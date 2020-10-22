@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+{% extends "@GhostGovUkFrontend/template.html.twig" %}
+
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader -%}
+
+{% block head -%}
+    {{ encore_entry_link_tags('app') }}
+{%- endblock %}
+
+{% block bodyEnd %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% block headerBar %}
+    {{ govukHeader({
+        serviceName: 'Road Freight Surveys'
+    }) }}
+{% endblock %}

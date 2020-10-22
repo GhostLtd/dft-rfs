@@ -1,0 +1,36 @@
+// Point directly at the assets in node_modules - webpack can resolve this
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+
+@import "~govuk-frontend/govuk/all.scss";
+
+@import "govuk-button";
+@import "govuk-confirmation";
+@import "govuk-header";
+@import "govuk-time-input";
+@import "govuk-money-input";
+
+.govuk-fieldset__item {
+    display: inline-block;
+    margin-right: 30px;
+}
+
+@include govuk-media-query($from: tablet) {
+    .govuk-button + .govuk-button {
+        margin-left: 10px;
+    }
+}
+
+.govuk-table__actions {
+    text-align: right;
+}
+
+.link-button {
+    display: inline;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    height: auto;
+    cursor: pointer;
+    text-decoration: underline;
+    @include govuk-font($size: 19, $line-height: 19px);
+}

@@ -1,0 +1,4 @@
+services:
+    ghost_govukfrontend.twig_extension:
+        class: Ghost\GovUkFrontendBundle\Twig\GovUkExtension
+        autoconfigure: true
