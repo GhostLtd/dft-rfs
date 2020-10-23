@@ -12,47 +12,55 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class ChoiceTypeTest extends FormTestCase
 {
-    public function testCheckboxesFixtures()
+    public function testFixtureProvider()
     {
-        $fixtures = $this->loadFixtures('checkboxes');
+        $ignoreTests = [
+            'with conditional items',
+            'with conditional item checked',
+            'with optional form-group classes showing group error',
+            'small with conditional reveal',
+            'with label classes', // we can't easily do choice label attributes
+            'multiple hints', // this one is stupid, it expects there to be an option with no label or value, but has a hint
+            'label with attributes', // we can't easily do choice label attributes
+            'fieldset params',
+        ];
 
+        $fixtures = $this->loadFixtures('checkboxes');
+        foreach ($fixtures as $index => $fixture) {
+            if (in_array($fixture['name'] ?? '', $ignoreTests)) {
+                unset($fixtures[$index]);
+            } else {
+                $fixtures[$index] = [$fixture];
+            }
+        }
+        return $fixtures;
+    }
+
+    /**
+     * @dataProvider testFixtureProvider
+     */
+    public function testCheckboxesFixtures($fixture)
+    {
         self::bootKernel();
         /** @var FormFactoryInterface $formFactory */
         $formFactory = self::$container->get('form.factory');
 
-        foreach ($fixtures['fixtures'] as $fixture)
-        {
-            $ignoreTests = [
-                'with conditional items',
-                'with conditional item checked',
-                'with optional form-group classes showing group error',
-                'small with conditional reveal',
-                'with label classes', // we can't easily do choice label attributes
-                'multiple hints', // this one is stupid, it expects there to be an option with no label or value, but has a hint
-                'label with attributes', // we can't easily do choice label attributes
-                'fieldset params',
-            ];
-            // only test true buttons here
-            if (!in_array($fixture['name'], $ignoreTests))
-            {
-                // create a button form element
-                $buttonForm = $formFactory->create(
-                    ChoiceType::class,
-                    $this->getData($fixture['options']['items'] ?? []),
-                    array_merge([
-                        'expanded' => true,
-                        'multiple' => true,
-                    ],
-                    $this->mapJsonOptions($fixture['options'] ?? []))
-                );
+        // create a button form element
+        $buttonForm = $formFactory->create(
+            ChoiceType::class,
+            $this->getData($fixture['options']['items'] ?? []),
+            array_merge([
+                'expanded' => true,
+                'multiple' => true,
+            ],
+            $this->mapJsonOptions($fixture['options'] ?? []))
+        );
 
-                if ($fixture['options']['errorMessage'] ?? false) {
-                    $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
-                }
-
-                $this->renderAndCompare($fixture['html'], $buttonForm);
-            }
+        if ($fixture['options']['errorMessage'] ?? false) {
+            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
         }
+
+        $this->renderAndCompare($fixture['html'], $buttonForm);
     }
 
     protected function getData($items = [])

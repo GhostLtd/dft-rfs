@@ -10,29 +10,39 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class ButtonTypeTest extends FormTestCase
 {
-    public function testButtonFixtures()
+    public function fixtureProvider()
     {
         $fixtures = $this->loadFixtures('button');
-
-        self::bootKernel();
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = self::$container->get('form.factory');
-
-        foreach ($fixtures['fixtures'] as $fixture)
+        foreach ($fixtures as $index => $fixture)
         {
-            // only test true buttons here
             if (!isset($fixture['options']['href']) &&
                 ($fixture['options']['element'] ?? 'button') === 'button')
             {
-                // create a button form element
-                $buttonForm = $formFactory->create(
-                    ButtonType::class,
-                    null,
-                    $this->mapJsonOptions($fixture['options'] ?? []));
-
-                $this->renderAndCompare($fixture['html'], $buttonForm);
+                $fixtures[$index] = [$fixture];
+            } else {
+                unset($fixtures[$index]);
             }
         }
+        return $fixtures;
+    }
+
+    /**
+     * @dataProvider fixtureProvider
+     */
+    public function testButtonFixtures($fixture)
+    {
+        self::bootKernel();
+
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = self::$container->get('form.factory');
+
+        // create a button form element
+        $buttonForm = $formFactory->create(
+            ButtonType::class,
+            null,
+            $this->mapJsonOptions($fixture['options'] ?? []));
+
+        $this->renderAndCompare($fixture['html'], $buttonForm);
     }
 
     protected function mapJsonOptions($fixtureOptions)

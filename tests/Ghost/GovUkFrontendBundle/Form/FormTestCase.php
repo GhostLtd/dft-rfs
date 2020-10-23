@@ -46,7 +46,7 @@ class FormTestCase extends WebTestCase
 
         $this->assertEquals($component, $fixtures['component']);
 
-        return $fixtures;
+        return $fixtures['fixtures'];
     }
 
     protected function renderAndCompare($fixtureHtml, FormInterface $componentForm)
