@@ -194,7 +194,9 @@
 
 {%- block gds_choice_row -%}
     {% if expanded %}
-        {% if label is empty and help is empty %}
+        {% if multiple and label is empty and help is empty %}
+            {{- block('form_row') -}}
+        {% elseif not multiple and label is empty %}
             {{- block('form_row') -}}
         {% else %}
             {{- block('gds_row_wrapped_in_fieldset') -}}
@@ -260,7 +262,6 @@
             'label_is_page_heading': false,
             'blockPrefix': blockPrefix,
             'classPrefix': classPrefix,
-            'help': choice_help[child.vars.label] ?? null
         }) only -%}
             {{- block(blockPrefix ~ '_widget') -}}
             {{- block(blockPrefix ~ '_label') -}}

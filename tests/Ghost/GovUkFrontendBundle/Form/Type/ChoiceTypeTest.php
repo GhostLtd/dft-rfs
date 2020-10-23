@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class ChoiceTypeTest extends FormTestCase
 {
-    public function testFixtureProvider()
+    public function checkboxFixtureProvider()
     {
         $ignoreTests = [
             'with conditional items',
@@ -28,7 +28,7 @@ class ChoiceTypeTest extends FormTestCase
     }
 
     /**
-     * @dataProvider testFixtureProvider
+     * @dataProvider checkboxFixtureProvider
      */
     public function testCheckboxesFixtures($fixture)
     {
@@ -40,7 +40,7 @@ class ChoiceTypeTest extends FormTestCase
         // create a button form element
         $buttonForm = $formFactory->create(
             ChoiceType::class,
-            $this->getData($fixture['options']['items'] ?? []),
+            $this->getCheckboxData($fixture['options']['items'] ?? []),
             array_merge([
                 'expanded' => true,
                 'multiple' => true,
@@ -55,7 +55,7 @@ class ChoiceTypeTest extends FormTestCase
         $this->renderAndCompare($fixture['html'], $buttonForm);
     }
 
-    protected function getData($items = [])
+    protected function getCheckboxData($items = [])
     {
         $data = [];
         foreach ($items as $item)
@@ -66,10 +66,63 @@ class ChoiceTypeTest extends FormTestCase
     }
 
 
+
+    public function radioFixtureProvider()
+    {
+        $ignoreTests = [
+            'with a divider',
+            'with conditional items',
+            'inline with conditional items',
+            'with conditional item checked',
+            'with optional form-group classes showing group error',
+            'small with conditional reveal',
+            'small with a divider',
+            'fieldset with describedBy',
+            'with hints on parent and items', // options without values/labels
+            'fieldset params',
+        ];
+        return $this->loadFixtures('radios', $ignoreTests);
+    }
+
+    /**
+     * @dataProvider radioFixtureProvider
+     */
+    public function testRadioFixtures($fixture)
+    {
+        self::bootKernel();
+
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = self::$container->get('form.factory');
+
+        // create a button form element
+        $buttonForm = $formFactory->create(
+            ChoiceType::class,
+            $this->getRadioData($fixture['options']['items'] ?? []),
+            array_merge([
+                'expanded' => true,
+            ],
+                $this->mapJsonOptions($fixture['options'] ?? []))
+        );
+
+        if ($fixture['options']['errorMessage'] ?? false) {
+            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
+        }
+
+        $this->renderAndCompare($fixture['html'], $buttonForm);
+    }
+
+    protected function getRadioData($items = [])
+    {
+        foreach ($items as $item)
+        {
+            if ($item['checked'] ?? false) return $item['value'];
+        }
+    }
+
     protected function mapJsonOptions($fixtureOptions)
     {
         // All of the options we want to support in ChoiceType
-        $mappedOptions = ['items', 'fieldset', 'hint', 'classes', 'attributes'];
+        $mappedOptions = ['items', 'fieldset', 'hint', 'classes', 'attributes', 'formGroup'];
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 
         $formOptions = parent::mapJsonOptions($fixtureOptions);
@@ -77,20 +130,31 @@ class ChoiceTypeTest extends FormTestCase
         {
             switch ($option)
             {
+                case 'formGroup' :
+                    if ($value['classes'] ?? false) {
+                        $formOptions['row_attr']['class'] = trim(($formOptions['row_attr']['class'] ?? "") . " " . $value['classes']);
+                    }
+                    break;
                 case 'items' :
                     $formOptions['choices'] = [];
                     foreach($value as $item) {
-                        if ($item['text'] ?? false)
+                        if ($item['text'] ?? $item['html'] ?? false)
                         {
-                            $formOptions['choices'][$item['text']] = $item['value'];
+                            $formOptions['choices'][$item['text'] ?? $item['html']] = $item['value'];
                             if ($item['hint']['text'] ?? false) {
-                                $formOptions['choice_help'][$item['text']] = $item['hint']['text'];
+                                $formOptions['choice_options'][$item['text']]['help'] = $item['hint']['text'];
                             }
                             if ($item['disabled'] ?? false) {
+//                                $formOptions['choice_attr'][$item['text']]['disabled'] = $item['disabled'];
                                 $formOptions['choice_options'][$item['text']]['disabled'] = $item['disabled'];
                             }
                             if ($item['attributes'] ?? false) {
-                                $formOptions['choice_options'][$item['text']] = $item['attributes'];
+                                $formOptions['choice_attr'][$item['text']] = $item['attributes'];
+                            }
+                            if ($item['label'] ?? false) {
+                                $formOptions['choice_options'][$item['text']]['label_attr'] = $item['label']['attributes'] ?? [];
+                                $formOptions['choice_options'][$item['text']]['label_attr']['class'] = $item['label']['classes'] ?? '';
+
                             }
                         }
                     }

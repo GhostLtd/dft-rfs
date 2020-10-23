@@ -134,7 +134,7 @@ class FormTestCase extends WebTestCase
                     $formOptions['label'] = $value;
                     break;
                 case 'classes' :
-                    $formOptions['attr']['class'] = trim(($formOptions['attr']['class'] ?? "") . " {$value}");
+                    $formOptions['attr']['class'] = trim(($formOptions['attr']['class'] ?? "") . " " . $value);
                     break;
                 case 'attributes' :
                     $formOptions['attr'] = array_merge($formOptions['attr'], $value);
