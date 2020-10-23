@@ -39,14 +39,27 @@ class FormTestCase extends WebTestCase
         }
     }
 
-    protected function loadFixtures($component)
+    protected function loadFixtures($component, $ignoreTests)
     {
         $file = __DIR__ . "/../../../../node_modules/govuk-frontend/govuk/components/${component}/fixtures.json";
         $fixtures = json_decode(file_get_contents($file), true);
 
         $this->assertEquals($component, $fixtures['component']);
 
-        return $fixtures['fixtures'];
+        $fixtures = $fixtures['fixtures'];
+
+        foreach ($fixtures as $index => $fixture) {
+            if (
+                (is_array($ignoreTests) && in_array($fixture['name'] ?? '', $ignoreTests)) ||
+                (is_callable($ignoreTests) && $ignoreTests($fixture))
+            ) {
+                unset($fixtures[$index]);
+            } else {
+                $fixtures[$index] = [$fixture];
+            }
+        }
+
+        return $fixtures;
     }
 
     protected function renderAndCompare($fixtureHtml, FormInterface $componentForm)

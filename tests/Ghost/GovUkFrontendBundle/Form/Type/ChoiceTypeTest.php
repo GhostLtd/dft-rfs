@@ -24,16 +24,7 @@ class ChoiceTypeTest extends FormTestCase
             'label with attributes', // we can't easily do choice label attributes
             'fieldset params',
         ];
-
-        $fixtures = $this->loadFixtures('checkboxes');
-        foreach ($fixtures as $index => $fixture) {
-            if (in_array($fixture['name'] ?? '', $ignoreTests)) {
-                unset($fixtures[$index]);
-            } else {
-                $fixtures[$index] = [$fixture];
-            }
-        }
-        return $fixtures;
+        return $this->loadFixtures('checkboxes', $ignoreTests);
     }
 
     /**
@@ -42,6 +33,7 @@ class ChoiceTypeTest extends FormTestCase
     public function testCheckboxesFixtures($fixture)
     {
         self::bootKernel();
+
         /** @var FormFactoryInterface $formFactory */
         $formFactory = self::$container->get('form.factory');
 

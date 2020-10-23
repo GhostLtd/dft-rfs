@@ -12,18 +12,11 @@ class ButtonTypeTest extends FormTestCase
 {
     public function fixtureProvider()
     {
-        $fixtures = $this->loadFixtures('button');
-        foreach ($fixtures as $index => $fixture)
-        {
-            if (!isset($fixture['options']['href']) &&
-                ($fixture['options']['element'] ?? 'button') === 'button')
-            {
-                $fixtures[$index] = [$fixture];
-            } else {
-                unset($fixtures[$index]);
-            }
-        }
-        return $fixtures;
+        $ignoreFixtures = function($fixture) {
+            return (isset($fixture['options']['href']) ||
+                ($fixture['options']['element'] ?? 'button') !== 'button');
+        };
+        return $this->loadFixtures('button', $ignoreFixtures);
     }
 
     /**
