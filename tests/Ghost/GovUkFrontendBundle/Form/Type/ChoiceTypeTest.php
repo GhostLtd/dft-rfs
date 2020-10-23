@@ -68,6 +68,7 @@ class ChoiceTypeTest extends FormTestCase
 
     protected function mapJsonOptions($fixtureOptions)
     {
+        // All of the options we want to support in ChoiceType
         $mappedOptions = ['items', 'fieldset', 'hint', 'classes', 'attributes'];
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 

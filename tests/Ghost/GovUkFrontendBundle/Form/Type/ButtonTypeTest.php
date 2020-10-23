@@ -40,6 +40,7 @@ class ButtonTypeTest extends FormTestCase
 
     protected function mapJsonOptions($fixtureOptions)
     {
+        // All of the options we want to support in ButtonType
         $mappedOptions = ['disabled', 'text', 'html', 'preventDoubleClick', 'classes', 'attributes', 'value'];
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 
