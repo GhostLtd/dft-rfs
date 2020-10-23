@@ -56,12 +56,16 @@
 
 {%- block form_label_inner -%}
     <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
-    {%- if translation_domain is same as(false) -%}
-        {{- label -}}
-    {%- else -%}
-        {{- label|trans(label_translation_parameters, translation_domain) -}}
-    {%- endif -%}
+        {{- block('form_label_inner_content') -}}
     </{{ element|default('label') }}>
+{%- endblock -%}
+
+{%- block form_label_inner_content -%}
+    {%- if translation_domain is same as(false) -%}
+        {{- label | raw -}}
+    {%- else -%}
+        {{- label|trans(label_translation_parameters, translation_domain) | raw -}}
+    {%- endif -%}
 {%- endblock -%}
 
 {%- block gds_row_wrapped_in_fieldset -%}
@@ -119,7 +123,7 @@
         {%- set id = form.vars.id ~ '-error' -%}
         <span id="{{ id }}" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span>
-            {%- for error in errors -%}
+            {% for error in errors -%}
                 {{ error.message }}
                 {%- if not loop.last %}<br>{% endif -%}
             {%- endfor -%}
@@ -129,8 +133,8 @@
 
 {% block form_help -%}
     {%- if help is not empty -%}
-        {%- set help_attr = help_attr|merge({class: ('govuk-hint ' ~ help_attr.class|default(''))|trim}) -%}
-        <span id="{{ id }}-hint"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+        {%- set help_attr = help_attr|merge({class: ('govuk-hint ' ~ help_attr.class|default(''))|trim}) %}
+        <div id="{{ id }}-hint"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
             {%- if translation_domain is same as(false) -%}
                 {%- if help_html is same as(false) -%}
                     {{- help|nl2br -}}
@@ -144,7 +148,7 @@
                     {{- help|trans(help_translation_parameters, translation_domain)|raw -}}
                 {%- endif -%}
             {%- endif -%}
-        </span>
+        </div>
     {%- endif -%}
 {%- endblock %}
 
@@ -190,7 +194,11 @@
 
 {%- block gds_choice_row -%}
     {% if expanded %}
-        {{- block('gds_row_wrapped_in_fieldset') -}}
+        {% if label is empty and help is empty %}
+            {{- block('form_row') -}}
+        {% else %}
+            {{- block('gds_row_wrapped_in_fieldset') -}}
+        {% endif %}
     {% else %}
         {{- form_row(form) -}}
     {% endif %}
@@ -252,8 +260,8 @@
             'label_is_page_heading': false,
             'blockPrefix': blockPrefix,
             'classPrefix': classPrefix,
-            'help': choice_help[child.vars.label] ?? null})
-            only -%}
+            'help': choice_help[child.vars.label] ?? null
+        }) only -%}
             {{- block(blockPrefix ~ '_widget') -}}
             {{- block(blockPrefix ~ '_label') -}}
             {%- set help_attr = {'class': classPrefix ~ '__hint'} -%}
@@ -285,7 +293,7 @@
         class: ('govuk-checkboxes__input ' ~
         attr.class|default(''))|trim
     }) -%}
-    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked | default(false) %} checked="checked"{% endif %} />
 {%- endblock -%}
 
 {%- block gds_button_row -%}
@@ -299,6 +307,22 @@
     }) -%}
     {{ block('button_widget') }}
 {%- endblock -%}
+
+{%- block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {%- elseif label is not same as(false) -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+        {{- block('form_label_inner_content') -}}
+    </button>
+{%- endblock button_widget -%}
 
 {%- block button_attributes -%}{# Adds aria-disabled if field disabled -#}
     id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled" aria-disabled="true"{% endif -%}

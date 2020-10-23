@@ -1,4 +1,14 @@
 services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
     ghost_govukfrontend.twig_extension:
         class: Ghost\GovUkFrontendBundle\Twig\GovUkExtension
-        autoconfigure: true
+
+    ghost_govukfrontend.form_extension.form_type:
+        class: Ghost\GovUkFrontendBundle\Form\Extension\FormTypeExtension
+
+    ghost_govukfrontend.form_extension.disabled:
+        class: Ghost\GovUkFrontendBundle\Form\Extension\DisabledExtension

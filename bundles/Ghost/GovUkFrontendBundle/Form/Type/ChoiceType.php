@@ -3,6 +3,7 @@
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType as ExtendedChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -21,6 +22,15 @@ class ChoiceType extends ExtendedChoiceType
         return 'gds_choice';
     }
 
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $options['choice_attr'] = function($value, $key, $index) use ($options) {
+            return $options['choice_options'][$key] ?? [];
+        };
+
+        parent::buildForm($builder, $options);
+    }
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
@@ -31,11 +41,16 @@ class ChoiceType extends ExtendedChoiceType
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
+        $resolver->setDefault('required', false);
+
         $resolver->setDefault('label_is_page_heading', false);
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
 
         $resolver->setDefault('choice_help', null);
         $resolver->setAllowedTypes('choice_help', ['null', 'array']);
+
+        $resolver->setDefault('choice_options', null);
+        $resolver->setAllowedTypes('choice_options', ['null', 'array']);
 
         $resolver->setNormalizer('multiple', function (Options $options, $value) {
             if (true === $value && false === $options['expanded']) {
