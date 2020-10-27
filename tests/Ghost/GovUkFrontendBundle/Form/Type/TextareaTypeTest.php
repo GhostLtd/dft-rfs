@@ -45,12 +45,6 @@ class TextareaTypeTest extends FormTestCase
                 case 'rows' :
                     $formOptions['rows'] = $value;
                     break;
-                case 'autocomplete' :
-                    $formOptions['attr']['autocomplete'] = $value;
-                    break;
-                case 'spellcheck' :
-                    $formOptions['attr']['spellcheck'] = $value ? 'true' : 'false';
-                    break;
             }
         }
 

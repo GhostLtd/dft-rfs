@@ -8,11 +8,11 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EmailType extends TextType
+class EmailType extends InputType
 {
     public function getParent()
     {
-        return TextType::class;
+        return InputType::class;
     }
 
     public function getBlockPrefix()

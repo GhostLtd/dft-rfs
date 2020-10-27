@@ -9,11 +9,11 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class NumberType extends TextType
+class NumberType extends InputType
 {
     public function getParent()
     {
-        return TextType::class;
+        return InputType::class;
     }
 
     public function getBlockPrefix()
@@ -26,10 +26,12 @@ class NumberType extends TextType
         parent::buildView($view, $form, $options);
 
         $view->vars['attr'] = array_merge([
-            'class' => 'govuk-input--width-3',
+//            'class' => 'govuk-input--width-3',
             'inputmode' => $options['is_decimal'] ? 'decimal' : 'numeric',
             'pattern' => '[0-9.,]*',
         ], $view->vars['attr']);
+
+        if (!$options['is_decimal']) $view->vars['type'] = 'number';
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -50,5 +52,7 @@ class NumberType extends TextType
             'transformer_invalid_message' => 'Enter a real number',
             'is_decimal' => false,
         ]);
+
+        $resolver->setAllowedTypes('is_decimal', ['bool']);
     }
 }

@@ -20,7 +20,7 @@ class GdsTestFormType extends AbstractType
         ];
 
         $builder
-            ->add('text', GdsTypes\TextType::class, [
+            ->add('text', GdsTypes\InputType::class, [
                 'constraints' => [new NotBlank()],
                 'help' => "Here's some help text for text!",
             ])

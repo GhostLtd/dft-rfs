@@ -71,7 +71,6 @@ class ChoiceType extends ExtendedChoiceType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'required' => false,
             'placeholder' => false,
             'label_is_page_heading' => false,
             'choice_options' => null,

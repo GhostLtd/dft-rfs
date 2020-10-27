@@ -24,7 +24,6 @@ class TextareaType extends ExtendedTextareaType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'required' => false,
             'max_length' => null,
             'max_words' => null,
             'threshold' => null,

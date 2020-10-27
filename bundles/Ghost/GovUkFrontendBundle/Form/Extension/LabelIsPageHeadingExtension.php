@@ -6,7 +6,7 @@ namespace Ghost\GovUkFrontendBundle\Form\Extension;
 
 use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
-use Ghost\GovUkFrontendBundle\Form\Type\TextType;
+use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Ghost\GovUkFrontendBundle\Form\Type\TimeType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
@@ -19,7 +19,7 @@ class LabelIsPageHeadingExtension extends AbstractTypeExtension
     {
         return [
             TextareaType::class,
-            TextType::class,
+            InputType::class,
             TimeType::class,
             FieldsetType::class,
         ];

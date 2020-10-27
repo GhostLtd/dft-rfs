@@ -152,7 +152,7 @@
     {%- endif -%}
 {%- endblock %}
 
-{%- block gds_text_widget -%}
+{%- block gds_input_widget -%}
     {%- set attr = attr|merge({
         class: ('govuk-input ' ~
             (errors is not empty ? 'govuk-input--error ' : '') ~

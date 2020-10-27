@@ -46,7 +46,7 @@ class FormTestCase extends WebTestCase
         );
 
         // Check the attributes are the same
-        $ignoreAttributes = ['id', 'name', 'for', 'aria-describedby'];
+        $ignoreAttributes = ['id', 'name', 'for', 'aria-describedby', 'pattern'];
         foreach($expected->getNode(0)->attributes as $attributeIndex => $expectedAttribute) {
             if (in_array($expectedAttribute->name, $ignoreAttributes)) continue;
             /** @var \DOMAttr $expectedAttribute */
@@ -54,7 +54,7 @@ class FormTestCase extends WebTestCase
             $this->assertEquals(
                 $expectedAttribute->value,
                 $actualAttribute,
-                "{$fixtureName}: {$actual->nodeName()}[{$expectedAttribute->name}]"
+                "{$fixtureName}: {$actual->nodeName()}[{$expectedAttribute->name}={$expectedAttribute->value}]"
             );
         }
 
@@ -174,7 +174,7 @@ class FormTestCase extends WebTestCase
                     $formOptions['label'] = $value;
                     break;
                 case 'label' :
-                    $formOptions['label'] = $value['text'];
+                    $formOptions['label'] = $value['text'] ?? $value['html'] ?? null;
                     if ($value['isPageHeading'] ?? false) $formOptions['label_is_page_heading'] = true;
                     break;
                 case 'classes' :
@@ -193,6 +193,12 @@ class FormTestCase extends WebTestCase
                     if ($value['classes'] ?? false) {
                         $formOptions['row_attr']['class'] = trim(($formOptions['row_attr']['class'] ?? "") . " " . $value['classes']);
                     }
+                    break;
+                case 'autocomplete' :
+                    $formOptions['attr']['autocomplete'] = $value;
+                    break;
+                case 'spellcheck' :
+                    $formOptions['attr']['spellcheck'] = $value ? 'true' : 'false';
                     break;
 
                 default :
