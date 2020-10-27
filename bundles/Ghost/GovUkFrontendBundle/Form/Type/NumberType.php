@@ -28,7 +28,7 @@ class NumberType extends InputType
         $view->vars['attr'] = array_merge([
 //            'class' => 'govuk-input--width-3',
             'inputmode' => $options['is_decimal'] ? 'decimal' : 'numeric',
-            'pattern' => '[0-9.,]*',
+            'pattern' => $options['is_decimal'] ? '[0-9.,]*' : '[0-9]*',
         ], $view->vars['attr']);
 
         if (!$options['is_decimal']) $view->vars['type'] = 'number';

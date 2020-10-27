@@ -46,7 +46,7 @@ class FormTestCase extends WebTestCase
         );
 
         // Check the attributes are the same
-        $ignoreAttributes = ['id', 'name', 'for', 'aria-describedby', 'pattern'];
+        $ignoreAttributes = ['id', 'name', 'for', 'aria-describedby'];
         foreach($expected->getNode(0)->attributes as $attributeIndex => $expectedAttribute) {
             if (in_array($expectedAttribute->name, $ignoreAttributes)) continue;
             /** @var \DOMAttr $expectedAttribute */
