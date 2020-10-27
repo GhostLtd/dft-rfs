@@ -73,7 +73,7 @@ class GdsTestFormType extends AbstractType
             ])
             ->add('money', GdsTypes\MoneyType::class)
 
-            ->add('submit_button', GdsTypes\SubmitType::class, [
+            ->add('submit_button', GdsTypes\ButtonType::class, [
                 'label' => 'Submit',
             ])
         ;

@@ -21,27 +21,22 @@ class ButtonTypeTest extends FormTestCase
 
     /**
      * @dataProvider fixtureProvider
+     * @param $fixture
      */
     public function testButtonFixtures($fixture)
     {
-        self::bootKernel();
-
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = self::$container->get('form.factory');
-
-        // create a button form element
-        $buttonForm = $formFactory->create(
+        $buttonForm = $this->createAndTestForm(
             ButtonType::class,
             null,
-            $this->mapJsonOptions($fixture['options'] ?? []));
-
-        $this->renderAndCompare($fixture['html'], $buttonForm);
+            $this->mapJsonOptions($fixture['options'] ?? []),
+            $fixture
+        );
     }
 
     protected function mapJsonOptions($fixtureOptions)
     {
         // All of the options we want to support in ButtonType
-        $mappedOptions = ['disabled', 'text', 'html', 'preventDoubleClick', 'classes', 'attributes', 'value'];
+        $mappedOptions = ['disabled', 'text', 'html', 'preventDoubleClick', 'classes', 'attributes', 'value', 'type'];
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 
         $formOptions = parent::mapJsonOptions($fixtureOptions);
@@ -54,6 +49,9 @@ class ButtonTypeTest extends FormTestCase
                     break;
                 case 'value' :
                     $formOptions['attr']['value'] = $value;
+                    break;
+                case 'type' :
+                    $formOptions['type'] = $value;
                     break;
             }
         }

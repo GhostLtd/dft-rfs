@@ -29,30 +29,20 @@ class ChoiceTypeTest extends FormTestCase
 
     /**
      * @dataProvider checkboxFixtureProvider
+     * @param $fixture
      */
     public function testCheckboxesFixtures($fixture)
     {
-        self::bootKernel();
-
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = self::$container->get('form.factory');
-
-        // create a button form element
-        $buttonForm = $formFactory->create(
+        $buttonForm = $this->createAndTestForm(
             ChoiceType::class,
             $this->getCheckboxData($fixture['options']['items'] ?? []),
             array_merge([
                 'expanded' => true,
                 'multiple' => true,
             ],
-            $this->mapJsonOptions($fixture['options'] ?? []))
+            $this->mapJsonOptions($fixture['options'] ?? [])),
+            $fixture
         );
-
-        if ($fixture['options']['errorMessage'] ?? false) {
-            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
-        }
-
-        $this->renderAndCompare($fixture['html'], $buttonForm);
     }
 
     protected function getCheckboxData($items = [])
@@ -86,29 +76,18 @@ class ChoiceTypeTest extends FormTestCase
 
     /**
      * @dataProvider radioFixtureProvider
+     * @param $fixture
      */
     public function testRadioFixtures($fixture)
     {
-        self::bootKernel();
-
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = self::$container->get('form.factory');
-
-        // create a button form element
-        $buttonForm = $formFactory->create(
+        $this->createAndTestForm(
             ChoiceType::class,
             $this->getRadioData($fixture['options']['items'] ?? []),
             array_merge([
                 'expanded' => true,
-            ],
-                $this->mapJsonOptions($fixture['options'] ?? []))
+            ], $this->mapJsonOptions($fixture['options'] ?? [])),
+            $fixture
         );
-
-        if ($fixture['options']['errorMessage'] ?? false) {
-            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
-        }
-
-        $this->renderAndCompare($fixture['html'], $buttonForm);
     }
 
     protected function getRadioData($items = [])
@@ -130,11 +109,6 @@ class ChoiceTypeTest extends FormTestCase
         {
             switch ($option)
             {
-                case 'formGroup' :
-                    if ($value['classes'] ?? false) {
-                        $formOptions['row_attr']['class'] = trim(($formOptions['row_attr']['class'] ?? "") . " " . $value['classes']);
-                    }
-                    break;
                 case 'items' :
                     $formOptions['choices'] = [];
                     foreach($value as $item) {
@@ -169,14 +143,9 @@ class ChoiceTypeTest extends FormTestCase
                     }
                     $formOptions['label_is_page_heading'] = $value['legend']['isPageHeading'] ?? false;
                     break;
-
-                case 'hint' :
-                    $formOptions['help'] = $value['text'] ?? null;
-                    break;
             }
         }
 
-//        dump($formOptions); exit;
         return $formOptions;
     }
 }

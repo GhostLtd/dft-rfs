@@ -2,8 +2,8 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
-use App\Form\Gds\DataTransformer\DecimalToStringTransformer;
-use App\Form\Gds\DataTransformer\IntegerToStringTransformer;
+use Ghost\GovUkFrontendBundle\Form\DataTransformer\DecimalToStringTransformer;
+use Ghost\GovUkFrontendBundle\Form\DataTransformer\IntegerToStringTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

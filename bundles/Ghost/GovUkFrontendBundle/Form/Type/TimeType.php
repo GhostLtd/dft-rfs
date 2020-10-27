@@ -2,7 +2,7 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
-use App\Form\Gds\DataTransformer\TimeStringTransformer;
+use Ghost\GovUkFrontendBundle\Form\DataTransformer\TimeStringTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,10 +44,7 @@ class TimeType extends AbstractType
 
         $resolver->setDefaults([
             'help' => 'For example, 11:36am or 2:11pm',
-            'label_is_page_heading' => false,
             'error_bubbling' => false,
         ]);
-
-        $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
     }
 }

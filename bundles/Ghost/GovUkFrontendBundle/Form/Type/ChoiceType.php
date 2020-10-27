@@ -58,6 +58,13 @@ class ChoiceType extends ExtendedChoiceType
     {
         parent::buildView($view, $form, $options);
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
+
+//        $typeName = $options['expanded'] ? $options['multiple'] ? 'checkbox' : 'radio' : 'select';
+//        $view->vars['blockPrefix'] = "gds_{$typeName}";
+//
+//        $class = "govuk-" . ($options['expanded'] ? $options['multiple'] ? 'checkboxes' : 'radios' : 'select');
+//        $view->vars['attr']['class'] = trim("$class " . ($options['attr']['class'] ?? ''));
+//        $view->vars['classPrefix'] = $class;
     }
 
     public function configureOptions(OptionsResolver $resolver)

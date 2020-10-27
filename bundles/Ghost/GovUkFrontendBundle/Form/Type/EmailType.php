@@ -27,22 +27,6 @@ class EmailType extends TextType
         $view->vars['attr'] = array_merge([
             'class' => 'govuk-!-width-one-third',
             'inputmode' => 'email',
-//            'pattern' => '[0-9]*',
         ], $view->vars['attr']);
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        parent::buildForm($builder, $options);
-
-//        $builder->addModelTransformer(new IntegerToStringTransformer($options['transformer_invalid_message']));
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-        $resolver->setDefaults([
-//            'transformer_invalid_message' => 'Enter a real number',
-        ]);
     }
 }

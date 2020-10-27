@@ -10,5 +10,5 @@ services:
     ghost_govukfrontend.form_extension.form_type:
         class: Ghost\GovUkFrontendBundle\Form\Extension\FormTypeExtension
 
-    ghost_govukfrontend.form_extension.disabled:
-        class: Ghost\GovUkFrontendBundle\Form\Extension\DisabledExtension
+    ghost_govukfrontend.form_extension.label_page_heading_extension:
+        class: Ghost\GovUkFrontendBundle\Form\Extension\LabelIsPageHeadingExtension

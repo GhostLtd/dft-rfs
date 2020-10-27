@@ -6,6 +6,8 @@ namespace App\Tests\Ghost\GovUkFrontendBundle\Form;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -18,17 +20,30 @@ class FormTestCase extends WebTestCase
      * Assert that the two Crawlers have the same content
      * @param Crawler $expected
      * @param Crawler $actual
+     * @param string $fixtureName
      */
-    protected function assertStructuresMatch(Crawler $expected, Crawler $actual)
+    protected function assertStructuresMatch(Crawler $expected, Crawler $actual, $fixtureName = '')
     {
         // check the nodes have the same name and number of children
-        $this->assertEquals($expected->nodeName(), $actual->nodeName());
-        $this->assertEquals($expected->children()->count(), $actual->children()->count());
+        $this->assertEquals(
+            $expected->nodeName(),
+            $actual->nodeName(),
+            "{$fixtureName}: {$actual->nodeName()}.{$actual->attr('class')}"
+        );
+        $this->assertEquals(
+            $expected->children()->count(),
+            $actual->children()->count(),
+            "{$fixtureName}: {$actual->nodeName()}.{$actual->attr('class')}"
+        );
 
         // get the text for this node only (by subtracting the text for its children), and check they're the same
-        $expectedNodeText = str_replace($expected->children()->text('', true), '', $expected->text(null, true));
-        $actualNodeText = str_replace($actual->children()->text('', true), '', $actual->text(null, true));
-        $this->assertEquals($expectedNodeText, $actualNodeText);
+        $expectedNodeText = trim(str_replace($expected->children()->text('', true), '', $expected->text(null, true)));
+        $actualNodeText = trim(str_replace($actual->children()->text('', true), '', $actual->text(null, true)));
+        $this->assertEquals(
+            $expectedNodeText,
+            $actualNodeText,
+            "{$fixtureName}: {$actual->nodeName()}.{$actual->attr('class')}"
+        );
 
         // Check the attributes are the same
         $ignoreAttributes = ['id', 'name', 'for', 'aria-describedby'];
@@ -36,7 +51,11 @@ class FormTestCase extends WebTestCase
             if (in_array($expectedAttribute->name, $ignoreAttributes)) continue;
             /** @var \DOMAttr $expectedAttribute */
             $actualAttribute = $actual->attr($expectedAttribute->name);
-            $this->assertEquals($expectedAttribute->value, $actualAttribute);
+            $this->assertEquals(
+                $expectedAttribute->value,
+                $actualAttribute,
+                "{$fixtureName}: {$actual->nodeName()}[{$expectedAttribute->name}]"
+            );
         }
 
         // traverse the tree of $expected
@@ -47,9 +66,28 @@ class FormTestCase extends WebTestCase
         {
             $actualChild = $actualChildren->eq($childIndex);
             $expectedChild = $expectedChildren->eq($childIndex);
-            $this->assertStructuresMatch($expectedChild, $actualChild);
+            $this->assertStructuresMatch($expectedChild, $actualChild, $fixtureName);
         }
     }
+
+
+    protected function createAndTestForm($formClass, $formData, $formOptions, $fixture)
+    {
+        self::bootKernel();
+
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = self::$container->get('form.factory');
+
+        // create a button form element
+        $buttonForm = $formFactory->create($formClass, $formData, $formOptions);
+
+        if ($fixture['options']['errorMessage'] ?? false) {
+            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
+        }
+
+        $this->renderAndCompare($fixture, $buttonForm);
+    }
+
 
     /**
      * @param $component string the name of the component
@@ -82,14 +120,15 @@ class FormTestCase extends WebTestCase
     }
 
     /**
-     * @param $fixtureHtml
+     * @param $fixture
      * @param FormInterface $componentForm
      */
-    protected function renderAndCompare($fixtureHtml, FormInterface $componentForm)
+    private function renderAndCompare($fixture, FormInterface $componentForm)
     {
         /** @var Environment $twig */
         $twig = self::$container->get('twig');
 
+        $renderedHtml = '';
         // render it
         try {
             $renderedHtml = $twig->render($twig->createTemplate("{{ form_row(form) }}"), ['form' => $componentForm->createView()]);
@@ -103,7 +142,7 @@ class FormTestCase extends WebTestCase
 
         // compare results
         $fixtureCrawler = new Crawler();
-        $fixtureCrawler->addHtmlContent($fixtureHtml);
+        $fixtureCrawler->addHtmlContent($fixture['html']);
 
         $renderCrawler = new Crawler();
         $renderCrawler->addHtmlContent($renderedHtml);
@@ -112,7 +151,8 @@ class FormTestCase extends WebTestCase
         // and assert they're the same
         $this->assertStructuresMatch(
             $fixtureCrawler->filter('body')->children(),
-            $renderCrawler->filter('body')->children()
+            $renderCrawler->filter('body')->children(),
+            $fixture['name']
         );
     }
 
@@ -133,6 +173,10 @@ class FormTestCase extends WebTestCase
                 case 'html' :
                     $formOptions['label'] = $value;
                     break;
+                case 'label' :
+                    $formOptions['label'] = $value['text'];
+                    if ($value['isPageHeading'] ?? false) $formOptions['label_is_page_heading'] = true;
+                    break;
                 case 'classes' :
                     $formOptions['attr']['class'] = trim(($formOptions['attr']['class'] ?? "") . " " . $value);
                     break;
@@ -141,6 +185,14 @@ class FormTestCase extends WebTestCase
                     break;
                 case 'disabled' :
                     $formOptions[$option] = $value;
+                    break;
+                case 'hint' :
+                    $formOptions['help'] = $value['text'] ?? null;
+                    break;
+                case 'formGroup' :
+                    if ($value['classes'] ?? false) {
+                        $formOptions['row_attr']['class'] = trim(($formOptions['row_attr']['class'] ?? "") . " " . $value['classes']);
+                    }
                     break;
 
                 default :

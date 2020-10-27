@@ -18,17 +18,4 @@ class TextType extends ExtendedTextType
     {
         return 'gds_text';
     }
-
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::buildView($view, $form, $options);
-        $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-        $resolver->setDefault('label_is_page_heading', false);
-        $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
-    }
 }

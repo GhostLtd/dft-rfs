@@ -24,16 +24,17 @@ class TextareaType extends ExtendedTextareaType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'required' => false,
             'max_length' => null,
             'max_words' => null,
             'threshold' => null,
-            'label_is_page_heading' => false,
+            'rows' => 5,
         ]);
 
+        $resolver->setAllowedTypes('rows', ['integer']);
         $resolver->setAllowedTypes('max_length', ['null', 'int']);
         $resolver->setAllowedTypes('max_words', ['null', 'int']);
         $resolver->setAllowedTypes('threshold', ['null', 'int']);
-        $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
 
         $resolver->setNormalizer('max_words', function (Options $options, $value) {
             if (($options['max_length'] ?? null) && $value) {
@@ -47,7 +48,8 @@ class TextareaType extends ExtendedTextareaType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
-        $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
+
+        $view->vars['attr']['rows'] = $options['rows'];
 
         $characterCountOptions = ['max_length', 'max_words', 'threshold'];
 
