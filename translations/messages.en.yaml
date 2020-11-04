@@ -1,0 +1,34 @@
+vehicle:
+  axle:
+    rigid:
+      2:
+        0: 'Rigid 2 axle'
+        1: 'Rigid 2 axle + 1 axle trailer'
+        2: 'Rigid 2 axle + 2 axle trailer'
+        3: 'Rigid 2 axle + 3 axle trailer'
+      3:
+        0: 'Rigid 3 axle'
+        2: 'Rigid 3 axle + 2 axle trailer'
+        3: 'Rigid 3 axle + 3 axle trailer'
+      other: 'Other rigid'
+      other-trailer: 'Other rigid with trailer'
+    arcticulated:
+      2:
+        1: 'Articulated 2 axle + 1 axle trailer'
+        2: 'Articulated 2 axle + 2 axle trailer'
+        3: 'Articulated 2 axle + 3 axle trailer'
+      3:
+        2: 'Articulated 3 axle + 2 axle trailer'
+        3: 'Articulated 3 axle + 3 axle trailer'
+      other: 'Other articulated'
+  trailer:
+    flat-drop: 'Flat/drop sided'
+    box: 'Box/non-specialised'
+    temperature-controlled: 'Temperature controlled'
+    curtain-sided: 'Curtain-sided'
+    liquid: 'Liquid tanker'
+    solid-bulk: 'Solid bulk tanker'
+    livestock: 'Livestock carrier'
+    car: 'Car transporter'
+    tipper: 'Tipper'
+    other: 'Other'
