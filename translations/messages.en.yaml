@@ -1,3 +1,17 @@
+survey:
+  domestic:
+    non-complete:
+      scrapped-or-stolen: 'Scrapped or stolen'
+      sold: 'Sold'
+      on-hire: 'On hire'
+      not-taxed: 'Not taxed'
+      no-work: 'No work'
+      repair: 'Being repaired'
+      site-work-only: 'Used solely for site work'
+      holiday: 'Not used owing to holiday'
+      no-driver: 'No driver'
+      other: 'Other'
+
 vehicle:
   axle:
     rigid:
