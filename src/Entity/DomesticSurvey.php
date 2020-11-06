@@ -16,13 +16,30 @@ class DomesticSurvey
     const STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS = 'request contact details';
     const STATE_PRE_SURVEY_ASK_COMPLETABLE = 'can you complete the survey?';
     const STATE_PRE_SURVEY_ASK_ON_HIRE = 'is vehicle on hire?';
-    const STATE_PRE_SURVEY_ASK_REMINDER_EMAIL = 'is reminder email required?';
+//    const STATE_PRE_SURVEY_ASK_REMINDER_EMAIL = 'is reminder email required?';
     const STATE_PRE_SURVEY_SUMMARY = 'summary';
     const STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE = "reason can't complete?" ;
     const STATE_PRE_SURVEY_ASK_HIREE_DETAILS = 'provide hiree details';
 
-    public $state;
+    public $choiceFormResult;
 
+    private $state;
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state): void
+    {
+        $this->state = $state;
+    }
 
     /**
      * @ORM\Column(type="boolean")

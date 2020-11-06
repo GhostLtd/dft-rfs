@@ -2,7 +2,7 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\Type\ButtonType as ExtendedButtonType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType as ExtendedButtonType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +26,11 @@ class ButtonType extends ExtendedButtonType
         parent::buildView($view, $form, $options);
 
         $view->vars['type'] = $options['type'];
+
+        if ($view->vars['type'] === 'submit')
+        {
+            $view->vars['clicked'] = $form->isClicked();
+        }
 
         if ($options['prevent_double_click']) {
             $view->vars['attr']['data-prevent-double-click'] = "true";
