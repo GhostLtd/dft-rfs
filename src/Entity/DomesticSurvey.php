@@ -34,6 +34,11 @@ class DomesticSurvey
      */
     private $surveyResponse;
 
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $registrationMark;
+
     public function getIsNorthernIreland(): ?bool
     {
         return $this->isNorthernIreland;
@@ -59,6 +64,18 @@ class DomesticSurvey
         if ($surveyResponse->getSurvey() !== $this) {
             $surveyResponse->setSurvey($this);
         }
+
+        return $this;
+    }
+
+    public function getRegistrationMark(): ?string
+    {
+        return $this->registrationMark;
+    }
+
+    public function setRegistrationMark(string $registrationMark): self
+    {
+        $this->registrationMark = $registrationMark;
 
         return $this;
     }

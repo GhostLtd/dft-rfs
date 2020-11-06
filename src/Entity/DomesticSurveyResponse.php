@@ -73,6 +73,11 @@ class DomesticSurveyResponse
      */
     private $vehicle;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $actualVehicleLocation;
+
     public function getNumberOfEmployees(): ?int
     {
         return $this->numberOfEmployees;
@@ -177,6 +182,18 @@ class DomesticSurveyResponse
     public function setVehicle(?DomesticVehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
+
+        return $this;
+    }
+
+    public function getActualVehicleLocation(): ?string
+    {
+        return $this->actualVehicleLocation;
+    }
+
+    public function setActualVehicleLocation(?string $actualVehicleLocation): self
+    {
+        $this->actualVehicleLocation = $actualVehicleLocation;
 
         return $this;
     }
