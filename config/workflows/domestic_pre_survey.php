@@ -1,66 +1,70 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Entity\DomesticSurvey;
+use App\Workflow\DomesticSurveyState;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [
             'domestic_pre_survey' => [
                 'type' => 'state_machine',
-                'initial_marking' => DomesticSurvey::STATE_PRE_SURVEY_INTRODUCTION,
+                'initial_marking' => DomesticSurveyState::STATE_PRE_SURVEY_INTRODUCTION,
                 'marking_store' => [
-//                    'type' => 'single_state',
-//                    'arguments' => ['$property' => 'state'],
                     'type' => 'method',
                     'property' => 'state',
                 ],
-                'supports' => [DomesticSurvey::class],
+                'supports' => [DomesticSurveyState::class],
                 'places' => [
-                    DomesticSurvey::STATE_PRE_SURVEY_INTRODUCTION,
-                    DomesticSurvey::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
-                    DomesticSurvey::STATE_PRE_SURVEY_ASK_COMPLETABLE,
-                    DomesticSurvey::STATE_PRE_SURVEY_ASK_ON_HIRE,
-//                    DomesticSurvey::STATE_PRE_SURVEY_ASK_REMINDER_EMAIL,
-                    DomesticSurvey::STATE_PRE_SURVEY_SUMMARY,
-                    DomesticSurvey::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE,
-                    DomesticSurvey::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
+                    DomesticSurveyState::STATE_PRE_SURVEY_INTRODUCTION,
+                    DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
+                    DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS,
+                    DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
+                    DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE,
+                    DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                    DomesticSurveyState::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE,
+                    DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
                 ],
                 'transitions' => [
                     'start' => [
-                        'from' => DomesticSurvey::STATE_PRE_SURVEY_INTRODUCTION,
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
+                        'from' => DomesticSurveyState::STATE_PRE_SURVEY_INTRODUCTION,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
                     ],
                     'contact details entered' => [
-                        'from' => DomesticSurvey::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_ASK_COMPLETABLE,
+                        'from' => DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
                     ],
                     'survey can be completed' => [
-                        'metadata' => ['result' => 'yes'],
-                        'from' => DomesticSurvey::STATE_PRE_SURVEY_ASK_COMPLETABLE,
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_ASK_ON_HIRE,
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'ableToComplete', 'value' => true]],
+                        'from' => DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE,
                     ],
                     'survey cannot be completed' => [
-                        'metadata' => ['result' => 'no'],
-                        'from' => DomesticSurvey::STATE_PRE_SURVEY_ASK_COMPLETABLE,
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'ableToComplete', 'value' => false]],
+                        'from' => DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE
                     ],
                     'request hiree details' => [
-                        'metadata' => ['result' => 'on-hire'],
-                        'from' => [DomesticSurvey::STATE_PRE_SURVEY_ASK_ON_HIRE, DomesticSurvey::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE],
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => 'on-hire']],
+                        'from' => [DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE, DomesticSurveyState::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE],
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
                     ],
-//                    'vehicle not on hire' => [
-//                        'from' => DomesticSurvey::STATE_PRE_SURVEY_ASK_ON_HIRE,
-//                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_ASK_REMINDER_EMAIL,
-//                    ],
-//                    'finish' => [
-//                        'from' => [DomesticSurvey::STATE_PRE_SURVEY_ASK_REMINDER_EMAIL, DomesticSurvey::STATE_PRE_SURVEY_ASK_HIREE_DETAILS],
-//                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_SUMMARY,
-//                    ],
                     'finish' => [
-                        'from' => [DomesticSurvey::STATE_PRE_SURVEY_ASK_ON_HIRE, DomesticSurvey::STATE_PRE_SURVEY_ASK_HIREE_DETAILS],
-                        'to' =>  DomesticSurvey::STATE_PRE_SURVEY_SUMMARY,
+                        'metadata' => ['persist' => true],
+                        'from' => [DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE, DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS],
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                    ],
+                    'change_contact_details' => [
+                        'from' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS,
+                    ],
+                    'contact_details_changed' => [
+                        'metadata' => ['persist' => true],
+                        'from' =>  DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                    ],
+                    'change_can_complete' => [
+                        'from' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
                     ],
                 ]
             ],

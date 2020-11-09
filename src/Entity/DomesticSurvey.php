@@ -12,38 +12,10 @@ class DomesticSurvey
 {
     use SurveyTrait;
 
-    const STATE_PRE_SURVEY_INTRODUCTION = 'introduction';
-    const STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS = 'request contact details';
-    const STATE_PRE_SURVEY_ASK_COMPLETABLE = 'can you complete the survey?';
-    const STATE_PRE_SURVEY_ASK_ON_HIRE = 'is vehicle on hire?';
-//    const STATE_PRE_SURVEY_ASK_REMINDER_EMAIL = 'is reminder email required?';
-    const STATE_PRE_SURVEY_SUMMARY = 'summary';
-    const STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE = "reason can't complete?" ;
-    const STATE_PRE_SURVEY_ASK_HIREE_DETAILS = 'provide hiree details';
-
-    public $choiceFormResult;
-
-    private $state;
-
     const REMINDER_STATE_INITIAL = "initial";
     const REMINDER_STATE_NOT_WANTED = "not-wanted";
     const REMINDER_STATE_WANTED = "wanted";
     const REMINDER_STATE_SENT = "sent";
-    /**
-     * @return mixed
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param mixed $state
-     */
-    public function setState($state): void
-    {
-        $this->state = $state;
-    }
 
     /**
      * @ORM\Column(type="boolean")

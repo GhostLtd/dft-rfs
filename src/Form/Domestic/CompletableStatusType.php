@@ -14,8 +14,8 @@ class CompletableStatusType extends AbstractType implements WorkflowChoiceFormIn
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('can_complete', Gds\ChoiceType::class, [
-                'choices' => ['Yes' => 'yes', 'No' => 'no'],
+            ->add('ableToComplete', Gds\ChoiceType::class, [
+                'choices' => ['Yes' => true, 'No' => false],
                 'expanded' => true,
                 'label' => 'Will you be able to complete this survey?',
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
@@ -24,4 +24,12 @@ class CompletableStatusType extends AbstractType implements WorkflowChoiceFormIn
             ])
         ;
     }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => DomesticSurveyResponse::class,
+        ]);
+    }
+
 }

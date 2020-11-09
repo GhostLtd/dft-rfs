@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\DomesticSurveyResponseRepository;
+use App\Workflow\DomesticSurveyState;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=DomesticSurveyResponseRepository::class)
@@ -34,16 +36,21 @@ class DomesticSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"hiree_details"})
      */
     private $hireeName;
 
+
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"hiree_details"})
+     * @Assert\Email(groups={"hiree_details"})
      */
     private $hireeEmail;
 
     /**
      * @ORM\Embedded(class="App\Entity\Address")
+     * @Assert\Valid()
      */
     private $hireeAddress;
 
@@ -147,6 +154,19 @@ class DomesticSurveyResponse
     {
         $this->unableToCompleteDate = $unableToCompleteDate;
 
+        return $this;
+    }
+
+    public function getAbleToComplete()
+    {
+        return empty($this->getUnableToCompleteReason());
+    }
+
+    public function setAbleToComplete($value)
+    {
+        if ($value) {
+            $this->setUnableToCompleteReason(null);
+        }
         return $this;
     }
 

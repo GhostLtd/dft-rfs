@@ -14,13 +14,21 @@ class OnHireStatusType extends AbstractType implements WorkflowChoiceFormInterfa
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('is_on_hire', Gds\ChoiceType::class, [
-                'choices' => ['Yes' => 'on-hire', 'No' => false],
+            ->add('unableToCompleteReason', Gds\ChoiceType::class, [
+                'choices' => ['Yes' => 'on-hire', 'No' => null],
                 'expanded' => true,
                 'label' => 'Will your vehicle be on hire during the survey period?',
                 'label_is_page_heading' => true,
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => 'For example, you may no longer own this vehicle or it may be on hire.',
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => DomesticSurveyResponse::class,
+        ]);
     }
 }

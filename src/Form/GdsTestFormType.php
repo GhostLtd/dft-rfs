@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Type;
+namespace App\Form;
 
 use Ghost\GovUkFrontendBundle\Form\Type as GdsTypes;
 use Symfony\Component\Form\AbstractType;

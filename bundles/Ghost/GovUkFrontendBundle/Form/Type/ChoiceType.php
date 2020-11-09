@@ -14,10 +14,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoiceType extends ExtendedChoiceType
 {
-    public function getParent()
-    {
-        return ExtendedChoiceType::class;
-    }
+//    public function getParent()
+//    {
+//        return ExtendedChoiceType::class;
+//    }
 
     public function getBlockPrefix()
     {
@@ -26,6 +26,8 @@ class ChoiceType extends ExtendedChoiceType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         if (is_array($options['choice_attr'])) {
             $options['choice_attr'] = function($value, $key, $index) use ($options) {
                 return $options['choice_attr'][$key] ?? [];
@@ -38,8 +40,6 @@ class ChoiceType extends ExtendedChoiceType
                 return array_merge($options, $choiceOptions[$options['label']] ?? []);
             }
         ));
-
-        parent::buildForm($builder, $options);
     }
 
     protected function getChildByLabel(FormBuilderInterface $builder, $label)
@@ -80,12 +80,12 @@ class ChoiceType extends ExtendedChoiceType
         $resolver->setAllowedTypes('choice_attr', ['null', 'array', 'callable']);
         $resolver->setAllowedTypes('choice_options', ['null', 'array']);
 
-        $resolver->setNormalizer('multiple', function (Options $options, $value) {
-            if (true === $value && false === $options['expanded']) {
-                throw new InvalidOptionsException('Option combination multiple=true, expanded=false is unsupported');
-            }
-
-            return $value;
-        });
+//        $resolver->setNormalizer('multiple', function (Options $options, $value) {
+//            if (true === $value && false === $options['expanded']) {
+//                throw new InvalidOptionsException('Option combination multiple=true, expanded=false is unsupported');
+//            }
+//
+//            return $value;
+//        });
     }
 }

@@ -23,6 +23,7 @@ class ContactDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DomesticSurveyResponse::class,
+            'validation_groups' => 'contact_details',
         ]);
     }
 }

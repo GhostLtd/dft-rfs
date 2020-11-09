@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait SurveyResponseTrait
 {
@@ -21,16 +22,20 @@ trait SurveyResponseTrait
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"contact_details"})
      */
     private $contactName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"contact_details"})
      */
     private $contactTelephone;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"contact_details"})
+     * @Assert\Email(groups={"contact_details"})
      */
     private $contactEmail;
 

@@ -3,14 +3,22 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable()
  */
 class Address
 {
+    public function __toString()
+    {
+
+        return implode(", ", array_filter([$this->line1, $this->line2, $this->line3, $this->line4, $this->postcode]));
+    }
+
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"hiree_details"})
      */
     private $line1;
 
@@ -31,6 +39,7 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank(groups={"hiree_details"})
      */
     private $postcode;
 
@@ -39,7 +48,7 @@ class Address
         return $this->line1;
     }
 
-    public function setLine1(string $line1): self
+    public function setLine1(?string $line1): self
     {
         $this->line1 = $line1;
 
@@ -51,7 +60,7 @@ class Address
         return $this->line2;
     }
 
-    public function setLine2(string $line2): self
+    public function setLine2(?string $line2): self
     {
         $this->line2 = $line2;
 
@@ -63,7 +72,7 @@ class Address
         return $this->line3;
     }
 
-    public function setLine3(string $line3): self
+    public function setLine3(?string $line3): self
     {
         $this->line3 = $line3;
 
@@ -75,7 +84,7 @@ class Address
         return $this->line4;
     }
 
-    public function setLine4(string $line4): self
+    public function setLine4(?string $line4): self
     {
         $this->line4 = $line4;
 
@@ -87,7 +96,7 @@ class Address
         return $this->postcode;
     }
 
-    public function setPostcode(string $postcode): self
+    public function setPostcode(?string $postcode): self
     {
         $this->postcode = $postcode;
 

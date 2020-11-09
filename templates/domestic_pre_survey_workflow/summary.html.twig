@@ -3,6 +3,27 @@
 {% block title %}Domestic Pre-Sruvey Wizard{% endblock %}
 
 {% block content %}
-    <h1 class="page-heading__heading govuk-heading-xl">Summary</h1>
+    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+    <h1 class="page-heading__heading govuk-heading-xl">Please check your answers so far</h1>
 
+    <h2 class="govuk-heading-m">Contact details</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {% set contactDetailsActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
+        {{ gdsComponents.summaryListRow('Name', domesticSurvey.surveyResponse.contactName, contactDetailsActionLinks) }}
+        {{ gdsComponents.summaryListRow('Telephone', domesticSurvey.surveyResponse.contactTelephone) }}
+        {{ gdsComponents.summaryListRow('Email address', domesticSurvey.surveyResponse.contactEmail) }}
+        {{ gdsComponents.summaryListRow('Can complete survey?', domesticSurvey.surveyResponse.ableToComplete ? 'Yes' : 'No') }}
+        {% if not domesticSurvey.surveyResponse.ableToComplete %}
+            {{ gdsComponents.summaryListRow('Reason for not completing', domesticSurvey.surveyResponse.unableToCompleteReason) }}
+        {% endif %}
+    </dl>
+
+    {% if domesticSurvey.surveyResponse.unableToCompleteReason == 'on-hire' %}
+        <h2 class="govuk-heading-m">Hiree details</h2>
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {{ gdsComponents.summaryListRow('Hiree name', domesticSurvey.surveyResponse.hireeName) }}
+            {{ gdsComponents.summaryListRow('Hiree email', domesticSurvey.surveyResponse.hireeEmail) }}
+            {{ gdsComponents.summaryListRow('Hiree address', domesticSurvey.surveyResponse.hireeAddress) }}
+        </dl>
+    {% endif %}
 {% endblock %}
