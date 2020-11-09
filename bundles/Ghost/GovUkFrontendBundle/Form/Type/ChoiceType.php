@@ -14,11 +14,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoiceType extends ExtendedChoiceType
 {
-//    public function getParent()
-//    {
-//        return ExtendedChoiceType::class;
-//    }
-
     public function getBlockPrefix()
     {
         return 'gds_choice';
@@ -42,29 +37,10 @@ class ChoiceType extends ExtendedChoiceType
         ));
     }
 
-    protected function getChildByLabel(FormBuilderInterface $builder, $label)
-    {
-        foreach($builder->all() as $item)
-        {
-            /** @var FormBuilderInterface $item */
-            if ($item->getOption('label') === $label)
-            {
-                return $item;
-            }
-        }
-    }
-
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
-
-//        $typeName = $options['expanded'] ? $options['multiple'] ? 'checkbox' : 'radio' : 'select';
-//        $view->vars['blockPrefix'] = "gds_{$typeName}";
-//
-//        $class = "govuk-" . ($options['expanded'] ? $options['multiple'] ? 'checkboxes' : 'radios' : 'select');
-//        $view->vars['attr']['class'] = trim("$class " . ($options['attr']['class'] ?? ''));
-//        $view->vars['classPrefix'] = $class;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -80,12 +56,12 @@ class ChoiceType extends ExtendedChoiceType
         $resolver->setAllowedTypes('choice_attr', ['null', 'array', 'callable']);
         $resolver->setAllowedTypes('choice_options', ['null', 'array']);
 
-//        $resolver->setNormalizer('multiple', function (Options $options, $value) {
-//            if (true === $value && false === $options['expanded']) {
-//                throw new InvalidOptionsException('Option combination multiple=true, expanded=false is unsupported');
-//            }
-//
-//            return $value;
-//        });
+        $resolver->setNormalizer('multiple', function (Options $options, $value) {
+            if (true === $value && false === $options['expanded']) {
+                throw new InvalidOptionsException('Option combination multiple=true, expanded=false is unsupported');
+            }
+
+            return $value;
+        });
     }
 }
