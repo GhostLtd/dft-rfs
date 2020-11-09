@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class GdsTestFormType extends AbstractType
 {
@@ -18,6 +19,11 @@ class GdsTestFormType extends AbstractType
             'Banana' => 'banana',
             'Cabbage' => 'cabbage',
         ];
+        $boolChoices = [
+            'Yes' => true,
+            'No' => false,
+        ];
+
 
         $builder
             ->add('text', GdsTypes\InputType::class, [
@@ -33,6 +39,13 @@ class GdsTestFormType extends AbstractType
                 'placeholder' => '-- Please select --',
                 'constraints' => [
                     new NotBlank(),
+                ],
+            ])
+            ->add('radioBool', GdsTypes\ChoiceType::class, [
+                'choices' => $boolChoices,
+                'expanded' => true,
+                'constraints' => [
+                    new NotNull(),
                 ],
             ])
             ->add('radios', GdsTypes\ChoiceType::class, [

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Form\Type\GdsTestFormType;
+use App\Form\GdsTestFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
