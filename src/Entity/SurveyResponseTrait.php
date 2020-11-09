@@ -18,14 +18,13 @@ trait SurveyResponseTrait
      */
     private $businessNature;
 
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $contactName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=50)
      */
     private $contactTelephone;
 
