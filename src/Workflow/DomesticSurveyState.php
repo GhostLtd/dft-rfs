@@ -32,7 +32,12 @@ class DomesticSurveyState
 
     public function setVisitedState($state)
     {
-        $this->visitedStates[] = $state;
+        if (is_array($state)) {
+            $this->visitedStates = array_merge($state, $this->visitedStates);
+        } else {
+            $this->visitedStates[] = $state;
+        }
+        // ToDo: validate the states
         $this->visitedStates = array_unique($this->visitedStates);
     }
 

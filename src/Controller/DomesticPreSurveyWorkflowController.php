@@ -26,6 +26,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
     
     private const FORM_MAP = [
         DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS => ContactDetailsType::class,
+        DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
         DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE => CompletableStatusType::class,
         DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE => OnHireStatusType::class,
         DomesticSurveyState::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE => ReasonCantCompleteType::class,
@@ -36,6 +37,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         DomesticSurveyState::STATE_PRE_SURVEY_INTRODUCTION => 'introduction',
         DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY => 'summary',
         DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS => 'form-contact-details',
+        DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS => 'form-contact-details',
         DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS => 'form-hiree-details',
     ];
 
@@ -109,11 +111,15 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         ]);
     }
 
-    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, $object, Transition $transition)
+    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, DomesticSurveyState $domesticSurveyState, Transition $transition)
     {
-        $stateMachine->apply($object, $transition->getName());
-        $request->getSession()->set(self::SESSION_KEY, $object);
-        return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $object->getState()]);
+        $stateMachine->apply($domesticSurveyState, $transition->getName());
+        if ($canVisit = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['canVisit'] ?? false)
+        {
+            $domesticSurveyState->setVisitedState($canVisit);
+        }
+        $request->getSession()->set(self::SESSION_KEY, $domesticSurveyState);
+        return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $domesticSurveyState->getState()]);
     }
 
     protected function formClassImplements($place, $interfaceClass)

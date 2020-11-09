@@ -49,7 +49,10 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
                     ],
                     'finish' => [
-                        'metadata' => ['persist' => true],
+                        'metadata' => [
+                            'persist' => true,
+                            'canVisit' => [DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS],
+                        ],
                         'from' => [DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE, DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS],
                         'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
                     ],
@@ -65,6 +68,10 @@ return static function (ContainerConfigurator $container) {
                     'change_can_complete' => [
                         'from' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
                         'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE,
+                    ],
+                    'change_hiree_details' => [
+                        'from' =>  DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY,
+                        'to' =>  DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS,
                     ],
                 ]
             ],
