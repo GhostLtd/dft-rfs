@@ -25,6 +25,10 @@ class DomesticSurvey
 
     private $state;
 
+    const REMINDER_STATE_INITIAL = "initial";
+    const REMINDER_STATE_NOT_WANTED = "not-wanted";
+    const REMINDER_STATE_WANTED = "wanted";
+    const REMINDER_STATE_SENT = "sent";
     /**
      * @return mixed
      */
@@ -55,6 +59,11 @@ class DomesticSurvey
      * @ORM\Column(type="string", length=10)
      */
     private $registrationMark;
+
+    /**
+     * @ORM\Column(type="string", length=12)
+     */
+    private $reminderState;
 
     public function getIsNorthernIreland(): ?bool
     {
@@ -93,6 +102,18 @@ class DomesticSurvey
     public function setRegistrationMark(string $registrationMark): self
     {
         $this->registrationMark = $registrationMark;
+
+        return $this;
+    }
+
+    public function getReminderState(): ?string
+    {
+        return $this->reminderState;
+    }
+
+    public function setReminderState(string $reminderState): self
+    {
+        $this->reminderState = $reminderState;
 
         return $this;
     }
