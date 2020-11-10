@@ -2,15 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
-use App\Form\Domestic\CompletableStatusType;
-use App\Form\Domestic\ContactDetailsType;
-use App\Form\Domestic\HireeDetailsType;
-use App\Form\Domestic\OnHireStatusType;
-use App\Form\Domestic\ReasonCantCompleteType;
-use App\Form\WorkflowChoiceFormInterface;
 use App\Workflow\DomesticSurveyState;
+use App\Workflow\FormWizardInterface;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -23,27 +17,10 @@ use Symfony\Component\Workflow\WorkflowInterface;
 class DomesticPreSurveyWorkflowController extends AbstractController
 {
     private const SESSION_KEY = 'wizard.domestic_pre_survey_state';
-    
-    private const FORM_MAP = [
-        DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS => ContactDetailsType::class,
-        DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
-        DomesticSurveyState::STATE_PRE_SURVEY_ASK_COMPLETABLE => CompletableStatusType::class,
-        DomesticSurveyState::STATE_PRE_SURVEY_ASK_ON_HIRE => OnHireStatusType::class,
-        DomesticSurveyState::STATE_PRE_SURVEY_ASK_REASON_CANT_COMPLETE => ReasonCantCompleteType::class,
-        DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS => HireeDetailsType::class,
-    ];
-
-    private const TEMPLATE_MAP = [
-        DomesticSurveyState::STATE_PRE_SURVEY_INTRODUCTION => 'introduction',
-        DomesticSurveyState::STATE_PRE_SURVEY_SUMMARY => 'summary',
-        DomesticSurveyState::STATE_PRE_SURVEY_REQUEST_CONTACT_DETAILS => 'form-contact-details',
-        DomesticSurveyState::STATE_PRE_SURVEY_CHANGE_CONTACT_DETAILS => 'form-contact-details',
-        DomesticSurveyState::STATE_PRE_SURVEY_ASK_HIREE_DETAILS => 'form-hiree-details',
-    ];
 
     /**
-     * @Route("/domestic/pre-survey/wizard/{state}")
-     * @Route("/domestic/pre-survey/wizard")
+     * @Route("/domestic/pre-survey/{state}")
+     * @Route("/domestic/pre-survey")
      * @param WorkflowInterface $domesticPreSurveyStateMachine
      * @param Request $request
      * @param $state
@@ -51,29 +28,28 @@ class DomesticPreSurveyWorkflowController extends AbstractController
      */
     public function index(WorkflowInterface $domesticPreSurveyStateMachine, Request $request, $state = null): Response
     {
-        /** @var DomesticSurveyState $domesticSurveyState */
-        $domesticSurveyState = $request->getSession()->get(
+        /** @var FormWizardInterface $formWizard */
+        $formWizard = $request->getSession()->get(
             self::SESSION_KEY,
             (new DomesticSurveyState())
         );
 
-        if (is_null($state)) return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $domesticSurveyState->getState()]);
+        if (is_null($state)) return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
 
-        if ($state !== $domesticSurveyState->getState()) {
-            if ($domesticSurveyState->isVisitedState($state))
+        if ($state !== $formWizard->getState()) {
+            if ($formWizard->isValidJumpInState($state))
             {
-                $domesticSurveyState->setState($state);
+                $formWizard->setState($state);
             } else {
-                $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $domesticSurveyState->getState()]);
+                $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
             }
         }
-        $domesticSurveyState->setVisitedState($state);
 
-        if (is_null($domesticSurveyState->getSurvey()->getSurveyResponse()))
-            $domesticSurveyState->getSurvey()->setSurveyResponse(new DomesticSurveyResponse());
+        if (is_null($formWizard->getSubject()->getSurveyResponse()))
+            $formWizard->getSubject()->setSurveyResponse(new DomesticSurveyResponse());
 
         /** @var FormInterface $form */
-        list($form, $template) = $this->getFormAndTemplate($domesticSurveyState);
+        list($form, $template) = $this->getFormAndTemplate($formWizard);
 
         $form->handleRequest($request);
 
@@ -82,7 +58,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         {
             if ($form->isValid())
             {
-                $transitions = $domesticPreSurveyStateMachine->getEnabledTransitions($domesticSurveyState);
+                $transitions = $domesticPreSurveyStateMachine->getEnabledTransitions($formWizard);
 
                 foreach ($transitions as $k=>$v)
                 {
@@ -90,7 +66,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
                     {
                         if ($form->get($transitionWhenFormData['property'])->getData() === $transitionWhenFormData['value'])
                         {
-                            return $this->applyTransitionAndRedirect($request, $domesticPreSurveyStateMachine, $domesticSurveyState, $v);
+                            return $this->applyTransitionAndRedirect($request, $domesticPreSurveyStateMachine, $formWizard, $v);
                         } else {
                             unset($transitions[$k]);
                         }
@@ -100,56 +76,53 @@ class DomesticPreSurveyWorkflowController extends AbstractController
 
                 if (count($transitions) === 1)
                 {
-                    return $this->applyTransitionAndRedirect($request, $domesticPreSurveyStateMachine, $domesticSurveyState, $transitions[0]);
+                    return $this->applyTransitionAndRedirect($request, $domesticPreSurveyStateMachine, $formWizard, $transitions[0]);
                 }
             }
         }
 
         return $this->render("domestic_pre_survey_workflow/{$template}.html.twig", [
             'form' => $form->createView(),
-            'domesticSurvey' => $domesticSurveyState->getSurvey(),
+            'domesticSurvey' => $formWizard->getSubject(),
         ]);
     }
 
-    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, DomesticSurveyState $domesticSurveyState, Transition $transition)
+    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardInterface $formWizard, Transition $transition)
     {
-        $stateMachine->apply($domesticSurveyState, $transition->getName());
-        if ($canVisit = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['canVisit'] ?? false)
-        {
-            $domesticSurveyState->setVisitedState($canVisit);
-        }
-        $request->getSession()->set(self::SESSION_KEY, $domesticSurveyState);
-        return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $domesticSurveyState->getState()]);
+        $stateMachine->apply($formWizard, $transition->getName());
+        $request->getSession()->set(self::SESSION_KEY, $formWizard);
+        return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
     }
 
-    protected function formClassImplements($place, $interfaceClass)
-    {
-        return in_array(
-            $interfaceClass,
-            (self::FORM_MAP[$place] ?? false) ? class_implements(self::FORM_MAP[$place]) : []
-        );
-    }
+//    protected function formClassImplements($place, $interfaceClass)
+//    {
+//        return in_array(
+//            $interfaceClass,
+//            (self::FORM_MAP[$place] ?? false) ? class_implements(self::FORM_MAP[$place]) : []
+//        );
+//    }
 
     /**
-     * @param DomesticSurveyState $domesticSurveyState
+     * @param FormWizardInterface $formWizard
      * @return array
      */
-    protected function getFormAndTemplate(DomesticSurveyState $domesticSurveyState)
+    protected function getFormAndTemplate(FormWizardInterface $formWizard)
     {
-        $state = $domesticSurveyState->getState();
+        $state = $formWizard->getState();
+        $formMap = $formWizard->getStateFormMap();
 
-        if (isset(self::FORM_MAP[$state]))
+        if (isset($formMap[$state]))
         {
-            $form = $this->createForm(self::FORM_MAP[$state]);
+            $form = $this->createForm($formMap[$state]);
             if ($form->getConfig()->getDataClass())
             {
-                $form->setData($domesticSurveyState->getSurvey()->getSurveyResponse());
+                $form->setData($formWizard->getSubject()->getSurveyResponse());
             }
         } else {
             $form = $this->createFormBuilder()
                 ->getForm();
         }
-        $template = self::TEMPLATE_MAP[$state] ?? 'form-step';
+        $template = $formWizard->getStateTemplateMap()[$state] ?? 'form-step';
         $form->add('continue', ButtonType::class, ['type' => 'submit']);
 
         return [$form, $template];
