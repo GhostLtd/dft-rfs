@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\InternationalSurveyRepository;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,77 +13,20 @@ class InternationalSurvey
     use SurveyTrait;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $preSurveyDispatchDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $PreSurveyDueDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $preSurveyResponseStartDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $preSurveySubmissionDate;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $referenceNumber;
 
-    public function getPreSurveyDispatchDate(): ?DateTimeInterface
-    {
-        return $this->preSurveyDispatchDate;
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=InternationalCompany::class, inversedBy="surveys")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $company;
 
-    public function setPreSurveyDispatchDate(?DateTimeInterface $preSurveyDispatchDate): self
-    {
-        $this->preSurveyDispatchDate = $preSurveyDispatchDate;
-
-        return $this;
-    }
-
-    public function getPreSurveyDueDate(): ?DateTimeInterface
-    {
-        return $this->PreSurveyDueDate;
-    }
-
-    public function setPreSurveyDueDate(?DateTimeInterface $PreSurveyDueDate): self
-    {
-        $this->PreSurveyDueDate = $PreSurveyDueDate;
-
-        return $this;
-    }
-
-    public function getPreSurveyResponseStartDate(): ?DateTimeInterface
-    {
-        return $this->preSurveyResponseStartDate;
-    }
-
-    public function setPreSurveyResponseStartDate(?DateTimeInterface $preSurveyResponseStartDate): self
-    {
-        $this->preSurveyResponseStartDate = $preSurveyResponseStartDate;
-
-        return $this;
-    }
-
-    public function getPreSurveySubmissionDate(): ?DateTimeInterface
-    {
-        return $this->preSurveySubmissionDate;
-    }
-
-    public function setPreSurveySubmissionDate(?DateTimeInterface $preSurveySubmissionDate): self
-    {
-        $this->preSurveySubmissionDate = $preSurveySubmissionDate;
-
-        return $this;
-    }
+    /**
+     * @ORM\OneToOne(targetEntity=InternationalSurveyResponse::class, mappedBy="survey", cascade={"persist", "remove"})
+     */
+    private $surveyResponse;
 
     public function getReferenceNumber(): ?string
     {
@@ -94,6 +36,35 @@ class InternationalSurvey
     public function setReferenceNumber(string $referenceNumber): self
     {
         $this->referenceNumber = $referenceNumber;
+
+        return $this;
+    }
+
+    public function getCompany(): ?InternationalCompany
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?InternationalCompany $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    public function getSurveyResponse(): ?InternationalSurveyResponse
+    {
+        return $this->surveyResponse;
+    }
+
+    public function setSurveyResponse(InternationalSurveyResponse $surveyResponse): self
+    {
+        $this->surveyResponse = $surveyResponse;
+
+        // set the owning side of the relation if necessary
+        if ($surveyResponse->getSurvey() !== $this) {
+            $surveyResponse->setSurvey($this);
+        }
 
         return $this;
     }

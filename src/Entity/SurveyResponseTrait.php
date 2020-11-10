@@ -19,7 +19,6 @@ trait SurveyResponseTrait
      */
     private $businessNature;
 
-
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"contact_details"})
@@ -27,7 +26,7 @@ trait SurveyResponseTrait
     private $contactName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=50)
      * @Assert\NotBlank(groups={"contact_details"})
      */
     private $contactTelephone;
