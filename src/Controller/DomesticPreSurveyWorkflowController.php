@@ -16,11 +16,11 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class DomesticPreSurveyWorkflowController extends AbstractController
 {
-    private const SESSION_KEY = 'wizard.domestic_pre_survey_state';
+    public const SESSION_KEY = 'wizard.domestic_pre_survey_state';
 
     /**
      * @Route("/domestic/pre-survey/{state}")
-     * @Route("/domestic/pre-survey")
+     * @Route("/domestic/pre-survey", name="app_domesticpresurveyworkflow_start")
      * @param WorkflowInterface $domesticPreSurveyStateMachine
      * @param Request $request
      * @param $state
@@ -29,10 +29,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
     public function index(WorkflowInterface $domesticPreSurveyStateMachine, Request $request, $state = null): Response
     {
         /** @var FormWizardInterface $formWizard */
-        $formWizard = $request->getSession()->get(
-            self::SESSION_KEY,
-            (new DomesticSurveyState())
-        );
+        $formWizard = $request->getSession()->get(self::SESSION_KEY);
 
         if (is_null($state)) return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
 
@@ -91,16 +88,20 @@ class DomesticPreSurveyWorkflowController extends AbstractController
     {
         $stateMachine->apply($formWizard, $transition->getName());
         $request->getSession()->set(self::SESSION_KEY, $formWizard);
+
+        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
+        {
+//            $this->getDoctrine()->getManager()->persist($formWizard->getSubject());
+//            $this->getDoctrine()->getManager()->flush();
+        }
+
+        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['redirectRoute'] ?? false)
+        {
+            return $this->redirectToRoute($alternativeRoute);
+        }
+
         return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
     }
-
-//    protected function formClassImplements($place, $interfaceClass)
-//    {
-//        return in_array(
-//            $interfaceClass,
-//            (self::FORM_MAP[$place] ?? false) ? class_implements(self::FORM_MAP[$place]) : []
-//        );
-//    }
 
     /**
      * @param FormWizardInterface $formWizard

@@ -51,7 +51,7 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'canVisit' => [DomesticSurveyState::STATE_CHANGE_CONTACT_DETAILS],
+                            'redirectRoute' => 'domestic_survey_index'
                         ],
                         'from' => [DomesticSurveyState::STATE_ASK_ON_HIRE, DomesticSurveyState::STATE_ASK_HIREE_DETAILS],
                         'to' =>  DomesticSurveyState::STATE_SUMMARY,
@@ -61,7 +61,10 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  DomesticSurveyState::STATE_CHANGE_CONTACT_DETAILS,
                     ],
                     'contact_details_changed' => [
-                        'metadata' => ['persist' => true],
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => 'domestic_survey_index'
+                        ],
                         'from' =>  DomesticSurveyState::STATE_CHANGE_CONTACT_DETAILS,
                         'to' =>  DomesticSurveyState::STATE_SUMMARY,
                     ],

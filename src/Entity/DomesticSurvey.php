@@ -23,7 +23,7 @@ class DomesticSurvey
     private $isNorthernIreland;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticSurveyResponse::class, mappedBy="survey", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=DomesticSurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
     private $surveyResponse;
 
