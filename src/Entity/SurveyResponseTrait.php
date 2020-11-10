@@ -15,24 +15,24 @@ trait SurveyResponseTrait
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $businessNature;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(groups={"contact_details"})
      */
     private $contactName;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      * @Assert\NotBlank(groups={"contact_details"})
      */
     private $contactTelephone;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(groups={"contact_details"})
      * @Assert\Email(groups={"contact_details"})
      */

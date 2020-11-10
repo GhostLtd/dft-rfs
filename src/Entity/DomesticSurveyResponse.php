@@ -30,19 +30,19 @@ class DomesticSurveyResponse
     use SurveyResponseTrait;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $numberOfEmployees;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(groups={"hiree_details"})
      */
     private $hireeName;
 
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(groups={"hiree_details"})
      * @Assert\Email(groups={"hiree_details"})
      */
@@ -70,13 +70,13 @@ class DomesticSurveyResponse
     private $unableToCompleteReason;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="surveyResponse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="surveyResponse", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticVehicle::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=DomesticVehicle::class, cascade={"persist"})
      */
     private $vehicle;
 
@@ -84,6 +84,11 @@ class DomesticSurveyResponse
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $actualVehicleLocation;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $ableToComplete;
 
     public function getNumberOfEmployees(): ?int
     {
@@ -157,19 +162,6 @@ class DomesticSurveyResponse
         return $this;
     }
 
-    public function getAbleToComplete()
-    {
-        return empty($this->getUnableToCompleteReason());
-    }
-
-    public function setAbleToComplete($value)
-    {
-        if ($value) {
-            $this->setUnableToCompleteReason(null);
-        }
-        return $this;
-    }
-
     public function getUnableToCompleteReason(): ?string
     {
         return $this->unableToCompleteReason;
@@ -214,6 +206,18 @@ class DomesticSurveyResponse
     public function setActualVehicleLocation(?string $actualVehicleLocation): self
     {
         $this->actualVehicleLocation = $actualVehicleLocation;
+
+        return $this;
+    }
+
+    public function getAbleToComplete(): ?bool
+    {
+        return $this->ableToComplete;
+    }
+
+    public function setAbleToComplete(?bool $ableToComplete): self
+    {
+        $this->ableToComplete = $ableToComplete;
 
         return $this;
     }

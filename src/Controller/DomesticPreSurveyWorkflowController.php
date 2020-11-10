@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
 use App\Workflow\DomesticSurveyState;
 use App\Workflow\FormWizardInterface;
@@ -19,8 +20,24 @@ class DomesticPreSurveyWorkflowController extends AbstractController
     public const SESSION_KEY = 'wizard.domestic_pre_survey_state';
 
     /**
-     * @Route("/domestic/pre-survey/{state}")
-     * @Route("/domestic/pre-survey", name="app_domesticpresurveyworkflow_start")
+     * @param Request $request
+     * @return FormWizardInterface
+     */
+    protected function getFormWizard(Request $request)
+    {
+        /** @var FormWizardInterface $formWizard */
+        $formWizard = $request->getSession()->get(self::SESSION_KEY, new DomesticSurveyState());
+        if (is_null($formWizard->getSubject())) {
+            $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
+            $formWizard->setSubject(array_pop($surveyResponses));
+        }
+        $formWizard->setSubject($this->getDoctrine()->getManager()->find(DomesticSurveyResponse::class, $formWizard->getSubject()->getId()));
+        return $formWizard;
+    }
+
+    /**
+     * @Route("/domestic-survey/pre-survey/{state}")
+     * @Route("/domestic-survey/pre-survey", name="app_domesticpresurveyworkflow_start")
      * @param WorkflowInterface $domesticPreSurveyStateMachine
      * @param Request $request
      * @param $state
@@ -28,8 +45,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
      */
     public function index(WorkflowInterface $domesticPreSurveyStateMachine, Request $request, $state = null): Response
     {
-        /** @var FormWizardInterface $formWizard */
-        $formWizard = $request->getSession()->get(self::SESSION_KEY);
+        $formWizard = $this->getFormWizard($request);
 
         if (is_null($state)) return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
 
@@ -38,12 +54,9 @@ class DomesticPreSurveyWorkflowController extends AbstractController
             {
                 $formWizard->setState($state);
             } else {
-                $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
+                return $this->redirectToRoute('app_domesticpresurveyworkflow_index', ['state' => $formWizard->getState()]);
             }
         }
-
-        if (is_null($formWizard->getSubject()->getSurveyResponse()))
-            $formWizard->getSubject()->setSurveyResponse(new DomesticSurveyResponse());
 
         /** @var FormInterface $form */
         list($form, $template) = $this->getFormAndTemplate($formWizard);
@@ -89,14 +102,15 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         $stateMachine->apply($formWizard, $transition->getName());
         $request->getSession()->set(self::SESSION_KEY, $formWizard);
 
-        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
-        {
+//        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
+//        {
 //            $this->getDoctrine()->getManager()->persist($formWizard->getSubject());
-//            $this->getDoctrine()->getManager()->flush();
-        }
+            $this->getDoctrine()->getManager()->flush();
+//        }
 
         if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['redirectRoute'] ?? false)
         {
+            $request->getSession()->remove(self::SESSION_KEY);
             return $this->redirectToRoute($alternativeRoute);
         }
 
@@ -117,7 +131,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
             $form = $this->createForm($formMap[$state]);
             if ($form->getConfig()->getDataClass())
             {
-                $form->setData($formWizard->getSubject()->getSurveyResponse());
+                $form->setData($formWizard->getSubject());
             }
         } else {
             $form = $this->createFormBuilder()

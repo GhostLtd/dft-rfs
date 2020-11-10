@@ -5,6 +5,7 @@ namespace App\Workflow;
 
 
 use App\Entity\DomesticSurvey;
+use App\Entity\DomesticSurveyResponse;
 use App\Form\Domestic\CompletableStatusType;
 use App\Form\Domestic\ContactDetailsType;
 use App\Form\Domestic\HireeDetailsType;
@@ -33,7 +34,6 @@ class DomesticSurveyState implements FormWizardInterface
 
     private const TEMPLATE_MAP = [
         self::STATE_INTRODUCTION => 'introduction',
-        self::STATE_SUMMARY => 'summary',
         self::STATE_REQUEST_CONTACT_DETAILS => 'form-contact-details',
         self::STATE_CHANGE_CONTACT_DETAILS => 'form-contact-details',
         self::STATE_ASK_HIREE_DETAILS => 'form-hiree-details',
@@ -41,13 +41,8 @@ class DomesticSurveyState implements FormWizardInterface
 
     private $state = self::STATE_INTRODUCTION;
 
-    /** @var DomesticSurvey */
-    private $survey;
-
-    public function __construct()
-    {
-        $this->survey = new DomesticSurvey();
-    }
+    /** @var DomesticSurveyResponse */
+    private $subject;
 
     /**
      * @return mixed
@@ -68,13 +63,13 @@ class DomesticSurveyState implements FormWizardInterface
 
     public function getSubject()
     {
-        return $this->survey;
+        return $this->subject;
     }
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === DomesticSurvey::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DomesticSurvey::class);
-        $this->survey = $subject;
+        if (!get_class($subject) === DomesticSurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DomesticSurveyResponse::class);
+        $this->subject = $subject;
         return $this;
     }
 
@@ -86,17 +81,17 @@ class DomesticSurveyState implements FormWizardInterface
     protected function getValidJumpInStates()
     {
         $states = [self::STATE_INTRODUCTION, self::STATE_REQUEST_CONTACT_DETAILS];
-        if (!empty($this->survey->getSurveyResponse()->getContactName())) {
+        if (!empty($this->subject->getContactName())) {
             $states[] = self::STATE_ASK_COMPLETABLE;
             $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
         }
-        if ($this->survey->getSurveyResponse()->getAbleToComplete()) {
+        if ($this->subject->getAbleToComplete()) {
             $states[] = self::STATE_ASK_ON_HIRE;
         } else {
             $states[] = self::STATE_ASK_REASON_CANT_COMPLETE;
         }
-        if ($this->survey->getSurveyResponse()->getUnableToCompleteReason() === 'on-hire') $states[] = self::STATE_ASK_HIREE_DETAILS;
-        return $states;
+        if ($this->subject->getUnableToCompleteReason() === 'on-hire') $states[] = self::STATE_ASK_HIREE_DETAILS;
+        return dump($states);
     }
 
     public function getStateFormMap()

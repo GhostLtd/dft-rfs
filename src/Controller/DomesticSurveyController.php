@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DomesticSurveyController extends AbstractController
 {
     /**
-     * @Route("/domestic-survey/", name="domestic_survey_index")
+     * @Route("/domestic-survey", name="domestic_survey_index")
      */
     public function index(Request $request): Response
     {
@@ -28,11 +28,12 @@ class DomesticSurveyController extends AbstractController
                 ->setPasscode("1234")
             ;
             $em = $this->getDoctrine()->getManager();
-            $em->persist($domesticSurvey);
+            $surveyResponse = (new DomesticSurveyResponse())->setSurvey($domesticSurvey);
+            $em->persist($surveyResponse);
             $em->flush();
 
             $state = new DomesticSurveyState();
-            $state->setSubject($domesticSurvey->setSurveyResponse(new DomesticSurveyResponse()));
+            $state->setSubject($surveyResponse);
 
             $request->getSession()->set(DomesticPreSurveyWorkflowController::SESSION_KEY, $state);
 
