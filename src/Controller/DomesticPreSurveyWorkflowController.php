@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
 use App\Workflow\DomesticSurveyState;
 use App\Workflow\FormWizardInterface;
@@ -31,7 +30,9 @@ class DomesticPreSurveyWorkflowController extends AbstractController
             $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
             $formWizard->setSubject(array_pop($surveyResponses));
         }
-        $formWizard->setSubject($this->getDoctrine()->getManager()->find(DomesticSurveyResponse::class, $formWizard->getSubject()->getId()));
+
+        // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
+        $this->getDoctrine()->getManager()->merge($formWizard->getSubject());
         return $formWizard;
     }
 
@@ -102,11 +103,10 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         $stateMachine->apply($formWizard, $transition->getName());
         $request->getSession()->set(self::SESSION_KEY, $formWizard);
 
-//        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
-//        {
-//            $this->getDoctrine()->getManager()->persist($formWizard->getSubject());
+        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
+        {
             $this->getDoctrine()->getManager()->flush();
-//        }
+        }
 
         if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['redirectRoute'] ?? false)
         {
