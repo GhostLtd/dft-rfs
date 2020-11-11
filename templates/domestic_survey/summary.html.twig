@@ -8,11 +8,11 @@
 
     <h2 class="govuk-heading-m">Contact details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {% set contactDetailsActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
+        {% set contactDetailsActionLinks = {(url('app_domesticinitialdetails_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
         {{ gdsComponents.summaryListRow('Name', domesticSurvey.surveyResponse.contactName, contactDetailsActionLinks) }}
         {{ gdsComponents.summaryListRow('Telephone', domesticSurvey.surveyResponse.contactTelephone, contactDetailsActionLinks) }}
         {{ gdsComponents.summaryListRow('Email address', domesticSurvey.surveyResponse.contactEmail, contactDetailsActionLinks) }}
-        {% set canCompleteActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_COMPLETABLE')})): 'Change'} %}
+        {% set canCompleteActionLinks = {(url('app_domesticinitialdetails_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_COMPLETABLE')})): 'Change'} %}
         {{ gdsComponents.summaryListRow('Can complete survey?', domesticSurvey.surveyResponse.ableToComplete ? 'Yes' : 'No', canCompleteActionLinks) }}
         {% if (not domesticSurvey.surveyResponse.ableToComplete) or constant('App\\Entity\\DomesticSurveyResponse::REASON_ON_HIRE') %}
             {{ gdsComponents.summaryListRow('Reason for not completing', domesticSurvey.surveyResponse.unableToCompleteReason, canCompleteActionLinks) }}
@@ -22,7 +22,7 @@
     {% if domesticSurvey.surveyResponse.unableToCompleteReason == constant('App\\Entity\\DomesticSurveyResponse::REASON_ON_HIRE') %}
         <h2 class="govuk-heading-m">Hiree details</h2>
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {% set hireeDetailsActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_HIREE_DETAILS')})): 'Change'} %}
+            {% set hireeDetailsActionLinks = {(url('app_domesticinitialdetails_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_HIREE_DETAILS')})): 'Change'} %}
             {{ gdsComponents.summaryListRow('Hiree name', domesticSurvey.surveyResponse.hireeName, hireeDetailsActionLinks) }}
             {{ gdsComponents.summaryListRow('Hiree email', domesticSurvey.surveyResponse.hireeEmail, hireeDetailsActionLinks) }}
             {{ gdsComponents.summaryListRow('Hiree address', domesticSurvey.surveyResponse.hireeAddress, hireeDetailsActionLinks) }}

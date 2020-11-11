@@ -7,7 +7,7 @@ use App\Workflow\DomesticSurveyState;
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [
-            'domestic_pre_survey' => [
+            'domestic_survey_initial_details' => [
                 'type' => 'state_machine',
                 'initial_marking' => DomesticSurveyState::STATE_INTRODUCTION,
                 'marking_store' => [

@@ -35,10 +35,10 @@ class DomesticSurveyController extends AbstractController
             $state = new DomesticSurveyState();
             $state->setSubject($surveyResponse);
 
-            $request->getSession()->set(DomesticPreSurveyWorkflowController::SESSION_KEY, $state);
+            $request->getSession()->set(AbstractWorkflowController::SESSION_KEY, $state);
 
             // start wizard
-            return $this->redirectToRoute("app_domesticpresurveyworkflow_start");
+            return $this->redirectToRoute("app_domesticinitialdetails_start");
         }
 
         // take first one

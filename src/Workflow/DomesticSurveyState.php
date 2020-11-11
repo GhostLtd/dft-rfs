@@ -39,11 +39,11 @@ class DomesticSurveyState implements FormWizardInterface
     ];
 
     private const TEMPLATE_MAP = [
-        self::STATE_INTRODUCTION => 'introduction',
-        self::STATE_REQUEST_CONTACT_DETAILS => 'form-contact-details',
-        self::STATE_CHANGE_CONTACT_DETAILS => 'form-contact-details',
-        self::STATE_ASK_HIREE_DETAILS => 'form-hiree-details',
-        self::STATE_ASK_SOLD_DETAILS => 'form-sold-details',
+        self::STATE_INTRODUCTION => 'domestic_survey/initial_details/introduction.html.twig',
+        self::STATE_REQUEST_CONTACT_DETAILS => 'domestic_survey/initial_details/form-contact-details.html.twig',
+        self::STATE_CHANGE_CONTACT_DETAILS => 'domestic_survey/initial_details/form-contact-details.html.twig',
+        self::STATE_ASK_HIREE_DETAILS => 'domestic_survey/initial_details/form-hiree-details.html.twig',
+        self::STATE_ASK_SOLD_DETAILS => 'domestic_survey/initial_details/form-sold-details.html.twig',
     ];
 
     private $state = self::STATE_INTRODUCTION;
