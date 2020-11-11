@@ -34,12 +34,12 @@ trait DomesticStopTrait
     private $transferredTo;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Embedded(class="App\Entity\Distance")
      */
     private $distanceTravelledLoaded;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Embedded(class="App\Entity\Distance")
      */
     private $distanceTravelledUnloaded;
 
@@ -118,24 +118,24 @@ trait DomesticStopTrait
         return $this;
     }
 
-    public function getDistanceTravelledLoaded(): ?string
+    public function getDistanceTravelledLoaded(): ?Distance
     {
         return $this->distanceTravelledLoaded;
     }
 
-    public function setDistanceTravelledLoaded(string $distanceTravelledLoaded): self
+    public function setDistanceTravelledLoaded(Distance $distanceTravelledLoaded): self
     {
         $this->distanceTravelledLoaded = $distanceTravelledLoaded;
 
         return $this;
     }
 
-    public function getDistanceTravelledUnloaded(): ?string
+    public function getDistanceTravelledUnloaded(): ?Distance
     {
         return $this->distanceTravelledUnloaded;
     }
 
-    public function setDistanceTravelledUnloaded(string $distanceTravelledUnloaded): self
+    public function setDistanceTravelledUnloaded(Distance $distanceTravelledUnloaded): self
     {
         $this->distanceTravelledUnloaded = $distanceTravelledUnloaded;
 

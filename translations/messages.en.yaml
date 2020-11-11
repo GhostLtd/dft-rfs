@@ -1,3 +1,8 @@
+distance:
+  units:
+    miles: 'Miles'
+    kilometers: 'Kilometers'
+
 survey:
   domestic:
     non-complete:

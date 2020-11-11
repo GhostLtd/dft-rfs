@@ -76,7 +76,7 @@ class InternationalTrip
     private $returnWasEmpty;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Embedded(class="App\Entity\Distance")
      */
     private $roundTripDistance;
 
@@ -238,12 +238,12 @@ class InternationalTrip
         return $this;
     }
 
-    public function getRoundTripDistance(): ?int
+    public function getRoundTripDistance(): ?Distance
     {
         return $this->roundTripDistance;
     }
 
-    public function setRoundTripDistance(int $roundTripDistance): self
+    public function setRoundTripDistance(Distance $roundTripDistance): self
     {
         $this->roundTripDistance = $roundTripDistance;
 
