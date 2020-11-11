@@ -13,18 +13,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class DomesticSurveyResponse
 {
+    const REASON_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
+    const REASON_SOLD = 'sold';
+    const REASON_ON_HIRE = 'on-hire';
+    const REASON_NOT_TAXED = 'not-taxed';
+    const REASON_NO_WORK = 'no-work';
+    const REASON_REPAIR = 'repair';
+    const REASON_SITE_WORK_ONLY = 'site-work-only';
+    const REASON_HOLIDAY = 'holiday';
+    const REASON_MAINTENANCE = 'maintenance';
+    const REASON_NO_DRIVER = 'no-driver';
+    const REASON_OTHER = 'other';
+
     const UNABLE_TO_COMPLETE_REASONS = [
-        'survey.domestic.non-complete.scrapped-or-stolen' => 'scrapped-or-stolen',
-        'survey.domestic.non-complete.sold' => 'sold',
-        'survey.domestic.non-complete.on-hire' => 'on-hire',
-        'survey.domestic.non-complete.not-taxed' => 'not-taxed',
-        'survey.domestic.non-complete.no-work' => 'no-work',
-        'survey.domestic.non-complete.repair' => 'repair',
-        'survey.domestic.non-complete.site-work-only' => 'site-work-only',
-        'survey.domestic.non-complete.holiday' => 'holiday',
-        'survey.domestic.non-complete.maintenance' => 'maintenance',
-        'survey.domestic.non-complete.no-driver' => 'no-driver',
-        'survey.domestic.non-complete.other' => 'other',
+        'survey.domestic.non-complete.scrapped-or-stolen' => self::REASON_SCRAPPED_OR_STOLEN,
+        'survey.domestic.non-complete.sold' => self::REASON_SOLD,
+        'survey.domestic.non-complete.on-hire' => self::REASON_ON_HIRE,
+        'survey.domestic.non-complete.not-taxed' => self::REASON_NOT_TAXED,
+        'survey.domestic.non-complete.no-work' => self::REASON_NO_WORK,
+        'survey.domestic.non-complete.repair' => self::REASON_REPAIR,
+        'survey.domestic.non-complete.site-work-only' => self::REASON_SITE_WORK_ONLY,
+        'survey.domestic.non-complete.holiday' => self::REASON_HOLIDAY,
+        'survey.domestic.non-complete.maintenance' => self::REASON_MAINTENANCE,
+        'survey.domestic.non-complete.no-driver' => self::REASON_NO_DRIVER,
+        'survey.domestic.non-complete.other' => self::REASON_OTHER,
     ];
 
     use SurveyResponseTrait;
@@ -50,12 +62,26 @@ class DomesticSurveyResponse
 
     /**
      * @ORM\Embedded(class="App\Entity\Address")
-     * @Assert\Valid()
+     * @Assert\Valid(groups={"hiree_details"})
      */
     private $hireeAddress;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"sold_details"})
+     */
+    private $newOwnerName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"sold_details"})
+     * @Assert\Email(groups={"sold_details"})
+     */
+    private $newOwnerEmail;
+
+    /**
      * @ORM\Embedded(class="App\Entity\Address")
+     * @Assert\Valid(groups={"sold_details"})
      */
     private $newOwnerAddress;
 
@@ -218,6 +244,31 @@ class DomesticSurveyResponse
     public function setAbleToComplete(?bool $ableToComplete): self
     {
         $this->ableToComplete = $ableToComplete;
+        if ($ableToComplete) $this->setUnableToCompleteReason(null);
+
+        return $this;
+    }
+
+    public function getNewOwnerName(): ?string
+    {
+        return $this->newOwnerName;
+    }
+
+    public function setNewOwnerName(?string $newOwnerName): self
+    {
+        $this->newOwnerName = $newOwnerName;
+
+        return $this;
+    }
+
+    public function getNewOwnerEmail(): ?string
+    {
+        return $this->newOwnerEmail;
+    }
+
+    public function setNewOwnerEmail(?string $newOwnerEmail): self
+    {
+        $this->newOwnerEmail = $newOwnerEmail;
 
         return $this;
     }

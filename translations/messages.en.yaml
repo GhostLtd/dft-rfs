@@ -9,6 +9,7 @@ survey:
       repair: 'Being repaired'
       site-work-only: 'Used solely for site work'
       holiday: 'Not used owing to holiday'
+      maintenance: 'Having maintenance'
       no-driver: 'No driver'
       other: 'Other'
 

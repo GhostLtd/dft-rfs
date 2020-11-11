@@ -9,17 +9,18 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ReasonCantCompleteType extends AbstractType implements WorkflowChoiceFormInterface
+class AbleToCompleteType extends AbstractType implements WorkflowChoiceFormInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('unableToCompleteReason', Gds\ChoiceType::class, [
-                'choices' => DomesticSurveyResponse::UNABLE_TO_COMPLETE_REASONS,
+            ->add('ableToComplete', Gds\ChoiceType::class, [
+                'choices' => ['Yes' => true, 'No' => false],
                 'expanded' => true,
-                'label' => 'Why are you not able to complete the survey?',
+                'label' => 'Will you be able to complete this survey?',
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'label_is_page_heading' => true,
-                'help' => 'We may need to ask you to supply evidence at the end of the survey period',
+                'help' => 'For example, you may no longer own this vehicle or it may be on hire.'
             ])
         ;
     }
@@ -30,4 +31,5 @@ class ReasonCantCompleteType extends AbstractType implements WorkflowChoiceFormI
             'data_class' => DomesticSurveyResponse::class,
         ]);
     }
+
 }

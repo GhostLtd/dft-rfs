@@ -9,18 +9,18 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CompletableStatusType extends AbstractType implements WorkflowChoiceFormInterface
+class UnableToCompleteOnHireType extends AbstractType implements WorkflowChoiceFormInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ableToComplete', Gds\ChoiceType::class, [
-                'choices' => ['Yes' => true, 'No' => false],
+            ->add('unableToCompleteReason', Gds\ChoiceType::class, [
+                'choices' => ['Yes' => 'on-hire', 'No' => null],
                 'expanded' => true,
-                'label' => 'Will you be able to complete this survey?',
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'label' => 'Will your vehicle be on hire during the survey period?',
                 'label_is_page_heading' => true,
-                'help' => 'For example, you may no longer own this vehicle or it may be on hire.'
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'help' => 'For example, you may no longer own this vehicle or it may be on hire.',
             ])
         ;
     }
@@ -31,5 +31,4 @@ class CompletableStatusType extends AbstractType implements WorkflowChoiceFormIn
             'data_class' => DomesticSurveyResponse::class,
         ]);
     }
-
 }

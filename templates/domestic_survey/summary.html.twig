@@ -4,7 +4,7 @@
 
 {% block content %}
     {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
-    <h1 class="page-heading__heading govuk-heading-xl">Please check your answers so far</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">CSRGT summary</h1>
 
     <h2 class="govuk-heading-m">Contact details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -14,12 +14,12 @@
         {{ gdsComponents.summaryListRow('Email address', domesticSurvey.surveyResponse.contactEmail, contactDetailsActionLinks) }}
         {% set canCompleteActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_COMPLETABLE')})): 'Change'} %}
         {{ gdsComponents.summaryListRow('Can complete survey?', domesticSurvey.surveyResponse.ableToComplete ? 'Yes' : 'No', canCompleteActionLinks) }}
-        {% if not domesticSurvey.surveyResponse.ableToComplete %}
+        {% if (not domesticSurvey.surveyResponse.ableToComplete) or constant('App\\Entity\\DomesticSurveyResponse::REASON_ON_HIRE') %}
             {{ gdsComponents.summaryListRow('Reason for not completing', domesticSurvey.surveyResponse.unableToCompleteReason, canCompleteActionLinks) }}
         {% endif %}
     </dl>
 
-    {% if domesticSurvey.surveyResponse.unableToCompleteReason == 'on-hire' %}
+    {% if domesticSurvey.surveyResponse.unableToCompleteReason == constant('App\\Entity\\DomesticSurveyResponse::REASON_ON_HIRE') %}
         <h2 class="govuk-heading-m">Hiree details</h2>
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
             {% set hireeDetailsActionLinks = {(url('app_domesticpresurveyworkflow_index', {state: constant('App\\Workflow\\DomesticSurveyState::STATE_ASK_HIREE_DETAILS')})): 'Change'} %}

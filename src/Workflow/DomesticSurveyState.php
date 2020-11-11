@@ -6,11 +6,13 @@ namespace App\Workflow;
 
 use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
-use App\Form\Domestic\CompletableStatusType;
+use App\Form\Domestic\AbleToCompleteType;
 use App\Form\Domestic\ContactDetailsType;
 use App\Form\Domestic\HireeDetailsType;
-use App\Form\Domestic\OnHireStatusType;
-use App\Form\Domestic\ReasonCantCompleteType;
+use App\Form\Domestic\ScrappedDetailsType;
+use App\Form\Domestic\SoldDetailsType;
+use App\Form\Domestic\UnableToCompleteOnHireType;
+use App\Form\Domestic\UnableToCompleteType;
 
 class DomesticSurveyState implements FormWizardInterface
 {
@@ -20,16 +22,20 @@ class DomesticSurveyState implements FormWizardInterface
     const STATE_ASK_ON_HIRE = 'on-hire';
     const STATE_ASK_REASON_CANT_COMPLETE = "reason-non-completion" ;
     const STATE_ASK_HIREE_DETAILS = 'hiree-details';
+    const STATE_ASK_SCRAPPED_DETAILS = 'scrapped-details';
+    const STATE_ASK_SOLD_DETAILS = 'sold-details';
     const STATE_SUMMARY = 'summary';
     const STATE_CHANGE_CONTACT_DETAILS = 'change-contact-details';
 
     private const FORM_MAP = [
         self::STATE_REQUEST_CONTACT_DETAILS => ContactDetailsType::class,
         self::STATE_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
-        self::STATE_ASK_COMPLETABLE => CompletableStatusType::class,
-        self::STATE_ASK_ON_HIRE => OnHireStatusType::class,
-        self::STATE_ASK_REASON_CANT_COMPLETE => ReasonCantCompleteType::class,
+        self::STATE_ASK_COMPLETABLE => AbleToCompleteType::class,
+        self::STATE_ASK_ON_HIRE => UnableToCompleteOnHireType::class,
+        self::STATE_ASK_REASON_CANT_COMPLETE => UnableToCompleteType::class,
         self::STATE_ASK_HIREE_DETAILS => HireeDetailsType::class,
+        self::STATE_ASK_SOLD_DETAILS => SoldDetailsType::class,
+        self::STATE_ASK_SCRAPPED_DETAILS => ScrappedDetailsType::class,
     ];
 
     private const TEMPLATE_MAP = [
@@ -37,6 +43,7 @@ class DomesticSurveyState implements FormWizardInterface
         self::STATE_REQUEST_CONTACT_DETAILS => 'form-contact-details',
         self::STATE_CHANGE_CONTACT_DETAILS => 'form-contact-details',
         self::STATE_ASK_HIREE_DETAILS => 'form-hiree-details',
+        self::STATE_ASK_SOLD_DETAILS => 'form-sold-details',
     ];
 
     private $state = self::STATE_INTRODUCTION;

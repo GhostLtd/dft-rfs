@@ -32,7 +32,7 @@ class DomesticPreSurveyWorkflowController extends AbstractController
         }
 
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-        $this->getDoctrine()->getManager()->merge($formWizard->getSubject());
+        $formWizard->setSubject($this->getDoctrine()->getManager()->merge($formWizard->getSubject()));
         return $formWizard;
     }
 
@@ -75,8 +75,11 @@ class DomesticPreSurveyWorkflowController extends AbstractController
                 {
                     if ($transitionWhenFormData = $domesticPreSurveyStateMachine->getMetadataStore()->getTransitionMetadata($v)['transitionWhenFormData'] ?? false)
                     {
-                        if ($form->get($transitionWhenFormData['property'])->getData() === $transitionWhenFormData['value'])
-                        {
+                        if (
+                            is_array($transitionWhenFormData['value'])
+                                ? in_array($form->get($transitionWhenFormData['property'])->getData(), $transitionWhenFormData['value'])
+                                : $form->get($transitionWhenFormData['property'])->getData() === $transitionWhenFormData['value']
+                        ) {
                             return $this->applyTransitionAndRedirect($request, $domesticPreSurveyStateMachine, $formWizard, $v);
                         } else {
                             unset($transitions[$k]);
@@ -105,6 +108,9 @@ class DomesticPreSurveyWorkflowController extends AbstractController
 
         if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
         {
+            if (!$this->getDoctrine()->getManager()->contains($formWizard->getSubject())) {
+                throw new \Exception("Subject not managed by ORM");
+            };
             $this->getDoctrine()->getManager()->flush();
         }
 
