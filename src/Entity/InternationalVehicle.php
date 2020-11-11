@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\InternationalVehicleRepository;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,14 +19,9 @@ class InternationalVehicle
     private $surveyResponse;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\OneToOne(targetEntity=InternationalTrip::class, mappedBy="vehicle", cascade={"persist", "remove"})
      */
-    private $dateOfLeavingUK;
-
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $dateOfReturningToUK;
+    private $trip;
 
     public function getSurveyResponse(): ?InternationalSurveyResponse
     {
@@ -41,26 +35,19 @@ class InternationalVehicle
         return $this;
     }
 
-    public function getDateOfLeavingUK(): ?DateTimeInterface
+    public function getTrip(): ?InternationalTrip
     {
-        return $this->dateOfLeavingUK;
+        return $this->trip;
     }
 
-    public function setDateOfLeavingUK(DateTimeInterface $dateOfLeavingUK): self
+    public function setTrip(InternationalTrip $trip): self
     {
-        $this->dateOfLeavingUK = $dateOfLeavingUK;
+        $this->trip = $trip;
 
-        return $this;
-    }
-
-    public function getDateOfReturningToUK(): ?DateTimeInterface
-    {
-        return $this->dateOfReturningToUK;
-    }
-
-    public function setDateOfReturningToUK(DateTimeInterface $dateOfReturningToUK): self
-    {
-        $this->dateOfReturningToUK = $dateOfReturningToUK;
+        // set the owning side of the relation if necessary
+        if ($trip->getVehicle() !== $this) {
+            $trip->setVehicle($this);
+        }
 
         return $this;
     }
