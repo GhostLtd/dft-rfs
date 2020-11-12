@@ -34,6 +34,11 @@ class InternationalCompany
      */
     private $surveys;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=SamplingGroup::class, inversedBy="companies")
+     */
+    private $samplingGroup;
+
     public function __construct()
     {
         $this->preEnquiries = new ArrayCollection();
@@ -113,6 +118,18 @@ class InternationalCompany
                 $survey->setCompany(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSamplingGroup(): ?SamplingGroup
+    {
+        return $this->samplingGroup;
+    }
+
+    public function setSamplingGroup(?SamplingGroup $samplingGroup): self
+    {
+        $this->samplingGroup = $samplingGroup;
 
         return $this;
     }
