@@ -16,7 +16,6 @@ class UnableToCompleteOnHireType extends AbstractType implements WorkflowChoiceF
         $builder
             ->add('unableToCompleteReason', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => 'on-hire', 'No' => null],
-                'expanded' => true,
                 'label' => 'Will your vehicle be on hire during the survey period?',
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],

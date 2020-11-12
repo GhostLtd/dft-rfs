@@ -13,35 +13,18 @@ class DomesticVehicle
     use VehicleTrait;
 
     /**
-     * @ORM\Column(type="decimal", precision=8, scale=2)
+     * @ORM\Embedded(class=Volume::class)
      */
     private $fuelQuantity;
 
-    /**
-     * @ORM\Column(type="string", length=8)
-     */
-    private $fuelUnit;
-
-    public function getFuelQuantity(): ?string
+    public function getFuelQuantity(): ?Volume
     {
         return $this->fuelQuantity;
     }
 
-    public function setFuelQuantity(string $fuelQuantity): self
+    public function setFuelQuantity(Volume $fuelQuantity): self
     {
         $this->fuelQuantity = $fuelQuantity;
-
-        return $this;
-    }
-
-    public function getFuelUnit(): ?string
-    {
-        return $this->fuelUnit;
-    }
-
-    public function setFuelUnit(string $fuelUnit): self
-    {
-        $this->fuelUnit = $fuelUnit;
 
         return $this;
     }

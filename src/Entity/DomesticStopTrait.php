@@ -34,12 +34,12 @@ trait DomesticStopTrait
     private $transferredTo;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Distance")
+     * @ORM\Embedded(class=Distance::class)
      */
     private $distanceTravelledLoaded;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Distance")
+     * @ORM\Embedded(class=Distance::class)
      */
     private $distanceTravelledUnloaded;
 

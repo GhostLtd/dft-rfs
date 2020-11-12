@@ -4,7 +4,6 @@
 namespace App\Workflow;
 
 
-use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
 use App\Form\Domestic\AbleToCompleteType;
 use App\Form\Domestic\ContactDetailsType;
@@ -14,7 +13,7 @@ use App\Form\Domestic\SoldDetailsType;
 use App\Form\Domestic\UnableToCompleteOnHireType;
 use App\Form\Domestic\UnableToCompleteType;
 
-class DomesticSurveyState implements FormWizardInterface
+class DomesticSurveyInitialDetailsState implements FormWizardInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';
@@ -98,7 +97,7 @@ class DomesticSurveyState implements FormWizardInterface
             $states[] = self::STATE_ASK_REASON_CANT_COMPLETE;
         }
         if ($this->subject->getUnableToCompleteReason() === 'on-hire') $states[] = self::STATE_ASK_HIREE_DETAILS;
-        return dump($states);
+        return $states;
     }
 
     public function getStateFormMap()
@@ -109,5 +108,10 @@ class DomesticSurveyState implements FormWizardInterface
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
+    }
+
+    public function getDefaultTemplate()
+    {
+        return 'domestic_survey/initial_details/form-step.html.twig';
     }
 }

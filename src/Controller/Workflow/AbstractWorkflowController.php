@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Workflow;
 
 use App\Workflow\FormWizardInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,11 +15,21 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractWorkflowController extends AbstractController
 {
-    public const SESSION_KEY = 'wizard.' . self::class;
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
 
-    abstract protected function getFormWizard(Request $request): FormWizardInterface;
+    abstract protected function getFormWizard(): FormWizardInterface;
+    abstract protected function setFormWizard(FormWizardInterface $formWizard);
+    abstract protected function cleanUp();
+
     abstract protected function getRouteName(): string;
-    abstract protected function getDefaultTemplate(): string;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     /**
      * @param WorkflowInterface $stateMachine
@@ -29,7 +40,7 @@ abstract class AbstractWorkflowController extends AbstractController
      */
     protected function doWorkflow(WorkflowInterface $stateMachine, Request $request, $state = null): Response
     {
-        $formWizard = $this->getFormWizard($request);
+        $formWizard = $this->getFormWizard();
 
         if (is_null($state)) return $this->redirectToRoute($this->getRouteName(), ['state' => $formWizard->getState()]);
 
@@ -95,19 +106,19 @@ abstract class AbstractWorkflowController extends AbstractController
     private function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardInterface $formWizard, Transition $transition)
     {
         $stateMachine->apply($formWizard, $transition->getName());
-        $request->getSession()->set(self::SESSION_KEY, $formWizard);
+        $this->setFormWizard($formWizard);
 
         if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
         {
-            if (!$this->getDoctrine()->getManager()->contains($formWizard->getSubject())) {
+            if (!$this->entityManager->contains($formWizard->getSubject())) {
                 throw new Exception("Subject not managed by ORM");
             };
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
         }
 
         if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['redirectRoute'] ?? false)
         {
-            $request->getSession()->remove(self::SESSION_KEY);
+            $this->cleanUp();
             return $this->redirectToRoute($alternativeRoute);
         }
 
@@ -134,7 +145,7 @@ abstract class AbstractWorkflowController extends AbstractController
             $form = $this->createFormBuilder()
                 ->getForm();
         }
-        $template = $formWizard->getStateTemplateMap()[$state] ?? $this->getDefaultTemplate();
+        $template = $formWizard->getStateTemplateMap()[$state] ?? $formWizard->getDefaultTemplate();
         $form->add('continue', ButtonType::class, ['type' => 'submit']);
 
         return [$form, $template];

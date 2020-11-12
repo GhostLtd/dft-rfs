@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\DomesticSurvey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,23 @@ class DomesticSurveyRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, DomesticSurvey::class);
+    }
+
+    /**
+     * @return int|mixed|string
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function findLatestSurveyForTesting()
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d, sr, v')
+            ->leftJoin('d.surveyResponse', 'sr')
+            ->leftJoin('sr.vehicle', 'v')
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     // /**

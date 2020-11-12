@@ -19,29 +19,29 @@ trait VehicleTrait
     private $registrationMark;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $grossWeight;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $carryingCapacity;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $forHireAndReward;
+    private $operationType;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $AxleConfiguration;
+    private $axleConfiguration;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      */
-    private $TrailerType;
+    private $bodyType;
 
     public function getId(): ?int
     {
@@ -53,7 +53,7 @@ trait VehicleTrait
         return $this->registrationMark;
     }
 
-    public function setRegistrationMark(string $registrationMark): self
+    public function setRegistrationMark(?string $registrationMark): self
     {
         $this->registrationMark = $registrationMark;
 
@@ -65,7 +65,7 @@ trait VehicleTrait
         return $this->grossWeight;
     }
 
-    public function setGrossWeight(int $grossWeight): self
+    public function setGrossWeight(?int $grossWeight): self
     {
         $this->grossWeight = $grossWeight;
 
@@ -77,45 +77,65 @@ trait VehicleTrait
         return $this->carryingCapacity;
     }
 
-    public function setCarryingCapacity(int $carryingCapacity): self
+    public function setCarryingCapacity(?int $carryingCapacity): self
     {
         $this->carryingCapacity = $carryingCapacity;
 
         return $this;
     }
 
-    public function getForHireAndReward(): ?bool
+    public function getOperationType(): ?string
     {
-        return $this->forHireAndReward;
+        return $this->operationType;
     }
 
-    public function setForHireAndReward(bool $forHireAndReward): self
+    public function setOperationType(?string $operationType): self
     {
-        $this->forHireAndReward = $forHireAndReward;
+        $this->operationType = $operationType;
 
+        return $this;
+    }
+
+    public function getTrailerConfiguration(): ?int
+    {
+        if (is_numeric($this->axleConfiguration))
+        {
+            // get the root category
+            return floor($this->axleConfiguration / 100) * 100;
+        }
+        return $this->axleConfiguration;
+    }
+
+    public function setTrailerConfiguration(?int $trailerConfiguration): self
+    {
+        if ($trailerConfiguration !== $this->getTrailerConfiguration())
+        {
+            // we're changing trailer configuration, so axle configuration should be reset.
+            $this->axleConfiguration = $trailerConfiguration;
+        }
         return $this;
     }
 
     public function getAxleConfiguration(): ?int
     {
-        return $this->AxleConfiguration;
+        return $this->axleConfiguration;
     }
 
-    public function setAxleConfiguration(int $AxleConfiguration): self
+    public function setAxleConfiguration(?int $axleConfiguration): self
     {
-        $this->AxleConfiguration = $AxleConfiguration;
+        $this->axleConfiguration = $axleConfiguration;
 
         return $this;
     }
 
-    public function getTrailerType(): ?string
+    public function getBodyType(): ?string
     {
-        return $this->TrailerType;
+        return $this->bodyType;
     }
 
-    public function setTrailerType(?string $TrailerType): self
+    public function setBodyType(?string $bodyType): self
     {
-        $this->TrailerType = $TrailerType;
+        $this->bodyType = $bodyType;
 
         return $this;
     }

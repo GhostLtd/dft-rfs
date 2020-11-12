@@ -3,23 +3,22 @@
 namespace App\Form\Domestic;
 
 use App\Entity\DomesticSurveyResponse;
-use App\Form\WorkflowChoiceFormInterface;
+use App\Entity\Vehicle;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AbleToCompleteType extends AbstractType implements WorkflowChoiceFormInterface
+class VehicleTrailerConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ableToComplete', Gds\ChoiceType::class, [
-                'choices' => ['Yes' => true, 'No' => false],
-                'label' => 'Will you be able to complete this survey?',
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'label_is_page_heading' => true,
-                'help' => 'For example, you may no longer own this vehicle or it may be on hire.'
+            ->add('trailerConfiguration', Gds\ChoiceType::class, [
+                'property_path' => 'vehicle.trailerConfiguration',
+                'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
+                'label' => 'survey.domestic.forms.vehicle-trailer-configuration.trailer-configuration.label',
+                'label_attr' => ['class' => 'govuk-label--m'],
             ])
         ;
     }
@@ -30,5 +29,4 @@ class AbleToCompleteType extends AbstractType implements WorkflowChoiceFormInter
             'data_class' => DomesticSurveyResponse::class,
         ]);
     }
-
 }

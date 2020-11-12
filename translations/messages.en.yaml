@@ -1,7 +1,10 @@
-distance:
-  units:
+units:
+  distance:
     miles: 'Miles'
     kilometers: 'Kilometers'
+  volume:
+    litres: 'Litres'
+    gallons: 'Gallons'
 
 survey:
   domestic:
@@ -14,25 +17,71 @@ survey:
       repair: 'Being repaired'
       site-work-only: 'Used solely for site work'
       holiday: 'Not used owing to holiday'
-      maintenance: 'Having maintenance'
+      maintenance: 'MOT / service'
       no-driver: 'No driver'
       other: 'Other'
+    forms:
+      business-details:
+        heading: Business Details
+        number-of-employees:
+          label: How many people does your firm employ nationally?
+        business-nature:
+          label: What is the nature of your business?
+          help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
+        operation-type:
+          label: How was the vehicle being operated during the survey week?
+      vehicle-weights-and-fuel:
+        heading: Vehicle weights and fuel
+        fuel-quantity:
+          label: How much fuel in total was put into this vehicle during the survey week?
+        gross-weight:
+          label: Gross vehicle weight
+          help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+        carrying-capacity:
+          label: Carrying capacity
+          help: Total weight of cargo that can be carried
+      vehicle-trailer-configuration:
+        heading: Please tell us about the the vehicle
+        trailer-configuration:
+          label: Select the option that best describes the vehicle
+      vehicle-axle-configuration:
+        heading: Please tell us about the the vehicle
+        axle-configuration:
+          label: Select the option that best shows the axle configuration of the vehicle
+      vehicle-body:
+        heading: Please tell us about the the vehicle
+        body-type:
+          label: Please indicate the main type of body for the vehicle
+
+
+
+
 
 vehicle:
+  operation-type:
+    for-hire-and-reward: For hire and reward
+    on-own-account: On own account
+
   axle:
     rigid:
+      label: Rigid
       2:
         0: 'Rigid 2 axle'
+      3:
+        0: 'Rigid 3 axle'
+      other: 'Other rigid'
+    rigid-and-trailer:
+      label: Rigid and trailer
+      2:
         1: 'Rigid 2 axle + 1 axle trailer'
         2: 'Rigid 2 axle + 2 axle trailer'
         3: 'Rigid 2 axle + 3 axle trailer'
       3:
-        0: 'Rigid 3 axle'
         2: 'Rigid 3 axle + 2 axle trailer'
         3: 'Rigid 3 axle + 3 axle trailer'
-      other: 'Other rigid'
-      other-trailer: 'Other rigid with trailer'
-    arcticulated:
+      other: 'Other rigid with trailer'
+    articulated:
+      label: Articulated
       2:
         1: 'Articulated 2 axle + 1 axle trailer'
         2: 'Articulated 2 axle + 2 axle trailer'
@@ -41,7 +90,7 @@ vehicle:
         2: 'Articulated 3 axle + 2 axle trailer'
         3: 'Articulated 3 axle + 3 axle trailer'
       other: 'Other articulated'
-  trailer:
+  body:
     flat-drop: 'Flat/drop sided'
     box: 'Box/non-specialised'
     temperature-controlled: 'Temperature controlled'

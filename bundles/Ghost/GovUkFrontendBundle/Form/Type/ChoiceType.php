@@ -50,6 +50,7 @@ class ChoiceType extends ExtendedChoiceType
             'placeholder' => false,
             'label_is_page_heading' => false,
             'choice_options' => null,
+            'expanded' => true,
         ]);
 
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);

@@ -76,7 +76,7 @@ class InternationalTrip
     private $returnWasEmpty;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Distance")
+     * @ORM\Embedded(class=Distance::class)
      */
     private $roundTripDistance;
 

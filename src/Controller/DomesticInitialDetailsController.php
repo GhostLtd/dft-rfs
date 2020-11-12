@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
+use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\DomesticSurveyResponse;
-use App\Workflow\DomesticSurveyState;
+use App\Workflow\DomesticSurveyInitialDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class DomesticInitialDetailsController extends AbstractWorkflowController
+class DomesticInitialDetailsController extends AbstractSessionStateWorkflowController
 {
     public const ROUTE_NAME = 'app_domesticinitialdetails_index';
 
@@ -29,16 +30,13 @@ class DomesticInitialDetailsController extends AbstractWorkflowController
         return $this->doWorkflow($domesticSurveyInitialDetailsStateMachine, $request, $state);
     }
 
-
-
     /**
-     * @param Request $request
      * @return FormWizardInterface
      */
-    protected function getFormWizard(Request $request): FormWizardInterface
+    protected function getFormWizard(): FormWizardInterface
     {
         /** @var FormWizardInterface $formWizard */
-        $formWizard = $request->getSession()->get(self::SESSION_KEY, new DomesticSurveyState());
+        $formWizard = $this->session->get(self::SESSION_KEY, new DomesticSurveyInitialDetailsState());
         if (is_null($formWizard->getSubject())) {
             $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
             $formWizard->setSubject(array_pop($surveyResponses));
@@ -52,10 +50,5 @@ class DomesticInitialDetailsController extends AbstractWorkflowController
     protected function getRouteName(): string
     {
         return self::ROUTE_NAME;
-    }
-
-    protected function getDefaultTemplate(): string
-    {
-        return 'domestic_survey/initial_details/form-step.html.twig';
     }
 }

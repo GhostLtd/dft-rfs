@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\DomesticSurvey;
 use App\Entity\DomesticSurveyResponse;
-use App\Workflow\DomesticSurveyState;
+use App\Entity\DomesticVehicle;
+use App\Workflow\DomesticSurveyInitialDetailsState;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +16,9 @@ class DomesticSurveyController extends AbstractController
 {
     /**
      * @Route("/domestic-survey", name="domestic_survey_index")
+     * @return Response
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $domesticSurveys = $this->getDoctrine()->getRepository(DomesticSurvey::class)->findAll();
 
@@ -28,14 +31,10 @@ class DomesticSurveyController extends AbstractController
                 ->setPasscode("1234")
             ;
             $em = $this->getDoctrine()->getManager();
-            $surveyResponse = (new DomesticSurveyResponse())->setSurvey($domesticSurvey);
+            $vehicle = (new DomesticVehicle())->setRegistrationMark($domesticSurvey->getRegistrationMark());
+            $surveyResponse = (new DomesticSurveyResponse())->setSurvey($domesticSurvey)->setVehicle($vehicle);
             $em->persist($surveyResponse);
             $em->flush();
-
-            $state = new DomesticSurveyState();
-            $state->setSubject($surveyResponse);
-
-            $request->getSession()->set(AbstractWorkflowController::SESSION_KEY, $state);
 
             // start wizard
             return $this->redirectToRoute("app_domesticinitialdetails_start");

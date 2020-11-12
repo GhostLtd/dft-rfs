@@ -17,4 +17,5 @@ interface FormWizardInterface
 
     public function getStateFormMap();
     public function getStateTemplateMap();
+    public function getDefaultTemplate();
 }

@@ -28,7 +28,7 @@ class InternationalPreEnquiryResponse
     private $correspondenceName;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Address")
+     * @ORM\Embedded(class=Address::class)
      */
     private $correspondenceAddress;
 

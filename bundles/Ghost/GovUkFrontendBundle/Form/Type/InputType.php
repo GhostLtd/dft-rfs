@@ -7,11 +7,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InputType extends ExtendedTextType
 {
-    public function getParent()
-    {
-        return ExtendedTextType::class;
-    }
-
     public function getBlockPrefix()
     {
         return 'gds_input';

@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DomesticSurveyResponseRepository;
-use App\Workflow\DomesticSurveyState;
+use App\Workflow\DomesticSurveyInitialDetailsState;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,18 +27,20 @@ class DomesticSurveyResponse
     const REASON_NO_DRIVER = 'no-driver';
     const REASON_OTHER = 'other';
 
+    const REASON_TRANSLATION_PREFIX = 'survey.domestic.non-complete.';
+
     const UNABLE_TO_COMPLETE_REASONS = [
-        'survey.domestic.non-complete.scrapped-or-stolen' => self::REASON_SCRAPPED_OR_STOLEN,
-        'survey.domestic.non-complete.sold' => self::REASON_SOLD,
-        'survey.domestic.non-complete.on-hire' => self::REASON_ON_HIRE,
-        'survey.domestic.non-complete.not-taxed' => self::REASON_NOT_TAXED,
-        'survey.domestic.non-complete.no-work' => self::REASON_NO_WORK,
-        'survey.domestic.non-complete.repair' => self::REASON_REPAIR,
-        'survey.domestic.non-complete.site-work-only' => self::REASON_SITE_WORK_ONLY,
-        'survey.domestic.non-complete.holiday' => self::REASON_HOLIDAY,
-        'survey.domestic.non-complete.maintenance' => self::REASON_MAINTENANCE,
-        'survey.domestic.non-complete.no-driver' => self::REASON_NO_DRIVER,
-        'survey.domestic.non-complete.other' => self::REASON_OTHER,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_SCRAPPED_OR_STOLEN => self::REASON_SCRAPPED_OR_STOLEN,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_SOLD => self::REASON_SOLD,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_ON_HIRE => self::REASON_ON_HIRE,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_NO_WORK => self::REASON_NO_WORK,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_REPAIR => self::REASON_REPAIR,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_SITE_WORK_ONLY => self::REASON_SITE_WORK_ONLY,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_HOLIDAY => self::REASON_HOLIDAY,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_MAINTENANCE => self::REASON_MAINTENANCE,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_NO_DRIVER => self::REASON_NO_DRIVER,
+        self::REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
     ];
 
     use SurveyResponseTrait;
@@ -63,7 +65,7 @@ class DomesticSurveyResponse
     private $hireeEmail;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Address")
+     * @ORM\Embedded(class=Address::class)
      * @Assert\Valid(groups={"hiree_details"})
      */
     private $hireeAddress;
@@ -82,7 +84,7 @@ class DomesticSurveyResponse
     private $newOwnerEmail;
 
     /**
-     * @ORM\Embedded(class="App\Entity\Address")
+     * @ORM\Embedded(class=Address::class)
      * @Assert\Valid(groups={"sold_details"})
      */
     private $newOwnerAddress;
