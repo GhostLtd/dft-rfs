@@ -69,6 +69,8 @@ vehicle:
         0: 'Rigid 2 axle'
       3:
         0: 'Rigid 3 axle'
+      4:
+        0: 'Rigid 4 axle'
       other: 'Other rigid'
     rigid-and-trailer:
       label: Rigid and trailer
