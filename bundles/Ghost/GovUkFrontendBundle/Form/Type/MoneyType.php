@@ -9,6 +9,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MoneyType extends AbstractType
 {
+    public function getParent()
+    {
+        return InputType::class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -29,6 +34,7 @@ class MoneyType extends AbstractType
         $resolver->setDefaults([
             'compound' => false,
             'divisor' => 100,
+            'prefix' => '£',
         ]);
     }
 }

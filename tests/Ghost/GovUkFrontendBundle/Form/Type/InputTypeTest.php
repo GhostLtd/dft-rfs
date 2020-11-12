@@ -12,10 +12,19 @@ class InputTypeTest extends FormTestCase
 {
     public function fixtureProvider()
     {
-        $ignoreFixtures = function ($fixture) {
-            // suffix/prefix not supported
-            return preg_match('(suffix|prefix)', $fixture['name']) === 1;
-        };
+        $ignoreFixtures = [
+            'with prefix with attributes',
+            'with suffix with attributes',
+            'with prefix with classes',
+            'with suffix with classes',
+            'with prefix with html as text',
+            'with suffix with html as text',
+        ];
+//        function ($fixture) {
+//            return false;
+//            // suffix/prefix not supported
+////            return preg_match('(suffix|prefix)', $fixture['name']) === 1;
+//        };
         return $this->loadFixtures('input', $ignoreFixtures);
     }
 
@@ -55,6 +64,12 @@ class InputTypeTest extends FormTestCase
         {
             switch ($option)
             {
+                case 'suffix' :
+                    $formOptions['suffix'] = $value['text'] ?? $value['html'] ?? false;
+                    break;
+                case 'prefix' :
+                    $formOptions['prefix'] = $value['text'] ?? $value['html'] ?? false;
+                    break;
                 case 'inputmode' :
                     $formOptions['is_decimal'] = true;
                     break;

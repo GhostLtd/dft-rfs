@@ -32,14 +32,16 @@ class VehcileWeightsAndFuelType extends AbstractType
                 'help' => 'survey.domestic.forms.vehicle-weights-and-fuel.gross-weight.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'property_path' => 'vehicle.grossWeight',
-                'attr' => ['class' => 'govuk-input--width-10']
+                'attr' => ['class' => 'govuk-input--width-10'],
+                'suffix' => 'kg',
             ])
             ->add('carryingCapacity', Gds\NumberType::class, [
                 'label' => 'survey.domestic.forms.vehicle-weights-and-fuel.carrying-capacity.label',
                 'help' => 'survey.domestic.forms.vehicle-weights-and-fuel.carrying-capacity.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'property_path' => 'vehicle.carryingCapacity',
-                'attr' => ['class' => 'govuk-input--width-10']
+                'attr' => ['class' => 'govuk-input--width-10'],
+                'suffix' => 'kg',
             ])
         ;
     }
