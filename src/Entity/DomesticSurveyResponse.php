@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\DomesticSurveyResponseRepository;
 use App\Workflow\DomesticSurveyState;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -115,6 +117,16 @@ class DomesticSurveyResponse
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $ableToComplete;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DomesticStopDay::class, mappedBy="response", orphanRemoval=true)
+     */
+    private $stopDays;
+
+    public function __construct()
+    {
+        $this->stopDays = new ArrayCollection();
+    }
 
     public function getNumberOfEmployees(): ?int
     {
@@ -269,6 +281,36 @@ class DomesticSurveyResponse
     public function setNewOwnerEmail(?string $newOwnerEmail): self
     {
         $this->newOwnerEmail = $newOwnerEmail;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DomesticStopDay[]
+     */
+    public function getStopDays(): Collection
+    {
+        return $this->stopDays;
+    }
+
+    public function addStopDay(DomesticStopDay $stopDay): self
+    {
+        if (!$this->stopDays->contains($stopDay)) {
+            $this->stopDays[] = $stopDay;
+            $stopDay->setResponse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStopDay(DomesticStopDay $stopDay): self
+    {
+        if ($this->stopDays->removeElement($stopDay)) {
+            // set the owning side to null (unless already changed)
+            if ($stopDay->getResponse() === $this) {
+                $stopDay->setResponse(null);
+            }
+        }
 
         return $this;
     }
