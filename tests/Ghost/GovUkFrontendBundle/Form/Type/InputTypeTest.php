@@ -66,9 +66,11 @@ class InputTypeTest extends FormTestCase
             {
                 case 'suffix' :
                     $formOptions['suffix'] = $value['text'] ?? $value['html'] ?? false;
+                    $formOptions['suffix_html'] = !empty($value['html']);
                     break;
                 case 'prefix' :
                     $formOptions['prefix'] = $value['text'] ?? $value['html'] ?? false;
+                    $formOptions['prefix_html'] = !empty($value['html']);
                     break;
                 case 'inputmode' :
                     $formOptions['is_decimal'] = true;

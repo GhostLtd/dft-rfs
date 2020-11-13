@@ -159,9 +159,13 @@
             attr.class|default(''))|trim
     }) -%}
     {% if prefix | default(false) or suffix | default(false) %}<div class="govuk-input__wrapper">{% endif %}
-    {% if prefix | default(false) %}<div class="govuk-input__prefix" aria-hidden="true">{{ prefix | raw }}</div>{% endif %}
+    {% if prefix | default(false) %}
+        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: prefix, affix_html: prefix_html, class: 'govuk-input__prefix'} %}
+    {% endif %}
     {{ block('form_widget_simple') }}
-    {% if suffix | default(false) %}<div class="govuk-input__suffix" aria-hidden="true">{{ suffix | raw }}</div>{% endif %}
+    {% if suffix | default(false) %}
+        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: suffix, affix_html: suffix_html, class: 'govuk-input__suffix'} %}
+    {% endif %}
     {% if prefix | default(false) or suffix | default(false) %}</div>{% endif %}
 {%- endblock -%}
 
