@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class VehcileWeightsAndFuelType extends AbstractType
+class VehicleWeightsAndFuelType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

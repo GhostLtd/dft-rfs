@@ -6,7 +6,7 @@ namespace App\Workflow;
 
 use App\Entity\DomesticSurveyResponse;
 use App\Form\Domestic\BusinessDetailsType;
-use App\Form\Domestic\VehcileWeightsAndFuelType;
+use App\Form\Domestic\VehicleWeightsAndFuelType;
 use App\Form\Domestic\VehicleAxleConfigurationType;
 use App\Form\Domestic\VehicleBodyType;
 use App\Form\Domestic\VehicleTrailerConfigurationType;
@@ -22,7 +22,7 @@ class DomesticSurveyVehicleAndBusinessDetailsState implements FormWizardInterfac
 
     private const FORM_MAP = [
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
-        self::STATE_VEHICLE_WEIGHTS_AND_FUEL => VehcileWeightsAndFuelType::class,
+        self::STATE_VEHICLE_WEIGHTS_AND_FUEL => VehicleWeightsAndFuelType::class,
         self::STATE_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
         self::STATE_VEHICLE_BODY => VehicleBodyType::class,
