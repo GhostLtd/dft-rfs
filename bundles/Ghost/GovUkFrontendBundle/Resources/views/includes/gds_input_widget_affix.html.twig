@@ -1,0 +1,15 @@
+<div class="{{ class }}" aria-hidden="true">
+    {%- if translation_domain is same as(false) -%}
+        {%- if affix_html is same as(false) -%}
+            {{- affix | nl2br -}}
+        {%- else -%}
+            {{- affix | raw -}}
+        {%- endif -%}
+    {%- else -%}
+        {%- if affix_html is same as(false) -%}
+            {{- affix | trans(help_translation_parameters, translation_domain) | nl2br -}}
+        {%- else -%}
+            {{- affix | trans(help_translation_parameters, translation_domain) | raw -}}
+        {%- endif -%}
+    {%- endif -%}
+</div>

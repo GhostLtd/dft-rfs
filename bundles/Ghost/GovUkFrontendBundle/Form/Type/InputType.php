@@ -19,7 +19,9 @@ class InputType extends ExtendedTextType
         parent::buildView($view, $form, $options);
 
         $view->vars['prefix'] = $options['prefix'];
+        $view->vars['prefix_html'] = $options['prefix_html'];
         $view->vars['suffix'] = $options['suffix'];
+        $view->vars['suffix_html'] = $options['suffix_html'];
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -28,7 +30,9 @@ class InputType extends ExtendedTextType
 
         $resolver->setDefaults([
            'prefix' => false,
+           'prefix_html' => false,
            'suffix' => false,
+           'suffix_html' => false,
         ]);
     }
 }
