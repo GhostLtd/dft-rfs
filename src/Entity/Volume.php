@@ -9,14 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Volume implements ValueUnitInterface
 {
-    const UNITS_GALLONS = 'gallons';
-    const UNITS_LITRES = 'litres';
+    const UNIT_GALLONS = 'gallons';
+    const UNIT_LITRES = 'litres';
 
-    const UNITS_TRANSLATION_PREFIX = 'units.volume.';
+    const UNIT_TRANSLATION_PREFIX = 'unit.volume.';
 
-    const UNITS = [
-        self::UNITS_TRANSLATION_PREFIX . self::UNITS_LITRES => self::UNITS_LITRES,
-        self::UNITS_TRANSLATION_PREFIX . self::UNITS_GALLONS => self::UNITS_GALLONS,
+    const UNIT_CHOICES = [
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_LITRES => self::UNIT_LITRES,
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_GALLONS => self::UNIT_GALLONS,
     ];
 
     /**
@@ -40,14 +40,14 @@ class Volume implements ValueUnitInterface
         return $this;
     }
 
-    public function getUnits(): ?string
+    public function getUnit(): ?string
     {
         return $this->units;
     }
 
-    public function setUnits(?string $units): self
+    public function setUnit(?string $unit): self
     {
-        $this->units = $units;
+        $this->units = $unit;
         return $this;
     }
 }

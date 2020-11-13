@@ -9,14 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Distance implements ValueUnitInterface
 {
-    const UNITS_KILOMETERS = 'kilometers';
-    const UNITS_MILES = 'miles';
+    const UNIT_KILOMETERS = 'kilometers';
+    const UNIT_MILES = 'miles';
 
-    const UNITS_TRANSLATION_PREFIX = 'distance.units.';
+    const UNIT_TRANSLATION_PREFIX = 'unit.distance.';
 
-    const UNITS = [
-        self::UNITS_TRANSLATION_PREFIX . self::UNITS_MILES => self::UNITS_MILES,
-        self::UNITS_TRANSLATION_PREFIX . self::UNITS_KILOMETERS => self::UNITS_KILOMETERS,
+    const UNIT_CHOICES = [
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_MILES => self::UNIT_MILES,
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_KILOMETERS => self::UNIT_KILOMETERS,
     ];
 
     /**
@@ -27,7 +27,7 @@ class Distance implements ValueUnitInterface
     /**
      * @ORM\Column(type="string", length=12, nullable=true)
      */
-    private $units;
+    private $unit;
 
     public function getValue(): ?string
     {
@@ -40,14 +40,14 @@ class Distance implements ValueUnitInterface
         return $this;
     }
 
-    public function getUnits(): ?string
+    public function getUnit(): ?string
     {
-        return $this->units;
+        return $this->unit;
     }
 
-    public function setUnits(?string $units): self
+    public function setUnit(?string $unit): self
     {
-        $this->units = $units;
+        $this->unit = $unit;
         return $this;
     }
 }

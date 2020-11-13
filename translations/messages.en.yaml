@@ -1,4 +1,4 @@
-units:
+unit:
   distance:
     miles: 'Miles'
     kilometers: 'Kilometers'

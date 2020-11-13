@@ -80,7 +80,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => 'domestic_survey_index',
                             'transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' =>
-                                array_diff(array_values(DomesticSurveyResponse::UNABLE_TO_COMPLETE_REASONS), [
+                                array_diff(array_values(DomesticSurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES), [
                                     DomesticSurveyResponse::REASON_ON_HIRE,
                                     DomesticSurveyResponse::REASON_SOLD,
                                     DomesticSurveyResponse::REASON_SCRAPPED_OR_STOLEN,

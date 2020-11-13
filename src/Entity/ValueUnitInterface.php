@@ -8,6 +8,6 @@ interface ValueUnitInterface
 {
     public function getValue() : ?string;
     public function setValue(?string $value);
-    public function getUnits() : ?string;
-    public function setUnits(?string $units);
+    public function getUnit() : ?string;
+    public function setUnit(?string $unit);
 }

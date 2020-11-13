@@ -21,7 +21,7 @@ class ValueUnitType extends AbstractType
 
         $builder
             ->add('value', $options['value_form_type'], array_merge($defaultValueOptions, $options['value_options']))
-            ->add('units', $options['units_form_type'], array_merge($defaultUnitsOptions, $options['units_options']))
+            ->add('unit', $options['unit_form_type'], array_merge($defaultUnitsOptions, $options['unit_options']))
         ;
     }
 
@@ -30,9 +30,14 @@ class ValueUnitType extends AbstractType
         $resolver->setDefaults([
             'data_class' => ValueUnitInterface::class,
             'value_form_type' => Gds\NumberType::class,
-            'units_form_type' => Gds\ChoiceType::class,
+            'unit_form_type' => Gds\ChoiceType::class,
             'value_options' => [],
-            'units_options' => [],
+            'unit_options' => [],
         ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return 'gds_value_units';
     }
 }

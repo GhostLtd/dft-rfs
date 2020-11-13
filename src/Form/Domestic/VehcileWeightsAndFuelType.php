@@ -23,8 +23,8 @@ class VehcileWeightsAndFuelType extends AbstractType
                     'is_decimal' => true,
                     'attr' => ['class' => 'govuk-input--width-5']
                 ],
-                'units_options' => [
-                    'choices' => Volume::UNITS,
+                'unit_options' => [
+                    'choices' => Volume::UNIT_CHOICES,
                 ],
             ])
             ->add('grossWeight', Gds\NumberType::class, [
