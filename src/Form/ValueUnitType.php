@@ -17,6 +17,9 @@ class ValueUnitType extends AbstractType
         ];
         $defaultUnitsOptions = [
             'label' => false,
+            'attr' => [
+                'class' => 'govuk-radios--inline',
+            ],
         ];
 
         $builder
