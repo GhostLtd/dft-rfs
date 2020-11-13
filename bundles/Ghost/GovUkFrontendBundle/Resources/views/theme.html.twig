@@ -62,9 +62,17 @@
 
 {%- block form_label_inner_content -%}
     {%- if translation_domain is same as(false) -%}
-        {{- label | raw -}}
+        {%- if label_html | default(false) is same as(true) -%}
+            {{- label | raw -}}
+        {%- else -%}
+            {{- label | nl2br -}}
+        {%- endif -%}
     {%- else -%}
-        {{- label|trans(label_translation_parameters, translation_domain) | raw -}}
+        {%- if label_html | default(false) is same as(true) -%}
+            {{- label | trans(label_translation_parameters, translation_domain) | raw -}}
+        {%- else -%}
+            {{- label | trans(label_translation_parameters, translation_domain) | nl2br -}}
+        {%- endif -%}
     {%- endif -%}
 {%- endblock -%}
 

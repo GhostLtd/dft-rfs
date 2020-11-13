@@ -170,11 +170,14 @@ class FormTestCase extends WebTestCase
             switch ($option)
             {
                 case 'text' :
+                    $formOptions['label'] = $value;
                 case 'html' :
                     $formOptions['label'] = $value;
+                    $formOptions['label_html'] = true;
                     break;
                 case 'label' :
                     $formOptions['label'] = $value['text'] ?? $value['html'] ?? null;
+                    $formOptions['label_html'] = !empty($value['html']);
                     if ($value['isPageHeading'] ?? false) $formOptions['label_is_page_heading'] = true;
                     break;
                 case 'classes' :

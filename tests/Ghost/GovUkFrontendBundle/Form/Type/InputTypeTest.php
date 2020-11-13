@@ -17,8 +17,6 @@ class InputTypeTest extends FormTestCase
             'with suffix with attributes',
             'with prefix with classes',
             'with suffix with classes',
-            'with prefix with html as text',
-            'with suffix with html as text',
         ];
 //        function ($fixture) {
 //            return false;

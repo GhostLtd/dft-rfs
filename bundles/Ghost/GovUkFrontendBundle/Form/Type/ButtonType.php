@@ -16,6 +16,7 @@ class ButtonType extends ExtendedButtonType
         $resolver->setDefaults([
             'prevent_double_click' => false,
             'type' => null,
+            'label_html' => false,
         ]);
 
         $resolver->setAllowedValues('type', [null, 'button', 'submit']);
@@ -39,6 +40,8 @@ class ButtonType extends ExtendedButtonType
         if ($options['disabled'] ?? false) {
             $view->vars['attr']['class'] = trim(($view->vars['attr']['class'] ?? "") . ' govuk-button--disabled');
         }
+
+        $view->vars['label_html'] = $options['label_html'];
     }
 
     public function getParent()

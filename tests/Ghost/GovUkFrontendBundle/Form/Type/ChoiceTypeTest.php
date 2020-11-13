@@ -115,6 +115,9 @@ class ChoiceTypeTest extends FormTestCase
                         if ($item['text'] ?? $item['html'] ?? false)
                         {
                             $formOptions['choices'][$item['text'] ?? $item['html']] = $item['value'];
+                            if (!empty($item['html'])) {
+                                $formOptions['choice_options'][$item['html']]['label_html'] = true;
+                            }
                             if ($item['hint']['text'] ?? false) {
                                 $formOptions['choice_options'][$item['text']]['help'] = $item['hint']['text'];
                             }
@@ -136,6 +139,7 @@ class ChoiceTypeTest extends FormTestCase
 
                 case 'fieldset' :
                     $formOptions['label'] = $value['legend']['text'] ?? $value['legend']['html'] ?? false;
+                    $formOptions['label_html'] = !empty($value['legend']['html']);
                     if ($value['legend']['classes'] ?? false)
                     {
                         $formOptions['label_attr'] = $formOptions['label_attr'] ?? [];
