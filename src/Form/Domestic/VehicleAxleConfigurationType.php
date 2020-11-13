@@ -22,6 +22,7 @@ class VehicleAxleConfigurationType extends AbstractType
             if ($event->getData()) {
                 /** @var VehicleTrait $vehicle */
                 $vehicle = $event->getData()->getVehicle();
+
                 $event->getForm()
                     ->add('axleConfiguration', Gds\ChoiceType::class, [
                         'property_path' => 'vehicle.axleConfiguration',

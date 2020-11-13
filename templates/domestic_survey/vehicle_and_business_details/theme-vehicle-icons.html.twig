@@ -1,0 +1,17 @@
+{%- block form_label_inner -%}
+    {%- if 'radio' in block_prefixes -%}
+        {%- set label_attr = label_attr | merge({
+            class: ('govuk-radios__label-with-icon ' ~ label_attr.class|default('')) | trim
+        }) -%}
+    {% endif %}
+
+    <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {% set content = block('form_label_inner_content') %}
+        {%- if 'radio' in block_prefixes -%}
+            <img src="{{ asset("/build/icons/lorry-#{value}.svg") }}">
+            <span>{{- content -}}</span>
+        {% else %}
+            {{- content -}}
+        {% endif %}
+    </{{ element|default('label') }}>
+{%- endblock -%}
