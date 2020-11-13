@@ -20,10 +20,12 @@ class VehicleWeightsAndFuelType extends AbstractType
                 'property_path' => 'vehicle.fuelQuantity',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'value_options' => [
+                    'label' => 'Quantity',
                     'is_decimal' => true,
                     'attr' => ['class' => 'govuk-input--width-5']
                 ],
                 'unit_options' => [
+                    'label' => 'Units',
                     'choices' => Volume::UNIT_CHOICES,
                 ],
             ])

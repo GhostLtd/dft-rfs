@@ -1,0 +1,11 @@
+{% extends "@GhostGovUkFrontend/theme.html.twig" %}
+
+{% block gds_value_units_row %}
+    {% with {
+        row_attr: row_attr|merge({
+            'class': ('value-unit-field ' ~ row_attr.class|default('')) | trim
+        })
+    } %}
+        {{ block('gds_fieldset_row') }}
+    {% endwith %}
+{% endblock %}

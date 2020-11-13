@@ -4,4 +4,4 @@ twig:
     strict_variables: '%kernel.debug%'
     exception_controller: null
     form_themes:
-        - '@GhostGovUkFrontend/theme.html.twig'
+        - 'theme.html.twig'

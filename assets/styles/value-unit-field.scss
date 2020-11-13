@@ -1,0 +1,16 @@
+.value-unit-field {
+  > fieldset {
+    .govuk-fieldset__item {
+      vertical-align: top;
+
+      .govuk-radios__item {
+        display: inline-block;
+        margin-right: 20px;
+      }
+
+      .govuk-label {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
