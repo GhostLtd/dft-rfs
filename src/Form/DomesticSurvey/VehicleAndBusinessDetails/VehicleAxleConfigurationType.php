@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Domestic;
+namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
 use App\Entity\DomesticSurveyResponse;
 use App\Entity\SurveyResponseTrait;

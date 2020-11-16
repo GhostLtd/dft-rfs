@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\DomesticSurvey;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DomesticSurveyController extends AbstractController
+class IndexController extends AbstractController
 {
     /**
      * @Route("/domestic-survey", name="domestic_survey_index")
@@ -37,7 +37,7 @@ class DomesticSurveyController extends AbstractController
             $em->flush();
 
             // start wizard
-            return $this->redirectToRoute("app_domesticinitialdetails_start");
+            return $this->redirectToRoute("app_domesticsurvey_initialdetails_start");
         }
 
         // take first one

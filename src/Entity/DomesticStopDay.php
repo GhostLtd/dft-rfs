@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class DomesticStopDay
 {
+    const TRANSFERRED = 1;
+    const TRANSFERRED_PORT = 2;
+    const TRANSFERRED_RAIL = 4;
+    const TRANSFERRED_AIR = 8;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -36,7 +41,7 @@ class DomesticStopDay
     private $hasStops;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasMoreThanFiveStops;
 

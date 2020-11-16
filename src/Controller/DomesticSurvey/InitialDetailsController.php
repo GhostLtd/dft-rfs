@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\DomesticSurveyResponse;
-use App\Workflow\DomesticSurveyInitialDetailsState;
+use App\Workflow\DomesticSurvey\InitialDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,13 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class DomesticInitialDetailsController extends AbstractSessionStateWorkflowController
+class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_NAME = 'app_domesticinitialdetails_index';
+    public const ROUTE_NAME = 'app_domesticsurvey_initialdetails_index';
 
     /**
-     * @Route("/domestic-survey/initial-details/{state}", name=DomesticInitialDetailsController::ROUTE_NAME)
-     * @Route("/domestic-survey/initial-details", name="app_domesticinitialdetails_start")
+     * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
+     * @Route("/domestic-survey/initial-details", name="app_domesticsurvey_initialdetails_start")
      * @param WorkflowInterface $domesticSurveyInitialDetailsStateMachine
      * @param Request $request
      * @param null $state
@@ -36,7 +36,7 @@ class DomesticInitialDetailsController extends AbstractSessionStateWorkflowContr
     protected function getFormWizard(): FormWizardInterface
     {
         /** @var FormWizardInterface $formWizard */
-        $formWizard = $this->session->get(self::SESSION_KEY, new DomesticSurveyInitialDetailsState());
+        $formWizard = $this->session->get(self::SESSION_KEY, new InitialDetailsState());
         if (is_null($formWizard->getSubject())) {
             $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
             $formWizard->setSubject(array_pop($surveyResponses));

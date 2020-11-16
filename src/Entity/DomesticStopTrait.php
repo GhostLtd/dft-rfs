@@ -75,7 +75,7 @@ trait DomesticStopTrait
         return $this->startLocation;
     }
 
-    public function setStartLocation(string $startLocation): self
+    public function setStartLocation(?string $startLocation): self
     {
         $this->startLocation = $startLocation;
 
@@ -87,7 +87,7 @@ trait DomesticStopTrait
         return $this->destinationLocation;
     }
 
-    public function setDestinationLocation(string $destinationLocation): self
+    public function setDestinationLocation(?string $destinationLocation): self
     {
         $this->destinationLocation = $destinationLocation;
 
@@ -99,10 +99,23 @@ trait DomesticStopTrait
         return $this->transferredFrom;
     }
 
-    public function setTransferredFrom(int $transferredFrom): self
+    public function setTransferredFrom(?int $transferredFrom): self
     {
         $this->transferredFrom = $transferredFrom;
 
+        return $this;
+    }
+
+    public function getGoodsLoaded(): ?bool
+    {
+        return $this->transferredFrom > 0;
+    }
+
+    public function setGoodsLoaded(bool $goodsLoaded): self
+    {
+        if ($this->getGoodsLoaded() != $goodsLoaded) {
+            $this->transferredFrom = DomesticStopDay::TRANSFERRED;
+        }
         return $this;
     }
 
@@ -111,7 +124,7 @@ trait DomesticStopTrait
         return $this->transferredTo;
     }
 
-    public function setTransferredTo(int $transferredTo): self
+    public function setTransferredTo(?int $transferredTo): self
     {
         $this->transferredTo = $transferredTo;
 
@@ -123,7 +136,7 @@ trait DomesticStopTrait
         return $this->distanceTravelledLoaded;
     }
 
-    public function setDistanceTravelledLoaded(Distance $distanceTravelledLoaded): self
+    public function setDistanceTravelledLoaded(?Distance $distanceTravelledLoaded): self
     {
         $this->distanceTravelledLoaded = $distanceTravelledLoaded;
 
@@ -135,7 +148,7 @@ trait DomesticStopTrait
         return $this->distanceTravelledUnloaded;
     }
 
-    public function setDistanceTravelledUnloaded(Distance $distanceTravelledUnloaded): self
+    public function setDistanceTravelledUnloaded(?Distance $distanceTravelledUnloaded): self
     {
         $this->distanceTravelledUnloaded = $distanceTravelledUnloaded;
 
@@ -159,7 +172,7 @@ trait DomesticStopTrait
         return $this->goodsDescription;
     }
 
-    public function setGoodsDescription(string $goodsDescription): self
+    public function setGoodsDescription(?string $goodsDescription): self
     {
         $this->goodsDescription = $goodsDescription;
 

@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Form\Domestic;
+namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
 use App\Entity\DomesticSurveyResponse;
 use App\Entity\Vehicle;
-use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class VehicleTrailerConfigurationType extends AbstractType
+class VehicleBodyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('trailerConfiguration', Gds\ChoiceType::class, [
-                'property_path' => 'vehicle.trailerConfiguration',
-                'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
-                'label' => 'survey.domestic.forms.vehicle-trailer-configuration.trailer-configuration.label',
+            ->add('bodyType', Gds\ChoiceType::class, [
+                'property_path' => 'vehicle.bodyType',
+                'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
+                'label' => 'survey.domestic.forms.vehicle-body.body-type.label',
                 'label_attr' => ['class' => 'govuk-label--m'],
             ])
         ;

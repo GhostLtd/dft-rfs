@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\DomesticSurvey;
-use App\Workflow\DomesticSurveyVehicleAndBusinessDetailsState;
+use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,13 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class DomesticSurveyVehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowController
+class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_NAME = 'app_domesticsurveyvehicleandbusinessdetails_index';
+    public const ROUTE_NAME = 'app_domesticsurvey_vehicleandbusinessdetails_index';
 
     /**
-     * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=DomesticSurveyVehicleAndBusinessDetailsController::ROUTE_NAME)
-     * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurveyvehicleandbusinessdetails_start")
+     * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=self::ROUTE_NAME)
+     * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurvey_vehicleandbusinessdetails_start")
      * @param WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine
      * @param Request $request
      * @param null $state
@@ -35,8 +35,8 @@ class DomesticSurveyVehicleAndBusinessDetailsController extends AbstractSessionS
      */
     protected function getFormWizard(): FormWizardInterface
     {
-        /** @var DomesticSurveyVehicleAndBusinessDetailsState $formWizard */
-        $formWizard = $this->session->get(self::SESSION_KEY, new DomesticSurveyVehicleAndBusinessDetailsState());
+        /** @var VehicleAndBusinessDetailsState $formWizard */
+        $formWizard = $this->session->get(self::SESSION_KEY, new VehicleAndBusinessDetailsState());
         if (is_null($formWizard->getSubject())) {
             $survey = $this->entityManager->getRepository(DomesticSurvey::class)->findLatestSurveyForTesting();
             $formWizard->setSubject($survey->getSurveyResponse());

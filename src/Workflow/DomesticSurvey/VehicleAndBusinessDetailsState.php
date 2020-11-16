@@ -1,17 +1,18 @@
 <?php
 
 
-namespace App\Workflow;
+namespace App\Workflow\DomesticSurvey;
 
 
 use App\Entity\DomesticSurveyResponse;
-use App\Form\Domestic\BusinessDetailsType;
-use App\Form\Domestic\VehicleWeightsAndFuelType;
-use App\Form\Domestic\VehicleAxleConfigurationType;
-use App\Form\Domestic\VehicleBodyType;
-use App\Form\Domestic\VehicleTrailerConfigurationType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\BusinessDetailsType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsAndFuelType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleAxleConfigurationType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleBodyType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleTrailerConfigurationType;
+use App\Workflow\FormWizardInterface;
 
-class DomesticSurveyVehicleAndBusinessDetailsState implements FormWizardInterface
+class VehicleAndBusinessDetailsState implements FormWizardInterface
 {
     const STATE_BUSINESS_DETAILS = 'business-details';
     const STATE_VEHICLE_WEIGHTS_AND_FUEL = 'vehicle-weights-and-fuel';

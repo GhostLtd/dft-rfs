@@ -1,19 +1,20 @@
 <?php
 
 
-namespace App\Workflow;
+namespace App\Workflow\DomesticSurvey;
 
 
 use App\Entity\DomesticSurveyResponse;
-use App\Form\Domestic\AbleToCompleteType;
-use App\Form\Domestic\ContactDetailsType;
-use App\Form\Domestic\HireeDetailsType;
-use App\Form\Domestic\ScrappedDetailsType;
-use App\Form\Domestic\SoldDetailsType;
-use App\Form\Domestic\UnableToCompleteOnHireType;
-use App\Form\Domestic\UnableToCompleteType;
+use App\Form\DomesticSurvey\InitialDetails\AbleToCompleteType;
+use App\Form\DomesticSurvey\InitialDetails\ContactDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\HireeDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\UnableToCompleteOnHireType;
+use App\Form\DomesticSurvey\InitialDetails\UnableToCompleteType;
+use App\Workflow\FormWizardInterface;
 
-class DomesticSurveyInitialDetailsState implements FormWizardInterface
+class InitialDetailsState implements FormWizardInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';

@@ -1,9 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Entity\DomesticSurveyResponse;
-use App\Workflow\DomesticSurveyInitialDetailsState;
-use App\Workflow\DomesticSurveyVehicleAndBusinessDetailsState as StateObject;
+use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [

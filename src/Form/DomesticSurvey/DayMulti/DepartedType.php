@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Form\Domestic;
+namespace App\Form\DomesticSurvey\DayMulti;
 
-use App\Entity\DomesticSurveyResponse;
-use App\Entity\Vehicle;
+use App\Entity\DomesticStopMultiple;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class VehicleBodyType extends AbstractType
+class DepartedType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('bodyType', Gds\ChoiceType::class, [
-                'property_path' => 'vehicle.bodyType',
-                'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
-                'label' => 'survey.domestic.forms.vehicle-body.body-type.label',
+            ->add('startLocation', Gds\InputType::class, [
+                'label_attr' => ['class' => 'govuk-label--m'],
+            ])
+            ->add('goodsLoaded', Gds\ChoiceType::class, [
+                'choices' => ['Yes' => true, 'No' => false],
                 'label_attr' => ['class' => 'govuk-label--m'],
             ])
         ;
@@ -26,7 +26,7 @@ class VehicleBodyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticSurveyResponse::class,
+            'data_class' => DomesticStopMultiple::class,
         ]);
     }
 }

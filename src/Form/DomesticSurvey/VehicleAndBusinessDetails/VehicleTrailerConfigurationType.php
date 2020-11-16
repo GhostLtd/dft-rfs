@@ -1,21 +1,25 @@
 <?php
 
-namespace App\Form\Domestic;
+namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
 use App\Entity\DomesticSurveyResponse;
+use App\Entity\Vehicle;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContactDetailsType extends AbstractType
+class VehicleTrailerConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('contactName', Gds\InputType::class)
-            ->add('contactTelephone', Gds\InputType::class)
-            ->add('contactEmail', Gds\EmailType::class)
+            ->add('trailerConfiguration', Gds\ChoiceType::class, [
+                'property_path' => 'vehicle.trailerConfiguration',
+                'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
+                'label' => 'survey.domestic.forms.vehicle-trailer-configuration.trailer-configuration.label',
+                'label_attr' => ['class' => 'govuk-label--m'],
+            ])
         ;
     }
 
@@ -23,7 +27,6 @@ class ContactDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DomesticSurveyResponse::class,
-            'validation_groups' => 'contact_details',
         ]);
     }
 }
