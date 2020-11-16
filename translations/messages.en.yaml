@@ -85,12 +85,12 @@ vehicle:
     articulated:
       label: Articulated
       2:
-        1: '2 axle tractor unit with 1 axle trailer'
-        2: '2 axle tractor unit with 2 axle trailer'
-        3: '2 axle tractor unit with 3 axle trailer'
+        1: 'Articulated 2 axle + 1 axle trailer'
+        2: 'Articulated 2 axle + 2 axle trailer'
+        3: 'Articulated 2 axle + 3 axle trailer'
       3:
-        2: '3 axle tractor unit with 2 axle trailer'
-        3: '3 axle tractor unit with 3 axle trailer'
+        2: 'Articulated 3 axle + 2 axle trailer'
+        3: 'Articulated 3 axle + 3 axle trailer'
       other: 'Other articulated'
   body:
     flat-drop: 'Flat/drop sided'
