@@ -36,7 +36,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     protected function getFormWizard(): FormWizardInterface
     {
         /** @var FormWizardInterface $formWizard */
-        $formWizard = $this->session->get(self::SESSION_KEY, new InitialDetailsState());
+        $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
         if (is_null($formWizard->getSubject())) {
             $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
             $formWizard->setSubject(array_pop($surveyResponses));
@@ -47,8 +47,8 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
-    protected function getRouteName(): string
+    protected function getRedirectUrl($state): Response
     {
-        return self::ROUTE_NAME;
+        return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
     }
 }

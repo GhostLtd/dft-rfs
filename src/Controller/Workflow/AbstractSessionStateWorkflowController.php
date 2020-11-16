@@ -15,7 +15,10 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowController
 {
-    public const SESSION_KEY = 'wizard.' . self::class;
+    public function getSessionKey()
+    {
+        return "wizard." . get_class($this);
+    }
 
     /**
      * @var SessionInterface
@@ -30,11 +33,11 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
 
     protected function setFormWizard(FormWizardInterface $formWizard)
     {
-        $this->session->set(self::SESSION_KEY, $formWizard);
+        $this->session->set($this->getSessionKey(), $formWizard);
     }
 
     protected function cleanUp()
     {
-        $this->session->remove(self::SESSION_KEY);
+        $this->session->remove($this->getSessionKey());
     }
 }

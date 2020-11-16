@@ -124,6 +124,7 @@ class DomesticSurveyResponse
     private $ableToComplete;
 
     /**
+     * @var DomesticStopDay[]
      * @ORM\OneToMany(targetEntity=DomesticStopDay::class, mappedBy="response", orphanRemoval=true)
      */
     private $stopDays;
@@ -318,5 +319,15 @@ class DomesticSurveyResponse
         }
 
         return $this;
+    }
+
+    public function getStopDayByNumber($dayNumber)
+    {
+        foreach ($this->stopDays as $day) {
+            if ($day->getDay() === $dayNumber) {
+                return $day;
+            }
+        }
+        return null;
     }
 }

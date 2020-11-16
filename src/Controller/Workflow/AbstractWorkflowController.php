@@ -24,7 +24,7 @@ abstract class AbstractWorkflowController extends AbstractController
     abstract protected function setFormWizard(FormWizardInterface $formWizard);
     abstract protected function cleanUp();
 
-    abstract protected function getRouteName(): string;
+    abstract protected function getRedirectUrl($state): Response;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -42,14 +42,14 @@ abstract class AbstractWorkflowController extends AbstractController
     {
         $formWizard = $this->getFormWizard();
 
-        if (is_null($state)) return $this->redirectToRoute($this->getRouteName(), ['state' => $formWizard->getState()]);
+        if (is_null($state)) return $this->getRedirectUrl($formWizard->getState());
 
         if ($state !== $formWizard->getState()) {
             if ($formWizard->isValidJumpInState($state))
             {
                 $formWizard->setState($state);
             } else {
-                return $this->redirectToRoute($this->getRouteName(), ['state' => $formWizard->getState()]);
+                return $this->getRedirectUrl($formWizard->getState());
             }
         }
 
@@ -122,7 +122,7 @@ abstract class AbstractWorkflowController extends AbstractController
             return $this->redirectToRoute($alternativeRoute);
         }
 
-        return $this->redirectToRoute($this->getRouteName(), ['state' => $formWizard->getState()]);
+        return $this->getRedirectUrl($formWizard->getState());
     }
 
     /**

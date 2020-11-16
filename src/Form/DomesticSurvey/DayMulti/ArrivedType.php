@@ -8,19 +8,19 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class DepartedType extends AbstractType
+class ArrivedType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('startLocation', Gds\InputType::class, [
-                'label' => 'survey.domestic.forms.day-multiple.departed.location.label',
+            ->add('destinationLocation', Gds\InputType::class, [
+                'label' => 'survey.domestic.forms.day-multiple.arrived.location.label',
                 'label_attr' => ['class' => 'govuk-label--m'],
-                'help' => 'survey.domestic.forms.day-multiple.departed.location.help',
+                'help' => 'survey.domestic.forms.day-multiple.arrived.location.help',
             ])
-            ->add('goodsLoaded', Gds\ChoiceType::class, [
+            ->add('goodsUnloaded', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => true, 'No' => false],
-                'label' => 'survey.domestic.forms.day-multiple.departed.goods-loaded.label',
+                'label' => 'survey.domestic.forms.day-multiple.arrived.goods-unloaded.label',
                 'label_attr' => ['class' => 'govuk-label--m'],
             ])
         ;

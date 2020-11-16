@@ -32,7 +32,19 @@
     <h2 class="govuk-heading-m">Next steps</h2>
     <p class="govuk-body">
         <a href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">Add/confirm vehicle and business details</a>
-        <a href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">Add/confirm vehicle and business details</a>
+        <br>
+        <a href="{{ url('app_domesticsurvey_daymultiple_start', {day: 1}) }}">Add step to day 1</a>
     </p>
+
+    <h2 class="govuk-heading-m">Your survey week</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {% for dayNumber in 1..7 %}
+            {% set day = domesticSurvey.surveyResponse.stopDayByNumber(dayNumber) %}
+            {{ gdsComponents.summaryListRow(
+                "Day #{dayNumber}",
+                day ? 'day exists' : 'nothing recorded'
+            ) }}
+        {% endfor %}
+    </dl>
 
 {% endblock %}

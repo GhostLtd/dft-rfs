@@ -13,9 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class DomesticStopDay
 {
     const TRANSFERRED = 1;
-    const TRANSFERRED_PORT = 2;
-    const TRANSFERRED_RAIL = 4;
-    const TRANSFERRED_AIR = 8;
+    const TRANSFERRED_NONE = 2;
+    const TRANSFERRED_PORT = 4;
+    const TRANSFERRED_RAIL = 8;
+    const TRANSFERRED_AIR = 16;
+
+    const TRANSFER_TRANSLATION_PREFIX = 'survey.domestic.transferred-port.';
+    const TRANSFER_CHOICES = [
+        self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_PORT => self::TRANSFERRED_PORT,
+        self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_RAIL => self::TRANSFERRED_RAIL,
+        self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_AIR => self::TRANSFERRED_AIR,
+        self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_NONE => self::TRANSFERRED_NONE,
+    ];
 
     /**
      * @ORM\Id

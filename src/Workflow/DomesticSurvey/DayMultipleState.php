@@ -4,26 +4,36 @@
 namespace App\Workflow\DomesticSurvey;
 
 
+use App\Entity\DomesticStopDay;
 use App\Entity\DomesticStopMultiple;
+use App\Form\DomesticSurvey\DayMulti\ArrivedPortsType;
+use App\Form\DomesticSurvey\DayMulti\ArrivedType;
+use App\Form\DomesticSurvey\DayMulti\DepartedPortsType;
 use App\Form\DomesticSurvey\DayMulti\DepartedType;
 use App\Workflow\FormWizardInterface;
 
 class DayMultipleState implements FormWizardInterface
 {
     const STATE_DEPARTED = 'departed';
-    const STATE_DEPARTED_MODE_CHANGE = 'departed-mode-change';
+    const STATE_DEPARTED_PORTS = 'departed-ports';
     const STATE_ARRIVED = 'arrived';
-    const STATE_ARRIVED_MODE_CHANGE = 'arrived-mode-change';
+    const STATE_ARRIVED_PORTS = 'arrived-ports';
     const STATE_NEXT = 'next';
     const STATE_ = '';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
         self::STATE_DEPARTED => DepartedType::class,
-        self::STATE_DEPARTED_MODE_CHANGE => '',
+        self::STATE_DEPARTED_PORTS => DepartedPortsType::class,
+        self::STATE_ARRIVED => ArrivedType::class,
+        self::STATE_ARRIVED_PORTS => ArrivedPortsType::class,
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_DEPARTED => 'domestic_survey/day_multiple/form-departed.html.twig',
+        self::STATE_DEPARTED_PORTS => 'domestic_survey/day_multiple/form-departed-ports.html.twig',
+        self::STATE_ARRIVED => 'domestic_survey/day_multiple/form-arrived.html.twig',
+        self::STATE_ARRIVED_PORTS => 'domestic_survey/day_multiple/form-arrived-ports.html.twig',
     ];
 
     private $state = self::STATE_DEPARTED;
@@ -69,6 +79,20 @@ class DayMultipleState implements FormWizardInterface
     protected function getValidJumpInStates()
     {
         $states = [self::STATE_DEPARTED];
+
+        if ($this->subject->getStartLocation()) {
+            $states[] = $this->subject->getGoodsLoaded() ? self::STATE_DEPARTED_PORTS : self::STATE_ARRIVED;
+        }
+        if (in_array(self::STATE_DEPARTED_PORTS, $states) && $this->subject->getTransferredFrom() !== DomesticStopDay::TRANSFERRED) {
+            $states[] = self::STATE_ARRIVED;
+        }
+
+        if ($this->subject->getDestinationLocation()) {
+            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_ARRIVED_PORTS : self::STATE_NEXT;
+        }
+        if (in_array(self::STATE_ARRIVED_PORTS, $states) && $this->subject->getTransferredTo() !== DomesticStopDay::TRANSFERRED) {
+            $states[] = self::STATE_NEXT;
+        }
 
         return $states;
     }

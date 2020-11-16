@@ -1,13 +1,12 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Entity\DomesticSurveyResponse;
 use App\Workflow\DomesticSurvey\DayMultipleState as StateObject;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [
-            'domestic_survey_day_multi' => [
+            'domestic_survey_day_multiple' => [
                 'type' => 'state_machine',
                 'initial_marking' => StateObject::STATE_DEPARTED,
                 'marking_store' => [
@@ -17,9 +16,9 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_DEPARTED,
-                    StateObject::STATE_DEPARTED_MODE_CHANGE,
+                    StateObject::STATE_DEPARTED_PORTS,
                     StateObject::STATE_ARRIVED,
-                    StateObject::STATE_ARRIVED_MODE_CHANGE,
+                    StateObject::STATE_ARRIVED_PORTS,
                     StateObject::STATE_NEXT,
 //                    StateObject::STATE_,
 
@@ -29,10 +28,10 @@ return static function (ContainerConfigurator $container) {
                     'departed-to-departed-mode-change' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsLoaded', 'value' => true]],
                         'from' => StateObject::STATE_DEPARTED,
-                        'to' =>  StateObject::STATE_DEPARTED_MODE_CHANGE,
+                        'to' =>  StateObject::STATE_DEPARTED_PORTS,
                     ],
                     'departed-mode-change-to-arrived' => [
-                        'from' => StateObject::STATE_DEPARTED_MODE_CHANGE,
+                        'from' => StateObject::STATE_DEPARTED_PORTS,
                         'to' =>  StateObject::STATE_ARRIVED,
                     ],
                     'departed-to-arrived' => [
@@ -43,10 +42,10 @@ return static function (ContainerConfigurator $container) {
                     'arrived-to-arrived-mode-change' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => true]],
                         'from' => StateObject::STATE_ARRIVED,
-                        'to' =>  StateObject::STATE_ARRIVED_MODE_CHANGE,
+                        'to' =>  StateObject::STATE_ARRIVED_PORTS,
                     ],
                     'arrived-mode-change-to-next' => [
-                        'from' => StateObject::STATE_ARRIVED_MODE_CHANGE,
+                        'from' => StateObject::STATE_ARRIVED_PORTS,
                         'to' =>  StateObject::STATE_NEXT,
                     ],
                     'arrived-to-next' => [

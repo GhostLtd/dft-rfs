@@ -36,7 +36,7 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     protected function getFormWizard(): FormWizardInterface
     {
         /** @var VehicleAndBusinessDetailsState $formWizard */
-        $formWizard = $this->session->get(self::SESSION_KEY, new VehicleAndBusinessDetailsState());
+        $formWizard = $this->session->get($this->getSessionKey(), new VehicleAndBusinessDetailsState());
         if (is_null($formWizard->getSubject())) {
             $survey = $this->entityManager->getRepository(DomesticSurvey::class)->findLatestSurveyForTesting();
             $formWizard->setSubject($survey->getSurveyResponse());
@@ -47,8 +47,8 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
         return $formWizard;
     }
 
-    protected function getRouteName(): string
+    protected function getRedirectUrl($state): Response
     {
-        return self::ROUTE_NAME;
+        return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
     }
 }

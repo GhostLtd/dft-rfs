@@ -108,13 +108,14 @@ trait DomesticStopTrait
 
     public function getGoodsLoaded(): ?bool
     {
+        if (!is_numeric($this->transferredFrom)) return null;
         return $this->transferredFrom > 0;
     }
 
-    public function setGoodsLoaded(bool $goodsLoaded): self
+    public function setGoodsLoaded(?bool $goodsLoaded): self
     {
         if ($this->getGoodsLoaded() != $goodsLoaded) {
-            $this->transferredFrom = DomesticStopDay::TRANSFERRED;
+            $this->transferredFrom = $goodsLoaded ? DomesticStopDay::TRANSFERRED : null;
         }
         return $this;
     }
@@ -128,6 +129,20 @@ trait DomesticStopTrait
     {
         $this->transferredTo = $transferredTo;
 
+        return $this;
+    }
+
+    public function getGoodsUnloaded(): ?bool
+    {
+        if (!is_numeric($this->transferredTo)) return null;
+        return $this->transferredTo > 0;
+    }
+
+    public function setGoodsUnloaded(?bool $goodsUnloaded): self
+    {
+        if ($this->getGoodsUnloaded() != $goodsUnloaded) {
+            $this->transferredTo = $goodsUnloaded ? DomesticStopDay::TRANSFERRED : null;
+        }
         return $this;
     }
 

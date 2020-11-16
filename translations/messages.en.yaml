@@ -8,6 +8,11 @@ unit:
 
 survey:
   domestic:
+    transferred-port:
+      2: None of the above
+      4: Shipping port or docks
+      8: Rail depot / terminal
+      16: Airport
     non-complete:
       scrapped-or-stolen: 'Scrapped or stolen'
       sold: 'Sold'
@@ -53,6 +58,36 @@ survey:
         body-type:
           label: Please indicate the main type of body for the vehicle
 
+# Day, Multiple Wizard
+      day-multiple:
+        departed:
+          heading: How did you start this stage of the journey?
+          help:
+          location:
+            label: Please tell us where you started this stage
+            help: eg. SW1P 4DR; or Westminster, London
+          goods-loaded:
+            label: Were goods loaded at this location?
+        departed-ports:
+          heading: About this location
+          help:
+          transferred-from:
+            label: Please tells us which option best describes the departure location
+            help: This question is to establish if the goods being loaded are being transferred from one mode of transport to another
+        arrived:
+          heading: How did this stage of the journey end?
+          help:
+          location:
+            label: Please tell us where you finished this stage
+            help: eg. SW1P 4DR; or Westminster, London
+          goods-unloaded:
+            label: Were goods un-loaded at this location?
+        arrived-ports:
+          heading: About this location
+          help:
+          transferred-to:
+            label: Please tells us which option best describes the arrival location
+            help: This question is to establish if the goods being unloaded are being transferred from one mode of transport to another
 
 
 

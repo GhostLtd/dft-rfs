@@ -2,26 +2,23 @@
 
 namespace App\Form\DomesticSurvey\DayMulti;
 
+use App\Entity\DomesticStopDay;
 use App\Entity\DomesticStopMultiple;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class DepartedType extends AbstractType
+class DepartedPortsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('startLocation', Gds\InputType::class, [
-                'label' => 'survey.domestic.forms.day-multiple.departed.location.label',
+            ->add('transferredFrom', Gds\ChoiceType::class, [
+                'choices' => DomesticStopDay::TRANSFER_CHOICES,
+                'label' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.label',
                 'label_attr' => ['class' => 'govuk-label--m'],
-                'help' => 'survey.domestic.forms.day-multiple.departed.location.help',
-            ])
-            ->add('goodsLoaded', Gds\ChoiceType::class, [
-                'choices' => ['Yes' => true, 'No' => false],
-                'label' => 'survey.domestic.forms.day-multiple.departed.goods-loaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'help' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.help',
             ])
         ;
     }
