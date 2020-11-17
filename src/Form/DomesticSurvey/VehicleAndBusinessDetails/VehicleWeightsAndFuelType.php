@@ -25,7 +25,7 @@ class VehicleWeightsAndFuelType extends AbstractType
                     'attr' => ['class' => 'govuk-input--width-5']
                 ],
                 'unit_options' => [
-                    'label' => 'Units',
+                    'label' => 'Unit',
                     'choices' => Volume::UNIT_CHOICES,
                 ],
             ])

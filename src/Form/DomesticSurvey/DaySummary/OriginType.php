@@ -2,8 +2,8 @@
 
 namespace App\Form\DomesticSurvey\DaySummary;
 
-use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

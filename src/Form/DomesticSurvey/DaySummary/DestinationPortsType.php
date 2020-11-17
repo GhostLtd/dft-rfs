@@ -3,7 +3,7 @@
 namespace App\Form\DomesticSurvey\DaySummary;
 
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\DaySummary;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,7 +17,8 @@ class DestinationPortsType extends AbstractType
             ->add('goodsTransferredTo', Gds\ChoiceType::class, [
                 'choices' => Day::TRANSFER_CHOICES,
                 'label' => 'survey.domestic.forms.day-summary.goods-transferred-to.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_is_page_heading' => true,
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => 'survey.domestic.forms.day-summary.goods-transferred-to.help',
             ])
         ;
@@ -26,7 +27,7 @@ class DestinationPortsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DayStop::class,
+            'data_class' => DaySummary::class,
         ]);
     }
 }

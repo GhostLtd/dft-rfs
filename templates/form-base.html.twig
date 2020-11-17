@@ -10,7 +10,7 @@
 
     {% set help = ("#{translation_prefix}.help" | trans((help_translation_parameters | default({})), help_translation_domain | default(null))) %}
     {% if help != "#{translation_prefix}.help" and not help is empty %}
-        <p class="govuk-body">{{ help }}</p>
+        <p class="govuk-body">{{ help | nl2br }}</p>
     {% endif %}
 
     {{ form(form) }}

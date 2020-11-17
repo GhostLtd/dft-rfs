@@ -73,15 +73,62 @@ survey:
 
 # Day, summary
       day-summary:
-        origin.heading: How did you start this journey?
+        origin.heading: Where did the journey start?
         origin-location:
-          label: Please tell us where you started this journey
-          help: eg. SW1P 4DR; or Westminster, London
+          label: Postcode or place-name and county
+          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
         goods-loaded:
-          label: Were goods loaded at the start of your journey?
+          label: Were goods loaded?
+
+        goods-transferred-from:
+          label: Tell us more about the start location
+          help: Indicate which option best describes the origin. This question is to establish if the goods being loaded are being transferred from one mode of transport or another.
+
+        destination.heading: Where did the journey end?
+        destination-location:
+          label: Postcode or place-name and county
+          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        goods-unloaded:
+          label: Were goods un-loaded?
+
+        goods-transferred-to:
+          label: Tell us more about the end location
+          help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport or another.
+
+        distance-travelled:
+          heading: How far did you travel?
+          help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
+        distance-travelled-unloaded:
+          label: Distance travelled unloaded
+          help: Enter the distance you travelled while your vehicle was empty
+        distance-travelled-loaded:
+          label: Distance travelled loaded
+          help: Enter the distance you travelled with a partially or fully loaded vehicle
+
+        goods:
+          heading: Tells about the goods
+        goods-description:
+          label: Basic description
+          help: Please give a basic, description of the goods carried. For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+            Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight; other mixed consignments should be recorded as ‘groupage’.
+            <ul>
+              <li>If the consignment was empty pallets, wire cages, roll cages or other packaging, please write ‘Packaging’
+              <li>If the consignment was an empty freight container please write ‘Empty Container’
+            </ul>
+        weight-of-goods-loaded:
+          label: Total weight of goods loaded on this day
+        weight-of-goods-unloaded:
+          label: Total weight of goods unloaded on this day
+#            <ul>
+#              <li>The weight of goods should include any packaging or containers
+#              <li>Journeys with a consignment of empty ‘Packaging’ or an ‘Empty Container’ are considered as loaded and therefore weights must be recorded
+#            <ul>
 
 
-# Day, Multiple Wizard
+
+
+
+      # Day, Multiple Wizard
       day-multiple:
         departed:
           heading: How did you start this stage of the journey?

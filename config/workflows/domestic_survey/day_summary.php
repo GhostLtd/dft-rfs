@@ -19,7 +19,8 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_ORIGIN_PORTS,
                     StateObject::STATE_DESTINATION,
                     StateObject::STATE_DESTINATION_PORTS,
-                    StateObject::STATE_NEXT,
+                    StateObject::STATE_DISTANCE_TRAVELLED,
+                    StateObject::STATE_GOODS,
 //                    StateObject::STATE_,
 
                     StateObject::STATE_END,
@@ -46,14 +47,17 @@ return static function (ContainerConfigurator $container) {
                     ],
                     'destination-port-to-next' => [
                         'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_NEXT,
+                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
-                    'destination-to-next' => [
+                    'destination-to-distance-travelled' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => false]],
                         'from' => StateObject::STATE_DESTINATION,
-                        'to' =>  StateObject::STATE_NEXT,
+                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
-
+                    'distance-travelled-to-goods' => [
+                        'from' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'to' =>  StateObject::STATE_GOODS,
+                    ],
 
 
                     'finish' => [
@@ -61,7 +65,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => 'domestic_survey_index',
                         ],
-                        'from' => StateObject::STATE_NEXT,
+                        'from' => StateObject::STATE_GOODS,
                         'to' =>  StateObject::STATE_END,
                     ],
                 ]
