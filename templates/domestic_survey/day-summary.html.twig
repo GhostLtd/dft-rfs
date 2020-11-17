@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Domestic Pre-Sruvey Wizard{% endblock %}
+
+{% block content %}
+    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+    {% import '@GhostGovUkFrontend/components/macros.html.twig' as macros %}
+
+    <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.day }})</h1>
+
+    {% dump(day) %}
+    {% if day.hasMoreThanFiveStops %}
+        <h2 class="govuk-heading-m">Summary day</h2>
+        {% if day.stopSummary | default(false) %}
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {{ gdsComponents.summaryListRow('Start location', day.stopSummary.startLocation | default('-')) }}
+                {{ gdsComponents.summaryListRow('Destination location', day.stopSummary.destinationLocation | default('-')) }}
+            </dl>
+        {% else %}
+            <p class="govuk-body">
+                You haven't entered any information for this journey yet.
+            </p>
+            <p>
+                {{ macros.buttonLink(url('domestic_survey_index'), 'Enter information for this journey') }}
+            </p>
+        {% endif %}
+    {% else %}
+        <h2 class="govuk-heading-m">Detailed day</h2>
+    {% endif %}
+
+    {{ macros.buttonLink(url('domestic_survey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}
+{% endblock %}

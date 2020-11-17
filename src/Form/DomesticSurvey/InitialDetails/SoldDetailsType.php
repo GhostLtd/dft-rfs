@@ -2,7 +2,7 @@
 
 namespace App\Form\DomesticSurvey\InitialDetails;
 
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use App\Form\AddressType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +26,7 @@ class SoldDetailsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticSurveyResponse::class,
+            'data_class' => SurveyResponse::class,
             'validation_groups' => 'sold_details'
         ]);
     }

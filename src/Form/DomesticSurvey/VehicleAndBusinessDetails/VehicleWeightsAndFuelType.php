@@ -2,7 +2,7 @@
 
 namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Volume;
 use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
@@ -51,7 +51,7 @@ class VehicleWeightsAndFuelType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticSurveyResponse::class,
+            'data_class' => SurveyResponse::class,
         ]);
     }
 }

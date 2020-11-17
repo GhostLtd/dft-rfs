@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Domestic;
 
-use App\Entity\DomesticStopSummary;
+use App\Entity\Domestic\DayStop;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DomesticStopSummary|null find($id, $lockMode = null, $lockVersion = null)
- * @method DomesticStopSummary|null findOneBy(array $criteria, array $orderBy = null)
- * @method DomesticStopSummary[]    findAll()
- * @method DomesticStopSummary[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DayStop|null find($id, $lockMode = null, $lockVersion = null)
+ * @method DayStop|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DayStop[]    findAll()
+ * @method DayStop[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DomesticStopSummaryRepository extends ServiceEntityRepository
+class StopMultipleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DomesticStopSummary::class);
+        parent::__construct($registry, DayStop::class);
     }
 
     // /**
-    //  * @return DomesticStopSummary[] Returns an array of DomesticStopSummary objects
+    //  * @return DayStop[] Returns an array of DayStop objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class DomesticStopSummaryRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DomesticStopSummary
+    public function findOneBySomeField($value): ?DayStop
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

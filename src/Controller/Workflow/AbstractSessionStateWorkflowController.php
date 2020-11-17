@@ -2,7 +2,7 @@
 
 namespace App\Controller\Workflow;
 
-use App\Entity\DomesticSurvey;
+use App\Entity\Domestic\Survey;
 use App\Workflow\DomesticSurveyVehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
 use Doctrine\ORM\EntityManagerInterface;

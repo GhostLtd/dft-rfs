@@ -4,7 +4,7 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\BusinessDetailsType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsAndFuelType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleAxleConfigurationType;
@@ -39,7 +39,7 @@ class VehicleAndBusinessDetailsState implements FormWizardInterface
 
     private $state = self::STATE_BUSINESS_DETAILS;
 
-    /** @var DomesticSurveyResponse */
+    /** @var SurveyResponse */
     private $subject;
 
     /**
@@ -67,7 +67,7 @@ class VehicleAndBusinessDetailsState implements FormWizardInterface
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === DomesticSurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DomesticSurveyResponse::class);
+        if (!get_class($subject) === SurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
         $this->subject = $subject;
         return $this;
     }

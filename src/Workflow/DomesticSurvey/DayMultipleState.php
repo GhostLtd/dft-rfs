@@ -4,8 +4,8 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\DomesticStopDay;
-use App\Entity\DomesticStopMultiple;
+use App\Entity\Domestic\Day;
+use App\Entity\Domestic\DayStop;
 use App\Form\DomesticSurvey\DayMulti\ArrivedPortsType;
 use App\Form\DomesticSurvey\DayMulti\ArrivedType;
 use App\Form\DomesticSurvey\DayMulti\DepartedPortsType;
@@ -38,7 +38,7 @@ class DayMultipleState implements FormWizardInterface
 
     private $state = self::STATE_DEPARTED;
 
-    /** @var DomesticStopMultiple */
+    /** @var DayStop */
     private $subject;
 
     /**
@@ -66,7 +66,7 @@ class DayMultipleState implements FormWizardInterface
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === DomesticStopMultiple::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DomesticStopMultiple::class);
+        if (!get_class($subject) === DayStop::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DayStop::class);
         $this->subject = $subject;
         return $this;
     }
@@ -80,17 +80,17 @@ class DayMultipleState implements FormWizardInterface
     {
         $states = [self::STATE_DEPARTED];
 
-        if ($this->subject->getStartLocation()) {
+        if ($this->subject->getOriginLocation()) {
             $states[] = $this->subject->getGoodsLoaded() ? self::STATE_DEPARTED_PORTS : self::STATE_ARRIVED;
         }
-        if (in_array(self::STATE_DEPARTED_PORTS, $states) && $this->subject->getTransferredFrom() !== DomesticStopDay::TRANSFERRED) {
+        if (in_array(self::STATE_DEPARTED_PORTS, $states) && $this->subject->getGoodsTransferredFrom() !== Day::TRANSFERRED) {
             $states[] = self::STATE_ARRIVED;
         }
 
         if ($this->subject->getDestinationLocation()) {
             $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_ARRIVED_PORTS : self::STATE_NEXT;
         }
-        if (in_array(self::STATE_ARRIVED_PORTS, $states) && $this->subject->getTransferredTo() !== DomesticStopDay::TRANSFERRED) {
+        if (in_array(self::STATE_ARRIVED_PORTS, $states) && $this->subject->getGoodsTransferredTo() !== Day::TRANSFERRED) {
             $states[] = self::STATE_NEXT;
         }
 

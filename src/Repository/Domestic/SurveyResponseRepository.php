@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Domestic;
 
-use App\Entity\DomesticVehicle;
+use App\Entity\Domestic\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DomesticVehicle|null find($id, $lockMode = null, $lockVersion = null)
- * @method DomesticVehicle|null findOneBy(array $criteria, array $orderBy = null)
- * @method DomesticVehicle[]    findAll()
- * @method DomesticVehicle[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SurveyResponse|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SurveyResponse|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SurveyResponse[]    findAll()
+ * @method SurveyResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DomesticVehicleRepository extends ServiceEntityRepository
+class SurveyResponseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DomesticVehicle::class);
+        parent::__construct($registry, SurveyResponse::class);
     }
 
     // /**
-    //  * @return DomesticVehicle[] Returns an array of DomesticVehicle objects
+    //  * @return DomesticSurveyResponse[] Returns an array of DomesticSurveyResponse objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class DomesticVehicleRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DomesticVehicle
+    public function findOneBySomeField($value): ?DomesticSurveyResponse
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

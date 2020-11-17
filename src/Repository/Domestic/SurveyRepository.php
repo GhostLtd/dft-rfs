@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Domestic;
 
-use App\Entity\DomesticSurvey;
+use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DomesticSurvey|null find($id, $lockMode = null, $lockVersion = null)
- * @method DomesticSurvey|null findOneBy(array $criteria, array $orderBy = null)
- * @method DomesticSurvey[]    findAll()
- * @method DomesticSurvey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Survey|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Survey|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Survey[]    findAll()
+ * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DomesticSurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DomesticSurvey::class);
+        parent::__construct($registry, Survey::class);
     }
 
     /**
-     * @return int|mixed|string
+     * @return Survey
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
@@ -30,7 +30,7 @@ class DomesticSurveyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('d')
             ->select('d, sr, v')
-            ->leftJoin('d.surveyResponse', 'sr')
+            ->leftJoin('d.response', 'sr')
             ->leftJoin('sr.vehicle', 'v')
             ->orderBy('d.id', 'DESC')
             ->setMaxResults(1)
@@ -39,7 +39,7 @@ class DomesticSurveyRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return DomesticSurvey[] Returns an array of DomesticSurvey objects
+    //  * @return Survey[] Returns an array of Survey objects
     //  */
     /*
     public function findByExampleField($value)
@@ -56,7 +56,7 @@ class DomesticSurveyRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DomesticSurvey
+    public function findOneBySomeField($value): ?Survey
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

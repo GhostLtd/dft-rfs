@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticSurveyRepository;
+use App\Entity\SurveyTrait;
+use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticSurveyRepository::class)
+ * @ORM\Entity(repositoryClass=SurveyRepository::class)
  */
-class DomesticSurvey
+class Survey
 {
     use SurveyTrait;
 
@@ -23,9 +24,9 @@ class DomesticSurvey
     private $isNorthernIreland;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticSurveyResponse::class, mappedBy="survey", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
-    private $surveyResponse;
+    private $response;
 
     /**
      * @ORM\Column(type="string", length=10)
@@ -49,18 +50,18 @@ class DomesticSurvey
         return $this;
     }
 
-    public function getSurveyResponse(): ?DomesticSurveyResponse
+    public function getResponse(): ?SurveyResponse
     {
-        return $this->surveyResponse;
+        return $this->response;
     }
 
-    public function setSurveyResponse(DomesticSurveyResponse $surveyResponse): self
+    public function setResponse(SurveyResponse $response): self
     {
-        $this->surveyResponse = $surveyResponse;
+        $this->response = $response;
 
         // set the owning side of the relation if necessary
-        if ($surveyResponse->getSurvey() !== $this) {
-            $surveyResponse->setSurvey($this);
+        if ($response->getSurvey() !== $this) {
+            $response->setSurvey($this);
         }
 
         return $this;

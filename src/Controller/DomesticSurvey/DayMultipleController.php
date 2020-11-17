@@ -3,8 +3,8 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\DomesticStopMultiple;
-use App\Entity\DomesticSurvey;
+use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\Survey;
 use App\Workflow\DomesticSurvey\DayMultipleState;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
@@ -22,8 +22,8 @@ class DayMultipleController extends AbstractSessionStateWorkflowController
     protected $stage;
 
     /**
-     * @Route("/domestic-survey/day/{day}/stqge/{stage}/{state}", name=self::ROUTE_NAME)
-     * @Route("/domestic-survey/day/{day}", name="app_domesticsurvey_daymultiple_start")
+     * @Route("/domestic-survey/day-{day}/stqge/{stage}/{state}", name=self::ROUTE_NAME)
+     * @Route("/domestic-survey/day-{day}", name="app_domesticsurvey_daymultiple_start")
      * @param WorkflowInterface $domesticSurveyDayMultipleStateMachine
      * @param Request $request
      * @param $day
@@ -49,11 +49,11 @@ class DayMultipleController extends AbstractSessionStateWorkflowController
         if (is_null($formWizard->getSubject())) {
             if ($this->stage === 'add') {
                 // create a new one
-                $formWizard->setSubject(new DomesticStopMultiple());
+                $formWizard->setSubject(new DayStop());
                 $this->entityManager->persist($formWizard->getSubject());
                 // add the day
             } else {
-//                $survey = $this->entityManager->getRepository(DomesticSurvey::class)->findLatestSurveyForTesting();
+//                $survey = $this->entityManager->getRepository(Survey::class)->findLatestSurveyForTesting();
                 // load the stop and merge it if we already have one for this day/stage
                 // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
             }

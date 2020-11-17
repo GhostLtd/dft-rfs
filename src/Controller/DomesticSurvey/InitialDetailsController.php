@@ -3,7 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
@@ -38,7 +38,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         /** @var FormWizardInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
         if (is_null($formWizard->getSubject())) {
-            $surveyResponses = $this->getDoctrine()->getRepository(DomesticSurveyResponse::class)->findAll();
+            $surveyResponses = $this->getDoctrine()->getRepository(SurveyResponse::class)->findAll();
             $formWizard->setSubject(array_pop($surveyResponses));
         }
 

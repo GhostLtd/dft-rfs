@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticStopMultipleRepository;
+use App\Repository\Domestic\StopMultipleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticStopMultipleRepository::class)
+ * @ORM\Entity(repositoryClass=StopMultipleRepository::class)
  */
-class DomesticStopMultiple
+class DayStop
 {
-    use DomesticStopTrait;
+    use StopTrait;
 
     /**
      * @ORM\Column(type="integer")
@@ -28,10 +28,10 @@ class DomesticStopMultiple
     private $wasLimitedBySpace;
 
     /**
-     * @ORM\ManyToOne(targetEntity=DomesticStopDay::class, inversedBy="stops")
+     * @ORM\ManyToOne(targetEntity=Day::class, inversedBy="stops")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $stopDay;
+    private $day;
 
     public function getWeightOfGoodsCarried(): ?int
     {
@@ -69,14 +69,14 @@ class DomesticStopMultiple
         return $this;
     }
 
-    public function getStopDay(): ?DomesticStopDay
+    public function getDay(): ?Day
     {
-        return $this->stopDay;
+        return $this->day;
     }
 
-    public function setStopDay(?DomesticStopDay $stopDay): self
+    public function setDay(?Day $day): self
     {
-        $this->stopDay = $stopDay;
+        $this->day = $day;
 
         return $this;
     }

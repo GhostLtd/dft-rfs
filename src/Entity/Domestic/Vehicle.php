@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticVehicleRepository;
+use App\Entity\VehicleTrait;
+use App\Entity\Volume;
+use App\Repository\Domestic\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticVehicleRepository::class)
+ * @ORM\Entity(repositoryClass=VehicleRepository::class)
  */
-class DomesticVehicle
+class Vehicle
 {
     use VehicleTrait;
 

@@ -2,7 +2,7 @@
 
 namespace App\Form\DomesticSurvey\InitialDetails;
 
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use App\Form\WorkflowChoiceFormInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -15,7 +15,7 @@ class UnableToCompleteType extends AbstractType implements WorkflowChoiceFormInt
     {
         $builder
             ->add('unableToCompleteReason', Gds\ChoiceType::class, [
-                'choices' => DomesticSurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES,
+                'choices' => SurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES,
                 'label' => 'Why are you not able to complete the survey?',
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
@@ -27,7 +27,7 @@ class UnableToCompleteType extends AbstractType implements WorkflowChoiceFormInt
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticSurveyResponse::class,
+            'data_class' => SurveyResponse::class,
         ]);
     }
 }

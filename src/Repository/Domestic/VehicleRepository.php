@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Domestic;
 
-use App\Entity\DomesticStopDay;
+use App\Entity\Domestic\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DomesticStopDay|null find($id, $lockMode = null, $lockVersion = null)
- * @method DomesticStopDay|null findOneBy(array $criteria, array $orderBy = null)
- * @method DomesticStopDay[]    findAll()
- * @method DomesticStopDay[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Vehicle|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Vehicle|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Vehicle[]    findAll()
+ * @method Vehicle[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DomesticStopDayRepository extends ServiceEntityRepository
+class VehicleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DomesticStopDay::class);
+        parent::__construct($registry, Vehicle::class);
     }
 
     // /**
-    //  * @return DomesticStopDay[] Returns an array of DomesticStopDay objects
+    //  * @return DomesticVehicle[] Returns an array of DomesticVehicle objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class DomesticStopDayRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DomesticStopDay
+    public function findOneBySomeField($value): ?DomesticVehicle
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

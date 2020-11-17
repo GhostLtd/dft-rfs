@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticStopSummaryRepository;
+use App\Repository\Domestic\StopSummaryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticStopSummaryRepository::class)
+ * @ORM\Entity(repositoryClass=StopSummaryRepository::class)
  */
-class DomesticStopSummary
+class DaySummary
 {
-    use DomesticStopTrait;
+    use StopTrait;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -43,10 +43,10 @@ class DomesticStopSummary
     private $numberOfStopsLoadingAndUnloading;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticStopDay::class, inversedBy="stopSummary", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Day::class, inversedBy="summary", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $stopDay;
+    private $day;
 
     public function getFurthestStop(): ?string
     {
@@ -120,14 +120,14 @@ class DomesticStopSummary
         return $this;
     }
 
-    public function getStopDay(): ?DomesticStopDay
+    public function getDay(): ?Day
     {
-        return $this->stopDay;
+        return $this->day;
     }
 
-    public function setStopDay(DomesticStopDay $stopDay): self
+    public function setDay(Day $day): self
     {
-        $this->stopDay = $stopDay;
+        $this->day = $day;
 
         return $this;
     }

@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Domestic;
 
-use App\Entity\DomesticStopMultiple;
+use App\Entity\Domestic\DaySummary;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method DomesticStopMultiple|null find($id, $lockMode = null, $lockVersion = null)
- * @method DomesticStopMultiple|null findOneBy(array $criteria, array $orderBy = null)
- * @method DomesticStopMultiple[]    findAll()
- * @method DomesticStopMultiple[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DaySummary|null find($id, $lockMode = null, $lockVersion = null)
+ * @method DaySummary|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DaySummary[]    findAll()
+ * @method DaySummary[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DomesticStopMultipleRepository extends ServiceEntityRepository
+class StopSummaryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DomesticStopMultiple::class);
+        parent::__construct($registry, DaySummary::class);
     }
 
     // /**
-    //  * @return DomesticStopMultiple[] Returns an array of DomesticStopMultiple objects
+    //  * @return DaySummary[] Returns an array of DaySummary objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class DomesticStopMultipleRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?DomesticStopMultiple
+    public function findOneBySomeField($value): ?DaySummary
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.exampleField = :val')

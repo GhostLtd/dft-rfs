@@ -2,7 +2,7 @@
 
 namespace App\Form\DomesticSurvey\InitialDetails;
 
-use App\Entity\DomesticSurveyResponse;
+use App\Entity\Domestic\SurveyResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +25,7 @@ class ScrappedDetailsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticSurveyResponse::class,
+            'data_class' => SurveyResponse::class,
         ]);
     }
 }

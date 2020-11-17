@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticStopDayRepository;
+use App\Repository\Domestic\StopDayRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticStopDayRepository::class)
+ * @ORM\Entity(repositoryClass=StopDayRepository::class)
  */
-class DomesticStopDay
+class Day
 {
     const TRANSFERRED = 1;
     const TRANSFERRED_NONE = 2;
@@ -34,7 +34,7 @@ class DomesticStopDay
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=DomesticSurveyResponse::class, inversedBy="stopDays")
+     * @ORM\ManyToOne(targetEntity=SurveyResponse::class, inversedBy="stopDays")
      * @ORM\JoinColumn(nullable=false)
      */
     private $response;
@@ -45,24 +45,19 @@ class DomesticStopDay
     private $day;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $hasStops;
-
-    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasMoreThanFiveStops;
 
     /**
-     * @ORM\OneToMany(targetEntity=DomesticStopMultiple::class, mappedBy="stopDay", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=DayStop::class, mappedBy="day", orphanRemoval=true)
      */
     private $stops;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticStopSummary::class, mappedBy="stopDay", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=DaySummary::class, mappedBy="day", cascade={"persist", "remove"})
      */
-    private $stopSummary;
+    private $summary;
 
     public function __construct()
     {
@@ -74,12 +69,12 @@ class DomesticStopDay
         return $this->id;
     }
 
-    public function getResponse(): ?DomesticSurveyResponse
+    public function getResponse(): ?SurveyResponse
     {
         return $this->response;
     }
 
-    public function setResponse(?DomesticSurveyResponse $response): self
+    public function setResponse(?SurveyResponse $response): self
     {
         $this->response = $response;
 
@@ -98,18 +93,6 @@ class DomesticStopDay
         return $this;
     }
 
-    public function getHasStops(): ?bool
-    {
-        return $this->hasStops;
-    }
-
-    public function setHasStops(bool $hasStops): self
-    {
-        $this->hasStops = $hasStops;
-
-        return $this;
-    }
-
     public function getHasMoreThanFiveStops(): ?bool
     {
         return $this->hasMoreThanFiveStops;
@@ -123,47 +106,47 @@ class DomesticStopDay
     }
 
     /**
-     * @return Collection|DomesticStopMultiple[]
+     * @return Collection|DayStop[]
      */
     public function getStops(): Collection
     {
         return $this->stops;
     }
 
-    public function addStop(DomesticStopMultiple $stop): self
+    public function addStop(DayStop $stop): self
     {
         if (!$this->stops->contains($stop)) {
             $this->stops[] = $stop;
-            $stop->setStopDay($this);
+            $stop->setDay($this);
         }
 
         return $this;
     }
 
-    public function removeStop(DomesticStopMultiple $stop): self
+    public function removeStop(DayStop $stop): self
     {
         if ($this->stops->removeElement($stop)) {
             // set the owning side to null (unless already changed)
-            if ($stop->getStopDay() === $this) {
-                $stop->setStopDay(null);
+            if ($stop->getDay() === $this) {
+                $stop->setDay(null);
             }
         }
 
         return $this;
     }
 
-    public function getStopSummary(): ?DomesticStopSummary
+    public function getSummary(): ?DaySummary
     {
-        return $this->stopSummary;
+        return $this->summary;
     }
 
-    public function setStopSummary(DomesticStopSummary $stopSummary): self
+    public function setSummary(DaySummary $summary): self
     {
-        $this->stopSummary = $stopSummary;
+        $this->summary = $summary;
 
         // set the owning side of the relation if necessary
-        if ($stopSummary->getStopDay() !== $this) {
-            $stopSummary->setStopDay($this);
+        if ($summary->getDay() !== $this) {
+            $summary->setDay($this);
         }
 
         return $this;

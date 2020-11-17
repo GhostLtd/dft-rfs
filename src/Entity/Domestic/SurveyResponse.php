@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
-use App\Repository\DomesticSurveyResponseRepository;
-use App\Workflow\DomesticSurveyInitialDetailsState;
+use App\Entity\Address;
+use App\Entity\SurveyResponseTrait;
+use App\Repository\Domestic\SurveyResponseRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=DomesticSurveyResponseRepository::class)
+ * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
  */
-class DomesticSurveyResponse
+class SurveyResponse
 {
     const REASON_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
     const REASON_SOLD = 'sold';
@@ -103,13 +104,13 @@ class DomesticSurveyResponse
     private $unableToCompleteReason;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="surveyResponse", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;
 
     /**
-     * @ORM\OneToOne(targetEntity=DomesticVehicle::class, cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Vehicle::class, cascade={"persist"})
      */
     private $vehicle;
 
@@ -124,14 +125,14 @@ class DomesticSurveyResponse
     private $ableToComplete;
 
     /**
-     * @var DomesticStopDay[]
-     * @ORM\OneToMany(targetEntity=DomesticStopDay::class, mappedBy="response", orphanRemoval=true)
+     * @var Day[]
+     * @ORM\OneToMany(targetEntity=Day::class, mappedBy="response", orphanRemoval=true)
      */
-    private $stopDays;
+    private $days;
 
     public function __construct()
     {
-        $this->stopDays = new ArrayCollection();
+        $this->days = new ArrayCollection();
     }
 
     public function getNumberOfEmployees(): ?int
@@ -218,24 +219,24 @@ class DomesticSurveyResponse
         return $this;
     }
 
-    public function getSurvey(): ?DomesticSurvey
+    public function getSurvey(): ?Survey
     {
         return $this->survey;
     }
 
-    public function setSurvey(DomesticSurvey $survey): self
+    public function setSurvey(Survey $survey): self
     {
         $this->survey = $survey;
 
         return $this;
     }
 
-    public function getVehicle(): ?DomesticVehicle
+    public function getVehicle(): ?Vehicle
     {
         return $this->vehicle;
     }
 
-    public function setVehicle(?DomesticVehicle $vehicle): self
+    public function setVehicle(?Vehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
 
@@ -292,26 +293,26 @@ class DomesticSurveyResponse
     }
 
     /**
-     * @return Collection|DomesticStopDay[]
+     * @return Collection|Day[]
      */
-    public function getStopDays(): Collection
+    public function getDays(): Collection
     {
-        return $this->stopDays;
+        return $this->days;
     }
 
-    public function addStopDay(DomesticStopDay $stopDay): self
+    public function addStopDay(Day $stopDay): self
     {
-        if (!$this->stopDays->contains($stopDay)) {
-            $this->stopDays[] = $stopDay;
+        if (!$this->days->contains($stopDay)) {
+            $this->days[] = $stopDay;
             $stopDay->setResponse($this);
         }
 
         return $this;
     }
 
-    public function removeStopDay(DomesticStopDay $stopDay): self
+    public function removeStopDay(Day $stopDay): self
     {
-        if ($this->stopDays->removeElement($stopDay)) {
+        if ($this->days->removeElement($stopDay)) {
             // set the owning side to null (unless already changed)
             if ($stopDay->getResponse() === $this) {
                 $stopDay->setResponse(null);
@@ -323,7 +324,7 @@ class DomesticSurveyResponse
 
     public function getStopDayByNumber($dayNumber)
     {
-        foreach ($this->stopDays as $day) {
+        foreach ($this->days as $day) {
             if ($day->getDay() === $dayNumber) {
                 return $day;
             }

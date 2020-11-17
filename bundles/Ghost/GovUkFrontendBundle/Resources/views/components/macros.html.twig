@@ -28,7 +28,7 @@
     {% endstrict -%}
 {%- endmacro %}
 
-{% macro summaryList(params) -%}
+{% macro summaryList() -%}
     {%- strict false -%}
         {%- include '@GhostGovUkFrontend/components/summary-list/template.html.twig' -%}
     {% endstrict -%}
@@ -38,4 +38,10 @@
     {%- strict false -%}
         {%- include '@GhostGovUkFrontend/components/tag/template.html.twig' -%}
     {% endstrict -%}
+{%- endmacro %}
+
+{% macro buttonLink(href, text, options) -%}
+    <a href="{{ href }}" role="button" draggable="false" class="govuk-button {{ options.class | default("") }}" data-module="govuk-button">
+        {{- text -}}
+    </a>
 {%- endmacro %}

@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Domestic;
 
+use App\Entity\CargoTransportMeans;
+use App\Entity\Distance;
+use App\Entity\HazardousGood;
 use Doctrine\ORM\Mapping as ORM;
 
-trait DomesticStopTrait
+trait StopTrait
 {
     /**
      * @ORM\Id
@@ -16,7 +19,7 @@ trait DomesticStopTrait
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $startLocation;
+    private $originLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -26,12 +29,12 @@ trait DomesticStopTrait
     /**
      * @ORM\Column(type="smallint")
      */
-    private $transferredFrom;
+    private $goodsTransferredFrom;
 
     /**
      * @ORM\Column(type="smallint")
      */
-    private $transferredTo;
+    private $goodsTransferredTo;
 
     /**
      * @ORM\Embedded(class=Distance::class)
@@ -70,14 +73,14 @@ trait DomesticStopTrait
         return $this->id;
     }
 
-    public function getStartLocation(): ?string
+    public function getOriginLocation(): ?string
     {
-        return $this->startLocation;
+        return $this->originLocation;
     }
 
-    public function setStartLocation(?string $startLocation): self
+    public function setOriginLocation(?string $originLocation): self
     {
-        $this->startLocation = $startLocation;
+        $this->originLocation = $originLocation;
 
         return $this;
     }
@@ -94,54 +97,54 @@ trait DomesticStopTrait
         return $this;
     }
 
-    public function getTransferredFrom(): ?int
+    public function getGoodsTransferredFrom(): ?int
     {
-        return $this->transferredFrom;
+        return $this->goodsTransferredFrom;
     }
 
-    public function setTransferredFrom(?int $transferredFrom): self
+    public function setGoodsTransferredFrom(?int $goodsTransferredFrom): self
     {
-        $this->transferredFrom = $transferredFrom;
+        $this->goodsTransferredFrom = $goodsTransferredFrom;
 
         return $this;
     }
 
     public function getGoodsLoaded(): ?bool
     {
-        if (!is_numeric($this->transferredFrom)) return null;
-        return $this->transferredFrom > 0;
+        if (!is_numeric($this->goodsTransferredFrom)) return null;
+        return $this->goodsTransferredFrom > 0;
     }
 
     public function setGoodsLoaded(?bool $goodsLoaded): self
     {
         if ($this->getGoodsLoaded() != $goodsLoaded) {
-            $this->transferredFrom = $goodsLoaded ? DomesticStopDay::TRANSFERRED : null;
+            $this->goodsTransferredFrom = $goodsLoaded ? Day::TRANSFERRED : null;
         }
         return $this;
     }
 
-    public function getTransferredTo(): ?int
+    public function getGoodsTransferredTo(): ?int
     {
-        return $this->transferredTo;
+        return $this->goodsTransferredTo;
     }
 
-    public function setTransferredTo(?int $transferredTo): self
+    public function setGoodsTransferredTo(?int $goodsTransferredTo): self
     {
-        $this->transferredTo = $transferredTo;
+        $this->goodsTransferredTo = $goodsTransferredTo;
 
         return $this;
     }
 
     public function getGoodsUnloaded(): ?bool
     {
-        if (!is_numeric($this->transferredTo)) return null;
-        return $this->transferredTo > 0;
+        if (!is_numeric($this->goodsTransferredTo)) return null;
+        return $this->goodsTransferredTo > 0;
     }
 
     public function setGoodsUnloaded(?bool $goodsUnloaded): self
     {
         if ($this->getGoodsUnloaded() != $goodsUnloaded) {
-            $this->transferredTo = $goodsUnloaded ? DomesticStopDay::TRANSFERRED : null;
+            $this->goodsTransferredTo = $goodsUnloaded ? Day::TRANSFERRED : null;
         }
         return $this;
     }

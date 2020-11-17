@@ -2,8 +2,8 @@
 
 namespace App\Form\DomesticSurvey\DayMulti;
 
-use App\Entity\DomesticStopDay;
-use App\Entity\DomesticStopMultiple;
+use App\Entity\Domestic\Day;
+use App\Entity\Domestic\DayStop;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +15,7 @@ class DepartedPortsType extends AbstractType
     {
         $builder
             ->add('transferredFrom', Gds\ChoiceType::class, [
-                'choices' => DomesticStopDay::TRANSFER_CHOICES,
+                'choices' => Day::TRANSFER_CHOICES,
                 'label' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.label',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'help' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.help',
@@ -26,7 +26,7 @@ class DepartedPortsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DomesticStopMultiple::class,
+            'data_class' => DayStop::class,
         ]);
     }
 }
