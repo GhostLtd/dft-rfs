@@ -325,7 +325,7 @@ class SurveyResponse
     public function getStopDayByNumber($dayNumber)
     {
         foreach ($this->days as $day) {
-            if ($day->getDay() === $dayNumber) {
+            if ($day->getNumber() === $dayNumber) {
                 return $day;
             }
         }

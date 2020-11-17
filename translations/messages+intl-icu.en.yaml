@@ -58,6 +58,19 @@ survey:
         body-type:
           label: Please indicate the main type of body for the vehicle
 
+# Day, create
+      number-of-stops:
+        heading: "How many times did you stop on day {dayNumber}?"
+        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
+          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
+          recorded.
+          <ul>
+            <li>Do not include stops where you did not load or unload goods</li>
+            <li>Do not include meal/rest breaks, congestion</li>
+          </ul>
+        fewer-than-5: Fewer than 5 stops
+        5-or-more: 5 or more stops
+
 # Day, Multiple Wizard
       day-multiple:
         departed:
@@ -88,7 +101,6 @@ survey:
           transferred-to:
             label: Please tells us which option best describes the arrival location
             help: This question is to establish if the goods being unloaded are being transferred from one mode of transport to another
-
 
 
 

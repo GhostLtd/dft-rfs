@@ -43,7 +43,7 @@
             {{ gdsComponents.summaryListRow(
                 "Day #{dayNumber}",
                 day ? 'day exists' : 'nothing recorded',
-                {(url('app_domesticsurvey_index_viewday', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
+                {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
             ) }}
         {% endfor %}
     </dl>

@@ -23,7 +23,7 @@ class DayMultipleController extends AbstractSessionStateWorkflowController
 
     /**
      * @Route("/domestic-survey/day-{day}/stqge/{stage}/{state}", name=self::ROUTE_NAME)
-     * @Route("/domestic-survey/day-{day}", name="app_domesticsurvey_daymultiple_start")
+     * @Route("/domestic-survey/day-{day}/start", name="app_domesticsurvey_daymultiple_start")
      * @param WorkflowInterface $domesticSurveyDayMultipleStateMachine
      * @param Request $request
      * @param $day

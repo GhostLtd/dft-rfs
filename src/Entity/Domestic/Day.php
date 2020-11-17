@@ -42,7 +42,7 @@ class Day
     /**
      * @ORM\Column(type="smallint")
      */
-    private $day;
+    private $number;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -81,14 +81,14 @@ class Day
         return $this;
     }
 
-    public function getDay(): ?int
+    public function getNumber(): ?int
     {
-        return $this->day;
+        return $this->number;
     }
 
-    public function setDay(int $day): self
+    public function setNumber(int $number): self
     {
-        $this->day = $day;
+        $this->number = $number;
 
         return $this;
     }

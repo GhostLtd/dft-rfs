@@ -6,15 +6,15 @@
     {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
     {% import '@GhostGovUkFrontend/components/macros.html.twig' as macros %}
 
-    <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.day }})</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.number }})</h1>
 
     {% dump(day) %}
     {% if day.hasMoreThanFiveStops %}
         <h2 class="govuk-heading-m">Summary day</h2>
-        {% if day.stopSummary | default(false) %}
+        {% if day.summary | default(false) %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ gdsComponents.summaryListRow('Start location', day.stopSummary.startLocation | default('-')) }}
-                {{ gdsComponents.summaryListRow('Destination location', day.stopSummary.destinationLocation | default('-')) }}
+                {{ gdsComponents.summaryListRow('Start location', day.summary.originLocation | default('-')) }}
+                {{ gdsComponents.summaryListRow('Destination location', day.summary.destinationLocation | default('-')) }}
             </dl>
         {% else %}
             <p class="govuk-body">
