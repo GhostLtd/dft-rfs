@@ -3,6 +3,7 @@
 namespace App\Repository\Domestic;
 
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,34 @@ class StopSummaryRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, DaySummary::class);
+    }
+
+    /**
+     * @param $dayNumber
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getForDevelopmentByDayNumber($dayNumber)
+    {
+        $survey = $this->getEntityManager()->getRepository(Survey::class)->findLatestSurveyForTesting();
+        $daySummary = $this->createQueryBuilder('stop_summary')
+            ->select('stop_summary, day')
+            ->leftJoin('stop_summary.day', 'day')
+            ->leftJoin('day.response', 'response')
+            ->where('day.number = :dayNumber')
+            ->andWhere('response.survey = :survey')
+            ->setParameters([
+                'dayNumber' => $dayNumber,
+                'survey' => $survey,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+        if (is_null($daySummary)) {
+            $daySummary = new DaySummary();
+            $daySummary->setDay($survey->getResponse()->getDayByNumber($dayNumber));
+        }
+        return $daySummary;
     }
 
     // /**

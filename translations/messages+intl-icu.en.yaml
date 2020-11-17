@@ -71,6 +71,16 @@ survey:
         fewer-than-5: Fewer than 5 stops
         5-or-more: 5 or more stops
 
+# Day, summary
+      day-summary:
+        origin.heading: How did you start this journey?
+        origin-location:
+          label: Please tell us where you started this journey
+          help: eg. SW1P 4DR; or Westminster, London
+        goods-loaded:
+          label: Were goods loaded at the start of your journey?
+
+
 # Day, Multiple Wizard
       day-multiple:
         departed:

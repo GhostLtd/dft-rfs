@@ -28,11 +28,12 @@ class SurveyRepository extends ServiceEntityRepository
      */
     public function findLatestSurveyForTesting()
     {
-        return $this->createQueryBuilder('d')
-            ->select('d, sr, v')
-            ->leftJoin('d.response', 'sr')
-            ->leftJoin('sr.vehicle', 'v')
-            ->orderBy('d.id', 'DESC')
+        return $this->createQueryBuilder('survey')
+            ->select('survey, response, vehicle, day')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.days', 'day', null, null, 'day.number')
+            ->leftJoin('response.vehicle', 'vehicle')
+            ->orderBy('survey.id', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getSingleResult();
