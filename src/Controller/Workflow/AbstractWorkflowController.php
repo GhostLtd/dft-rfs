@@ -54,7 +54,7 @@ abstract class AbstractWorkflowController extends AbstractController
         }
 
         /** @var FormInterface $form */
-        list($form, $template) = $this->getFormAndTemplate($formWizard);
+        list($form, $template) = $this->getFormAndTemplate($formWizard, $stateMachine);
 
         $form->handleRequest($request);
 
@@ -127,9 +127,10 @@ abstract class AbstractWorkflowController extends AbstractController
 
     /**
      * @param FormWizardInterface $formWizard
+     * @param WorkflowInterface $stateMachine
      * @return array
      */
-    protected function getFormAndTemplate(FormWizardInterface $formWizard)
+    protected function getFormAndTemplate(FormWizardInterface $formWizard, WorkflowInterface $stateMachine)
     {
         $state = $formWizard->getState();
         $formMap = $formWizard->getStateFormMap();
@@ -145,8 +146,21 @@ abstract class AbstractWorkflowController extends AbstractController
             $form = $this->createFormBuilder()
                 ->getForm();
         }
+
+        // If we have only one possible transition, and it is meant to persist/flush
+        // then we want to have a better label for the "continue" button
+        $isSavePoint = false;
+        $transitions = $stateMachine->getEnabledTransitions($formWizard);
+        if (count($transitions) === 1) {
+            $transition = $transitions[array_key_last($transitions)];
+            $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
+            $isSavePoint = ($metadata['persist'] ?? false) === true;
+        }
         $template = $formWizard->getStateTemplateMap()[$state] ?? $formWizard->getDefaultTemplate();
-        $form->add('continue', ButtonType::class, ['type' => 'submit']);
+        $form->add('continue', ButtonType::class, [
+            'type' => 'submit',
+            'label' => $isSavePoint ? 'Save and continue' : null,
+        ]);
 
         return [$form, $template];
     }
