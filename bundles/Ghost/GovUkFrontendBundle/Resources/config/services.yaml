@@ -15,3 +15,6 @@ services:
 
     ghost_govukfrontend.form_extension.label_page_heading_extension:
         class: Ghost\GovUkFrontendBundle\Form\Extension\LabelIsPageHeadingExtension
+
+    ghost_govukfrontend.form_extension.radio_type_extension:
+        class: Ghost\GovUkFrontendBundle\Form\Extension\RadioTypeExtension

@@ -7,6 +7,9 @@
 'use strict'
 
 import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/js/bundle';
+import * as gds from 'govuk-frontend';
+
+gds.initAll();
 
 // any SCSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';

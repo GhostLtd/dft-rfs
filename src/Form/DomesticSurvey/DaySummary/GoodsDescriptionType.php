@@ -14,7 +14,7 @@ class GoodsDescriptionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('goodsDescription', Gds\FieldsetType::class, [
+            ->add('goodsDescriptionFieldset', Gds\FieldsetType::class, [
                 'label' => 'survey.domestic.forms.day-summary.goods-description.label',
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
@@ -30,15 +30,16 @@ class GoodsDescriptionType extends AbstractType
                 'help' => "survey.domestic.forms.day-summary.goods-description.{$v}.help",
             ];
         }
+        $goodsChoiceOptions[Day::GOODS_DESCRIPTION_TRANSLATION_PREFIX . Day::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
 
-        $builder->get('goodsDescription')
+        $builder->get('goodsDescriptionFieldset')
             ->add('goodsDescription', Gds\ChoiceType::class, [
                 'choices' => Day::GOODS_DESCRIPTION_CHOICES,
                 'choice_options' => $goodsChoiceOptions,
                 'label' => false,
             ])
             ->add('goodsDescriptionOther', Gds\InputType::class, [
-                'label' => 'survey.domestic.forms.day-summary.goods-description-other.label',
+                'label' => false,
                 'help' => 'survey.domestic.forms.day-summary.goods-description-other.help',
             ])
             ;

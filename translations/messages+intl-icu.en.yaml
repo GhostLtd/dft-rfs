@@ -13,7 +13,7 @@ survey:
       packaging: Packaging
       groupage: Groupage
       empty: Empty
-      other-goods: Other (please specify)
+      other-goods: Specific goods / Other (please specify)
     transferred-port:
       2: None of the above
       4: Shipping port or docks

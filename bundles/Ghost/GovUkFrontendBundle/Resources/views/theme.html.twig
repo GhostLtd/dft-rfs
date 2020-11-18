@@ -277,11 +277,13 @@
 {% endblock %}
 
 {% block gds_choice_widget_expanded_item %}
+    {%- set conditionalFormItem = child.vars.conditional_form_name | default(false) -%}
     <div class="{{ classPrefix }}__item">
         {%- with child.vars|merge({
             'label_is_page_heading': false,
             'blockPrefix': blockPrefix,
             'classPrefix': classPrefix,
+            'attr': child.vars.attr | merge({'data-aria-controls': (conditionalFormItem ? "conditional-#{child.vars.id}" : '')}),
         }) only -%}
             {{- block(blockPrefix ~ '_widget') -}}
             {{- block(blockPrefix ~ '_label') -}}
@@ -289,6 +291,11 @@
             {{- block('form_help') -}}
         {% endwith %}
     </div>
+    {%- if conditionalFormItem -%}
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ child.vars.id }}">
+            {{- form_row(form.parent.children[conditionalFormItem]) -}}
+        </div>
+    {%- endif -%}
 {% endblock %}
 
 {%- block gds_radio_label -%}
