@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\InternationalPreEnquiryResponseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=InternationalPreEnquiryResponseRepository::class)
@@ -19,51 +20,65 @@ class InternationalPreEnquiryResponse
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"company_name"})
      */
     private $companyName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"correspondence_details"})
      */
     private $correspondenceName;
 
     /**
      * @ORM\Embedded(class=Address::class)
+     * @Assert\Valid(groups={"correspondence_address"})
      */
     private $correspondenceAddress;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(groups={"correspondence_details"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"correspondence_details"})
+     * @Assert\Email(groups={"correspondence_details"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"vehicle_questions"})
+     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $totalVehicleCount;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"vehicle_questions"})
+     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $internationalJourneyVehicleCount;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"employees_and_international_journeys"})
+     * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
      */
     private $employeeCount;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"employees_and_international_journeys"})
+     * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
      */
     private $annualJourneyEstimate;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalPreEnquiry::class, inversedBy="response", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=InternationalPreEnquiry::class, inversedBy="response", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $preEnquiry;
@@ -78,7 +93,7 @@ class InternationalPreEnquiryResponse
         return $this->companyName;
     }
 
-    public function setCompanyName(string $companyName): self
+    public function setCompanyName(?string $companyName): self
     {
         $this->companyName = $companyName;
 
@@ -90,7 +105,7 @@ class InternationalPreEnquiryResponse
         return $this->correspondenceName;
     }
 
-    public function setCorrespondenceName(string $correspondenceName): self
+    public function setCorrespondenceName(?string $correspondenceName): self
     {
         $this->correspondenceName = $correspondenceName;
 
@@ -114,7 +129,7 @@ class InternationalPreEnquiryResponse
         return $this->phone;
     }
 
-    public function setPhone(string $phone): self
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
 
@@ -126,7 +141,7 @@ class InternationalPreEnquiryResponse
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -138,7 +153,7 @@ class InternationalPreEnquiryResponse
         return $this->totalVehicleCount;
     }
 
-    public function setTotalVehicleCount(int $totalVehicleCount): self
+    public function setTotalVehicleCount(?int $totalVehicleCount): self
     {
         $this->totalVehicleCount = $totalVehicleCount;
 
@@ -150,7 +165,7 @@ class InternationalPreEnquiryResponse
         return $this->internationalJourneyVehicleCount;
     }
 
-    public function setInternationalJourneyVehicleCount(int $internationalJourneyVehicleCount): self
+    public function setInternationalJourneyVehicleCount(?int $internationalJourneyVehicleCount): self
     {
         $this->internationalJourneyVehicleCount = $internationalJourneyVehicleCount;
 
@@ -162,7 +177,7 @@ class InternationalPreEnquiryResponse
         return $this->employeeCount;
     }
 
-    public function setEmployeeCount(int $employeeCount): self
+    public function setEmployeeCount(?int $employeeCount): self
     {
         $this->employeeCount = $employeeCount;
 
@@ -174,7 +189,7 @@ class InternationalPreEnquiryResponse
         return $this->annualJourneyEstimate;
     }
 
-    public function setAnnualJourneyEstimate(int $annualJourneyEstimate): self
+    public function setAnnualJourneyEstimate(?int $annualJourneyEstimate): self
     {
         $this->annualJourneyEstimate = $annualJourneyEstimate;
 

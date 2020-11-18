@@ -468,9 +468,7 @@
             {{- form_help(form) -}}
             {{- form_errors(form) -}}
             {% for child in form %}
-                <div class="govuk-fieldset__item">
-                    {{ form_row(child) }}
-                </div>
+                {{ form_row(child) }}
             {% endfor %}
         </fieldset>
     </div>

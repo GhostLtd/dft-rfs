@@ -34,7 +34,7 @@ class InternationalPreEnquiry
     private $submissionDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalPreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=InternationalPreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
      */
     private $response;
 

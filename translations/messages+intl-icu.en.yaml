@@ -163,7 +163,44 @@ survey:
             label: Please tells us which option best describes the arrival location
             help: This question is to establish if the goods being unloaded are being transferred from one mode of transport to another
 
-
+# Pre-Enquiry
+  pre-enquiry:
+    business-details:
+      company-name:
+        label: Company name
+        help: Provide the name of your company
+    correspondence-details:
+      heading: Correspondence details
+      help: Provide contact details for correspondence about this survey
+      name:
+        label: Name
+        help: ''
+      phone:
+        label: Phone
+        help: ''
+      email:
+        label: Email
+        help: ''
+    correspondence-address:
+      address:
+        label: Correspondence address
+        help: Provide the address where correspondence about this survey should be sent
+    vehicle-questions:
+      heading: Vehicle questions
+      total-vehicle-count:
+        label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
+        help: Disregard the weight of any trailers
+      international-journey-vehicle-count:
+        label: How many of the above vehicles will be used to conduct international journeys?
+        help: ''
+    employees-and-international-journeys:
+      heading: Employees and International Journeys
+      employee-count:
+        label: How many employees do you currently employee in this firm?
+        help: ''
+      annual-journey-estimate:
+        label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+        help: ''
 
 vehicle:
   operation-type:
