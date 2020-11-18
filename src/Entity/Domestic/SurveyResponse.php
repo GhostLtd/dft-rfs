@@ -300,22 +300,22 @@ class SurveyResponse
         return $this->days;
     }
 
-    public function addStopDay(Day $stopDay): self
+    public function addDay(Day $day): self
     {
-        if (!$this->days->contains($stopDay)) {
-            $this->days[] = $stopDay;
-            $stopDay->setResponse($this);
+        if (!$this->days->contains($day)) {
+            $this->days[] = $day;
+            $day->setResponse($this);
         }
 
         return $this;
     }
 
-    public function removeStopDay(Day $stopDay): self
+    public function removeDay(Day $day): self
     {
-        if ($this->days->removeElement($stopDay)) {
+        if ($this->days->removeElement($day)) {
             // set the owning side to null (unless already changed)
-            if ($stopDay->getResponse() === $this) {
-                $stopDay->setResponse(null);
+            if ($day->getResponse() === $this) {
+                $day->setResponse(null);
             }
         }
 

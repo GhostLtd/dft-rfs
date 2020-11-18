@@ -140,6 +140,7 @@
 {%- endblock form_errors -%}
 
 {% block form_help -%}
+
     {%- if help is not empty -%}
         {%- set help_attr = help_attr|merge({class: ('govuk-hint ' ~ help_attr.class|default(''))|trim}) %}
         <div id="{{ id }}-hint"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
@@ -150,11 +151,14 @@
                     {{- help|raw -}}
                 {%- endif -%}
             {%- else -%}
-                {%- if help_html is same as(false) -%}
-                    {{- help|trans(help_translation_parameters, translation_domain)|nl2br -}}
-                {%- else -%}
-                    {{- help|trans(help_translation_parameters, translation_domain)|raw -}}
-                {%- endif -%}
+                {%- set helpTranslated = help | trans(help_translation_parameters, translation_domain) -%}
+                {%- if helpTranslated != help -%}
+                    {%- if help_html is same as(false) -%}
+                        {{- helpTranslated | nl2br -}}
+                    {%- else -%}
+                        {{- helpTranslated | raw -}}
+                    {%- endif -%}
+                {% endif %}
             {%- endif -%}
         </div>
     {%- endif -%}

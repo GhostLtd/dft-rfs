@@ -56,6 +56,10 @@ trait StopTrait
      */
     private $goodsDescription;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $goodsDescriptionOther;
 
     /**
      * @ORM\ManyToOne(targetEntity=HazardousGood::class)
@@ -193,6 +197,18 @@ trait StopTrait
     public function setGoodsDescription(?string $goodsDescription): self
     {
         $this->goodsDescription = $goodsDescription;
+
+        return $this;
+    }
+
+    public function getGoodsDescriptionOther(): ?string
+    {
+        return $this->goodsDescriptionOther;
+    }
+
+    public function setGoodsDescriptionOther(?string $goodsDescriptionOther): self
+    {
+        $this->goodsDescriptionOther = $goodsDescriptionOther;
 
         return $this;
     }

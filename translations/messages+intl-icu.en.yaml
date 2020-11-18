@@ -8,6 +8,12 @@ unit:
 
 survey:
   domestic:
+    goods-description:
+      empty-container: Empty container
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
+      other-goods: Other (please specify)
     transferred-port:
       2: None of the above
       4: Shipping port or docks
@@ -105,16 +111,18 @@ survey:
           label: Distance travelled loaded
           help: Enter the distance you travelled with a partially or fully loaded vehicle
 
-        goods:
-          heading: About the goods carried
         goods-description:
-          label: Basic description
-          help: Please give a basic, description of the goods carried. For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
-            Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight; other mixed consignments should be recorded as ‘groupage’.
-            <ul>
-              <li>If the consignment was empty pallets, wire cages, roll cages or other packaging, please write ‘Packaging’
-              <li>If the consignment was an empty freight container please write ‘Empty Container’
-            </ul>
+          label: Description of goods carried
+          empty-container.help: select this option if the consignment was an empty freight container
+          packaging.help: select this option if the consignment was empty pallets, wire cages, roll cages or other packaging
+          groupage.help: select this option for mixed consignments where the main type represented less than 75% (three quarters) by weight
+          empty.help: only select this option if the vehicle carried nothing at all
+          help: Select a basic description of the goods carried. Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight.
+          other-goods.help:
+        goods-description-other:
+          label: Other description
+          help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+
         weight-of-goods-loaded:
           label: Total weight of goods loaded on this day
         weight-of-goods-unloaded:

@@ -15,7 +15,7 @@ use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
 use App\Form\DomesticSurvey\DaySummary\DestinationType;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
-use App\Form\DomesticSurvey\DaySummary\GoodsType;
+use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
 use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
 use App\Form\DomesticSurvey\DaySummary\OriginType;
 use App\Workflow\FormWizardInterface;
@@ -39,7 +39,7 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
-        self::STATE_GOODS => GoodsType::class,
+        self::STATE_GOODS => GoodsDescriptionType::class,
     ];
 
     private const TEMPLATE_MAP = [
