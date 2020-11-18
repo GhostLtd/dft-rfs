@@ -73,7 +73,7 @@ survey:
 
 # Day, summary
       day-summary:
-        origin.heading: Where did the journey start?
+        origin.heading: Where did the vehicle start the day?
         origin-location:
           label: Postcode or place-name and county
           help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
@@ -81,8 +81,8 @@ survey:
           label: Were goods loaded?
 
         goods-transferred-from:
-          label: Tell us more about the start location
-          help: Indicate which option best describes the origin. This question is to establish if the goods being loaded are being transferred from one mode of transport or another.
+          label: More details about the start
+          help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
         destination.heading: Where did the journey end?
         destination-location:
@@ -92,8 +92,8 @@ survey:
           label: Were goods un-loaded?
 
         goods-transferred-to:
-          label: Tell us more about the end location
-          help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport or another.
+          label: More details about the destination prrp
+          help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
         distance-travelled:
           heading: How far did you travel?
@@ -106,7 +106,7 @@ survey:
           help: Enter the distance you travelled with a partially or fully loaded vehicle
 
         goods:
-          heading: Tells about the goods
+          heading: About the goods carried
         goods-description:
           label: Basic description
           help: Please give a basic, description of the goods carried. For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
@@ -123,6 +123,10 @@ survey:
 #              <li>The weight of goods should include any packaging or containers
 #              <li>Journeys with a consignment of empty ‘Packaging’ or an ‘Empty Container’ are considered as loaded and therefore weights must be recorded
 #            <ul>
+
+        furthest-stop:
+          label: Furthest point on this day
+          help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
 
 
 

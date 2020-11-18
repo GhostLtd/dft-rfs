@@ -48,7 +48,7 @@ trait SurveyResponseTrait
         return $this->businessNature;
     }
 
-    public function setBusinessNature(string $businessNature): self
+    public function setBusinessNature(?string $businessNature): self
     {
         $this->businessNature = $businessNature;
 
@@ -61,7 +61,7 @@ trait SurveyResponseTrait
         return $this->contactName;
     }
 
-    public function setContactName(string $contactName): self
+    public function setContactName(?string $contactName): self
     {
         $this->contactName = $contactName;
 
@@ -73,7 +73,7 @@ trait SurveyResponseTrait
         return $this->contactTelephone;
     }
 
-    public function setContactTelephone(string $contactTelephone): self
+    public function setContactTelephone(?string $contactTelephone): self
     {
         $this->contactTelephone = $contactTelephone;
 
@@ -85,7 +85,7 @@ trait SurveyResponseTrait
         return $this->contactEmail;
     }
 
-    public function setContactEmail(string $contactEmail): self
+    public function setContactEmail(?string $contactEmail): self
     {
         $this->contactEmail = $contactEmail;
 

@@ -14,6 +14,7 @@ use App\Form\DomesticSurvey\DayMulti\DepartedType;
 use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
 use App\Form\DomesticSurvey\DaySummary\DestinationType;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
+use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
 use App\Form\DomesticSurvey\DaySummary\GoodsType;
 use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
 use App\Form\DomesticSurvey\DaySummary\OriginType;
@@ -26,6 +27,7 @@ class DaySummaryState implements FormWizardInterface
     const STATE_DESTINATION = 'destination';
     const STATE_DESTINATION_PORTS = 'destination-ports';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
+    const STATE_FURTHEST_STOP = 'furthest-stop';
     const STATE_GOODS = 'goods';
     const STATE_ = '';
     const STATE_END = 'end';
@@ -35,6 +37,7 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_ORIGIN_PORTS => OriginPortsType::class,
         self::STATE_DESTINATION => DestinationType::class,
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
+        self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
         self::STATE_GOODS => GoodsType::class,
     ];
@@ -44,13 +47,14 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_ORIGIN_PORTS => 'domestic_survey/day_summary/form-origin-ports.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_summary/form-destination.html.twig',
         self::STATE_DESTINATION_PORTS => 'domestic_survey/day_summary/form-destination-ports.html.twig',
+        self::STATE_FURTHEST_STOP => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
         self::STATE_GOODS => 'domestic_survey/day_summary/form-goods.html.twig',
     ];
 
     private $state = self::STATE_ORIGIN;
 
-    /** @var DayStop */
+    /** @var DaySummary */
     private $subject;
 
     /**
@@ -103,7 +107,11 @@ class DaySummaryState implements FormWizardInterface
             $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_GOODS;
         }
         if (in_array(self::STATE_DESTINATION_PORTS, $states) && $this->subject->getGoodsTransferredTo() !== Day::TRANSFERRED) {
-            $states[] = self::STATE_GOODS;
+            $states[] = self::STATE_FURTHEST_STOP;
+        }
+
+        if ($this->subject->getFurthestStop()) {
+            $stated[] = self::STATE_DISTANCE_TRAVELLED;
         }
 
         return $states;

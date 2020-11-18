@@ -20,7 +20,9 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_DESTINATION,
                     StateObject::STATE_DESTINATION_PORTS,
                     StateObject::STATE_DISTANCE_TRAVELLED,
+                    StateObject::STATE_FURTHEST_STOP,
                     StateObject::STATE_GOODS,
+
 //                    StateObject::STATE_,
 
                     StateObject::STATE_END,
@@ -45,14 +47,18 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_DESTINATION_PORTS,
                     ],
-                    'destination-port-to-next' => [
+                    'destination-port-to-furthest-stop' => [
                         'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
+                        'to' =>  StateObject::STATE_FURTHEST_STOP,
                     ],
-                    'destination-to-distance-travelled' => [
+                    'destination-to-furthest-stop' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => false]],
                         'from' => StateObject::STATE_DESTINATION,
-                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
+                        'to' =>  StateObject::STATE_FURTHEST_STOP,
+                    ],
+                    'furthest-stop-to-distance-travelled' => [
+                        'from' => StateObject::STATE_FURTHEST_STOP,
+                        'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
                     'distance-travelled-to-goods' => [
                         'from' => StateObject::STATE_DISTANCE_TRAVELLED,
