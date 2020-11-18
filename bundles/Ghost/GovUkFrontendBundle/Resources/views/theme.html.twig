@@ -152,7 +152,7 @@
                 {%- endif -%}
             {%- else -%}
                 {%- set helpTranslated = help | trans(help_translation_parameters, translation_domain) -%}
-                {%- if helpTranslated != help -%}
+                {%- if helpTranslated is not empty -%}
                     {%- if help_html is same as(false) -%}
                         {{- helpTranslated | nl2br -}}
                     {%- else -%}

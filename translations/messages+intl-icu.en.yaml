@@ -118,7 +118,7 @@ survey:
           groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
           empty.help: only if the vehicle carried nothing at all
           help: Select a basic description of the goods carried. Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight.
-          other-goods.help:
+          other-goods.help: ''
         goods-description-other:
           label: Other description
           help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
