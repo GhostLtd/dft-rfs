@@ -25,12 +25,12 @@ class InternationalCompany
     private $businessName;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalPreEnquiry::class, mappedBy="company", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=InternationalPreEnquiry::class, mappedBy="company", cascade={"persist"})
      */
     private $preEnquiries;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalSurvey::class, mappedBy="company", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=InternationalSurvey::class, mappedBy="company", cascade={"persist"})
      */
     private $surveys;
 

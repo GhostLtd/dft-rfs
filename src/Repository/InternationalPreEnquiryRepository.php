@@ -19,32 +19,12 @@ class InternationalPreEnquiryRepository extends ServiceEntityRepository
         parent::__construct($registry, InternationalPreEnquiry::class);
     }
 
-    // /**
-    //  * @return InternationalPreEnquiry[] Returns an array of InternationalPreEnquiry objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findLatestSurveyForTesting(): ?InternationalPreEnquiry
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('pe')
+            ->orderBy('pe.id', 'DESC')
+            ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getSingleResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?InternationalPreEnquiry
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

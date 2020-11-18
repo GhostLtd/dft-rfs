@@ -24,7 +24,7 @@ class InternationalSurvey
     private $company;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalSurveyResponse::class, mappedBy="survey", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=InternationalSurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
     private $surveyResponse;
 
