@@ -113,10 +113,10 @@ survey:
 
         goods-description:
           label: Description of goods carried
-          empty-container.help: select this option if the consignment was an empty freight container
-          packaging.help: select this option if the consignment was empty pallets, wire cages, roll cages or other packaging
-          groupage.help: select this option for mixed consignments where the main type represented less than 75% (three quarters) by weight
-          empty.help: only select this option if the vehicle carried nothing at all
+          empty-container.help: consignment was an empty freight container
+          packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
+          groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
+          empty.help: only if the vehicle carried nothing at all
           help: Select a basic description of the goods carried. Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight.
           other-goods.help:
         goods-description-other:
