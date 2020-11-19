@@ -98,7 +98,7 @@ survey:
           label: Were goods un-loaded?
 
         goods-transferred-to:
-          label: More details about the destination prrp
+          label: More details about the destination
           help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
         distance-travelled:
@@ -113,30 +113,51 @@ survey:
 
         goods-description:
           label: Description of goods carried
+          help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
           empty-container.help: consignment was an empty freight container
           packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
           groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
           empty.help: only if the vehicle carried nothing at all
-          help: Select a basic description of the goods carried. Where consignments are mixed, the main type of goods should be recorded where this represents 75% (three quarters) of the consignment weight.
           other-goods.help: ''
         goods-description-other:
           label: Other description
           help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
 
-        weight-of-goods-loaded:
-          label: Total weight of goods loaded on this day
-        weight-of-goods-unloaded:
-          label: Total weight of goods unloaded on this day
-#            <ul>
-#              <li>The weight of goods should include any packaging or containers
-#              <li>Journeys with a consignment of empty ‘Packaging’ or an ‘Empty Container’ are considered as loaded and therefore weights must be recorded
-#            <ul>
-
         furthest-stop:
           label: Furthest point on this day
           help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
 
+        hazardous-goods:
+          label: Were these goods dangerous or hazardous?
+          help: Were the goods being transported classified as dangerous or hazardous?
+#          placeholder: -- select --
 
+        cargo-type:
+          label: How were the goods are carried?
+          help: Mixed consignments should be recorded as "Other cargo type"
+
+        goods-weight:
+          heading: Weight of goods
+          help:
+        weight-of-goods-loaded:
+          label: Total weight of goods loaded on this day
+          help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+        weight-of-goods-unloaded:
+          label: Total weight of goods unloaded on this day
+          help: ''
+
+        number-of-stops:
+          heading: Number of stops
+          help: ''
+        number-of-stops-loading:
+          label: 'Goods loaded'
+          help: 'The number of stops where goods were loaded onto the vehicle only'
+        number-of-stops-unloading:
+          label: 'Goods unloaded'
+          help: 'The number of stops where goods were unloaded from the vehicle only'
+        number-of-stops-both:
+          label: 'Goods loaded and unloaded'
+          help: 'The number of stops where goods were both loaded and unloaded'
 
 
 
@@ -209,6 +230,39 @@ survey:
       annual-journey-estimate:
         label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
         help: ''
+
+goods:
+  hazardous:
+    0: Goods were not classified as dangerous or hazardous
+    1: <b>1</b> Explosive
+    2: 2 - Gases
+    '2.1': <b>2.1</b> Flammable gas
+    '2.2': <b>2.2</b> Non-flammable, non-toxic gas
+    '2.3': <b>2.3</b> Toxic gas
+    3: <b>3</b> Flammable liquid
+    '4.1': <b>4.1</b>lammable solid
+    '4.2': <b>4.2</b> Spontaneously combustible substance
+    '4.3': <b>4.3</b> Substance which, in contact with water, emits flammable gas
+    '5.1': <b>5.1</b> Oxidising substance
+    '5.2': <b>5.2</b> Organic peroxide
+    '6.1': <b>6.1</b> Toxic substance
+    '6.2': <b>6.2</b> Infectious substance
+    7: <b>7</b> Radioactive material
+    8: <b>8</b> Corrosive substance
+    9: <b>9</b> Miscellaneous dangerous goods
+  cargo-type:
+    LB: Liquid bulk
+    SB: Solid bulk
+    LFC: Large freight containers, incl. ISO containers
+    OFC: Other freight containers, including stillage’s
+    PL: Palletised goods
+    PS: Pre slung goods
+    NP: No packaging and other mobile units e.g. livestock, cars, plant
+    RC: Roll cages and other mobile units
+    OT: Other cargo types including swap bodies, boxes, crates and cylinders or mixed consignments
+    NS: Empty
+
+
 
 vehicle:
   operation-type:

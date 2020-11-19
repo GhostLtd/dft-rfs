@@ -7,18 +7,24 @@ namespace App\Workflow\DomesticSurvey;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
+use App\Form\CargoTypeType;
 use App\Form\DomesticSurvey\DayMulti\ArrivedPortsType;
 use App\Form\DomesticSurvey\DayMulti\ArrivedType;
 use App\Form\DomesticSurvey\DayMulti\DepartedPortsType;
 use App\Form\DomesticSurvey\DayMulti\DepartedType;
-use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
-use App\Form\DomesticSurvey\DaySummary\DestinationType;
-use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
+use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
+use App\Form\DomesticSurvey\DaySummary\NumberOfStopsType;
+use App\Form\DomesticSurvey\DestinationPortsType;
+use App\Form\DomesticSurvey\DestinationType;
+use App\Form\DomesticSurvey\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
-use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
-use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
-use App\Form\DomesticSurvey\DaySummary\OriginType;
+use App\Form\DomesticSurvey\GoodsDescriptionType;
+use App\Form\DomesticSurvey\OriginPortsType;
+use App\Form\DomesticSurvey\OriginType;
+use App\Form\HazardousGoodsType;
 use App\Workflow\FormWizardInterface;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class DaySummaryState implements FormWizardInterface
 {
@@ -28,8 +34,11 @@ class DaySummaryState implements FormWizardInterface
     const STATE_DESTINATION_PORTS = 'destination-ports';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
     const STATE_FURTHEST_STOP = 'furthest-stop';
-    const STATE_GOODS = 'goods';
-    const STATE_ = '';
+    const STATE_GOODS_DESCRIPTION = 'goods-description';
+    const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
+    const STATE_CARGO_TYPE = 'cargo-type';
+    const STATE_GOODS_WEIGHT = 'goods-weight';
+    const STATE_NUMBER_OF_STOPS = 'number-of-stops';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
@@ -39,7 +48,21 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
-        self::STATE_GOODS => GoodsDescriptionType::class,
+        self::STATE_GOODS_DESCRIPTION => [
+            'form' => GoodsDescriptionType::class,
+            'options' => [
+                'is_summary_day' => true,
+            ],
+        ],
+        self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
+        self::STATE_CARGO_TYPE => [
+            'form' => CargoTypeType::class,
+            'options' => [
+                'is_summary_day' => true,
+            ],
+        ],
+        self::STATE_GOODS_WEIGHT => GoodsWeightType::class,
+        self::STATE_NUMBER_OF_STOPS => NumberOfStopsType::class,
     ];
 
     private const TEMPLATE_MAP = [
@@ -49,7 +72,11 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_DESTINATION_PORTS => 'domestic_survey/day_summary/form-destination-ports.html.twig',
         self::STATE_FURTHEST_STOP => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
-        self::STATE_GOODS => 'domestic_survey/day_summary/form-goods.html.twig',
+        self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_summary/form-goods-description.html.twig',
+        self::STATE_HAZARDOUS_GOODS => 'domestic_survey/day_summary/form-goods-description.html.twig',
+        self::STATE_CARGO_TYPE => 'domestic_survey/day_summary/form-cargo-type.html.twig',
+        self::STATE_GOODS_WEIGHT => 'domestic_survey/day_summary/form-goods-weight.html.twig',
+        self::STATE_NUMBER_OF_STOPS => 'domestic_survey/day_summary/form-number-of-stops.html.twig',
     ];
 
     private $state = self::STATE_ORIGIN;
@@ -104,14 +131,35 @@ class DaySummaryState implements FormWizardInterface
         }
 
         if ($this->subject->getDestinationLocation()) {
-            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_GOODS;
+            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_DISTANCE_TRAVELLED;
         }
         if (in_array(self::STATE_DESTINATION_PORTS, $states) && $this->subject->getGoodsTransferredTo() !== Day::TRANSFERRED) {
             $states[] = self::STATE_FURTHEST_STOP;
         }
 
         if ($this->subject->getFurthestStop()) {
-            $stated[] = self::STATE_DISTANCE_TRAVELLED;
+            $states[] = self::STATE_DISTANCE_TRAVELLED;
+        }
+
+        if (($this->subject->getDistanceTravelledLoaded() && $this->subject->getDistanceTravelledLoaded()->getValue())
+                || ($this->subject->getDistanceTravelledUnloaded() && $this->subject->getDistanceTravelledUnloaded()->getValue())) {
+            $states[] = self::STATE_GOODS_DESCRIPTION;
+        }
+
+        if ($this->subject->getGoodsDescription()) {
+            $states[] = self::STATE_HAZARDOUS_GOODS;
+        }
+
+        if ($this->subject->getHazardousGoodsCode()) {
+            $states[] = self::STATE_CARGO_TYPE;
+        }
+
+        if ($this->subject->getCargoTypeCode()) {
+            $states[] = self::STATE_GOODS_WEIGHT;
+        }
+
+        if ($this->subject->getWeightOfGoodsLoaded()) {
+            $states[] = self::STATE_NUMBER_OF_STOPS;
         }
 
         return $states;

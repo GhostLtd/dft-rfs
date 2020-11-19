@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\DomesticSurvey;
 
 use App\Entity\Distance;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\StopTrait;
 use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,8 +16,8 @@ class DistanceTravelledType extends AbstractType
     {
         $valueOptions = [
             'label' => 'Distance',
-            'is_decimal' => false,
-            'attr' => ['class' => 'govuk-input--width-5']
+            'is_decimal' => true,
+            'attr' => ['class' => 'govuk-input--width-5'],
         ];
         $unitOptions = [
             'label' => 'Unit',
@@ -46,7 +47,7 @@ class DistanceTravelledType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DaySummary::class,
+            'data_class' => StopTrait::class,
         ]);
     }
 }

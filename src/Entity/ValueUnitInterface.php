@@ -6,8 +6,8 @@ namespace App\Entity;
 
 interface ValueUnitInterface
 {
-    public function getValue() : ?string;
-    public function setValue(?string $value);
+    public function getValue();
+    public function setValue($value);
     public function getUnit() : ?string;
     public function setUnit(?string $unit);
 }

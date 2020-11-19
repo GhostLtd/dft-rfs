@@ -20,7 +20,7 @@ class Distance implements ValueUnitInterface
     ];
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @ORM\Column(type="integer", precision=10, scale=1, nullable=true)
      */
     private $value;
 
@@ -34,7 +34,7 @@ class Distance implements ValueUnitInterface
         return $this->value;
     }
 
-    public function setValue(?string $value): self
+    public function setValue($value): self
     {
         $this->value = $value;
         return $this;

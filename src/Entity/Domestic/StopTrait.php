@@ -2,9 +2,9 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\CargoTransportMeans;
+use App\Entity\CargoTypeTrait;
 use App\Entity\Distance;
-use App\Entity\HazardousGood;
+use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 trait StopTrait
@@ -27,12 +27,12 @@ trait StopTrait
     private $destinationLocation;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", nullable=true)
      */
     private $goodsTransferredFrom;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", nullable=true)
      */
     private $goodsTransferredTo;
 
@@ -57,20 +57,12 @@ trait StopTrait
     private $goodsDescription;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $goodsDescriptionOther;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=HazardousGood::class)
-     */
-    private $hazardousGoodsType;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=CargoTransportMeans::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $cargoTransportMeans;
+    use HazardousGoodsTrait;
+    use CargoTypeTrait;
 
     public function getId(): ?int
     {
@@ -209,30 +201,6 @@ trait StopTrait
     public function setGoodsDescriptionOther(?string $goodsDescriptionOther): self
     {
         $this->goodsDescriptionOther = $goodsDescriptionOther;
-
-        return $this;
-    }
-
-    public function getHazardousGoodsType(): ?HazardousGood
-    {
-        return $this->hazardousGoodsType;
-    }
-
-    public function setHazardousGoodsType(?HazardousGood $hazardousGoodsType): self
-    {
-        $this->hazardousGoodsType = $hazardousGoodsType;
-
-        return $this;
-    }
-
-    public function getCargoTransportMeans(): ?CargoTransportMeans
-    {
-        return $this->cargoTransportMeans;
-    }
-
-    public function setCargoTransportMeans(?CargoTransportMeans $cargoTransportMeans): self
-    {
-        $this->cargoTransportMeans = $cargoTransportMeans;
 
         return $this;
     }

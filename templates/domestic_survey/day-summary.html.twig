@@ -8,7 +8,6 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.number }})</h1>
 
-    {% dump(day) %}
     {% if day.hasMoreThanFiveStops %}
         <h2 class="govuk-heading-m">Summary day</h2>
         {% if day.summary | default(false) %}

@@ -34,16 +34,8 @@ class InternationalConsignment
      */
     private $goodsDescription;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=HazardousGood::class)
-     */
-    private $hazardousGoodsType;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=CargoTransportMeans::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $cargoTransportMeans;
+    use HazardousGoodsTrait;
+    use CargoTypeTrait;
 
     /**
      * @ORM\Column(type="integer")
@@ -87,30 +79,6 @@ class InternationalConsignment
     public function setGoodsDescription(string $goodsDescription): self
     {
         $this->goodsDescription = $goodsDescription;
-
-        return $this;
-    }
-
-    public function getHazardousGoodsType(): ?HazardousGood
-    {
-        return $this->hazardousGoodsType;
-    }
-
-    public function setHazardousGoodsType(?HazardousGood $hazardousGoodsType): self
-    {
-        $this->hazardousGoodsType = $hazardousGoodsType;
-
-        return $this;
-    }
-
-    public function getCargoTransportMeans(): ?CargoTransportMeans
-    {
-        return $this->cargoTransportMeans;
-    }
-
-    public function setCargoTransportMeans(?CargoTransportMeans $cargoTransportMeans): self
-    {
-        $this->cargoTransportMeans = $cargoTransportMeans;
 
         return $this;
     }

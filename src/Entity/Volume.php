@@ -34,7 +34,7 @@ class Volume implements ValueUnitInterface
         return $this->value;
     }
 
-    public function setValue(?string $value): self
+    public function setValue($value): self
     {
         $this->value = $value;
         return $this;

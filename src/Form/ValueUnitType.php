@@ -14,6 +14,8 @@ class ValueUnitType extends AbstractType
     {
         $defaultValueOptions = [
             'label' => false,
+            'attr' => [
+            ],
         ];
         $defaultUnitsOptions = [
             'label' => false,

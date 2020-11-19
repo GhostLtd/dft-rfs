@@ -8,8 +8,10 @@ use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -137,10 +139,25 @@ abstract class AbstractWorkflowController extends AbstractController
 
         if (isset($formMap[$state]))
         {
-            $form = $this->createForm($formMap[$state]);
-            if ($form->getConfig()->getDataClass())
+            $formClass = $formMap[$state];
+            $formOptions = [];
+            if (is_array($formClass)) {
+                $formOptions = $formClass['options'];
+                $formClass = $formClass['form'];
+            }
+            $or = new OptionsResolver();
+            /** @var FormTypeInterface $formType */
+            $formType = new $formClass();
+            $formType->configureOptions($or);
+
+            if ($or->isDefined('data_class'))
             {
-                $form->setData($formWizard->getSubject());
+                // force the data_class - some use traits for IDE assistance.
+                $form = $this->createForm(
+                    $formClass,
+                    $formWizard->getSubject(),
+                    array_merge(['data_class' => get_class($formWizard->getSubject())], $formOptions)
+                );
             }
         } else {
             $form = $this->createFormBuilder()

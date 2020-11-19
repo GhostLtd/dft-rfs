@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
@@ -30,7 +30,7 @@ class DestinationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DaySummary::class,
+            'data_class' => StopTrait::class,
         ]);
     }
 }

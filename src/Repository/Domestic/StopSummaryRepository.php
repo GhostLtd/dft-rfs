@@ -5,6 +5,8 @@ namespace App\Repository\Domestic;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,8 +24,9 @@ class StopSummaryRepository extends ServiceEntityRepository
 
     /**
      * @param $dayNumber
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return DaySummary
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function getForDevelopmentByDayNumber($dayNumber)
     {

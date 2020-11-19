@@ -16,16 +16,17 @@ class GoodsWeightType extends AbstractType
         $builder
             ->add('weightOfGoodsLoaded', Gds\NumberType::class, [
                 'label' => 'survey.domestic.forms.day-summary.weight-of-goods-loaded.label',
+                'help' => 'survey.domestic.forms.day-summary.weight-of-goods-loaded.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'suffix' => 'kg',
             ])
             ->add('weightOfGoodsUnloaded', Gds\NumberType::class, [
                 'label' => 'survey.domestic.forms.day-summary.weight-of-goods-unloaded.label',
+                'help' => 'survey.domestic.forms.day-summary.weight-of-goods-unloaded.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'suffix' => 'kg',
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

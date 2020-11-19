@@ -21,10 +21,11 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_DESTINATION_PORTS,
                     StateObject::STATE_DISTANCE_TRAVELLED,
                     StateObject::STATE_FURTHEST_STOP,
-                    StateObject::STATE_GOODS,
-
-//                    StateObject::STATE_,
-
+                    StateObject::STATE_GOODS_DESCRIPTION,
+                    StateObject::STATE_HAZARDOUS_GOODS,
+                    StateObject::STATE_CARGO_TYPE,
+                    StateObject::STATE_GOODS_WEIGHT,
+                    StateObject::STATE_NUMBER_OF_STOPS,
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
@@ -60,9 +61,25 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_FURTHEST_STOP,
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
-                    'distance-travelled-to-goods' => [
+                    'distance-travelled-to-goods-description' => [
                         'from' => StateObject::STATE_DISTANCE_TRAVELLED,
-                        'to' =>  StateObject::STATE_GOODS,
+                        'to' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                    ],
+                    'goods-description-to-hazardous-goods' => [
+                        'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                        'to' => StateObject::STATE_HAZARDOUS_GOODS,
+                    ],
+                    'hazardous-goods-to-cargo-type' => [
+                        'from' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'to' => StateObject::STATE_CARGO_TYPE,
+                    ],
+                    'cargo-type-to-goods-weight' => [
+                        'from' => StateObject::STATE_CARGO_TYPE,
+                        'to' => StateObject::STATE_GOODS_WEIGHT,
+                    ],
+                    'goods-weight-to-number-of-stops' => [
+                        'from' => StateObject::STATE_GOODS_WEIGHT,
+                        'to' => StateObject::STATE_NUMBER_OF_STOPS,
                     ],
 
 
@@ -71,7 +88,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => 'domestic_survey_index',
                         ],
-                        'from' => StateObject::STATE_GOODS,
+                        'from' => StateObject::STATE_NUMBER_OF_STOPS,
                         'to' =>  StateObject::STATE_END,
                     ],
                 ]

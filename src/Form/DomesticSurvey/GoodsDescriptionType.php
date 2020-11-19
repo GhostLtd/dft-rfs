@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,9 +32,14 @@ class GoodsDescriptionType extends AbstractType
         }
         $goodsChoiceOptions[Day::GOODS_DESCRIPTION_TRANSLATION_PREFIX . Day::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
 
+        $choices = Day::GOODS_DESCRIPTION_CHOICES;
+        if ($options['is_summary_day']) {
+            unset($choices[array_search(Day::GOODS_DESCRIPTION_EMPTY, $choices)]);
+        }
+
         $builder->get('goodsDescriptionFieldset')
             ->add('goodsDescription', Gds\ChoiceType::class, [
-                'choices' => Day::GOODS_DESCRIPTION_CHOICES,
+                'choices' => dump($choices),
                 'choice_options' => $goodsChoiceOptions,
                 'label' => false,
             ])
@@ -48,7 +53,8 @@ class GoodsDescriptionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DaySummary::class,
+            'data_class' => StopTrait::class,
+            'is_summary_day' => false,
         ]);
     }
 }

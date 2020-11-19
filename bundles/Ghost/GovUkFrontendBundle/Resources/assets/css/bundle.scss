@@ -9,11 +9,6 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "govuk-time-input";
 @import "govuk-money-input";
 
-.govuk-fieldset__item {
-    display: inline-block;
-    margin-right: 30px;
-}
-
 @include govuk-media-query($from: tablet) {
     .govuk-button + .govuk-button {
         margin-left: 10px;
