@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalCompanyRepository;
+use App\Repository\International\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalCompanyRepository::class)
+ * @ORM\Entity(repositoryClass=CompanyRepository::class)
+ * @ORM\Table(name="international_company")
  */
-class InternationalCompany
+class Company
 {
     /**
      * @ORM\Id
@@ -25,12 +26,12 @@ class InternationalCompany
     private $businessName;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalPreEnquiry::class, mappedBy="company", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=PreEnquiry::class, mappedBy="company", cascade={"persist"})
      */
     private $preEnquiries;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalSurvey::class, mappedBy="company", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Survey::class, mappedBy="company", cascade={"persist"})
      */
     private $surveys;
 
@@ -63,14 +64,14 @@ class InternationalCompany
     }
 
     /**
-     * @return Collection|InternationalPreEnquiry[]
+     * @return Collection|PreEnquiry[]
      */
     public function getPreEnquiries(): Collection
     {
         return $this->preEnquiries;
     }
 
-    public function addPreEnquiry(InternationalPreEnquiry $preEnquiry): self
+    public function addPreEnquiry(PreEnquiry $preEnquiry): self
     {
         if (!$this->preEnquiries->contains($preEnquiry)) {
             $this->preEnquiries[] = $preEnquiry;
@@ -80,7 +81,7 @@ class InternationalCompany
         return $this;
     }
 
-    public function removePreEnquiry(InternationalPreEnquiry $preEnquiry): self
+    public function removePreEnquiry(PreEnquiry $preEnquiry): self
     {
         if ($this->preEnquiries->removeElement($preEnquiry)) {
             // set the owning side to null (unless already changed)
@@ -93,14 +94,14 @@ class InternationalCompany
     }
 
     /**
-     * @return Collection|InternationalSurvey[]
+     * @return Collection|Survey[]
      */
     public function getSurveys(): Collection
     {
         return $this->surveys;
     }
 
-    public function addSurvey(InternationalSurvey $survey): self
+    public function addSurvey(Survey $survey): self
     {
         if (!$this->surveys->contains($survey)) {
             $this->surveys[] = $survey;
@@ -110,7 +111,7 @@ class InternationalCompany
         return $this;
     }
 
-    public function removeSurvey(InternationalSurvey $survey): self
+    public function removeSurvey(Survey $survey): self
     {
         if ($this->surveys->removeElement($survey)) {
             // set the owning side to null (unless already changed)

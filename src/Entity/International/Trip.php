@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalTripRepository;
+use App\Entity\Distance;
+use App\Repository\International\TripRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalTripRepository::class)
+ * @ORM\Entity(repositoryClass=TripRepository::class)
+ * @ORM\Table(name="international_trip")
  */
-class InternationalTrip
+class Trip
 {
     /**
      * @ORM\Id
@@ -81,7 +83,7 @@ class InternationalTrip
     private $roundTripDistance;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalStop::class, mappedBy="trip", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip", orphanRemoval=true)
      */
     private $stops;
 
@@ -91,7 +93,7 @@ class InternationalTrip
     private $countriesTransitted = [];
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalVehicle::class, inversedBy="trip", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Vehicle::class, inversedBy="trip", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $vehicle;
@@ -251,14 +253,14 @@ class InternationalTrip
     }
 
     /**
-     * @return Collection|InternationalStop[]
+     * @return Collection|Stop[]
      */
     public function getStops(): Collection
     {
         return $this->stops;
     }
 
-    public function addStop(InternationalStop $stop): self
+    public function addStop(Stop $stop): self
     {
         if (!$this->stops->contains($stop)) {
             $this->stops[] = $stop;
@@ -268,7 +270,7 @@ class InternationalTrip
         return $this;
     }
 
-    public function removeStop(InternationalStop $stop): self
+    public function removeStop(Stop $stop): self
     {
         if ($this->stops->removeElement($stop)) {
             // set the owning side to null (unless already changed)
@@ -292,12 +294,12 @@ class InternationalTrip
         return $this;
     }
 
-    public function getVehicle(): ?InternationalVehicle
+    public function getVehicle(): ?Vehicle
     {
         return $this->vehicle;
     }
 
-    public function setVehicle(InternationalVehicle $vehicle): self
+    public function setVehicle(Vehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
 

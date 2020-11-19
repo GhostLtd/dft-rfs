@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalStopRepository;
+use App\Repository\International\StopRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalStopRepository::class)
+ * @ORM\Entity(repositoryClass=StopRepository::class)
+ * @ORM\Table(name="international_stop")
  */
-class InternationalStop
+class Stop
 {
     /**
      * @ORM\Id
@@ -18,7 +19,7 @@ class InternationalStop
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InternationalTrip::class, inversedBy="stops")
+     * @ORM\ManyToOne(targetEntity=Trip::class, inversedBy="stops")
      * @ORM\JoinColumn(nullable=false)
      */
     private $trip;
@@ -43,12 +44,12 @@ class InternationalStop
         return $this->id;
     }
 
-    public function getTrip(): ?InternationalTrip
+    public function getTrip(): ?Trip
     {
         return $this->trip;
     }
 
-    public function setTrip(?InternationalTrip $trip): self
+    public function setTrip(?Trip $trip): self
     {
         $this->trip = $trip;
 

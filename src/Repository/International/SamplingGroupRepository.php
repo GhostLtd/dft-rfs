@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\SamplingSchemaDay;
+use App\Entity\International\SamplingGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method SamplingSchemaDay|null find($id, $lockMode = null, $lockVersion = null)
- * @method SamplingSchemaDay|null findOneBy(array $criteria, array $orderBy = null)
- * @method SamplingSchemaDay[]    findAll()
- * @method SamplingSchemaDay[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SamplingGroup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SamplingGroup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SamplingGroup[]    findAll()
+ * @method SamplingGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SamplingSchemaDayRepository extends ServiceEntityRepository
+class SamplingGroupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, SamplingSchemaDay::class);
+        parent::__construct($registry, SamplingGroup::class);
     }
 
     // /**
-    //  * @return SamplingSchemaDay[] Returns an array of SamplingSchemaDay objects
+    //  * @return SamplingGroup[] Returns an array of SamplingGroup objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class SamplingSchemaDayRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?SamplingSchemaDay
+    public function findOneBySomeField($value): ?SamplingGroup
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

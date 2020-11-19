@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalPreEnquiryRepository;
+use App\Repository\International\PreEnquiryRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalPreEnquiryRepository::class)
+ * @ORM\Entity(repositoryClass=PreEnquiryRepository::class)
+ * @ORM\Table(name="international_pre_enquiry")
  */
-class InternationalPreEnquiry
+class PreEnquiry
 {
     /**
      * @ORM\Id
@@ -34,12 +35,12 @@ class InternationalPreEnquiry
     private $submissionDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalPreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=PreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
      */
     private $response;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InternationalCompany::class, inversedBy="preEnquiries")
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries")
      * @ORM\JoinColumn(nullable=false)
      */
     private $company;
@@ -85,12 +86,12 @@ class InternationalPreEnquiry
         return $this;
     }
 
-    public function getResponse(): ?InternationalPreEnquiryResponse
+    public function getResponse(): ?PreEnquiryResponse
     {
         return $this->response;
     }
 
-    public function setResponse(InternationalPreEnquiryResponse $response): self
+    public function setResponse(PreEnquiryResponse $response): self
     {
         $this->response = $response;
 
@@ -102,12 +103,12 @@ class InternationalPreEnquiry
         return $this;
     }
 
-    public function getCompany(): ?InternationalCompany
+    public function getCompany(): ?Company
     {
         return $this->company;
     }
 
-    public function setCompany(?InternationalCompany $company): self
+    public function setCompany(?Company $company): self
     {
         $this->company = $company;
 

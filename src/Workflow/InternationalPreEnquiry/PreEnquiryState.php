@@ -2,7 +2,7 @@
 
 namespace App\Workflow\InternationalPreEnquiry;
 
-use App\Entity\InternationalPreEnquiryResponse;
+use App\Entity\International\PreEnquiryResponse;
 use App\Form\InternationalPreEnquiry\CompanyNameType;
 use App\Form\InternationalPreEnquiry\CorrespondenceAddressType;
 use App\Form\InternationalPreEnquiry\CorrespondenceDetailsType;
@@ -58,7 +58,7 @@ class PreEnquiryState implements FormWizardInterface
 
     private $state = self::STATE_COMPANY_NAME;
 
-    /** @var InternationalPreEnquiryResponse */
+    /** @var PreEnquiryResponse */
     private $subject;
 
     /**
@@ -86,8 +86,8 @@ class PreEnquiryState implements FormWizardInterface
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === InternationalPreEnquiryResponse::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . InternationalPreEnquiryResponse::class);
+        if (!get_class($subject) === PreEnquiryResponse::class) {
+            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . PreEnquiryResponse::class);
         }
         $this->subject = $subject;
         return $this;

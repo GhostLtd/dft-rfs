@@ -2,7 +2,7 @@
 
 namespace App\Form\InternationalPreEnquiry;
 
-use App\Entity\InternationalPreEnquiryResponse;
+use App\Entity\International\PreEnquiryResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,7 +27,7 @@ class CompanyNameType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => InternationalPreEnquiryResponse::class,
+            'data_class' => PreEnquiryResponse::class,
             'validation_groups' => ['company_name'],
         ]);
     }

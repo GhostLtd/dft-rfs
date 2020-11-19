@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalSurveyResponseRepository;
+use App\Repository\International\SurveyResponseRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalSurveyResponseRepository::class)
+ * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
+ * @ORM\Table(name="international_survey_response")
  */
-class InternationalSurveyResponse
+class SurveyResponse
 {
     /**
      * @ORM\Id
@@ -36,13 +37,13 @@ class InternationalSurveyResponse
     private $unableToCompleteReason;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="surveyResponse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="surveyResponse", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalVehicle::class, mappedBy="surveyResponse", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="surveyResponse", orphanRemoval=true)
      */
     private $vehicles;
 
@@ -97,12 +98,12 @@ class InternationalSurveyResponse
         return $this;
     }
 
-    public function getSurvey(): ?InternationalSurvey
+    public function getSurvey(): ?Survey
     {
         return $this->survey;
     }
 
-    public function setSurvey(InternationalSurvey $survey): self
+    public function setSurvey(Survey $survey): self
     {
         $this->survey = $survey;
 
@@ -110,14 +111,14 @@ class InternationalSurveyResponse
     }
 
     /**
-     * @return Collection|InternationalVehicle[]
+     * @return Collection|Vehicle[]
      */
     public function getVehicles(): Collection
     {
         return $this->vehicles;
     }
 
-    public function addVehicle(InternationalVehicle $vehicle): self
+    public function addVehicle(Vehicle $vehicle): self
     {
         if (!$this->vehicles->contains($vehicle)) {
             $this->vehicles[] = $vehicle;
@@ -127,7 +128,7 @@ class InternationalSurveyResponse
         return $this;
     }
 
-    public function removeVehicle(InternationalVehicle $vehicle): self
+    public function removeVehicle(Vehicle $vehicle): self
     {
         if ($this->vehicles->removeElement($vehicle)) {
             // set the owning side to null (unless already changed)

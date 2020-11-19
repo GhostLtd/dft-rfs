@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\SamplingGroup;
+use App\Entity\International\SamplingSchema;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method SamplingGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method SamplingGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method SamplingGroup[]    findAll()
- * @method SamplingGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SamplingSchema|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SamplingSchema|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SamplingSchema[]    findAll()
+ * @method SamplingSchema[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SamplingGroupRepository extends ServiceEntityRepository
+class SamplingSchemaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, SamplingGroup::class);
+        parent::__construct($registry, SamplingSchema::class);
     }
 
     // /**
-    //  * @return SamplingGroup[] Returns an array of SamplingGroup objects
+    //  * @return SamplingSchema[] Returns an array of SamplingSchema objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class SamplingGroupRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?SamplingGroup
+    public function findOneBySomeField($value): ?SamplingSchema
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

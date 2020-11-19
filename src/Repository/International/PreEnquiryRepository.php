@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalPreEnquiry;
+use App\Entity\International\PreEnquiry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
 
 /**
- * @method InternationalPreEnquiry|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalPreEnquiry|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalPreEnquiry[]    findAll()
- * @method InternationalPreEnquiry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PreEnquiry|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PreEnquiry|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PreEnquiry[]    findAll()
+ * @method PreEnquiry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalPreEnquiryRepository extends ServiceEntityRepository
+class PreEnquiryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalPreEnquiry::class);
+        parent::__construct($registry, PreEnquiry::class);
     }
 
-    public function findLatestSurveyForTesting(): ?InternationalPreEnquiry
+    public function findLatestSurveyForTesting(): ?PreEnquiry
     {
         try {
             return $this->createQueryBuilder('pe')

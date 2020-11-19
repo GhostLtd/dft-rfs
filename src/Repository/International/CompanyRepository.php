@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalTrip;
+use App\Entity\International\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalTrip|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalTrip|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalTrip[]    findAll()
- * @method InternationalTrip[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Company|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Company|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Company[]    findAll()
+ * @method Company[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalTripRepository extends ServiceEntityRepository
+class CompanyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalTrip::class);
+        parent::__construct($registry, Company::class);
     }
 
     // /**
-    //  * @return InternationalTrip[] Returns an array of InternationalTrip objects
+    //  * @return InternationalCompany[] Returns an array of InternationalCompany objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class InternationalTripRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?InternationalTrip
+    public function findOneBySomeField($value): ?InternationalCompany
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')

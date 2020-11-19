@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalConsignment;
+use App\Entity\International\Consignment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalConsignment|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalConsignment|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalConsignment[]    findAll()
- * @method InternationalConsignment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Consignment|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Consignment|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Consignment[]    findAll()
+ * @method Consignment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalConsignmentRepository extends ServiceEntityRepository
+class ConsignmentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalConsignment::class);
+        parent::__construct($registry, Consignment::class);
     }
 
     // /**

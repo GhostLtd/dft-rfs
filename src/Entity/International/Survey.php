@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalSurveyRepository;
+use App\Entity\SurveyTrait;
+use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalSurveyRepository::class)
+ * @ORM\Entity(repositoryClass=SurveyRepository::class)
+ * @ORM\Table(name="international_survey")
  */
-class InternationalSurvey
+class Survey
 {
     use SurveyTrait;
 
@@ -18,13 +20,13 @@ class InternationalSurvey
     private $referenceNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InternationalCompany::class, inversedBy="surveys")
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys")
      * @ORM\JoinColumn(nullable=false)
      */
     private $company;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalSurveyResponse::class, mappedBy="survey", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
     private $surveyResponse;
 
@@ -40,24 +42,24 @@ class InternationalSurvey
         return $this;
     }
 
-    public function getCompany(): ?InternationalCompany
+    public function getCompany(): ?Company
     {
         return $this->company;
     }
 
-    public function setCompany(?InternationalCompany $company): self
+    public function setCompany(?Company $company): self
     {
         $this->company = $company;
 
         return $this;
     }
 
-    public function getSurveyResponse(): ?InternationalSurveyResponse
+    public function getSurveyResponse(): ?SurveyResponse
     {
         return $this->surveyResponse;
     }
 
-    public function setSurveyResponse(InternationalSurveyResponse $surveyResponse): self
+    public function setSurveyResponse(SurveyResponse $surveyResponse): self
     {
         $this->surveyResponse = $surveyResponse;
 

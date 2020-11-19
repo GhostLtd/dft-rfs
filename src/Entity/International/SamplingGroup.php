@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\SamplingGroupRepository;
+use App\Repository\International\SamplingGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +30,7 @@ class SamplingGroup
     private $sizeGroup;
 
     /**
-     * @ORM\OneToMany(targetEntity=InternationalCompany::class, mappedBy="samplingGroup")
+     * @ORM\OneToMany(targetEntity=Company::class, mappedBy="samplingGroup")
      */
     private $companies;
 
@@ -69,14 +69,14 @@ class SamplingGroup
     }
 
     /**
-     * @return Collection|InternationalCompany[]
+     * @return Collection|Company[]
      */
     public function getCompanies(): Collection
     {
         return $this->companies;
     }
 
-    public function addCompany(InternationalCompany $company): self
+    public function addCompany(Company $company): self
     {
         if (!$this->companies->contains($company)) {
             $this->companies[] = $company;
@@ -86,7 +86,7 @@ class SamplingGroup
         return $this;
     }
 
-    public function removeCompany(InternationalCompany $company): self
+    public function removeCompany(Company $company): self
     {
         if ($this->companies->removeElement($company)) {
             // set the owning side to null (unless already changed)

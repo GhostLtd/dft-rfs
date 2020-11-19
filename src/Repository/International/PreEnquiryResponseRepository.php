@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalSurvey;
+use App\Entity\International\PreEnquiryResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalSurvey|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalSurvey|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalSurvey[]    findAll()
- * @method InternationalSurvey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PreEnquiryResponse|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PreEnquiryResponse|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PreEnquiryResponse[]    findAll()
+ * @method PreEnquiryResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalSurveyRepository extends ServiceEntityRepository
+class PreEnquiryResponseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalSurvey::class);
+        parent::__construct($registry, PreEnquiryResponse::class);
     }
 
     // /**
-    //  * @return InternationalSurvey[] Returns an array of InternationalSurvey objects
+    //  * @return InternationalPreEnquiryResponse[] Returns an array of InternationalPreEnquiryResponse objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class InternationalSurveyRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?InternationalSurvey
+    public function findOneBySomeField($value): ?InternationalPreEnquiryResponse
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')

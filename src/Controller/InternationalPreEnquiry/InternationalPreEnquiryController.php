@@ -3,13 +3,13 @@
 namespace App\Controller\InternationalPreEnquiry;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\InternationalCompany;
-use App\Entity\InternationalPreEnquiry;
-use App\Entity\InternationalPreEnquiryResponse;
-use App\Entity\SamplingGroup;
+use App\Entity\International\Company;
+use App\Entity\International\PreEnquiry;
+use App\Entity\International\PreEnquiryResponse;
+use App\Entity\International\SamplingGroup;
 use App\Form\InternationalPreEnquiry\SubmitPreEnquiryType;
-use App\Repository\InternationalPreEnquiryRepository;
-use App\Repository\SamplingGroupRepository;
+use App\Repository\International\PreEnquiryRepository;
+use App\Repository\International\SamplingGroupRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use DateTime;
@@ -85,13 +85,13 @@ class InternationalPreEnquiryController extends AbstractSessionStateWorkflowCont
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
 
-    protected function getSurveyResponse(?InternationalPreEnquiryResponse $existingResponse): InternationalPreEnquiryResponse
+    protected function getSurveyResponse(?PreEnquiryResponse $existingResponse): PreEnquiryResponse
     {
         $preEnquiry = $this->getPreEnquiry();
         $response = $existingResponse ?? $preEnquiry->getResponse();
 
         if (!$response) {
-            $response = new InternationalPreEnquiryResponse();
+            $response = new PreEnquiryResponse();
         }
 
         if ($response->getPreEnquiry() === null) {
@@ -101,10 +101,10 @@ class InternationalPreEnquiryController extends AbstractSessionStateWorkflowCont
         return $response;
     }
 
-    protected function getPreEnquiry(): InternationalPreEnquiry
+    protected function getPreEnquiry(): PreEnquiry
     {
-        /** @var InternationalPreEnquiryRepository $preEnquiryRepo */
-        $preEnquiryRepo = $this->entityManager->getRepository(InternationalPreEnquiry::class);
+        /** @var PreEnquiryRepository $preEnquiryRepo */
+        $preEnquiryRepo = $this->entityManager->getRepository(PreEnquiry::class);
 
         $preEnquiry = $preEnquiryRepo->findLatestSurveyForTesting();
 
@@ -115,14 +115,14 @@ class InternationalPreEnquiryController extends AbstractSessionStateWorkflowCont
             /** @var SamplingGroup $samplingGroup */
             $samplingGroup = $samplingGroupRepo->findOneBy(['number' => 1, 'sizeGroup' => 1]);
 
-            $company = (new InternationalCompany())
+            $company = (new Company())
                 ->setBusinessName('Test spockets inc')
                 ->setSamplingGroup($samplingGroup);
 
             $dispatchDate = new DateTime();
             $dueDate = (clone $dispatchDate)->modify('+4 weeks');
 
-            $preEnquiry = (new InternationalPreEnquiry())
+            $preEnquiry = (new PreEnquiry())
                 ->setCompany($company)
                 ->setDispatchDate($dispatchDate)
                 ->setDueDate($dueDate);

@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalSurveyResponse;
+use App\Entity\International\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalSurveyResponse|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalSurveyResponse|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalSurveyResponse[]    findAll()
- * @method InternationalSurveyResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SurveyResponse|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SurveyResponse|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SurveyResponse[]    findAll()
+ * @method SurveyResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalSurveyResponseRepository extends ServiceEntityRepository
+class SurveyResponseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalSurveyResponse::class);
+        parent::__construct($registry, SurveyResponse::class);
     }
 
     // /**
