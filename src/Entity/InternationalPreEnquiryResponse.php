@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\InternationalPreEnquiryResponseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=InternationalPreEnquiryResponseRepository::class)
@@ -82,6 +83,21 @@ class InternationalPreEnquiryResponse
      * @ORM\JoinColumn(nullable=false)
      */
     private $preEnquiry;
+
+    /**
+     * @Assert\Callback(groups={"vehicle_questions"})
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if ($this->getInternationalJourneyVehicleCount() !== null &&
+            $this->getTotalVehicleCount() !== null &&
+            $this->getInternationalJourneyVehicleCount() > $this->getTotalVehicleCount()) {
+            $context
+                ->buildViolation('Number of vehicles used for international journeys must be less than or equal to the total number of vehicles')
+                ->atPath('internationalJourneyVehicleCount')
+                ->addViolation();
+        }
+    }
 
     public function getId(): ?int
     {

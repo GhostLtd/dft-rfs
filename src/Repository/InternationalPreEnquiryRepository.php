@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\InternationalPreEnquiry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 /**
  * @method InternationalPreEnquiry|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,10 +23,14 @@ class InternationalPreEnquiryRepository extends ServiceEntityRepository
 
     public function findLatestSurveyForTesting(): ?InternationalPreEnquiry
     {
-        return $this->createQueryBuilder('pe')
-            ->orderBy('pe.id', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+        try {
+            return $this->createQueryBuilder('pe')
+                ->orderBy('pe.id', 'DESC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Query with maxResults 1 returned multiple results!');
+        }
     }
 }

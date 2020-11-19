@@ -18,7 +18,7 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"hiree_details", "sold_details", "correspondence_address"})
+     * @Assert\NotBlank(groups={"hiree_details", "sold_details", "correspondence_address", "pre_enquiry_summary"})
      */
     private $line1;
 
@@ -39,7 +39,7 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Assert\NotBlank(groups={"hiree_details", "sold_details", "correspondence_address"})
+     * @Assert\NotBlank(groups={"hiree_details", "sold_details", "correspondence_address", "pre_enquiry_summary"})
      */
     private $postcode;
 
