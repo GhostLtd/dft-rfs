@@ -6,6 +6,9 @@ use App\Workflow\FormWizardInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
+use ReflectionClass;
+use ReflectionException;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -141,27 +144,40 @@ abstract class AbstractWorkflowController extends AbstractController
         {
             $formClass = $formMap[$state];
             $formOptions = [];
+
             if (is_array($formClass)) {
                 $formOptions = $formClass['options'];
                 $formClass = $formClass['form'];
             }
+
             $or = new OptionsResolver();
             /** @var FormTypeInterface $formType */
             $formType = new $formClass();
             $formType->configureOptions($or);
+            $resolvedOptions = $or->resolve([]);
 
-            if ($or->isDefined('data_class'))
-            {
-                // force the data_class - some use traits for IDE assistance.
-                $form = $this->createForm(
-                    $formClass,
-                    $formWizard->getSubject(),
-                    array_merge(['data_class' => get_class($formWizard->getSubject())], $formOptions)
-                );
+            $dataClass = $resolvedOptions['data_class'] ?? null;
+            if ($dataClass) {
+                try {
+                    $dataClassRefl = new ReflectionClass($dataClass);
+                } catch (ReflectionException $e) {
+                    throw new RuntimeException("Invalid data_class specified: '{$dataClass}'");
+                }
+
+                // Some use traits, which enables IDE assistance, but isn't valid for the data_class.
+                // Override them with the class of the dataSubject.
+                if ($dataClassRefl->isTrait()) {
+                    $form = $this->createForm(
+                        $formClass,
+                        $formWizard->getSubject(),
+                        array_merge(['data_class' => get_class($formWizard->getSubject())], $formOptions)
+                    );
+                } else {
+                    $form = $this->createForm($formClass);
+                }
             }
         } else {
-            $form = $this->createFormBuilder()
-                ->getForm();
+            $form = $this->createFormBuilder()->getForm();
         }
 
         // If we have only one possible transition, and it is meant to persist/flush
