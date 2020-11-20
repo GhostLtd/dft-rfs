@@ -2,8 +2,8 @@
 
 namespace App\Entity\International;
 
-use App\Entity\CargoTransportMeans;
-use App\Entity\HazardousGood;
+use App\Entity\CargoTypeTrait;
+use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ConsignmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
