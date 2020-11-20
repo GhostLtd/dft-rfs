@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalPreEnquiryResponseRepository;
+use App\Entity\Address;
+use App\Repository\International\PreEnquiryResponseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalPreEnquiryResponseRepository::class)
+ * @ORM\Entity(repositoryClass=PreEnquiryResponseRepository::class)
+ * @ORM\Table(name="international_pre_enquiry_response")
  */
-class InternationalPreEnquiryResponse
+class PreEnquiryResponse
 {
     /**
      * @ORM\Id
@@ -78,10 +81,25 @@ class InternationalPreEnquiryResponse
     private $annualJourneyEstimate;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalPreEnquiry::class, inversedBy="response", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="response", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $preEnquiry;
+
+    /**
+     * @Assert\Callback(groups={"vehicle_questions"})
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if ($this->getInternationalJourneyVehicleCount() !== null &&
+            $this->getTotalVehicleCount() !== null &&
+            $this->getInternationalJourneyVehicleCount() > $this->getTotalVehicleCount()) {
+            $context
+                ->buildViolation('Number of vehicles used for international journeys must be less than or equal to the total number of vehicles')
+                ->atPath('internationalJourneyVehicleCount')
+                ->addViolation();
+        }
+    }
 
     public function getId(): ?int
     {
@@ -196,12 +214,12 @@ class InternationalPreEnquiryResponse
         return $this;
     }
 
-    public function getPreEnquiry(): ?InternationalPreEnquiry
+    public function getPreEnquiry(): ?PreEnquiry
     {
         return $this->preEnquiry;
     }
 
-    public function setPreEnquiry(InternationalPreEnquiry $preEnquiry): self
+    public function setPreEnquiry(PreEnquiry $preEnquiry): self
     {
         $this->preEnquiry = $preEnquiry;
 

@@ -2,8 +2,8 @@
 
 namespace App\Command;
 
-use App\Entity\SamplingGroup;
-use App\Repository\SamplingGroupRepository;
+use App\Entity\International\SamplingGroup;
+use App\Repository\International\SamplingGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\Console\Command\Command;

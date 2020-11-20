@@ -4,8 +4,8 @@
 
 {% macro summaryListRow(key, value, actions, options) -%}
     <div class="govuk-summary-list__row {{ options.row_class | default('') }}">
-        <dt class="govuk-summary-list__key">{{ key | raw }}</dt>
-        <dd class="govuk-summary-list__value">{{ value | raw }}</dd>
+        <dt class="govuk-summary-list__key">{{ key | nl2br }}</dt>
+        <dd class="govuk-summary-list__value">{{ value | nl2br }}</dd>
         <dd class="govuk-summary-list__actions">
             {{- _self.actionLinks(actions) -}}
         </dd>

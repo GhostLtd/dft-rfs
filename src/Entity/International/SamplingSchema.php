@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\SamplingSchemaRepository;
+use App\Repository\International\SamplingSchemaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

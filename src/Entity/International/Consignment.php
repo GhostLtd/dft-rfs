@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\International;
 
-use App\Repository\InternationalConsignmentRepository;
+use App\Entity\CargoTransportMeans;
+use App\Entity\HazardousGood;
+use App\Repository\International\ConsignmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InternationalConsignmentRepository::class)
+ * @ORM\Entity(repositoryClass=ConsignmentRepository::class)
+ * @ORM\Table(name="international_consignment")
  */
-class InternationalConsignment
+class Consignment
 {
     /**
      * @ORM\Id
@@ -18,13 +21,13 @@ class InternationalConsignment
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InternationalStop::class)
+     * @ORM\ManyToOne(targetEntity=Stop::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $loadingStop;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InternationalStop::class)
+     * @ORM\ManyToOne(targetEntity=Stop::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $unloadingStop;
@@ -47,24 +50,24 @@ class InternationalConsignment
         return $this->id;
     }
 
-    public function getLoadingStop(): ?InternationalStop
+    public function getLoadingStop(): ?Stop
     {
         return $this->loadingStop;
     }
 
-    public function setLoadingStop(?InternationalStop $loadingStop): self
+    public function setLoadingStop(?Stop $loadingStop): self
     {
         $this->loadingStop = $loadingStop;
 
         return $this;
     }
 
-    public function getUnloadingStop(): ?InternationalStop
+    public function getUnloadingStop(): ?Stop
     {
         return $this->unloadingStop;
     }
 
-    public function setUnloadingStop(?InternationalStop $unloadingStop): self
+    public function setUnloadingStop(?Stop $unloadingStop): self
     {
         $this->unloadingStop = $unloadingStop;
 

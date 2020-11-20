@@ -1,26 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalVehicle;
+use App\Entity\International\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalVehicle|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalVehicle|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalVehicle[]    findAll()
- * @method InternationalVehicle[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Survey|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Survey|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Survey[]    findAll()
+ * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalVehicleRepository extends ServiceEntityRepository
+class
+SurveyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalVehicle::class);
+        parent::__construct($registry, Survey::class);
     }
 
     // /**
-    //  * @return InternationalVehicle[] Returns an array of InternationalVehicle objects
+    //  * @return InternationalSurvey[] Returns an array of InternationalSurvey objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +38,7 @@ class InternationalVehicleRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?InternationalVehicle
+    public function findOneBySomeField($value): ?InternationalSurvey
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')

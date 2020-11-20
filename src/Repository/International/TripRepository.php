@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\International;
 
-use App\Entity\InternationalStop;
+use App\Entity\International\Trip;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InternationalStop|null find($id, $lockMode = null, $lockVersion = null)
- * @method InternationalStop|null findOneBy(array $criteria, array $orderBy = null)
- * @method InternationalStop[]    findAll()
- * @method InternationalStop[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Trip|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Trip|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Trip[]    findAll()
+ * @method Trip[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InternationalStopRepository extends ServiceEntityRepository
+class TripRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InternationalStop::class);
+        parent::__construct($registry, Trip::class);
     }
 
     // /**
-    //  * @return InternationalStop[] Returns an array of InternationalStop objects
+    //  * @return InternationalTrip[] Returns an array of InternationalTrip objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class InternationalStopRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?InternationalStop
+    public function findOneBySomeField($value): ?InternationalTrip
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')
