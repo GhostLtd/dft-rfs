@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,6 +39,11 @@ class Survey
      * @ORM\Column(type="string", length=12)
      */
     private $reminderState;
+
+    /**
+     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
+     */
+    private $passcodeUser;
 
     public function getIsNorthernIreland(): ?bool
     {
@@ -88,6 +94,24 @@ class Survey
     public function setReminderState(string $reminderState): self
     {
         $this->reminderState = $reminderState;
+
+        return $this;
+    }
+
+    public function getPasscodeUser(): ?PasscodeUser
+    {
+        return $this->passcodeUser;
+    }
+
+    public function setPasscodeUser(?PasscodeUser $passcodeUser): self
+    {
+        $this->passcodeUser = $passcodeUser;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newDomesticSurvey = null === $passcodeUser ? null : $this;
+        if ($passcodeUser->getDomesticSurvey() !== $newDomesticSurvey) {
+            $passcodeUser->setDomesticSurvey($newDomesticSurvey);
+        }
 
         return $this;
     }
