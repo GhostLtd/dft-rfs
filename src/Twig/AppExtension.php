@@ -2,7 +2,7 @@
 
 namespace App\Twig;
 
-use App\Controller\InternationalPreEnquiry\InternationalPreEnquiryController;
+use App\Controller\InternationalPreEnquiry\PreEnquiryController;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -42,7 +42,7 @@ class AppExtension extends AbstractExtension
     }
 
     protected $wizardMapping = [
-        'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => InternationalPreEnquiryController::WIZARD_ROUTE],
+        'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {
