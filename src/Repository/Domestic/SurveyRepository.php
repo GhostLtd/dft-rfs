@@ -35,7 +35,6 @@ class SurveyRepository extends ServiceEntityRepository
             ->leftJoin('response.vehicle', 'vehicle')
             ->leftJoin('day.summary', 'summary')
             ->orderBy('survey.id', 'DESC')
-            ->setMaxResults(1)
             ->getQuery()
             ->getSingleResult();
     }
