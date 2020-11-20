@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
+ * @ORM\Table("domestic_survey_response")
  */
 class SurveyResponse
 {

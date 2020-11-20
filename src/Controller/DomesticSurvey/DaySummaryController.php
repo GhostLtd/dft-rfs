@@ -45,19 +45,18 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     {
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $daySummary = dump($this->entityManager->getRepository(DaySummary::class)->getForDevelopmentByDayNumber($this->dayNumber));
+        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getForDevelopmentByDayNumber($this->dayNumber);
         if (is_null($formWizard->getSubject())) {
             $formWizard->setSubject($daySummary);
         }
-        $formWizard->getSubject()->setDay(dump($daySummary->getDay()));
+        $formWizard->getSubject()->setDay($daySummary->getDay());
         if ($formWizard->getSubject()->getId()) {
-            dump('id');
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
             $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
         } else {
             $this->entityManager->persist($formWizard->getSubject());
         }
-        dump($formWizard->getSubject());
+        $formWizard->getSubject();
 
         return $formWizard;
     }

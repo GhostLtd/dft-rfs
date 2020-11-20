@@ -39,7 +39,7 @@ class GoodsDescriptionType extends AbstractType
 
         $builder->get('goodsDescriptionFieldset')
             ->add('goodsDescription', Gds\ChoiceType::class, [
-                'choices' => dump($choices),
+                'choices' => $choices,
                 'choice_options' => $goodsChoiceOptions,
                 'label' => false,
             ])

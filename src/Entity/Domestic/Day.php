@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=StopDayRepository::class)
+ * @ORM\Table("domestic_day")
  */
 class Day
 {

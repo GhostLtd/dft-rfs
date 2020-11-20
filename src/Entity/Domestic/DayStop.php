@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=StopMultipleRepository::class)
+ * @ORM\Table("domestic_day_stop")
  */
 class DayStop
 {
