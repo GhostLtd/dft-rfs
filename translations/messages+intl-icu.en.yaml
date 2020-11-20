@@ -240,7 +240,7 @@ goods:
     '2.2': <b>2.2</b> Non-flammable, non-toxic gas
     '2.3': <b>2.3</b> Toxic gas
     3: <b>3</b> Flammable liquid
-    '4.1': <b>4.1</b>lammable solid
+    '4.1': <b>4.1</b> Flammable solid
     '4.2': <b>4.2</b> Spontaneously combustible substance
     '4.3': <b>4.3</b> Substance which, in contact with water, emits flammable gas
     '5.1': <b>5.1</b> Oxidising substance
