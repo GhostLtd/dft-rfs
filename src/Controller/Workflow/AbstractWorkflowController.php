@@ -173,7 +173,7 @@ abstract class AbstractWorkflowController extends AbstractController
                         array_merge(['data_class' => get_class($formWizard->getSubject())], $formOptions)
                     );
                 } else {
-                    $form = $this->createForm($formClass);
+                    $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
                 }
             }
         } else {
