@@ -45,7 +45,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     {
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $daySummary = dump($this->entityManager->getRepository(DaySummary::class)->getForDevelopmentByDayNumber($this->dayNumber));
+        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getForDevelopmentByDayNumber($this->dayNumber);
         if (is_null($formWizard->getSubject())) {
             $formWizard->setSubject($daySummary);
         }

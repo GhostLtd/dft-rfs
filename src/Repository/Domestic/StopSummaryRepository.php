@@ -38,7 +38,7 @@ class StopSummaryRepository extends ServiceEntityRepository
             ->where('day.number = :dayNumber')
             ->andWhere('response.survey = :survey')
             ->setParameters([
-                'dayNumber' => dump($dayNumber),
+                'dayNumber' => $dayNumber,
                 'survey' => $survey,
             ])
             ->setMaxResults(1)
@@ -46,7 +46,7 @@ class StopSummaryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
         if (is_null($daySummary)) {
             $daySummary = new DaySummary();
-            $daySummary->setDay(dump($survey)->getResponse()->getDayByNumber($dayNumber));
+            $daySummary->setDay($survey->getResponse()->getDayByNumber($dayNumber));
         }
         return $daySummary;
     }
