@@ -6,6 +6,19 @@ unit:
     litres: 'Litres'
     gallons: 'Gallons'
 
+
+
+
+passcode:
+  login:
+    label: Enter your survey passcode
+    help: This code is supplied in the letter you received
+    passcode:
+      0.label: First code
+      1.label: Second code
+
+
+
 survey:
   domestic:
     goods-description:

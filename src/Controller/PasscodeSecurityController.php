@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Form\PasscodeLoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -12,18 +16,21 @@ class PasscodeSecurityController extends AbstractController
     /**
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Session $session): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        $form = $this->createForm(PasscodeLoginType::class);
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        if ($error) {
+            $form->get('passcode')->addError(new FormError($error->getMessageKey()));
+        }
+
+        return $this->render('security/login.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
     }
 
     /**

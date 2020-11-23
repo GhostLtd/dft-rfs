@@ -3,12 +3,16 @@
 namespace App\Security;
 
 use App\Entity\PasscodeUser;
+use App\Form\PasscodeLoginType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
@@ -30,13 +34,18 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, FormFactoryInterface $formFactory)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->formFactory = $formFactory;
     }
 
     public function supports(Request $request)
@@ -47,31 +56,41 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
-            'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
-        ];
-        $request->getSession()->set(
-            Security::LAST_USERNAME,
-            $credentials['username']
-        );
+//        $credentials = [
+//            'username' => $request->request->get('username'),
+//            'password' => $request->request->get('password'),
+//            'csrf_token' => $request->request->get('_csrf_token'),
+//        ];
+//        $request->getSession()->set(
+//            Security::LAST_USERNAME,
+//            $credentials['username']
+//        );
 
-        return $credentials;
+//        return $credentials;
+
+        return dump($request->request->get('passcode_login'));
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return PasscodeUser|object|UserInterface|null
+     * @throws Exception
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+        $token = new CsrfToken('authenticate.passcode', $credentials['_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(PasscodeUser::class)->findOneBy(['username' => $credentials['username']]);
+        $user = $this->entityManager->getRepository(PasscodeUser::class)->findOneBy(['username' => $credentials['passcode'][0]]);
 
         if (!$user) {
+            // fake the password checking - so that atackers can't detect the difference
+            $this->passwordEncoder->isPasswordValid(new PasscodeUser(), random_bytes(8));
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Username could not be found.');
+            throw new BadCredentialsException();
         }
 
         return $user;
@@ -79,15 +98,17 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials['passcode'][1]);
     }
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
+     * @param $credentials
+     * @return string|null
      */
     public function getPassword($credentials): ?string
     {
-        return $credentials['password'];
+        return $credentials['passcode'][1];
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
@@ -104,7 +125,7 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        throw new Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl()
