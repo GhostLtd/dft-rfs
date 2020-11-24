@@ -6,6 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
+use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DayMultipleState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
@@ -43,9 +44,12 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
      */
     protected function getFormWizard(): FormWizardInterface
     {
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
+
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getForDevelopmentByDayNumber($this->dayNumber);
+        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
         if (is_null($formWizard->getSubject())) {
             $formWizard->setSubject($daySummary);
         }

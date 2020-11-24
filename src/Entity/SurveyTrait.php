@@ -38,11 +38,6 @@ trait SurveyTrait {
      */
     private $submissionDate;
 
-    /**
-     * @ORM\Column(type="string", length=16)
-     */
-    private $passcode;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -104,18 +99,6 @@ trait SurveyTrait {
     public function setSubmissionDate(?DateTimeInterface $submissionDate): self
     {
         $this->submissionDate = $submissionDate;
-
-        return $this;
-    }
-
-    public function getPasscode(): ?string
-    {
-        return $this->passcode;
-    }
-
-    public function setPasscode(string $passcode): self
-    {
-        $this->passcode = $passcode;
 
         return $this;
     }

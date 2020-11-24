@@ -87,7 +87,7 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         $user = $this->entityManager->getRepository(PasscodeUser::class)->findOneBy(['username' => $credentials['passcode'][0]]);
 
         if (!$user) {
-            // fake the password checking - so that atackers can't detect the difference
+            // fake the password checking - so that attackers can't detect the difference
             $this->passwordEncoder->isPasswordValid(new PasscodeUser(), random_bytes(8));
             // fail authentication with a custom error
             throw new BadCredentialsException();

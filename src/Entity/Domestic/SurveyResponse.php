@@ -105,7 +105,7 @@ class SurveyResponse
     private $unableToCompleteReason;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;

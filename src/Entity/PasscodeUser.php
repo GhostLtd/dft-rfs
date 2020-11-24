@@ -31,7 +31,12 @@ class PasscodeUser implements UserInterface
     private $password;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="passcodeUser", cascade={"persist", "remove"})
+     * @var string | null
+     */
+    private $plainPassword;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
     private $domesticSurvey;
 
@@ -115,6 +120,24 @@ class PasscodeUser implements UserInterface
     {
         $this->domesticSurvey = $domesticSurvey;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string|null $plainPassword
+     * @return PasscodeUser
+     */
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }
