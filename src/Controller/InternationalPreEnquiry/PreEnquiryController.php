@@ -19,13 +19,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class InternationalPreEnquiryController extends AbstractSessionStateWorkflowController
+class PreEnquiryController extends AbstractSessionStateWorkflowController
 {
-    public const WIZARD_ROUTE = 'app_internationalpreenquiry_wizard';
-    public const SUMMARY_ROUTE = 'app_internationalpreenquiry_summary';
+    public const WIZARD_ROUTE = 'app_international_preenquiry_wizard';
+    public const SUMMARY_ROUTE = 'app_international_preenquiry_summary';
 
     /**
-     * @Route("/pre-enquiry", name=InternationalPreEnquiryController::SUMMARY_ROUTE)
+     * @Route("/pre-enquiry", name=PreEnquiryController::SUMMARY_ROUTE)
      */
     public function index(Request $request): Response
     {
@@ -60,11 +60,11 @@ class InternationalPreEnquiryController extends AbstractSessionStateWorkflowCont
     }
 
     /**
-     * @Route("/pre-enquiry/{state}", name=InternationalPreEnquiryController::WIZARD_ROUTE)
+     * @Route("/pre-enquiry/{state}", name=PreEnquiryController::WIZARD_ROUTE)
      */
-    public function wizard(WorkflowInterface $internationalPreEnquiryStateMachine, Request $request, $state = null): Response
+    public function wizard(WorkflowInterface $preEnquiryStateMachine, Request $request, $state = null): Response
     {
-        return $this->doWorkflow($internationalPreEnquiryStateMachine, $request, $state);
+        return $this->doWorkflow($preEnquiryStateMachine, $request, $state);
     }
 
     protected function getFormWizard(): FormWizardInterface
@@ -72,10 +72,11 @@ class InternationalPreEnquiryController extends AbstractSessionStateWorkflowCont
         /** @var PreEnquiryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new PreEnquiryState());
 
-        $formWizard->setSubject($this->getSurveyResponse($formWizard->getSubject()));
+        $subject = $this->getSurveyResponse($formWizard->getSubject());
+        $subject = $this->entityManager->merge($subject);
 
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-        $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
+        $formWizard->setSubject($subject);
 
         return $formWizard;
     }
