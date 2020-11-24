@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\International\Survey as InternationalSurvey;
 use App\Repository\PasscodeUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,6 +13,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PasscodeUser implements UserInterface
 {
+    const ROLE_PASSCODE_USER = 'ROLE_PASSCODE_USER';
+    const ROLE_DOMESTIC_SURVEY_USER = 'ROLE_DOMESTIC_SURVEY_USER';
+    const ROLE_INTERNATIONAL_SURVEY_USER = 'ROLE_INTERNATIONAL_SURVEY_USER';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -36,9 +41,14 @@ class PasscodeUser implements UserInterface
     private $plainPassword;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
+     * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
     private $domesticSurvey;
+
+    /**
+     * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"})
+     */
+    private $internationalSurvey;
 
     public function getId(): ?int
     {
@@ -63,19 +73,27 @@ class PasscodeUser implements UserInterface
     public function getRoles(): array
     {
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_PASSCODE_USER';
+        $roles[] = self::ROLE_PASSCODE_USER;
 
-        if ($this->getDomesticSurvey()) {
-            $roles[] = 'ROLE_DOMESTIC_SURVEY_USER';
+        switch(true) {
+            case $this->getDomesticSurvey() :
+                $roles[] = self::ROLE_DOMESTIC_SURVEY_USER;
+                break;
+
+            case $this->getInternationalSurvey() :
+                $roles[] = self::ROLE_INTERNATIONAL_SURVEY_USER;
         }
 
         return array_unique($roles);
     }
 
+    public function hasRole($role)
+    {
+        return in_array($role, $this->getRoles());
+    }
+
     public function setRoles(array $roles): self
     {
-        $this->roles = $roles;
-
         return $this;
     }
 
@@ -111,12 +129,12 @@ class PasscodeUser implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getDomesticSurvey(): ?Survey
+    public function getDomesticSurvey(): ?DomesticSurvey
     {
         return $this->domesticSurvey;
     }
 
-    public function setDomesticSurvey(?Survey $domesticSurvey): self
+    public function setDomesticSurvey(?DomesticSurvey $domesticSurvey): self
     {
         $this->domesticSurvey = $domesticSurvey;
 
@@ -138,6 +156,18 @@ class PasscodeUser implements UserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    public function getInternationalSurvey(): ?InternationalSurvey
+    {
+        return $this->internationalSurvey;
+    }
+
+    public function setInternationalSurvey(?InternationalSurvey $internationalSurvey): self
+    {
+        $this->internationalSurvey = $internationalSurvey;
+
         return $this;
     }
 }

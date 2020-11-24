@@ -3,19 +3,18 @@
 namespace App\Security;
 
 use App\Entity\PasscodeUser;
-use App\Form\PasscodeLoginType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -56,25 +55,13 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
     public function getCredentials(Request $request)
     {
-//        $credentials = [
-//            'username' => $request->request->get('username'),
-//            'password' => $request->request->get('password'),
-//            'csrf_token' => $request->request->get('_csrf_token'),
-//        ];
-//        $request->getSession()->set(
-//            Security::LAST_USERNAME,
-//            $credentials['username']
-//        );
-
-//        return $credentials;
-
-        return dump($request->request->get('passcode_login'));
+        return $request->request->get('passcode_login');
     }
 
     /**
      * @param mixed $credentials
      * @param UserProviderInterface $userProvider
-     * @return PasscodeUser|object|UserInterface|null
+     * @return PasscodeUser|UserInterface|null
      * @throws Exception
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
@@ -111,6 +98,13 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         return $credentials['passcode'][1];
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return Response|null
+     * @throws Exception
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
@@ -119,13 +113,17 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
         /** @var PasscodeUser $user */
         $user = $token->getUser();
-        if ($user->getDomesticSurvey()) {
-            // redirect to domestic survey index
-            return new RedirectResponse($this->urlGenerator->generate('domestic_survey_index'));
+        switch (true)
+        {
+            case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER) :
+                return new RedirectResponse($this->urlGenerator->generate('domestic_survey_index'));
+
+            case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER) :
+                // ToDo: add the redirect here
+                throw new Exception('TODO: provide a valid redirect inside '.__FILE__);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new Exception('TODO: provide a valid redirect inside '.__FILE__);
+        throw new AuthenticationException();
     }
 
     protected function getLoginUrl()

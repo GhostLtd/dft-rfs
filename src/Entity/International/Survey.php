@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,6 +30,11 @@ class Survey
      * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
     private $surveyResponse;
+
+    /**
+     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"})
+     */
+    private $passcodeUser;
 
     public function getReferenceNumber(): ?string
     {
@@ -66,6 +72,24 @@ class Survey
         // set the owning side of the relation if necessary
         if ($surveyResponse->getSurvey() !== $this) {
             $surveyResponse->setSurvey($this);
+        }
+
+        return $this;
+    }
+
+    public function getPasscodeUser(): ?PasscodeUser
+    {
+        return $this->passcodeUser;
+    }
+
+    public function setPasscodeUser(?PasscodeUser $passcodeUser): self
+    {
+        $this->passcodeUser = $passcodeUser;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newInternationalSurvey = null === $passcodeUser ? null : $this;
+        if ($passcodeUser->getInternationalSurvey() !== $newInternationalSurvey) {
+            $passcodeUser->setInternationalSurvey($newInternationalSurvey);
         }
 
         return $this;

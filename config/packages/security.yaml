@@ -37,5 +37,8 @@ security:
         - { path: ^/domestic-survey$, roles: ROLE_DOMESTIC_SURVEY_USER }
         - { path: ^/domestic-survey/, roles: ROLE_DOMESTIC_SURVEY_USER }
 
+        - { path: ^/international-survey$, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+        - { path: ^/international-survey/, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
