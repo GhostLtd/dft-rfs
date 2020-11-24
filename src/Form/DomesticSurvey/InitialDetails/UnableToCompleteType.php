@@ -16,10 +16,10 @@ class UnableToCompleteType extends AbstractType implements WorkflowChoiceFormInt
         $builder
             ->add('unableToCompleteReason', Gds\ChoiceType::class, [
                 'choices' => SurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES,
-                'label' => 'Why are you not able to complete the survey?',
+                'label' => 'domestic.survey-response.unable-to-complete.unable-to-complete-reason.label',
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => 'We may need to ask you to supply evidence at the end of the survey period',
+                'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
+                'help' => 'domestic.survey-response.unable-to-complete.unable-to-complete-reason.help',
             ])
         ;
     }

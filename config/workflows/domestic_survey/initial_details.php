@@ -19,10 +19,8 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_INTRODUCTION,
                     StateObject::STATE_REQUEST_CONTACT_DETAILS,
                     StateObject::STATE_CHANGE_CONTACT_DETAILS,
-                    StateObject::STATE_ASK_COMPLETABLE,
-                    StateObject::STATE_ASK_ON_HIRE,
                     StateObject::STATE_SUMMARY,
-                    StateObject::STATE_ASK_REASON_CANT_COMPLETE,
+                    StateObject::STATE_ASK_IN_POSSESSION,
                     StateObject::STATE_ASK_HIREE_DETAILS,
                     StateObject::STATE_ASK_SCRAPPED_DETAILS,
                     StateObject::STATE_ASK_SOLD_DETAILS,
@@ -32,33 +30,23 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_REQUEST_CONTACT_DETAILS,
                     ],
-                    'contact details entered' => [
+                    'contact-details-to-in-possession' => [
                         'from' => StateObject::STATE_REQUEST_CONTACT_DETAILS,
-                        'to' =>  StateObject::STATE_ASK_COMPLETABLE,
+                        'to' =>  StateObject::STATE_ASK_IN_POSSESSION,
                     ],
-                    'survey can be completed' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'ableToComplete', 'value' => true]],
-                        'from' => StateObject::STATE_ASK_COMPLETABLE,
-                        'to' =>  StateObject::STATE_ASK_ON_HIRE,
-                    ],
-                    'survey cannot be completed' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'ableToComplete', 'value' => false]],
-                        'from' => StateObject::STATE_ASK_COMPLETABLE,
-                        'to' =>  StateObject::STATE_ASK_REASON_CANT_COMPLETE
-                    ],
-                    'request hiree details' => [
+                    'request-hiree-details' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_ON_HIRE]],
-                        'from' => [StateObject::STATE_ASK_ON_HIRE, StateObject::STATE_ASK_REASON_CANT_COMPLETE],
+                        'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_HIREE_DETAILS,
                     ],
-                    'request scrapped details' => [
+                    'request-scrapped-details' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_SCRAPPED_OR_STOLEN]],
-                        'from' => StateObject::STATE_ASK_REASON_CANT_COMPLETE,
+                        'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SCRAPPED_DETAILS,
                     ],
-                    'request sold details' => [
+                    'request-sold-details' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_SOLD]],
-                        'from' => StateObject::STATE_ASK_REASON_CANT_COMPLETE,
+                        'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SOLD_DETAILS,
                     ],
                     'finish' => [
@@ -67,7 +55,6 @@ return static function (ContainerConfigurator $container) {
                             'redirectRoute' => 'domestic_survey_index',
                         ],
                         'from' => [
-                            StateObject::STATE_ASK_ON_HIRE,
                             StateObject::STATE_ASK_HIREE_DETAILS,
                             StateObject::STATE_ASK_SCRAPPED_DETAILS,
                             StateObject::STATE_ASK_SOLD_DETAILS,
@@ -87,12 +74,16 @@ return static function (ContainerConfigurator $container) {
                                 ]),
                             ]
                         ],
-                        'from' => StateObject::STATE_ASK_REASON_CANT_COMPLETE,
+                        'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_SUMMARY,
                     ],
-                    'change contact details' => [
+                    'change-contact-details' => [
                         'from' =>  StateObject::STATE_SUMMARY,
                         'to' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
+                    ],
+                    'change-in-possession' => [
+                        'from' =>  StateObject::STATE_SUMMARY,
+                        'to' =>  StateObject::STATE_ASK_IN_POSSESSION,
                     ],
                     'contact details changed' => [
                         'name' => 'finish',
@@ -102,14 +93,6 @@ return static function (ContainerConfigurator $container) {
                         ],
                         'from' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-                    'change can complete' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_ASK_COMPLETABLE,
-                    ],
-                    'change hiree details' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_ASK_HIREE_DETAILS,
                     ],
                 ]
             ],

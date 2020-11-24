@@ -12,28 +12,26 @@
         {{ gdsComponents.summaryListRow('Name', domesticSurvey.response.contactName, contactDetailsActionLinks) }}
         {{ gdsComponents.summaryListRow('Telephone', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
         {{ gdsComponents.summaryListRow('Email address', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
-        {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_COMPLETABLE')})): 'Change'} %}
-        {{ gdsComponents.summaryListRow('Can complete survey?', domesticSurvey.response.ableToComplete ? 'Yes' : 'No', canCompleteActionLinks) }}
-        {% if (not domesticSurvey.response.ableToComplete) or domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_ON_HIRE') %}
-            {{ gdsComponents.summaryListRow('Reason for not completing', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ domesticSurvey.response.unableToCompleteReason) | trans, canCompleteActionLinks) }}
+        {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
+        {% if not domesticSurvey.response.unableToCompleteReason %}
+            {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ constant('App\\Entity\\Domestic\\SurveyResponse::REASON_NONE')) | trans, canCompleteActionLinks) }}
+        {% else %}
+            {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ domesticSurvey.response.unableToCompleteReason) | trans, canCompleteActionLinks) }}
+
+            {% if domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_ON_HIRE') %}
+                {{ gdsComponents.summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
+            {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SCRAPPED_OR_STOLEN') %}
+                {{ gdsComponents.summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+            {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SOLD') %}
+                {{ gdsComponents.summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+                {{ gdsComponents.summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
+            {% endif %}
         {% endif %}
     </dl>
-
-    {% if domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_ON_HIRE') %}
-        <h2 class="govuk-heading-m">Hiree details</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {% set hireeDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_HIREE_DETAILS')})): 'Change'} %}
-            {{ gdsComponents.summaryListRow('Hiree name', domesticSurvey.response.hireeName, hireeDetailsActionLinks) }}
-            {{ gdsComponents.summaryListRow('Hiree email', domesticSurvey.response.hireeEmail, hireeDetailsActionLinks) }}
-            {{ gdsComponents.summaryListRow('Hiree address', domesticSurvey.response.hireeAddress, hireeDetailsActionLinks) }}
-        </dl>
-    {% endif %}
 
     <h2 class="govuk-heading-m">Next steps</h2>
     <p class="govuk-body">
         <a href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">Add/confirm vehicle and business details</a>
-{#        <br>#}
-{#        <a href="{{ url('app_domesticsurvey_daymultiple_start', {day: 1}) }}">Add step to day 1</a>#}
     </p>
 
     <h2 class="govuk-heading-m">Your survey week</h2>

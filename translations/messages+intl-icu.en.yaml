@@ -18,6 +18,65 @@ passcode:
       1.label: Second code
 
 
+domestic:
+  survey-response:
+    contact-details:
+      heading: 'Contact details'
+      help: ''
+      contact-name:
+        label: 'Name'
+        help: ''
+      contact-email:
+        label: 'Email address'
+        help: ''
+      contact-telephone:
+        label: 'Telephone number'
+        help: ''
+
+    unable-to-complete:
+      unable-to-complete-reason:
+        label: 'Will you be in possession of the vehicle during your survey week?'
+        help: 'We may need to ask you to supply evidence at the end of the survey period'
+      reason:
+        none: 'Yes'
+        scrapped-or-stolen: 'No - it has been scrapped or stolen'
+        sold: 'No - it has been sold'
+        on-hire: 'No - it is on hire to another person or company'
+
+    scrapped-details:
+      date:
+        label: 'When was the vehicle scrapped?'
+        help: ''
+
+    sold-details:
+      heading: 'Details of the sale'
+      help: 'Provide details for the sale, including contact details for the new owner'
+      date:
+        label: "When was the vehicle sold?"
+        help: ''
+      new-owner-name:
+        label: "What is the new owner's name?"
+        help: ''
+      new-owner-email:
+        label: "What is the new owner's email address?"
+        help: ''
+      new-owner-address:
+        label: "What is the new owner's postal address?"
+        help: ''
+
+    hiree-details:
+      heading: "Hiree details"
+      help: "Provide details of the person or company who will be in possession of the vehicle during the survey week"
+      name:
+        label: "Full name"
+        help: ""
+      email:
+        label: "Email address"
+        help: ""
+      address:
+        label: "Address"
+        help: ""
+
 
 survey:
   domestic:
@@ -33,9 +92,6 @@ survey:
       8: Rail depot / terminal
       16: Airport
     non-complete:
-      scrapped-or-stolen: 'Scrapped or stolen'
-      sold: 'Sold'
-      on-hire: 'On hire'
       not-taxed: 'Not taxed'
       no-work: 'No work'
       repair: 'Being repaired'

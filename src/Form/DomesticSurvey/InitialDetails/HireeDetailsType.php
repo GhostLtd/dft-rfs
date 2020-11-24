@@ -14,9 +14,22 @@ class HireeDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('hireeName', Gds\InputType::class)
-            ->add('hireeEmail', Gds\EmailType::class)
-            ->add('hireeAddress', AddressType::class)
+            ->add('hireeName', Gds\InputType::class, [
+                'label' => 'domestic.survey-response.hiree-details.name.label',
+                'help' => 'domestic.survey-response.hiree-details.name.help',
+                'attr' => ['class' => 'govuk-input--width-20'],
+                'label_attr' => ['class' => 'govuk-label--m'],
+            ])
+            ->add('hireeEmail', Gds\EmailType::class, [
+                'label' => 'domestic.survey-response.hiree-details.email.label',
+                'help' => 'domestic.survey-response.hiree-details.email.help',
+                'label_attr' => ['class' => 'govuk-label--m'],
+            ])
+            ->add('hireeAddress', AddressType::class, [
+                'label' => 'domestic.survey-response.hiree-details.address.label',
+                'help' => 'domestic.survey-response.hiree-details.address.help',
+                'label_attr' => ['class' => 'govuk-label--m'],
+            ])
         ;
     }
 
