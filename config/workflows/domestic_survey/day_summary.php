@@ -19,6 +19,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_ORIGIN_PORTS,
                     StateObject::STATE_DESTINATION,
                     StateObject::STATE_DESTINATION_PORTS,
+                    StateObject::STATE_BORDER_CROSSING,
                     StateObject::STATE_DISTANCE_TRAVELLED,
                     StateObject::STATE_FURTHEST_STOP,
                     StateObject::STATE_GOODS_DESCRIPTION,
@@ -57,7 +58,17 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_FURTHEST_STOP,
                     ],
+                    'furthest-stop-to-border-crossing' => [
+                        'metadata' => ['transitionWhenCallback' => 'isNorthernIrelandSurvey'],
+                        'from' => StateObject::STATE_FURTHEST_STOP,
+                        'to' =>  StateObject::STATE_BORDER_CROSSING,
+                    ],
+                    'border-crossing-to-distance-travelled' => [
+                        'from' =>  StateObject::STATE_BORDER_CROSSING,
+                        'to' => StateObject::STATE_DISTANCE_TRAVELLED,
+                    ],
                     'furthest-stop-to-distance-travelled' => [
+                        'metadata' => ['transitionWhenCallbackNot' => 'isNorthernIrelandSurvey'],
                         'from' => StateObject::STATE_FURTHEST_STOP,
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                     ],

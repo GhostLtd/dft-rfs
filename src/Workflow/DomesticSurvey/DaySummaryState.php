@@ -7,6 +7,7 @@ namespace App\Workflow\DomesticSurvey;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Form\AbstractCargoTypeType;
+use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
 use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
 use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
 use App\Form\DomesticSurvey\DaySummary\DestinationType;
@@ -26,6 +27,7 @@ class DaySummaryState implements FormWizardInterface
     const STATE_ORIGIN_PORTS = 'origin-ports';
     const STATE_DESTINATION = 'destination';
     const STATE_DESTINATION_PORTS = 'destination-ports';
+    const STATE_BORDER_CROSSING = 'border-crossing';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
     const STATE_FURTHEST_STOP = 'furthest-stop';
     const STATE_GOODS_DESCRIPTION = 'goods-description';
@@ -40,6 +42,7 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_ORIGIN_PORTS => OriginPortsType::class,
         self::STATE_DESTINATION => DestinationType::class,
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
+        self::STATE_BORDER_CROSSING => BorderCrossingType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
         self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
@@ -54,6 +57,7 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_ORIGIN_PORTS => 'domestic_survey/day_summary/form-origin-ports.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_summary/form-destination.html.twig',
         self::STATE_DESTINATION_PORTS => 'domestic_survey/day_summary/form-destination-ports.html.twig',
+        self::STATE_BORDER_CROSSING => 'domestic_survey/day_summary/form-border-crossing.html.twig',
         self::STATE_FURTHEST_STOP => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
         self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_summary/form-goods-description.html.twig',
@@ -115,13 +119,16 @@ class DaySummaryState implements FormWizardInterface
         }
 
         if ($this->subject->getDestinationLocation()) {
-            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_DISTANCE_TRAVELLED;
+            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_FURTHEST_STOP;
         }
         if (in_array(self::STATE_DESTINATION_PORTS, $states) && $this->subject->getGoodsTransferredTo() !== Day::TRANSFERRED) {
             $states[] = self::STATE_FURTHEST_STOP;
         }
 
         if ($this->subject->getFurthestStop()) {
+            if ($this->subject->isNorthernIrelandSurvey()) {
+                $states[] = self::STATE_BORDER_CROSSING;
+            }
             $states[] = self::STATE_DISTANCE_TRAVELLED;
         }
 

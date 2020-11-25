@@ -49,6 +49,11 @@ class DaySummary
      */
     private $day;
 
+    public function isNorthernIrelandSurvey()
+    {
+        return $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
+    }
+
     public function getFurthestStop(): ?string
     {
         return $this->furthestStop;
