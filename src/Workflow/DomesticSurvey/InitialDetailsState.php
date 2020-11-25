@@ -5,12 +5,10 @@ namespace App\Workflow\DomesticSurvey;
 
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Form\DomesticSurvey\InitialDetails\AbleToCompleteType;
 use App\Form\DomesticSurvey\InitialDetails\ContactDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\HireeDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
-use App\Form\DomesticSurvey\InitialDetails\UnableToCompleteOnHireType;
 use App\Form\DomesticSurvey\InitialDetails\UnableToCompleteType;
 use App\Workflow\FormWizardInterface;
 
@@ -18,9 +16,7 @@ class InitialDetailsState implements FormWizardInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';
-    const STATE_ASK_COMPLETABLE = 'can-complete';
-    const STATE_ASK_ON_HIRE = 'on-hire';
-    const STATE_ASK_REASON_CANT_COMPLETE = "reason-non-completion" ;
+    const STATE_ASK_IN_POSSESSION = "in-possession" ;
     const STATE_ASK_HIREE_DETAILS = 'hiree-details';
     const STATE_ASK_SCRAPPED_DETAILS = 'scrapped-details';
     const STATE_ASK_SOLD_DETAILS = 'sold-details';
@@ -30,9 +26,7 @@ class InitialDetailsState implements FormWizardInterface
     private const FORM_MAP = [
         self::STATE_REQUEST_CONTACT_DETAILS => ContactDetailsType::class,
         self::STATE_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
-        self::STATE_ASK_COMPLETABLE => AbleToCompleteType::class,
-        self::STATE_ASK_ON_HIRE => UnableToCompleteOnHireType::class,
-        self::STATE_ASK_REASON_CANT_COMPLETE => UnableToCompleteType::class,
+        self::STATE_ASK_IN_POSSESSION => UnableToCompleteType::class,
         self::STATE_ASK_HIREE_DETAILS => HireeDetailsType::class,
         self::STATE_ASK_SOLD_DETAILS => SoldDetailsType::class,
         self::STATE_ASK_SCRAPPED_DETAILS => ScrappedDetailsType::class,
@@ -42,8 +36,10 @@ class InitialDetailsState implements FormWizardInterface
         self::STATE_INTRODUCTION => 'domestic_survey/initial_details/introduction.html.twig',
         self::STATE_REQUEST_CONTACT_DETAILS => 'domestic_survey/initial_details/form-contact-details.html.twig',
         self::STATE_CHANGE_CONTACT_DETAILS => 'domestic_survey/initial_details/form-contact-details.html.twig',
+        self::STATE_ASK_IN_POSSESSION => 'domestic_survey/initial_details/form-in-possession.html.twig',
         self::STATE_ASK_HIREE_DETAILS => 'domestic_survey/initial_details/form-hiree-details.html.twig',
         self::STATE_ASK_SOLD_DETAILS => 'domestic_survey/initial_details/form-sold-details.html.twig',
+        self::STATE_ASK_SCRAPPED_DETAILS => 'domestic_survey/initial_details/form-scrapped-details.html.twig',
     ];
 
     private $state = self::STATE_INTRODUCTION;
@@ -89,15 +85,12 @@ class InitialDetailsState implements FormWizardInterface
     {
         $states = [self::STATE_INTRODUCTION, self::STATE_REQUEST_CONTACT_DETAILS];
         if (!empty($this->subject->getContactName())) {
-            $states[] = self::STATE_ASK_COMPLETABLE;
+            $states[] = self::STATE_ASK_IN_POSSESSION;
             $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
         }
-        if ($this->subject->getAbleToComplete()) {
-            $states[] = self::STATE_ASK_ON_HIRE;
-        } else {
-            $states[] = self::STATE_ASK_REASON_CANT_COMPLETE;
-        }
-        if ($this->subject->getUnableToCompleteReason() === 'on-hire') $states[] = self::STATE_ASK_HIREE_DETAILS;
+        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_ON_HIRE) $states[] = self::STATE_ASK_HIREE_DETAILS;
+        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_SCRAPPED_OR_STOLEN) $states[] = self::STATE_ASK_SCRAPPED_DETAILS;
+        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_SOLD) $states[] = self::STATE_ASK_SOLD_DETAILS;
         return $states;
     }
 

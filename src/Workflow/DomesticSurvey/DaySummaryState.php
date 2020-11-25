@@ -5,26 +5,20 @@ namespace App\Workflow\DomesticSurvey;
 
 
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
-use App\Form\CargoTypeType;
-use App\Form\DomesticSurvey\DayMulti\ArrivedPortsType;
-use App\Form\DomesticSurvey\DayMulti\ArrivedType;
-use App\Form\DomesticSurvey\DayMulti\DepartedPortsType;
-use App\Form\DomesticSurvey\DayMulti\DepartedType;
+use App\Form\AbstractCargoTypeType;
+use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
+use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
+use App\Form\DomesticSurvey\DaySummary\DestinationType;
+use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
 use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
+use App\Form\DomesticSurvey\DaySummary\HazardousGoodsType;
 use App\Form\DomesticSurvey\DaySummary\NumberOfStopsType;
-use App\Form\DomesticSurvey\DestinationPortsType;
-use App\Form\DomesticSurvey\DestinationType;
-use App\Form\DomesticSurvey\DistanceTravelledType;
+use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
+use App\Form\DomesticSurvey\DaySummary\OriginType;
+use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
-use App\Form\DomesticSurvey\GoodsDescriptionType;
-use App\Form\DomesticSurvey\OriginPortsType;
-use App\Form\DomesticSurvey\OriginType;
-use App\Form\HazardousGoodsType;
 use App\Workflow\FormWizardInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 
 class DaySummaryState implements FormWizardInterface
 {
@@ -48,19 +42,9 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
-        self::STATE_GOODS_DESCRIPTION => [
-            'form' => GoodsDescriptionType::class,
-            'options' => [
-                'is_summary_day' => true,
-            ],
-        ],
+        self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
         self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
-        self::STATE_CARGO_TYPE => [
-            'form' => CargoTypeType::class,
-            'options' => [
-                'is_summary_day' => true,
-            ],
-        ],
+        self::STATE_CARGO_TYPE => CargoTypeType::class,
         self::STATE_GOODS_WEIGHT => GoodsWeightType::class,
         self::STATE_NUMBER_OF_STOPS => NumberOfStopsType::class,
     ];

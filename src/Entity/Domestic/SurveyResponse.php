@@ -17,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SurveyResponse
 {
+    const REASON_NONE = 'none';
+
     const REASON_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
     const REASON_SOLD = 'sold';
     const REASON_ON_HIRE = 'on-hire';
@@ -29,9 +31,10 @@ class SurveyResponse
     const REASON_NO_DRIVER = 'no-driver';
     const REASON_OTHER = 'other';
 
-    const REASON_TRANSLATION_PREFIX = 'survey.domestic.non-complete.';
+    const REASON_TRANSLATION_PREFIX = 'domestic.survey-response.unable-to-complete.reason.';
 
     const UNABLE_TO_COMPLETE_REASON_CHOICES = [
+        self::REASON_TRANSLATION_PREFIX . self::REASON_NONE => null,
         self::REASON_TRANSLATION_PREFIX . self::REASON_SCRAPPED_OR_STOLEN => self::REASON_SCRAPPED_OR_STOLEN,
         self::REASON_TRANSLATION_PREFIX . self::REASON_SOLD => self::REASON_SOLD,
         self::REASON_TRANSLATION_PREFIX . self::REASON_ON_HIRE => self::REASON_ON_HIRE,
@@ -105,7 +108,7 @@ class SurveyResponse
     private $unableToCompleteReason;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;

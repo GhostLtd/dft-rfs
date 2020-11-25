@@ -27,8 +27,9 @@ class VehicleAxleConfigurationType extends AbstractType
                     ->add('axleConfiguration', Gds\ChoiceType::class, [
                         'property_path' => 'vehicle.axleConfiguration',
                         'choices' => Vehicle::AXLE_CONFIGURATION_CHOICES[$vehicle->getTrailerConfiguration()],
-                        'label' => 'survey.domestic.forms.vehicle-axle-configuration.axle-configuration.label',
-                        'label_attr' => ['class' => 'govuk-label--m'],
+                        'label' => 'domestic.survey-response.vehicle-axle-configuration.axle-configuration.label',
+                        'help' => 'domestic.survey-response.vehicle-axle-configuration.axle-configuration.help',
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                     ])
                 ;
             }

@@ -3,32 +3,27 @@
 namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class DestinationPortsType extends AbstractType
+abstract class AbstractOriginPortsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.origin-ports";
         $builder
-            ->add('goodsTransferredTo', Gds\ChoiceType::class, [
+            ->add('goodsTransferredFrom', Gds\ChoiceType::class, [
                 'choices' => Day::TRANSFER_CHOICES,
-                'label' => 'survey.domestic.forms.day-summary.goods-transferred-to.label',
+                'label' => "{$translationKeyPrefix}.goods-transferred-from.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => 'survey.domestic.forms.day-summary.goods-transferred-to.help',
+                'help' => "{$translationKeyPrefix}.goods-transferred-from.help",
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => StopTrait::class,
-        ]);
-    }
+    use StopTypeTrait;
 }

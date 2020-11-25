@@ -6,23 +6,250 @@ unit:
     litres: 'Litres'
     gallons: 'Gallons'
 
-survey:
-  domestic:
-    goods-description:
+
+
+
+passcode:
+  login:
+    label: Enter your survey passcode
+    help: This code is supplied in the letter you received
+    passcode:
+      0.label: First code
+      1.label: Second code
+
+
+domestic:
+  goods-description:
+    options:
       empty-container: Empty container
       packaging: Packaging
       groupage: Groupage
       empty: Empty
       other-goods: Specific goods / Other (please specify)
-    transferred-port:
+  transferred-port:
+    options:
       2: None of the above
       4: Shipping port or docks
       8: Rail depot / terminal
       16: Airport
+
+
+  survey-response:
+
+    ## initial details wizard
+    contact-details:
+      heading: 'Contact details'
+      help: ''
+      contact-name:
+        label: 'Name'
+        help: ''
+      contact-email:
+        label: 'Email address'
+        help: ''
+      contact-telephone:
+        label: 'Telephone number'
+        help: ''
+
+    unable-to-complete:
+      unable-to-complete-reason:
+        label: 'Will you be in possession of the vehicle during your survey week?'
+        help: 'We may need to ask you to supply evidence at the end of the survey period'
+      reason:
+        none: 'Yes'
+        scrapped-or-stolen: 'No - it has been scrapped or stolen'
+        sold: 'No - it has been sold'
+        on-hire: 'No - it is on hire to another person or company'
+
+    scrapped-details:
+      date:
+        label: 'When was the vehicle scrapped?'
+        help: ''
+
+    sold-details:
+      heading: 'Details of the sale'
+      help: 'Provide details for the sale, including contact details for the new owner'
+      date:
+        label: "When was the vehicle sold?"
+        help: ''
+      new-owner-name:
+        label: "What is the new owner's name?"
+        help: ''
+      new-owner-email:
+        label: "What is the new owner's email address?"
+        help: ''
+      new-owner-address:
+        label: "What is the new owner's postal address?"
+        help: ''
+
+    hiree-details:
+      heading: "Hiree details"
+      help: "Provide details of the person or company who will be in possession of the vehicle during the survey week"
+      name:
+        label: "Full name"
+        help: ""
+      email:
+        label: "Email address"
+        help: ""
+      address:
+        label: "Address"
+        help: ""
+
+
+    ## business and vehicle details wizard
+    business-details:
+      heading: Business Details
+      help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
+        help: ''
+      business-nature:
+        label: What is the nature of your business?
+        help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
+      operation-type:
+        label: How was the vehicle being operated during the survey week?
+        help: ''
+
+    vehicle-weights-and-fuel:
+      heading: Vehicle weights and fuel
+      help: ''
+      fuel-quantity:
+        label: How much fuel in total was put into this vehicle during the survey week?
+        help: ''
+      gross-weight:
+        label: Gross vehicle weight
+        help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+      carrying-capacity:
+        label: Carrying capacity
+        help: Total weight of cargo that can be carried
+
+    vehicle-trailer-configuration:
+      trailer-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best describes the vehicle
+
+    vehicle-axle-configuration:
+      axle-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best shows the axle configuration of the vehicle
+
+    vehicle-body:
+      body-type:
+        label: Tell us about the the vehicle
+        help: Indicate the main type of body for the vehicle
+
+    ## summary day
+  day-summary:
+    origin:
+      heading: Where did the vehicle start the day?
+      help: ''
+      origin-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-loaded:
+        label: Were goods loaded?
+        help: ''
+
+    origin-ports:
+      goods-transferred-from:
+        label: More details about the start
+        help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    destination:
+      heading: Where did the journey end?
+      help: ''
+      destination-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-unloaded:
+        label: Were goods un-loaded?
+        help: ''
+
+    destination-ports:
+      goods-transferred-to:
+        label: More details about the destination
+        help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    furthest-stop:
+      furthest-stop:
+        label: Furthest point on this day
+        help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
+
+    distance-travelled:
+      heading: How far did you travel?
+      help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
+      distance-travelled-unloaded:
+        label: Distance travelled unloaded
+        help: Enter the distance you travelled while your vehicle was empty
+      distance-travelled-loaded:
+        label: Distance travelled loaded
+        help: Enter the distance you travelled with a partially or fully loaded vehicle
+
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+        empty-container.help: consignment was an empty freight container
+        packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
+        groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
+        empty.help: only if the vehicle carried nothing at all
+        other-goods.help: ''
+      goods-description-other:
+        label: Other description
+        help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+
+    hazardous-goods:
+      hazardous-goods:
+        label: Were these goods dangerous or hazardous?
+        help: Were the goods being transported classified as dangerous or hazardous?
+
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods are carried?
+        help: Mixed consignments should be recorded as "Other cargo type"
+
+    goods-weight:
+      heading: Weight of goods
+      help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+      weight-of-goods-loaded:
+        label: Total weight of goods loaded on this day
+        help: ''
+      weight-of-goods-unloaded:
+        label: Total weight of goods unloaded on this day
+        help: ''
+
+    number-of-stops:
+      heading: Number of stops
+      help: ''
+      number-of-stops-loading:
+        label: 'Goods loaded'
+        help: 'The number of stops where goods were loaded onto the vehicle only'
+      number-of-stops-unloading:
+        label: 'Goods unloaded'
+        help: 'The number of stops where goods were unloaded from the vehicle only'
+      number-of-stops-both:
+        label: 'Goods loaded and unloaded'
+        help: 'The number of stops where goods were both loaded and unloaded'
+
+  # Day, create
+  day:
+    number-of-stops:
+      number-of-stops:
+        label: "How many times did you stop on day {dayNumber}?"
+        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
+          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
+          recorded.
+          <ul>
+          <li>Do not include stops where you did not load or unload goods</li>
+          <li>Do not include meal/rest breaks, congestion</li>
+          </ul>
+
+        fewer-than-5: Fewer than 5 stops
+        5-or-more: 5 or more stops
+
+
+survey:
+  domestic:
     non-complete:
-      scrapped-or-stolen: 'Scrapped or stolen'
-      sold: 'Sold'
-      on-hire: 'On hire'
       not-taxed: 'Not taxed'
       no-work: 'No work'
       repair: 'Being repaired'
@@ -32,133 +259,6 @@ survey:
       no-driver: 'No driver'
       other: 'Other'
     forms:
-      business-details:
-        heading: Business Details
-        number-of-employees:
-          label: How many people does your firm employ nationally?
-        business-nature:
-          label: What is the nature of your business?
-          help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
-        operation-type:
-          label: How was the vehicle being operated during the survey week?
-      vehicle-weights-and-fuel:
-        heading: Vehicle weights and fuel
-        fuel-quantity:
-          label: How much fuel in total was put into this vehicle during the survey week?
-        gross-weight:
-          label: Gross vehicle weight
-          help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
-        carrying-capacity:
-          label: Carrying capacity
-          help: Total weight of cargo that can be carried
-      vehicle-trailer-configuration:
-        heading: Please tell us about the the vehicle
-        trailer-configuration:
-          label: Select the option that best describes the vehicle
-      vehicle-axle-configuration:
-        heading: Please tell us about the the vehicle
-        axle-configuration:
-          label: Select the option that best shows the axle configuration of the vehicle
-      vehicle-body:
-        heading: Please tell us about the the vehicle
-        body-type:
-          label: Please indicate the main type of body for the vehicle
-
-# Day, create
-      number-of-stops:
-        heading: "How many times did you stop on day {dayNumber}?"
-        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
-          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
-          recorded.
-          <ul>
-            <li>Do not include stops where you did not load or unload goods</li>
-            <li>Do not include meal/rest breaks, congestion</li>
-          </ul>
-        fewer-than-5: Fewer than 5 stops
-        5-or-more: 5 or more stops
-
-# Day, summary
-      day-summary:
-        origin.heading: Where did the vehicle start the day?
-        origin-location:
-          label: Postcode or place-name and county
-          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
-        goods-loaded:
-          label: Were goods loaded?
-
-        goods-transferred-from:
-          label: More details about the start
-          help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
-
-        destination.heading: Where did the journey end?
-        destination-location:
-          label: Postcode or place-name and county
-          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
-        goods-unloaded:
-          label: Were goods un-loaded?
-
-        goods-transferred-to:
-          label: More details about the destination
-          help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
-
-        distance-travelled:
-          heading: How far did you travel?
-          help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
-        distance-travelled-unloaded:
-          label: Distance travelled unloaded
-          help: Enter the distance you travelled while your vehicle was empty
-        distance-travelled-loaded:
-          label: Distance travelled loaded
-          help: Enter the distance you travelled with a partially or fully loaded vehicle
-
-        goods-description:
-          label: Description of goods carried
-          help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
-          empty-container.help: consignment was an empty freight container
-          packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
-          groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
-          empty.help: only if the vehicle carried nothing at all
-          other-goods.help: ''
-        goods-description-other:
-          label: Other description
-          help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
-
-        furthest-stop:
-          label: Furthest point on this day
-          help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
-
-        hazardous-goods:
-          label: Were these goods dangerous or hazardous?
-          help: Were the goods being transported classified as dangerous or hazardous?
-#          placeholder: -- select --
-
-        cargo-type:
-          label: How were the goods are carried?
-          help: Mixed consignments should be recorded as "Other cargo type"
-
-        goods-weight:
-          heading: Weight of goods
-          help:
-        weight-of-goods-loaded:
-          label: Total weight of goods loaded on this day
-          help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
-        weight-of-goods-unloaded:
-          label: Total weight of goods unloaded on this day
-          help: ''
-
-        number-of-stops:
-          heading: Number of stops
-          help: ''
-        number-of-stops-loading:
-          label: 'Goods loaded'
-          help: 'The number of stops where goods were loaded onto the vehicle only'
-        number-of-stops-unloading:
-          label: 'Goods unloaded'
-          help: 'The number of stops where goods were unloaded from the vehicle only'
-        number-of-stops-both:
-          label: 'Goods loaded and unloaded'
-          help: 'The number of stops where goods were both loaded and unloaded'
-
 
 
       # Day, Multiple Wizard

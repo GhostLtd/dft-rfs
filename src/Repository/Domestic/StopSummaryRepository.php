@@ -23,14 +23,13 @@ class StopSummaryRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Survey $survey
      * @param $dayNumber
      * @return DaySummary
-     * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function getForDevelopmentByDayNumber($dayNumber)
+    public function getBySurveyAndDayNumber(Survey $survey, $dayNumber)
     {
-        $survey = $this->getEntityManager()->getRepository(Survey::class)->findLatestSurveyForTesting();
         $daySummary = $this->createQueryBuilder('stop_summary')
             ->select('stop_summary, day')
             ->leftJoin('stop_summary.day', 'day')

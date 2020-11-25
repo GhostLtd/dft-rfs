@@ -17,8 +17,9 @@ class VehicleBodyType extends AbstractType
             ->add('bodyType', Gds\ChoiceType::class, [
                 'property_path' => 'vehicle.bodyType',
                 'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
-                'label' => 'survey.domestic.forms.vehicle-body.body-type.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => 'domestic.survey-response.vehicle-body.body-type.label',
+                'help' => 'domestic.survey-response.vehicle-body.body-type.help',
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
             ])
         ;
     }

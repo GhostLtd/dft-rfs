@@ -17,8 +17,10 @@ class VehicleTrailerConfigurationType extends AbstractType
             ->add('trailerConfiguration', Gds\ChoiceType::class, [
                 'property_path' => 'vehicle.trailerConfiguration',
                 'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
-                'label' => 'survey.domestic.forms.vehicle-trailer-configuration.trailer-configuration.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => 'domestic.survey-response.vehicle-trailer-configuration.trailer-configuration.label',
+                'help' => 'domestic.survey-response.vehicle-trailer-configuration.trailer-configuration.help',
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'label_is_page_heading' => true,
             ])
         ;
     }

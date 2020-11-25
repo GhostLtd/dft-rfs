@@ -25,7 +25,7 @@ class EmailType extends InputType
         parent::buildView($view, $form, $options);
 
         $view->vars['attr'] = array_merge([
-            'class' => 'govuk-!-width-one-third',
+            'class' => 'govuk-input--width-20',
             'inputmode' => 'email',
         ], $view->vars['attr']);
     }

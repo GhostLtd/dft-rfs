@@ -21,23 +21,6 @@ class SurveyRepository extends ServiceEntityRepository
         parent::__construct($registry, Survey::class);
     }
 
-    /**
-     * @return Survey
-     * @throws NoResultException
-     * @throws NonUniqueResultException
-     */
-    public function findLatestSurveyForTesting()
-    {
-        return $this->createQueryBuilder('survey')
-            ->select('survey, response, vehicle, day, summary')
-            ->leftJoin('survey.response', 'response')
-            ->leftJoin('response.days', 'day', null, null, 'day.number')
-            ->leftJoin('response.vehicle', 'vehicle')
-            ->leftJoin('day.summary', 'summary')
-            ->orderBy('survey.id', 'DESC')
-            ->getQuery()
-            ->getSingleResult();
-    }
 
     // /**
     //  * @return Survey[] Returns an array of Survey objects

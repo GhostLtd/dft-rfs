@@ -14,10 +14,10 @@ class ScrappedDetailsType extends AbstractType
     {
         $builder
             ->add('unableToCompleteDate', Gds\DateType::class, [
-                'label' => 'Please tell us when the vehicle was scrapped',
+                'label' => 'domestic.survey-response.scrapped-details.date.label',
 //                'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => 'Enter the date that the vehicle was scrapped',
+                'help' => 'domestic.survey-response.scrapped-details.date.help',
             ])
         ;
     }

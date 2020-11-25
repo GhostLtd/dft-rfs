@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class CargoTypeType extends AbstractType
+abstract class AbstractCargoTypeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -24,14 +24,15 @@ class CargoTypeType extends AbstractType
             unset($choices[array_search(CargoType::CODE_NS_EMPTY, $choices)]);
         }
 
+        $translationKeyPrefix = "{$options['translation_namespace_key']}.{$options['translation_entity_key']}.cargo-type";
         $builder
             ->add('cargoTypeCode', Gds\ChoiceType::class, [
                 'choices' => $choices,
                 'choice_options' => $choiceOptions,
-                'label' => 'survey.domestic.forms.day-summary.cargo-type.label',
+                'label' => "{$translationKeyPrefix}.cargo-type-code.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-label--xl'],
-                'help' => 'survey.domestic.forms.day-summary.cargo-type.help',
+                'help' => "{$translationKeyPrefix}.cargo-type-code.help",
             ])
             ;
     }
@@ -42,5 +43,8 @@ class CargoTypeType extends AbstractType
             'data_class' => CargoTypeTrait::class,
             'is_summary_day' => false,
         ]);
+        $resolver->setRequired(["translation_entity_key", "translation_namespace_key"]);
+        $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);
+        $resolver->setAllowedValues("translation_namespace_key", ['domestic', 'international']);
     }
 }

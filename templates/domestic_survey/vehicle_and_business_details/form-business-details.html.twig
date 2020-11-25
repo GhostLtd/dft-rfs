@@ -1,11 +1,2 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Domestic Survey{% endblock %}
-
-{% block content %}
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'survey.domestic.forms.business-details.heading' | trans }}</h1>
-
-    <p class="govuk-body"></p>
-
-    {{ form(form) }}
-{% endblock %}
+{% set translation_prefix = 'domestic.survey-response.business-details' %}
+{% extends 'form-base.html.twig' %}

@@ -13,21 +13,22 @@ class NumberOfStopsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.day-summary.number-of-stops";
         $builder
             ->add('numberOfStopsLoadingAndUnloading', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.day-summary.number-of-stops-both.label',
-                'help' => 'survey.domestic.forms.day-summary.number-of-stops-both.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "{$translationKeyPrefix}.number-of-stops-both.label",
+                'help' => "{$translationKeyPrefix}.number-of-stops-both.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('numberOfStopsLoading', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.day-summary.number-of-stops-loading.label',
-                'help' => 'survey.domestic.forms.day-summary.number-of-stops-loading.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "{$translationKeyPrefix}.number-of-stops-loading.label",
+                'help' => "{$translationKeyPrefix}.number-of-stops-loading.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('numberOfStopsUnloading', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.day-summary.number-of-stops-unloading.label',
-                'help' => 'survey.domestic.forms.day-summary.number-of-stops-unloading.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "{$translationKeyPrefix}.number-of-stops-unloading.label",
+                'help' => "{$translationKeyPrefix}.number-of-stops-unloading.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

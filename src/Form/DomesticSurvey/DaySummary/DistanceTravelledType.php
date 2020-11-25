@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\DomesticSurvey;
+namespace App\Form\DomesticSurvey\DaySummary;
 
 use App\Entity\Distance;
 use App\Entity\Domestic\DaySummary;
@@ -24,19 +24,20 @@ class DistanceTravelledType extends AbstractType
             'choices' => Distance::UNIT_CHOICES,
         ];
 
+        $translationKeyPrefix = "domestic.day-summary.distance-travelled";
         $builder
             ->add('distanceTravelledLoaded', ValueUnitType::class, [
-                'label' => 'survey.domestic.forms.day-summary.distance-travelled-loaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
-                'help' => 'survey.domestic.forms.day-summary.distance-travelled-loaded.help',
+                'label' => "{$translationKeyPrefix}.distance-travelled-loaded.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.distance-travelled-loaded.help",
                 'value_options' => $valueOptions,
                 'unit_options' => $unitOptions,
                 'data_class' => Distance::class,
             ])
             ->add('distanceTravelledUnloaded', ValueUnitType::class, [
-                'label' => 'survey.domestic.forms.day-summary.distance-travelled-unloaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
-                'help' => 'survey.domestic.forms.day-summary.distance-travelled-unloaded.help',
+                'label' => "{$translationKeyPrefix}.distance-travelled-unloaded.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.distance-travelled-unloaded.help",
                 'value_options' => $valueOptions,
                 'unit_options' => $unitOptions,
                 'data_class' => Distance::class,

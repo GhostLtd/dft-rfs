@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class HazardousGoodsType extends AbstractType
+abstract class AbstractHazardousGoodsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -20,16 +20,16 @@ class HazardousGoodsType extends AbstractType
             ];
         }
 
+        $translationKeyPrefix = "{$options['translation_namespace_key']}.{$options['translation_entity_key']}.hazardous-goods";
         $builder
             ->add('hazardousGoodsCode', Gds\ChoiceType::class, [
                 'expanded' => true,
-//                'placeholder' => 'survey.domestic.forms.day-summary.hazardous-goods.placeholder',
                 'choices' => HazardousGoods::CHOICES,
                 'choice_options' => $choiceOptions,
-                'label' => 'survey.domestic.forms.day-summary.hazardous-goods.label',
+                'label' => "{$translationKeyPrefix}.hazardous-goods.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-label--xl'],
-                'help' => 'survey.domestic.forms.day-summary.hazardous-goods.help',
+                'help' => "{$translationKeyPrefix}.hazardous-goods.help",
             ])
             ;
     }
@@ -39,5 +39,8 @@ class HazardousGoodsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => HazardousGoodsTrait::class,
         ]);
+        $resolver->setRequired(["translation_entity_key", "translation_namespace_key"]);
+        $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);
+        $resolver->setAllowedValues("translation_namespace_key", ['domestic', 'international']);
     }
 }

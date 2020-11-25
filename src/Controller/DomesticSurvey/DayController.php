@@ -8,6 +8,7 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
+use App\Entity\PasscodeUser;
 use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
 use App\Workflow\DomesticSurveyInitialDetailsState;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,14 +34,14 @@ class DayController extends AbstractController
      * @param Request $request
      * @param $dayNumber
      * @return Response
-     * @throws NoResultException
-     * @throws NonUniqueResultException
      * @Route("/day-{dayNumber}")
      */
     public function view(EntityManagerInterface $entityManager, Request $request, $dayNumber)
     {
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
         // load the survey
-        $survey = $entityManager->getRepository(Survey::class)->findLatestSurveyForTesting();
+        $survey = $user->getDomesticSurvey();
 
         // fetch day for survey/dayNumber
         $day = $entityManager->getRepository(Day::class)->findOneBy(['number' => $dayNumber, 'response' => $survey->getResponse()]);
@@ -61,14 +62,14 @@ class DayController extends AbstractController
      * @param Request $request
      * @param $dayNumber
      * @return Response
-     * @throws NoResultException
-     * @throws NonUniqueResultException
      * @Route("/day-{dayNumber}/add")
      */
     public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber)
     {
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
         // load the survey
-        $survey = $entityManager->getRepository(Survey::class)->findLatestSurveyForTesting();
+        $survey = $user->getDomesticSurvey();
 
         // user might have navigated back in order to change answer... lets let them change it.
 
