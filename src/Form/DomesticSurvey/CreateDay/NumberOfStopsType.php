@@ -16,19 +16,20 @@ class NumberOfStopsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event){
+            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+                $translationKeyPrefix = "domestic.day.number-of-stops";
                 $event->getForm()
                     ->add('hasMoreThanFiveStops', ChoiceType::class, [
                         'choices' => [
-                            'survey.domestic.forms.number-of-stops.fewer-than-5' => false,
-                            'survey.domestic.forms.number-of-stops.5-or-more' => true,
+                            "{$translationKeyPrefix}.number-of-stops.fewer-than-5" => false,
+                            "{$translationKeyPrefix}.number-of-stops.5-or-more" => true,
                         ],
-                        'label' => 'survey.domestic.forms.number-of-stops.heading',
+                        'label' => "{$translationKeyPrefix}.number-of-stops.label",
                         'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                         'label_is_page_heading' => true,
                         'label_translation_parameters' => ['dayNumber' => $event->getData()->getNumber()],
                         'help_html' => true,
-                        'help' => 'survey.domestic.forms.number-of-stops.help',
+                        'help' => "{$translationKeyPrefix}.number-of-stops.help",
                     ])
                     ->add('continue', ButtonType::class, [
                         'type' => 'submit',

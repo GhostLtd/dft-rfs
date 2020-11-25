@@ -215,6 +215,22 @@ domestic:
         label: 'Goods loaded and unloaded'
         help: 'The number of stops where goods were both loaded and unloaded'
 
+  # Day, create
+  day:
+    number-of-stops:
+      number-of-stops:
+        label: "How many times did you stop on day {dayNumber}?"
+        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
+          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
+          recorded.
+          <ul>
+          <li>Do not include stops where you did not load or unload goods</li>
+          <li>Do not include meal/rest breaks, congestion</li>
+          </ul>
+
+        fewer-than-5: Fewer than 5 stops
+        5-or-more: 5 or more stops
+
 
 survey:
   domestic:
@@ -239,20 +255,6 @@ survey:
       no-driver: 'No driver'
       other: 'Other'
     forms:
-
-# Day, create
-      number-of-stops:
-        heading: "How many times did you stop on day {dayNumber}?"
-        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
-          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
-          recorded.
-          <ul>
-            <li>Do not include stops where you did not load or unload goods</li>
-            <li>Do not include meal/rest breaks, congestion</li>
-          </ul>
-        fewer-than-5: Fewer than 5 stops
-        5-or-more: 5 or more stops
-
 
 
       # Day, Multiple Wizard
