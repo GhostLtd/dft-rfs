@@ -122,6 +122,100 @@ domestic:
         label: Tell us about the the vehicle
         help: Indicate the main type of body for the vehicle
 
+    ## summary day
+  day-summary:
+    origin:
+      heading: Where did the vehicle start the day?
+      help: ''
+      origin-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-loaded:
+        label: Were goods loaded?
+        help: ''
+
+    origin-ports:
+      goods-transferred-from:
+        label: More details about the start
+        help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    destination:
+      heading: Where did the journey end?
+      help: ''
+      destination-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-unloaded:
+        label: Were goods un-loaded?
+        help: ''
+
+    destination-ports:
+      goods-transferred-to:
+        label: More details about the destination
+        help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    furthest-stop:
+      furthest-stop:
+        label: Furthest point on this day
+        help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
+
+    distance-travelled:
+      heading: How far did you travel?
+      help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
+      distance-travelled-unloaded:
+        label: Distance travelled unloaded
+        help: Enter the distance you travelled while your vehicle was empty
+      distance-travelled-loaded:
+        label: Distance travelled loaded
+        help: Enter the distance you travelled with a partially or fully loaded vehicle
+
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+        empty-container.help: consignment was an empty freight container
+        packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
+        groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
+        empty.help: only if the vehicle carried nothing at all
+        other-goods.help: ''
+      goods-description-other:
+        label: Other description
+        help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+
+    hazardous-goods:
+      hazardous-goods:
+        label: Were these goods dangerous or hazardous?
+        help: Were the goods being transported classified as dangerous or hazardous?
+
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods are carried?
+        help: Mixed consignments should be recorded as "Other cargo type"
+
+    goods-weight:
+      heading: Weight of goods
+      help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+      weight-of-goods-loaded:
+        label: Total weight of goods loaded on this day
+        help: ''
+      weight-of-goods-unloaded:
+        label: Total weight of goods unloaded on this day
+        help: ''
+
+    number-of-stops:
+      heading: Number of stops
+      help: ''
+      number-of-stops-loading:
+        label: 'Goods loaded'
+        help: 'The number of stops where goods were loaded onto the vehicle only'
+      number-of-stops-unloading:
+        label: 'Goods unloaded'
+        help: 'The number of stops where goods were unloaded from the vehicle only'
+      number-of-stops-both:
+        label: 'Goods loaded and unloaded'
+        help: 'The number of stops where goods were both loaded and unloaded'
+
+
 survey:
   domestic:
     goods-description:
@@ -158,88 +252,6 @@ survey:
           </ul>
         fewer-than-5: Fewer than 5 stops
         5-or-more: 5 or more stops
-
-# Day, summary
-      day-summary:
-        origin.heading: Where did the vehicle start the day?
-        origin-location:
-          label: Postcode or place-name and county
-          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
-        goods-loaded:
-          label: Were goods loaded?
-
-        goods-transferred-from:
-          label: More details about the start
-          help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
-
-        destination.heading: Where did the journey end?
-        destination-location:
-          label: Postcode or place-name and county
-          help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
-        goods-unloaded:
-          label: Were goods un-loaded?
-
-        goods-transferred-to:
-          label: More details about the destination
-          help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
-
-        distance-travelled:
-          heading: How far did you travel?
-          help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
-        distance-travelled-unloaded:
-          label: Distance travelled unloaded
-          help: Enter the distance you travelled while your vehicle was empty
-        distance-travelled-loaded:
-          label: Distance travelled loaded
-          help: Enter the distance you travelled with a partially or fully loaded vehicle
-
-        goods-description:
-          label: Description of goods carried
-          help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
-          empty-container.help: consignment was an empty freight container
-          packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
-          groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
-          empty.help: only if the vehicle carried nothing at all
-          other-goods.help: ''
-        goods-description-other:
-          label: Other description
-          help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
-
-        furthest-stop:
-          label: Furthest point on this day
-          help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
-
-        hazardous-goods:
-          label: Were these goods dangerous or hazardous?
-          help: Were the goods being transported classified as dangerous or hazardous?
-#          placeholder: -- select --
-
-        cargo-type:
-          label: How were the goods are carried?
-          help: Mixed consignments should be recorded as "Other cargo type"
-
-        goods-weight:
-          heading: Weight of goods
-          help:
-        weight-of-goods-loaded:
-          label: Total weight of goods loaded on this day
-          help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
-        weight-of-goods-unloaded:
-          label: Total weight of goods unloaded on this day
-          help: ''
-
-        number-of-stops:
-          heading: Number of stops
-          help: ''
-        number-of-stops-loading:
-          label: 'Goods loaded'
-          help: 'The number of stops where goods were loaded onto the vehicle only'
-        number-of-stops-unloading:
-          label: 'Goods unloaded'
-          help: 'The number of stops where goods were unloaded from the vehicle only'
-        number-of-stops-both:
-          label: 'Goods loaded and unloaded'
-          help: 'The number of stops where goods were both loaded and unloaded'
 
 
 

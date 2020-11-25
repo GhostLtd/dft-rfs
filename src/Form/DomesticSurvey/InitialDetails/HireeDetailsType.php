@@ -18,17 +18,17 @@ class HireeDetailsType extends AbstractType
                 'label' => 'domestic.survey-response.hiree-details.name.label',
                 'help' => 'domestic.survey-response.hiree-details.name.help',
                 'attr' => ['class' => 'govuk-input--width-20'],
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('hireeEmail', Gds\EmailType::class, [
                 'label' => 'domestic.survey-response.hiree-details.email.label',
                 'help' => 'domestic.survey-response.hiree-details.email.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('hireeAddress', AddressType::class, [
                 'label' => 'domestic.survey-response.hiree-details.address.label',
                 'help' => 'domestic.survey-response.hiree-details.address.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

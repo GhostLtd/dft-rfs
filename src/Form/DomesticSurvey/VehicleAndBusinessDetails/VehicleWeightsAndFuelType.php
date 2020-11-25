@@ -19,7 +19,7 @@ class VehicleWeightsAndFuelType extends AbstractType
                 'label' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.label',
                 'help' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.help',
                 'property_path' => 'vehicle.fuelQuantity',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'value_options' => [
                     'label' => 'Quantity',
                     'is_decimal' => true,
@@ -33,7 +33,7 @@ class VehicleWeightsAndFuelType extends AbstractType
             ->add('grossWeight', Gds\NumberType::class, [
                 'label' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.label',
                 'help' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'property_path' => 'vehicle.grossWeight',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
@@ -41,7 +41,7 @@ class VehicleWeightsAndFuelType extends AbstractType
             ->add('carryingCapacity', Gds\NumberType::class, [
                 'label' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.label',
                 'help' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'property_path' => 'vehicle.carryingCapacity',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',

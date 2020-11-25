@@ -13,17 +13,18 @@ class GoodsWeightType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.day-summary.goods-weight";
         $builder
             ->add('weightOfGoodsLoaded', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.day-summary.weight-of-goods-loaded.label',
-                'help' => 'survey.domestic.forms.day-summary.weight-of-goods-loaded.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "{$translationKeyPrefix}.weight-of-goods-loaded.label",
+                'help' => "{$translationKeyPrefix}.weight-of-goods-loaded.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'suffix' => 'kg',
             ])
             ->add('weightOfGoodsUnloaded', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.day-summary.weight-of-goods-unloaded.label',
-                'help' => 'survey.domestic.forms.day-summary.weight-of-goods-unloaded.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "{$translationKeyPrefix}.weight-of-goods-unloaded.label",
+                'help' => "{$translationKeyPrefix}.weight-of-goods-unloaded.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'suffix' => 'kg',
             ])
         ;

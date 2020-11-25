@@ -9,28 +9,25 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class DestinationType extends AbstractType
+abstract class AbstractDestinationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.destination";
         $builder
             ->add('destinationLocation', Gds\InputType::class, [
-                'label' => 'survey.domestic.forms.day-summary.destination-location.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
-                'help' => 'survey.domestic.forms.day-summary.destination-location.help',
+                'label' => "{$translationKeyPrefix}.destination-location.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "${translationKeyPrefix}.destination-location.help",
             ])
             ->add('goodsUnloaded', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => true, 'No' => false],
-                'label' => 'survey.domestic.forms.day-summary.goods-unloaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label' => "${translationKeyPrefix}.goods-unloaded.label",
+                'help' => "${translationKeyPrefix}.goods-unloaded.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => StopTrait::class,
-        ]);
-    }
+    use StopTypeTrait;
 }

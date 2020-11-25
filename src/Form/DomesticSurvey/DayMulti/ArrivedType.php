@@ -15,13 +15,13 @@ class ArrivedType extends AbstractType
         $builder
             ->add('destinationLocation', Gds\InputType::class, [
                 'label' => 'survey.domestic.forms.day-multiple.arrived.location.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => 'survey.domestic.forms.day-multiple.arrived.location.help',
             ])
             ->add('goodsUnloaded', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => true, 'No' => false],
                 'label' => 'survey.domestic.forms.day-multiple.arrived.goods-unloaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

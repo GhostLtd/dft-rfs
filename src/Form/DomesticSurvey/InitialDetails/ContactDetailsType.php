@@ -17,18 +17,18 @@ class ContactDetailsType extends AbstractType
                 'label' => 'domestic.survey-response.contact-details.contact-name.label',
                 'help' => 'domestic.survey-response.contact-details.contact-name.help',
                 'attr' => ['class' => 'govuk-input--width-20'],
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('contactTelephone', Gds\InputType::class, [
                 'label' => 'domestic.survey-response.contact-details.contact-telephone.label',
                 'help' => 'domestic.survey-response.contact-details.contact-telephone.help',
                 'attr' => ['class' => 'govuk-input--width-20'],
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('contactEmail', Gds\EmailType::class, [
                 'label' => 'domestic.survey-response.contact-details.contact-email.label',
                 'help' => 'domestic.survey-response.contact-details.contact-email.help',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

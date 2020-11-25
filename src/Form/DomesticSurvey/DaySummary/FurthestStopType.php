@@ -13,12 +13,13 @@ class FurthestStopType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.day-summary.furthest-stop";
         $builder
             ->add('furthestStop', Gds\InputType::class, [
-                'label' => 'survey.domestic.forms.day-summary.furthest-stop.label',
+                'label' => "{$translationKeyPrefix}.furthest-stop.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-label--xl'],
-                'help' => 'survey.domestic.forms.day-summary.furthest-stop.help',
+                'help' => "{$translationKeyPrefix}.furthest-stop.help",
             ])
         ;
     }

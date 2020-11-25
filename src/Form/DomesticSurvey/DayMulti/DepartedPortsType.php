@@ -17,7 +17,7 @@ class DepartedPortsType extends AbstractType
             ->add('transferredFrom', Gds\ChoiceType::class, [
                 'choices' => Day::TRANSFER_CHOICES,
                 'label' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => 'survey.domestic.forms.day-multiple.departed-ports.transferred-from.help',
             ])
         ;

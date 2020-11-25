@@ -15,13 +15,13 @@ class DepartedType extends AbstractType
         $builder
             ->add('startLocation', Gds\InputType::class, [
                 'label' => 'survey.domestic.forms.day-multiple.departed.location.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => 'survey.domestic.forms.day-multiple.departed.location.help',
             ])
             ->add('goodsLoaded', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => true, 'No' => false],
                 'label' => 'survey.domestic.forms.day-multiple.departed.goods-loaded.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }
