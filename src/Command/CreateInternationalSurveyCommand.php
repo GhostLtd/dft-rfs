@@ -2,12 +2,14 @@
 
 namespace App\Command;
 
+use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\PasscodeUser;
+use App\Repository\International\CompanyRepository;
 use App\Utility\PasscodeGenerator;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -44,11 +46,21 @@ class CreateInternationalSurveyCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        // TODO: Learn how to reference numbers are actually generated and update accordingly
+        $referenceNumber = $this->passcodeGenerator->generatePasscode();
+
+        // TODO: Use a real company
+        /**
+         * @var $companyRepo CompanyRepository
+         */
+        $companyRepo = $this->entityManager->getRepository(Company::class);
+        $company = $companyRepo->fetchOrCreateTestCompany();
+
         $survey = new Survey();
         $survey
-            // ToDo: update reference number
-            ->setReferenceNumber(1)
-            ->setStartDate(new \DateTime('now +7 days'))
+            ->setReferenceNumber($referenceNumber)
+            ->setStartDate(new DateTime('now +7 days'))
+            ->setCompany($company);
         ;
         $user = new PasscodeUser();
         $user
