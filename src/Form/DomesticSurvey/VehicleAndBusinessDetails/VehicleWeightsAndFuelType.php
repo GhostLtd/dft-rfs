@@ -16,7 +16,8 @@ class VehicleWeightsAndFuelType extends AbstractType
     {
         $builder
             ->add('fuelQuantity', ValueUnitType::class, [
-                'label' => 'survey.domestic.forms.vehicle-weights-and-fuel.fuel-quantity.label',
+                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.label',
+                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.help',
                 'property_path' => 'vehicle.fuelQuantity',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'value_options' => [
@@ -30,16 +31,16 @@ class VehicleWeightsAndFuelType extends AbstractType
                 ],
             ])
             ->add('grossWeight', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.vehicle-weights-and-fuel.gross-weight.label',
-                'help' => 'survey.domestic.forms.vehicle-weights-and-fuel.gross-weight.help',
+                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.label',
+                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'property_path' => 'vehicle.grossWeight',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
             ->add('carryingCapacity', Gds\NumberType::class, [
-                'label' => 'survey.domestic.forms.vehicle-weights-and-fuel.carrying-capacity.label',
-                'help' => 'survey.domestic.forms.vehicle-weights-and-fuel.carrying-capacity.help',
+                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.label',
+                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.help',
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'property_path' => 'vehicle.carryingCapacity',
                 'attr' => ['class' => 'govuk-input--width-10'],

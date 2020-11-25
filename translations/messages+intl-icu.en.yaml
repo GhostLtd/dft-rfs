@@ -20,6 +20,8 @@ passcode:
 
 domestic:
   survey-response:
+
+    ## initial details wizard
     contact-details:
       heading: 'Contact details'
       help: ''
@@ -78,6 +80,48 @@ domestic:
         help: ""
 
 
+    ## business and vehicle details wizard
+    business-details:
+      heading: Business Details
+      help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
+        help: ''
+      business-nature:
+        label: What is the nature of your business?
+        help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
+      operation-type:
+        label: How was the vehicle being operated during the survey week?
+        help: ''
+
+    vehicle-weights-and-fuel:
+      heading: Vehicle weights and fuel
+      help: ''
+      fuel-quantity:
+        label: How much fuel in total was put into this vehicle during the survey week?
+        help: ''
+      gross-weight:
+        label: Gross vehicle weight
+        help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+      carrying-capacity:
+        label: Carrying capacity
+        help: Total weight of cargo that can be carried
+
+    vehicle-trailer-configuration:
+      trailer-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best describes the vehicle
+
+    vehicle-axle-configuration:
+      axle-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best shows the axle configuration of the vehicle
+
+    vehicle-body:
+      body-type:
+        label: Tell us about the the vehicle
+        help: Indicate the main type of body for the vehicle
+
 survey:
   domestic:
     goods-description:
@@ -101,37 +145,6 @@ survey:
       no-driver: 'No driver'
       other: 'Other'
     forms:
-      business-details:
-        heading: Business Details
-        number-of-employees:
-          label: How many people does your firm employ nationally?
-        business-nature:
-          label: What is the nature of your business?
-          help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
-        operation-type:
-          label: How was the vehicle being operated during the survey week?
-      vehicle-weights-and-fuel:
-        heading: Vehicle weights and fuel
-        fuel-quantity:
-          label: How much fuel in total was put into this vehicle during the survey week?
-        gross-weight:
-          label: Gross vehicle weight
-          help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
-        carrying-capacity:
-          label: Carrying capacity
-          help: Total weight of cargo that can be carried
-      vehicle-trailer-configuration:
-        heading: Please tell us about the the vehicle
-        trailer-configuration:
-          label: Select the option that best describes the vehicle
-      vehicle-axle-configuration:
-        heading: Please tell us about the the vehicle
-        axle-configuration:
-          label: Select the option that best shows the axle configuration of the vehicle
-      vehicle-body:
-        heading: Please tell us about the the vehicle
-        body-type:
-          label: Please indicate the main type of body for the vehicle
 
 # Day, create
       number-of-stops:
