@@ -19,7 +19,7 @@ class Day
     const TRANSFERRED_RAIL = 8;
     const TRANSFERRED_AIR = 16;
 
-    const TRANSFER_TRANSLATION_PREFIX = 'survey.domestic.transferred-port.';
+    const TRANSFER_TRANSLATION_PREFIX = 'domestic.transferred-port.options.';
     const TRANSFER_CHOICES = [
         self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_PORT => self::TRANSFERRED_PORT,
         self::TRANSFER_TRANSLATION_PREFIX . self::TRANSFERRED_RAIL => self::TRANSFERRED_RAIL,
@@ -33,7 +33,7 @@ class Day
     const GOODS_DESCRIPTION_EMPTY = 'empty';
     const GOODS_DESCRIPTION_OTHER = 'other-goods';
 
-    const GOODS_DESCRIPTION_TRANSLATION_PREFIX = 'survey.domestic.goods-description.';
+    const GOODS_DESCRIPTION_TRANSLATION_PREFIX = 'domestic.goods-description.options.';
     const GOODS_DESCRIPTION_CHOICES = [
         self::GOODS_DESCRIPTION_TRANSLATION_PREFIX . self::GOODS_DESCRIPTION_EMPTY_CONTAINER => self::GOODS_DESCRIPTION_EMPTY_CONTAINER,
         self::GOODS_DESCRIPTION_TRANSLATION_PREFIX . self::GOODS_DESCRIPTION_PACKAGING => self::GOODS_DESCRIPTION_PACKAGING,

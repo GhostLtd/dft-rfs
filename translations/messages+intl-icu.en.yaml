@@ -19,6 +19,21 @@ passcode:
 
 
 domestic:
+  goods-description:
+    options:
+      empty-container: Empty container
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
+      other-goods: Specific goods / Other (please specify)
+  transferred-port:
+    options:
+      2: None of the above
+      4: Shipping port or docks
+      8: Rail depot / terminal
+      16: Airport
+
+
   survey-response:
 
     ## initial details wizard
@@ -234,17 +249,6 @@ domestic:
 
 survey:
   domestic:
-    goods-description:
-      empty-container: Empty container
-      packaging: Packaging
-      groupage: Groupage
-      empty: Empty
-      other-goods: Specific goods / Other (please specify)
-    transferred-port:
-      2: None of the above
-      4: Shipping port or docks
-      8: Rail depot / terminal
-      16: Airport
     non-complete:
       not-taxed: 'Not taxed'
       no-work: 'No work'
