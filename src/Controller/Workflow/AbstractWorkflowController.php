@@ -64,27 +64,48 @@ abstract class AbstractWorkflowController extends AbstractController
         $form->handleRequest($request);
 
         // validate/state-transition
-        if (!is_null($form->getClickedButton()))
-        {
-            if ($form->isValid())
-            {
+        if (!is_null($form->getClickedButton())) {
+            if ($form->isValid()) {
                 $transitions = $stateMachine->getEnabledTransitions($formWizard);
 
-                foreach ($transitions as $k=>$v)
-                {
-                    if ($transitionWhenFormData = $stateMachine->getMetadataStore()->getTransitionMetadata($v)['transitionWhenFormData'] ?? false)
-                    {
-                        if (
-                            is_array($transitionWhenFormData['value'])
-                                ? in_array($form->get($transitionWhenFormData['property'])->getData(), $transitionWhenFormData['value'])
-                                : $form->get($transitionWhenFormData['property'])->getData() === $transitionWhenFormData['value']
-                        ) {
+                foreach ($transitions as $k=>$v) {
+                    $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($v);
+
+                    if ($transitionWhenFormData = $metadata['transitionWhenFormData'] ?? false) {
+                        $data = $form->get($transitionWhenFormData['property'])->getData();
+                        $value = $transitionWhenFormData['value'];
+
+                        if (is_array($value) ? in_array($data, $value) : $data === $value) {
                             return $this->applyTransitionAndRedirect($request, $stateMachine, $formWizard, $v);
                         } else {
                             unset($transitions[$k]);
                         }
                     }
+
+                    $transitionCallback = $metadata['transitionWhenCallback'] ?? false;
+                    $invertCallbackResponse = false;
+
+                    if (!$transitionCallback) {
+                        $transitionCallback = $metadata['transitionWhenCallbackNot'] ?? false;
+                        $invertCallbackResponse = true;
+                    }
+
+                    if ($transitionCallback) {
+                        $data = $form->getData();
+                        $shouldKeep = is_array($transitionCallback) ?
+                            $transitionCallback($data) :
+                            $data !== null && $data->$transitionCallback();
+
+                        if ($invertCallbackResponse) {
+                            $shouldKeep = !$shouldKeep;
+                        }
+
+                        if (!$shouldKeep) {
+                            unset($transitions[$k]);
+                        }
+                    }
                 }
+
                 $transitions = array_values($transitions);
 
                 if (count($transitions) === 1)

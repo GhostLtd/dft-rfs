@@ -16,6 +16,7 @@ trait SurveyResponseTrait
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank(groups={"business_details"}, message="common.survey-response.business-nature.not-blank")
      */
     private $businessNature;
 

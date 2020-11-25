@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}International Survey{% endblock %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">Welcome to your GB Survey</h1>
+
+    <h2 class="govuk-heading-m">Preliminary questions</h2>
+    <p class="govuk-body">We now want to ask you some questions before the survey starts.</p>
+    <p class="govuk-body">The questions will cover:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Who to contact about this survey</li>
+        <li>If you are able to complete the survey</li>
+    </ul>
+    <p class="govuk-body">It will take around 5 minutes</p>
+
+    {{ form(form) }}
+{% endblock %}

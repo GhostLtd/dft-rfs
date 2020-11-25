@@ -3,6 +3,7 @@
 namespace App\Repository\International;
 
 use App\Entity\International\Company;
+use App\Entity\International\SamplingGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,9 +15,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CompanyRepository extends ServiceEntityRepository
 {
+    protected $samplingGroupRepo;
+
+    protected $manager;
+
     public function __construct(ManagerRegistry $registry)
     {
+        $this->samplingGroupRepo = $registry->getRepository(SamplingGroup::class);
+        $this->manager = $registry->getManager();
+
         parent::__construct($registry, Company::class);
+    }
+
+    public function fetchOrCreateTestCompany()
+    {
+        $companyName = 'Test sprockets inc';
+        $company = $this->findOneBy(['businessName' => $companyName]);
+
+        if (!$company) {
+            /** @var SamplingGroup $samplingGroup */
+            $samplingGroup = $this->samplingGroupRepo->findOneBy(['number' => 1, 'sizeGroup' => 1]);
+
+            $company = (new Company())
+                ->setBusinessName($companyName)
+                ->setSamplingGroup($samplingGroup);
+
+            $this->manager->persist($company);
+            $this->manager->flush();
+        }
+
+        return $company;
     }
 
     // /**

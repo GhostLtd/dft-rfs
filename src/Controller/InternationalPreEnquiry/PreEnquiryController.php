@@ -6,10 +6,9 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Company;
 use App\Entity\International\PreEnquiry;
 use App\Entity\International\PreEnquiryResponse;
-use App\Entity\International\SamplingGroup;
 use App\Form\InternationalPreEnquiry\SubmitPreEnquiryType;
+use App\Repository\International\CompanyRepository;
 use App\Repository\International\PreEnquiryRepository;
-use App\Repository\International\SamplingGroupRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use DateTime;
@@ -107,18 +106,13 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
         /** @var PreEnquiryRepository $preEnquiryRepo */
         $preEnquiryRepo = $this->entityManager->getRepository(PreEnquiry::class);
 
+        /** @var CompanyRepository $companyRepo */
+        $companyRepo = $this->entityManager->getRepository(Company::class);
+
         $preEnquiry = $preEnquiryRepo->findLatestSurveyForTesting();
 
         if (!$preEnquiry) {
-            /** @var SamplingGroupRepository $samplingGroup */
-            $samplingGroupRepo = $this->entityManager->getRepository(SamplingGroup::class);
-
-            /** @var SamplingGroup $samplingGroup */
-            $samplingGroup = $samplingGroupRepo->findOneBy(['number' => 1, 'sizeGroup' => 1]);
-
-            $company = (new Company())
-                ->setBusinessName('Test spockets inc')
-                ->setSamplingGroup($samplingGroup);
+            $company = $companyRepo->fetchOrCreateTestCompany();
 
             $dispatchDate = new DateTime();
             $dueDate = (clone $dispatchDate)->modify('+4 weeks');
@@ -128,7 +122,6 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
                 ->setDispatchDate($dispatchDate)
                 ->setDueDate($dueDate);
 
-            $this->entityManager->persist($company);
             $this->entityManager->persist($preEnquiry);
             $this->entityManager->flush();
         }

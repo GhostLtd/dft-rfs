@@ -95,7 +95,7 @@ class PreEnquiryResponse
             $this->getTotalVehicleCount() !== null &&
             $this->getInternationalJourneyVehicleCount() > $this->getTotalVehicleCount()) {
             $context
-                ->buildViolation('Number of vehicles used for international journeys must be less than or equal to the total number of vehicles')
+                ->buildViolation('pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-more-international-than-total-vehicles')
                 ->atPath('internationalJourneyVehicleCount')
                 ->addViolation();
         }

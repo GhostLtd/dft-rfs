@@ -2,11 +2,13 @@
 
 namespace App\Entity\International;
 
+use App\Entity\SurveyResponseTrait;
 use App\Repository\International\SurveyResponseRepository;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
@@ -14,6 +16,34 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SurveyResponse
 {
+    const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
+    const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
+    const ACTIVITY_STATUS_STILL_ACTIVE = 'still-active';
+
+    const ACTIVITY_STATUS_PREFIX = 'international.survey-response.activity-status.';
+    const ACTIVITY_STATUS_CHOICES_PREFIX = self::ACTIVITY_STATUS_PREFIX .'choices.';
+    const ACTIVITY_STATUS_CHOICES = [
+         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_CEASED_TRADING => self::ACTIVITY_STATUS_CEASED_TRADING,
+         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK => self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK,
+         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_STILL_ACTIVE => self::ACTIVITY_STATUS_STILL_ACTIVE,
+    ];
+
+    const NOT_USED_NO_INTERNATIONAL_WORK = 'no-international_work';
+    const NOT_USED_ON_HOLIDAY = 'on-holiday';
+    const NOT_USED_REPAIR = 'repair';
+    const NOT_USED_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    const NOT_USED_OTHER = 'other';
+
+    const NOT_USED_PREFIX = 'international.survey-response.not-used.';
+    const NOT_USED_CHOICES_PREFIX = self::NOT_USED_PREFIX . 'choices.';
+    const NOT_USED_CHOICES = [
+        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_NO_INTERNATIONAL_WORK => self::NOT_USED_NO_INTERNATIONAL_WORK,
+        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_ON_HOLIDAY => self::NOT_USED_ON_HOLIDAY,
+        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_REPAIR => self::NOT_USED_REPAIR,
+        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_NO_VEHICLES_AVAILABLE => self::NOT_USED_NO_VEHICLES_AVAILABLE,
+        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_OTHER => self::NOT_USED_OTHER,
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -23,21 +53,23 @@ class SurveyResponse
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(groups={"number_of_trips"}, message="international.survey-response.annual-international-journey-count.not-null")
+     * @Assert\Range(groups={"number_of_trips"}, min=0, minMessage="international.survey-response.annual-international-journey-count.not-negative")
      */
     private $annualInternationalJourneyCount;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="string", length=24, nullable=true)
      */
-    private $unableToCompleteDate;
+    private $activityStatus;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      */
-    private $unableToCompleteReason;
+    private $notUsed;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="surveyResponse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $survey;
@@ -48,9 +80,25 @@ class SurveyResponse
     private $vehicles;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $fewerThanTenEmployees;
+
+    /**
+     * @Assert\Callback(groups={"business_details"})
+     */
+    public function validateFewerThanTenEmployees(ExecutionContextInterface $context)
+    {
+        // fewerThanTenEmployees is allowed to be null ONLY IF the company is no longer active...
+        if (!$this->isNoLongerActive() && $this->getFewerThanTenEmployees() === null) {
+            $context
+                ->buildViolation('international.survey-response.fewer-than-ten-employees.not-null')
+                ->atPath('fewerThanTenEmployees')
+                ->addViolation();
+        }
+    }
+
+    use SurveyResponseTrait;
 
     public function __construct()
     {
@@ -67,33 +115,33 @@ class SurveyResponse
         return $this->annualInternationalJourneyCount;
     }
 
-    public function setAnnualInternationalJourneyCount(int $annualInternationalJourneyCount): self
+    public function setAnnualInternationalJourneyCount(?int $annualInternationalJourneyCount): self
     {
         $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
 
         return $this;
     }
 
-    public function getUnableToCompleteDate(): ?DateTimeInterface
+    public function getActivityStatus(): ?string
     {
-        return $this->unableToCompleteDate;
+        return $this->activityStatus;
     }
 
-    public function setUnableToCompleteDate(?DateTimeInterface $unableToCompleteDate): self
+    public function setActivityStatus(?string $activityStatus): self
     {
-        $this->unableToCompleteDate = $unableToCompleteDate;
+        $this->activityStatus = $activityStatus;
 
         return $this;
     }
 
-    public function getUnableToCompleteReason(): ?string
+    public function getNotUsedStatus(): ?string
     {
-        return $this->unableToCompleteReason;
+        return $this->notUsed;
     }
 
-    public function setUnableToCompleteReason(?string $unableToCompleteReason): self
+    public function setNotUsedStatus(?string $notUsed): self
     {
-        $this->unableToCompleteReason = $unableToCompleteReason;
+        $this->notUsed = $notUsed;
 
         return $this;
     }
@@ -145,10 +193,22 @@ class SurveyResponse
         return $this->fewerThanTenEmployees;
     }
 
-    public function setFewerThanTenEmployees(bool $fewerThanTenEmployees): self
+    public function setFewerThanTenEmployees(?bool $fewerThanTenEmployees): self
     {
         $this->fewerThanTenEmployees = $fewerThanTenEmployees;
 
         return $this;
+    }
+
+    public function hasPositiveTrips(): bool
+    {
+        $journeyCount = $this->getAnnualInternationalJourneyCount();
+        return $journeyCount !== null && $journeyCount > 0;
+    }
+
+    public function isNoLongerActive(): bool
+    {
+        $status = $this->getActivityStatus();
+        return ($status === self::ACTIVITY_STATUS_CEASED_TRADING || $status === self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK);
     }
 }

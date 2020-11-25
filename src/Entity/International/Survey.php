@@ -28,7 +28,7 @@ class Survey
     /**
      * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
-    private $surveyResponse;
+    private $response;
 
     public function getReferenceNumber(): ?string
     {
@@ -54,18 +54,18 @@ class Survey
         return $this;
     }
 
-    public function getSurveyResponse(): ?SurveyResponse
+    public function getResponse(): ?SurveyResponse
     {
-        return $this->surveyResponse;
+        return $this->response;
     }
 
-    public function setSurveyResponse(SurveyResponse $surveyResponse): self
+    public function setResponse(SurveyResponse $response): self
     {
-        $this->surveyResponse = $surveyResponse;
+        $this->response = $response;
 
         // set the owning side of the relation if necessary
-        if ($surveyResponse->getSurvey() !== $this) {
-            $surveyResponse->setSurvey($this);
+        if ($response->getSurvey() !== $this) {
+            $response->setSurvey($this);
         }
 
         return $this;

@@ -193,43 +193,84 @@ survey:
             help: This question is to establish if the goods being unloaded are being transferred from one mode of transport to another
 
 # Pre-Enquiry
-  pre-enquiry:
+pre-enquiry:
+  business-details:
+    company-name:
+      label: Company name
+      help: Provide the name of your company
+  correspondence-details:
+    heading: Correspondence details
+    help: Provide contact details for correspondence about this survey
+    name:
+      label: Name
+      help: ''
+    phone:
+      label: Phone
+      help: ''
+    email:
+      label: Email
+      help: ''
+  correspondence-address:
+    address:
+      label: Correspondence address
+      help: Provide the address where correspondence about this survey should be sent
+  vehicle-questions:
+    heading: Vehicle questions
+    total-vehicle-count:
+      label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
+      help: Disregard the weight of any trailers
+    international-journey-vehicle-count:
+      label: How many of the above vehicles will be used to conduct international journeys?
+      help: ''
+  employees-and-international-journeys:
+    heading: Employees and International Journeys
+    employee-count:
+      label: How many employees do you currently employee in this firm?
+      help: ''
+    annual-journey-estimate:
+      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      help: ''
+
+# International
+international:
+  survey-response:
+    contact-details:
+      heading: Contact details
+      help: Who should the Department for Transport team contact about the survey?
+      contact-name:
+        label: Contact name
+        help: ''
+      contact-telephone:
+        label: Contact telephone
+        help: ''
+      contact-email:
+        label: Contact email
+        help: ''
+    number-of-trips:
+      heading: Annual international trips
+      annual-international-journey-count:
+        label: Estimate the number of international trips that will be made by your firm in the next 12 months
+        help: ''
+    activity-status:
+      choices:
+        ceased-trading: No - firm has ceased trading
+        only-domestic-work: No - firm only carries out domestic work
+        still-active: Yes
+      activity-status:
+        label: Does your firm still perform international road haulage activities?
+        help: ''
     business-details:
-      company-name:
-        label: Company name
-        help: Provide the name of your company
-    correspondence-details:
-      heading: Correspondence details
-      help: Provide contact details for correspondence about this survey
-      name:
-        label: Name
+      heading: Business details
+      help: ''
+      fewer-than-ten-employees:
+        label: Does your firm employ fewer than 10 people in total, nationally?
         help: ''
-      phone:
-        label: Phone
-        help: ''
-      email:
-        label: Email
-        help: ''
-    correspondence-address:
-      address:
-        label: Correspondence address
-        help: Provide the address where correspondence about this survey should be sent
-    vehicle-questions:
-      heading: Vehicle questions
-      total-vehicle-count:
-        label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
-        help: Disregard the weight of any trailers
-      international-journey-vehicle-count:
-        label: How many of the above vehicles will be used to conduct international journeys?
-        help: ''
-    employees-and-international-journeys:
-      heading: Employees and International Journeys
-      employee-count:
-        label: How many employees do you currently employee in this firm?
-        help: ''
-      annual-journey-estimate:
-        label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
-        help: ''
+        choices:
+          yes: Yes
+          no: No
+      business-nature:
+        label: What is the nature of your business?
+        help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
 
 goods:
   hazardous:
