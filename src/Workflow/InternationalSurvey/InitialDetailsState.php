@@ -17,6 +17,9 @@ class InitialDetailsState implements FormWizardInterface
     const STATE_REQUEST_NUMBER_OF_TRIPS = 'number-of-trips';
     const STATE_REQUEST_ACTIVITY_STATUS = 'activity-status';
     const STATE_REQUEST_BUSINESS_DETAILS = 'business-details';
+
+    const STATE_CHANGE_CONTACT_DETAILS = 'change-contact-details';
+
     const STATE_SUMMARY = 'summary';
 
     private const FORM_MAP = [
@@ -24,6 +27,8 @@ class InitialDetailsState implements FormWizardInterface
         self::STATE_REQUEST_NUMBER_OF_TRIPS => NumberOfTripsType::class,
         self::STATE_REQUEST_ACTIVITY_STATUS => ActivityStatusType::class,
         self::STATE_REQUEST_BUSINESS_DETAILS => BusinessDetailsType::class,
+
+        self::STATE_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
     ];
 
     private const TEMPLATE_MAP = [
@@ -32,6 +37,8 @@ class InitialDetailsState implements FormWizardInterface
         self::STATE_REQUEST_NUMBER_OF_TRIPS => 'international_survey/initial_details/form-number-of-trips.html.twig',
         self::STATE_REQUEST_ACTIVITY_STATUS => 'international_survey/initial_details/form-activity-status.html.twig',
         self::STATE_REQUEST_BUSINESS_DETAILS => 'international_survey/initial_details/form-business-details.html.twig',
+
+        self::STATE_CHANGE_CONTACT_DETAILS => 'international_survey/initial_details/form-contact-details.html.twig',
     ];
 
     private $state = self::STATE_INTRODUCTION;
@@ -39,17 +46,11 @@ class InitialDetailsState implements FormWizardInterface
     /** @var SurveyResponse */
     private $subject;
 
-    /**
-     * @return mixed
-     */
     public function getState()
     {
         return $this->state;
     }
 
-    /**
-     * @param mixed $state
-     */
     public function setState($state): self
     {
         $this->state = $state;
@@ -95,6 +96,14 @@ class InitialDetailsState implements FormWizardInterface
 
         if ($isActive) {
             $states[] = self::STATE_REQUEST_BUSINESS_DETAILS;
+        }
+
+        if ($this->subject->getAnnualInternationalJourneyCount() !== null) {
+            $states[] = self::STATE_REQUEST_NUMBER_OF_TRIPS;
+        }
+
+        if ($this->subject->getId()) {
+            $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
         }
 
         return $states;
