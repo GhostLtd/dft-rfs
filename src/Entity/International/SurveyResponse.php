@@ -119,6 +119,10 @@ class SurveyResponse
     {
         $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
 
+        if ($this->annualInternationalJourneyCount && $this->annualInternationalJourneyCount > 0) {
+            $this->setActivityStatus(self::ACTIVITY_STATUS_STILL_ACTIVE);
+        }
+
         return $this;
     }
 
@@ -130,6 +134,11 @@ class SurveyResponse
     public function setActivityStatus(?string $activityStatus): self
     {
         $this->activityStatus = $activityStatus;
+
+        if ($this->isNoLongerActive()) {
+            $this->setBusinessNature(null);
+            $this->setFewerThanTenEmployees(null);
+        }
 
         return $this;
     }
@@ -210,5 +219,16 @@ class SurveyResponse
     {
         $status = $this->getActivityStatus();
         return ($status === self::ACTIVITY_STATUS_CEASED_TRADING || $status === self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK);
+    }
+
+    public function mergeInitialDetails(SurveyResponse $response)
+    {
+        $this->setContactName($response->getContactName());
+        $this->setContactEmail($response->getContactEmail());
+        $this->setContactTelephone($response->getContactTelephone());
+        $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
+        $this->setActivityStatus($response->getActivityStatus());
+        $this->setBusinessNature($response->getBusinessNature());
+        $this->setFewerThanTenEmployees($response->getFewerThanTenEmployees());
     }
 }

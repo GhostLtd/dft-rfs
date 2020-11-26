@@ -10,25 +10,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessDetailsType extends AbstractType
 {
+    const PREFIX = "international.survey-response.business-details";
+    const EMPLOYEES_PREFIX = self::PREFIX . '.fewer-than-ten-employees';
+    const NATURE_PREFIX = self::PREFIX . '.business-nature';
+
+    const EMPLOYEES_CHOICES = [
+        self::EMPLOYEES_PREFIX.".choices.yes" => true,
+        self::EMPLOYEES_PREFIX.".choices.no" => false,
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $prefix = "international.survey-response.business-details";
-        $employeesPrefix = "{$prefix}.fewer-than-ten-employees";
-        $naturePrefix = "{$prefix}.business-nature";
-
         $builder
             ->add('fewerThanTenEmployees', Gds\ChoiceType::class, [
-                'label' => "{$employeesPrefix}.label",
-                'help' => "{$employeesPrefix}.help",
-                'choices' => [
-                    "{$employeesPrefix}.choices.yes" => true,
-                    "{$employeesPrefix}.choices.no" => false,
-                ],
+                'label' => self::EMPLOYEES_PREFIX.".label",
+                'help' => self::EMPLOYEES_PREFIX.".help",
+                'choices' => self::EMPLOYEES_CHOICES,
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('businessNature', Gds\InputType::class, [
-                'label' => "{$naturePrefix}.label",
-                'help' => "{$naturePrefix}.help",
+                'label' => self::NATURE_PREFIX.".label",
+                'help' => self::NATURE_PREFIX.".help",
                 'attr' => ['class' => 'govuk-input--width-30'],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])

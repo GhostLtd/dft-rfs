@@ -22,6 +22,8 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                     StateObject::STATE_REQUEST_BUSINESS_DETAILS,
 
+                    StateObject::STATE_CHANGE_CONTACT_DETAILS,
+
                     StateObject::STATE_SUMMARY,
                 ],
                 'transitions' => [
@@ -49,6 +51,7 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_REQUEST_BUSINESS_DETAILS,
                     ],
                     'finish via business details' => [
+                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => IndexController::SUMMARY_ROUTE,
@@ -57,6 +60,7 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_SUMMARY,
                     ],
                     'finish via inactive business' => [
+                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => IndexController::SUMMARY_ROUTE,
@@ -64,6 +68,33 @@ return static function (ContainerConfigurator $container) {
                         ],
                         'from' => StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                         'to' =>  StateObject::STATE_SUMMARY,
+                    ],
+                    'contact details change' => [
+                        'from' =>  StateObject::STATE_SUMMARY,
+                        'to' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
+                    ],
+                    'contact details changed' => [
+                        'name' => 'finish',
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                        ],
+                        'from' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
+                        'to' =>  StateObject::STATE_SUMMARY,
+                    ],
+                    'number of trips change' => [
+                        'from' =>  StateObject::STATE_SUMMARY,
+                        'to' =>  StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
+                    ],
+                    'business details change' => [
+                        'metadata' => ['transitionWhenCallbackNot' => 'isNoLongerActive'],
+                        'from' =>  StateObject::STATE_SUMMARY,
+                        'to' =>  StateObject::STATE_REQUEST_BUSINESS_DETAILS,
+                    ],
+                    'activity status change' => [
+                        'metadata' => ['transitionWhenCallback' => 'isNoLongerActive'],
+                        'from' =>  StateObject::STATE_SUMMARY,
+                        'to' =>  StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                     ],
                 ]
             ],
