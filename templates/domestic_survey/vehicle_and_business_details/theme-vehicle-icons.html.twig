@@ -16,9 +16,9 @@
     {%- if 'radio' in block_prefixes -%}
         {% if hasIcon %}
             <div aria-hidden="true">
-                {{ svgIcon("lorry-#{value}.svg") | raw }}
+                {{ svgIcon("lorry-#{value}.svg") }}
                 {% if value == '130' %}
-                    <span class="or"> or </span>{{ svgIcon("lorry-#{value}v2.svg") | raw }}
+                    <span class="or"> or </span>{{ svgIcon("lorry-#{value}v2.svg") }}
                 {% endif %}
             </div>
         {% endif %}

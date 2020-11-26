@@ -34,7 +34,7 @@ class AppExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('svgIcon', [$this, 'svgIcon']),
+            new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
             new TwigFunction('wizardState', [$this, 'wizardState']),
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
         ];

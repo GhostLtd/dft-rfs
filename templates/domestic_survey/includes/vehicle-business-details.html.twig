@@ -34,9 +34,11 @@
 
     {# vehicle config #}
     {% set vehicleConfigActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})): 'Change'} %}
-    {{ gdsComponents.summaryListRow(
-        'Axle configuration',
-        domesticSurvey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans,
-        vehicleConfigActionLinks) }}
-
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Axle configuration</dt>
+        <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{domesticSurvey.response.vehicle.axleConfiguration}.svg") }}<br>{{ (domesticSurvey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+        <dd class="govuk-summary-list__actions">
+            {{- gdsComponents.actionLinks(vehicleConfigActionLinks) -}}
+        </dd>
+    </div>
 </dl>
