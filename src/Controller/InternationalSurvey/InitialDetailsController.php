@@ -44,16 +44,16 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
 
         $response = $formWizard->getSubject() ?? $survey->getResponse() ?? new SurveyResponse();
-        $survey->setResponse($response);
 
-        if ($this->entityManager->contains($response)) {
-            // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-            $response = $this->entityManager->merge($response);
-        } else {
-            $this->entityManager->persist($response);
+        $databaseResponse = $survey->getResponse() ?? new SurveyResponse();
+        $databaseResponse->mergeInitialDetails($response);
+        $survey->setResponse($databaseResponse);
+
+        if (!$this->entityManager->contains($databaseResponse)) {
+            $this->entityManager->persist($databaseResponse);
         }
 
-        $formWizard->setSubject($response);
+        $formWizard->setSubject($databaseResponse);
 
         return $formWizard;
     }
