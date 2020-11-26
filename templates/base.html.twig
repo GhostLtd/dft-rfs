@@ -2,6 +2,10 @@
 
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader -%}
 
+{% block pageTitle -%}
+    {{- 'service.name' | trans }} - GOV.UK
+{%- endblock %}
+
 {% block head -%}
     {{ encore_entry_link_tags('app') }}
 {%- endblock %}
@@ -12,7 +16,7 @@
 
 {% block headerBar %}
     {{ govukHeader({
-        serviceName: 'Road Freight Surveys'
+        serviceName: ('service.name' | trans)
     }) }}
 {% endblock %}
 

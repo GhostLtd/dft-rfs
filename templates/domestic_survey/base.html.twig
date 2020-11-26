@@ -1,0 +1,3 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle -%}CSRGT{% if app.user.domesticSurvey.isNorthernIreland %} (NI){% endif %} - {{ parent() -}}{%- endblock %}

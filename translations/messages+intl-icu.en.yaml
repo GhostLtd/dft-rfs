@@ -1,3 +1,7 @@
+service:
+  name: Road Freight Statistics
+
+
 unit:
   distance:
     miles: 'Miles'
