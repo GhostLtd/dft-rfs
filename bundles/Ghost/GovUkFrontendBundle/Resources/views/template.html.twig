@@ -45,13 +45,13 @@
         {%- endset %}
     {% set phaseBannerHtml %}
         This is a new service – your
-        <a class="govuk-link" href="mailto:feedback@ghostlimited.com?subject=DfT NTS Alpha: user testing feedback&body={{ feedbackMailtoBody | replace({'<br>' : '%0A'}) }}">feedback</a>
+        <a class="govuk-link" href="mailto:feedback@ghostlimited.com?subject=DfT RTS Beta: user testing feedback&body={{ feedbackMailtoBody | replace({'<br>' : '%0A'}) }}">feedback</a>
         will help us to improve it.
     {% endset %}
     {{ govuk.phaseBanner({
         classes: 'govuk-width-container',
         tag: {
-            text: "alpha"
+            text: "beta"
         },
         html: phaseBannerHtml
     }) }}
