@@ -41,5 +41,7 @@
         {%- endif %}
     </dl>
 
-{#    {{ form(form) }}#}
+    {%- if response.canSubmit -%}
+        {{ form(form) }}
+    {%- endif -%}
 {% endblock %}

@@ -231,4 +231,9 @@ class SurveyResponse
         $this->setBusinessNature($response->getBusinessNature());
         $this->setFewerThanTenEmployees($response->getFewerThanTenEmployees());
     }
+
+    public function canSubmit()
+    {
+        return $this->isNoLongerActive(); // TODO: Add further check cases
+    }
 }

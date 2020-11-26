@@ -346,13 +346,13 @@ international:
       heading: Contact details
       help: Who should the Department for Transport team contact about the survey?
       contact-name:
-        label: Contact name
+        label: Name
         help: ''
       contact-telephone:
-        label: Contact telephone
+        label: Telephone
         help: ''
       contact-email:
-        label: Contact email
+        label: Email
         help: ''
     number-of-trips:
       heading: Annual international trips
