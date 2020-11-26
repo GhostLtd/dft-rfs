@@ -5,6 +5,10 @@
     {{- parent() -}}
 {%- endblock %}
 
+{% block oneThirdColumnContent -%}
+    {% include 'domestic_survey/includes/survey-summary.html.twig' %}
+{%- endblock %}
+
 {% block content -%}
-    {%- include 'includes/form-page-content.html.twig' -%}
+    {%- include 'includes/form-page-content.html.twig' with {oneThirdColumnContent: block('oneThirdColumnContent')} -%}
 {%- endblock %}
