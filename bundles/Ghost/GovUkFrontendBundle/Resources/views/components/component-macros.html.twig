@@ -4,7 +4,7 @@
 
 {% macro summaryListRow(key, value, actions, options) -%}
     <div class="govuk-summary-list__row {{ options.row_class | default('') }}">
-        <dt class="govuk-summary-list__key">{{ key | nl2br }}</dt>
+        <dt class="govuk-summary-list__key">{{ key | trans | nl2br }}</dt>
         <dd class="govuk-summary-list__value">{{ value | nl2br }}</dd>
         <dd class="govuk-summary-list__actions">
             {{- _self.actionLinks(actions) -}}
@@ -34,7 +34,7 @@
             {%- set action = action[0] -%}
         {%- endif -%}
         <a class="govuk-link" href="{{ url }}">
-            {{- action }}{% if actionHidden | default(false) %}<span class="govuk-visually-hidden"> {{ actionHidden }}</span>{% endif -%}
+            {{- action | trans }}{% if actionHidden | default(false) %}<span class="govuk-visually-hidden"> {{ actionHidden | trans }}</span>{% endif -%}
         </a>
     {%- endif -%}
 {%- endmacro %}
