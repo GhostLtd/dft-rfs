@@ -3,7 +3,9 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
+use App\Workflow\InternationalSurvey\InitialDetailsState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -28,6 +30,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('svgIcon', [$this, 'svgIcon']),
             new TwigFunction('wizardState', [$this, 'wizardState']),
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
+            new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
         ];
     }
 
@@ -43,6 +46,7 @@ class AppExtension extends AbstractExtension
 
     protected $wizardMapping = [
         'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
+        'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {
@@ -63,5 +67,15 @@ class AppExtension extends AbstractExtension
         $params = ['state' => $this->wizardState($wizard, $state)];
 
         return $this->router->generate($route, $params);
+    }
+
+    public function choiceLabel(array $choices, ?string $choice, bool $equivalence=false): string {
+        foreach($choices as $label => $value) {
+            if ($value === $choice || ($equivalence && $value == $choice)) {
+                return $label;
+            }
+        }
+
+        return '';
     }
 }
