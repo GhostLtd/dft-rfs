@@ -52,7 +52,7 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'domestic_survey_index',
+                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
                         ],
                         'from' => [
                             StateObject::STATE_ASK_HIREE_DETAILS,
@@ -65,7 +65,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'domestic_survey_index',
+                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
                             'transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' =>
                                 array_diff(array_values(SurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES), [
                                     SurveyResponse::REASON_ON_HIRE,
@@ -89,7 +89,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'domestic_survey_index'
+                            'redirectRoute' => 'app_domesticsurvey_contactdetails'
                         ],
                         'from' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,

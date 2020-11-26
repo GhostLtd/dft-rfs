@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Domestic Pre-Sruvey Wizard{% endblock %}
+
+{% block content %}
+    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+    <h1 class="page-heading__heading govuk-heading-xl">CSRGT summary</h1>
+
+    {% include 'domestic_survey/includes/contact-details.html.twig' %}
+
+    {% if domesticSurvey.businessAndVehicleDetailsComplete %}
+        {% include 'domestic_survey/includes/vehicle-business-details.html.twig' %}
+
+        <p class="govuk-body">
+            <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>
+        </p>
+    {% else %}
+        <h2 class="govuk-heading-m">Next step</h2>
+        <p class="govuk-body">
+            <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">Complete vehicle and business details</a>
+        </p>
+    {% endif %}
+{% endblock %}

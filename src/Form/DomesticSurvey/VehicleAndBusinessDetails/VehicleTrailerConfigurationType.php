@@ -13,12 +13,13 @@ class VehicleTrailerConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.survey-response.vehicle-trailer-configuration";
         $builder
             ->add('trailerConfiguration', Gds\ChoiceType::class, [
                 'property_path' => 'vehicle.trailerConfiguration',
                 'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
-                'label' => 'domestic.survey-response.vehicle-trailer-configuration.trailer-configuration.label',
-                'help' => 'domestic.survey-response.vehicle-trailer-configuration.trailer-configuration.help',
+                'label' => "{$translationKeyPrefix}.trailer-configuration.label",
+                'help' => "{$translationKeyPrefix}.trailer-configuration.help",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'label_is_page_heading' => true,
             ])

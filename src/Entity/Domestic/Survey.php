@@ -45,6 +45,24 @@ class Survey
      */
     private $passcodeUser;
 
+    public function isInitialDetailsComplete()
+    {
+        return (
+            !empty($this->getResponse())
+        );
+    }
+
+    public function isBusinessAndVehicleDetailsComplete()
+    {
+        return (
+            $this->isInitialDetailsComplete()
+            && !empty($this->getResponse()->getBusinessNature())
+            && !empty($this->getResponse()->getVehicle()->getGrossWeight())
+            && !empty($this->getResponse()->getVehicle()->getCarryingCapacity())
+            && !empty($this->getResponse()->getVehicle()->getAxleConfiguration())
+        );
+    }
+
     public function getIsNorthernIreland(): ?bool
     {
         return $this->isNorthernIreland;

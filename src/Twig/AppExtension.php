@@ -3,11 +3,13 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Entity\Vehicle;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
@@ -20,6 +22,13 @@ class AppExtension extends AbstractExtension
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
         $this->router = $router;
+    }
+
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey'])
+        ];
     }
 
     public function getFunctions()

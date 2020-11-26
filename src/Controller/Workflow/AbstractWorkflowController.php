@@ -213,7 +213,7 @@ abstract class AbstractWorkflowController extends AbstractController
         $template = $formWizard->getStateTemplateMap()[$state] ?? $formWizard->getDefaultTemplate();
         $form->add('continue', ButtonType::class, [
             'type' => 'submit',
-            'label' => $isSavePoint ? 'Save and continue' : null,
+            'label' => $isSavePoint ? 'Save and finish' : null,
         ]);
 
         return [$form, $template];

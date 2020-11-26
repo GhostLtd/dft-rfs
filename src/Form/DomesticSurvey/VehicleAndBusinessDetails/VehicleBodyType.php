@@ -13,12 +13,13 @@ class VehicleBodyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.survey-response.vehicle-body";
         $builder
             ->add('bodyType', Gds\ChoiceType::class, [
                 'property_path' => 'vehicle.bodyType',
                 'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
-                'label' => 'domestic.survey-response.vehicle-body.body-type.label',
-                'help' => 'domestic.survey-response.vehicle-body.body-type.help',
+                'label' => "{$translationKeyPrefix}.body-type.label",
+                'help' => "{$translationKeyPrefix}.body-type.help",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
             ])
         ;

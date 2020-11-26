@@ -15,26 +15,41 @@ use App\Workflow\FormWizardInterface;
 class VehicleAndBusinessDetailsState implements FormWizardInterface
 {
     const STATE_BUSINESS_DETAILS = 'business-details';
+    const STATE_CHANGE_BUSINESS_DETAILS = 'change-business-details';
     const STATE_VEHICLE_WEIGHTS_AND_FUEL = 'vehicle-weights-and-fuel';
+    const STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL = 'change-vehicle-weights-and-fuel';
     const STATE_VEHICLE_TRAILER_CONFIGURATION = 'vehicle-trailer-configuration';
+    const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-vehicle-trailer-configuration';
     const STATE_VEHICLE_AXLE_CONFIGURATION = 'vehicle-axle-configuration';
+    const STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION = 'change-vehicle-axle-configuration';
     const STATE_VEHICLE_BODY = 'vehicle-body';
+    const STATE_CHANGE_VEHICLE_BODY = 'change-vehicle-body';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
+        self::STATE_CHANGE_BUSINESS_DETAILS => BusinessDetailsType::class,
         self::STATE_VEHICLE_WEIGHTS_AND_FUEL => VehicleWeightsAndFuelType::class,
+        self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL => VehicleWeightsAndFuelType::class,
         self::STATE_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
+        self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
+        self::STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
         self::STATE_VEHICLE_BODY => VehicleBodyType::class,
+        self::STATE_CHANGE_VEHICLE_BODY => VehicleBodyType::class,
     ];
 
     private const TEMPLATE_MAP = [
         self::STATE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
+        self::STATE_CHANGE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
         self::STATE_VEHICLE_WEIGHTS_AND_FUEL => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights-and-fuel.html.twig',
+        self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights-and-fuel.html.twig',
         self::STATE_VEHICLE_TRAILER_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-trailer-configuration.html.twig',
+        self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-trailer-configuration.html.twig',
         self::STATE_VEHICLE_AXLE_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-axle-configuration.html.twig',
+        self::STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-axle-configuration.html.twig',
         self::STATE_VEHICLE_BODY => 'domestic_survey/vehicle_and_business_details/form-vehicle-body.html.twig',
+        self::STATE_CHANGE_VEHICLE_BODY => 'domestic_survey/vehicle_and_business_details/form-vehicle-body.html.twig',
     ];
 
     private $state = self::STATE_BUSINESS_DETAILS;
@@ -84,15 +99,20 @@ class VehicleAndBusinessDetailsState implements FormWizardInterface
         if ($this->subject->getBusinessNature() || $this->subject->getNumberOfEmployees() || $this->subject->getVehicle()->getOperationType())
         {
             $states[] = self::STATE_VEHICLE_WEIGHTS_AND_FUEL;
+            $states[] = self::STATE_CHANGE_BUSINESS_DETAILS;
 
             if ($this->subject->getVehicle()->getCarryingCapacity() || $this->subject->getVehicle()->getFuelQuantity())
             {
+                $states[] = self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL;
                 $states[] = self::STATE_VEHICLE_TRAILER_CONFIGURATION;
+                $states[] = self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION;
                 $states[] = self::STATE_VEHICLE_AXLE_CONFIGURATION;
+                $states[] = self::STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION;
 
                 if ($this->subject->getVehicle()->getAxleConfiguration())
                 {
                     $states[] = self::STATE_VEHICLE_BODY;
+                    $states[] = self::STATE_CHANGE_VEHICLE_BODY;
                 }
             }
         }

@@ -57,4 +57,9 @@ abstract class Vehicle
         self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'tipper' => 'tipper',
         self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'other' => 'other',
     ];
+
+    static function getAxleConfigurationTranslationKey($axleConfigCode)
+    {
+        return array_flip(self::AXLE_CONFIGURATION_CHOICES[100 * floor($axleConfigCode / 100)])[$axleConfigCode];
+    }
 }

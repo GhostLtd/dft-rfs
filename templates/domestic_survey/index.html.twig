@@ -1,20 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DomesticSurveyController!{% endblock %}
+{% block title %}Domestic Pre-Sruvey Wizard{% endblock %}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{% block content %}
+    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+    <h1 class="page-heading__heading govuk-heading-xl">CSRGT summary</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {% if domesticSurvey.initialDetailsComplete and domesticSurvey.businessAndVehicleDetailsComplete %}
+        <h2 class="govuk-heading-m">Your survey week</h2>
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {% for dayNumber in 1..7 %}
+                {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
+                {{ gdsComponents.summaryListRow(
+                    "Day #{dayNumber}",
+                    day ? 'day exists' : 'nothing recorded',
+                    {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
+                ) }}
+            {% endfor %}
+        </dl>
+        <p class="govuk-body">
+            <a href="{{ url('app_domesticsurvey_contactdetails') }}">View/change the contact, business and vehicle details you have already entered</a>.
+        </p>
+    {% endif %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/tom/websites/dft-rfs/src/Controller/DomesticSurveyController.php'|file_link(0) }}">src/Controller/DomesticSurveyController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/tom/websites/dft-rfs/templates/domestic_survey/index.html.twig'|file_link(0) }}">templates/domestic_survey/index.html.twig</a></code></li>
-    </ul>
-</div>
+    {% if domesticSurvey.initialDetailsComplete %}
+        <p class="govuk-body">
+            When you have finished entering information for your survey week, you must submit your survey.
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_index') }}">Submit your survey</a>
+        </p>
+
+    {% endif %}
 {% endblock %}

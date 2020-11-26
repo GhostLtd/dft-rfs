@@ -1,0 +1,42 @@
+{% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+
+<h2 class="govuk-heading-m">Business details</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {# business details #}
+    {% set businessDetailsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')})): 'Change'} %}
+    {{ gdsComponents.summaryListRow(
+        'domestic.survey-response.business-details.number-of-employees.label' | trans,
+        domesticSurvey.response.numberOfEmployees,
+        businessDetailsActionLinks) }}
+    {{ gdsComponents.summaryListRow(
+        'domestic.survey-response.business-details.business-nature.label' | trans,
+        domesticSurvey.response.businessNature,
+        businessDetailsActionLinks) }}
+    {{ gdsComponents.summaryListRow(
+        'domestic.survey-response.business-details.operation-type.label' | trans,
+        (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ domesticSurvey.response.vehicle.operationType) | trans,
+        businessDetailsActionLinks) }}
+</dl>
+
+<h2 class="govuk-heading-m">Vehicle details</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {# vehicle weights #}
+    {% set vehicleWeightsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL')})): 'Change'} %}
+    {{ gdsComponents.summaryListRow('domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.label' | trans,
+        "#{domesticSurvey.response.vehicle.fuelQuantity.value} #{domesticSurvey.response.vehicle.fuelQuantity.unit}",
+        vehicleWeightsActionLinks) }}
+    {{ gdsComponents.summaryListRow('domestic.survey-response.vehicle-weights-and-fuel.gross-weight.label' | trans,
+        "#{domesticSurvey.response.vehicle.grossWeight} Kg",
+        vehicleWeightsActionLinks) }}
+    {{ gdsComponents.summaryListRow('domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.label' | trans,
+        "#{domesticSurvey.response.vehicle.carryingCapacity} Kg",
+        vehicleWeightsActionLinks) }}
+
+    {# vehicle config #}
+    {% set vehicleConfigActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})): 'Change'} %}
+    {{ gdsComponents.summaryListRow(
+        'Axle configuration',
+        domesticSurvey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans,
+        vehicleConfigActionLinks) }}
+
+</dl>

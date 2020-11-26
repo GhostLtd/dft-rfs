@@ -14,10 +14,11 @@ class VehicleWeightsAndFuelType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.survey-response.vehicle-weights-and-fuel";
         $builder
             ->add('fuelQuantity', ValueUnitType::class, [
-                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.label',
-                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.help',
+                'label' => "{$translationKeyPrefix}.fuel-quantity.label",
+                'help' => "{$translationKeyPrefix}.fuel-quantity.help",
                 'property_path' => 'vehicle.fuelQuantity',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'value_options' => [
@@ -31,16 +32,16 @@ class VehicleWeightsAndFuelType extends AbstractType
                 ],
             ])
             ->add('grossWeight', Gds\NumberType::class, [
-                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.label',
-                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.gross-weight.help',
+                'label' => "{$translationKeyPrefix}.gross-weight.label",
+                'help' => "{$translationKeyPrefix}.gross-weight.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'property_path' => 'vehicle.grossWeight',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
             ->add('carryingCapacity', Gds\NumberType::class, [
-                'label' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.label',
-                'help' => 'domestic.survey-response.vehicle-weights-and-fuel.carrying-capacity.help',
+                'label' => "{$translationKeyPrefix}.carrying-capacity.label",
+                'help' => "{$translationKeyPrefix}.carrying-capacity.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'property_path' => 'vehicle.carryingCapacity',
                 'attr' => ['class' => 'govuk-input--width-10'],

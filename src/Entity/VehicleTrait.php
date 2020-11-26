@@ -116,6 +116,11 @@ trait VehicleTrait
         return $this;
     }
 
+    public function getTrailerGroup()
+    {
+        return $this->getAxleConfiguration() ? 100 * floor($this->getAxleConfiguration() / 100) : null;
+    }
+
     public function getAxleConfiguration(): ?int
     {
         return $this->axleConfiguration;

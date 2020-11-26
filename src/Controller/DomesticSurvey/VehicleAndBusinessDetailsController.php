@@ -22,11 +22,11 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
      * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurvey_vehicleandbusinessdetails_start")
      * @param WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine
      * @param Request $request
-     * @param null $state
+     * @param null | string $state
      * @return Response
      * @throws Exception
      */
-    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = null): Response
+    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = VehicleAndBusinessDetailsState::STATE_BUSINESS_DETAILS): Response
     {
         return $this->doWorkflow($domesticSurveyVehicleAndBusinessDetailsStateMachine, $request, $state);
     }
@@ -43,10 +43,12 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
         if (is_null($formWizard->getSubject())) {
             $survey = $user->getDomesticSurvey();
             $formWizard->setSubject($survey->getResponse());
+
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
         $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
         $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
+
         return $formWizard;
     }
 

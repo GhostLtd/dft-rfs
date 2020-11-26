@@ -116,7 +116,7 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         switch (true)
         {
             case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER) :
-                return new RedirectResponse($this->urlGenerator->generate('domestic_survey_index'));
+                return new RedirectResponse($this->urlGenerator->generate('app_domesticsurvey_index'));
 
             case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER) :
                 // ToDo: add the redirect here

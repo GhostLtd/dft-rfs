@@ -13,25 +13,26 @@ class BusinessDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.survey-response.business-details";
         $builder
             ->add('numberOfEmployees', Gds\NumberType::class, [
-                'label' => 'domestic.survey-response.business-details.number-of-employees.label',
+                'label' => "{$translationKeyPrefix}.number-of-employees.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-5'],
-                'help' => 'domestic.survey-response.business-details.number-of-employees.help',
+                'help' => "{$translationKeyPrefix}.number-of-employees.help",
             ])
             ->add('businessNature', Gds\InputType::class, [
-                'label' => 'domestic.survey-response.business-details.business-nature.label',
+                'label' => "{$translationKeyPrefix}.business-nature.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => 'domestic.survey-response.forms.business-details.business-nature.help',
+                'help' => "{$translationKeyPrefix}.business-nature.help",
                 'attr' => ['class' => 'govuk-input--width-30']
             ])
             ->add('operationType', Gds\ChoiceType::class, [
-                'label' => 'domestic.survey-response.business-details.operation-type.label',
+                'label' => "{$translationKeyPrefix}.operation-type.label",
                 'property_path' => 'vehicle.operationType',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => Vehicle::OPERATION_TYPE_CHOICES,
-                'help' => 'domestic.survey-response.business-details.operation-type.help',
+                'help' => "{$translationKeyPrefix}.operation-type.help",
             ])
         ;
     }

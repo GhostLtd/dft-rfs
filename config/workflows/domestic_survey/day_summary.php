@@ -97,7 +97,7 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'domestic_survey_index',
+                            'redirectRoute' => 'app_domesticsurvey_index',
                         ],
                         'from' => StateObject::STATE_NUMBER_OF_STOPS,
                         'to' =>  StateObject::STATE_END,

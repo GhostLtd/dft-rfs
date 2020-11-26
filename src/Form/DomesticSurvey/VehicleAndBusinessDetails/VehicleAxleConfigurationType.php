@@ -19,6 +19,8 @@ class VehicleAxleConfigurationType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event)
         {
+            $translationKeyPrefix = "domestic.survey-response.vehicle-axle-configuration";
+
             if ($event->getData()) {
                 /** @var VehicleTrait $vehicle */
                 $vehicle = $event->getData()->getVehicle();
@@ -27,8 +29,8 @@ class VehicleAxleConfigurationType extends AbstractType
                     ->add('axleConfiguration', Gds\ChoiceType::class, [
                         'property_path' => 'vehicle.axleConfiguration',
                         'choices' => Vehicle::AXLE_CONFIGURATION_CHOICES[$vehicle->getTrailerConfiguration()],
-                        'label' => 'domestic.survey-response.vehicle-axle-configuration.axle-configuration.label',
-                        'help' => 'domestic.survey-response.vehicle-axle-configuration.axle-configuration.help',
+                        'label' => "{$translationKeyPrefix}.axle-configuration.label",
+                        'help' => "{$translationKeyPrefix}.axle-configuration.help",
                         'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                     ])
                 ;
