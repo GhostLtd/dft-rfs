@@ -345,6 +345,13 @@ pre-enquiry:
 
 # International
 international:
+  correspondence-and-business-details:
+    title: 'Correspondence and Business Details'
+  summary:
+    title: 'IRHS Survey summary'
+  thanks:
+    title: 'Thanks'
+
   survey-response:
     contact-details:
       heading: Contact details

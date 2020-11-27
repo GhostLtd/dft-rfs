@@ -1,3 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block pageTitle -%}IRHS - {{ parent() -}}{%- endblock %}
+{% block pageTitle -%}
+    {%- include 'includes/form-page-title.html.twig' -%}
+    IRHS - {{ parent() -}}
+{%- endblock %}

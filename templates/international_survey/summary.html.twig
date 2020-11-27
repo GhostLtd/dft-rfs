@@ -1,6 +1,5 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}International Survey{% endblock %}
+{% set translation_prefix = 'international.summary' %}
+{% extends 'international_survey/base.html.twig' %}
 
 {% block beforeContent %}{% endblock %}
 
@@ -10,7 +9,7 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">IRHS Survey summary</h1>
 
-    {%- if response.isBusinessAndCorrespondenceDetailsComplete() | default(false) -%}
+    {%- if response.isInitialDetailsSignedOff() | default(false) -%}
         <p class="govuk-body">
             {%- set businessDashboardRoute = constant('App\\Controller\\InternationalSurvey\\BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE') -%}
             <a href="{{ url(businessDashboardRoute) }}">View/change the business and correspondence details you have already entered</a>.

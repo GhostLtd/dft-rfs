@@ -41,7 +41,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
         }
 
         $response = $survey->getResponse();
-        $detailsComplete = $response->isBusinessAndCorrespondenceDetailsComplete();
+        $detailsComplete = $response->isInitialDetailsSignedOff();
 
         $canSubmitAsNoLongerActive = $response->isNoLongerActive();
         if ($canSubmitAsNoLongerActive) {
@@ -70,7 +70,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
                     $survey->setSubmissionDate(new DateTime());
                 } elseif (!$detailsComplete) {
                     // Confirming that correspondence + business details look ok
-                    $response->setBusinessAndCorrespondenceDetailsComplete(true);
+                    $response->setInitialDetailsSignedOff(true);
                 }
             }
 

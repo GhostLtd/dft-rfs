@@ -36,7 +36,7 @@ class IndexController extends AbstractController
             return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
         }
 
-        if (!$response->isBusinessAndCorrespondenceDetailsComplete()) {
+        if (!$response->isInitialDetailsSignedOff()) {
             return $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE);
         }
 

@@ -87,7 +87,7 @@ class SurveyResponse
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $businessAndCorrespondenceDetailsComplete;
+    private $initialDetailsSignedOff;
 
     /**
      * @Assert\Callback(groups={"business_details"})
@@ -151,7 +151,7 @@ class SurveyResponse
         if ($this->isNoLongerActive()) {
             $this->setBusinessNature(null);
             $this->setFewerThanTenEmployees(null);
-            $this->setBusinessAndCorrespondenceDetailsComplete(null);
+            $this->setInitialDetailsSignedOff(null);
         }
 
         return $this;
@@ -223,14 +223,14 @@ class SurveyResponse
         return $this;
     }
 
-    public function isBusinessAndCorrespondenceDetailsComplete(): ?bool
+    public function isInitialDetailsSignedOff(): ?bool
     {
-        return $this->businessAndCorrespondenceDetailsComplete;
+        return $this->initialDetailsSignedOff;
     }
 
-    public function setBusinessAndCorrespondenceDetailsComplete(?bool $businessAndCorrespondenceDetailsComplete): self
+    public function setInitialDetailsSignedOff(?bool $initialDetailsSignedOff): self
     {
-        $this->businessAndCorrespondenceDetailsComplete = $businessAndCorrespondenceDetailsComplete;
+        $this->initialDetailsSignedOff = $initialDetailsSignedOff;
 
         return $this;
     }
