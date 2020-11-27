@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Controller\InternationalSurvey\IndexController;
 use App\Entity\PasscodeUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -71,6 +72,9 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             throw new InvalidCsrfTokenException();
         }
 
+        /**
+         * @var $user PasscodeUser|null
+         */
         $user = $this->entityManager->getRepository(PasscodeUser::class)->findOneBy(['username' => $credentials['passcode'][0]]);
 
         if (!$user) {
@@ -107,20 +111,15 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
-        }
-
         /** @var PasscodeUser $user */
         $user = $token->getUser();
         switch (true)
         {
-            case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER) :
+            case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER):
                 return new RedirectResponse($this->urlGenerator->generate('app_domesticsurvey_index'));
 
-            case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER) :
-                // ToDo: add the redirect here
-                throw new Exception('TODO: provide a valid redirect inside '.__FILE__);
+            case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER):
+                return new RedirectResponse($this->urlGenerator->generate(IndexController::SUMMARY_ROUTE));
         }
 
         throw new AuthenticationException();

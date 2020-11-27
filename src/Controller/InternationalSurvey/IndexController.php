@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -21,15 +22,21 @@ class IndexController extends AbstractController
 
     protected $surveyRepo;
 
-    public function __construct(SurveyRepository $surveyRepo)
+    protected $session;
+
+    public function __construct(SurveyRepository $surveyRepo, SessionInterface $session)
     {
         $this->surveyRepo = $surveyRepo;
+        $this->session = $session;
     }
 
     /**
      * @Route("/international-survey", name=self::SUMMARY_ROUTE)
      */
     public function index(UserInterface $user, Request $request, EntityManagerInterface $entityManager) {
+        // TODO: Replace this with a better session wizards clearing mechanism
+        $this->session->remove('wizard.' . InitialDetailsController::class);
+
         $survey = $this->getSurvey($user);
 
         if ($survey->getSubmissionDate()) {
