@@ -85,6 +85,11 @@ class SurveyResponse
     private $fewerThanTenEmployees;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $businessAndCorrespondenceDetailsComplete;
+
+    /**
      * @Assert\Callback(groups={"business_details"})
      */
     public function validateFewerThanTenEmployees(ExecutionContextInterface $context)
@@ -146,6 +151,7 @@ class SurveyResponse
         if ($this->isNoLongerActive()) {
             $this->setBusinessNature(null);
             $this->setFewerThanTenEmployees(null);
+            $this->setBusinessAndCorrespondenceDetailsComplete(null);
         }
 
         return $this;
@@ -216,6 +222,20 @@ class SurveyResponse
 
         return $this;
     }
+
+    public function isBusinessAndCorrespondenceDetailsComplete(): ?bool
+    {
+        return $this->businessAndCorrespondenceDetailsComplete;
+    }
+
+    public function setBusinessAndCorrespondenceDetailsComplete(?bool $businessAndCorrespondenceDetailsComplete): self
+    {
+        $this->businessAndCorrespondenceDetailsComplete = $businessAndCorrespondenceDetailsComplete;
+
+        return $this;
+    }
+
+    // -----
 
     public function hasPositiveTrips(): bool
     {

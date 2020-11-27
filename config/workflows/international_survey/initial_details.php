@@ -1,7 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Controller\InternationalSurvey\IndexController;
+use App\Controller\InternationalSurvey\BusinessAndCorrespondenceDetailsController;
 use App\Workflow\InternationalSurvey\InitialDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -54,7 +54,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'redirectRoute' => BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE,
                         ],
                         'from' => StateObject::STATE_REQUEST_BUSINESS_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
@@ -63,7 +63,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'redirectRoute' => BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE,
                             'transitionWhenCallback' => 'isNoLongerActive',
                         ],
                         'from' => StateObject::STATE_REQUEST_ACTIVITY_STATUS,
@@ -77,7 +77,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'redirectRoute' => BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE,
                         ],
                         'from' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,

@@ -94,4 +94,9 @@ class Survey
 
         return $this;
     }
+
+    public function isInitialDetailsComplete(): bool
+    {
+        return !!$this->response;
+    }
 }

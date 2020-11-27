@@ -10,38 +10,41 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">IRHS Survey summary</h1>
 
-    {%- set urlCorrespondenceDetails = wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS') -%}
-    {%- set urlNumberOfTrips = wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS') -%}
-    {%- set urlActivityStatus = wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS') -%}
-    {%- set urlBusinessDetails = wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS') -%}
+    {%- if response.isBusinessAndCorrespondenceDetailsComplete() | default(false) -%}
+        <p class="govuk-body">
+            {%- set businessDashboardRoute = constant('App\\Controller\\InternationalSurvey\\BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE') -%}
+            <a href="{{ url(businessDashboardRoute) }}">View/change the business and correspondence details you have already entered</a>.
+        </p>
+    {% endif %}
 
-    <h2 class="govuk-heading-m">Correspondence details</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+{#    {%- set urlCorrespondenceDetails = wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS') -%}#}
+{#    {%- set urlNumberOfTrips = wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS') -%}#}
+{#    {%- set urlActivityStatus = wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS') -%}#}
+{#    {%- set urlBusinessDetails = wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS') -%}#}
 
-        {{ gdsComponents.summaryListRow('Name', response.contactName, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Email', response.contactEmail, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'Change'}) }}
-    </dl>
+{#    <h2 class="govuk-heading-m">Correspondence details</h2>#}
+{#    <dl class="govuk-summary-list govuk-!-margin-bottom-9">#}
 
-    <h2 class="govuk-heading-m">Business details</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+{#        {{ gdsComponents.summaryListRow('Name', response.contactName, {(urlCorrespondenceDetails): 'Change'}) }}#}
+{#        {{ gdsComponents.summaryListRow('Email', response.contactEmail, {(urlCorrespondenceDetails): 'Change'}) }}#}
+{#        {{ gdsComponents.summaryListRow('Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'Change'}) }}#}
+{#    </dl>#}
 
-        {{ gdsComponents.summaryListRow('Estimated number of international trips over the next 12 months', response.annualInternationalJourneyCount, {(urlNumberOfTrips): 'Change'}) }}
-        {%- if response.isNoLongerActive %}
-            {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
-            {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
+{#    <h2 class="govuk-heading-m">Business details</h2>#}
+{#    <dl class="govuk-summary-list govuk-!-margin-bottom-9">#}
 
-            {{ gdsComponents.summaryListRow('Firm still performs international road haulage activities?', activityStatus, {(urlActivityStatus): 'Change'}) }}
-        {%- else %}
-            {%- set employeesChoices = constant('App\\Form\\InternationalSurvey\\InitialDetails\\BusinessDetailsType::EMPLOYEES_CHOICES') -%}
-            {%- set fewerThanTenEmployees = choiceLabel(employeesChoices, response.fewerThanTenEmployees, true) | trans -%}
+{#        {{ gdsComponents.summaryListRow('Estimated number of international trips over the next 12 months', response.annualInternationalJourneyCount, {(urlNumberOfTrips): 'Change'}) }}#}
+{#        {%- if response.isNoLongerActive %}#}
+{#            {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}#}
+{#            {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}#}
 
-            {{ gdsComponents.summaryListRow('Nature of business', response.businessNature, {(urlBusinessDetails): 'Change'}) }}
-            {{ gdsComponents.summaryListRow('Employs fewer than 10 people nationally?', fewerThanTenEmployees, {(urlBusinessDetails): 'Change'}) }}
-        {%- endif %}
-    </dl>
+{#            {{ gdsComponents.summaryListRow('Firm still performs international road haulage activities?', activityStatus, {(urlActivityStatus): 'Change'}) }}#}
+{#        {%- else %}#}
+{#            {%- set employeesChoices = constant('App\\Form\\InternationalSurvey\\InitialDetails\\BusinessDetailsType::EMPLOYEES_CHOICES') -%}#}
+{#            {%- set fewerThanTenEmployees = choiceLabel(employeesChoices, response.fewerThanTenEmployees, true) | trans -%}#}
 
-    {%- if response.canSubmit -%}
-        {{ form(form) }}
-    {%- endif -%}
+{#            {{ gdsComponents.summaryListRow('Nature of business', response.businessNature, {(urlBusinessDetails): 'Change'}) }}#}
+{#            {{ gdsComponents.summaryListRow('Employs fewer than 10 people nationally?', fewerThanTenEmployees, {(urlBusinessDetails): 'Change'}) }}#}
+{#        {%- endif %}#}
+{#    </dl>#}
 {% endblock %}
