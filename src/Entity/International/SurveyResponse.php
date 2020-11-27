@@ -119,8 +119,16 @@ class SurveyResponse
     {
         $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
 
-        if ($this->annualInternationalJourneyCount && $this->annualInternationalJourneyCount > 0) {
-            $this->setActivityStatus(self::ACTIVITY_STATUS_STILL_ACTIVE);
+        if ($annualInternationalJourneyCount !== null) {
+            if ($annualInternationalJourneyCount > 0) {
+                $this->setActivityStatus(self::ACTIVITY_STATUS_STILL_ACTIVE);
+            } else if ($annualInternationalJourneyCount === 0) {
+                // If the journey count has just been set to 0, and we were previously still performing international
+                // journeys, then the activity question needs to be a asked again
+                if (!$this->isNoLongerActive()) {
+                    $this->setActivityStatus(null);
+                }
+            }
         }
 
         return $this;
@@ -226,10 +234,12 @@ class SurveyResponse
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
         $this->setContactTelephone($response->getContactTelephone());
-        $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
-        $this->setActivityStatus($response->getActivityStatus());
+
+        // N.B. The order of these calls is important as some setters cause other setters to be triggered
         $this->setBusinessNature($response->getBusinessNature());
         $this->setFewerThanTenEmployees($response->getFewerThanTenEmployees());
+        $this->setActivityStatus($response->getActivityStatus());
+        $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
     }
 
     public function canSubmit()

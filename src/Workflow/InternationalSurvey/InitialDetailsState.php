@@ -80,12 +80,15 @@ class InitialDetailsState implements FormWizardInterface
     {
         $states = [self::STATE_INTRODUCTION, self::STATE_REQUEST_CONTACT_DETAILS];
 
-        $annualCount = $this->subject->getAnnualInternationalJourneyCount();
+        $isCommitted = $this->subject->getId();
         $activityStatus = $this->subject->getActivityStatus();
+        $annualCount = $this->subject->getAnnualInternationalJourneyCount();
 
         $isActive = false;
 
         if ($annualCount !== null) {
+            $states[] = self::STATE_REQUEST_NUMBER_OF_TRIPS;
+
             if ($annualCount === 0) {
                 $states[] = self::STATE_REQUEST_ACTIVITY_STATUS;
                 $isActive = $activityStatus === SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE;
@@ -98,11 +101,7 @@ class InitialDetailsState implements FormWizardInterface
             $states[] = self::STATE_REQUEST_BUSINESS_DETAILS;
         }
 
-        if ($this->subject->getAnnualInternationalJourneyCount() !== null) {
-            $states[] = self::STATE_REQUEST_NUMBER_OF_TRIPS;
-        }
-
-        if ($this->subject->getId()) {
+        if ($isCommitted) {
             $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
         }
 
