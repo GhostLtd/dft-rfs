@@ -17,11 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SurveyResponse
 {
-    const REASON_NONE = 'none';
+    const IN_POSSESSION_YES = 'yes';
+    const IN_POSSESSION_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
+    const IN_POSSESSION_SOLD = 'sold';
+    const IN_POSSESSION_ON_HIRE = 'on-hire';
 
-    const REASON_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
-    const REASON_SOLD = 'sold';
-    const REASON_ON_HIRE = 'on-hire';
     const REASON_NOT_TAXED = 'not-taxed';
     const REASON_NO_WORK = 'no-work';
     const REASON_REPAIR = 'repair';
@@ -31,24 +31,25 @@ class SurveyResponse
     const REASON_NO_DRIVER = 'no-driver';
     const REASON_OTHER = 'other';
 
-    const REASON_TRANSLATION_PREFIX = 'domestic.survey-response.unable-to-complete.reason.';
+    const IN_POSSESSION_TRANSLATION_PREFIX = 'domestic.survey-response.in-possession-of-vehicle.option.';
 
-    const UNABLE_TO_COMPLETE_REASON_CHOICES = [
-        self::REASON_TRANSLATION_PREFIX . self::REASON_NONE => null,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_SCRAPPED_OR_STOLEN => self::REASON_SCRAPPED_OR_STOLEN,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_SOLD => self::REASON_SOLD,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_ON_HIRE => self::REASON_ON_HIRE,
+    const IN_POSSESSION_CHOICES = [
+        self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_YES => self::IN_POSSESSION_YES,
+        self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SCRAPPED_OR_STOLEN => self::IN_POSSESSION_SCRAPPED_OR_STOLEN,
+        self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SOLD => self::IN_POSSESSION_SOLD,
+        self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_ON_HIRE => self::IN_POSSESSION_ON_HIRE,
     ];
 
+    const EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.unable-to-complete.reason.';
     const EMPTY_SURVEY_REASON_CHOICES = [
-        self::REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_NO_WORK => self::REASON_NO_WORK,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_REPAIR => self::REASON_REPAIR,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_SITE_WORK_ONLY => self::REASON_SITE_WORK_ONLY,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_HOLIDAY => self::REASON_HOLIDAY,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_MAINTENANCE => self::REASON_MAINTENANCE,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_NO_DRIVER => self::REASON_NO_DRIVER,
-        self::REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NO_WORK => self::REASON_NO_WORK,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_REPAIR => self::REASON_REPAIR,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_SITE_WORK_ONLY => self::REASON_SITE_WORK_ONLY,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_HOLIDAY => self::REASON_HOLIDAY,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_MAINTENANCE => self::REASON_MAINTENANCE,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NO_DRIVER => self::REASON_NO_DRIVER,
+        self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
     ];
 
     use SurveyResponseTrait;
@@ -105,7 +106,7 @@ class SurveyResponse
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      */
-    private $unableToCompleteReason;
+    private $isInPossessionOfVehicle;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
@@ -211,14 +212,14 @@ class SurveyResponse
         return $this;
     }
 
-    public function getUnableToCompleteReason(): ?string
+    public function getIsInPossessionOfVehicle(): ?string
     {
-        return $this->unableToCompleteReason;
+        return $this->isInPossessionOfVehicle;
     }
 
-    public function setUnableToCompleteReason(?string $unableToCompleteReason): self
+    public function setIsInPossessionOfVehicle(?string $isInPossessionOfVehicle): self
     {
-        $this->unableToCompleteReason = $unableToCompleteReason;
+        $this->isInPossessionOfVehicle = $isInPossessionOfVehicle;
 
         return $this;
     }
@@ -267,7 +268,7 @@ class SurveyResponse
     public function setAbleToComplete(?bool $ableToComplete): self
     {
         $this->ableToComplete = $ableToComplete;
-        if ($ableToComplete) $this->setUnableToCompleteReason(null);
+        if ($ableToComplete) $this->setIsInPossessionOfVehicle(null);
 
         return $this;
     }
@@ -326,7 +327,11 @@ class SurveyResponse
         return $this;
     }
 
-    public function getDayByNumber($dayNumber)
+    /**
+     * @param $dayNumber
+     * @return Day | null
+     */
+    public function getDayByNumber($dayNumber): ?Day
     {
         foreach ($this->days as $day) {
             if ($day->getNumber() === $dayNumber) {

@@ -7,18 +7,14 @@
     {{ gdsComponents.summaryListRow('Telephone', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
     {{ gdsComponents.summaryListRow('Email address', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
     {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
-    {% if not domesticSurvey.response.unableToCompleteReason %}
-        {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ constant('App\\Entity\\Domestic\\SurveyResponse::REASON_NONE')) | trans, canCompleteActionLinks) }}
-    {% else %}
-        {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ domesticSurvey.response.unableToCompleteReason) | trans, canCompleteActionLinks) }}
 
-        {% if domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_ON_HIRE') %}
-            {{ gdsComponents.summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
-        {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SCRAPPED_OR_STOLEN') %}
-            {{ gdsComponents.summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
-        {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SOLD') %}
-            {{ gdsComponents.summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
-            {{ gdsComponents.summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
-        {% endif %}
+    {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ domesticSurvey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
+    {% if domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
+        {{ gdsComponents.summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
+    {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
+        {{ gdsComponents.summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+    {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
+        {{ gdsComponents.summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+        {{ gdsComponents.summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
     {% endif %}
 </dl>

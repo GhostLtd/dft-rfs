@@ -43,6 +43,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
             ProfilerController::class,
         ];
 
+        if (!is_array($event->getController())) return;
         $controller = $event->getController()[0];
         $controllerClass = get_class($controller);
         if (

@@ -10,8 +10,8 @@
             {% for dayNumber in 1..7 %}
                 {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
                 {{ gdsComponents.summaryListRow(
-                    "Day #{dayNumber}",
-                    day ? 'day exists' : 'nothing recorded',
+                    "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
+                    day ? _self.dayText(day) : 'Nothing recorded',
                     {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
                 ) }}
             {% endfor %}
@@ -31,3 +31,13 @@
 
     {% endif %}
 {% endblock %}
+
+{% macro dayText(day) -%}
+    {{- (day.hasMoreThanFiveStops
+        ? ('More than 5 stops' ~ ((day.summary | default(false))
+            ? " (#{day.summary.originLocation} to #{day.summary.destinationLocation})"
+            : ' (incomplete)'
+        ))
+        : '5 stops of fewer'
+    ) -}}
+{%- endmacro %}
