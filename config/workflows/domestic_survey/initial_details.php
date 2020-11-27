@@ -35,17 +35,17 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_ASK_IN_POSSESSION,
                     ],
                     'request-hiree-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_ON_HIRE]],
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_ON_HIRE]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_HIREE_DETAILS,
                     ],
                     'request-scrapped-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_SCRAPPED_OR_STOLEN]],
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SCRAPPED_DETAILS,
                     ],
                     'request-sold-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' => SurveyResponse::REASON_SOLD]],
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_SOLD]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SOLD_DETAILS,
                     ],
@@ -66,13 +66,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_contactdetails',
-                            'transitionWhenFormData' => ['property' => 'unableToCompleteReason', 'value' =>
-                                array_diff(array_values(SurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES), [
-                                    SurveyResponse::REASON_ON_HIRE,
-                                    SurveyResponse::REASON_SOLD,
-                                    SurveyResponse::REASON_SCRAPPED_OR_STOLEN,
-                                ]),
-                            ]
+                            'transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_YES],
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_SUMMARY,

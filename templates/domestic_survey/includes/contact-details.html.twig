@@ -1,24 +1,20 @@
-{% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
 
 <h2 class="govuk-heading-m">Contact details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
     {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
-    {{ gdsComponents.summaryListRow('Name', domesticSurvey.response.contactName, contactDetailsActionLinks) }}
-    {{ gdsComponents.summaryListRow('Telephone', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
-    {{ gdsComponents.summaryListRow('Email address', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
+    {{ summaryListRow('Name', domesticSurvey.response.contactName, contactDetailsActionLinks) }}
+    {{ summaryListRow('Telephone', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
+    {{ summaryListRow('Email address', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
     {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
-    {% if not domesticSurvey.response.unableToCompleteReason %}
-        {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ constant('App\\Entity\\Domestic\\SurveyResponse::REASON_NONE')) | trans, canCompleteActionLinks) }}
-    {% else %}
-        {{ gdsComponents.summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::REASON_TRANSLATION_PREFIX') ~ domesticSurvey.response.unableToCompleteReason) | trans, canCompleteActionLinks) }}
 
-        {% if domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_ON_HIRE') %}
-            {{ gdsComponents.summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
-        {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SCRAPPED_OR_STOLEN') %}
-            {{ gdsComponents.summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
-        {% elseif domesticSurvey.response.unableToCompleteReason == constant('App\\Entity\\Domestic\\SurveyResponse::REASON_SOLD') %}
-            {{ gdsComponents.summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
-            {{ gdsComponents.summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
-        {% endif %}
+    {{ summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ domesticSurvey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
+    {% if domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
+        {{ summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
+    {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
+        {{ summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+    {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
+        {{ summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+        {{ summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
     {% endif %}
 </dl>

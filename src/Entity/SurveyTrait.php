@@ -67,6 +67,12 @@ trait SurveyTrait {
         return $this;
     }
 
+    public function getStartDateModifiedBy($modifier)
+    {
+        if (is_null($this->startDate)) return null;
+        return (clone $this->startDate)->modify($modifier);
+    }
+
     public function getDueDate(): ?DateTimeInterface
     {
         return $this->dueDate;

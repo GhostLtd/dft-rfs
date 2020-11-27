@@ -9,7 +9,7 @@ use App\Form\DomesticSurvey\InitialDetails\ContactDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\HireeDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
-use App\Form\DomesticSurvey\InitialDetails\UnableToCompleteType;
+use App\Form\DomesticSurvey\InitialDetails\InPossessionOfVehicleType;
 use App\Workflow\FormWizardInterface;
 
 class InitialDetailsState implements FormWizardInterface
@@ -26,7 +26,7 @@ class InitialDetailsState implements FormWizardInterface
     private const FORM_MAP = [
         self::STATE_REQUEST_CONTACT_DETAILS => ContactDetailsType::class,
         self::STATE_CHANGE_CONTACT_DETAILS => ContactDetailsType::class,
-        self::STATE_ASK_IN_POSSESSION => UnableToCompleteType::class,
+        self::STATE_ASK_IN_POSSESSION => InPossessionOfVehicleType::class,
         self::STATE_ASK_HIREE_DETAILS => HireeDetailsType::class,
         self::STATE_ASK_SOLD_DETAILS => SoldDetailsType::class,
         self::STATE_ASK_SCRAPPED_DETAILS => ScrappedDetailsType::class,
@@ -88,9 +88,9 @@ class InitialDetailsState implements FormWizardInterface
             $states[] = self::STATE_ASK_IN_POSSESSION;
             $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
         }
-        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_ON_HIRE) $states[] = self::STATE_ASK_HIREE_DETAILS;
-        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_SCRAPPED_OR_STOLEN) $states[] = self::STATE_ASK_SCRAPPED_DETAILS;
-        if ($this->subject->getUnableToCompleteReason() === SurveyResponse::REASON_SOLD) $states[] = self::STATE_ASK_SOLD_DETAILS;
+        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_ON_HIRE) $states[] = self::STATE_ASK_HIREE_DETAILS;
+        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN) $states[] = self::STATE_ASK_SCRAPPED_DETAILS;
+        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_SOLD) $states[] = self::STATE_ASK_SOLD_DETAILS;
         return $states;
     }
 
