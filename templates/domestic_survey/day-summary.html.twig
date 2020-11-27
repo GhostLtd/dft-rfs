@@ -1,8 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
-    {% import '@GhostGovUkFrontend/components/macros.html.twig' as macros %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink %}
 
     <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.number }})</h1>
 
@@ -10,20 +9,20 @@
         <h2 class="govuk-heading-m">Summary day</h2>
         {% if day.summary | default(false) %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ gdsComponents.summaryListRow('Start location', day.summary.originLocation | default('-')) }}
-                {{ gdsComponents.summaryListRow('Destination location', day.summary.destinationLocation | default('-')) }}
+                {{ summaryListRow('Start location', day.summary.originLocation | default('-')) }}
+                {{ summaryListRow('Destination location', day.summary.destinationLocation | default('-')) }}
             </dl>
         {% else %}
             <p class="govuk-body">
                 You haven't entered any information for this journey yet.
             </p>
             <p>
-                {{ macros.buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'Enter information for this journey') }}
+                {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'Enter information for this journey') }}
             </p>
         {% endif %}
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
     {% endif %}
 
-    {{ macros.buttonLink(url('app_domesticsurvey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}
+    {{ buttonLink(url('app_domesticsurvey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}
 {% endblock %}

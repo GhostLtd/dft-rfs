@@ -1,15 +1,19 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% import '@GhostGovUkFrontend/components/component-macros.html.twig' as gdsComponents %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
     <h1 class="page-heading__heading govuk-heading-xl">CSRGT summary</h1>
 
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ actionlessSummaryListRow('Vehicle', domesticSurvey.registrationMark) }}
+        {{ actionlessSummaryListRow('Start date', domesticSurvey.startDate | date('l, jS F Y')) }}
+    </dl>
     {% if domesticSurvey.initialDetailsComplete and domesticSurvey.businessAndVehicleDetailsComplete %}
         <h2 class="govuk-heading-m">Your survey week</h2>
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
             {% for dayNumber in 1..7 %}
                 {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
-                {{ gdsComponents.summaryListRow(
+                {{ summaryListRow(
                     "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
                     day ? _self.dayText(day) : 'Nothing recorded',
                     {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}

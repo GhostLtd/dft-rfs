@@ -1,7 +1,6 @@
 {%- import '@GhostGovUkFrontend/components/macros.html.twig' as govuk -%}
-{%- from '@GhostGovUkFrontend/components/component-macros.html.twig' import attributes %}
 <!DOCTYPE html>
-<html lang="{{ htmlLang | default('en') }}" class="govuk-template {{ htmlClasses | default('') }}" {{ attributes(html_attributes | default({})) }}>
+<html lang="{{ htmlLang | default('en') }}" class="govuk-template {{ htmlClasses | default('') }}" {{ govuk.attributes(html_attributes | default({})) }}>
 <head>
     <meta charset="utf-8" />
     <title{% if pageTitleLang | default(false) %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
