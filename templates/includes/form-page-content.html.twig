@@ -16,5 +16,5 @@
 
         {{ form(form) }}
     </div>
-    {% if not oneThirdColumnContent is empty %}<div class="govuk-grid-column-one-third">{{ oneThirdColumnContent | raw }}</div>{% endif %}
+    {% if oneThirdColumnContent | default(false) %}<div class="govuk-grid-column-one-third">{{ oneThirdColumnContent | raw }}</div>{% endif %}
 </div>
