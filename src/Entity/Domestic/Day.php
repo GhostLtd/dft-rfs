@@ -51,7 +51,7 @@ class Day
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=SurveyResponse::class, inversedBy="stopDays")
+     * @ORM\ManyToOne(targetEntity=SurveyResponse::class, inversedBy="days")
      * @ORM\JoinColumn(nullable=false)
      */
     private $response;

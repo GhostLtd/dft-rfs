@@ -2,7 +2,7 @@
 
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
-    <h1 class="page-heading__heading govuk-heading-xl">CSRGT summary</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">Survey dashboard</h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('Vehicle', domesticSurvey.registrationMark) }}
@@ -26,6 +26,7 @@
     {% endif %}
 
     {% if domesticSurvey.initialDetailsComplete %}
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         <p class="govuk-body">
             When you have finished entering information for your survey week, you must submit your survey.
         </p>

@@ -12,9 +12,9 @@
     {% if domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
         {{ summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
     {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
-        {{ summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+        {{ summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
     {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
-        {{ summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date, canCompleteActionLinks) }}
+        {{ summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
         {{ summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
     {% endif %}
 </dl>

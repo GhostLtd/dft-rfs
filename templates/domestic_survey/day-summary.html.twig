@@ -3,10 +3,10 @@
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink %}
 
-    <h1 class="page-heading__heading govuk-heading-xl">CSRGT day summary ({{ day.number }})</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
 
     {% if day.hasMoreThanFiveStops %}
-        <h2 class="govuk-heading-m">Summary day</h2>
+        <h2 class="govuk-heading-m">Summary day (more than 5 stops)</h2>
         {% if day.summary | default(false) %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 {{ summaryListRow('Start location', day.summary.originLocation | default('-')) }}
@@ -14,7 +14,7 @@
             </dl>
         {% else %}
             <p class="govuk-body">
-                You haven't entered any information for this journey yet.
+                You haven't entered any information for this day yet.
             </p>
             <p>
                 {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'Enter information for this journey') }}
