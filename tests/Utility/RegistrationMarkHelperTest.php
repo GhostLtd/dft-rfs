@@ -14,6 +14,14 @@ class RegistrationMarkHelperTest extends TestCase
             ["AB51ABC", true, true, "AB51 ABC"],
 
             // ## Invalid Current Style
+            // "We will not use I, Q or Z in local memory tags identifiers
+            ["IB51ABC", false, false, null],
+            ["AI51ABC", false, false, null],
+            ["QB51ABC", false, false, null],
+            ["AQ51ABC", false, false, null],
+            ["ZB51ABC", false, false, null],
+            ["AZ51ABC", false, false, null],
+
             // Missing First Letter = Prefix e.g. A51ABC
             ["A51ABC", true, false, "A51ABC"],
             // Extra First Letter
