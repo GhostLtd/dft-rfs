@@ -17,7 +17,7 @@ use App\Form\DomesticSurvey\DayStop\OriginPortsType;
 use App\Form\DomesticSurvey\DayStop\OriginType;
 use App\Workflow\FormWizardInterface;
 
-class DayMultipleState implements FormWizardInterface
+class DayStopState implements FormWizardInterface
 {
     const STATE_ORIGIN = 'origin';
     const STATE_ORIGIN_PORTS = 'origin-ports';

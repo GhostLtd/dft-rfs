@@ -7,7 +7,7 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
-use App\Workflow\DomesticSurvey\DayMultipleState;
+use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;

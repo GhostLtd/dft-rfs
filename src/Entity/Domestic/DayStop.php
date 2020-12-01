@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\Distance;
 use App\Repository\Domestic\StopMultipleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -27,6 +28,11 @@ class DayStop
      * @ORM\Column(type="boolean")
      */
     private $wasLimitedBySpace;
+
+    /**
+     * @ORM\Embedded(class=Distance::class)
+     */
+    private $distanceTravelled;
 
     /**
      * @ORM\ManyToOne(targetEntity=Day::class, inversedBy="stops")
@@ -66,6 +72,18 @@ class DayStop
     public function setWasLimitedBySpace(bool $wasLimitedBySpace): self
     {
         $this->wasLimitedBySpace = $wasLimitedBySpace;
+
+        return $this;
+    }
+
+    public function getDistanceTravelled(): ?Distance
+    {
+        return $this->distanceTravelled;
+    }
+
+    public function setDistanceTravelled(?Distance $distanceTravelledLoaded): self
+    {
+        $this->distanceTravelled = $distanceTravelledLoaded;
 
         return $this;
     }

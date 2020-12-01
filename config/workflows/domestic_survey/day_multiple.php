@@ -1,7 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Workflow\DomesticSurvey\DayMultipleState as StateObject;
+use App\Workflow\DomesticSurvey\DayStopState as StateObject;
 use Doctrine\Migrations\Version\State;
 
 return static function (ContainerConfigurator $container) {

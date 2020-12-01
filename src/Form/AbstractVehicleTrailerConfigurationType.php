@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
