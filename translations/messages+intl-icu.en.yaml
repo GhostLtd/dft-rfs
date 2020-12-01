@@ -390,6 +390,13 @@ international:
       business-nature:
         label: What is the nature of your business?
         help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
+  vehicle:
+    vehicle-registration:
+      heading: ''
+      registration-mark:
+        label: Registration mark of vehicle
+        help: ''
+
 
 goods:
   hazardous:

@@ -115,6 +115,10 @@ abstract class AbstractWorkflowController extends AbstractController
             }
         }
 
+        if (!$template) {
+            throw new RuntimeException("Template not defined for state '{$state}' of '{$stateMachine->getName()}' state machine");
+        }
+
         return $this->render($template, [
             'form' => $form->createView(),
             'subject' => $formWizard->getSubject(),
