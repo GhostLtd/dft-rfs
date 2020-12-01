@@ -54,12 +54,12 @@ domestic:
         label: 'Telephone number'
         help: ''
 
-    unable-to-complete:
-      unable-to-complete-reason:
+    in-possession-of-vehicle:
+      is-in-possession-of-vehicle:
         label: 'Will you be in possession of the vehicle during your survey week?'
         help: 'We may need to ask you to supply evidence at the end of the survey period'
-      reason:
-        none: 'Yes'
+      option:
+        yes: 'Yes'
         scrapped-or-stolen: 'No - it has been scrapped or stolen'
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'

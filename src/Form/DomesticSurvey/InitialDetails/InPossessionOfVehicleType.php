@@ -9,17 +9,18 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UnableToCompleteType extends AbstractType implements WorkflowChoiceFormInterface
+class InPossessionOfVehicleType extends AbstractType implements WorkflowChoiceFormInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationKeyPrefix = "domestic.survey-response.in-possession-of-vehicle";
         $builder
-            ->add('unableToCompleteReason', Gds\ChoiceType::class, [
-                'choices' => SurveyResponse::UNABLE_TO_COMPLETE_REASON_CHOICES,
-                'label' => 'domestic.survey-response.unable-to-complete.unable-to-complete-reason.label',
+            ->add('isInPossessionOfVehicle', Gds\ChoiceType::class, [
+                'choices' => SurveyResponse::IN_POSSESSION_CHOICES,
+                'label' => "{$translationKeyPrefix}.is-in-possession-of-vehicle.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
-                'help' => 'domestic.survey-response.unable-to-complete.unable-to-complete-reason.help',
+                'help' => "{$translationKeyPrefix}.is-in-possession-of-vehicle.help",
             ])
         ;
     }
