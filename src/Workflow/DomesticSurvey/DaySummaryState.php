@@ -12,12 +12,12 @@ use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
 use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
 use App\Form\DomesticSurvey\DaySummary\DestinationType;
 use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
-use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
+use App\Form\DomesticSurvey\AbstractGoodsWeightType;
 use App\Form\DomesticSurvey\DaySummary\HazardousGoodsType;
 use App\Form\DomesticSurvey\DaySummary\NumberOfStopsType;
 use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
 use App\Form\DomesticSurvey\DaySummary\OriginType;
-use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
+use App\Form\DomesticSurvey\AbstractDistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
 use App\Workflow\FormWizardInterface;
 
@@ -44,11 +44,11 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_BORDER_CROSSING => BorderCrossingType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
-        self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
+        self::STATE_DISTANCE_TRAVELLED => AbstractDistanceTravelledType::class,
         self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
         self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
         self::STATE_CARGO_TYPE => CargoTypeType::class,
-        self::STATE_GOODS_WEIGHT => GoodsWeightType::class,
+        self::STATE_GOODS_WEIGHT => AbstractGoodsWeightType::class,
         self::STATE_NUMBER_OF_STOPS => NumberOfStopsType::class,
     ];
 

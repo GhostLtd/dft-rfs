@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\DomesticSurvey;
 
 use App\Entity\Distance;
 use App\Entity\Domestic\DaySummary;
@@ -10,7 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DistanceTravelledType extends AbstractType
+abstract class AbstractDistanceTravelledType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -24,7 +24,7 @@ class DistanceTravelledType extends AbstractType
             'choices' => Distance::UNIT_CHOICES,
         ];
 
-        $translationKeyPrefix = "domestic.day-summary.distance-travelled";
+        $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.distance-travelled";
         $builder
             ->add('distanceTravelledLoaded', ValueUnitType::class, [
                 'label' => "{$translationKeyPrefix}.distance-travelled-loaded.label",
@@ -45,10 +45,5 @@ class DistanceTravelledType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => StopTrait::class,
-        ]);
-    }
+    use StopTypeTrait;
 }

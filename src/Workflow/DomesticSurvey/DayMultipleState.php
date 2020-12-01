@@ -4,23 +4,17 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
-use App\Form\DomesticSurvey\DayMulti\ArrivedPortsType;
-use App\Form\DomesticSurvey\DayMulti\ArrivedType;
-use App\Form\DomesticSurvey\DayMulti\DepartedPortsType;
-use App\Form\DomesticSurvey\DayMulti\DepartedType;
-use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
-use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
-use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
-use App\Form\DomesticSurvey\DaySummary\DestinationType;
-use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
-use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
-use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
-use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
-use App\Form\DomesticSurvey\DaySummary\HazardousGoodsType;
-use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
-use App\Form\DomesticSurvey\DaySummary\OriginType;
+use App\Form\DomesticSurvey\DayStop\BorderCrossingType;
+use App\Form\DomesticSurvey\DayStop\CargoTypeType;
+use App\Form\DomesticSurvey\DayStop\DestinationPortsType;
+use App\Form\DomesticSurvey\DayStop\DestinationType;
+use App\Form\DomesticSurvey\DayStop\DistanceTravelledType;
+use App\Form\DomesticSurvey\DayStop\GoodsDescriptionType;
+use App\Form\DomesticSurvey\DayStop\GoodsWeightType;
+use App\Form\DomesticSurvey\DayStop\HazardousGoodsType;
+use App\Form\DomesticSurvey\DayStop\OriginPortsType;
+use App\Form\DomesticSurvey\DayStop\OriginType;
 use App\Workflow\FormWizardInterface;
 
 class DayMultipleState implements FormWizardInterface

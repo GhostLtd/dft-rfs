@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\DomesticSurvey\DayStop;
 
 
 use App\Form\AbstractHazardousGoodsType;
@@ -12,6 +12,6 @@ class HazardousGoodsType extends AbstractHazardousGoodsType
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
-        $resolver->setDefault('translation_entity_key', 'domestic.day-summary');
+        $resolver->setDefault('translation_entity_key', 'domestic.day-stop');
     }
 }
