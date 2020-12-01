@@ -9,6 +9,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VehicleAxleConfigurationType extends AbstractVehicleAxleConfigurationType
 {
+    protected function getVehicle($formData)
+    {
+        return $formData->getVehicle();
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
