@@ -20,8 +20,7 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
             $translationKeyPrefix = "{$options['translation_entity_key']}.vehicle-axle-configuration";
 
             if ($event->getData()) {
-                /** @var VehicleTrait $vehicle */
-                $vehicle = $event->getData()->getVehicle();
+                $vehicle = $this->getVehicle($event->getData());
 
                 $event->getForm()
                     ->add('axleConfiguration', Gds\ChoiceType::class, [
@@ -36,6 +35,12 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
 
         });
     }
+
+    /**
+     * @param $formData
+     * @return VehicleTrait
+     */
+    abstract protected function getVehicle($formData);
 
     public function configureOptions(OptionsResolver $resolver)
     {
