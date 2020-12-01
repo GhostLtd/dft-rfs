@@ -28,10 +28,6 @@ abstract class AbstractVehicleTrailerConfigurationType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => SurveyResponse::class,
-        ]);
-
         $resolver->setRequired([
             "translation_entity_key",
             "property_path",

@@ -3,6 +3,7 @@
 
 namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
+use App\Entity\Domestic\SurveyResponse;
 use App\Form\AbstractVehicleAxleConfigurationType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,6 +13,7 @@ class VehicleAxleConfigurationType extends AbstractVehicleAxleConfigurationType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
+            'data_class' => SurveyResponse::class,
             'translation_entity_key' => 'domestic.survey-response',
             'property_path' => 'vehicle.axleConfiguration',
         ]);
