@@ -2,66 +2,101 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Workflow\DomesticSurvey\DayMultipleState as StateObject;
+use Doctrine\Migrations\Version\State;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [
             'domestic_survey_day_multiple' => [
                 'type' => 'state_machine',
-                'initial_marking' => StateObject::STATE_DEPARTED,
+                'initial_marking' => StateObject::STATE_ORIGIN,
                 'marking_store' => [
                     'type' => 'method',
                     'property' => 'state',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_DEPARTED,
-                    StateObject::STATE_DEPARTED_PORTS,
-                    StateObject::STATE_ARRIVED,
-                    StateObject::STATE_ARRIVED_PORTS,
-                    StateObject::STATE_NEXT,
+                    StateObject::STATE_ORIGIN,
+                    StateObject::STATE_ORIGIN_PORTS,
+                    StateObject::STATE_DESTINATION,
+                    StateObject::STATE_DESTINATION_PORTS,
+                    StateObject::STATE_BORDER_CROSSING,
+                    StateObject::STATE_DISTANCE_TRAVELLED,
+                    StateObject::STATE_GOODS_DESCRIPTION,
+                    StateObject::STATE_HAZARDOUS_GOODS,
+                    StateObject::STATE_CARGO_TYPE,
+                    StateObject::STATE_GOODS_WEIGHT,
 //                    StateObject::STATE_,
 
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
-                    'departed-to-departed-mode-change' => [
+                    'goods-loaded' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsLoaded', 'value' => true]],
-                        'from' => StateObject::STATE_DEPARTED,
-                        'to' =>  StateObject::STATE_DEPARTED_PORTS,
+                        'from' => StateObject::STATE_ORIGIN,
+                        'to' =>  StateObject::STATE_ORIGIN_PORTS,
                     ],
-                    'departed-mode-change-to-arrived' => [
-                        'from' => StateObject::STATE_DEPARTED_PORTS,
-                        'to' =>  StateObject::STATE_ARRIVED,
+                    'origin-port-to-destination' => [
+                        'from' => StateObject::STATE_ORIGIN_PORTS,
+                        'to' =>  StateObject::STATE_DESTINATION,
                     ],
-                    'departed-to-arrived' => [
+                    'goods-not-loaded' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsLoaded', 'value' => false]],
-                        'from' => StateObject::STATE_DEPARTED,
-                        'to' =>  StateObject::STATE_ARRIVED,
+                        'from' => StateObject::STATE_ORIGIN,
+                        'to' =>  StateObject::STATE_DESTINATION,
                     ],
-                    'arrived-to-arrived-mode-change' => [
+                    'goods-not-unloaded-ni-only' => [
+                        'metadata' => ['transitionWhenCallback' => 'transitionGoodsNotUnloadedNICallback'],
+                        'from' => StateObject::STATE_DESTINATION,
+                        'to' =>  StateObject::STATE_BORDER_CROSSING,
+                    ],
+                    'goods-not-unloaded-gb-only' => [
+                        'metadata' => ['transitionWhenCallback' => 'transitionGoodsNotUnloadedGBCallback'],
+                        'from' => StateObject::STATE_DESTINATION,
+                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
+                    ],
+                    'goods-unloaded-gb-or-ni' => [
                         'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => true]],
-                        'from' => StateObject::STATE_ARRIVED,
-                        'to' =>  StateObject::STATE_ARRIVED_PORTS,
+                        'from' => StateObject::STATE_DESTINATION,
+                        'to' =>  StateObject::STATE_DESTINATION_PORTS,
                     ],
-                    'arrived-mode-change-to-next' => [
-                        'from' => StateObject::STATE_ARRIVED_PORTS,
-                        'to' =>  StateObject::STATE_NEXT,
+                    'goods-unloaded-ni-only' => [
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'isNorthernIrelandSurvey', 'value' => true]],
+                        'from' => StateObject::STATE_DESTINATION_PORTS,
+                        'to' =>  StateObject::STATE_BORDER_CROSSING,
                     ],
-                    'arrived-to-next' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => false]],
-                        'from' => StateObject::STATE_ARRIVED,
-                        'to' =>  StateObject::STATE_NEXT,
+                    'border-crossing-to-distance-travelled' => [
+                        'from' =>  StateObject::STATE_BORDER_CROSSING,
+                        'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
-
-
+                    'goods-unloaded-gb-only' => [
+                        'metadata' => ['transitionWhenFormData' => ['property' => 'isNorthernIrelandSurvey', 'value' => false]],
+                        'from' => StateObject::STATE_DESTINATION_PORTS,
+                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
+                    ],
+                    'distance-travelled-to-goods-description' => [
+                        'from' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'to' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                    ],
+                    'goods-description-to-hazardous-goods' => [
+                        'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                        'to' => StateObject::STATE_HAZARDOUS_GOODS,
+                    ],
+                    'hazardous-goods-to-cargo-type' => [
+                        'from' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'to' => StateObject::STATE_CARGO_TYPE,
+                    ],
+                    'cargo-type-to-goods-weight' => [
+                        'from' => StateObject::STATE_CARGO_TYPE,
+                        'to' => StateObject::STATE_GOODS_WEIGHT,
+                    ],
 
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_index',
                         ],
-                        'from' => StateObject::STATE_NEXT,
+                        'from' => StateObject::STATE_GOODS_WEIGHT,
                         'to' =>  StateObject::STATE_END,
                     ],
                 ]

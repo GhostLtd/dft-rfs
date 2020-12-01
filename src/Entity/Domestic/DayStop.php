@@ -81,4 +81,28 @@ class DayStop
 
         return $this;
     }
+
+
+    // transition callbacks
+    public function transitionGoodsNotUnloadedNICallback()
+    {
+        return
+            $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
+            && !$this->getGoodsUnloaded()
+            ;
+    }
+
+    public function transitionGoodsNotUnloadedGBCallback()
+    {
+        return
+            !$this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
+            && !$this->getGoodsUnloaded()
+            ;
+    }
+
+    public function isNorthernIrelandSurvey()
+    {
+        return $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
+    }
+
 }
