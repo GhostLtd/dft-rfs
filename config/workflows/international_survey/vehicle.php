@@ -16,8 +16,9 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_REQUEST_VEHICLE_REGISTRATION,
-                    StateObject::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION,
+                    StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,
                     StateObject::STATE_REQUEST_VEHICLE_BODY,
+                    StateObject::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION,
                     StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
                     StateObject::STATE_REQUEST_TRAVEL_DATES,
                     StateObject::STATE_SUMMARY,
@@ -25,6 +26,10 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'vehicle details entered' => [
                         'from' => StateObject::STATE_REQUEST_VEHICLE_REGISTRATION,
+                        'to' =>  StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,
+                    ],
+                    'vehicle trailer entered' => [
+                        'from' => StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,
                         'to' =>  StateObject::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION,
                     ],
                     'axle configuration entered' => [

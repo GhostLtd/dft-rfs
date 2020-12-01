@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,8 +28,12 @@ abstract class AbstractVehicleBodyType extends AbstractType
     {
         $resolver->setRequired([
             "translation_entity_key",
-            "property_path",
         ]);
+
+        $resolver->setDefaults([
+            'property_path' => null,
+        ]);
+
         $resolver->setAllowedValues("translation_entity_key", ['domestic.survey-response', 'international.vehicle']);
     }
 }

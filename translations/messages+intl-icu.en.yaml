@@ -396,6 +396,18 @@ international:
       registration-mark:
         label: Registration mark of vehicle
         help: ''
+    vehicle-trailer-configuration:
+      trailer-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best describes the vehicle
+    vehicle-axle-configuration:
+      axle-configuration:
+        label: Tell us about the the vehicle
+        help: Select the option that best shows the axle configuration of the vehicle
+    vehicle-body:
+      body-type:
+        label: Tell us about the the vehicle
+        help: Indicate the main type of body for the vehicle
 
 
 goods:

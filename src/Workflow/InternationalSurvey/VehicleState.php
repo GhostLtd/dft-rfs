@@ -3,13 +3,17 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\SurveyResponse;
+use App\Form\InternationalSurvey\Vehicle\VehicleAxleConfigurationType;
+use App\Form\InternationalSurvey\Vehicle\VehicleBodyType;
 use App\Form\InternationalSurvey\Vehicle\VehicleRegistrationType;
+use App\Form\InternationalSurvey\Vehicle\VehicleTrailerConfigurationType;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
 
 class VehicleState implements FormWizardInterface
 {
     const STATE_REQUEST_VEHICLE_REGISTRATION = 'vehicle-registration';
+    const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';
     const STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION = 'axle-configuration';
     const STATE_REQUEST_VEHICLE_BODY = 'vehicle-body';
     const STATE_REQUEST_VEHICLE_WEIGHT = 'vehicle-weight';
@@ -19,10 +23,14 @@ class VehicleState implements FormWizardInterface
 
     private const FORM_MAP = [
         self::STATE_REQUEST_VEHICLE_REGISTRATION => VehicleRegistrationType::class,
+        self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
+        self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
+        self::STATE_REQUEST_VEHICLE_BODY => VehicleBodyType::class,
     ];
 
     private const TEMPLATE_MAP = [
         self::STATE_REQUEST_VEHICLE_REGISTRATION => 'international_survey/vehicle/form-vehicle-registration.html.twig',
+        self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => 'international_survey/vehicle/form-trailer-configuration.html.twig',
         self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => 'international_survey/vehicle/form-axle-configuration.html.twig',
         self::STATE_REQUEST_VEHICLE_BODY => 'international_survey/vehicle/form-vehicle-body.html.twig',
         self::STATE_REQUEST_VEHICLE_WEIGHT => 'international_survey/vehicle/form-vehicle-weight.html.twig',

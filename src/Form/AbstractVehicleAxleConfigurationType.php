@@ -2,8 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Domestic\SurveyResponse;
-use App\Entity\SurveyResponseTrait;
 use App\Entity\Vehicle;
 use App\Entity\VehicleTrait;
 use Symfony\Component\Form\AbstractType;
@@ -43,8 +41,12 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
     {
         $resolver->setRequired([
             "translation_entity_key",
-            "property_path",
         ]);
+
+        $resolver->setDefaults([
+            'property_path' => 'axleConfiguration',
+        ]);
+
         $resolver->setAllowedValues("translation_entity_key", ['domestic.survey-response', 'international.vehicle']);
     }
 }

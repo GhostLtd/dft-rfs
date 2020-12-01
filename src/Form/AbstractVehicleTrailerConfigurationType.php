@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -30,8 +29,12 @@ abstract class AbstractVehicleTrailerConfigurationType extends AbstractType
     {
         $resolver->setRequired([
             "translation_entity_key",
-            "property_path",
         ]);
+
+        $resolver->setDefaults([
+            'property_path' => null,
+        ]);
+
         $resolver->setAllowedValues("translation_entity_key", ['domestic.survey-response', 'international.vehicle']);
     }
 }
