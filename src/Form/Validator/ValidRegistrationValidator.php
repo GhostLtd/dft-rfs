@@ -27,12 +27,12 @@ class ValidRegistrationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidRegistration::class);
         }
 
-        if (!$value) {
-            return;
-        }
-
         if ($value instanceof DomesticVehicle || $value instanceof InternationalVehicle) {
             $registrationMark = $value->getRegistrationMark();
+
+            if (!$registrationMark) {
+                return;
+            }
 
             $helper = new RegistrationMarkHelper($registrationMark);
 
