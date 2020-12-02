@@ -2,6 +2,11 @@ common:
   survey-response:
     business-nature:
       not-blank: Enter the nature of your business
+  vehicle:
+    vehicle-registration:
+      not-blank: Enter the vehicle's registration mark
+      valid: Enter a valid registration mark
+      not-exists: You have already added this registration mark to your survey response
 
 pre-enquiry:
   pre-enquiry-response:

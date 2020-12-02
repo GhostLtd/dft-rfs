@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait VehicleTrait
 {
@@ -16,6 +17,7 @@ trait VehicleTrait
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank(groups={"vehicle_registration"}, message="common.vehicle.vehicle-registration.not-blank")
      */
     private $registrationMark;
 

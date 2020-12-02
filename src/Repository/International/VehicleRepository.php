@@ -4,7 +4,9 @@ namespace App\Repository\International;
 
 use App\Entity\International\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 /**
  * @method Vehicle|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,28 @@ class VehicleRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Vehicle::class);
+    }
+
+    public function alreadyExists(?string $registrationMark, ?int $responseId)
+    {
+        try {
+            $count = $this->createQueryBuilder('v')
+                ->select('count(r)')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->where('r.id = :responseId')
+                ->andWhere('v.registrationMark = :registrationMark')
+                ->getQuery()
+                ->setParameters([
+                    'registrationMark' => $registrationMark,
+                    'responseId' => $responseId,
+                ])
+                ->getSingleScalarResult();
+        } catch (UnexpectedResultException $e) {
+            // Should not be able to happen in this case
+            throw new RuntimeException('Query failure', 0, $e);
+        }
+
+        return $count > 0;
     }
 
     // /**

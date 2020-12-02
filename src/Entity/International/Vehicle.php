@@ -3,12 +3,15 @@
 namespace App\Entity\International;
 
 use App\Entity\VehicleTrait;
+use App\Form\Validator\ValidRegistration;
 use App\Repository\International\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
  * @ORM\Table(name="international_vehicle")
+ *
+ * @ValidRegistration(groups={"vehicle_registration"})
  */
 class Vehicle
 {
