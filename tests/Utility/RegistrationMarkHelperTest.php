@@ -134,6 +134,6 @@ class RegistrationMarkHelperTest extends TestCase
 
         $this->assertEquals($isValid, $helper->isValid());
         $this->assertEquals($isCurrent, $helper->isCurrent());
-        $this->assertEquals($expectedOutput, $helper->getRegistrationMark());
+        $this->assertEquals($expectedOutput, $helper->getFormattedRegistrationMark());
     }
 }

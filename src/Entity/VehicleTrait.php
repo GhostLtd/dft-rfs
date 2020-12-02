@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\Mapping as ORM;
 
 trait VehicleTrait
@@ -55,9 +56,15 @@ trait VehicleTrait
 
     public function setRegistrationMark(?string $registrationMark): self
     {
-        $this->registrationMark = $registrationMark;
+        $helper = new RegistrationMarkHelper($registrationMark);
+        $this->registrationMark = $helper->getRegistrationMark();
 
         return $this;
+    }
+
+    public function getFormattedRegistrationMark(): ?string
+    {
+        return (new RegistrationMarkHelper($this->registrationMark))->getFormattedRegistrationMark();
     }
 
     public function getGrossWeight(): ?int

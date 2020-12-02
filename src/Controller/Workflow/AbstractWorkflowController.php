@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -138,7 +139,9 @@ abstract class AbstractWorkflowController extends AbstractController
         $stateMachine->apply($formWizard, $transition->getName());
         $this->setFormWizard($formWizard);
 
-        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['persist'] ?? false)
+        $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
+
+        if ($metadata['persist'] ?? false)
         {
             if (!$this->entityManager->contains($formWizard->getSubject())) {
                 throw new Exception("Subject not managed by ORM");
@@ -146,10 +149,27 @@ abstract class AbstractWorkflowController extends AbstractController
             $this->entityManager->flush();
         }
 
-        if ($alternativeRoute = $stateMachine->getMetadataStore()->getTransitionMetadata($transition)['redirectRoute'] ?? false)
+        if ($redirectRoute = $metadata['redirectRoute'] ?? false)
         {
+            if (is_array($redirectRoute)) {
+                $subject = $formWizard->getSubject();
+                $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+                // e.g. redirectRoute = ['routeName' => 'app_summary', 'parameterMappings' => ['id' => 'vehicleId']]
+                // Would essentially call generateUrl('app_summary', ['id' => $subject->getVehicleId()]);
+
+                $params = array_map(function(string $propertyPath) use ($subject, $propertyAccessor) {
+                    return $propertyAccessor->getValue($subject, $propertyPath);
+                }, $redirectRoute['parameterMappings'] ?? []);
+
+                $routeName = $redirectRoute['routeName'];
+            } else {
+                $params = [];
+                $routeName = $redirectRoute;
+            }
+
             $this->cleanUp();
-            return $this->redirectToRoute($alternativeRoute);
+            return $this->redirectToRoute($routeName, $params);
         }
 
         return $this->getRedirectUrl($formWizard->getState());

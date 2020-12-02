@@ -408,6 +408,15 @@ international:
       body-type:
         label: Tell us about the the vehicle
         help: Indicate the main type of body for the vehicle
+    vehicle-weight:
+      heading: Vehicle weight and capacity
+      help: ''
+      gross-weight:
+        label: Gross vehicle weight
+        help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+      carrying-capacity:
+        label: Carrying capacity
+        help: Total weight of cargo that can be carried
 
 
 goods:

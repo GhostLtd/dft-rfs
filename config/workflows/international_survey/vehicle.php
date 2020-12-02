@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\VehicleController;
 use App\Workflow\InternationalSurvey\VehicleState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -20,7 +21,6 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_REQUEST_VEHICLE_BODY,
                     StateObject::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION,
                     StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
-                    StateObject::STATE_REQUEST_TRAVEL_DATES,
                     StateObject::STATE_SUMMARY,
                 ],
                 'transitions' => [
@@ -40,16 +40,15 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_REQUEST_VEHICLE_BODY,
                         'to' =>  StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
                     ],
-                    'vehicle weight entered' => [
-                        'from' => StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
-                        'to' =>  StateObject::STATE_REQUEST_TRAVEL_DATES,
-                    ],
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'TODO-ROUTE',
+                            'redirectRoute' => [
+                                'routeName' => VehicleController::SUMMARY_ROUTE,
+                                'parameterMappings' => ['registrationMark' => 'registrationMark'],
+                            ],
                         ],
-                        'from' => StateObject::STATE_REQUEST_TRAVEL_DATES,
+                        'from' => StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
                         'to' =>  StateObject::STATE_SUMMARY,
                     ],
                 ]

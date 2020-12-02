@@ -2,60 +2,46 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\International\Survey;
-use App\Entity\International\Vehicle;
-use App\Workflow\FormWizardInterface;
-use App\Workflow\InternationalSurvey\VehicleState;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use App\Repository\International\SurveyRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class VehicleController extends AbstractSessionStateWorkflowController
+class VehicleController extends AbstractController
 {
     use SurveyHelperTrait;
 
-    public const START_ROUTE = 'app_internationalsurvey_vehicle_start';
-    public const WIZARD_ROUTE = 'app_internationalsurvey_vehicle_state';
+    public const SUMMARY_ROUTE = 'app_internationalsurvey_vehicle_summary';
+
+    protected $surveyRepo;
+
+    public function __construct(SurveyRepository $surveyRepo)
+    {
+        $this->surveyRepo = $surveyRepo;
+    }
 
     /**
-     * @Route("/international-survey/add-vehicle/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/international-survey/add-vehicle", name=self::START_ROUTE)
+     * @Route("/international-survey/vehicles/{registrationMark}", name=self::SUMMARY_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyVehicleStateMachine, Request $request, $state = null): Response
-    {
-        return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
-    }
-
-    protected function getFormWizard(): FormWizardInterface
-    {
-        $survey = $this->getSurvey($this->getUser());
-
-        /** @var FormWizardInterface $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new VehicleState());
-
-        $response = $formWizard->getSubject() ?? $this->getVehicle($survey);
-        $this->entityManager->persist($response);
-        $formWizard->setSubject($response);
-
-        return $formWizard;
-    }
-
-    protected function getRedirectUrl($state): Response
-    {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
-    }
-
-    protected function getVehicle(Survey $survey): Vehicle
-    {
+    public function index(UserInterface $user, string $registrationMark) {
+        $survey = $this->getSurvey($user);
         $response = $survey->getResponse();
 
-        if (!$response) {
-            throw new UnauthorizedHttpException('No such survey response');
-        }
+//        if ($survey->getSubmissionDate()) {
+//            return $this->render('international_survey/thanks.html.twig');
+//        }
+//
+//        if (!$survey->isInitialDetailsComplete()) {
+//            return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
+//        }
+//
+//        if (!$response->isInitialDetailsSignedOff()) {
+//            return $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE);
+//        }
 
-        return (new Vehicle())->setSurveyResponse($response);
+        return $this->render('international_survey/vehicle/summary.html.twig', [
+            'survey' => $survey,
+            'registrationMark' => $registrationMark,
+        ]);
     }
 }

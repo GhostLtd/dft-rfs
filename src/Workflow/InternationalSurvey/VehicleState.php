@@ -7,6 +7,7 @@ use App\Form\InternationalSurvey\Vehicle\VehicleAxleConfigurationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleBodyType;
 use App\Form\InternationalSurvey\Vehicle\VehicleRegistrationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleTrailerConfigurationType;
+use App\Form\InternationalSurvey\Vehicle\VehicleWeightType;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
 
@@ -17,7 +18,6 @@ class VehicleState implements FormWizardInterface
     const STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION = 'axle-configuration';
     const STATE_REQUEST_VEHICLE_BODY = 'vehicle-body';
     const STATE_REQUEST_VEHICLE_WEIGHT = 'vehicle-weight';
-    const STATE_REQUEST_TRAVEL_DATES = 'travel-dates';
 
     const STATE_SUMMARY = 'summary';
 
@@ -26,6 +26,7 @@ class VehicleState implements FormWizardInterface
         self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
         self::STATE_REQUEST_VEHICLE_BODY => VehicleBodyType::class,
+        self::STATE_REQUEST_VEHICLE_WEIGHT => VehicleWeightType::class,
     ];
 
     private const TEMPLATE_MAP = [
@@ -34,7 +35,6 @@ class VehicleState implements FormWizardInterface
         self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => 'international_survey/vehicle/form-axle-configuration.html.twig',
         self::STATE_REQUEST_VEHICLE_BODY => 'international_survey/vehicle/form-vehicle-body.html.twig',
         self::STATE_REQUEST_VEHICLE_WEIGHT => 'international_survey/vehicle/form-vehicle-weight.html.twig',
-        self::STATE_REQUEST_TRAVEL_DATES => 'international_survey/vehicle/form-travel-dates.html.twig',
     ];
 
     private $state = self::STATE_REQUEST_VEHICLE_REGISTRATION;

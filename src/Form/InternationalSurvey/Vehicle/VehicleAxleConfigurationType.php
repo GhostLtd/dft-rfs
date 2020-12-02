@@ -16,4 +16,9 @@ class VehicleAxleConfigurationType extends AbstractVehicleAxleConfigurationType
             'translation_entity_key' => 'international.vehicle',
         ]);
     }
+
+    protected function getVehicle($formData)
+    {
+        return $formData;
+    }
 }
