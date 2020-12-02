@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -48,14 +49,14 @@ abstract class AbstractWorkflowController extends AbstractController
     {
         $formWizard = $this->getFormWizard();
 
-        if (is_null($state)) return $this->getRedirectUrl($formWizard->getState());
+        if (is_null($state)) return $this->getRedirectUrl($stateMachine->getDefinition()->getInitialPlaces()[0]);
 
         if ($state !== $formWizard->getState()) {
-            if ($formWizard->isValidJumpInState($state))
+            if ($formWizard->isValidHistoryState($state) || $formWizard->isValidAlternativeStartState($state))
             {
                 $formWizard->setState($state);
             } else {
-                return $this->getRedirectUrl($formWizard->getState());
+                throw new LogicException('invalid state');
             }
         }
 
@@ -123,6 +124,7 @@ abstract class AbstractWorkflowController extends AbstractController
         return $this->render($template, [
             'form' => $form->createView(),
             'subject' => $formWizard->getSubject(),
+            'formWizardState' => $formWizard,
         ]);
     }
 

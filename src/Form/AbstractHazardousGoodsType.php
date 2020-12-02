@@ -20,7 +20,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType
             ];
         }
 
-        $translationKeyPrefix = "{$options['translation_namespace_key']}.{$options['translation_entity_key']}.hazardous-goods";
+        $translationKeyPrefix = "{$options['translation_entity_key']}.hazardous-goods";
         $builder
             ->add('hazardousGoodsCode', Gds\ChoiceType::class, [
                 'expanded' => true,
@@ -39,8 +39,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => HazardousGoodsTrait::class,
         ]);
-        $resolver->setRequired(["translation_entity_key", "translation_namespace_key"]);
-        $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);
-        $resolver->setAllowedValues("translation_namespace_key", ['domestic', 'international']);
+        $resolver->setRequired(["translation_entity_key"]);
+        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.[change me]']);
     }
 }

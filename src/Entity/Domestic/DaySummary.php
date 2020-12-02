@@ -2,11 +2,12 @@
 
 namespace App\Entity\Domestic;
 
-use App\Repository\Domestic\StopSummaryRepository;
+use App\Entity\Distance;
+use App\Repository\Domestic\DaySummaryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=StopSummaryRepository::class)
+ * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
  * @ORM\Table("domestic_day_summary")
  */
 class DaySummary
@@ -42,6 +43,16 @@ class DaySummary
      * @ORM\Column(type="integer")
      */
     private $numberOfStopsLoadingAndUnloading;
+
+    /**
+     * @ORM\Embedded(class=Distance::class)
+     */
+    private $distanceTravelledLoaded;
+
+    /**
+     * @ORM\Embedded(class=Distance::class)
+     */
+    private $distanceTravelledUnloaded;
 
     /**
      * @ORM\OneToOne(targetEntity=Day::class, inversedBy="summary", cascade={"persist", "remove"})
@@ -126,6 +137,29 @@ class DaySummary
         return $this;
     }
 
+    public function getDistanceTravelledLoaded(): ?Distance
+    {
+        return $this->distanceTravelledLoaded;
+    }
+
+    public function setDistanceTravelledLoaded(?Distance $distanceTravelledLoaded): self
+    {
+        $this->distanceTravelledLoaded = $distanceTravelledLoaded;
+
+        return $this;
+    }
+
+    public function getDistanceTravelledUnloaded(): ?Distance
+    {
+        return $this->distanceTravelledUnloaded;
+    }
+
+    public function setDistanceTravelledUnloaded(?Distance $distanceTravelledUnloaded): self
+    {
+        $this->distanceTravelledUnloaded = $distanceTravelledUnloaded;
+
+        return $this;
+    }
     public function getDay(): ?Day
     {
         return $this->day;

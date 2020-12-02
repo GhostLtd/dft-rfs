@@ -7,7 +7,7 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
-use App\Workflow\DomesticSurvey\DayMultipleState;
+use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
@@ -24,16 +24,16 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     protected $dayNumber;
 
     /**
-     * @Route("/domestic-survey/day-{dayNumber}/summary/{state}", name=self::ROUTE_NAME)
      * @Route("/domestic-survey/day-{dayNumber}/summary/start", name="app_domesticsurvey_daysummary_start")
+     * @Route("/domestic-survey/day-{dayNumber}/summary/{state}", name=self::ROUTE_NAME)
      * @param WorkflowInterface $domesticSurveyDaySummaryStateMachine
      * @param Request $request
      * @param $dayNumber
-     * @param string $state
+     * @param null | string $state
      * @return Response
      * @throws Exception
      */
-    public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = DaySummaryState::STATE_ORIGIN): Response
+    public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {
         $this->dayNumber = intval($dayNumber);
         return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state);

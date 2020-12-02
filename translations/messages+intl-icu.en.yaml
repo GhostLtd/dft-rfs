@@ -30,6 +30,15 @@ domestic:
       groupage: Groupage
       empty: Empty
       other-goods: Specific goods / Other (please specify)
+    help:
+      empty-container: consignment was an empty freight container
+      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
+      groupage: mixed consignments where the main type represented less than 75% (three quarters) by weight
+      empty: only if the vehicle carried nothing at all
+      other-goods: ''
+      # this help text key is intentionally different - see the form structure
+      other: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+
   transferred-port:
     options:
       2: None of the above
@@ -141,14 +150,14 @@ domestic:
         label: Tell us about the the vehicle
         help: Indicate the main type of body for the vehicle
 
-    ## summary day
+  ## summary day
   day-summary:
     origin:
       heading: Where did the vehicle start the day?
       help: ''
       origin-location:
         label: Postcode or place-name and county
-        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -163,7 +172,7 @@ domestic:
       help: ''
       destination-location:
         label: Postcode or place-name and county
-        help: "Please provide the postcode as far as possible eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
       goods-unloaded:
         label: Were goods un-loaded?
         help: ''
@@ -200,14 +209,8 @@ domestic:
       goods-description:
         label: Description of goods carried
         help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
-        empty-container.help: consignment was an empty freight container
-        packaging.help: consignment was empty pallets, wire cages, roll cages or other packaging
-        groupage.help: mixed consignments where the main type represented less than 75% (three quarters) by weight
-        empty.help: only if the vehicle carried nothing at all
-        other-goods.help: ''
       goods-description-other:
         label: Other description
-        help: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
 
     hazardous-goods:
       hazardous-goods:
@@ -241,6 +244,79 @@ domestic:
       number-of-stops-both:
         label: 'Goods loaded and unloaded'
         help: 'The number of stops where goods were both loaded and unloaded'
+
+  ## detailed day stop
+  day-stop:
+    origin:
+      heading: Where did the vehicle begin this leg of the journey?
+      help: ''
+      origin-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-loaded:
+        label: Were goods loaded?
+        help: ''
+
+    origin-ports:
+      goods-transferred-from:
+        label: More details about the start of this leg
+        help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    destination:
+      heading: Where did this leg of the journey end?
+      help: ''
+      destination-location:
+        label: Postcode or place-name and county
+        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+      goods-unloaded:
+        label: Were goods un-loaded?
+        help: ''
+
+    destination-ports:
+      goods-transferred-to:
+        label: More details about the destination
+        help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    border-crossing:
+      border-crossing-location:
+        label: 'Border crossing'
+        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
+               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
+               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
+               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel."
+
+    distance-travelled:
+      distance-travelled:
+        label: Distance travelled
+        help: Enter the distance you travelled on this leg
+
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this leg. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+      goods-description-other:
+        label: Other description
+
+    hazardous-goods:
+      hazardous-goods:
+        label: Were these goods dangerous or hazardous?
+        help: Were the goods being transported classified as dangerous or hazardous?
+
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods are carried?
+        help: Mixed consignments should be recorded as "Other cargo type"
+
+    goods-weight:
+      heading: 'Goods'
+      help: ''
+      weight-of-goods-carried:
+        label: Weight of goods
+        help: 'Total weight of goods carried on this leg'
+      was-limited-by:
+        label: Was your vehicle at full capacity?
+        help: 'Select the answers which best describe the load'
+
 
   # Day, create
   day:

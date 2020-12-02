@@ -2,17 +2,18 @@
 
 namespace App\Entity\Domestic;
 
-use App\Repository\Domestic\StopDayRepository;
+use App\Repository\Domestic\DayRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=StopDayRepository::class)
+ * @ORM\Entity(repositoryClass=DayRepository::class)
  * @ORM\Table("domestic_day")
  */
 class Day
 {
+    const NOT_TRANSFERRED = 0;
     const TRANSFERRED = 1;
     const TRANSFERRED_NONE = 2;
     const TRANSFERRED_PORT = 4;
