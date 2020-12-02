@@ -3,11 +3,11 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Distance;
-use App\Repository\Domestic\StopMultipleRepository;
+use App\Repository\Domestic\DayStopRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=StopMultipleRepository::class)
+ * @ORM\Entity(repositoryClass=DayStopRepository::class)
  * @ORM\Table("domestic_day_stop")
  */
 class DayStop
@@ -61,6 +61,21 @@ class DayStop
     {
         $this->wasLimitedByWeight = $wasLimitedByWeight;
 
+        return $this;
+    }
+
+    public function getWasLimitedBy(): ?array
+    {
+        $limitedBy = [];
+        if ($this->getWasLimitedBySpace()) $limitedBy[] = 'space';
+        if ($this->getWasLimitedByWeight()) $limitedBy[] = 'weight';
+        return $limitedBy;
+    }
+
+    public function setWasLimitedBy(?array $limitedBy): self
+    {
+        $this->setWasLimitedBySpace(in_array('space', $limitedBy));
+        $this->setWasLimitedByWeight(in_array('weight', $limitedBy));
         return $this;
     }
 

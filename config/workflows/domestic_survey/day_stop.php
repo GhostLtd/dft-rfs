@@ -7,7 +7,7 @@ use Doctrine\Migrations\Version\State;
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
         'workflows' => [
-            'domestic_survey_day_multiple' => [
+            'domestic_survey_day_stop' => [
                 'type' => 'state_machine',
                 'initial_marking' => StateObject::STATE_ORIGIN,
                 'marking_store' => [
@@ -61,7 +61,7 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_DESTINATION_PORTS,
                     ],
                     'goods-unloaded-ni-only' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'isNorthernIrelandSurvey', 'value' => true]],
+                        'metadata' => ['transitionWhenCallback' => 'isNorthernIrelandSurvey'],
                         'from' => StateObject::STATE_DESTINATION_PORTS,
                         'to' =>  StateObject::STATE_BORDER_CROSSING,
                     ],
@@ -70,7 +70,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                     ],
                     'goods-unloaded-gb-only' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'isNorthernIrelandSurvey', 'value' => false]],
+                        'metadata' => ['transitionWhenCallbackNot' => 'isNorthernIrelandSurvey'],
                         'from' => StateObject::STATE_DESTINATION_PORTS,
                         'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
                     ],

@@ -3,11 +3,11 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Distance;
-use App\Repository\Domestic\StopSummaryRepository;
+use App\Repository\Domestic\DaySummaryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=StopSummaryRepository::class)
+ * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
  * @ORM\Table("domestic_day_summary")
  */
 class DaySummary

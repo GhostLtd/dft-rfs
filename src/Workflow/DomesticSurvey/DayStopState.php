@@ -4,6 +4,7 @@
 namespace App\Workflow\DomesticSurvey;
 
 
+use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Form\DomesticSurvey\DayStop\BorderCrossingType;
 use App\Form\DomesticSurvey\DayStop\CargoTypeType;
@@ -46,16 +47,16 @@ class DayStopState implements FormWizardInterface
     ];
 
     private const TEMPLATE_MAP = [
-        self::STATE_ORIGIN => 'domestic_survey/day_multiple/form-origin.html.twig',
-        self::STATE_ORIGIN_PORTS => 'domestic_survey/day_multiple/form-origin-ports.html.twig',
-        self::STATE_DESTINATION => 'domestic_survey/day_multiple/form-destination.html.twig',
-        self::STATE_DESTINATION_PORTS => 'domestic_survey/day_multiple/form-destination-ports.html.twig',
-        self::STATE_BORDER_CROSSING => 'domestic_survey/day_multiple/form-border-crossing.html.twig',
-        self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_multiple/form-distance-travelled.html.twig',
-        self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_multiple/form-goods-description.html.twig',
-        self::STATE_HAZARDOUS_GOODS => 'domestic_survey/day_multiple/form-goods-description.html.twig',
-        self::STATE_CARGO_TYPE => 'domestic_survey/day_multiple/form-cargo-type.html.twig',
-        self::STATE_GOODS_WEIGHT => 'domestic_survey/day_multiple/form-goods-weight.html.twig',
+        self::STATE_ORIGIN => 'domestic_survey/day_stop/form-origin.html.twig',
+        self::STATE_ORIGIN_PORTS => 'domestic_survey/day_stop/form-origin-ports.html.twig',
+        self::STATE_DESTINATION => 'domestic_survey/day_stop/form-destination.html.twig',
+        self::STATE_DESTINATION_PORTS => 'domestic_survey/day_stop/form-destination-ports.html.twig',
+        self::STATE_BORDER_CROSSING => 'domestic_survey/day_stop/form-border-crossing.html.twig',
+        self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_stop/form-distance-travelled.html.twig',
+        self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_stop/form-goods-description.html.twig',
+        self::STATE_HAZARDOUS_GOODS => 'domestic_survey/day_stop/form-hazardous-goods.html.twig',
+        self::STATE_CARGO_TYPE => 'domestic_survey/day_stop/form-cargo-type.html.twig',
+        self::STATE_GOODS_WEIGHT => 'domestic_survey/day_stop/form-goods-weight.html.twig',
     ];
 
     private $state;
@@ -101,6 +102,46 @@ class DayStopState implements FormWizardInterface
     protected function getValidJumpInStates()
     {
         $states = [self::STATE_ORIGIN];
+
+        if ($this->subject->getOriginLocation()) {
+            $states[] = $this->subject->getGoodsLoaded() ? self::STATE_ORIGIN_PORTS : self::STATE_DESTINATION;
+        }
+        if (in_array(self::STATE_ORIGIN_PORTS, $states) && in_array($this->subject->getGoodsTransferredFrom(), Day::TRANSFER_CHOICES)) {
+            $states[] = self::STATE_DESTINATION;
+        }
+
+        if ($this->subject->getDestinationLocation()) {
+            $states[] = $this->subject->getGoodsUnloaded()
+                ? self::STATE_DESTINATION_PORTS
+                : ($this->subject->isNorthernIrelandSurvey()
+                    ? self::STATE_BORDER_CROSSING
+                    : self::STATE_DISTANCE_TRAVELLED);
+        }
+        if (in_array(self::STATE_DESTINATION_PORTS, $states) && in_array($this->subject->getGoodsTransferredTo(), Day::TRANSFER_CHOICES)) {
+            $states[] = $this->subject->isNorthernIrelandSurvey()
+                ? self::STATE_BORDER_CROSSING
+                : self::STATE_DISTANCE_TRAVELLED;
+        }
+
+        if ($this->subject->isNorthernIrelandSurvey() && $this->subject->getBorderCrossingLocation()) {
+            $states[] = self::STATE_DISTANCE_TRAVELLED;
+        }
+
+        if (in_array(self::STATE_DISTANCE_TRAVELLED, $states) && $this->subject->getDistanceTravelled()) {
+            $states[] = self::STATE_GOODS_DESCRIPTION;
+        }
+
+        if (in_array(self::STATE_GOODS_DESCRIPTION, $states) && $this->subject->getGoodsDescription()) {
+            $states[] = self::STATE_HAZARDOUS_GOODS;
+        }
+
+        if (in_array(self::STATE_HAZARDOUS_GOODS, $states) && $this->subject->getGoodsDescription()) {
+            $states[] = self::STATE_CARGO_TYPE;
+        }
+
+        if (in_array(self::STATE_CARGO_TYPE, $states) && $this->subject->getGoodsDescription()) {
+            $states[] = self::STATE_GOODS_WEIGHT;
+        }
 
         return $states;
     }

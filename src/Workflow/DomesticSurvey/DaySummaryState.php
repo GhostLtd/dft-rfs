@@ -60,7 +60,7 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_FURTHEST_STOP => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
         self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_summary/form-goods-description.html.twig',
-        self::STATE_HAZARDOUS_GOODS => 'domestic_survey/day_summary/form-goods-description.html.twig',
+        self::STATE_HAZARDOUS_GOODS => 'domestic_survey/day_summary/form-hazardous-goods.html.twig',
         self::STATE_CARGO_TYPE => 'domestic_survey/day_summary/form-cargo-type.html.twig',
         self::STATE_GOODS_WEIGHT => 'domestic_survey/day_summary/form-goods-weight.html.twig',
         self::STATE_NUMBER_OF_STOPS => 'domestic_survey/day_summary/form-number-of-stops.html.twig',
@@ -113,14 +113,14 @@ class DaySummaryState implements FormWizardInterface
         if ($this->subject->getOriginLocation()) {
             $states[] = $this->subject->getGoodsLoaded() ? self::STATE_ORIGIN_PORTS : self::STATE_DESTINATION;
         }
-        if (in_array(self::STATE_ORIGIN_PORTS, $states) && $this->subject->getGoodsTransferredFrom() !== Day::TRANSFERRED) {
+        if (in_array(self::STATE_ORIGIN_PORTS, $states) && in_array($this->subject->getGoodsTransferredFrom(), Day::TRANSFER_CHOICES)) {
             $states[] = self::STATE_DESTINATION;
         }
 
         if ($this->subject->getDestinationLocation()) {
             $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_FURTHEST_STOP;
         }
-        if (in_array(self::STATE_DESTINATION_PORTS, $states) && $this->subject->getGoodsTransferredTo() !== Day::TRANSFERRED) {
+        if (in_array(self::STATE_DESTINATION_PORTS, $states) && in_array($this->subject->getGoodsTransferredTo(), Day::TRANSFER_CHOICES)) {
             $states[] = self::STATE_FURTHEST_STOP;
         }
 

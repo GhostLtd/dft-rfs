@@ -1,0 +1,16 @@
+{% extends 'domestic_survey/form-base.html.twig' %}
+
+{% block oneThirdColumnContent -%}
+    <h2 class="govuk-heading-m">Adding a leg on day {{ subject.day.number }} ({{ subject.day.response.survey.startDate | date('F j, Y') }})</h2>
+
+    {% if (subject.day.stops | length) > 0 %}
+        {% set previousLeg = subject.day.stops | last %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Previous leg on this day</h3>
+        <p class="govuk-body">{{ previousLeg.originLocation }} to {{ previousLeg.destinationLocation }}</p>
+    {% else %}
+        <p class="govuk-body">This is the first leg for the day</p>
+    {% endif %}
+
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+    {{ parent() }}
+{% endblock %}
