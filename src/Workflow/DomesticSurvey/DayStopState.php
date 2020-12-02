@@ -4,7 +4,6 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Form\DomesticSurvey\DayStop\BorderCrossingType;
 use App\Form\DomesticSurvey\DayStop\CargoTypeType;
@@ -16,9 +15,10 @@ use App\Form\DomesticSurvey\DayStop\GoodsWeightType;
 use App\Form\DomesticSurvey\DayStop\HazardousGoodsType;
 use App\Form\DomesticSurvey\DayStop\OriginPortsType;
 use App\Form\DomesticSurvey\DayStop\OriginType;
+use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 
-class DayStopState implements FormWizardInterface
+class DayStopState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_ORIGIN = 'origin';
     const STATE_ORIGIN_PORTS = 'origin-ports';
@@ -30,7 +30,6 @@ class DayStopState implements FormWizardInterface
     const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
     const STATE_CARGO_TYPE = 'cargo-type';
     const STATE_GOODS_WEIGHT = 'goods-weight';
-    const STATE_ = '';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
@@ -59,28 +58,8 @@ class DayStopState implements FormWizardInterface
         self::STATE_GOODS_WEIGHT => 'domestic_survey/day_stop/form-goods-weight.html.twig',
     ];
 
-    private $state;
-
     /** @var DayStop */
     private $subject;
-
-    /**
-     * @return mixed
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param mixed $state
-     * @return self
-     */
-    public function setState($state): self
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     public function getSubject()
     {
@@ -92,58 +71,6 @@ class DayStopState implements FormWizardInterface
         if (!get_class($subject) === DayStop::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DayStop::class);
         $this->subject = $subject;
         return $this;
-    }
-
-    public function isValidJumpInState($state)
-    {
-        return (in_array($state, $this->getValidJumpInStates()));
-    }
-
-    protected function getValidJumpInStates()
-    {
-        $states = [self::STATE_ORIGIN];
-
-        if ($this->subject->getOriginLocation()) {
-            $states[] = $this->subject->getGoodsLoaded() ? self::STATE_ORIGIN_PORTS : self::STATE_DESTINATION;
-        }
-        if (in_array(self::STATE_ORIGIN_PORTS, $states) && in_array($this->subject->getGoodsTransferredFrom(), Day::TRANSFER_CHOICES)) {
-            $states[] = self::STATE_DESTINATION;
-        }
-
-        if ($this->subject->getDestinationLocation()) {
-            $states[] = $this->subject->getGoodsUnloaded()
-                ? self::STATE_DESTINATION_PORTS
-                : ($this->subject->isNorthernIrelandSurvey()
-                    ? self::STATE_BORDER_CROSSING
-                    : self::STATE_DISTANCE_TRAVELLED);
-        }
-        if (in_array(self::STATE_DESTINATION_PORTS, $states) && in_array($this->subject->getGoodsTransferredTo(), Day::TRANSFER_CHOICES)) {
-            $states[] = $this->subject->isNorthernIrelandSurvey()
-                ? self::STATE_BORDER_CROSSING
-                : self::STATE_DISTANCE_TRAVELLED;
-        }
-
-        if ($this->subject->isNorthernIrelandSurvey() && $this->subject->getBorderCrossingLocation()) {
-            $states[] = self::STATE_DISTANCE_TRAVELLED;
-        }
-
-        if (in_array(self::STATE_DISTANCE_TRAVELLED, $states) && $this->subject->getDistanceTravelled()) {
-            $states[] = self::STATE_GOODS_DESCRIPTION;
-        }
-
-        if (in_array(self::STATE_GOODS_DESCRIPTION, $states) && $this->subject->getGoodsDescription()) {
-            $states[] = self::STATE_HAZARDOUS_GOODS;
-        }
-
-        if (in_array(self::STATE_HAZARDOUS_GOODS, $states) && $this->subject->getGoodsDescription()) {
-            $states[] = self::STATE_CARGO_TYPE;
-        }
-
-        if (in_array(self::STATE_CARGO_TYPE, $states) && $this->subject->getGoodsDescription()) {
-            $states[] = self::STATE_GOODS_WEIGHT;
-        }
-
-        return $states;
     }
 
     public function getStateFormMap()

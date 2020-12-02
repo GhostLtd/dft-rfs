@@ -7,10 +7,11 @@ use App\Form\InternationalSurvey\InitialDetails\ActivityStatusType;
 use App\Form\InternationalSurvey\InitialDetails\BusinessDetailsType;
 use App\Form\InternationalSurvey\InitialDetails\ContactDetailsType;
 use App\Form\InternationalSurvey\InitialDetails\NumberOfTripsType;
+use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
 
-class InitialDetailsState implements FormWizardInterface
+class InitialDetailsState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';
@@ -41,21 +42,8 @@ class InitialDetailsState implements FormWizardInterface
         self::STATE_CHANGE_CONTACT_DETAILS => 'international_survey/initial_details/form-contact-details.html.twig',
     ];
 
-    private $state = self::STATE_INTRODUCTION;
-
     /** @var SurveyResponse */
     private $subject;
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function setState($state): self
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     public function getSubject()
     {
@@ -69,43 +57,6 @@ class InitialDetailsState implements FormWizardInterface
         }
         $this->subject = $subject;
         return $this;
-    }
-
-    public function isValidJumpInState($state)
-    {
-        return (in_array($state, $this->getValidJumpInStates()));
-    }
-
-    protected function getValidJumpInStates()
-    {
-        $states = [self::STATE_INTRODUCTION, self::STATE_REQUEST_CONTACT_DETAILS];
-
-        $isCommitted = $this->subject->getId();
-        $activityStatus = $this->subject->getActivityStatus();
-        $annualCount = $this->subject->getAnnualInternationalJourneyCount();
-
-        $isActive = false;
-
-        if ($annualCount !== null) {
-            $states[] = self::STATE_REQUEST_NUMBER_OF_TRIPS;
-
-            if ($annualCount === 0) {
-                $states[] = self::STATE_REQUEST_ACTIVITY_STATUS;
-                $isActive = $activityStatus === SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE;
-            } else {
-                $isActive = true;
-            }
-        }
-
-        if ($isActive) {
-            $states[] = self::STATE_REQUEST_BUSINESS_DETAILS;
-        }
-
-        if ($isCommitted) {
-            $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
-        }
-
-        return $states;
     }
 
     public function getStateFormMap()

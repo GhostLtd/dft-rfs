@@ -4,7 +4,6 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
 use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
@@ -18,9 +17,10 @@ use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
 use App\Form\DomesticSurvey\DaySummary\OriginType;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
+use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 
-class DaySummaryState implements FormWizardInterface
+class DaySummaryState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_ORIGIN = 'origin';
     const STATE_ORIGIN_PORTS = 'origin-ports';
@@ -66,28 +66,8 @@ class DaySummaryState implements FormWizardInterface
         self::STATE_NUMBER_OF_STOPS => 'domestic_survey/day_summary/form-number-of-stops.html.twig',
     ];
 
-    private $state = self::STATE_ORIGIN;
-
     /** @var DaySummary */
     private $subject;
-
-    /**
-     * @return mixed
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param mixed $state
-     * @return self
-     */
-    public function setState($state): self
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     public function getSubject()
     {
@@ -99,60 +79,6 @@ class DaySummaryState implements FormWizardInterface
         if (!get_class($subject) === DaySummary::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DaySummary::class);
         $this->subject = $subject;
         return $this;
-    }
-
-    public function isValidJumpInState($state)
-    {
-        return (in_array($state, $this->getValidJumpInStates()));
-    }
-
-    protected function getValidJumpInStates()
-    {
-        $states = [self::STATE_ORIGIN];
-
-        if ($this->subject->getOriginLocation()) {
-            $states[] = $this->subject->getGoodsLoaded() ? self::STATE_ORIGIN_PORTS : self::STATE_DESTINATION;
-        }
-        if (in_array(self::STATE_ORIGIN_PORTS, $states) && in_array($this->subject->getGoodsTransferredFrom(), Day::TRANSFER_CHOICES)) {
-            $states[] = self::STATE_DESTINATION;
-        }
-
-        if ($this->subject->getDestinationLocation()) {
-            $states[] = $this->subject->getGoodsUnloaded() ? self::STATE_DESTINATION_PORTS : self::STATE_FURTHEST_STOP;
-        }
-        if (in_array(self::STATE_DESTINATION_PORTS, $states) && in_array($this->subject->getGoodsTransferredTo(), Day::TRANSFER_CHOICES)) {
-            $states[] = self::STATE_FURTHEST_STOP;
-        }
-
-        if ($this->subject->getFurthestStop()) {
-            if ($this->subject->isNorthernIrelandSurvey()) {
-                $states[] = self::STATE_BORDER_CROSSING;
-            }
-            $states[] = self::STATE_DISTANCE_TRAVELLED;
-        }
-
-        if (($this->subject->getDistanceTravelledLoaded() && $this->subject->getDistanceTravelledLoaded()->getValue())
-                || ($this->subject->getDistanceTravelledUnloaded() && $this->subject->getDistanceTravelledUnloaded()->getValue())) {
-            $states[] = self::STATE_GOODS_DESCRIPTION;
-        }
-
-        if ($this->subject->getGoodsDescription()) {
-            $states[] = self::STATE_HAZARDOUS_GOODS;
-        }
-
-        if ($this->subject->getHazardousGoodsCode()) {
-            $states[] = self::STATE_CARGO_TYPE;
-        }
-
-        if ($this->subject->getCargoTypeCode()) {
-            $states[] = self::STATE_GOODS_WEIGHT;
-        }
-
-        if ($this->subject->getWeightOfGoodsLoaded()) {
-            $states[] = self::STATE_NUMBER_OF_STOPS;
-        }
-
-        return $states;
     }
 
     public function getStateFormMap()

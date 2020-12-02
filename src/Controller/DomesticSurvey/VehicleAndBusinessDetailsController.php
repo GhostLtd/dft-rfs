@@ -18,15 +18,15 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     public const ROUTE_NAME = 'app_domesticsurvey_vehicleandbusinessdetails_index';
 
     /**
-     * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=self::ROUTE_NAME)
      * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurvey_vehicleandbusinessdetails_start")
+     * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=self::ROUTE_NAME)
      * @param WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine
      * @param Request $request
      * @param null | string $state
      * @return Response
      * @throws Exception
      */
-    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = VehicleAndBusinessDetailsState::STATE_BUSINESS_DETAILS): Response
+    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($domesticSurveyVehicleAndBusinessDetailsStateMachine, $request, $state);
     }

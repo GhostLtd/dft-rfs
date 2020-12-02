@@ -24,16 +24,16 @@ class DayStopController extends AbstractSessionStateWorkflowController
     protected $dayNumber;
 
     /**
-     * @Route("/domestic-survey/day-{dayNumber}/stop/{state}", name=self::ROUTE_NAME)
      * @Route("/domestic-survey/day-{dayNumber}/stop/start", name="app_domesticsurvey_daystop_start")
+     * @Route("/domestic-survey/day-{dayNumber}/stop/{state}", name=self::ROUTE_NAME)
      * @param WorkflowInterface $domesticSurveyDayStopStateMachine
      * @param Request $request
      * @param $dayNumber
-     * @param string $state
+     * @param null | string $state
      * @return Response
      * @throws Exception
      */
-    public function index(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, $state = DayStopState::STATE_ORIGIN): Response
+    public function index(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, $state = null): Response
     {
         $this->dayNumber = intval($dayNumber);
         return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);

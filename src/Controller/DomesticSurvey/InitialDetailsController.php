@@ -20,8 +20,8 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     public const ROUTE_NAME = 'app_domesticsurvey_initialdetails_index';
 
     /**
-     * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
      * @Route("/domestic-survey/initial-details", name="app_domesticsurvey_initialdetails_start")
+     * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
      * @param WorkflowInterface $domesticSurveyInitialDetailsStateMachine
      * @param Request $request
      * @param null $state
