@@ -16,12 +16,24 @@
             <p class="govuk-body">
                 You haven't entered any information for this day yet.
             </p>
-            <p>
+            <p class="govuk-body">
                 {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'Enter information for this journey') }}
             </p>
         {% endif %}
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {% for stop in day.stops %}
+                {{ summaryListRow("Leg #{loop.index}", "#{stop.originLocation} to #{stop.destinationLocation}") }}
+{#                {% set limitedActions = {(url('app_domesticsurvey_daystop_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')})): 'Change'} %}#}
+{#                {{ summaryListRow('Capacity limited?', (stop.wasLimitedBySpace ? 'Space' : '') ~ (stop.wasLimitedByWeight ? 'Weight' : ''), limitedActions) }}#}
+        {% else %}
+            No journey legs have been recorded for this day yet
+        {% endfor %}
+        </dl>
+        <p class="govuk-body">
+            {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'Add a leg for this journey') }}
+        </p>
     {% endif %}
 
     {{ buttonLink(url('app_domesticsurvey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}

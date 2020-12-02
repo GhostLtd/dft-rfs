@@ -10,9 +10,10 @@ use App\Form\DomesticSurvey\InitialDetails\HireeDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\InPossessionOfVehicleType;
+use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 
-class InitialDetailsState implements FormWizardInterface
+class InitialDetailsState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';
@@ -42,27 +43,8 @@ class InitialDetailsState implements FormWizardInterface
         self::STATE_ASK_SCRAPPED_DETAILS => 'domestic_survey/initial_details/form-scrapped-details.html.twig',
     ];
 
-    private $state = self::STATE_INTRODUCTION;
-
     /** @var SurveyResponse */
     private $subject;
-
-    /**
-     * @return mixed
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param mixed $state
-     */
-    public function setState($state): self
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     public function getSubject()
     {
@@ -74,24 +56,6 @@ class InitialDetailsState implements FormWizardInterface
         if (!get_class($subject) === SurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
         $this->subject = $subject;
         return $this;
-    }
-
-    public function isValidJumpInState($state)
-    {
-        return (in_array($state, $this->getValidJumpInStates()));
-    }
-
-    protected function getValidJumpInStates()
-    {
-        $states = [self::STATE_INTRODUCTION, self::STATE_REQUEST_CONTACT_DETAILS];
-        if (!empty($this->subject->getContactName())) {
-            $states[] = self::STATE_ASK_IN_POSSESSION;
-            $states[] = self::STATE_CHANGE_CONTACT_DETAILS;
-        }
-        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_ON_HIRE) $states[] = self::STATE_ASK_HIREE_DETAILS;
-        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN) $states[] = self::STATE_ASK_SCRAPPED_DETAILS;
-        if ($this->subject->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_SOLD) $states[] = self::STATE_ASK_SOLD_DETAILS;
-        return $states;
     }
 
     public function getStateFormMap()
@@ -107,5 +71,16 @@ class InitialDetailsState implements FormWizardInterface
     public function getDefaultTemplate()
     {
         return 'domestic_survey/initial_details/form-step.html.twig';
+    }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        if ($this->subject->getId()) {
+            return in_array($state, [
+                self::STATE_CHANGE_CONTACT_DETAILS,
+                self::STATE_ASK_IN_POSSESSION,
+            ]);
+        }
+        return parent::isValidAlternativeStartState($state);
     }
 }

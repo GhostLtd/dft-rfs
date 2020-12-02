@@ -9,10 +9,11 @@ use App\Form\InternationalSurvey\Vehicle\VehicleBodyType;
 use App\Form\InternationalSurvey\Vehicle\VehicleRegistrationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleTrailerConfigurationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleWeightType;
+use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
 
-class VehicleState implements FormWizardInterface
+class VehicleState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_REQUEST_VEHICLE_REGISTRATION = 'vehicle-registration';
     const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';
@@ -38,21 +39,8 @@ class VehicleState implements FormWizardInterface
         self::STATE_REQUEST_VEHICLE_WEIGHT => 'international_survey/vehicle/form-vehicle-weight.html.twig',
     ];
 
-    private $state = self::STATE_REQUEST_VEHICLE_REGISTRATION;
-
     /** @var SurveyResponse */
     private $subject;
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function setState($state): self
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     public function getSubject()
     {

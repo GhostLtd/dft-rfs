@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method DaySummary[]    findAll()
  * @method DaySummary[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class StopSummaryRepository extends ServiceEntityRepository
+class DaySummaryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,9 +30,9 @@ class StopSummaryRepository extends ServiceEntityRepository
      */
     public function getBySurveyAndDayNumber(Survey $survey, $dayNumber)
     {
-        $daySummary = $this->createQueryBuilder('stop_summary')
-            ->select('stop_summary, day')
-            ->leftJoin('stop_summary.day', 'day')
+        $daySummary = $this->createQueryBuilder('day_summary')
+            ->select('day_summary, day')
+            ->leftJoin('day_summary.day', 'day')
             ->leftJoin('day.response', 'response')
             ->where('day.number = :dayNumber')
             ->andWhere('response.survey = :survey')

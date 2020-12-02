@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Day[]    findAll()
  * @method Day[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class StopDayRepository extends ServiceEntityRepository
+class DayRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

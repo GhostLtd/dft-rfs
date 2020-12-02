@@ -5,6 +5,7 @@ namespace App\Form\DomesticSurvey\DaySummary;
 use App\Entity\Distance;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
+use App\Form\DomesticSurvey\StopTypeTrait;
 use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,8 +48,9 @@ class DistanceTravelledType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'data_class' => StopTrait::class,
+            'data_class' => DaySummary::class,
         ]);
     }
 }

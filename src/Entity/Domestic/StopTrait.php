@@ -37,16 +37,6 @@ trait StopTrait
     private $goodsTransferredTo;
 
     /**
-     * @ORM\Embedded(class=Distance::class)
-     */
-    private $distanceTravelledLoaded;
-
-    /**
-     * @ORM\Embedded(class=Distance::class)
-     */
-    private $distanceTravelledUnloaded;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $borderCrossingLocation;
@@ -113,8 +103,8 @@ trait StopTrait
 
     public function setGoodsLoaded(?bool $goodsLoaded): self
     {
-        if ($this->getGoodsLoaded() != $goodsLoaded) {
-            $this->goodsTransferredFrom = $goodsLoaded ? Day::TRANSFERRED : null;
+        if ($this->getGoodsLoaded() !== $goodsLoaded) {
+            $this->goodsTransferredFrom = $goodsLoaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
         }
         return $this;
     }
@@ -139,33 +129,9 @@ trait StopTrait
 
     public function setGoodsUnloaded(?bool $goodsUnloaded): self
     {
-        if ($this->getGoodsUnloaded() != $goodsUnloaded) {
-            $this->goodsTransferredTo = $goodsUnloaded ? Day::TRANSFERRED : null;
+        if ($this->getGoodsUnloaded() !== $goodsUnloaded) {
+            $this->goodsTransferredTo = $goodsUnloaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
         }
-        return $this;
-    }
-
-    public function getDistanceTravelledLoaded(): ?Distance
-    {
-        return $this->distanceTravelledLoaded;
-    }
-
-    public function setDistanceTravelledLoaded(?Distance $distanceTravelledLoaded): self
-    {
-        $this->distanceTravelledLoaded = $distanceTravelledLoaded;
-
-        return $this;
-    }
-
-    public function getDistanceTravelledUnloaded(): ?Distance
-    {
-        return $this->distanceTravelledUnloaded;
-    }
-
-    public function setDistanceTravelledUnloaded(?Distance $distanceTravelledUnloaded): self
-    {
-        $this->distanceTravelledUnloaded = $distanceTravelledUnloaded;
-
         return $this;
     }
 

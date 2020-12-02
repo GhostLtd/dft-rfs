@@ -2,11 +2,12 @@
 
 namespace App\Entity\Domestic;
 
-use App\Repository\Domestic\StopMultipleRepository;
+use App\Entity\Distance;
+use App\Repository\Domestic\DayStopRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=StopMultipleRepository::class)
+ * @ORM\Entity(repositoryClass=DayStopRepository::class)
  * @ORM\Table("domestic_day_stop")
  */
 class DayStop
@@ -27,6 +28,11 @@ class DayStop
      * @ORM\Column(type="boolean")
      */
     private $wasLimitedBySpace;
+
+    /**
+     * @ORM\Embedded(class=Distance::class)
+     */
+    private $distanceTravelled;
 
     /**
      * @ORM\ManyToOne(targetEntity=Day::class, inversedBy="stops")
@@ -58,6 +64,21 @@ class DayStop
         return $this;
     }
 
+    public function getWasLimitedBy(): ?array
+    {
+        $limitedBy = [];
+        if ($this->getWasLimitedBySpace()) $limitedBy[] = 'space';
+        if ($this->getWasLimitedByWeight()) $limitedBy[] = 'weight';
+        return $limitedBy;
+    }
+
+    public function setWasLimitedBy(?array $limitedBy): self
+    {
+        $this->setWasLimitedBySpace(in_array('space', $limitedBy));
+        $this->setWasLimitedByWeight(in_array('weight', $limitedBy));
+        return $this;
+    }
+
     public function getWasLimitedBySpace(): ?bool
     {
         return $this->wasLimitedBySpace;
@@ -66,6 +87,18 @@ class DayStop
     public function setWasLimitedBySpace(bool $wasLimitedBySpace): self
     {
         $this->wasLimitedBySpace = $wasLimitedBySpace;
+
+        return $this;
+    }
+
+    public function getDistanceTravelled(): ?Distance
+    {
+        return $this->distanceTravelled;
+    }
+
+    public function setDistanceTravelled(?Distance $distanceTravelledLoaded): self
+    {
+        $this->distanceTravelled = $distanceTravelledLoaded;
 
         return $this;
     }
@@ -81,4 +114,28 @@ class DayStop
 
         return $this;
     }
+
+
+    // transition callbacks
+    public function transitionGoodsNotUnloadedNICallback()
+    {
+        return
+            $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
+            && !$this->getGoodsUnloaded()
+            ;
+    }
+
+    public function transitionGoodsNotUnloadedGBCallback()
+    {
+        return
+            !$this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
+            && !$this->getGoodsUnloaded()
+            ;
+    }
+
+    public function isNorthernIrelandSurvey()
+    {
+        return $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
+    }
+
 }

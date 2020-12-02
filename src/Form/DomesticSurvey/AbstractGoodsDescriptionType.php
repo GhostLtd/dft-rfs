@@ -28,7 +28,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
         $goodsChoiceOptions = Day::GOODS_DESCRIPTION_CHOICES;
         foreach ($goodsChoiceOptions as $k=>$v) {
             $goodsChoiceOptions[$k] = [
-                'help' => "{$translationKeyPrefix}.goods-description.{$v}.help",
+                'help' => "domestic.goods-description.help.{$v}",
             ];
         }
         $goodsChoiceOptions[Day::GOODS_DESCRIPTION_TRANSLATION_PREFIX . Day::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
@@ -46,7 +46,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
             ])
             ->add('goodsDescriptionOther', Gds\InputType::class, [
                 'label' => false,
-                'help' => "{$translationKeyPrefix}.goods-description-other.help",
+                'help' => "domestic.goods-description.help.other",
             ])
             ;
     }
