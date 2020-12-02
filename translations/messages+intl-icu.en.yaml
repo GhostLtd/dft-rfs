@@ -1,6 +1,13 @@
 service:
   name: Road Freight Statistics
 
+common:
+  vehicle:
+    registration-mark: Registration mark
+    axle-configuration: Axle configuration
+    body-type: Vehicle/trailer body type
+    gross-weight: Gross vehicle weight
+    carrying-capacity: Carrying capacity
 
 unit:
   distance:

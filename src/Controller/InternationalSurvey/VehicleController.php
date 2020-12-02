@@ -2,8 +2,10 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Repository\International\SurveyRepository;
+use App\Repository\International\VehicleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -12,36 +14,49 @@ class VehicleController extends AbstractController
     use SurveyHelperTrait;
 
     public const SUMMARY_ROUTE = 'app_internationalsurvey_vehicle_summary';
+    public const VEHICLE_ROUTE = 'app_internationalsurvey_vehicle_vehicle';
 
-    protected $surveyRepo;
+    protected $vehicleRepository;
 
-    public function __construct(SurveyRepository $surveyRepo)
+    public function __construct(VehicleRepository $vehicleRepository)
     {
-        $this->surveyRepo = $surveyRepo;
+        $this->vehicleRepository = $vehicleRepository;
     }
 
     /**
-     * @Route("/international-survey/vehicles/{registrationMark}", name=self::SUMMARY_ROUTE)
+     * @Route("/international-survey/vehicles/", name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user, string $registrationMark) {
+    public function summary(UserInterface $user) {
         $survey = $this->getSurvey($user);
         $response = $survey->getResponse();
-
-//        if ($survey->getSubmissionDate()) {
-//            return $this->render('international_survey/thanks.html.twig');
-//        }
-//
-//        if (!$survey->isInitialDetailsComplete()) {
-//            return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
-//        }
-//
-//        if (!$response->isInitialDetailsSignedOff()) {
-//            return $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE);
-//        }
+        $vehicles = $response->getVehicles();
 
         return $this->render('international_survey/vehicle/summary.html.twig', [
             'survey' => $survey,
-            'registrationMark' => $registrationMark,
+            'vehicles' => $vehicles,
+        ]);
+    }
+
+    /**
+     * @Route("/international-survey/vehicles/{registrationMark}", name=self::VEHICLE_ROUTE)
+     */
+    public function vehicle(UserInterface $user, string $registrationMark) {
+        $survey = $this->getSurvey($user);
+        $response = $survey->getResponse();
+
+        if (!$response) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $vehicle = $this->vehicleRepository->findOneBy(['registrationMark' => $registrationMark, 'surveyResponse' => $response]);
+
+        if (!$vehicle) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->render('international_survey/vehicle/vehicle.html.twig', [
+            'survey' => $survey,
+            'vehicle' => $vehicle,
         ]);
     }
 }

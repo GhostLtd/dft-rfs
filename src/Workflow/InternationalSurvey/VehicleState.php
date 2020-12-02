@@ -3,6 +3,7 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\SurveyResponse;
+use App\Entity\International\Vehicle;
 use App\Form\InternationalSurvey\Vehicle\VehicleAxleConfigurationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleBodyType;
 use App\Form\InternationalSurvey\Vehicle\VehicleRegistrationType;
@@ -75,6 +76,25 @@ class VehicleState implements FormWizardInterface
     protected function getValidJumpInStates()
     {
         $states = [self::STATE_REQUEST_VEHICLE_REGISTRATION];
+
+        /** @var Vehicle $vehicle */
+        $vehicle = $this->subject;
+
+        if ($vehicle->getRegistrationMark()) {
+            $states[] = self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION;
+        }
+
+        if ($vehicle->getTrailerConfiguration()) {
+            $states[] = self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION;
+        }
+
+        if ($vehicle->getAxleConfiguration()) {
+            $states[] = self::STATE_REQUEST_VEHICLE_BODY;
+        }
+
+        if ($vehicle->getBodyType()) {
+            $states[] = self::STATE_REQUEST_VEHICLE_WEIGHT;
+        }
 
         return $states;
     }

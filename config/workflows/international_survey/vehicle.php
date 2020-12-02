@@ -44,7 +44,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
-                                'routeName' => VehicleController::SUMMARY_ROUTE,
+                                'routeName' => VehicleController::VEHICLE_ROUTE,
                                 'parameterMappings' => ['registrationMark' => 'registrationMark'],
                             ],
                         ],
