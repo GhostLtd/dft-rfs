@@ -44,11 +44,10 @@ class ValidRegistrationValidator extends ConstraintValidator
             } else if ($value instanceof InternationalVehicle) {
                 /** @var InternationalVehicleRepository $repository */
                 $repository = $this->entityManager->getRepository(InternationalVehicle::class);
-                $responseId = $value->getSurveyResponse()->getId();
 
                 // We don't check whether the vehicle already exists for Domestic as there's a one-to-one mapping
                 // between DomesticSurveyResponse and DomesticVehicle (compared to many-to-one for International)
-                if ($repository->alreadyExists($registrationMark, $responseId)) {
+                if ($repository->registrationMarkAlreadyExists($value)) {
                     $this->context
                         ->buildViolation($constraint->alreadyExistsMessage)
                         ->atPath('registrationMark')

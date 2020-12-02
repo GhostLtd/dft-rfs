@@ -21,19 +21,32 @@ class VehicleRepository extends ServiceEntityRepository
         parent::__construct($registry, Vehicle::class);
     }
 
-    public function alreadyExists(?string $registrationMark, ?int $responseId)
+    public function registrationMarkAlreadyExists(Vehicle $vehicle)
     {
+        $response = $vehicle->getSurveyResponse();
+        $responseId = $response ? $response->getId() : null;
+        $isCommitted = !!$vehicle->getId();
+
         try {
-            $count = $this->createQueryBuilder('v')
+            $params = [
+                'registrationMark' => $vehicle->getRegistrationMark(),
+                'responseId' => $responseId,
+            ];
+
+            $qb = $this->createQueryBuilder('v')
                 ->select('count(r)')
                 ->leftJoin('v.surveyResponse', 'r')
                 ->where('r.id = :responseId')
-                ->andWhere('v.registrationMark = :registrationMark')
+                ->andWhere('v.registrationMark = :registrationMark');
+
+            if ($isCommitted) {
+                $params['vehicleId'] = $vehicle->getId();
+                $qb = $qb->andWhere('v.id != :vehicleId');
+            }
+
+            $count = $qb
                 ->getQuery()
-                ->setParameters([
-                    'registrationMark' => $registrationMark,
-                    'responseId' => $responseId,
-                ])
+                ->setParameters($params)
                 ->getSingleScalarResult();
         } catch (UnexpectedResultException $e) {
             // Should not be able to happen in this case

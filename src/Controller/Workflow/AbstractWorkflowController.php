@@ -50,7 +50,7 @@ abstract class AbstractWorkflowController extends AbstractController
         $formWizard = $this->getFormWizard();
 
         if (is_null($state)) return $this->getRedirectUrl($stateMachine->getDefinition()->getInitialPlaces()[0]);
-
+dump($formWizard);
         if ($state !== $formWizard->getState()) {
             if ($formWizard->isValidHistoryState($state)
                 || $formWizard->isValidAlternativeStartState($state)

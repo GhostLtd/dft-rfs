@@ -3,10 +3,12 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
+use App\Workflow\InternationalSurvey\VehicleState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -56,6 +58,7 @@ class AppExtension extends AbstractExtension
     protected $wizardMapping = [
         'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
+        'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {
@@ -71,11 +74,11 @@ class AppExtension extends AbstractExtension
         return constant("$class::$state");
     }
 
-    public function wizardUrl(string $wizard, string $state) {
+    public function wizardUrl(string $wizard, string $state, array $params=[]) {
         $route = $this->getWizardMeta($wizard)['route'];
-        $params = ['state' => $this->wizardState($wizard, $state)];
+        $stateParams = ['state' => $this->wizardState($wizard, $state)];
 
-        return $this->router->generate($route, $params);
+        return $this->router->generate($route, array_merge($params, $stateParams));
     }
 
     public function choiceLabel(array $choices, ?string $choice, bool $equivalence=false): string {

@@ -56,4 +56,14 @@ class Vehicle
 
         return $this;
     }
+
+    public function mergeVehicleChanges(Vehicle $vehicle)
+    {
+        $this->setRegistrationMark($vehicle->getRegistrationMark());
+        $this->setTrailerConfiguration($vehicle->getTrailerConfiguration());
+        $this->setAxleConfiguration($vehicle->getAxleConfiguration());
+        $this->setBodyType($vehicle->getBodyType());
+        $this->setCarryingCapacity($vehicle->getCarryingCapacity());
+        $this->setGrossWeight($vehicle->getGrossWeight());
+    }
 }
