@@ -138,7 +138,8 @@ class SurveyResponse
 
     /**
      * @var Day[]
-     * @ORM\OneToMany(targetEntity=Day::class, mappedBy="response", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Day::class, mappedBy="response", orphanRemoval=true, indexBy="number")
+     * @ORM\OrderBy({"number" = "ASC"})
      */
     private $days;
 

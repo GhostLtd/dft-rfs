@@ -68,7 +68,9 @@ class Day
     private $hasMoreThanFiveStops;
 
     /**
-     * @ORM\OneToMany(targetEntity=DayStop::class, mappedBy="day", orphanRemoval=true)
+     * @var DayStop[] | ArrayCollection
+     * @ORM\OneToMany(targetEntity=DayStop::class, mappedBy="day", indexBy="number", orphanRemoval=true)
+     * @ORM\OrderBy({"number" = "ASC"})
      */
     private $stops;
 
@@ -80,6 +82,20 @@ class Day
     public function __construct()
     {
         $this->stops = new ArrayCollection();
+    }
+
+    /**
+     * @param $stopNumber
+     * @return DayStop|null
+     */
+    public function getStopByNumber($stopNumber): ?DayStop
+    {
+        foreach ($this->stops as $stop) {
+            if ($stop->getNumber() === intval($stopNumber)) {
+                return $stop;
+            }
+        }
+        return null;
     }
 
     public function getId(): ?int
@@ -124,11 +140,16 @@ class Day
     }
 
     /**
-     * @return Collection|DayStop[]
+     * @return DayStop[] | ArrayCollection
      */
     public function getStops(): Collection
     {
         return $this->stops;
+    }
+
+    public function getNextStopNumber()
+    {
+        return $this->stops->last()->getNumber() + 1;
     }
 
     public function addStop(DayStop $stop): self
@@ -136,6 +157,7 @@ class Day
         if (!$this->stops->contains($stop)) {
             $this->stops[] = $stop;
             $stop->setDay($this);
+            $stop->setNumber($this->getNextStopNumber());
         }
 
         return $this;

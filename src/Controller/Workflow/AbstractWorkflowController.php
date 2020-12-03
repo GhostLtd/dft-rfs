@@ -48,7 +48,6 @@ abstract class AbstractWorkflowController extends AbstractController
     protected function doWorkflow(WorkflowInterface $stateMachine, Request $request, $state = null): Response
     {
         $formWizard = $this->getFormWizard();
-
         if (is_null($state)) return $this->getRedirectUrl($stateMachine->getDefinition()->getInitialPlaces()[0]);
 
         if ($state !== $formWizard->getState()) {

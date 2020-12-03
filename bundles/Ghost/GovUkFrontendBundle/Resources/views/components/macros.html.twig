@@ -93,3 +93,36 @@
     {%- endif -%}
 {%- endmacro %}
 
+
+{% macro tableHead(caption, columnHeadings, options) -%}
+    {%- if caption | default(false) %}<caption class="govuk-table__caption">{{ caption }}</caption>{% endif -%}
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            {%- for heading in columnHeadings -%}
+                {% with {
+                    options: options[heading] | default({}) | merge({
+                    class: ('govuk-table__header '
+                            ~ ((options[heading].actions | default(false)) or (options[heading].numeric | default(false)) ? 'govuk-table__header--numeric ' : '')
+                            ~ (options[heading].class | default(''))
+                        ) | trim
+                    })
+                } %}
+                    <th scope="col" class="{{ options.class }}">{{ heading }}</th>
+                {% endwith %}
+            {%- endfor -%}
+        </tr>
+    </thead>
+{%- endmacro %}
+
+{% macro tableCell(value, options) -%}
+    {% with {
+        options: options | default({}) | merge({
+            class: ('govuk-table__cell '
+                ~ ((options.actions | default(false)) or (options.numeric | default(false)) ? 'govuk-table__cell--numeric ' : '')
+                ~ (options.class | default(''))
+            ) | trim
+        })
+    } %}
+    <td class="{{ options.class }}">{{ value }}</td>
+    {% endwith %}
+{%- endmacro %}

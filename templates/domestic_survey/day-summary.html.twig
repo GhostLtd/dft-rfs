@@ -1,7 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHead, tableCell %}
 
     <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
 
@@ -22,19 +22,39 @@
         {% endif %}
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {% for stop in day.stops %}
-                {{ summaryListRow("Leg #{loop.index}", "#{stop.originLocation} to #{stop.destinationLocation}") }}
-{#                {% set limitedActions = {(url('app_domesticsurvey_daystop_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')})): 'Change'} %}#}
-{#                {{ summaryListRow('Capacity limited?', (stop.wasLimitedBySpace ? 'Space' : '') ~ (stop.wasLimitedByWeight ? 'Weight' : ''), limitedActions) }}#}
-        {% else %}
-            No journey legs have been recorded for this day yet
-        {% endfor %}
-        </dl>
+        <table class="govuk-table">
+            {{ tableHead('Legs/stops for this day', ['Origin', 'Destination', 'Distance', 'Goods', ''], {'Distance': {numeric: true}}) }}
+            <tbody class="govuk-table__body">
+                {% for stop in day.stops %}
+                    <tr class="govuk-table__row">
+
+                        {{ tableCell(stop.originLocation ~ (stop.goodsLoadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredFrom}" | trans) ~ ")" : '')) }}
+                        {{ tableCell(stop.destinationLocation ~ (stop.goodsUnloadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredTo}" | trans) ~ ")")) }}
+                        {{ tableCell(stop.distanceTravelled, {numeric: true}) }}
+                        <td class="govuk-table__cell">
+                            {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')
+                                ? stop.goodsDescriptionOther
+                                : ("domestic.goods-description.options.#{stop.goodsDescription}" | trans)
+                            -}}
+                            {%- if stop.cargoTypeCode | default(false) %} / {{
+                                "goods.cargo-type.options.#{stop.cargoTypeCode}" | trans
+                            -}}
+                            {%- endif -%}
+                        </td>
+                        {{ tableCell(
+                            actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'}),
+                            {actions: true}
+                        ) }}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <p class="govuk-body">
             {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'Add a leg for this journey') }}
         </p>
     {% endif %}
 
-    {{ buttonLink(url('app_domesticsurvey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}
+    <p class="govuk-body">
+        <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>
+    </p>
 {% endblock %}

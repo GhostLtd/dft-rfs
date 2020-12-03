@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Entity\Domestic\Day;
 use App\Workflow\DomesticSurvey\DayStopState as StateObject;
 use Doctrine\Migrations\Version\State;
 
@@ -78,7 +79,18 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_DISTANCE_TRAVELLED,
                         'to' =>  StateObject::STATE_GOODS_DESCRIPTION,
                     ],
+                    'goods-description-empty' => [
+                        'name' => 'finish',
+                        'metadata' => [
+                            'transitionWhenCallback' => 'isGoodsDescriptionEmptyOption',
+                            'persist' => true,
+                            'redirectRoute' => 'app_domesticsurvey_index',
+                        ],
+                        'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                        'to' =>  StateObject::STATE_END,
+                    ],
                     'goods-description-to-hazardous-goods' => [
+                        'metadata' => ['transitionWhenCallbackNot' => 'isGoodsDescriptionEmptyOption'],
                         'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
                         'to' => StateObject::STATE_HAZARDOUS_GOODS,
                     ],

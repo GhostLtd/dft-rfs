@@ -98,7 +98,12 @@ trait StopTrait
     public function getGoodsLoaded(): ?bool
     {
         if (!is_numeric($this->goodsTransferredFrom)) return null;
-        return $this->goodsTransferredFrom > 0;
+        return $this->goodsTransferredFrom > Day::NOT_TRANSFERRED;
+    }
+    public function getGoodsLoadedIsPort(): bool
+    {
+        if (!is_numeric($this->goodsTransferredFrom)) return false;
+        return ($this->goodsTransferredFrom > Day::TRANSFERRED_NONE);
     }
 
     public function setGoodsLoaded(?bool $goodsLoaded): self
@@ -124,7 +129,13 @@ trait StopTrait
     public function getGoodsUnloaded(): ?bool
     {
         if (!is_numeric($this->goodsTransferredTo)) return null;
-        return $this->goodsTransferredTo > 0;
+        return $this->goodsTransferredTo > Day::NOT_TRANSFERRED;
+    }
+
+    public function getGoodsUnloadedIsPort(): bool
+    {
+        if (!is_numeric($this->goodsTransferredTo)) return false;
+        return $this->goodsTransferredTo > Day::TRANSFERRED_NONE;
     }
 
     public function setGoodsUnloaded(?bool $goodsUnloaded): self
@@ -156,6 +167,13 @@ trait StopTrait
     {
         $this->goodsDescription = $goodsDescription;
 
+        if ($goodsDescription === Day::GOODS_DESCRIPTION_EMPTY) {
+            $this
+                ->setHazardousGoodsCode(null)
+                ->setCargoTypeCode(null)
+            ;
+        }
+
         return $this;
     }
 
@@ -169,5 +187,11 @@ trait StopTrait
         $this->goodsDescriptionOther = $goodsDescriptionOther;
 
         return $this;
+    }
+
+
+    public function isGoodsDescriptionEmptyOption()
+    {
+        return $this->goodsDescription === Day::GOODS_DESCRIPTION_EMPTY;
     }
 }

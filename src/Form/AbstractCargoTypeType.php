@@ -16,6 +16,7 @@ abstract class AbstractCargoTypeType extends AbstractType
         $choiceOptions = CargoType::CHOICES;
         foreach ($choiceOptions as $k=>$v) {
             $choiceOptions[$k] = [
+                'help' => "goods.cargo-type.help.{$v}",
             ];
         }
 

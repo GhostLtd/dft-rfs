@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait HazardousGoodsTrait
 {
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=5, nullable=true)
      */
     private $hazardousGoodsCode;
 
