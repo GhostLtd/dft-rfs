@@ -59,6 +59,7 @@ class ChoiceType extends ExtendedChoiceType
             'label_is_page_heading' => false,
             'choice_options' => null,
             'expanded' => true,
+            'invalid_message' => 'common.choice.invalid',
         ]);
 
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);

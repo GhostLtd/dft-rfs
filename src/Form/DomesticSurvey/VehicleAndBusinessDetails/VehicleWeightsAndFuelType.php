@@ -54,7 +54,7 @@ class VehicleWeightsAndFuelType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
-            'validation_groups' => ['vehicle_weight'],
+            'validation_groups' => ['vehicle_weight', 'vehicle_fuel_quantity'],
         ]);
     }
 }

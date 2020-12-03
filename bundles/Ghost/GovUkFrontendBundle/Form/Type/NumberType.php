@@ -49,7 +49,7 @@ class NumberType extends InputType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'transformer_invalid_message' => 'Enter a real number',
+            'transformer_invalid_message' => 'common.number.invalid',
             'is_decimal' => false,
         ]);
 
