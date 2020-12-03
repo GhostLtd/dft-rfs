@@ -1,0 +1,7 @@
+{%- macro displayAxleConfiguration(axleConfiguration) -%}
+    {%- set hasIcon = not ('' ~ axleConfiguration ends with '99') -%}
+    {%- if hasIcon -%}
+        {{- svgIcon("lorry-#{axleConfiguration}.svg") }}<br>
+    {%- endif -%}
+    {{ (axleConfiguration | vehicleAxleConfigTransKey | trans) }}
+{%- endmacro -%}

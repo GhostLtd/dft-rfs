@@ -73,4 +73,20 @@ class InitialDetailsState extends AbstractFormWizardState implements FormWizardI
     {
         return null;
     }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        $response = ($this->subject && $this->subject instanceof SurveyResponse) ? $this->subject : null;
+        $isCommitted = $response && !!$response->getId();
+
+        if ($isCommitted) {
+            return in_array($state, [
+                InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS,
+                InitialDetailsState::STATE_REQUEST_NUMBER_OF_TRIPS,
+                InitialDetailsState::STATE_REQUEST_BUSINESS_DETAILS,
+            ]);
+        }
+
+        return false;
+    }
 }

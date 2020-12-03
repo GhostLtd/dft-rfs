@@ -45,9 +45,9 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
 
         $canSubmitAsNoLongerActive = $response->isNoLongerActive();
         if ($canSubmitAsNoLongerActive) {
-            $submitLabel = 'Submit survey';
+            $submitLabel = 'international.buttons.submit-survey';
         } elseif (!$detailsComplete) {
-            $submitLabel = 'Add vehicles';
+            $submitLabel = 'international.buttons.add-vehicles';
         } else {
             $submitLabel = null;
         }
@@ -75,7 +75,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
             }
 
             $entityManager->flush();
-            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
+            return $this->redirectToRoute(VehicleController::SUMMARY_ROUTE);
         }
 
         return $this->render('international_survey/correspondence-and-business-details.html.twig', [

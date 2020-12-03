@@ -429,12 +429,16 @@ pre-enquiry:
 
 # International
 international:
+  buttons:
+    add-vehicles: Add Vehicles
+    submit-survey: Submit Survey
+
   correspondence-and-business-details:
-    title: 'Correspondence and Business Details'
+    title: Correspondence and Business Details
   summary:
-    title: 'IRHS Survey summary'
+    title: IRHS Survey summary
   thanks:
-    title: 'Thanks'
+    title: Thanks
 
   survey-response:
     contact-details:

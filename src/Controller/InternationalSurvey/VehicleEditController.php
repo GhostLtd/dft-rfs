@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class VehicleEditController extends AbstractSessionStateWorkflowController
@@ -27,9 +28,14 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/international-survey/vehicles/{registrationMark}/{state}", name=self::WIZARD_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyVehicleStateMachine, Request $request, VehicleRepository $vehicleRepository, string $registrationMark, string $state): Response
+    public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
+                          Request $request,
+                          VehicleRepository $vehicleRepository,
+                          UserInterface $user,
+                          string $registrationMark,
+                          string $state): Response
     {
-        $surveyResponse = $this->getSurveyResponse($this->getUser());
+        $surveyResponse = $this->getSurveyResponse($user);
         $this->vehicle = $vehicleRepository->findOneBy(['registrationMark' => $registrationMark, 'surveyResponse' => $surveyResponse]);
 
         if (!$this->vehicle) {

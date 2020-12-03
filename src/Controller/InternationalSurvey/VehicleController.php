@@ -27,12 +27,10 @@ class VehicleController extends AbstractController
      * @Route("/international-survey/vehicles/", name=self::SUMMARY_ROUTE)
      */
     public function summary(UserInterface $user) {
-        $survey = $this->getSurvey($user);
-        $response = $survey->getResponse();
+        $response = $this->getSurveyResponse($user);
         $vehicles = $response->getVehicles();
 
         return $this->render('international_survey/vehicle/summary.html.twig', [
-            'survey' => $survey,
             'vehicles' => $vehicles,
         ]);
     }
@@ -41,8 +39,7 @@ class VehicleController extends AbstractController
      * @Route("/international-survey/vehicles/{registrationMark}", name=self::VEHICLE_ROUTE)
      */
     public function vehicle(UserInterface $user, string $registrationMark) {
-        $survey = $this->getSurvey($user);
-        $response = $survey->getResponse();
+        $response = $this->getSurveyResponse($user);
 
         if (!$response) {
             throw new AccessDeniedHttpException();
@@ -55,7 +52,6 @@ class VehicleController extends AbstractController
         }
 
         return $this->render('international_survey/vehicle/vehicle.html.twig', [
-            'survey' => $survey,
             'vehicle' => $vehicle,
         ]);
     }

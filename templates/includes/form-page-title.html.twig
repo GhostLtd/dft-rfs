@@ -3,6 +3,6 @@
 {%- if title != "#{translation_prefix}.title" and not title is empty -%}
     {{- title }} - {% else -%}
     {%- if heading != "#{translation_prefix}.heading" and not heading is empty -%}
-    {{- heading }} - {% elseif not form is empty and (form.children | length) == 3 -%}
+    {{- heading }} - {% elseif not form | default(null) is empty and (form.children | length) == 3 -%}
         {{- form.children[(form.children | keys)[0]].vars.label | trans }} - {% endif -%}
 {%- endif -%}

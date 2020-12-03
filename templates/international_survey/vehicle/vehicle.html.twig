@@ -3,7 +3,7 @@
 
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
-    {%- set response = survey.response -%}
+    {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">Vehicle Summary</h1>
 
@@ -22,14 +22,9 @@
             choiceLabel(operationChoices, vehicle.operationType) | trans,
             {(urlVehicleDetails): 'Change'}) }}
 
-        {%- set hasIcon = not ('' ~ vehicle.axleConfiguration ends with '99') -%}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Axle configuration</dt>
-            <dd class="govuk-summary-list__value">
-                {%- if hasIcon -%}
-                    {{- svgIcon("lorry-#{vehicle.axleConfiguration}.svg") }}<br>
-                {%- endif -%}
-                {{ (vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+            <dd class="govuk-summary-list__value">{{ displayAxleConfiguration(vehicle.axleConfiguration) }}</dd>
             <dd class="govuk-summary-list__actions">
                 {{- actionLinks({(urlChangeTrailerConfiguration): 'Change'}) -}}
             </dd>
@@ -46,4 +41,9 @@
             "#{vehicle.carryingCapacity} Kg",
             {(urlChangeVehicleWeight): 'Change'}) }}
     </dl>
+
+    <p class="govuk-body">
+        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::SUMMARY_ROUTE') -%}
+        <a href="{{ url(dashboardRoute) }}">Back to dashboard</a>
+    </p>
 {% endblock %}
