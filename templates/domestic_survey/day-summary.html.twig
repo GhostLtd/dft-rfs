@@ -1,7 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHead, tableCell %}
 
     <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
 
@@ -23,22 +23,14 @@
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
         <table class="govuk-table">
-            <caption class="govuk-table__caption">Legs/stops for this day</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Origin</th>
-                    <th scope="col" class="govuk-table__header">Destination</th>
-                    <th scope="col" class="govuk-table__header">Distance</th>
-                    <th scope="col" class="govuk-table__header">Goods</th>
-                    <th scope="col" class="govuk-table__header"></th>
-                </tr>
-            </thead>
+            {{ tableHead('Legs/stops for this day', ['Origin', 'Destination', 'Distance', 'Goods', ''], {'Distance': {numeric: true}}) }}
             <tbody class="govuk-table__body">
                 {% for stop in day.stops %}
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">{{ stop.originLocation }}{% if stop.goodsLoadedIsPort %} ({{ "domestic.transferred-port.options.#{stop.goodsTransferredFrom}" | trans }}){% endif %}</td>
-                        <td class="govuk-table__cell">{{ stop.destinationLocation }}{% if stop.goodsUnloadedIsPort %} ({{ "domestic.transferred-port.options.#{stop.goodsTransferredTo}" | trans }}){% endif %}</td>
-                        <td class="govuk-table__cell">{{ stop.distanceTravelled }}</td>
+
+                        {{ tableCell(stop.originLocation ~ (stop.goodsLoadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredFrom}" | trans) ~ ")" : '')) }}
+                        {{ tableCell(stop.destinationLocation ~ (stop.goodsUnloadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredTo}" | trans) ~ ")")) }}
+                        {{ tableCell(stop.distanceTravelled, {numeric: true}) }}
                         <td class="govuk-table__cell">
                             {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')
                                 ? stop.goodsDescriptionOther
@@ -49,7 +41,10 @@
                             -}}
                             {%- endif -%}
                         </td>
-                        <td class="govuk-table__cell">{{ actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'}) }}</td>
+                        {{ tableCell(
+                            actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'}),
+                            {actions: true}
+                        ) }}
                     </tr>
                 {% endfor %}
             </tbody>
