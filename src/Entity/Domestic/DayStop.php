@@ -15,6 +15,11 @@ class DayStop
     use StopTrait;
 
     /**
+     * @ORM\Column(type="smallint")
+     */
+    private $number;
+
+    /**
      * @ORM\Column(type="integer")
      */
     private $weightOfGoodsCarried;
@@ -39,6 +44,18 @@ class DayStop
      * @ORM\JoinColumn(nullable=false)
      */
     private $day;
+
+    public function getNumber(): ?int
+    {
+        return $this->number;
+    }
+
+    public function setNumber(int $number): self
+    {
+        $this->number = $number;
+
+        return $this;
+    }
 
     public function getWeightOfGoodsCarried(): ?int
     {

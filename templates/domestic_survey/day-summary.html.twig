@@ -24,7 +24,8 @@
         <h2 class="govuk-heading-m">Detailed day</h2>
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
             {% for stop in day.stops %}
-                {{ summaryListRow("Leg #{loop.index}", "#{stop.originLocation} to #{stop.destinationLocation}") }}
+                {% set actionLinks = {(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'} %}
+                {{ summaryListRow("Leg #{loop.index}", "#{stop.originLocation} to #{stop.destinationLocation}", actionLinks) }}
 {#                {% set limitedActions = {(url('app_domesticsurvey_daystop_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')})): 'Change'} %}#}
 {#                {{ summaryListRow('Capacity limited?', (stop.wasLimitedBySpace ? 'Space' : '') ~ (stop.wasLimitedByWeight ? 'Weight' : ''), limitedActions) }}#}
         {% else %}
