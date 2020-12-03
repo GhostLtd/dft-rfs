@@ -27,12 +27,12 @@ class ValidRegistrationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidRegistration::class);
         }
 
-        if (!$value) {
-            return;
-        }
-
         if ($value instanceof DomesticVehicle || $value instanceof InternationalVehicle) {
             $registrationMark = $value->getRegistrationMark();
+
+            if (!$registrationMark) {
+                return;
+            }
 
             $helper = new RegistrationMarkHelper($registrationMark);
 
@@ -44,11 +44,10 @@ class ValidRegistrationValidator extends ConstraintValidator
             } else if ($value instanceof InternationalVehicle) {
                 /** @var InternationalVehicleRepository $repository */
                 $repository = $this->entityManager->getRepository(InternationalVehicle::class);
-                $responseId = $value->getSurveyResponse()->getId();
 
                 // We don't check whether the vehicle already exists for Domestic as there's a one-to-one mapping
                 // between DomesticSurveyResponse and DomesticVehicle (compared to many-to-one for International)
-                if ($repository->alreadyExists($registrationMark, $responseId)) {
+                if ($repository->registrationMarkAlreadyExists($value)) {
                     $this->context
                         ->buildViolation($constraint->alreadyExistsMessage)
                         ->atPath('registrationMark')

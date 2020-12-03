@@ -4,6 +4,7 @@ namespace App\Entity\Domestic;
 
 use App\Entity\VehicleTrait;
 use App\Entity\Volume;
+use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,6 +18,7 @@ class Vehicle
 
     /**
      * @ORM\Embedded(class=Volume::class)
+     * @AppAssert\ValidVolume(groups={"vehicle_fuel_quantity"})
      */
     private $fuelQuantity;
 

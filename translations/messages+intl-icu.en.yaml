@@ -1,6 +1,14 @@
 service:
   name: Road Freight Statistics
 
+common:
+  vehicle:
+    registration-mark: Registration mark
+    operation-type: Operation type
+    axle-configuration: Axle configuration
+    body-type: Vehicle/trailer body type
+    gross-weight: Gross vehicle weight
+    carrying-capacity: Carrying capacity
 
 unit:
   distance:
@@ -467,10 +475,14 @@ international:
         label: What is the nature of your business?
         help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
   vehicle:
-    vehicle-registration:
-      heading: ''
+    vehicle-details:
+      heading: 'Vehicle Details'
+      help: ''
       registration-mark:
         label: Registration mark of vehicle
+        help: ''
+      operation-type:
+        label: How was the vehicle being operated during the survey week?
         help: ''
     vehicle-trailer-configuration:
       trailer-configuration:

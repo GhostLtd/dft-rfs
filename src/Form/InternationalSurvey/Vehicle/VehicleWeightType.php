@@ -35,6 +35,7 @@ class VehicleWeightType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Vehicle::class,
+            'validation_groups' => ['vehicle_weight'],
         ]);
     }
 }

@@ -1,0 +1,49 @@
+{% set translation_prefix = 'international.summary' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+    {%- set response = survey.response -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">Vehicle Summary</h1>
+
+    {%- set params = {registrationMark: vehicle.registrationMark} -%}
+    {%- set urlVehicleDetails = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params) -%}
+    {%- set urlChangeTrailerConfiguration = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params) -%}
+    {%- set urlChangeVehicleBody = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params) -%}
+    {%- set urlChangeVehicleWeight = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params) -%}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
+        {{ summaryListRow('common.vehicle.registration-mark',
+            vehicle.formattedRegistrationMark,
+            {(urlVehicleDetails): 'Change'}) }}
+        {{ summaryListRow('common.vehicle.operation-type',
+            choiceLabel(operationChoices, vehicle.operationType) | trans,
+            {(urlVehicleDetails): 'Change'}) }}
+
+        {%- set hasIcon = not ('' ~ vehicle.axleConfiguration ends with '99') -%}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Axle configuration</dt>
+            <dd class="govuk-summary-list__value">
+                {%- if hasIcon -%}
+                    {{- svgIcon("lorry-#{vehicle.axleConfiguration}.svg") }}<br>
+                {%- endif -%}
+                {{ (vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+            <dd class="govuk-summary-list__actions">
+                {{- actionLinks({(urlChangeTrailerConfiguration): 'Change'}) -}}
+            </dd>
+        </div>
+
+        {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
+        {{ summaryListRow('common.vehicle.body-type' | trans,
+            choiceLabel(bodyChoices, vehicle.bodyType) | trans,
+            {(urlChangeVehicleBody): 'Change'}) }}
+        {{ summaryListRow('common.vehicle.gross-weight' | trans,
+            "#{vehicle.grossWeight} Kg",
+            {(urlChangeVehicleWeight): 'Change'}) }}
+        {{ summaryListRow('common.vehicle.carrying-capacity' | trans,
+            "#{vehicle.carryingCapacity} Kg",
+            {(urlChangeVehicleWeight): 'Change'}) }}
+    </dl>
+{% endblock %}

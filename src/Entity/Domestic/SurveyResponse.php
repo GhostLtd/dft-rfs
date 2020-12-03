@@ -116,6 +116,13 @@ class SurveyResponse
 
     /**
      * @ORM\OneToOne(targetEntity=Vehicle::class, cascade={"persist"})
+     * @Assert\Valid(groups={
+     *     "vehicle_axle_configuration",
+     *     "vehicle_body_type",
+     *     "vehicle_fuel_quantity",
+     *     "vehicle_trailer_configuration",
+     *     "vehicle_weight",
+     * })
      */
     private $vehicle;
 
