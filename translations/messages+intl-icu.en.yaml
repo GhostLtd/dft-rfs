@@ -37,7 +37,7 @@ domestic:
       packaging: Packaging
       groupage: Groupage
       empty: Empty
-      other-goods: Specific goods / Other (please specify)
+      other-goods: Specific goods / Other
     help:
       empty-container: consignment was an empty freight container
       packaging: consignment was empty pallets, wire cages, roll cages or other packaging
@@ -45,7 +45,7 @@ domestic:
       empty: only if the vehicle carried nothing at all
       other-goods: ''
       # this help text key is intentionally different - see the form structure
-      other: For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+      other: Describe the goods. For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
 
   transferred-port:
     options:
@@ -527,16 +527,28 @@ goods:
     8: <b>8</b> Corrosive substance
     9: <b>9</b> Miscellaneous dangerous goods
   cargo-type:
-    LB: Liquid bulk
-    SB: Solid bulk
-    LFC: Large freight containers, incl. ISO containers
-    OFC: Other freight containers, including stillage’s
-    PL: Palletised goods
-    PS: Pre slung goods
-    NP: No packaging and other mobile units e.g. livestock, cars, plant
-    RC: Roll cages and other mobile units
-    OT: Other cargo types including swap bodies, boxes, crates and cylinders or mixed consignments
-    NS: Empty
+    options:
+      LB: Liquid bulk
+      SB: Solid bulk
+      LFC: Large freight containers
+      OFC: Other freight containers
+      PL: Palletised goods
+      PS: Pre slung goods
+      NP: No packaging and other mobile units
+      RC: Roll cages and other mobile units
+      OT: Other cargo types
+      NS: Empty
+    help:
+      LB: ''
+      SB: ''
+      LFC: 'including ISO containers'
+      OFC: 'including stillage’s'
+      PL: ''
+      PS: ''
+      NP: for example livestock, cars, plant
+      RC: ''
+      OT: 'including swap bodies, boxes, crates and cylinders or mixed consignments'
+      NS: ''
 
 
 

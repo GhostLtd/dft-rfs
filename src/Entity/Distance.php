@@ -29,6 +29,11 @@ class Distance implements ValueUnitInterface
      */
     private $unit;
 
+    public function __toString()
+    {
+        return "{$this->value} {$this->unit}";
+    }
+
     public function getValue(): ?string
     {
         return $this->value;

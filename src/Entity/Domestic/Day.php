@@ -140,7 +140,7 @@ class Day
     }
 
     /**
-     * @return Collection|DayStop[]
+     * @return DayStop[] | ArrayCollection
      */
     public function getStops(): Collection
     {

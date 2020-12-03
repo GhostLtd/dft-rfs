@@ -17,7 +17,7 @@ class CargoType
     const CODE_OT_OTHER_CARGO_TYPES = "OT";
     const CODE_NS_EMPTY = "NS";
 
-    const TRANSLATION_PREFIX = "goods.cargo-type.";
+    const TRANSLATION_PREFIX = "goods.cargo-type.options.";
 
     const CHOICES = [
         self::TRANSLATION_PREFIX . self::CODE_LB_LIQUID_BULK => self::CODE_LB_LIQUID_BULK,

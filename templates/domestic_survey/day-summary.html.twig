@@ -1,7 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks %}
 
     <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
 
@@ -22,20 +22,44 @@
         {% endif %}
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {% for stop in day.stops %}
-                {% set actionLinks = {(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'} %}
-                {{ summaryListRow("Leg #{loop.index}", "#{stop.originLocation} to #{stop.destinationLocation}", actionLinks) }}
-{#                {% set limitedActions = {(url('app_domesticsurvey_daystop_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')})): 'Change'} %}#}
-{#                {{ summaryListRow('Capacity limited?', (stop.wasLimitedBySpace ? 'Space' : '') ~ (stop.wasLimitedByWeight ? 'Weight' : ''), limitedActions) }}#}
-        {% else %}
-            No journey legs have been recorded for this day yet
-        {% endfor %}
-        </dl>
+        <table class="govuk-table">
+            <caption class="govuk-table__caption">Legs/stops for this day</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Origin</th>
+                    <th scope="col" class="govuk-table__header">Destination</th>
+                    <th scope="col" class="govuk-table__header">Distance</th>
+                    <th scope="col" class="govuk-table__header">Goods</th>
+                    <th scope="col" class="govuk-table__header"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for stop in day.stops %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ stop.originLocation }}{% if stop.goodsLoadedIsPort %} ({{ "domestic.transferred-port.options.#{stop.goodsTransferredFrom}" | trans }}){% endif %}</td>
+                        <td class="govuk-table__cell">{{ stop.destinationLocation }}{% if stop.goodsUnloadedIsPort %} ({{ "domestic.transferred-port.options.#{stop.goodsTransferredTo}" | trans }}){% endif %}</td>
+                        <td class="govuk-table__cell">{{ stop.distanceTravelled }}</td>
+                        <td class="govuk-table__cell">
+                            {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')
+                                ? stop.goodsDescriptionOther
+                                : ("domestic.goods-description.options.#{stop.goodsDescription}" | trans)
+                            -}}
+                            {%- if stop.cargoTypeCode | default(false) %} / {{
+                                "goods.cargo-type.options.#{stop.cargoTypeCode}" | trans
+                            -}}
+                            {%- endif -%}
+                        </td>
+                        <td class="govuk-table__cell">{{ actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'}) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <p class="govuk-body">
             {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'Add a leg for this journey') }}
         </p>
     {% endif %}
 
-    {{ buttonLink(url('app_domesticsurvey_index'), 'View survey summary', {class: 'govuk-button--secondary'}) }}
+    <p class="govuk-body">
+        <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>
+    </p>
 {% endblock %}

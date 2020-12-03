@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait CargoTypeTrait
 {
     /**
-     * @ORM\Column(type="string", length=4)
+     * @ORM\Column(type="string", length=4, nullable=true)
      */
     private $cargoTypeCode;
 

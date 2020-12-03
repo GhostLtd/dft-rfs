@@ -12,7 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class DayStop
 {
-    use StopTrait;
+    use StopTrait {
+        setGoodsDescription as traitSetGoodsDescription;
+    }
 
     /**
      * @ORM\Column(type="smallint")
@@ -20,17 +22,17 @@ class DayStop
     private $number;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $weightOfGoodsCarried;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $wasLimitedByWeight;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $wasLimitedBySpace;
 
@@ -62,7 +64,7 @@ class DayStop
         return $this->weightOfGoodsCarried;
     }
 
-    public function setWeightOfGoodsCarried(int $weightOfGoodsCarried): self
+    public function setWeightOfGoodsCarried(?int $weightOfGoodsCarried): self
     {
         $this->weightOfGoodsCarried = $weightOfGoodsCarried;
 
@@ -74,7 +76,7 @@ class DayStop
         return $this->wasLimitedByWeight;
     }
 
-    public function setWasLimitedByWeight(bool $wasLimitedByWeight): self
+    public function setWasLimitedByWeight(?bool $wasLimitedByWeight): self
     {
         $this->wasLimitedByWeight = $wasLimitedByWeight;
 
@@ -101,7 +103,7 @@ class DayStop
         return $this->wasLimitedBySpace;
     }
 
-    public function setWasLimitedBySpace(bool $wasLimitedBySpace): self
+    public function setWasLimitedBySpace(?bool $wasLimitedBySpace): self
     {
         $this->wasLimitedBySpace = $wasLimitedBySpace;
 
@@ -132,6 +134,17 @@ class DayStop
         return $this;
     }
 
+    public function setGoodsDescription(?string $goodsDescription): self
+    {
+        if ($goodsDescription === Day::GOODS_DESCRIPTION_EMPTY) {
+            $this
+                ->setWasLimitedBySpace(null)
+                ->setWasLimitedByWeight(null)
+                ->setWeightOfGoodsCarried(null)
+            ;
+        }
+        return dump($this)->traitSetGoodsDescription($goodsDescription);
+    }
 
     // transition callbacks
     public function transitionGoodsNotUnloadedNICallback()
