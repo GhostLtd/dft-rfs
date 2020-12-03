@@ -3,8 +3,10 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Distance;
+use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\DayStopRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=DayStopRepository::class)
@@ -23,6 +25,8 @@ class DayStop
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-stop.goods-weight"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-stop.goods-weight"})
      */
     private $weightOfGoodsCarried;
 
@@ -38,6 +42,7 @@ class DayStop
 
     /**
      * @ORM\Embedded(class=Distance::class)
+     * @AppAssert\ValidValueUnit(groups={"day-stop.distance-travelled"})
      */
     private $distanceTravelled;
 
@@ -143,7 +148,7 @@ class DayStop
                 ->setWeightOfGoodsCarried(null)
             ;
         }
-        return dump($this)->traitSetGoodsDescription($goodsDescription);
+        return $this->traitSetGoodsDescription($goodsDescription);
     }
 
     // transition callbacks

@@ -1,8 +1,19 @@
 common:
   choice:
     invalid: Choose a valid option
+    not-null: Choose an option
   number:
     invalid: Enter a number
+    not-null: Enter a number
+    positive-or-zero: Must be positive
+  value-unit:
+    unit:
+      not-blank: Choose a unit
+    value:
+      not-blank: Enter a value
+      positive-or-zero: Must be positive
+
+
 
   survey-response:
     business-nature:
@@ -25,12 +36,6 @@ common:
       not-blank: Enter the vehicle's registration mark
       valid: Enter a valid registration mark
       not-exists: You have already added this registration mark to your survey response
-  volume:
-    unit:
-      not-blank: Choose a unit
-    value:
-      not-blank: Enter a value
-      positive: Must be positive
 
 international:
   survey-response:
@@ -44,3 +49,9 @@ pre-enquiry:
   pre-enquiry-response:
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
+
+domestic:
+  day:
+    location.not-blank: Enter the location
+    border-crossing.not-blank: Enter the border crossing point
+    goods-description-other.not-blank: Describe the goods

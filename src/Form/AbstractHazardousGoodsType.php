@@ -38,6 +38,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => HazardousGoodsTrait::class,
+            'validation_groups' => 'hazardous-goods',
         ]);
         $resolver->setRequired(["translation_entity_key"]);
         $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.[change me]']);

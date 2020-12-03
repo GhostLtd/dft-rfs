@@ -28,5 +28,16 @@ abstract class AbstractOriginType extends AbstractType
         ;
     }
 
-    use StopTypeTrait;
+    use StopTypeTrait {
+        configureOptions as traitConfigureOptions;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $this->traitConfigureOptions($resolver);
+
+        $resolver->setDefaults([
+            'validation_groups' => 'origin'
+        ]);
+    }
 }

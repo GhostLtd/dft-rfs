@@ -60,6 +60,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
         $this->traitConfigureOptions($resolver);
         $resolver->setDefaults([
             'is_summary_day' => false,
+            'validation_groups' => 'goods-description',
         ]);
     }
 }

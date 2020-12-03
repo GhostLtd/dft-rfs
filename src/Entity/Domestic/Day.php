@@ -155,9 +155,9 @@ class Day
     public function addStop(DayStop $stop): self
     {
         if (!$this->stops->contains($stop)) {
-            $this->stops[] = $stop;
             $stop->setDay($this);
             $stop->setNumber($this->getNextStopNumber());
+            $this->stops[] = $stop;
         }
 
         return $this;

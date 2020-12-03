@@ -6,6 +6,7 @@ use App\Entity\CargoTypeTrait;
 use App\Entity\Distance;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait StopTrait
 {
@@ -18,36 +19,55 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"origin"})
      */
     private $originLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"destination"})
      */
     private $destinationLocation;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"origin"})
+     */
+    private $goodsLoaded;
+
+    /**
      * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"origin-ports"})
      */
     private $goodsTransferredFrom;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"destination"})
+     */
+    private $goodsUnloaded;
+
+    /**
      * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"destination-ports"})
      */
     private $goodsTransferredTo;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="domestic.day.border-crossing.not-blank", groups={"border-crossing"})
      */
     private $borderCrossingLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"goods-description"})
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
      */
     private $goodsDescriptionOther;
 
@@ -97,13 +117,7 @@ trait StopTrait
 
     public function getGoodsLoaded(): ?bool
     {
-        if (!is_numeric($this->goodsTransferredFrom)) return null;
-        return $this->goodsTransferredFrom > Day::NOT_TRANSFERRED;
-    }
-    public function getGoodsLoadedIsPort(): bool
-    {
-        if (!is_numeric($this->goodsTransferredFrom)) return false;
-        return ($this->goodsTransferredFrom > Day::TRANSFERRED_NONE);
+        return $this->goodsLoaded;
     }
 
     public function setGoodsLoaded(?bool $goodsLoaded): self
@@ -111,7 +125,14 @@ trait StopTrait
         if ($this->getGoodsLoaded() !== $goodsLoaded) {
             $this->goodsTransferredFrom = $goodsLoaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
         }
+        $this->goodsLoaded = $goodsLoaded;
         return $this;
+    }
+
+    public function getGoodsLoadedIsPort(): bool
+    {
+        if (!$this->getGoodsLoaded()) return false;
+        return ($this->goodsTransferredFrom > Day::TRANSFERRED_NONE);
     }
 
     public function getGoodsTransferredTo(): ?int
@@ -128,14 +149,7 @@ trait StopTrait
 
     public function getGoodsUnloaded(): ?bool
     {
-        if (!is_numeric($this->goodsTransferredTo)) return null;
-        return $this->goodsTransferredTo > Day::NOT_TRANSFERRED;
-    }
-
-    public function getGoodsUnloadedIsPort(): bool
-    {
-        if (!is_numeric($this->goodsTransferredTo)) return false;
-        return $this->goodsTransferredTo > Day::TRANSFERRED_NONE;
+        return $this->goodsUnloaded;
     }
 
     public function setGoodsUnloaded(?bool $goodsUnloaded): self
@@ -143,7 +157,14 @@ trait StopTrait
         if ($this->getGoodsUnloaded() !== $goodsUnloaded) {
             $this->goodsTransferredTo = $goodsUnloaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
         }
+        $this->goodsUnloaded = $goodsUnloaded;
         return $this;
+    }
+
+    public function getGoodsUnloadedIsPort(): bool
+    {
+        if (!$this->getGoodsUnloaded()) return false;
+        return $this->goodsTransferredTo > Day::TRANSFERRED_NONE;
     }
 
     public function getBorderCrossingLocation(): ?string
