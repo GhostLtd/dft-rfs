@@ -26,6 +26,7 @@ class ScrappedDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'validation_groups' => 'scrapped_details',
         ]);
     }
 }

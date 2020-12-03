@@ -2,6 +2,7 @@
 
 namespace App\Form\Validator;
 
+use App\Entity\Address;
 use App\Entity\ValueUnitInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -10,31 +11,30 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-class ValidValueUnitValidator extends ConstraintValidator
+class ValidAddressValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof ValidValueUnit) {
-            throw new UnexpectedTypeException($constraint, ValidValueUnit::class);
+        if (!$constraint instanceof ValidAddress) {
+            throw new UnexpectedTypeException($constraint, ValidAddress::class);
         }
 
         if (!$value) {
             return;
         }
 
-        if (!$value instanceof ValueUnitInterface) {
-            throw new UnexpectedValueException($value, ValueUnitInterface::class);
+        if (!$value instanceof Address) {
+            throw new UnexpectedValueException($value, Address::class);
         }
 
         $validator = $this->context->getValidator()->inContext($this->context);
 
-        $validator->atPath('value')->validate($value->getValue(), [
-            new NotBlank(['message' => $constraint->valueBlankMessage]),
-            new PositiveOrZero(['message' => $constraint->valuePositiveMessage]),
+        $validator->atPath('line1')->validate($value->getLine1(), [
+            new NotBlank(['message' => $constraint->line1BlankMessage]),
         ], ['Default']);
 
-        $validator->atPath('unit')->validate($value->getUnit(), [
-            new NotBlank(['message' => $constraint->unitBlankMessage]),
+        $validator->atPath('postcode')->validate($value->getPostcode(), [
+            new NotBlank(['message' => $constraint->postcodeBlankMessage]),
         ], ['Default']);
     }
 }

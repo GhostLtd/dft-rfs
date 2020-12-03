@@ -6,16 +6,31 @@ common:
     invalid: Enter a number
     not-null: Enter a number
     positive-or-zero: Must be positive
+    positive: Must be positive
   value-unit:
     unit:
       not-blank: Choose a unit
     value:
       not-blank: Enter a value
       positive-or-zero: Must be positive
-
+  address:
+    line-1:
+      not-blank: Enter a value
+    postcode:
+      not-blank: Enter a postcode
+  email:
+    invalid: Enter a valid email address
+    not-blank: Enter an email address
+  telephone:
+    not-blank: Enter a phone number
+  date:
+    not-null: Enter a date
+    invalid: Enter a valid date
 
 
   survey-response:
+    name:
+      not-blank: Enter a name
     business-nature:
       not-blank: Enter the nature of your business
   vehicle:

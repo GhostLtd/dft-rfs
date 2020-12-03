@@ -26,7 +26,7 @@ class DayStop
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\NotNull(message="common.number.not-null", groups={"day-stop.goods-weight"})
-     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-stop.goods-weight"})
+     * @Assert\Positive(message="common.number.positive", groups={"day-stop.goods-weight"})
      */
     private $weightOfGoodsCarried;
 

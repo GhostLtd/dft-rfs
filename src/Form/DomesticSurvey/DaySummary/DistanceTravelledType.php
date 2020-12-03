@@ -51,6 +51,7 @@ class DistanceTravelledType extends AbstractType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'data_class' => DaySummary::class,
+            'validation_groups' => 'day-summary.distance-travelled',
         ]);
     }
 }

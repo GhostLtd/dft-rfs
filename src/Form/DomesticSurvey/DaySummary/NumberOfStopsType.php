@@ -37,6 +37,7 @@ class NumberOfStopsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DaySummary::class,
+            'validation_groups' => 'day-summary.number-of-stops',
         ]);
     }
 }
