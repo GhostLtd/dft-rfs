@@ -62,50 +62,13 @@ trait VehicleTrait
      * @Assert\Callback(groups={"vehicle_weight"})
      */
     public function validateWeight(ExecutionContextInterface $context) {
-        if ($this->carryingCapacity >= $this->grossWeight) {
+        if ($this->carryingCapacity !== null && $this->carryingCapacity >= $this->grossWeight) {
             $context
                 ->buildViolation('common.vehicle.carrying-capacity.not-more-than-gross-weight')
                 ->atPath('carryingCapacity')
                 ->addViolation();
         }
     }
-
-//    /**
-//     * @Assert\Callback(groups={"vehicle_trailer"})
-//     */
-//    public function validateTrailerConfiguration(ExecutionContextInterface $context) {
-//        $trailerConfiguration = $this->getTrailerConfiguration();
-//
-//        if (!$trailerConfiguration) {
-//            // Symfony's built-in validators will stop us from choosing an option not on the list, so we only
-//            // need to concern ourselves with the case where nothing is selected.
-//
-//            // N.B. We can't just attach a NotBlank to the $axleConfiguration above, as the error won't be attached
-//            //      correctly to the form field since its name differs
-//            $context
-//                ->buildViolation('common.vehicle.trailer-configuration.not-blank')
-//                ->atPath('trailerConfiguration')
-//                ->addViolation();
-//        }
-//    }
-//
-//    /**
-//     * @Assert\Callback(groups={"vehicle_axle_configuration"})
-//     */
-//    public function validateAxleConfiguration(ExecutionContextInterface $context) {
-//        $axleConfiguration = $this->getAxleConfiguration();
-//
-//        $axleChoice = $axleConfiguration ? $axleConfiguration % 100 : null;
-//
-//        dump([$axleConfiguration, $axleChoice]);
-//
-//        if (!$axleConfiguration || !$axleChoice) {
-//            $context
-//                ->buildViolation('common.vehicle.axle-configuration.not-blank')
-//                ->atPath('axleConfiguration')
-//                ->addViolation();
-//        }
-//    }
 
     public function getId(): ?int
     {
