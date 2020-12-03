@@ -3,6 +3,19 @@ common:
     business-nature:
       not-blank: Enter the nature of your business
   vehicle:
+    axle-configuration:
+      not-blank: Choose the axle configuration of the vehicle
+    body-type:
+      not-blank: Choose the type of body this vehicle has
+    carrying-capacity:
+      not-blank: Enter the vehicle's carrying capacity
+      not-more-than-gross-weight: Enter a weight less than the vehicle's gross weight
+    gross-weight:
+      not-blank: Enter the vehicle's gross weight
+    operation-type:
+      not-blank: Choose how this vehicle was being operated during the survey period
+    trailer-configuration:
+      not-blank: Choose the type of vehicle
     vehicle-registration:
       not-blank: Enter the vehicle's registration mark
       valid: Enter a valid registration mark

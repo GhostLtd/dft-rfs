@@ -45,11 +45,12 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
-            "translation_entity_key",
+            'translation_entity_key',
         ]);
 
         $resolver->setDefaults([
-            'property_path' => 'axleConfiguration',
+            'property_path' => null,
+            'validation_groups' => ['vehicle_axle_configuration'],
         ]);
 
         $resolver->setAllowedValues("translation_entity_key", ['domestic.survey-response', 'international.vehicle']);

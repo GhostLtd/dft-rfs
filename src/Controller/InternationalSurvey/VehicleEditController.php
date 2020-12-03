@@ -25,7 +25,7 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
     protected $vehicle;
 
     /**
-     * @Route("/international-survey/vehicle/{registrationMark}/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/international-survey/vehicles/{registrationMark}/{state}", name=self::WIZARD_ROUTE)
      */
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine, Request $request, VehicleRepository $vehicleRepository, string $registrationMark, string $state): Response
     {

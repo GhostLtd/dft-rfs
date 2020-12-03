@@ -60,6 +60,7 @@ class Vehicle
     public function mergeVehicleChanges(Vehicle $vehicle)
     {
         $this->setRegistrationMark($vehicle->getRegistrationMark());
+        $this->setOperationType($vehicle->getOperationType());
         $this->setTrailerConfiguration($vehicle->getTrailerConfiguration());
         $this->setAxleConfiguration($vehicle->getAxleConfiguration());
         $this->setBodyType($vehicle->getBodyType());

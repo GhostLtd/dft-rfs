@@ -34,7 +34,7 @@ class VehicleDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => InternationalVehicle::class,
-            'validation_groups' => ['vehicle_registration'],
+            'validation_groups' => ['vehicle_registration', 'vehicle_operation_type'],
         ]);
     }
 }

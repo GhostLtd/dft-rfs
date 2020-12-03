@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait VehicleTrait
 {
@@ -23,28 +24,88 @@ trait VehicleTrait
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.gross-weight.not-blank")
      */
     private $grossWeight;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.carrying-capacity.not-blank")
      */
     private $carryingCapacity;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_operation_type"}, message="common.vehicle.operation-type.not-blank")
      */
     private $operationType;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_trailer_configuration"}, message="common.vehicle.trailer-configuration.not-blank")
+     */
+    private $trailerConfiguration;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_axle_configuration"}, message="common.vehicle.axle-configuration.not-blank")
      */
     private $axleConfiguration;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\NotBlank(groups={"vehicle_body_type"}, message="common.vehicle.body-type.not-blank")
      */
     private $bodyType;
+
+    /**
+     * @Assert\Callback(groups={"vehicle_weight"})
+     */
+    public function validateWeight(ExecutionContextInterface $context) {
+        if ($this->carryingCapacity >= $this->grossWeight) {
+            $context
+                ->buildViolation('common.vehicle.carrying-capacity.not-more-than-gross-weight')
+                ->atPath('carryingCapacity')
+                ->addViolation();
+        }
+    }
+
+//    /**
+//     * @Assert\Callback(groups={"vehicle_trailer"})
+//     */
+//    public function validateTrailerConfiguration(ExecutionContextInterface $context) {
+//        $trailerConfiguration = $this->getTrailerConfiguration();
+//
+//        if (!$trailerConfiguration) {
+//            // Symfony's built-in validators will stop us from choosing an option not on the list, so we only
+//            // need to concern ourselves with the case where nothing is selected.
+//
+//            // N.B. We can't just attach a NotBlank to the $axleConfiguration above, as the error won't be attached
+//            //      correctly to the form field since its name differs
+//            $context
+//                ->buildViolation('common.vehicle.trailer-configuration.not-blank')
+//                ->atPath('trailerConfiguration')
+//                ->addViolation();
+//        }
+//    }
+//
+//    /**
+//     * @Assert\Callback(groups={"vehicle_axle_configuration"})
+//     */
+//    public function validateAxleConfiguration(ExecutionContextInterface $context) {
+//        $axleConfiguration = $this->getAxleConfiguration();
+//
+//        $axleChoice = $axleConfiguration ? $axleConfiguration % 100 : null;
+//
+//        dump([$axleConfiguration, $axleChoice]);
+//
+//        if (!$axleConfiguration || !$axleChoice) {
+//            $context
+//                ->buildViolation('common.vehicle.axle-configuration.not-blank')
+//                ->atPath('axleConfiguration')
+//                ->addViolation();
+//        }
+//    }
 
     public function getId(): ?int
     {
@@ -107,27 +168,14 @@ trait VehicleTrait
 
     public function getTrailerConfiguration(): ?int
     {
-        if (is_numeric($this->axleConfiguration))
-        {
-            // get the root category
-            return floor($this->axleConfiguration / 100) * 100;
-        }
-        return $this->axleConfiguration;
+        return $this->trailerConfiguration;
     }
 
     public function setTrailerConfiguration(?int $trailerConfiguration): self
     {
-        if ($trailerConfiguration !== $this->getTrailerConfiguration())
-        {
-            // we're changing trailer configuration, so axle configuration should be reset.
-            $this->axleConfiguration = $trailerConfiguration;
-        }
-        return $this;
-    }
+        $this->trailerConfiguration = $trailerConfiguration;
 
-    public function getTrailerGroup()
-    {
-        return $this->getAxleConfiguration() ? 100 * floor($this->getAxleConfiguration() / 100) : null;
+        return $this;
     }
 
     public function getAxleConfiguration(): ?int

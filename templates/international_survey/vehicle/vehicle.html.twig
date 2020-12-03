@@ -21,9 +21,15 @@
         {{ summaryListRow('common.vehicle.operation-type',
             choiceLabel(operationChoices, vehicle.operationType) | trans,
             {(urlVehicleDetails): 'Change'}) }}
+
+        {%- set hasIcon = not ('' ~ vehicle.axleConfiguration ends with '99') -%}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Axle configuration</dt>
-            <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{vehicle.axleConfiguration}.svg") }}<br>{{ (vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+            <dd class="govuk-summary-list__value">
+                {%- if hasIcon -%}
+                    {{- svgIcon("lorry-#{vehicle.axleConfiguration}.svg") }}<br>
+                {%- endif -%}
+                {{ (vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
             <dd class="govuk-summary-list__actions">
                 {{- actionLinks({(urlChangeTrailerConfiguration): 'Change'}) -}}
             </dd>
