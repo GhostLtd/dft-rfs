@@ -75,7 +75,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
             }
 
             $entityManager->flush();
-            return $this->redirectToRoute(VehicleController::SUMMARY_ROUTE);
+            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
         }
 
         return $this->render('international_survey/correspondence-and-business-details.html.twig', [

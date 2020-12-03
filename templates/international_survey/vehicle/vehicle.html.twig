@@ -43,7 +43,7 @@
     </dl>
 
     <p class="govuk-body">
-        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::SUMMARY_ROUTE') -%}
+        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
         <a href="{{ url(dashboardRoute) }}">Back to dashboard</a>
     </p>
 {% endblock %}

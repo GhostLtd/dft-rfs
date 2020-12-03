@@ -123,6 +123,8 @@
             ) | trim
         })
     } %}
-    <td class="{{ options.class }}">{{ value }}</td>
+    <td class="{{ options.class }}"
+            {%- if options.colSpan | default(false) %} colspan="{{ options.colSpan }}"{% endif -%}
+    >{{ value }}</td>
     {% endwith %}
 {%- endmacro %}

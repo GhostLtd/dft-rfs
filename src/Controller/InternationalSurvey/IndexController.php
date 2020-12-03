@@ -26,7 +26,6 @@ class IndexController extends AbstractController
      */
     public function index(UserInterface $user) {
         $survey = $this->getSurvey($user);
-        $response = $survey->getResponse();
 
         if ($survey->getSubmissionDate()) {
             return $this->render('international_survey/thanks.html.twig');
@@ -36,12 +35,17 @@ class IndexController extends AbstractController
             return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
         }
 
+        $response = $survey->getResponse();
+
         if (!$response->isInitialDetailsSignedOff()) {
             return $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE);
         }
 
+        $vehicles = $response->getVehicles();
+
         return $this->render('international_survey/summary.html.twig', [
-            'survey' => $survey,
+            'response' => $response,
+            'vehicles' => $vehicles,
         ]);
     }
 }

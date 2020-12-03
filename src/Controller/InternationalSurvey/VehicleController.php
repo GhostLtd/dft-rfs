@@ -24,18 +24,6 @@ class VehicleController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey/vehicles/", name=self::SUMMARY_ROUTE)
-     */
-    public function summary(UserInterface $user) {
-        $response = $this->getSurveyResponse($user);
-        $vehicles = $response->getVehicles();
-
-        return $this->render('international_survey/vehicle/summary.html.twig', [
-            'vehicles' => $vehicles,
-        ]);
-    }
-
-    /**
      * @Route("/international-survey/vehicles/{registrationMark}", name=self::VEHICLE_ROUTE)
      */
     public function vehicle(UserInterface $user, string $registrationMark) {
