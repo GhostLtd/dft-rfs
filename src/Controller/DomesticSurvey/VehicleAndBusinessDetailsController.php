@@ -49,7 +49,7 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
             $formWizard->setSubject($response);
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-        $formWizard->getSubject()->setVehicle(dump($this->entityManager->merge($formWizard->getSubject()->getVehicle())));
+        $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
         $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
 
         return $formWizard;
