@@ -4,6 +4,7 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
@@ -38,12 +39,14 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
+
+        $survey = $user->getDomesticSurvey();
+        $response = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
+
         /** @var VehicleAndBusinessDetailsState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new VehicleAndBusinessDetailsState());
         if (is_null($formWizard->getSubject())) {
-            $survey = $user->getDomesticSurvey();
-            $formWizard->setSubject($survey->getResponse());
-
+            $formWizard->setSubject($response);
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
         $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));

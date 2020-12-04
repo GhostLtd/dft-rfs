@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\VehicleController;
 use App\Entity\Domestic\Day;
 use App\Workflow\DomesticSurvey\DayStopState as StateObject;
 use Doctrine\Migrations\Version\State;
@@ -84,7 +85,10 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'transitionWhenCallback' => 'isGoodsDescriptionEmptyOption',
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => [
+                                'routeName' => 'app_domesticsurvey_day_view',
+                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            ],
                         ],
                         'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
                         'to' =>  StateObject::STATE_END,
@@ -106,7 +110,10 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => [
+                                'routeName' => 'app_domesticsurvey_day_view',
+                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            ],
                         ],
                         'from' => StateObject::STATE_GOODS_WEIGHT,
                         'to' =>  StateObject::STATE_END,

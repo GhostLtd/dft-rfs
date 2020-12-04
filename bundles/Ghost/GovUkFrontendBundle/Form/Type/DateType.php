@@ -23,7 +23,10 @@ class DateType extends ExtendedDateType
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefault('widget', 'text');
+        $resolver->setDefaults([
+            'widget' => 'text',
+            'invalid_message' => 'common.date.invalid',
+        ]);
         $resolver->setAllowedValues('widget', ['text']);
 
         $resolver->setDefault('format', 'dd-MM-yyyy');

@@ -41,6 +41,7 @@ class GoodsWeightType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DayStop::class,
+            'validation_groups' => 'day-stop.goods-weight'
         ]);
     }
 }

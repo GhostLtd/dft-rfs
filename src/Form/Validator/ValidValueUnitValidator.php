@@ -2,7 +2,7 @@
 
 namespace App\Form\Validator;
 
-use App\Entity\Volume;
+use App\Entity\ValueUnitInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
@@ -10,20 +10,20 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-class ValidVolumeValidator extends ConstraintValidator
+class ValidValueUnitValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof ValidVolume) {
-            throw new UnexpectedTypeException($constraint, ValidVolume::class);
+        if (!$constraint instanceof ValidValueUnit) {
+            throw new UnexpectedTypeException($constraint, ValidValueUnit::class);
         }
 
         if (!$value) {
             return;
         }
 
-        if (!$value instanceof Volume) {
-            throw new UnexpectedValueException($value, 'Volume');
+        if (!$value instanceof ValueUnitInterface) {
+            throw new UnexpectedValueException($value, ValueUnitInterface::class);
         }
 
         $validator = $this->context->getValidator()->inContext($this->context);

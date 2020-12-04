@@ -83,10 +83,8 @@ class DayStopController extends AbstractSessionStateWorkflowController
             // check legNumber (add / number)
             if ($this->legNumber === 'add') {
                 $day->addStop($dayStop = new DayStop());
-                dump($dayStop);
             } else {
-                $dayStop = $day->getStopByNumber(dump($this->legNumber));
-                dump($dayStop);
+                $dayStop = $day->getStopByNumber($this->legNumber);
             }
             $formWizard->setSubject($dayStop);
             $this->setFormWizard($formWizard);

@@ -58,6 +58,14 @@ domestic:
       8: Rail depot / terminal
       16: Airport
 
+  number-of-employees:
+    1-9: '1 - 9'
+    10-49: '10 - 49'
+    50-249: '50 - 249'
+    250-499: '250 - 499'
+    500-10000: '500 - 10,000'
+    10001-30000: '10001 - 30,000'
+    '>30000': 'More than 30,000'
 
   survey-response:
 

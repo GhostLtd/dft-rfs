@@ -29,6 +29,7 @@ class InPossessionOfVehicleType extends AbstractType implements WorkflowChoiceFo
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'validation_groups' => 'domestic.in-possession'
         ]);
     }
 }

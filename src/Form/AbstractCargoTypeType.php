@@ -43,6 +43,7 @@ abstract class AbstractCargoTypeType extends AbstractType
         $resolver->setDefaults([
             'data_class' => CargoTypeTrait::class,
             'is_summary_day' => false,
+            'validation_groups' => 'cargo-type',
         ]);
         $resolver->setRequired(["translation_entity_key", "translation_namespace_key"]);
         $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);

@@ -6,6 +6,7 @@ use App\Entity\Domestic\Day;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractDestinationPortsType extends AbstractType
 {
@@ -23,5 +24,16 @@ abstract class AbstractDestinationPortsType extends AbstractType
         ;
     }
 
-    use StopTypeTrait;
+    use StopTypeTrait {
+        configureOptions as traitConfigureOptions;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $this->traitConfigureOptions($resolver);
+
+        $resolver->setDefaults([
+            'validation_groups' => 'destination-ports',
+        ]);
+    }
 }

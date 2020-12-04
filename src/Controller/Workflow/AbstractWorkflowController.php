@@ -58,7 +58,10 @@ abstract class AbstractWorkflowController extends AbstractController
             {
                 $formWizard->setState($state);
             } else {
-                throw new LogicException('invalid state');
+                // possibly combination of back link and history back
+                // send them to the last allowable history || initial place
+                return $this->getRedirectUrl($formWizard->getPreviousHistoryState() ?? $stateMachine->getDefinition()->getInitialPlaces()[0]);
+//                throw new LogicException('invalid state');
             }
         }
 

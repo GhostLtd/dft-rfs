@@ -15,6 +15,7 @@ gds.initAll();
 import './styles/app.scss';
 
 
+/*
 document.addEventListener('click', function (event) {
     // If the clicked element doesn't have the right selector, bail
     if (!event.target.matches('.govuk-back-link')) return;
@@ -25,3 +26,4 @@ document.addEventListener('click', function (event) {
     // Log the clicked element in the console
     window.history.back();
 }, false);
+*/

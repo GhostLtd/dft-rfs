@@ -5,6 +5,8 @@ namespace App\Entity\Domestic;
 use App\Entity\Distance;
 use App\Repository\Domestic\DaySummaryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\Validator as AppAssert;
 
 /**
  * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
@@ -16,41 +18,54 @@ class DaySummary
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"day-summary.furthest-stop"})
      */
     private $furthestStop;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-summary.goods-weight"})
      */
     private $weightOfGoodsLoaded;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-summary.goods-weight"})
      */
     private $weightOfGoodsUnloaded;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-summary.number-of-stops"})
      */
     private $numberOfStopsLoading;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-summary.number-of-stops"})
      */
     private $numberOfStopsUnloading;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"day-summary.number-of-stops"})
      */
     private $numberOfStopsLoadingAndUnloading;
 
     /**
      * @ORM\Embedded(class=Distance::class)
+     * @AppAssert\ValidValueUnit(groups={"day-summary.distance-travelled"})
      */
     private $distanceTravelledLoaded;
 
     /**
      * @ORM\Embedded(class=Distance::class)
+     * @AppAssert\ValidValueUnit(groups={"day-summary.distance-travelled"})
      */
     private $distanceTravelledUnloaded;
 

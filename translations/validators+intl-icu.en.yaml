@@ -1,10 +1,36 @@
 common:
   choice:
     invalid: Choose a valid option
+    not-null: Choose an option
   number:
     invalid: Enter a number
+    not-null: Enter a number
+    positive-or-zero: Must be positive
+    positive: Must be positive
+  value-unit:
+    unit:
+      not-blank: Choose a unit
+    value:
+      not-blank: Enter a value
+      positive-or-zero: Must be positive
+  address:
+    line-1:
+      not-blank: Enter a value
+    postcode:
+      not-blank: Enter a postcode
+  email:
+    invalid: Enter a valid email address
+    not-blank: Enter an email address
+  telephone:
+    not-blank: Enter a phone number
+  date:
+    not-null: Enter a date
+    invalid: Enter a valid date
+
 
   survey-response:
+    name:
+      not-blank: Enter a name
     business-nature:
       not-blank: Enter the nature of your business
   vehicle:
@@ -14,7 +40,7 @@ common:
       not-blank: Choose the type of body this vehicle has
     carrying-capacity:
       not-blank: Enter the vehicle's carrying capacity
-      not-more-than-gross-weight: Enter a weight less than the vehicle's gross weight
+      not-more-than-gross-weight: Carrying capcity cannot be more than the vehicle's gross weight
     gross-weight:
       not-blank: Enter the vehicle's gross weight
     operation-type:
@@ -25,12 +51,6 @@ common:
       not-blank: Enter the vehicle's registration mark
       valid: Enter a valid registration mark
       not-exists: You have already added this registration mark to your survey response
-  volume:
-    unit:
-      not-blank: Choose a unit
-    value:
-      not-blank: Enter a value
-      positive: Must be positive
 
 international:
   survey-response:
@@ -44,3 +64,9 @@ pre-enquiry:
   pre-enquiry-response:
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
+
+domestic:
+  day:
+    location.not-blank: Enter the location
+    border-crossing.not-blank: Enter the border crossing point
+    goods-description-other.not-blank: Describe the goods
