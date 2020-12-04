@@ -15,11 +15,6 @@ class NumberOfStopsType extends AbstractType
     {
         $translationKeyPrefix = "domestic.day-summary.number-of-stops";
         $builder
-            ->add('numberOfStopsLoadingAndUnloading', Gds\NumberType::class, [
-                'label' => "{$translationKeyPrefix}.number-of-stops-both.label",
-                'help' => "{$translationKeyPrefix}.number-of-stops-both.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
-            ])
             ->add('numberOfStopsLoading', Gds\NumberType::class, [
                 'label' => "{$translationKeyPrefix}.number-of-stops-loading.label",
                 'help' => "{$translationKeyPrefix}.number-of-stops-loading.help",
@@ -28,6 +23,11 @@ class NumberOfStopsType extends AbstractType
             ->add('numberOfStopsUnloading', Gds\NumberType::class, [
                 'label' => "{$translationKeyPrefix}.number-of-stops-unloading.label",
                 'help' => "{$translationKeyPrefix}.number-of-stops-unloading.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+            ->add('numberOfStopsLoadingAndUnloading', Gds\NumberType::class, [
+                'label' => "{$translationKeyPrefix}.number-of-stops-both.label",
+                'help' => "{$translationKeyPrefix}.number-of-stops-both.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;

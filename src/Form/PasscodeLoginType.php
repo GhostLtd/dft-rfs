@@ -7,10 +7,21 @@ use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PasscodeLoginType extends AbstractType
 {
+    /**
+     * @var KernelInterface
+     */
+    private $kernel;
+
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -41,6 +52,9 @@ class PasscodeLoginType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.passcode',
+            'attr' => [
+                'autocomplete' => $this->kernel->getEnvironment() !== 'dev' ? 'off' : null,
+            ],
         ]);
     }
 }

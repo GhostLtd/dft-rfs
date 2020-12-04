@@ -6,7 +6,7 @@
     {% set businessDetailsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')})): 'Change'} %}
     {{ summaryListRow(
         'domestic.survey-response.business-details.number-of-employees.label' | trans,
-        domesticSurvey.response.numberOfEmployees,
+        "domestic.number-of-employees.#{domesticSurvey.response.numberOfEmployees}" | trans,
         businessDetailsActionLinks) }}
     {{ summaryListRow(
         'domestic.survey-response.business-details.business-nature.label' | trans,

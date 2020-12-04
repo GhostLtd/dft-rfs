@@ -15,10 +15,11 @@ class BusinessDetailsType extends AbstractType
     {
         $translationKeyPrefix = "domestic.survey-response.business-details";
         $builder
-            ->add('numberOfEmployees', Gds\NumberType::class, [
+            ->add('numberOfEmployees', Gds\ChoiceType::class, [
+                'choices' => SurveyResponse::EMPLOYEES_CHOICES,
                 'label' => "{$translationKeyPrefix}.number-of-employees.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-5'],
+//                'attr' => ['class' => 'govuk-input--width-5'],
                 'help' => "{$translationKeyPrefix}.number-of-employees.help",
             ])
             ->add('businessNature', Gds\InputType::class, [
@@ -41,6 +42,7 @@ class BusinessDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'validation_groups' => ['business_details', 'vehicle_operation_type'],
         ]);
     }
 }
