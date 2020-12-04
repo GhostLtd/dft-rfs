@@ -3,7 +3,6 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\CargoTypeTrait;
-use App\Entity\Distance;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,8 +10,8 @@ trait StopTrait
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid", unique=true)
      */
     private $id;
 
@@ -54,7 +53,7 @@ trait StopTrait
     use HazardousGoodsTrait;
     use CargoTypeTrait;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

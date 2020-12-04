@@ -13,8 +13,8 @@ class Stop
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid", unique=true)
      */
     private $id;
 
@@ -39,7 +39,7 @@ class Stop
      */
     private $number;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

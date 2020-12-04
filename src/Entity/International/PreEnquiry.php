@@ -14,8 +14,8 @@ class PreEnquiry
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid", unique=true)
      */
     private $id;
 
@@ -45,7 +45,7 @@ class PreEnquiry
      */
     private $company;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
