@@ -62,9 +62,14 @@ class CargoStateDataMapper implements DataMapperInterface
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $accessor->setValue($viewData, "{$this->direction}WasEmpty", $forms['wasEmpty']->getData());
+        $wasEmpty = $forms['wasEmpty']->getData();
+        $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
 
-        $wasLimitedBy = $forms['wasLimitedBy']->getData();
+        // Naughty, but forcing both wasLimitedBy fields to be false, if wasEmpty
+        // (In any case, that part of the form will be hidden, if wasEmpty was chosen)
+        $wasLimitedBy = $wasEmpty ?
+            [] :
+            $forms['wasLimitedBy']->getData();
 
         $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", in_array('space', $wasLimitedBy));
         $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", in_array('weight', $wasLimitedBy));

@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -113,19 +114,29 @@ class Trip
      * @Assert\Callback (groups={"trip_outbound_cargo_state"})
      */
     public function validateOutboundCargoState(ExecutionContextInterface $context) {
-        if ($this->outboundWasEmpty === null) {
-            $context->buildViolation('international.trip.outbound-was-empty.not-null')
-                ->atPath('wasEmpty')
-                ->addViolation();
-        }
+        $this->validateCargoState($context, 'outbound');
     }
 
     /**
      * @Assert\Callback (groups={"trip_return_cargo_state"})
      */
     public function validateReturnCargoState(ExecutionContextInterface $context) {
-        if ($this->returnWasEmpty === null) {
-            $context->buildViolation('international.trip.return-was-empty.not-null')
+        $this->validateCargoState($context, 'return');
+    }
+
+    protected function validateCargoState(ExecutionContextInterface $context, string $direction) {
+        $accessor = PropertyAccess::createPropertyAccessor();
+
+        $wasEmpty = $accessor->getValue($this, "{$direction}WasEmpty");
+        $wasLimitedBySpace = $accessor->getValue($this, "{$direction}WasLimitedBySpace");
+        $wasLimitedByWeight = $accessor->getValue($this, "{$direction}WasLimitedByWeight");
+
+        if ($wasEmpty === null) {
+            $context->buildViolation("international.trip.{$direction}-was-empty.not-null")
+                ->atPath('wasEmpty')
+                ->addViolation();
+        } else if ($wasEmpty && ($wasLimitedByWeight || $wasLimitedBySpace)) {
+            $context->buildViolation("international.trip.{$direction}-was-empty.cannot-be-both")
                 ->atPath('wasEmpty')
                 ->addViolation();
         }

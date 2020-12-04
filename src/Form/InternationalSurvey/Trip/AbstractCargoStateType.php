@@ -43,9 +43,13 @@ abstract class AbstractCargoStateType extends AbstractType
             ->add("wasEmpty", Gds\ChoiceType::class, [
                 'label' => "{$emptyPrefix}.label",
                 'help' => "{$emptyPrefix}.help",
-                'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => self::CHOICES,
+                'choice_options' => [
+                    self::CHOICE_NO => [
+                        'conditional_form_name' => 'wasLimitedBy',
+                    ],
+                ],
             ])
             ->add('wasLimitedBy', LimitedByType::class, [
                 'label' => "{$limitedPrefix}.label",

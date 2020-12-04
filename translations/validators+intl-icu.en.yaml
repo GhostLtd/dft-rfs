@@ -62,8 +62,10 @@ international:
   trip:
     outbound-was-empty:
       not-null: Choose an option
+      cannot-be-both: Vehicle cannot be both empty and full
     return-was-empty:
       not-null: Choose an option
+      cannot-be-both: Vehicle cannot be both empty and full
 
 pre-enquiry:
   pre-enquiry-response:
