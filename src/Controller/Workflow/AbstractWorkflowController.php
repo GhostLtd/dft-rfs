@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -227,6 +226,9 @@ abstract class AbstractWorkflowController extends AbstractController
                 } else {
                     $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
                 }
+            } else {
+                dump($formWizard->getSubject());
+                $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
             }
         } else {
             $form = $this->createFormBuilder()->getForm();

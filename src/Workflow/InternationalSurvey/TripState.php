@@ -3,7 +3,9 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\Trip;
+use App\Form\InternationalSurvey\Trip\OutboundCargoStateType;
 use App\Form\InternationalSurvey\Trip\OutboundPortsType;
+use App\Form\InternationalSurvey\Trip\ReturnCargoStateType;
 use App\Form\InternationalSurvey\Trip\ReturnPortsType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
@@ -23,6 +25,8 @@ class TripState extends AbstractFormWizardState implements FormWizardInterface
     private const FORM_MAP = [
         self::STATE_REQUEST_TRIP_OUTBOUND_PORTS => OutboundPortsType::class,
         self::STATE_REQUEST_TRIP_RETURN_PORTS => ReturnPortsType::class,
+        self::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE => OutboundCargoStateType::class,
+        self::STATE_REQUEST_TRIP_RETURN_CARGO_STATE => ReturnCargoStateType::class,
     ];
 
     private const TEMPLATE_MAP = [

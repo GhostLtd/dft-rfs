@@ -2,9 +2,8 @@
 
 namespace App\Form\DomesticSurvey\DayStop;
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
-use App\Entity\Domestic\DaySummary;
+use App\Form\LimitedByType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,15 +23,10 @@ class GoodsWeightType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'suffix' => 'kg',
             ])
-            ->add('wasLimitedBy', Gds\ChoiceType::class, [
-                'multiple' => true,
+            ->add('wasLimitedBy', LimitedByType::class, [
                 'label' => "{$translationKeyPrefix}.was-limited-by.label",
                 'help' => "{$translationKeyPrefix}.was-limited-by.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => [
-                    'At capacity by weight' => 'weight',
-                    'At capacity by space' => 'space',
-                ]
             ])
         ;
     }

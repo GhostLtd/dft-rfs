@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
@@ -108,6 +109,28 @@ class Trip
      */
     private $vehicle;
 
+    /**
+     * @Assert\Callback (groups={"trip_outbound_cargo_state"})
+     */
+    public function validateOutboundCargoState(ExecutionContextInterface $context) {
+        if ($this->outboundWasEmpty === null) {
+            $context->buildViolation('international.trip.outbound-was-empty.not-null')
+                ->atPath('wasEmpty')
+                ->addViolation();
+        }
+    }
+
+    /**
+     * @Assert\Callback (groups={"trip_return_cargo_state"})
+     */
+    public function validateReturnCargoState(ExecutionContextInterface $context) {
+        if ($this->returnWasEmpty === null) {
+            $context->buildViolation('international.trip.return-was-empty.not-null')
+                ->atPath('wasEmpty')
+                ->addViolation();
+        }
+    }
+
     public function __construct()
     {
         $this->stops = new ArrayCollection();
@@ -183,7 +206,7 @@ class Trip
         return $this->outboundWasEmpty;
     }
 
-    public function setOutboundWasEmpty(bool $outboundWasEmpty): self
+    public function setOutboundWasEmpty(?bool $outboundWasEmpty): self
     {
         $this->outboundWasEmpty = $outboundWasEmpty;
 
@@ -255,7 +278,7 @@ class Trip
         return $this->returnWasEmpty;
     }
 
-    public function setReturnWasEmpty(bool $returnWasEmpty): self
+    public function setReturnWasEmpty(?bool $returnWasEmpty): self
     {
         $this->returnWasEmpty = $returnWasEmpty;
 

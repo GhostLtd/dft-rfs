@@ -59,6 +59,11 @@ international:
       not-negative: Enter a positive number
     fewer-than-ten-employees:
       not-null: Choose an option
+  trip:
+    outbound-was-empty:
+      not-null: Choose an option
+    return-was-empty:
+      not-null: Choose an option
 
 pre-enquiry:
   pre-enquiry-response:

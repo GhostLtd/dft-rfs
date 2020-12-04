@@ -6,6 +6,10 @@ common:
     boolean:
       yes: Yes
       no: No
+  limited-by:
+    choices:
+      space: At capacity by space
+      weight: At capacity by weight
   vehicle:
     registration-mark: Registration mark
     operation-type: Operation type
@@ -532,11 +536,15 @@ international:
         label: Foreign port of arrival
         help: ''
     outbound-cargo-state:
-      heading: Outbound trip - from the UK
-      help: ''
+      cargo-state:
+        label: Outbound trip - from the UK
+        help: ''
       was-empty:
         label: Was your vehicle empty?
         help: ''
+      was-limited:
+        label: Was your vehicle at full capacity?
+        help: 'Select the answers which best describe the load'
     return-ports:
       heading: Return trip - to the UK
       help: ''
@@ -547,11 +555,15 @@ international:
         label: UK port of arrival
         help: ''
     return-cargo-state:
-      heading: Return trip - to the UK
-      help: ''
+      cargo-state:
+        label: Return trip - to the UK
+        help: ''
       was-empty:
         label: Was your vehicle empty?
         help: ''
+      was-limited:
+        label: Was your vehicle at full capacity?
+        help: 'Select the answers which best describe the load'
     distance:
       heading: Trip distance
       help: ''
