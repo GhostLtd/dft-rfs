@@ -2,8 +2,12 @@
 
 namespace App\Repository\Domestic;
 
+use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +23,25 @@ class SurveyResponseRepository extends ServiceEntityRepository
         parent::__construct($registry, SurveyResponse::class);
     }
 
+    /**
+     * @param Survey $survey
+     * @param $dayNumber
+     * @return DaySummary
+     * @throws NonUniqueResultException
+     */
+    public function getBySurvey(Survey $survey)
+    {
+        return $this->createQueryBuilder('survey_response')
+            ->select('survey_response, vehicle')
+            ->leftJoin('survey_response.vehicle', 'vehicle')
+            ->leftJoin('survey_response.days', 'days')
+            ->andWhere('survey_response.survey = :survey')
+            ->setParameters([
+                'survey' => $survey,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     // /**
     //  * @return DomesticSurveyResponse[] Returns an array of DomesticSurveyResponse objects
     //  */
