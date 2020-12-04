@@ -7,7 +7,7 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">Vehicle Summary</h1>
 
-    {%- set params = {id: vehicle.id} -%}
+    {%- set params = {vehicleId: vehicle.id} -%}
     {%- set urlVehicleDetails = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params) -%}
     {%- set urlChangeTrailerConfiguration = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params) -%}
     {%- set urlChangeVehicleBody = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params) -%}
@@ -68,8 +68,8 @@
 
     <p class="govuk-body">
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
-        {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
-        <a href="{{ url(addTripRoute) }}" class="govuk-button">Add Trip</a>
+        {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
+        <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button">Add Trip</a>
         <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">Back to dashboard</a>
     </p>
 {% endblock %}

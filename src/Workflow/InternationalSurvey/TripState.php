@@ -2,8 +2,9 @@
 
 namespace App\Workflow\InternationalSurvey;
 
-use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
+use App\Form\InternationalSurvey\Trip\OutboundPortsType;
+use App\Form\InternationalSurvey\Trip\ReturnPortsType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
@@ -11,28 +12,29 @@ use InvalidArgumentException;
 class TripState extends AbstractFormWizardState implements FormWizardInterface
 {
     const STATE_REQUEST_TRIP_OUTBOUND_PORTS = 'outbound-ports';
-    const STATE_REQUEST_TRIP_OUTBOUND_CARGO = 'outbound-cargo';
+    const STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE = 'outbound-cargo-state';
     const STATE_REQUEST_TRIP_RETURN_PORTS = 'return-ports';
-    const STATE_REQUEST_TRIP_RETURN_CARGO = 'return-cargo';
+    const STATE_REQUEST_TRIP_RETURN_CARGO_STATE = 'return-cargo-state';
     const STATE_REQUEST_TRIP_DISTANCE = 'distance';
     const STATE_REQUEST_TRIP_TRANSITTED_COUNTRIES = 'transitted-countries';
 
     const STATE_SUMMARY = 'summary';
 
     private const FORM_MAP = [
-
+        self::STATE_REQUEST_TRIP_OUTBOUND_PORTS => OutboundPortsType::class,
+        self::STATE_REQUEST_TRIP_RETURN_PORTS => ReturnPortsType::class,
     ];
 
     private const TEMPLATE_MAP = [
         self::STATE_REQUEST_TRIP_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
-        self::STATE_REQUEST_TRIP_OUTBOUND_CARGO => 'international_survey/trip/form-outbound-cargo.html.twig',
+        self::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE => 'international_survey/trip/form-outbound-cargo-state.html.twig',
         self::STATE_REQUEST_TRIP_RETURN_PORTS => 'international_survey/trip/form-return-ports.html.twig',
-        self::STATE_REQUEST_TRIP_RETURN_CARGO => 'international_survey/trip/form-return-cargo.html.twig',
+        self::STATE_REQUEST_TRIP_RETURN_CARGO_STATE => 'international_survey/trip/form-return-cargo-state.html.twig',
         self::STATE_REQUEST_TRIP_DISTANCE => 'international_survey/trip/form-distance.html.twig',
-        self::STATE_REQUEST_TRIP_TRANSITTED_COUNTRIES => 'international_survey/trip/form-transitted.html.twig',
+        self::STATE_REQUEST_TRIP_TRANSITTED_COUNTRIES => 'international_survey/trip/form-transitted-countries.html.twig',
     ];
 
-    /** @var SurveyResponse */
+    /** @var Trip */
     private $subject;
 
     public function getSubject()
@@ -42,8 +44,8 @@ class TripState extends AbstractFormWizardState implements FormWizardInterface
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === SurveyResponse::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        if (!get_class($subject) === Trip::class) {
+            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . Trip::class);
         }
         $this->subject = $subject;
         return $this;

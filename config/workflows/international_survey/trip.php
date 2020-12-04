@@ -17,9 +17,9 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_REQUEST_TRIP_OUTBOUND_PORTS,
-                    StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO,
+                    StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
                     StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
-                    StateObject::STATE_REQUEST_TRIP_RETURN_CARGO,
+                    StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
                     StateObject::STATE_REQUEST_TRIP_DISTANCE,
                     StateObject::STATE_REQUEST_TRIP_TRANSITTED_COUNTRIES,
 
@@ -28,18 +28,18 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'outbound ports entered' => [
                         'from' => StateObject::STATE_REQUEST_TRIP_OUTBOUND_PORTS,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO,
+                        'to' =>  StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
                     ],
                     'outbound cargo entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO,
+                        'from' => StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
                         'to' =>  StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
                     ],
                     'return ports entered' => [
                         'from' => StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_RETURN_CARGO,
+                        'to' =>  StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
                     ],
                     'return cargo entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_RETURN_CARGO,
+                        'from' => StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
                         'to' =>  StateObject::STATE_REQUEST_TRIP_DISTANCE,
                     ],
                     'distance entered' => [

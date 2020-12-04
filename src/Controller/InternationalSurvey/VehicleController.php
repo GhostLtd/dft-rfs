@@ -23,16 +23,16 @@ class VehicleController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey/vehicles/{id}", name=self::VEHICLE_ROUTE)
+     * @Route("/international-survey/vehicles/{vehicleId}", name=self::VEHICLE_ROUTE)
      */
-    public function vehicle(UserInterface $user, string $id) {
+    public function vehicle(UserInterface $user, string $vehicleId) {
         $response = $this->getSurveyResponse($user);
 
         if (!$response) {
             throw new AccessDeniedHttpException();
         }
 
-        $vehicle = $this->vehicleRepository->findByIdAndSurveyResponse($id, $response);
+        $vehicle = $this->vehicleRepository->findByIdAndSurveyResponse($vehicleId, $response);
 
         if (!$vehicle) {
             throw new NotFoundHttpException();

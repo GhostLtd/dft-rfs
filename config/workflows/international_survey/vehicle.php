@@ -51,7 +51,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => [
                                 'routeName' => VehicleController::VEHICLE_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
+                                'parameterMappings' => ['vehicleId' => 'id'],
                             ],
                         ],
                         'from' => StateObject::STATE_REQUEST_VEHICLE_WEIGHT,
@@ -67,7 +67,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => [
                                 'routeName' => VehicleController::VEHICLE_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
+                                'parameterMappings' => ['vehicleId' => 'id'],
                             ],
                         ],
                         'from' => StateObject::STATE_CHANGE_VEHICLE_DETAILS,
@@ -87,7 +87,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => [
                                 'routeName' => VehicleController::VEHICLE_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
+                                'parameterMappings' => ['vehicleId' => 'id'],
                             ],
                         ],
                         'from' => StateObject::STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION,
@@ -103,7 +103,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => [
                                 'routeName' => VehicleController::VEHICLE_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
+                                'parameterMappings' => ['vehicleId' => 'id'],
                             ],
                         ],
                         'from' => StateObject::STATE_CHANGE_VEHICLE_BODY,
@@ -119,7 +119,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => [
                                 'routeName' => VehicleController::VEHICLE_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
+                                'parameterMappings' => ['vehicleId' => 'id'],
                             ],
                         ],
                         'from' => StateObject::STATE_CHANGE_VEHICLE_WEIGHT,

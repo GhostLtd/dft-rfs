@@ -2,6 +2,10 @@ service:
   name: Road Freight Statistics
 
 common:
+  choices:
+    boolean:
+      yes: Yes
+      no: No
   vehicle:
     registration-mark: Registration mark
     operation-type: Operation type
@@ -509,7 +513,43 @@ international:
       carrying-capacity:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
-
+  trip:
+    outbound-ports:
+      heading: Outbound trip - from the UK
+      help: ''
+      uk-port:
+        label: UK port of departure
+        help: ''
+      foreign-port:
+        label: Foreign port of arrival
+        help: ''
+    outbound-cargo-state:
+      heading: Outbound trip - from the UK
+      help: ''
+      was-empty:
+        label: Was your vehicle empty?
+        help: ''
+    return-ports:
+      heading: Return trip - to the UK
+      help: ''
+      foreign-port:
+        label: Foreign port of departure
+        help: ''
+      uk-port:
+        label: UK port of arrival
+        help: ''
+    return-cargo-state:
+      heading: Return trip - to the UK
+      help: ''
+      was-empty:
+        label: Was your vehicle empty?
+        help: ''
+    distance:
+      heading: Trip distance
+      help: ''
+    transitted-countries:
+      heading: Transitted countries
+      help: ''
 
 goods:
   hazardous:

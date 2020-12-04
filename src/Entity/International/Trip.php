@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
@@ -29,8 +30,15 @@ class Trip
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"trip_outbound_ports"})
      */
     private $outboundUkPort;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"trip_outbound_ports"})
+     */
+    private $outboundForeignPort;
 
     /**
      * @ORM\Column(type="boolean")
@@ -54,11 +62,13 @@ class Trip
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"trip_return_ports"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"trip_return_ports"})
      */
     private $returnUkPort;
 
@@ -128,6 +138,18 @@ class Trip
     public function setOutboundUkPort(string $outboundUkPort): self
     {
         $this->outboundUkPort = $outboundUkPort;
+
+        return $this;
+    }
+
+    public function getOutboundForeignPort(): ?string
+    {
+        return $this->outboundForeignPort;
+    }
+
+    public function setOutboundForeignPort(string $outboundForeignPort): self
+    {
+        $this->outboundForeignPort = $outboundForeignPort;
 
         return $this;
     }

@@ -11,6 +11,6 @@
 
     <p class="govuk-body">
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-        <a href="{{ url(dashboardRoute, {id: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back to vehicle summary</a>
+        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back to vehicle summary</a>
     </p>
 {% endblock %}
