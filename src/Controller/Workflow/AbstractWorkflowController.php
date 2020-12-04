@@ -148,7 +148,7 @@ abstract class AbstractWorkflowController extends AbstractController
         if ($metadata['persist'] ?? false)
         {
             if (!$this->entityManager->contains($formWizard->getSubject())) {
-                throw new Exception("Subject not managed by ORM");
+                $this->entityManager->persist($formWizard->getSubject());
             };
             $this->entityManager->flush();
         }

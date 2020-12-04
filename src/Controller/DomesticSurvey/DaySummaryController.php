@@ -3,13 +3,9 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
-use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
-use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
-use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,10 +53,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
         if ($formWizard->getSubject()->getId()) {
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
             $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
-        } else {
-            $this->entityManager->persist($formWizard->getSubject());
         }
-        $formWizard->getSubject();
 
         return $formWizard;
     }

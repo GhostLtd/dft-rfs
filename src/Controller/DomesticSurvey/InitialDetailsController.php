@@ -3,7 +3,6 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\PasscodeUser;
@@ -58,8 +57,6 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         if ($formWizard->getSubject()->getId()) {
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
             $formWizard->setSubject($this->getDoctrine()->getManager()->merge($formWizard->getSubject()));
-        } else {
-            $this->entityManager->persist($formWizard->getSubject());
         }
 
         return $formWizard;
