@@ -149,6 +149,7 @@ class Day
 
     public function getNextStopNumber()
     {
+        if (empty($this->stops)) return 1;
         return $this->stops->last()->getNumber() + 1;
     }
 
