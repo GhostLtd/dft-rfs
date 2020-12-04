@@ -26,17 +26,17 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
     protected $vehicle;
 
     /**
-     * @Route("/international-survey/vehicles/{registrationMark}/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/international-survey/vehicles/{id}/{state}", name=self::WIZARD_ROUTE)
      */
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,
                           VehicleRepository $vehicleRepository,
                           UserInterface $user,
-                          string $registrationMark,
+                          string $id,
                           string $state): Response
     {
         $surveyResponse = $this->getSurveyResponse($user);
-        $this->vehicle = $vehicleRepository->findOneBy(['registrationMark' => $registrationMark, 'surveyResponse' => $surveyResponse]);
+        $this->vehicle = $vehicleRepository->findByIdAndSurveyResponse($id, $surveyResponse);
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();
@@ -59,6 +59,6 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['registrationMark' => $this->vehicle->getRegistrationMark(), 'state' => $state]);
+        return $this->redirectToRoute(self::WIZARD_ROUTE, ['id' => $this->vehicle->getId(), 'state' => $state]);
     }
 }

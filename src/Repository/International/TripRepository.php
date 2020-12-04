@@ -2,8 +2,10 @@
 
 namespace App\Repository\International;
 
+use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +21,24 @@ class TripRepository extends ServiceEntityRepository
         parent::__construct($registry, Trip::class);
     }
 
-    // /**
-    //  * @return InternationalTrip[] Returns an array of InternationalTrip objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findOneByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Trip
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        try {
+            return $this->createQueryBuilder('t')
+                ->select('t,v,r')
+                ->leftJoin('t.vehicle', 'v')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->where('t.id = :id')
+                ->andWhere('r = :response')
+                ->getQuery()
+                ->setParameters([
+                    'id' => $id,
+                    'response' => $response,
+                ])
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            // Not that this can ever happen, since we're querying by id!
+            return null;
+        }
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?InternationalTrip
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

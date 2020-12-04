@@ -1,0 +1,16 @@
+{% set translation_prefix = 'international.trip-summary' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
+    {%- from 'macros.html.twig' import displayAxleConfiguration -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">Trip Summary</h1>
+
+    <p>...</p>
+
+    <p class="govuk-body">
+        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
+        <a href="{{ url(dashboardRoute, {id: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back to vehicle summary</a>
+    </p>
+{% endblock %}

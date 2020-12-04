@@ -2,8 +2,10 @@
 
 namespace App\Repository\International;
 
+use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
@@ -56,32 +58,23 @@ class VehicleRepository extends ServiceEntityRepository
         return $count > 0;
     }
 
-    // /**
-    //  * @return InternationalVehicle[] Returns an array of InternationalVehicle objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Vehicle
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        try {
+            return $this->createQueryBuilder('v')
+                ->select('v,r,t')
+                ->leftJoin('v.trips', 't')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->where('v.id = :id')
+                ->andWhere('r = :response')
+                ->getQuery()
+                ->setParameters([
+                    'id' => $id,
+                    'response' => $response,
+                ])
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?InternationalVehicle
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -5,6 +5,8 @@ namespace App\Entity\International;
 use App\Entity\VehicleTrait;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\VehicleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,9 +26,14 @@ class Vehicle
     private $surveyResponse;
 
     /**
-     * @ORM\OneToOne(targetEntity=Trip::class, mappedBy="vehicle", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity=Trip::class, mappedBy="vehicle")
      */
-    private $trip;
+    private $trips;
+
+    public function __construct()
+    {
+        $this->trips = new ArrayCollection();
+    }
 
     public function getSurveyResponse(): ?SurveyResponse
     {
@@ -40,18 +47,31 @@ class Vehicle
         return $this;
     }
 
-    public function getTrip(): ?Trip
+    /**
+     * @return Collection|Trip[]
+     */
+    public function getTrips(): Collection
     {
-        return $this->trip;
+        return $this->trips;
     }
 
-    public function setTrip(Trip $trip): self
+    public function addTrip(Trip $trip): self
     {
-        $this->trip = $trip;
-
-        // set the owning side of the relation if necessary
-        if ($trip->getVehicle() !== $this) {
+        if (!$this->trips->contains($trip)) {
+            $this->trips[] = $trip;
             $trip->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrip(Trip $trip): self
+    {
+        if ($this->trips->removeElement($trip)) {
+            // set the owning side to null (unless already changed)
+            if ($trip->getVehicle() === $this) {
+                $trip->setVehicle(null);
+            }
         }
 
         return $this;

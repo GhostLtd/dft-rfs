@@ -2,17 +2,18 @@
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">Vehicle Summary</h1>
 
-    {%- set params = {registrationMark: vehicle.registrationMark} -%}
+    {%- set params = {id: vehicle.id} -%}
     {%- set urlVehicleDetails = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params) -%}
     {%- set urlChangeTrailerConfiguration = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params) -%}
     {%- set urlChangeVehicleBody = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params) -%}
     {%- set urlChangeVehicleWeight = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params) -%}
 
+    <h2 class="page-heading__heading govuk-heading-l">Basic Details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
         {{ summaryListRow('common.vehicle.registration-mark',
@@ -42,8 +43,33 @@
             {(urlChangeVehicleWeight): 'Change'}) }}
     </dl>
 
+    <h2 class="page-heading__heading govuk-heading-l">Trips</h2>
+
+    <table class="govuk-table">
+        {{ tableHead(false, ['Outward trip', 'Return trip', 'Status', '']) }}
+        <tbody class="govuk-table__body">
+        {%- for trip in vehicle.trips %}
+            <tr class="govuk-table__row">
+                {%- set tripRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
+                {%- set viewContents = actionLinks({(url(tripRoute, {id: trip.id})): 'View'}) -%}
+
+                {{ tableCell('-') }}
+                {{ tableCell('-') }}
+                {{ tableCell('-') }}
+                {{ tableCell(viewContents, {actions: true}) }}
+            </tr>
+        {% else %}
+            <tr class="govuk-table__row">
+                {{ tableCell('No trips', {colSpan: 4}) }}
+            </tr>
+        {%- endfor %}
+        </tbody>
+    </table>
+
     <p class="govuk-body">
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
-        <a href="{{ url(dashboardRoute) }}">Back to dashboard</a>
+        {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        <a href="{{ url(addTripRoute) }}" class="govuk-button">Add Trip</a>
+        <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">Back to dashboard</a>
     </p>
 {% endblock %}

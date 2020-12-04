@@ -93,7 +93,7 @@ class Trip
     private $countriesTransitted = [];
 
     /**
-     * @ORM\OneToOne(targetEntity=Vehicle::class, inversedBy="trip", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Vehicle::class, inversedBy="trips")
      * @ORM\JoinColumn(nullable=false)
      */
     private $vehicle;
@@ -299,7 +299,7 @@ class Trip
         return $this->vehicle;
     }
 
-    public function setVehicle(Vehicle $vehicle): self
+    public function setVehicle(?Vehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
 

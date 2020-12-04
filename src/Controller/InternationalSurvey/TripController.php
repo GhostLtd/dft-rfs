@@ -2,28 +2,28 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Repository\International\VehicleRepository;
+use App\Repository\International\TripRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class VehicleController extends AbstractController
+class TripController extends AbstractController
 {
     use SurveyHelperTrait;
 
-    public const VEHICLE_ROUTE = 'app_internationalsurvey_vehicle_view';
+    public const TRIP_ROUTE = 'app_internationalsurvey_trip_view';
 
-    protected $vehicleRepository;
+    protected $tripRepository;
 
-    public function __construct(VehicleRepository $vehicleRepository)
+    public function __construct(TripRepository $tripRepository)
     {
-        $this->vehicleRepository = $vehicleRepository;
+        $this->tripRepository = $tripRepository;
     }
 
     /**
-     * @Route("/international-survey/vehicles/{id}", name=self::VEHICLE_ROUTE)
+     * @Route("/international-survey/trips/{id}", name=self::TRIP_ROUTE)
      */
     public function vehicle(UserInterface $user, string $id) {
         $response = $this->getSurveyResponse($user);
@@ -32,14 +32,14 @@ class VehicleController extends AbstractController
             throw new AccessDeniedHttpException();
         }
 
-        $vehicle = $this->vehicleRepository->findByIdAndSurveyResponse($id, $response);
+        $trip = $this->tripRepository->findOneByIdAndSurveyResponse($id, $response);
 
-        if (!$vehicle) {
+        if (!$trip) {
             throw new NotFoundHttpException();
         }
 
-        return $this->render('international_survey/vehicle/vehicle.html.twig', [
-            'vehicle' => $vehicle,
+        return $this->render('international_survey/trip/trip.html.twig', [
+            'trip' => $trip,
         ]);
     }
 }

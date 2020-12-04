@@ -25,7 +25,7 @@
             {%- for vehicle in vehicles %}
             <tr class="govuk-table__row">
                 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-                {%- set viewContents = actionLinks({(url(vehicleRoute, {registrationMark: vehicle.registrationMark})): 'View'}) -%}
+                {%- set viewContents = actionLinks({(url(vehicleRoute, {id: vehicle.id})): 'View'}) -%}
 
                 {{ tableCell(vehicle.formattedRegistrationMark) }}
                 {{ tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) }}
