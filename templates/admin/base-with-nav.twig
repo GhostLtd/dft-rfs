@@ -1,0 +1,18 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block content -%}
+    {% apply spaceless %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-menu">
+            {% block adminMenu %}
+                <p class="govuk-body">Menu</p>
+            {% endblock %}
+        </div>
+        <div class="govuk-grid-column-content">
+            {% block adminContent %}
+                <p class="govuk-body">Content</p>
+            {% endblock %}
+        </div>
+    </div>
+    {% endapply %}
+{%- endblock %}

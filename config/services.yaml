@@ -23,6 +23,9 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    App\Security\FileUserProvider:
+        arguments:
+            $usersFile: '%env(resolve:ADMIN_USERS_PASSWORD_FILE)%'
 
 
     # controllers are imported separately to make sure services can be injected

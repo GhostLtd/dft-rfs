@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{%- import '@GhostGovUkFrontend/components/macros.html.twig' as govuk -%}
+
+{% block header %}
+    {% block headerBar %}
+        {{ govuk.header({
+            serviceName: ('service.name' | trans)
+        }) }}
+    {% endblock %}
+{% endblock %}
+
+{% block head -%}
+    {{ parent() }}
+    {{ encore_entry_link_tags('admin') }}
+{%- endblock %}
+
+{% block bodyEnd %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('admin') }}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
