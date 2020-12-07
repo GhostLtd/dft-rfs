@@ -52,9 +52,7 @@ class PasscodeLoginType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.passcode',
-            'attr' => [
-                'autocomplete' => $this->kernel->getEnvironment() !== 'dev' ? 'off' : null,
-            ],
         ]);
+        if ($this->kernel->getEnvironment() !== 'dev') $resolver->setDefault('attr', ['autocomplete' => 'off']);
     }
 }

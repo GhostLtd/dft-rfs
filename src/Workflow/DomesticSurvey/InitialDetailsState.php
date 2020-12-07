@@ -21,7 +21,7 @@ class InitialDetailsState extends AbstractFormWizardState implements FormWizardI
     const STATE_ASK_HIREE_DETAILS = 'hiree-details';
     const STATE_ASK_SCRAPPED_DETAILS = 'scrapped-details';
     const STATE_ASK_SOLD_DETAILS = 'sold-details';
-    const STATE_SUMMARY = 'summary';
+    const STATE_END = 'end';
     const STATE_CHANGE_CONTACT_DETAILS = 'change-contact-details';
 
     private const FORM_MAP = [
