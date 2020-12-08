@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
+use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
@@ -36,7 +37,8 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
-            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');})
+            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
+            new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
         ];
     }
 

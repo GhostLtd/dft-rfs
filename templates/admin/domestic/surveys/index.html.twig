@@ -17,7 +17,7 @@
                 {{ tableCell(survey.response ? "domestic.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
 {#                {{ tableCell(survey.response., {}) }}#}
 {#                {{ tableCell(survey., {}) }}#}
-                {{ tableCell(actionLinks({(url('admin_index')): 'details'}), {}) }}
+                {{ tableCell(actionLinks({(url('admin_domestic_surveydetails', app.request.get('_route_params') | default({}) | merge({survey: survey.id}))): 'details'}), {}) }}
             </tr>
         {% endfor %}
         </tbody>
