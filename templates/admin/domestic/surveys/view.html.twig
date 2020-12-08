@@ -1,0 +1,32 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+    <h1 class="govuk-heading-l">Survey</h1>
+{#
+
+    <table class="govuk-table">
+        {{ tableHead('Surveys unordered', ['User', 'Start date', 'Reg Mark', 'In Posession', 'Business nature', 'Employees', ''], {}) }}
+        <tbody class="govuk-table__body">
+        {% for survey in surveys %}
+            <tr class="govuk-table__row">
+                {{ tableCell(survey.passcodeUser.username, {}) }}
+                {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}
+                {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
+                {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
+                {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
+                {{ tableCell(survey.response ? "domestic.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
+#}
+{#                {{ tableCell(survey.response., {}) }}#}{#
+
+#}
+{#                {{ tableCell(survey., {}) }}#}{#
+
+                {{ tableCell(actionLinks({(url('admin_index')): 'details'}), {}) }}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+#}
+
+{% endblock %}

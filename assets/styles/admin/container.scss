@@ -31,6 +31,6 @@ html.govuk-template {
     width: $menuWidth;
   }
   > .govuk-grid-column-content {
-    width: calc(100% - #{$menuWidth} - (4 * #{gutter}));
+    width: calc(100% - #{$menuWidth} - (4 * #{$gutter}));
   }
 }
