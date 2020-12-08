@@ -21,6 +21,18 @@ class SurveyRepository extends ServiceEntityRepository
         parent::__construct($registry, Survey::class);
     }
 
+    /**
+     * @return Survey[]
+     */
+    public function findAllWithResponseAndVehicle()
+    {
+        return $this->createQueryBuilder('survey')
+            ->leftJoin('survey.passcodeUser', 'passcode_user')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.vehicle', 'vehicle')
+            ->getQuery()
+            ->execute();
+    }
 
     // /**
     //  * @return Survey[] Returns an array of Survey objects

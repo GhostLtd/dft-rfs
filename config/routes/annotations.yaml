@@ -1,6 +1,15 @@
-controllers:
+front_end:
     resource: ../../src/Controller/
+    exclude:
+        - ../../src/Controller/Admin/
     type: annotation
+    host: '%frontend_hostname%.%base_domain%'
+
+admin:
+    resource: ../../src/Controller/Admin/
+    type: annotation
+    host: '%admin_hostname%.%base_domain%'
+#    name_prefix: admin_
 
 kernel:
     resource: ../../src/Kernel.php

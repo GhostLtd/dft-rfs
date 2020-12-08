@@ -7,6 +7,7 @@ use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
+use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
@@ -36,6 +37,8 @@ class AppExtension extends AbstractExtension
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('lcfirst', 'lcfirst'),
             new TwigFilter('ucfirst', 'ucfirst'),
+            new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
+            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');})
         ];
     }
 
@@ -47,6 +50,11 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
         ];
+    }
+
+    public function formatRegMark($regMark)
+    {
+        return (new RegistrationMarkHelper($regMark))->getFormattedRegistrationMark();
     }
 
     public function svgIcon(string $icon)

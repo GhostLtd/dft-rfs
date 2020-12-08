@@ -2,21 +2,28 @@ security:
     encoders:
         App\Entity\PasscodeUser:
             algorithm: auto
+        Symfony\Component\Security\Core\User\User:
+            algorithm: auto
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        passcode_user_provider:
+        passcode:
             entity:
                 class: App\Entity\PasscodeUser
                 property: username
+        passwd_file:
+            id: App\Security\FileUserProvider
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            host: '^%frontend_hostname%\.%base_domain%$'
+#            pattern: ^/(domestic|international)-survey/
             anonymous: lazy
-            provider: passcode_user_provider
+            provider: passcode
             guard:
                 authenticators:
                     - App\Security\PasscodeAuthenticator
@@ -25,6 +32,17 @@ security:
                 # where to redirect after logout
                 # target: app_any_route
                 target: app_login
+
+        admin:
+            host: '^%admin_hostname%\.%base_domain%$'
+            anonymous: lazy
+            provider: passwd_file
+            guard:
+                authenticators:
+                    - App\Security\AdminFormAuthenticator
+            logout:
+                path: admin_logout
+                target: admin_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -35,11 +53,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/domestic-survey$, roles: ROLE_DOMESTIC_SURVEY_USER }
-        - { path: ^/domestic-survey/, roles: ROLE_DOMESTIC_SURVEY_USER }
+        ## Front end
+        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/domestic-survey$, roles: ROLE_DOMESTIC_SURVEY_USER }
+        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/domestic-survey/, roles: ROLE_DOMESTIC_SURVEY_USER }
 
-        - { path: ^/international-survey$, roles: ROLE_INTERNATIONAL_SURVEY_USER }
-        - { path: ^/international-survey/, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/international-survey$, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/international-survey/, roles: ROLE_INTERNATIONAL_SURVEY_USER }
 
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        ## Admin
+        - { host: '^%admin_hostname%\.%base_domain%$', path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { host: '^%admin_hostname%\.%base_domain%$', roles: ROLE_ADMIN_USER }
