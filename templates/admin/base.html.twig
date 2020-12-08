@@ -4,7 +4,7 @@
 {% block header %}
     {% block headerBar %}
         {{ govuk.header({
-            serviceName: ('service.name' | trans)
+            serviceName: ('service.name' | trans) ~ ' Admin'
         }) }}
     {% endblock %}
 {% endblock %}

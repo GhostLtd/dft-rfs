@@ -16,7 +16,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 /**
  * Class MemorySecurityController
  * @package App\Controller
- * @route("/admin")
  */
 class FileSecurityController extends AbstractController
 {
