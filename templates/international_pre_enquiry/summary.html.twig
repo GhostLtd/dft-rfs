@@ -14,12 +14,13 @@
         {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_CHANGE_COMPANY_NAME') -%}
         {%- set urlVehicleQuestions = wizardUrl('pre-enquiry', 'STATE_CHANGE_VEHICLE_QUESTIONS') -%}
         {%- set urlEmployeesAndInternationalJourneys = wizardUrl('pre-enquiry', 'STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS') -%}
+        {%- set change = 'common.actions.change'|trans -%}
 
-        {{ gdsComponents.summaryListRow('Company name', response.companyName, {(urlCompanyName): 'Change'}) }}
-        {{ gdsComponents.summaryListRow("Total vehicle count\n(> 3.5 tonnes gross)", response.totalVehicleCount, {(urlVehicleQuestions): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Vehicles used to conduct international journeys', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Employee count', response.employeeCount, {(urlEmployeesAndInternationalJourneys): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('International journey estimate (Annual)', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): 'Change'}) }}
+        {{ gdsComponents.summaryListRow('Company name', response.companyName, {(urlCompanyName): change}) }}
+        {{ gdsComponents.summaryListRow("Total vehicle count\n(> 3.5 tonnes gross)", response.totalVehicleCount, {(urlVehicleQuestions): change}) }}
+        {{ gdsComponents.summaryListRow('Vehicles used to conduct international journeys', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): change}) }}
+        {{ gdsComponents.summaryListRow('Employee count', response.employeeCount, {(urlEmployeesAndInternationalJourneys): change}) }}
+        {{ gdsComponents.summaryListRow('International journey estimate (Annual)', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): change}) }}
     </dl>
 
     <h2 class="govuk-heading-m">Correspondence details</h2>
@@ -27,10 +28,10 @@
         {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CHANGE_CORRESPONDENCE_DETAILS') -%}
         {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CHANGE_CORRESPONDENCE_ADDRESS') -%}
 
-        {{ gdsComponents.summaryListRow('Name', response.correspondenceName, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Email', response.email, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Phone', response.phone, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Address', response.correspondenceAddress, {(urlCorrespondenceAddress): 'Change'}) }}
+        {{ gdsComponents.summaryListRow('Name', response.correspondenceName, {(urlCorrespondenceDetails): change}) }}
+        {{ gdsComponents.summaryListRow('Email', response.email, {(urlCorrespondenceDetails): change}) }}
+        {{ gdsComponents.summaryListRow('Phone', response.phone, {(urlCorrespondenceDetails): change}) }}
+        {{ gdsComponents.summaryListRow('Address', response.correspondenceAddress, {(urlCorrespondenceAddress): change}) }}
     </dl>
 
     {{ form(form) }}

@@ -25,7 +25,7 @@ class TripController extends AbstractController
     /**
      * @Route("/international-survey/trips/{id}", name=self::TRIP_ROUTE)
      */
-    public function vehicle(UserInterface $user, string $id) {
+    public function trip(UserInterface $user, string $id) {
         $response = $this->getSurveyResponse($user);
 
         if (!$response) {

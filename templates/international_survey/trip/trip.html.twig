@@ -7,7 +7,40 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">Trip Summary</h1>
 
-    <p>...</p>
+    {%- set params = {tripId: trip.id} -%}
+    {%- set urlDateChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DATES', params) -%}
+    {%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_OUTBOUND_PORTS', params) -%}
+    {%- set urlReturnChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_RETURN_PORTS', params) -%}
+    {%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DISTANCE', params) -%}
+    {%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED', params) -%}
+    {%- set change = 'common.actions.change'|trans -%}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ summaryListRow('Dates',
+            trip.outboundDate == trip.returnDate ?
+                trip.outboundDate|format('D/m/Y') :
+                ('international.trip.summary.date-until-date'|trans({
+                    'from': trip.outboundDate|date('d/m/Y'),
+                    'until': trip.returnDate|date('d/m/Y'),
+                })),
+            {(urlDateChange): change}) }}
+        {{ summaryListRow('Outbound journey',
+            'international.trip.summary.origin-to-destination'|trans({
+                'origin': trip.outboundUkPort|capitalize,
+                'destination': trip.outboundForeignPort|capitalize,
+            }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.outboundCargoState)|trans|lower ~ ")",
+            {(urlOutboundChange): change})
+        }}
+        {{ summaryListRow('Return journey',
+            'international.trip.summary.origin-to-destination'|trans({
+                'origin': trip.returnForeignPort|capitalize,
+                'destination': trip.returnUkPort|capitalize,
+            }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
+            {(urlReturnChange): change})
+        }}
+        {{ summaryListRow('Round trip distance', trip.roundTripDistance, {(urlDistanceChange): change}) }}
+        {{ summaryListRow('Countries transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
+    </dl>
 
     <p class="govuk-body">
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}

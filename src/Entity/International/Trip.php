@@ -3,11 +3,13 @@
 namespace App\Entity\International;
 
 use App\Entity\Distance;
+use App\Form\Validator as AppAssert;
 use App\Repository\International\TripRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -27,6 +29,7 @@ class Trip
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(groups={"trip_dates"})
      */
     private $outboundDate;
 
@@ -59,6 +62,7 @@ class Trip
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(groups={"trip_dates"})
      */
     private $returnDate;
 
@@ -91,6 +95,7 @@ class Trip
 
     /**
      * @ORM\Embedded(class=Distance::class)
+     * @AppAssert\ValidValueUnit(groups={"trip_distance"})
      */
     private $roundTripDistance;
 
@@ -105,23 +110,48 @@ class Trip
     private $countriesTransitted = [];
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $countriesTransittedOther;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Vehicle::class, inversedBy="trips")
      * @ORM\JoinColumn(nullable=false)
      */
     private $vehicle;
 
     /**
-     * @Assert\Callback (groups={"trip_outbound_cargo_state"})
+     * @Assert\Callback(groups={"trip_outbound_cargo_state"})
      */
     public function validateOutboundCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'outbound');
     }
 
     /**
-     * @Assert\Callback (groups={"trip_return_cargo_state"})
+     * @Assert\Callback(groups={"trip_return_cargo_state"})
      */
     public function validateReturnCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'return');
+    }
+
+
+
+    /**
+     * @Assert\Callback(groups={"trip_dates"})
+     */
+    public function validateDates(ExecutionContextInterface $context) {
+        $outboundDate = $this->getOutboundDate();
+        $returnDate = $this->getReturnDate();
+
+        if (!$outboundDate && !$returnDate) {
+            return;
+        }
+
+        if ($returnDate < $outboundDate) {
+            $context->buildViolation('international.trip.dates.not-return-before-departure')
+                ->atPath('returnDate')
+                ->addViolation();
+        }
     }
 
     protected function validateCargoState(ExecutionContextInterface $context, string $direction) {
@@ -157,7 +187,7 @@ class Trip
         return $this->outboundDate;
     }
 
-    public function setOutboundDate(DateTimeInterface $outboundDate): self
+    public function setOutboundDate(?DateTimeInterface $outboundDate): self
     {
         $this->outboundDate = $outboundDate;
 
@@ -169,7 +199,7 @@ class Trip
         return $this->outboundUkPort;
     }
 
-    public function setOutboundUkPort(string $outboundUkPort): self
+    public function setOutboundUkPort(?string $outboundUkPort): self
     {
         $this->outboundUkPort = $outboundUkPort;
 
@@ -181,7 +211,7 @@ class Trip
         return $this->outboundForeignPort;
     }
 
-    public function setOutboundForeignPort(string $outboundForeignPort): self
+    public function setOutboundForeignPort(?string $outboundForeignPort): self
     {
         $this->outboundForeignPort = $outboundForeignPort;
 
@@ -193,7 +223,7 @@ class Trip
         return $this->outboundWasLimitedBySpace;
     }
 
-    public function setOutboundWasLimitedBySpace(bool $outboundWasLimitedBySpace): self
+    public function setOutboundWasLimitedBySpace(?bool $outboundWasLimitedBySpace): self
     {
         $this->outboundWasLimitedBySpace = $outboundWasLimitedBySpace;
 
@@ -205,7 +235,7 @@ class Trip
         return $this->outboundWasLimitedByWeight;
     }
 
-    public function setOutboundWasLimitedByWeight(bool $outboundWasLimitedByWeight): self
+    public function setOutboundWasLimitedByWeight(?bool $outboundWasLimitedByWeight): self
     {
         $this->outboundWasLimitedByWeight = $outboundWasLimitedByWeight;
 
@@ -229,7 +259,7 @@ class Trip
         return $this->returnDate;
     }
 
-    public function setReturnDate(DateTimeInterface $returnDate): self
+    public function setReturnDate(?DateTimeInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
 
@@ -241,7 +271,7 @@ class Trip
         return $this->returnForeignPort;
     }
 
-    public function setReturnForeignPort(string $returnForeignPort): self
+    public function setReturnForeignPort(?string $returnForeignPort): self
     {
         $this->returnForeignPort = $returnForeignPort;
 
@@ -253,7 +283,7 @@ class Trip
         return $this->returnUkPort;
     }
 
-    public function setReturnUkPort(string $returnUkPort): self
+    public function setReturnUkPort(?string $returnUkPort): self
     {
         $this->returnUkPort = $returnUkPort;
 
@@ -265,7 +295,7 @@ class Trip
         return $this->returnWasLimitedBySpace;
     }
 
-    public function setReturnWasLimitedBySpace(bool $returnWasLimitedBySpace): self
+    public function setReturnWasLimitedBySpace(?bool $returnWasLimitedBySpace): self
     {
         $this->returnWasLimitedBySpace = $returnWasLimitedBySpace;
 
@@ -277,7 +307,7 @@ class Trip
         return $this->returnWasLimitedByWeight;
     }
 
-    public function setReturnWasLimitedByWeight(bool $returnWasLimitedByWeight): self
+    public function setReturnWasLimitedByWeight(?bool $returnWasLimitedByWeight): self
     {
         $this->returnWasLimitedByWeight = $returnWasLimitedByWeight;
 
@@ -350,6 +380,18 @@ class Trip
         return $this;
     }
 
+    public function getCountriesTransittedOther(): ?string
+    {
+        return $this->countriesTransittedOther;
+    }
+
+    public function setCountriesTransittedOther(?string $countriesTransittedOther): self
+    {
+        $this->countriesTransittedOther = $countriesTransittedOther;
+
+        return $this;
+    }
+
     public function getVehicle(): ?Vehicle
     {
         return $this->vehicle;
@@ -360,5 +402,57 @@ class Trip
         $this->vehicle = $vehicle;
 
         return $this;
+    }
+
+    // -----
+
+    public function getOutboundCargoState(): string {
+        return $this->getCargoState($this->outboundWasEmpty, $this->outboundWasLimitedBySpace, $this->outboundWasLimitedByWeight);
+    }
+
+    public function getReturnCargoState(): string {
+        return $this->getCargoState($this->returnWasEmpty, $this->returnWasLimitedBySpace, $this->returnWasLimitedByWeight);
+    }
+
+    protected function getCargoState(bool $wasEmpty, bool $limitedBySpace, bool $limitedByWeight): string {
+        if ($wasEmpty) {
+            return 'empty';
+        }
+
+        if ($limitedBySpace) {
+            return $limitedByWeight ? 'limited-by-space-and-weight' : 'limited-by-space';
+        }
+
+        return $limitedByWeight ? 'limited-by-weight' : 'not-limited';
+    }
+
+    public function getAllCountriesTransitted(): string {
+        $countries = array_unique(array_merge(
+            array_map(function($code) {
+                return Countries::getName($code);
+            }, $this->countriesTransitted),
+            array_map('trim', explode(',', $this->countriesTransittedOther))
+        ));
+
+        sort($countries);
+
+        $countries = array_filter($countries, function($str) {
+            return $str !== '';
+        });
+
+        return join(', ', $countries);
+    }
+
+    public function mergeTripChanges(Trip $trip)
+    {
+        $this->setOutboundDate($trip->getOutboundDate());
+        $this->setReturnDate($trip->getReturnDate());
+        $this->setOutboundUkPort($trip->getOutboundUkPort());
+        $this->setOutboundForeignPort($trip->getOutboundForeignPort());
+        $this->setReturnUkPort($trip->getReturnUkPort());
+        $this->setReturnForeignPort($trip->getReturnForeignPort());
+        $this->setRoundTripDistance($trip->getRoundTripDistance());
+        $this->setCountriesTransitted($trip->getCountriesTransitted());
+        $this->setCountriesTransittedOther($trip->getCountriesTransittedOther());
     }
 }

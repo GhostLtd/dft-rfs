@@ -60,6 +60,8 @@ international:
     fewer-than-ten-employees:
       not-null: Choose an option
   trip:
+    dates:
+      not-return-before-departure: Return date must be the same as or after date of leaving
     outbound-was-empty:
       not-null: Choose an option
       cannot-be-both: Vehicle cannot be both empty and full

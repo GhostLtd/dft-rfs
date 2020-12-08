@@ -15,6 +15,14 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
     }
 }
 
+@include govuk-media-query($until: tablet) {
+    // Makes sure there's a vertical between grouped-into-column checkbox choices when they get collapsed into a
+    // single vertical column on mobile.
+    .govuk-checkboxes > .govuk-grid-row > div {
+        margin-bottom: govuk-spacing(2);
+    }
+}
+
 .govuk-table__actions {
     text-align: right;
 }

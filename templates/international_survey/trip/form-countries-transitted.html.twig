@@ -1,0 +1,30 @@
+{%- form_theme form _self -%}
+
+{%- set translation_prefix = 'international.trip.countries-transitted' -%}
+{%- extends 'international_survey/form-base.html.twig' -%}
+
+{% block _countries_transitted_countriesTransitted_widget %}
+    {%- set blockPrefix = 'gds_checkbox' -%}
+    {%- set classPrefix = 'govuk-checkboxes' -%}
+    {%- set attr = attr|merge({
+        class: (classPrefix ~ ' ' ~
+        attr.class|default(''))|trim
+    }) -%}
+    <div {{ block('widget_container_attributes') }}>
+        <div class="govuk-grid-row">
+            {%- set columns = 2 -%}
+            {%- set columnMappings = {2: 'half', 3: 'third', 4: 'quarter'} -%}
+            {%- set columnClass = columnMappings[columns] -%}
+
+            {% for i in range(0, columns-1) %}
+                <div class="govuk-grid-column-one-{{ columnClass }}">
+                    {%- for child in form %}
+                        {% if loop.index0 % columns == i %}
+                            {{ block('gds_choice_widget_expanded_item') }}
+                        {% endif %}
+                    {%- endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -3,11 +3,13 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
+use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -31,7 +33,9 @@ class AppExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey'])
+            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
+            new TwigFilter('lcfirst', 'lcfirst'),
+            new TwigFilter('ucfirst', 'ucfirst'),
         ];
     }
 
@@ -59,6 +63,7 @@ class AppExtension extends AbstractExtension
         'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
+        'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {

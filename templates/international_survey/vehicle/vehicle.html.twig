@@ -12,35 +12,36 @@
     {%- set urlChangeTrailerConfiguration = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params) -%}
     {%- set urlChangeVehicleBody = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params) -%}
     {%- set urlChangeVehicleWeight = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params) -%}
+    {%- set change = 'common.actions.change'|trans -%}
 
     <h2 class="page-heading__heading govuk-heading-l">Basic Details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
         {{ summaryListRow('common.vehicle.registration-mark',
             vehicle.formattedRegistrationMark,
-            {(urlVehicleDetails): 'Change'}) }}
+            {(urlVehicleDetails): change}) }}
         {{ summaryListRow('common.vehicle.operation-type',
             choiceLabel(operationChoices, vehicle.operationType) | trans,
-            {(urlVehicleDetails): 'Change'}) }}
+            {(urlVehicleDetails): change}) }}
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Axle configuration</dt>
             <dd class="govuk-summary-list__value">{{ displayAxleConfiguration(vehicle.axleConfiguration) }}</dd>
             <dd class="govuk-summary-list__actions">
-                {{- actionLinks({(urlChangeTrailerConfiguration): 'Change'}) -}}
+                {{- actionLinks({(urlChangeTrailerConfiguration): change}) -}}
             </dd>
         </div>
 
         {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
         {{ summaryListRow('common.vehicle.body-type' | trans,
             choiceLabel(bodyChoices, vehicle.bodyType) | trans,
-            {(urlChangeVehicleBody): 'Change'}) }}
+            {(urlChangeVehicleBody): change}) }}
         {{ summaryListRow('common.vehicle.gross-weight' | trans,
             "#{vehicle.grossWeight} Kg",
-            {(urlChangeVehicleWeight): 'Change'}) }}
+            {(urlChangeVehicleWeight): change}) }}
         {{ summaryListRow('common.vehicle.carrying-capacity' | trans,
             "#{vehicle.carryingCapacity} Kg",
-            {(urlChangeVehicleWeight): 'Change'}) }}
+            {(urlChangeVehicleWeight): change}) }}
     </dl>
 
     <h2 class="page-heading__heading govuk-heading-l">Trips</h2>
@@ -51,10 +52,16 @@
         {%- for trip in vehicle.trips %}
             <tr class="govuk-table__row">
                 {%- set tripRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
-                {%- set viewContents = actionLinks({(url(tripRoute, {id: trip.id})): 'View'}) -%}
+                {%- set viewContents = actionLinks({(url(tripRoute, {id: trip.id})): 'common.actions.view'|trans}) -%}
 
-                {{ tableCell('-') }}
-                {{ tableCell('-') }}
+                {{ tableCell('international.trip.summary.origin-to-destination'|trans({
+                    'origin': trip.outboundUkPort|capitalize,
+                    'destination': trip.outboundForeignPort|capitalize,
+                })) }}
+                {{ tableCell('international.trip.summary.origin-to-destination'|trans({
+                    'origin': trip.returnForeignPort|capitalize,
+                    'destination': trip.returnUkPort|capitalize,
+                })) }}
                 {{ tableCell('-') }}
                 {{ tableCell(viewContents, {actions: true}) }}
             </tr>
