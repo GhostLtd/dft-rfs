@@ -3,12 +3,12 @@ front_end:
     exclude:
         - ../../src/Controller/Admin/
     type: annotation
-    host: '%frontend_hostname%.%base_domain%'
+    host: '%frontend_hostname%'
 
 admin:
     resource: ../../src/Controller/Admin/
     type: annotation
-    host: '%admin_hostname%.%base_domain%'
+    host: '%admin_hostname%'
 #    name_prefix: admin_
 
 kernel:

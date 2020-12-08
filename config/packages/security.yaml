@@ -20,7 +20,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            host: '^%frontend_hostname%\.%base_domain%$'
+            host: '^%frontend_hostname%$'
 #            pattern: ^/(domestic|international)-survey/
             anonymous: lazy
             provider: passcode
@@ -34,7 +34,7 @@ security:
                 target: app_login
 
         admin:
-            host: '^%admin_hostname%\.%base_domain%$'
+            host: '^%admin_hostname%$'
             anonymous: lazy
             provider: passwd_file
             guard:
@@ -54,12 +54,12 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## Front end
-        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/domestic-survey$, roles: ROLE_DOMESTIC_SURVEY_USER }
-        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/domestic-survey/, roles: ROLE_DOMESTIC_SURVEY_USER }
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey$, roles: ROLE_DOMESTIC_SURVEY_USER }
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey/, roles: ROLE_DOMESTIC_SURVEY_USER }
 
-        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/international-survey$, roles: ROLE_INTERNATIONAL_SURVEY_USER }
-        - { host: '^%frontend_hostname%\.%base_domain%$', path: ^/international-survey/, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+        - { host: '^%frontend_hostname%$', path: ^/international-survey$, roles: ROLE_INTERNATIONAL_SURVEY_USER }
+        - { host: '^%frontend_hostname%$', path: ^/international-survey/, roles: ROLE_INTERNATIONAL_SURVEY_USER }
 
         ## Admin
-        - { host: '^%admin_hostname%\.%base_domain%$', path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: '^%admin_hostname%\.%base_domain%$', roles: ROLE_ADMIN_USER }
+        - { host: '^%admin_hostname%$', path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER }
