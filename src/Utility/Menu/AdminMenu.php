@@ -46,14 +46,19 @@ class AdminMenu implements MenuInterface
         return $this->filterMenuItemsByRole($this->authorizationChecker, [
             new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
             new MenuDivider(),
-            new RoleMenuItem('domestic', 'menu.domestic.root', $this->router->generate('admin_domestic_surveys'), [
-                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-1', $this->router->generate('admin_logout'), [], []),
-                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-2', $this->router->generate('admin_logout'), [], []),
+            new RoleMenuItem('domestic', 'menu.domestic.gb.root', null, [
+                new RoleMenuItem('dashboard', 'menu.domestic.gb.surveys', $this->router->generate('admin_domestic_surveys', ['type' => 'gb']), [], []),
+                new RoleMenuItem('dashboard', 'menu.domestic.gb.sub-item-2', null, [], []),
             ]),
             new MenuDivider(),
-            new RoleMenuItem('international', 'menu.international', null, [
-                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-1', $this->router->generate('admin_logout'), [], []),
-                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-2', $this->router->generate('admin_logout'), [], []),
+            new RoleMenuItem('domestic', 'menu.domestic.ni.root', null, [
+                new RoleMenuItem('dashboard', 'menu.domestic.ni.surveys', $this->router->generate('admin_domestic_surveys', ['type' => 'ni']), [], []),
+                new RoleMenuItem('dashboard', 'menu.domestic.ni.sub-item-2', null, [], []),
+            ]),
+            new MenuDivider(),
+            new RoleMenuItem('international', 'menu.international.root', null, [
+                new RoleMenuItem('dashboard', 'menu.international.sub-item-1', $this->router->generate('admin_logout'), [], []),
+                new RoleMenuItem('dashboard', 'menu.international.sub-item-2', $this->router->generate('admin_logout'), [], []),
             ]),
         ]);
     }

@@ -22,14 +22,17 @@ class SurveyRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param bool $isNorthernIreland
      * @return Survey[]
      */
-    public function findAllWithResponseAndVehicle()
+    public function findByTypeWithResponseAndVehicle($isNorthernIreland = false)
     {
         return $this->createQueryBuilder('survey')
             ->leftJoin('survey.passcodeUser', 'passcode_user')
             ->leftJoin('survey.response', 'response')
             ->leftJoin('response.vehicle', 'vehicle')
+            ->where('survey.isNorthernIreland = :isNI')
+            ->setParameter('isNI', $isNorthernIreland)
             ->getQuery()
             ->execute();
     }

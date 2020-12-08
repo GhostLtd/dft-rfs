@@ -10,12 +10,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveysController extends AbstractController
 {
     /**
-     * @Route("/domestic/surveys", name="admin_domestic_surveys")
+     * @param $type
+     * @return Response
+     * @Route("/domestic/surveys/{type}", name="admin_domestic_surveys", requirements={"type": "gb|ni"})
      */
-    public function index(): Response
+    public function index($type): Response
     {
         return $this->render('admin/domestic/surveys/index.html.twig', [
-            'surveys' => $this->getDoctrine()->getRepository(Survey::class)->findAllWithResponseAndVehicle(),
+            'surveys' => $this->getDoctrine()->getRepository(Survey::class)->findByTypeWithResponseAndVehicle($type === 'ni'),
         ]);
     }
 }

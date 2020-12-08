@@ -1,7 +1,14 @@
 menu:
   dashboard: 'Home'
-  domestic:
-    root: 'Domestic surveys'
+  domestic.gb:
+    root: 'CSRGT (GB)'
+    surveys: 'Surveys'
+    sub-item-2: 'test'
+  domestic.ni:
+    root: 'CSRGT (NI)'
+    surveys: 'Surveys'
+    sub-item-2: 'test'
+  international:
+    root: 'IRHS'
     sub-item-1: 'test'
     sub-item-2: 'test'
-
