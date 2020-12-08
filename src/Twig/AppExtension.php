@@ -35,8 +35,6 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
-            new TwigFilter('lcfirst', 'lcfirst'),
-            new TwigFilter('ucfirst', 'ucfirst'),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');})
         ];
