@@ -44,8 +44,17 @@ class AdminMenu implements MenuInterface
     public function getMenuItems()
     {
         return $this->filterMenuItemsByRole($this->authorizationChecker, [
-            new RoleMenuItem('dashboard', 'home.menu', $this->router->generate('admin_index'), [], []),
+            new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
             new MenuDivider(),
+            new RoleMenuItem('domestic', 'menu.domestic.root', $this->router->generate('admin_domestic_surveys'), [
+                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-1', $this->router->generate('admin_logout'), [], []),
+                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-2', $this->router->generate('admin_logout'), [], []),
+            ]),
+            new MenuDivider(),
+            new RoleMenuItem('international', 'menu.international', null, [
+                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-1', $this->router->generate('admin_logout'), [], []),
+                new RoleMenuItem('dashboard', 'menu.domestic.sub-item-2', $this->router->generate('admin_logout'), [], []),
+            ]),
         ]);
     }
 }

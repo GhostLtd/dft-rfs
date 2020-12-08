@@ -1,0 +1,7 @@
+menu:
+  dashboard: 'Home'
+  domestic:
+    root: 'Domestic surveys'
+    sub-item-1: 'test'
+    sub-item-2: 'test'
+

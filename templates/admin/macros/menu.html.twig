@@ -1,0 +1,57 @@
+{# ------------------------------------------------------------------------------------------------------------------
+    Admin menu
+   ------------------------------------------------------------------------------------------------------------------ #}
+
+{% macro displayAdminMenu(menuItems, options) %}
+    {%- import _self as m -%}
+    {%- set menuStyle = options.menuStyle | default('dropdown') -%}
+
+    {%- if menuItems is not empty %}
+        <ul class="govuk-admin-menu {% if options.class | default(false) %} {{ options.class }}{% endif %} menu-style-{{ menuStyle }}">
+            {% for menuItem in menuItems %}
+                {{ m.displayAdminMenuItem(menuItem, options) }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro displayAdminMenuItem(menuItem, options) %}
+    {% import _self as m %}
+
+    {% set menuSelected = app.request.requestUri == menuItem.url %}
+    {% set menuStyle = options.menuStyle | default('collapse') %}
+    {% set subMenu = options.subMenu | default(false) %}
+    {% set stickyOpen = options.stickyOpen | default(false) %}
+
+    {% if not menuItem.id and not menuItem.title %}
+        <li class="divider"><hr class="govuk-section-break {#govuk-section-break--m#} govuk-section-break--visible"></li>
+    {% elseif menuItem.hasChildren() %}
+        <li class="dropdown{% if subMenu %}-submenu{% endif %} {% if menuSelected %}active{% endif %}"{{ m.renderDataAttributes(menuItem) }}>
+            <a href="{{ menuItem.url | default('javascript:null;') }}" class="govuk-link govuk-menu-link dropdown-toggle" data-target="#{{ menuItem.id }}-submenu" data-toggle="{{ menuStyle }}" role="button" aria-expanded="false">
+                {{ m.displayMenuItemCopy(menuItem) }}<span class="caret"></span></a>
+            <ul class="govuk-admin-menu {{ menuStyle }}-menu collapse {% if (menuItem.id == menuSelected | first) and stickyOpen %}show{% endif %}" role="menu" id="{{ menuItem.id }}-submenu">
+                {% for subMenuItem in menuItem.children %}
+                    {{ m.displayAdminMenuItem(subMenuItem, {subMenu: true, menuStyle: menuStyle, stickyOpen: stickyOpen}) }}
+                {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li{% if menuSelected %} class="active"{% endif %}{{ m.renderDataAttributes(menuItem) }}>
+            <a class="govuk-link govuk-menu-link" href="{{ menuItem.url }}">{{ m.displayMenuItemCopy(menuItem) }}</a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{# ------------------------------------------------------------------------------------------------------------------
+    Helper functions
+   ------------------------------------------------------------------------------------------------------------------ #}
+
+{% macro displayMenuItemCopy(menuItem) -%}
+    {%- set options = menuItem.options -%}
+    {%- set icon = options['icon'] | default(null) -%}
+    {%- if icon %}<i class="icon ion-md-{{ icon }}"></i>{% endif %} <span class="title">{{ menuItem.title | trans({username: app.user.username}, 'admin') }}</span>
+{%- endmacro -%}
+
+{%- macro renderDataAttributes(menuItem) -%}
+    {% for name, value in menuItem.options.data | default([]) %} data-{{ name }}="{% if value is iterable %}{{ value | json_encode | e('html_attr')}}"{% else %}{{ value }}{% endif %}"{% endfor %}
+{%- endmacro -%}

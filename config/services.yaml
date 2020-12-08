@@ -43,3 +43,8 @@ services:
     App\EventSubscriber\HashPasscodeSubscriber:
         tags:
             - { name: 'doctrine.event_subscriber' }
+
+
+    App\EventSubscriber\AdminMenuEventSubscriber:
+        arguments:
+            $hostname: '%admin_hostname%.%base_domain%'

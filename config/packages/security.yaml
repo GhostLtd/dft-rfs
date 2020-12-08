@@ -62,4 +62,4 @@ security:
 
         ## Admin
         - { host: '^%admin_hostname%\.%base_domain%$', path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { host: '^%admin_hostname%\.%base_domain%$.', roles: ROLE_ADMIN_USER }
+        - { host: '^%admin_hostname%\.%base_domain%$', roles: ROLE_ADMIN_USER }
