@@ -6,7 +6,8 @@
     {% include 'domestic_survey/includes/contact-details.html.twig' %}
 
     {% if domesticSurvey.businessAndVehicleDetailsComplete %}
-        {% include 'domestic_survey/includes/vehicle-business-details.html.twig' %}
+        {% include 'domestic_survey/includes/business-details.html.twig' %}
+        {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
 
         <p class="govuk-body">
             <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>

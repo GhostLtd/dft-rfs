@@ -16,11 +16,11 @@ class AdminLoginType extends AbstractType
     /**
      * @var KernelInterface
      */
-    private $kernel;
+    private $appEnvironment;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct($appEnvironment)
     {
-        $this->kernel = $kernel;
+        $this->appEnvironment = $appEnvironment;
     }
 
 
@@ -55,6 +55,6 @@ class AdminLoginType extends AbstractType
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.admin',
         ]);
-        if ($this->kernel->getEnvironment() !== 'dev') $resolver->setDefault('attr', ['autocomplete' => 'off']);
+        if ($this->appEnvironment !== 'dev') $resolver->setDefault('attr', ['autocomplete' => 'off']);
     }
 }

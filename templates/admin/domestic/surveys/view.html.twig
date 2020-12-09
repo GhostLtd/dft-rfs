@@ -1,56 +1,65 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+{% block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead -%}
+    {%- if survey.response | default(false) -%}
+        {%- set tabs = {
+            'Contact details': 'tab-initial-details',
+        } -%}
+        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+            {%- set tabs = tabs | merge({
+                'Business details': 'tab-business-details',
+                'Vehicle details': 'tab-vehicle-details',
+                'Survey period': 'tab-survey-period',
+            }) -%}
+        {%- endif -%}
+    {%- endif -%}
+
     <h1 class="govuk-heading-l">Survey</h1>
 
-    <h2 class="govuk-heading-m">Survey details</h2>
+{#    <h2 class="govuk-heading-m">Survey details</h2>#}
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
-        {{ actionlessSummaryListRow('Vehicle reg', survey.registrationMark | formatRegMark) }}
+        {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.startDate | date ('Y-m-d')) }}
     </dl>
 
-    {% if survey.response | default (false) %}
+    {% if tabs | default(false) %}
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            {{ tabsHead(tabs) }}
 
-        <h2 class="govuk-heading-m">Initial details</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {{ actionlessSummaryListRow('Contact name', survey.response.contactName) }}
-            {{ actionlessSummaryListRow('Contact email', survey.response.contactEmail) }}
-            {{ actionlessSummaryListRow('Contact phone', survey.response.contactTelephone) }}
-            {{ actionlessSummaryListRow('In posession?', "domestic.survey-response.in-possession-of-vehicle.option.#{survey.response.isInPossessionOfVehicle}" | trans) }}
-
-            {% if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
-                {{ actionlessSummaryListRow('Date scraped / stolen', survey.response.unableToCompleteDate | date('Y-m-d')) }}
-            {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
-                {{ actionlessSummaryListRow('Date sold', survey.response.unableToCompleteDate | date('Y-m-d')) }}
-                {{ actionlessSummaryListRow('New owner name', survey.response.newOwnerName) }}
-                {{ actionlessSummaryListRow('New owner email', survey.response.newOwnerEmail) }}
-                {{ actionlessSummaryListRow('New owner address', survey.response.newOwnerAddress) }}
-            {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
-                {{ actionlessSummaryListRow('Hiree name', survey.response.hireeName) }}
-                {{ actionlessSummaryListRow('Hiree email', survey.response.hireeEmail) }}
-                {{ actionlessSummaryListRow('Hiree address', survey.response.hireeAddress) }}
+            {% if 'Contact details' in tabs | keys %}
+                <div class="govuk-tabs__panel" id="tab-initial-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/contact-details.html.twig' %}
+                    {% endwith %}
+                </div>
             {% endif %}
-        </dl>
 
-        <h2 class="govuk-heading-m">Business details</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {{ actionlessSummaryListRow('Employees', "domestic.number-of-employees.#{survey.response.numberOfEmployees}" | trans) }}
-            {{ actionlessSummaryListRow('Nature of business', survey.response.businessNature) }}
-            {{ actionlessSummaryListRow('Operation', "vehicle.operation-type.#{survey.response.vehicle.operationType}" | trans) }}
-        </dl>
+            {% if 'Business details' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/business-details.html.twig' %}
+                    {% endwith %}
+               </div>
+            {% endif %}
 
-        <h2 class="govuk-heading-m">Vehicle details</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {{ actionlessSummaryListRow('Fuel added during period', survey.response.vehicle.fuelQuantity | formatValueUnit) }}
-            {{ actionlessSummaryListRow('Gross weight', "#{survey.response.vehicle.grossWeight} kg") }}
-            {{ actionlessSummaryListRow('Carrying capcity', "#{survey.response.vehicle.carryingCapacity} kg") }}
-            <dt class="govuk-summary-list__key">Axle configuration</dt>
-            <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{survey.response.vehicle.axleConfiguration}.svg") }}<br>{{ (survey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
-            {{ actionlessSummaryListRow('Body', "vehicle.body.#{survey.response.vehicle.bodyType}" | trans) }}
-        </dl>
+            {% if 'Vehicle details' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
 
+            {% if 'Survey period' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-survey-period">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 
 {% endblock %}

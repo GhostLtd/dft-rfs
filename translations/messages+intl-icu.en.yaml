@@ -110,7 +110,7 @@ domestic:
 
     scrapped-details:
       date:
-        label: 'When was the vehicle scrapped?'
+        label: 'When was the vehicle scrapped or stolen?'
         help: ''
 
     sold-details:

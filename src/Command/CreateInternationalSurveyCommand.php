@@ -28,11 +28,14 @@ class CreateInternationalSurveyCommand extends Command
      */
     private $passcodeGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator)
+    private $appEnvironment;
+
+    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, $appEnvironment)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->passcodeGenerator = $passcodeGenerator;
+        $this->appEnvironment = $appEnvironment;
     }
 
     protected function configure()
@@ -66,6 +69,7 @@ class CreateInternationalSurveyCommand extends Command
         $user
             ->setUsername($username = $this->passcodeGenerator->generatePasscode())
             ->setPlainPassword($password = $this->passcodeGenerator->generatePasscode())
+            ->setPlainPassword($password = ($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode()))
             ->setInternationalSurvey($survey);
         ;
 

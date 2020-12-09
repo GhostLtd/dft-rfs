@@ -1,5 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
+{% from 'domestic_survey/includes/macros.html.twig' import dayText %}
+
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
     <h1 class="page-heading__heading govuk-heading-xl">Survey dashboard</h1>
@@ -15,7 +17,7 @@
                 {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
                 {{ summaryListRow(
                     "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
-                    day ? _self.dayText(day) : 'Nothing recorded',
+                    day ? dayText(day) : 'Nothing recorded',
                     {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
                 ) }}
             {% endfor %}
@@ -36,13 +38,3 @@
 
     {% endif %}
 {% endblock %}
-
-{% macro dayText(day) -%}
-    {{- (day.hasMoreThanFiveStops
-        ? ('More than 5 stops' ~ ((day.summary | default(false))
-            ? " (#{day.summary.originLocation} to #{day.summary.destinationLocation})"
-            : ' (incomplete)'
-        ))
-        : '5 stops or fewer'
-    ) -}}
-{%- endmacro %}

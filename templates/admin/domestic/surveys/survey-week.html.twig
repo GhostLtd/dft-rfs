@@ -1,0 +1,16 @@
+{% from 'domestic_survey/includes/macros.html.twig' import dayText %}
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+
+
+<table class="govuk-table">
+    {% set headings = [] %}
+    {{ tableHead('Survey week', headings, {}) }}
+    <tbody class="govuk-table__body">
+    {% for dayNumber in 1..7 %}
+        {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
+        <tr class="govuk-table__row"><th class="govuk-table__header" colspan="{{ headings | length }}">{{ "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})" }} - {{ day ? dayText(day) : 'Nothing recorded' }}</th></tr>
+    {% endfor %}
+
+    <tr class="govuk-table__row">
+{#        {{ tableCell(survey.passcodeUser.username, {}) }}#}
+{#        {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}#}
