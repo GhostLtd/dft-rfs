@@ -102,39 +102,51 @@
 {%- endmacro %}
 
 
-{% macro tableHead(caption, columnHeadings, options) -%}
+{# Takes a simple array of headings as strings, eg ['Id', 'Name'] #}
+{% macro tableHead(caption, columnHeadings) -%}
+    {%- set columnDefinitions = {} -%}
+    {%- for value in columnHeadings -%}
+        {%- set columnDefinitions = columnDefinitions | merge({(value): {}}) -%}
+    {%- endfor -%}
+
+    {{ _self.tableHeadComplex(caption, columnDefinitions) }}
+{%- endmacro %}
+
+{# Takes an object (heading => options) , eg {'Id': {}, 'Age': {numeric: true} #}
+{% macro tableHeadComplex(caption, columnDefinitions) -%}
     {%- if caption | default(false) %}<caption class="govuk-table__caption">{{ caption }}</caption>{% endif -%}
     <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            {%- for heading in columnHeadings -%}
-                {% with {
-                    options: options[heading] | default({}) | merge({
-                    class: ('govuk-table__header '
-                            ~ ((options[heading].actions | default(false)) or (options[heading].numeric | default(false)) ? 'govuk-table__header--numeric ' : '')
-                            ~ (options[heading].class | default(''))
-                        ) | trim
-                    })
-                } %}
-                    <th scope="col" class="{{ options.class }}">{{ heading }}</th>
-                {% endwith %}
-            {%- endfor -%}
-        </tr>
+        {{ _self.tableRowComplex(columnDefinitions, {commonCellOptions: {element: 'th'}}) }}
     </thead>
 {%- endmacro %}
 
+{% macro tableRowComplex(columnDefinitions, options) -%}
+    <tr class="govuk-table__row">
+        {%- for content, cellOptions in columnDefinitions -%}
+            {{ _self.tableCell(content, (options.commonCellOptions | default({})) | merge(cellOptions)) }}
+        {%- endfor -%}
+    </tr>
+{%- endmacro %}
+
 {% macro tableCell(value, options) -%}
-    {% with {
-        options: options | default({}) | merge({
-            class: ('govuk-table__cell '
-                ~ ((options.actions | default(false)) or (options.numeric | default(false)) ? 'govuk-table__cell--numeric ' : '')
+    {% set element = options.element | default('td') %}
+    {% set baseClass = ((element == 'td') ? 'govuk-table__cell' : 'govuk-table__header') %}
+    {%- with {
+        options: (options | default({})) | merge({
+            class: ("#{baseClass} "
+                ~ ((options.actions | default(false)) or (options.numeric | default(false)) ? "#{baseClass}--numeric " : '')
                 ~ (options.class | default(''))
-            ) | trim
+            ) | trim,
+            colSpan: options.colSpan | default(false),
+            rowSpan: options.rowSpan | default(false),
         })
-    } %}
-    <td class="{{ options.class }}"
-            {%- if options.colSpan | default(false) %} colspan="{{ options.colSpan }}"{% endif -%}
-    >{{ value }}</td>
-    {% endwith %}
+    } -%}
+    <{{ element }} class="{{ options.class }}"
+            {%- if element == 'th' %}scope="{{ options.scope | default('col') }}"{% endif -%}
+            {%- if options.colSpan %} colspan="{{ options.colSpan }}"{% endif -%}
+            {%- if options.rowSpan %} rowspan="{{ options.rowSpan }}"{% endif -%}
+    >{{ options.content | default(value) | nl2br }}</{{ element }}>
+    {%- endwith -%}
 {%- endmacro %}
 
 

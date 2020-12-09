@@ -1,7 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHead, tableCell %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell %}
 
     <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
 
@@ -23,7 +23,7 @@
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
         <table class="govuk-table">
-            {{ tableHead('Legs/stops for this day', ['Origin', 'Destination', 'Distance', 'Goods', ''], {'Distance': {numeric: true}}) }}
+            {{ tableHeadComplex('Legs/stops for this day', {'Origin': {}, 'Destination': {}, 'Distance': {numeric: true}, 'Goods': {}, '': {}}) }}
             <tbody class="govuk-table__body">
                 {% for stop in day.stops %}
                     <tr class="govuk-table__row">

@@ -1,19 +1,91 @@
 {% from 'domestic_survey/includes/macros.html.twig' import dayText %}
-{% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell, actionLinks %}
 
 
-<table class="govuk-table">
-    {% set headings = [] %}
-    {{ tableHead('Survey week', headings, {}) }}
-    <tbody class="govuk-table__body">
-    {% for dayNumber in 1..7 %}
-        {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
-        <tr class="govuk-table__row"><th class="govuk-table__header" colspan="{{ headings | length }}">{{ "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})" }} - {{ day ? dayText(day) : 'Nothing recorded' }}</th></tr>
-    {% endfor %}
+{% set locationHeadings = {
+    'Origin': {},
+    'Destination': {},
+} %}
+{% set goodsHeadings = {
+    'Goods': {},
+    'Hazardous?': {},
+    'Cargo type': {},
+} %}
+{% set summaryHeadings = locationHeadings | merge({
+        'Furthest point': {},
+        "Distance (l/u)": {numeric: true},
+    }) | merge (goodsHeadings) | merge ({
+        "Weight (l/u)": {numeric: true},
+        "Stops (l/u/b)": {numeric: true},
+    })
+%}
 
-        <tr class="govuk-table__row">
-    {#        {{ tableCell(survey.passcodeUser.username, {}) }}#}
-    {#        {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}#}
-        </tr>
-    </tbody>
-</table>
+{% set stopHeadings = locationHeadings | merge({
+    "Distance": {numeric: true},
+}) | merge (goodsHeadings) | merge ({
+    "Weight": {numeric: true},
+    "Capacity": {},
+})
+%}
+
+{% for dayNumber in 1..7 -%}
+    <table class="govuk-table">
+        {%- set day = domesticSurvey.response.dayByNumber(dayNumber) -%}
+        {% set caption = "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')}) " ~ (day ? dayText(day) : 'Nothing recorded') %}
+        <tbody class="govuk-table__body">
+        {% if day %}
+            {% if day.hasMoreThanFiveStops %}
+                {{ tableHeadComplex(caption, summaryHeadings) }}
+                <tr class="govuk-table__row">
+                    {{ tableCell(_self.location(day.summary.originLocation, day.summary.goodsLoaded, day.summary.goodsTransferredFrom)) }}
+                    {{ tableCell(_self.location(day.summary.destinationLocation, day.summary.goodsUnloaded, day.summary.goodsTransferredTo, false)) }}
+                    {{ tableCell(day.summary.furthestStop) }}
+                    {{ tableCell("#{day.summary.distanceTravelledLoaded | formatValueUnit} / #{day.summary.distanceTravelledUnloaded | formatValueUnit}", {numeric: true}) }}
+                    {{ tableCell(day.summary | formatGoodsDescription(true)) }}
+                    {{ tableCell(day.summary.hazardousGoodsCode) }}
+                    {{ tableCell(day.summary.cargoTypeCode) }}
+                    {{ tableCell("#{day.summary.weightOfGoodsLoaded}kg / #{day.summary.weightOfGoodsUnloaded}kg", {numeric: true}) }}
+                    {{ tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) }}
+                </tr>
+            {% else %}
+                {{ tableHeadComplex(caption, stopHeadings) }}
+                {% for stop in day.stops %}
+                    <tr class="govuk-table__row">
+                        {{ tableCell(_self.location(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom)) }}
+                        {{ tableCell(_self.location(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false)) }}
+                        {{ tableCell(stop.distanceTravelled | formatValueUnit, {numeric: true}) }}
+                        {{ tableCell(stop | formatGoodsDescription(true)) }}
+                        {% if stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_EMPTY') %}
+                            {{ tableCell('-') }}
+                            {{ tableCell('-') }}
+                            {{ tableCell('-', {numeric: true}) }}
+                            {{ tableCell('-') }}
+                        {% else %}
+                            {{ tableCell(stop.hazardousGoodsCode) }}
+                            {{ tableCell(stop.cargoTypeCode) }}
+                            {{ tableCell("#{stop.weightOfGoodsCarried}kg", {numeric: true}) }}
+                            {{ tableCell((stop.wasLimitedBySpace ? 'S' : '') ~ (stop.wasLimitedByWeight ? 'W' : '')) }}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {{ tableHeadComplex(caption, []) }}
+            <tr><td>-</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endfor %}
+
+{% macro location(location, loaded, port, isOrigin) -%}
+    {{- location -}}
+    {%- if loaded %} (
+        {{- (isOrigin ?? true) ? 'L' : 'U' -}}
+        {%- if port != constant('App\\Entity\\Domestic\\Day::TRANSFERRED_NONE') -%}
+            : {{ attribute({4: 'D', 8: 'R', 16: 'A'}, port) -}}
+        {%- endif -%}
+        )
+    {%- endif -%}
+{%- endmacro %}
+
