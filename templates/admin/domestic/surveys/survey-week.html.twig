@@ -11,6 +11,9 @@
         <tr class="govuk-table__row"><th class="govuk-table__header" colspan="{{ headings | length }}">{{ "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})" }} - {{ day ? dayText(day) : 'Nothing recorded' }}</th></tr>
     {% endfor %}
 
-    <tr class="govuk-table__row">
-{#        {{ tableCell(survey.passcodeUser.username, {}) }}#}
-{#        {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}#}
+        <tr class="govuk-table__row">
+    {#        {{ tableCell(survey.passcodeUser.username, {}) }}#}
+    {#        {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}#}
+        </tr>
+    </tbody>
+</table>
