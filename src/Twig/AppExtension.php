@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
+use App\Entity\Address;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
@@ -36,7 +37,8 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
-            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');})
+            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
+            new TwigFilter('formatAddress', [$this, 'formatAddress']),
         ];
     }
 
@@ -53,6 +55,15 @@ class AppExtension extends AbstractExtension
     public function formatRegMark($regMark)
     {
         return (new RegistrationMarkHelper($regMark))->getFormattedRegistrationMark();
+    }
+
+    public function formatAddress($address, bool $addNewlines=false): string {
+        if (!$address instanceof Address) {
+            return '';
+        }
+
+        $separator = $addNewlines ? ",\n": ", ";
+        return implode($separator, array_filter([$address->getLine1(), $address->getLine2(), $address->getLine3(), $address->getLine4(), $address->getPostcode()]));
     }
 
     public function svgIcon(string $icon)

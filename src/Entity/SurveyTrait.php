@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Form\Validator as AppAssert;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,14 +20,10 @@ trait SurveyTrait {
     private $dispatchDate;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
+     * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
      */
     private $startDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $dueDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -71,18 +68,6 @@ trait SurveyTrait {
     {
         if (is_null($this->startDate)) return null;
         return (clone $this->startDate)->modify($modifier);
-    }
-
-    public function getDueDate(): ?DateTimeInterface
-    {
-        return $this->dueDate;
-    }
-
-    public function setDueDate(?DateTimeInterface $dueDate): self
-    {
-        $this->dueDate = $dueDate;
-
-        return $this;
     }
 
     public function getResponseStartDate(): ?DateTimeInterface

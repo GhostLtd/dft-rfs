@@ -2,6 +2,7 @@
 
 namespace App\Form\Validator;
 
+use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\Vehicle as DomesticVehicle;
 use App\Entity\International\Vehicle as InternationalVehicle;
 use App\Repository\International\VehicleRepository as InternationalVehicleRepository;
@@ -27,7 +28,7 @@ class ValidRegistrationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidRegistration::class);
         }
 
-        if ($value instanceof DomesticVehicle || $value instanceof InternationalVehicle) {
+        if ($value instanceof DomesticVehicle || $value instanceof InternationalVehicle || $value instanceof Survey) {
             $registrationMark = $value->getRegistrationMark();
 
             if (!$registrationMark) {
@@ -55,7 +56,7 @@ class ValidRegistrationValidator extends ConstraintValidator
                 }
             }
         } else {
-            throw new UnexpectedValueException($value, 'DomesticVehicle|InternationalVehicle');
+            throw new UnexpectedValueException($value, 'DomesticVehicle|InternationalVehicle|Domestic\\Survey');
         }
     }
 }

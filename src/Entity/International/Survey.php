@@ -5,6 +5,7 @@ namespace App\Entity\International;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,6 +20,11 @@ class Survey
      * @ORM\Column(type="string", length=255)
      */
     private $referenceNumber;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dueDate;
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys")
@@ -44,6 +50,18 @@ class Survey
     public function setReferenceNumber(string $referenceNumber): self
     {
         $this->referenceNumber = $referenceNumber;
+
+        return $this;
+    }
+
+    public function getDueDate(): ?DateTimeInterface
+    {
+        return $this->dueDate;
+    }
+
+    public function setDueDate(?DateTimeInterface $dueDate): self
+    {
+        $this->dueDate = $dueDate;
 
         return $this;
     }

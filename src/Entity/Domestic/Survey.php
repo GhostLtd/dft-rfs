@@ -2,14 +2,21 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\Address;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
+use App\Form\Validator as AppAssert;
+use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table("domestic_survey")
+ *
+ * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
 class Survey
 {
@@ -32,6 +39,7 @@ class Survey
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank(groups={"add_survey"}, message="common.vehicle.vehicle-registration.not-blank")
      */
     private $registrationMark;
 
@@ -44,6 +52,32 @@ class Survey
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
      */
     private $passcodeUser;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Email(groups={"add_survey"})
+     */
+    private $invitationEmail;
+
+    /**
+     * @ORM\Embedded(class=Address::class)
+     * @AppAssert\ValidAddress(groups={"add_survey"}, validatePostcode=true, allowBlank=true)
+     *
+     * @var Address|null
+     */
+    private $invitationAddress;
+
+    /**
+     * @Assert\Callback(groups={"add_survey"})
+     */
+    public function validInvitationDetails(ExecutionContextInterface $context) {
+        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
+            $context
+                ->buildViolation('domestic.add.invitation-email-or-address')
+                ->atPath('invitationEmail')
+                ->addViolation();
+        }
+    }
 
     public function isInitialDetailsComplete()
     {
@@ -99,7 +133,8 @@ class Survey
 
     public function setRegistrationMark(string $registrationMark): self
     {
-        $this->registrationMark = $registrationMark;
+        $helper = new RegistrationMarkHelper($registrationMark);
+        $this->registrationMark = $helper->getRegistrationMark();
 
         return $this;
     }
@@ -133,4 +168,29 @@ class Survey
 
         return $this;
     }
+
+    public function getInvitationEmail(): ?string
+    {
+        return $this->invitationEmail;
+    }
+
+    public function setInvitationEmail(?string $invitationEmail): self
+    {
+        $this->invitationEmail = $invitationEmail;
+
+        return $this;
+    }
+
+    public function getInvitationAddress(): ?Address
+    {
+        return $this->invitationAddress;
+    }
+
+    public function setInvitationAddress(?Address $invitationAddress): self
+    {
+        $this->invitationAddress = $invitationAddress;
+
+        return $this;
+    }
+
 }

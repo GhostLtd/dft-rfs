@@ -47,7 +47,22 @@ admin:
     help: ''
     username.label: Username
     password.label: Password
-
+  domestic:
+    add-survey:
+      registration-mark:
+        label: Registration mark
+        help: ''
+      start-date:
+        label: Survey period start
+        help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: ''
+      submit:
+        label: Add survey
 
 domestic:
   goods-description:

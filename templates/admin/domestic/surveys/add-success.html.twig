@@ -1,0 +1,22 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- set bodyClasses = 'page__admin-survey-add-success' -%}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow %}
+
+    <h1 class="page-heading__heading govuk-heading-xl">Survey created</h1>
+
+    <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
+    {%- set options = {hideActions: true} -%}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ summaryListRow('Registration mark', survey.registrationMark, null, options) }}
+        {{ summaryListRow('Type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)'), null, options) }}
+        {{ summaryListRow('Start date', survey.startDate | date('d/m/Y'), null, options) }}
+        {{ summaryListRow('Invitation email', survey.invitationEmail | default('-'), null, options) }}
+        {{ summaryListRow('Invitation address', survey.invitationAddress | default('-') | formatAddress(true), null, options) }}
+        {{ summaryListRow('Access code #1', user.username, null, options|merge({'row_class': 'access-code'})) }}
+        {{ summaryListRow('Access code #2', password, null, options|merge({'row_class': 'access-code'})) }}
+    </dl>
+{% endblock %}

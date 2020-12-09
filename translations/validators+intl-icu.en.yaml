@@ -2,6 +2,11 @@ common:
   choice:
     invalid: Choose a valid option
     not-null: Choose an option
+  date:
+    not-null: Enter a date
+    greater-than: Enter a date after {compared_value}
+    greater-than-or-equal: Enter a date on or after {compared_value}
+    invalid: Enter a valid date
   number:
     invalid: Enter a number
     not-null: Enter a number
@@ -18,15 +23,12 @@ common:
       not-blank: Enter a value
     postcode:
       not-blank: Enter a postcode
+      invalid: Enter a valid postcode
   email:
     invalid: Enter a valid email address
     not-blank: Enter an email address
   telephone:
     not-blank: Enter a phone number
-  date:
-    not-null: Enter a date
-    invalid: Enter a valid date
-
 
   survey-response:
     name:
@@ -79,3 +81,5 @@ domestic:
     location.not-blank: Enter the location
     border-crossing.not-blank: Enter the border crossing point
     goods-description-other.not-blank: Describe the goods
+  add:
+    invitation-email-or-address: Enter at least one of an invitation email or an invitation address

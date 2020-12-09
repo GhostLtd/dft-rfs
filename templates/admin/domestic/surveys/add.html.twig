@@ -1,0 +1,10 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-l">Add Survey</h1>
+
+        {{ form(form) }}
+    </div>
+{% endblock %}

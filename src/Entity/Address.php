@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable()
@@ -12,7 +11,7 @@ class Address
 {
     public function __toString()
     {
-
+        @trigger_error('The __tostring() method is deprecated and will be removed. Use the formatAddress twig filter instead.', E_USER_DEPRECATED);
         return implode(", ", array_filter([$this->line1, $this->line2, $this->line3, $this->line4, $this->postcode]));
     }
 
@@ -99,5 +98,11 @@ class Address
         $this->postcode = $postcode;
 
         return $this;
+    }
+
+    // -----
+
+    public function isFilled(): bool {
+        return $this->line1 || $this->line2 || $this->line3 || $this->line4 || $this->postcode;
     }
 }
