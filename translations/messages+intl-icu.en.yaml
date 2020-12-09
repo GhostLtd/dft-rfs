@@ -63,6 +63,14 @@ admin:
         help: ''
       submit:
         label: Add survey
+    survey-created:
+      registration-mark: Registration mark
+      type: Type
+      start-date: Start date
+      invitation-email: Invitation email
+      invitation-address: Invitation address
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
 
 domestic:
   goods-description:
