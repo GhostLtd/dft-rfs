@@ -7,7 +7,6 @@ use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
@@ -20,20 +19,26 @@ use App\Workflow\InternationalSurvey\VehicleState;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
+    const TRANSFER_UNLOADING = 'unloading';
+    const TRANSFER_LOADING = 'loading';
     protected $iconsDir;
 
     protected $router;
 
-    public function __construct(KernelInterface $kernel, RouterInterface $router) {
+    protected $translator;
+
+    public function __construct(KernelInterface $kernel, RouterInterface $router, TranslatorInterface $translator) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
         $this->router = $router;
+        $this->translator = $translator;
     }
 
     public function getFilters()
@@ -53,6 +58,7 @@ class AppExtension extends AbstractExtension
                     ? $a->getGoodsDescriptionOther()
                     : ($short ? $a->getGoodsDescription() : "domestic.goods-description.options.{$a->getGoodsDescription()}"));
             }),
+            new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
         ];
     }
 
@@ -78,6 +84,37 @@ class AppExtension extends AbstractExtension
 
         $separator = $addNewlines ? ",\n": ", ";
         return implode($separator, array_filter([$address->getLine1(), $address->getLine2(), $address->getLine3(), $address->getLine4(), $address->getPostcode()]));
+    }
+
+    function formatGoodsTransferDetails($stop, $loadingOrUnloading, $nonBlankPrefix = '') {
+        if (!in_array(StopTrait::class, class_uses($stop)) || !in_array($loadingOrUnloading, [self::TRANSFER_LOADING, self::TRANSFER_UNLOADING])) {
+            return '';
+        }
+
+        $isLoadingMode = $loadingOrUnloading === self::TRANSFER_LOADING;
+        $transferredToOrFrom = $isLoadingMode ? $stop->getGoodsTransferredFrom() : $stop->getGoodsTransferredTo();
+
+        $parts = [];
+
+        if ($isLoadingMode && $stop->getGoodsLoaded()) {
+            $parts[] = "loaded";
+        } else if (!$isLoadingMode && $stop->getGoodsUnloaded()) {
+            $parts[] = "unloaded";
+        } else {
+            return '';
+        }
+
+        if ($transferredToOrFrom === Day::TRANSFERRED_PORT) {
+            $parts[] = "docks";
+        } else if ($transferredToOrFrom === Day::TRANSFERRED_RAIL) {
+            $parts[] = "rail";
+        } else if ($transferredToOrFrom === Day::TRANSFERRED_AIR) {
+            $parts[] = "airport";
+        } else {
+            $parts[] = "none";
+        }
+
+        return $nonBlankPrefix . $this->translator->trans("domestic.day-view." . join('.', $parts));
     }
 
     public function svgIcon(string $icon)

@@ -3,6 +3,7 @@ service:
 
 common:
   actions:
+    back-to-dashboard: Back to dashboard
     change: Change
     view: View
   choices:
@@ -207,6 +208,32 @@ domestic:
       body-type:
         label: Tell us about the the vehicle
         help: Indicate the main type of body for the vehicle
+
+  day-view:
+    headings:
+      page: Day record ({date})
+      more-than-five-stops: Summary day (more than 5 stops)
+    actions:
+      add-a-leg-for-this-journey: Add a leg for this journey
+      enter-information-for-this-journey: Enter information for this journey
+    no-info: You haven't entered any information for this day yet
+    start-location: Start location
+    destination-location: Destination location
+    loaded:
+      none: loaded
+      rail: loaded via rail
+      docks: loaded via docks
+      airport: loaded via airport
+    unloaded:
+      none: unloaded
+      rail: unloaded via rail
+      docks: unloaded via docks
+      airport: unloaded via airport
+    legs-for-day: Legs/stops for this day
+    origin: Origin
+    destination: Destination
+    distance: Distance
+    goods: Goods
 
   ## summary day
   day-summary:

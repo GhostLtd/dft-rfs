@@ -103,20 +103,23 @@
 
 
 {# Takes a simple array of headings as strings, eg ['Id', 'Name'] #}
-{% macro tableHead(caption, columnHeadings) -%}
+{% macro tableHead(caption, columnHeadings, options) -%}
     {%- set columnDefinitions = {} -%}
     {%- for value in columnHeadings -%}
         {%- set columnDefinitions = columnDefinitions | merge({(value): {}}) -%}
     {%- endfor -%}
 
-    {{ _self.tableHeadComplex(caption, columnDefinitions) }}
+    {{ _self.tableHeadComplex(caption, columnDefinitions, options) }}
 {%- endmacro %}
 
 {# Takes an object (heading => options) , eg {'Id': {}, 'Age': {numeric: true} #}
-{% macro tableHeadComplex(caption, columnDefinitions) -%}
-    {%- if caption | default(false) %}<caption class="govuk-table__caption">{{ caption }}</caption>{% endif -%}
+{% macro tableHeadComplex(caption, columnDefinitions, options) -%}
+    {%- set options = options | default({}) -%}
+    {%- set translate = options.translate ?? true -%}
+
+    {%- if caption | default(false) %}<caption class="govuk-table__caption">{{ translate ? (caption|trans) : caption }}</caption>{% endif -%}
     <thead class="govuk-table__head">
-        {{ _self.tableRowComplex(columnDefinitions, {commonCellOptions: {element: 'th'}}) }}
+        {{ _self.tableRowComplex(columnDefinitions, {commonCellOptions: {element: 'th', translate: translate}}) }}
     </thead>
 {%- endmacro %}
 
@@ -145,8 +148,13 @@
             {%- if element == 'th' %}scope="{{ options.scope | default('col') }}"{% endif -%}
             {%- if options.colSpan %} colspan="{{ options.colSpan }}"{% endif -%}
             {%- if options.rowSpan %} rowspan="{{ options.rowSpan }}"{% endif -%}
-    >{{ options.content | default(value) | nl2br }}</{{ element }}>
-    {%- endwith -%}
+    >
+            {%- if options.translate | default(false) -%}
+                {{ options.content | default(value) | trans | nl2br }}
+            {%- else -%}
+                {{ options.content | default(value) | nl2br }}
+            {%- endif -%}</{{ element }}>
+        {%- endwith -%}
 {%- endmacro %}
 
 

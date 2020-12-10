@@ -3,33 +3,43 @@
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell %}
 
-    <h1 class="page-heading__heading govuk-heading-xl">Day record ({{ day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y') }})</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.headings.page' | trans({date: day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y')}) }}</h1>
 
     {% if day.hasMoreThanFiveStops %}
-        <h2 class="govuk-heading-m">Summary day (more than 5 stops)</h2>
+        <h2 class="govuk-heading-m">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
         {% if day.summary | default(false) %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {{ summaryListRow('Start location', day.summary.originLocation | default('-')) }}
-                {{ summaryListRow('Destination location', day.summary.destinationLocation | default('-')) }}
+
+                {{ summaryListRow('domestic.day-view.start-location',
+                    (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — '))
+                ) }}
+                {{ summaryListRow('domestic.day-view.destination-location',
+                    (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — '))
+                ) }}
             </dl>
         {% else %}
             <p class="govuk-body">
-                You haven't entered any information for this day yet.
+                {{ 'domestic.day-view.no-info' | trans }}
             </p>
             <p class="govuk-body">
-                {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'Enter information for this journey') }}
+                {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'domestic.day-view.actions.enter-information-for-this-journey'|trans) }}
             </p>
         {% endif %}
     {% else %}
         <h2 class="govuk-heading-m">Detailed day</h2>
         <table class="govuk-table">
-            {{ tableHeadComplex('Legs/stops for this day', {'Origin': {}, 'Destination': {}, 'Distance': {numeric: true}, 'Goods': {}, '': {}}) }}
+            {{ tableHeadComplex('domestic.day-view.legs-for-day', {
+                'domestic.day-view.origin': {},
+                'domestic.day-view.destination': {},
+                'domestic.day-view.distance': {numeric: true},
+                'domestic.day-view.goods': {},
+                '': {}
+            }) }}
             <tbody class="govuk-table__body">
                 {% for stop in day.stops %}
                     <tr class="govuk-table__row">
-
-                        {{ tableCell(stop.originLocation ~ (stop.goodsLoadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredFrom}" | trans) ~ ")" : '')) }}
-                        {{ tableCell(stop.destinationLocation ~ (stop.goodsUnloadedIsPort ? " (" ~ ("domestic.transferred-port.options.#{stop.goodsTransferredTo}" | trans) ~ ")")) }}
+                        {{ tableCell(stop.originLocation | default('-') ~ (stop | formatGoodsTransferDetails('loading', "\n"))) }}
+                        {{ tableCell(stop.destinationLocation | default('-') ~ (stop | formatGoodsTransferDetails('unloading', "\n"))) }}
                         {{ tableCell(stop.distanceTravelled, {numeric: true}) }}
                         <td class="govuk-table__cell">
                             {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')
@@ -42,7 +52,7 @@
                             {%- endif -%}
                         </td>
                         {{ tableCell(
-                            actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'Change'}),
+                            actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'common.actions.change'}),
                             {actions: true}
                         ) }}
                     </tr>
@@ -50,11 +60,11 @@
             </tbody>
         </table>
         <p class="govuk-body">
-            {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'Add a leg for this journey') }}
+            {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'domestic.day-view.actions.add-a-leg-for-this-journey'|trans) }}
         </p>
     {% endif %}
 
     <p class="govuk-body">
-        <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>
+        <a href="{{ url('app_domesticsurvey_index') }}">{{ 'common.actions.back-to-dashboard' | trans }}</a>
     </p>
 {% endblock %}
