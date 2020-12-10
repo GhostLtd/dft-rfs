@@ -6,15 +6,11 @@ use App\Workflow\FormWizardInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
-use ReflectionClass;
-use ReflectionException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -60,7 +56,6 @@ abstract class AbstractWorkflowController extends AbstractController
                 // possibly combination of back link and history back
                 // send them to the last allowable history || initial place
                 return $this->getRedirectUrl($formWizard->getPreviousHistoryState() ?? $stateMachine->getDefinition()->getInitialPlaces()[0]);
-//                throw new LogicException('invalid state');
             }
         }
 
@@ -201,35 +196,7 @@ abstract class AbstractWorkflowController extends AbstractController
                 $formClass = $formClass['form'];
             }
 
-            $or = new OptionsResolver();
-            /** @var FormTypeInterface $formType */
-            $formType = new $formClass();
-            $formType->configureOptions($or);
-            $resolvedOptions = $or->resolve([]);
-
-            $dataClass = $resolvedOptions['data_class'] ?? null;
-            if ($dataClass) {
-                try {
-                    $dataClassRefl = new ReflectionClass($dataClass);
-                } catch (ReflectionException $e) {
-                    throw new RuntimeException("Invalid data_class specified: '{$dataClass}'");
-                }
-
-                // Some use traits, which enables IDE assistance, but isn't valid for the data_class.
-                // Override them with the class of the dataSubject.
-                if ($dataClassRefl->isTrait()) {
-                    $form = $this->createForm(
-                        $formClass,
-                        $formWizard->getSubject(),
-                        array_merge(['data_class' => get_class($formWizard->getSubject())], $formOptions)
-                    );
-                } else {
-                    $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
-                }
-            } else {
-                dump($formWizard->getSubject());
-                $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
-            }
+            $form = $this->createForm($formClass, $formWizard->getSubject(), $formOptions);
         } else {
             $form = $this->createFormBuilder()->getForm();
         }

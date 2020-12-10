@@ -3,19 +3,40 @@
 namespace App\Form;
 
 use App\Entity\HazardousGoods;
-use App\Entity\HazardousGoodsTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractHazardousGoodsType extends AbstractType
 {
+    protected $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $choiceOptions = HazardousGoods::CHOICES;
-        foreach ($choiceOptions as $k=>$v) {
-            $choiceOptions[$k] = [
+        $choiceOptions = [];
+        $choices = [];
+
+        foreach (HazardousGoods::CHOICES as $k=>$v) {
+            $labelPrefix = ($v === '0') ? '' : "<b>{$v}</b> ";
+
+            // Used escape rules from:
+            // vendor/twig/twig/src/Extension/EscaperExtension.php : 232
+            $safeLabel = htmlspecialchars(
+                $this->translator->trans("goods.hazardous.{$v}"),
+                ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+            $label = $labelPrefix . $safeLabel;
+
+            $choices[$label] = $v;
+
+            $choiceOptions[$label] = [
                 'label_html' => true,
             ];
         }
@@ -24,7 +45,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType
         $builder
             ->add('hazardousGoodsCode', Gds\ChoiceType::class, [
                 'expanded' => true,
-                'choices' => HazardousGoods::CHOICES,
+                'choices' => $choices,
                 'choice_options' => $choiceOptions,
                 'label' => "{$translationKeyPrefix}.hazardous-goods.label",
                 'label_is_page_heading' => true,
@@ -37,7 +58,6 @@ abstract class AbstractHazardousGoodsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => HazardousGoodsTrait::class,
             'validation_groups' => 'hazardous-goods',
         ]);
         $resolver->setRequired(["translation_entity_key"]);

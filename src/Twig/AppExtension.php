@@ -8,10 +8,12 @@ use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
+use App\Entity\HazardousGoodsTrait;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
+use App\Utility\TraitUtils;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
@@ -50,15 +52,16 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatAddress', [$this, 'formatAddress']),
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
             new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
-            new TwigFilter('formatGoodsDescription', function($a, $short = false){
-                if ($a instanceof StopTrait) {
-                    return null;
+            new TwigFilter('formatGoodsDescription', function($stop, $short = false){
+                if (!in_array(StopTrait::class, class_uses($stop))) {
+                    return '';
                 }
-                return ($a->getGoodsDescription() === Day::GOODS_DESCRIPTION_OTHER
-                    ? $a->getGoodsDescriptionOther()
-                    : ($short ? $a->getGoodsDescription() : "domestic.goods-description.options.{$a->getGoodsDescription()}"));
+                return ($stop->getGoodsDescription() === Day::GOODS_DESCRIPTION_OTHER
+                    ? $stop->getGoodsDescriptionOther()
+                    : ($short ? $stop->getGoodsDescription() : "domestic.goods-description.options.{$stop->getGoodsDescription()}"));
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
+            new TwigFilter('formatHazardousGoods', [$this, 'formatHazardousGoods']),
         ];
     }
 
@@ -115,6 +118,21 @@ class AppExtension extends AbstractExtension
         }
 
         return $nonBlankPrefix . $this->translator->trans("domestic.day-view." . join('.', $parts));
+    }
+
+    public function formatHazardousGoods($class) {
+        if (!TraitUtils::classUsesTrait($class, HazardousGoodsTrait::class)) {
+            return '';
+        }
+
+        /** @var HazardousGoodsTrait $class */
+        $code = $class->getHazardousGoodsCode();
+
+        if ($code === null || $code === '') {
+            return '-';
+        }
+
+        return $this->translator->trans("goods.hazardous.{$code}");
     }
 
     public function svgIcon(string $icon)

@@ -26,11 +26,11 @@ common:
 
 unit:
   distance:
-    miles: 'Miles'
-    kilometers: 'Kilometers'
+    miles: Miles
+    kilometers: Kilometers
   volume:
-    litres: 'Litres'
-    gallons: 'Gallons'
+    litres: Litres
+    gallons: Gallons
 
 
 
@@ -219,6 +219,17 @@ domestic:
     no-info: You haven't entered any information for this day yet
     start-location: Start location
     destination-location: Destination location
+    furthest-stop: Furthest stop
+    distance-travelled: Distance travelled
+    goods-carried: Goods carried
+    hazardous-goods: Hazardous goods
+    distance:
+      loaded:
+        miles: "{value} miles loaded"
+        kilometers: "{value} kilometers loaded"
+      unloaded:
+        miles: "{value} miles unloaded"
+        kilometers: "{value} kilometers unloaded"
     loaded:
       none: loaded
       rail: loaded via rail
@@ -230,10 +241,11 @@ domestic:
       docks: unloaded via docks
       airport: unloaded via airport
     legs-for-day: Legs/stops for this day
-    origin: Origin
-    destination: Destination
-    distance: Distance
-    goods: Goods
+    table:
+      origin: Origin
+      destination: Destination
+      distance: Distance
+      goods: Goods
 
   ## summary day
   day-summary:
@@ -672,22 +684,22 @@ international:
 goods:
   hazardous:
     0: Goods were not classified as dangerous or hazardous
-    1: <b>1</b> Explosive
-    2: 2 - Gases
-    '2.1': <b>2.1</b> Flammable gas
-    '2.2': <b>2.2</b> Non-flammable, non-toxic gas
-    '2.3': <b>2.3</b> Toxic gas
-    3: <b>3</b> Flammable liquid
-    '4.1': <b>4.1</b> Flammable solid
-    '4.2': <b>4.2</b> Spontaneously combustible substance
-    '4.3': <b>4.3</b> Substance which, in contact with water, emits flammable gas
-    '5.1': <b>5.1</b> Oxidising substance
-    '5.2': <b>5.2</b> Organic peroxide
-    '6.1': <b>6.1</b> Toxic substance
-    '6.2': <b>6.2</b> Infectious substance
-    7: <b>7</b> Radioactive material
-    8: <b>8</b> Corrosive substance
-    9: <b>9</b> Miscellaneous dangerous goods
+    1: Explosive
+    2: Gases
+    '2.1': Flammable gas
+    '2.2': Non-flammable, non-toxic <b>gas</b>
+    '2.3': Toxic gas
+    3: Flammable liquid
+    '4.1': Flammable solid
+    '4.2': Spontaneously combustible substance
+    '4.3': Substance which, in contact with water, emits flammable gas
+    '5.1': Oxidising substance
+    '5.2': Organic peroxide
+    '6.1': Toxic substance
+    '6.2': Infectious substance
+    7: Radioactive material
+    8: Corrosive substance
+    9: Miscellaneous dangerous goods
   cargo-type:
     options:
       LB: Liquid bulk

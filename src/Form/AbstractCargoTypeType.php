@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\CargoType;
-use App\Entity\CargoTypeTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,7 +40,6 @@ abstract class AbstractCargoTypeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => CargoTypeTrait::class,
             'is_summary_day' => false,
             'validation_groups' => 'cargo-type',
         ]);

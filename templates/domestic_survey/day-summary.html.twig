@@ -16,6 +16,26 @@
                 {{ summaryListRow('domestic.day-view.destination-location',
                     (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — '))
                 ) }}
+                {{ summaryListRow('domestic.day-view.furthest-stop', day.summary.furthestStop | default('-')) }}
+                {{ summaryListRow('domestic.day-view.distance-travelled',
+                    ("domestic.day-view.distance.loaded.#{day.summary.distanceTravelledLoaded.unit}" |
+                        trans({value: day.summary.distanceTravelledLoaded.value})
+                    ) ~
+                    ', ' ~
+                    ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
+                        trans({value: day.summary.distanceTravelledUnloaded.value})
+                    )
+                ) }}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{- day.summary | formatGoodsDescription }}
+                        {%- if day.summary.hazardousGoodsCode %} — <em>{{ day.summary.hazardousGoodsCode }}</em> - {{ day.summary | formatHazardousGoods }}{% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        {# Action Links #}
+                    </dd>
+                </div>
             </dl>
         {% else %}
             <p class="govuk-body">
@@ -29,10 +49,10 @@
         <h2 class="govuk-heading-m">Detailed day</h2>
         <table class="govuk-table">
             {{ tableHeadComplex('domestic.day-view.legs-for-day', {
-                'domestic.day-view.origin': {},
-                'domestic.day-view.destination': {},
-                'domestic.day-view.distance': {numeric: true},
-                'domestic.day-view.goods': {},
+                'domestic.day-view.table.origin': {},
+                'domestic.day-view.table.destination': {},
+                'domestic.day-view.table.distance': {numeric: true},
+                'domestic.day-view.table.goods': {},
                 '': {}
             }) }}
             <tbody class="govuk-table__body">
