@@ -1,32 +1,65 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+{% block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead -%}
+    {%- if survey.response | default(false) -%}
+        {%- set tabs = {
+            'Contact details': 'tab-initial-details',
+        } -%}
+        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+            {%- set tabs = tabs | merge({
+                'Business details': 'tab-business-details',
+                'Vehicle details': 'tab-vehicle-details',
+                'Survey period': 'tab-survey-period',
+            }) -%}
+        {%- endif -%}
+    {%- endif -%}
+
     <h1 class="govuk-heading-l">Survey</h1>
-{#
 
-    <table class="govuk-table">
-        {{ tableHead('Surveys unordered', ['User', 'Start date', 'Reg Mark', 'In Posession', 'Business nature', 'Employees', ''], {}) }}
-        <tbody class="govuk-table__body">
-        {% for survey in surveys %}
-            <tr class="govuk-table__row">
-                {{ tableCell(survey.passcodeUser.username, {}) }}
-                {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}
-                {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
-                {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
-                {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
-                {{ tableCell(survey.response ? "domestic.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
-#}
-{#                {{ tableCell(survey.response., {}) }}#}{#
+{#    <h2 class="govuk-heading-m">Survey details</h2>#}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
+        {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
+        {{ actionlessSummaryListRow('Survey period start', survey.startDate | date ('Y-m-d')) }}
+    </dl>
 
-#}
-{#                {{ tableCell(survey., {}) }}#}{#
+    {% if tabs | default(false) %}
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            {{ tabsHead(tabs) }}
 
-                {{ tableCell(actionLinks({(url('admin_index')): 'details'}), {}) }}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-#}
+            {% if 'Contact details' in tabs | keys %}
+                <div class="govuk-tabs__panel" id="tab-initial-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/contact-details.html.twig' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+            {% if 'Business details' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/business-details.html.twig' %}
+                    {% endwith %}
+               </div>
+            {% endif %}
+
+            {% if 'Vehicle details' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+            {% if 'Survey period' in tabs | keys %}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-survey-period">
+                    {% with {domesticSurvey: survey, showActions: false} %}
+                        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 
 {% endblock %}

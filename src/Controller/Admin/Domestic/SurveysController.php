@@ -12,14 +12,14 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class SurveysController
  * @package App\Controller\Admin\Domestic
  *
- * @Route("/csrgt/{type}", name="admin_domestic_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
  */
 class SurveysController extends AbstractController
 {
     /**
      * @param $type
      * @return Response
-     * @Route("/surveys", name="surveys")
+     * @Route("", name="surveys")
      */
     public function index($type): Response
     {
@@ -32,7 +32,7 @@ class SurveysController extends AbstractController
      * @param $type
      * @param Survey $survey
      * @return Response
-     * @Route("/surveys/{{ survey }}", name="surveydetails")
+     * @Route("/{survey}", name="surveydetails")
      */
     public function viewDetails($type, Survey $survey): Response
     {

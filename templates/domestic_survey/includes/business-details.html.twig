@@ -1,0 +1,20 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
+{% set showActions = showActions ?? true %}
+
+<h2 class="govuk-heading-m">Business details</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {# business details #}
+    {% set businessDetailsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')})): 'Change'} %}
+    {{ row(showActions,
+        'domestic.survey-response.business-details.number-of-employees.label',
+        "domestic.number-of-employees.#{domesticSurvey.response.numberOfEmployees}" | trans,
+        businessDetailsActionLinks) }}
+    {{ row(showActions,
+        'domestic.survey-response.business-details.business-nature.label',
+        domesticSurvey.response.businessNature,
+        businessDetailsActionLinks) }}
+    {{ row(showActions,
+        'domestic.survey-response.business-details.operation-type.label',
+        (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ domesticSurvey.response.vehicle.operationType) | trans,
+        businessDetailsActionLinks) }}
+</dl>

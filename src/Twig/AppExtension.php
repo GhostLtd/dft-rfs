@@ -6,6 +6,10 @@ use App\Controller\InternationalPreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Address;
+use App\Entity\Domestic\Day;
+use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\StopTrait;
+use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
@@ -39,6 +43,16 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
             new TwigFilter('formatAddress', [$this, 'formatAddress']),
+            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
+            new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
+            new TwigFilter('formatGoodsDescription', function($a, $short = false){
+                if ($a instanceof StopTrait) {
+                    return null;
+                }
+                return ($a->getGoodsDescription() === Day::GOODS_DESCRIPTION_OTHER
+                    ? $a->getGoodsDescriptionOther()
+                    : ($short ? $a->getGoodsDescription() : "domestic.goods-description.options.{$a->getGoodsDescription()}"));
+            }),
         ];
     }
 

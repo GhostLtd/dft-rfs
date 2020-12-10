@@ -1,20 +1,25 @@
-{% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{% set showActions = showActions ?? true %}
 
 <h2 class="govuk-heading-m">Contact details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
     {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
-    {{ summaryListRow('Name', domesticSurvey.response.contactName, contactDetailsActionLinks) }}
-    {{ summaryListRow('Telephone', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
-    {{ summaryListRow('Email address', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', domesticSurvey.response.contactName, contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', domesticSurvey.response.contactTelephone, contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', domesticSurvey.response.contactEmail, contactDetailsActionLinks) }}
     {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
 
-    {{ summaryListRow('In possession of vehicle?', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ domesticSurvey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ domesticSurvey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
     {% if domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
-        {{ summaryListRow('Hiree', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.name.label', domesticSurvey.response.hireeName, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.email.label', domesticSurvey.response.hireeEmail, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.address.label', domesticSurvey.response.hireeAddress, canCompleteActionLinks) }}
     {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
-        {{ summaryListRow('Date of theft/scrappage', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.scrapped-details.date.label', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
     {% elseif domesticSurvey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
-        {{ summaryListRow('Date of sale', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
-        {{ summaryListRow('New owner', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details.date.label', domesticSurvey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-name.label', domesticSurvey.response.newOwnerName, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-email.label', domesticSurvey.response.newOwnerEmail, canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-address.label', domesticSurvey.response.newOwnerAddress, canCompleteActionLinks) }}
     {% endif %}
 </dl>

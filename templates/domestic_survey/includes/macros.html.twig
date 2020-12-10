@@ -1,0 +1,9 @@
+{% macro dayText(day) -%}
+    {{- (day.hasMoreThanFiveStops
+        ? ('More than 5 stops' ~ ((day.summary | default(false))
+            ? " (#{day.summary.originLocation} to #{day.summary.destinationLocation})"
+            : ' (incomplete)'
+        ))
+        : '5 stops or fewer'
+    ) -}}
+{%- endmacro %}

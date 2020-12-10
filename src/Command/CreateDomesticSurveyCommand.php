@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,11 +27,14 @@ class CreateDomesticSurveyCommand extends Command
      */
     private $passcodeGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator)
+    private $appEnvironment;
+
+    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, $appEnvironment)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->passcodeGenerator = $passcodeGenerator;
+        $this->appEnvironment = $appEnvironment;
     }
 
     protected function configure()
@@ -41,6 +45,12 @@ class CreateDomesticSurveyCommand extends Command
         ;
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -56,7 +66,7 @@ class CreateDomesticSurveyCommand extends Command
         $user = new PasscodeUser();
         $user
             ->setUsername($username = $this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($password = $this->passcodeGenerator->generatePasscode())
+            ->setPlainPassword($password = ($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode()))
             ->setDomesticSurvey($survey);
         ;
 
