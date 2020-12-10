@@ -13,12 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Day
 {
-    const NOT_TRANSFERRED = 0;
-    const TRANSFERRED = 1;
-    const TRANSFERRED_NONE = 2;
-    const TRANSFERRED_PORT = 4;
-    const TRANSFERRED_RAIL = 8;
-    const TRANSFERRED_AIR = 16;
+    const TRANSFERRED_NONE = 0;
+    const TRANSFERRED_PORT = 1;
+    const TRANSFERRED_RAIL = 2;
+    const TRANSFERRED_AIR = 4;
 
     const TRANSFER_TRANSLATION_PREFIX = 'domestic.transferred-port.options.';
     const TRANSFER_CHOICES = [

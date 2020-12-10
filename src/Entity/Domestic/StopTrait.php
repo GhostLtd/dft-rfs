@@ -122,7 +122,7 @@ trait StopTrait
     public function setGoodsLoaded(?bool $goodsLoaded): self
     {
         if ($this->getGoodsLoaded() !== $goodsLoaded) {
-            $this->goodsTransferredFrom = $goodsLoaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
+            $this->goodsTransferredFrom = null;
         }
         $this->goodsLoaded = $goodsLoaded;
         return $this;
@@ -154,7 +154,7 @@ trait StopTrait
     public function setGoodsUnloaded(?bool $goodsUnloaded): self
     {
         if ($this->getGoodsUnloaded() !== $goodsUnloaded) {
-            $this->goodsTransferredTo = $goodsUnloaded ? Day::TRANSFERRED : Day::NOT_TRANSFERRED;
+            $this->goodsTransferredTo = null;
         }
         $this->goodsUnloaded = $goodsUnloaded;
         return $this;

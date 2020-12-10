@@ -91,10 +91,10 @@ domestic:
 
   transferred-port:
     options:
-      2: None of the above
-      4: Shipping port or docks
-      8: Rail depot / terminal
-      16: Airport
+      0: None of the above
+      1: Shipping port or docks
+      2: Rail depot / terminal
+      4: Airport
 
   number-of-employees:
     1-9: '1 - 9'
