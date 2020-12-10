@@ -694,7 +694,7 @@ goods:
     1: Explosive
     2: Gases
     '2.1': Flammable gas
-    '2.2': Non-flammable, non-toxic <b>gas</b>
+    '2.2': Non-flammable, non-toxic gas
     '2.3': Toxic gas
     3: Flammable liquid
     '4.1': Flammable solid
