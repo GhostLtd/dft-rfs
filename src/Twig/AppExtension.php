@@ -8,12 +8,10 @@ use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
-use App\Entity\HazardousGoodsTrait;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
-use App\Utility\TraitUtils;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
@@ -61,7 +59,6 @@ class AppExtension extends AbstractExtension
                     : ($short ? $stop->getGoodsDescription() : "domestic.goods-description.options.{$stop->getGoodsDescription()}"));
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
-            new TwigFilter('formatHazardousGoods', [$this, 'formatHazardousGoods']),
         ];
     }
 
@@ -118,21 +115,6 @@ class AppExtension extends AbstractExtension
         }
 
         return $nonBlankPrefix . $this->translator->trans("domestic.day-view." . join('.', $parts));
-    }
-
-    public function formatHazardousGoods($class) {
-        if (!TraitUtils::classUsesTrait($class, HazardousGoodsTrait::class)) {
-            return '';
-        }
-
-        /** @var HazardousGoodsTrait $class */
-        $code = $class->getHazardousGoodsCode();
-
-        if ($code === null || $code === '') {
-            return '-';
-        }
-
-        return $this->translator->trans("goods.hazardous.{$code}");
     }
 
     public function svgIcon(string $icon)

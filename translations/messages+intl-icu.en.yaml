@@ -239,6 +239,16 @@ domestic:
     distance-travelled: Distance travelled
     goods-carried: Goods carried
     hazardous-goods: Hazardous goods
+    cargo-type: Cargo type
+    weight-of-goods:
+      label: Weight of goods
+      loaded: "{value}kg loaded"
+      unloaded: "{value}kg unloaded"
+    number-of-stops:
+      label: Number of stops
+      loading: "{value} loading"
+      unloading: "{value} unloading"
+      loading-and-unloading: "{value} both loading and unloading"
     distance:
       loaded:
         miles: "{value} miles loaded"
@@ -723,7 +733,7 @@ goods:
       LB: ''
       SB: ''
       LFC: 'including ISO containers'
-      OFC: 'including stillage’s'
+      OFC: 'including stillages'
       PL: ''
       PS: ''
       NP: for example livestock, cars, plant
