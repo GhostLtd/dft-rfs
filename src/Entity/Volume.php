@@ -27,7 +27,7 @@ class Volume implements ValueUnitInterface
     /**
      * @ORM\Column(type="string", length=8, nullable=true)
      */
-    private $units;
+    private $unit;
 
     public function getValue(): ?string
     {
@@ -42,12 +42,17 @@ class Volume implements ValueUnitInterface
 
     public function getUnit(): ?string
     {
-        return $this->units;
+        return $this->unit;
     }
 
     public function setUnit(?string $unit): self
     {
-        $this->units = $unit;
+        $this->unit = $unit;
         return $this;
+    }
+
+    public function isBlank(): bool
+    {
+        return empty($this->value);
     }
 }

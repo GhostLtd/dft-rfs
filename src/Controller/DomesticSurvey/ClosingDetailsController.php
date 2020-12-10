@@ -3,36 +3,48 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
-use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
+use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowController
+class ClosingDetailsController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_NAME = 'app_domesticsurvey_vehicleandbusinessdetails_index';
+    public const ROUTE_NAME = 'app_domesticsurvey_closingdetails_index';
+    public const START_ROUTE_NAME = 'app_domesticsurvey_closingdetails_start';
 
     /**
-     * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurvey_vehicleandbusinessdetails_start")
-     * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=self::ROUTE_NAME)
+     * @var WorkflowInterface
+     */
+    private $domesticSurveyStateMachine;
+
+    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, WorkflowInterface $domesticSurveyStateMachine)
+    {
+        parent::__construct($entityManager, $session);
+        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
+    }
+
+    /**
+     * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
+     * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     * @param WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine
+     * @param WorkflowInterface $domesticSurveyClosingDetailsStateMachine
      * @param Request $request
      * @param null | string $state
      * @return Response
      * @throws Exception
      */
-    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = null): Response
+    public function index(WorkflowInterface $domesticSurveyClosingDetailsStateMachine, Request $request, $state = null): Response
     {
-        return $this->doWorkflow($domesticSurveyVehicleAndBusinessDetailsStateMachine, $request, $state);
+        return $this->doWorkflow($domesticSurveyClosingDetailsStateMachine, $request, $state);
     }
 
     /**
@@ -44,15 +56,15 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
         $user = $this->getUser();
 
         $survey = $user->getDomesticSurvey();
-        /** @var SurveyResponse $response */
         $response = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
 
-        /** @var VehicleAndBusinessDetailsState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new VehicleAndBusinessDetailsState());
+        /** @var ClosingDetailsState $formWizard */
+        $formWizard = $this->session->get($this->getSessionKey(), new ClosingDetailsState());
         if (is_null($formWizard->getSubject())) {
             $formWizard->setSubject($response);
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
+        $formWizard->getSubject()->setSurvey($survey);
         $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
         $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
 

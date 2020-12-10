@@ -33,7 +33,7 @@ class FileSecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
 
         if ($error) {
-            $form->get('passcode')->addError(new FormError($error->getMessageKey()));
+            $form->addError(new FormError($error->getMessageKey()));
         }
 
         return $this->render('admin/security/login.html.twig', [

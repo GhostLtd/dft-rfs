@@ -142,6 +142,11 @@ abstract class AbstractWorkflowController extends AbstractController
 
         $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
 
+//        if ($controllerCallbackMethod = $metadata['controllerCallback'] ?? false)
+//        {
+//            if (method_exists($this, $controllerCallbackMethod)) $this->$controllerCallbackMethod($formWizard);
+//        }
+
         if ($metadata['persist'] ?? false)
         {
             if (!$this->entityManager->contains($formWizard->getSubject())) {
@@ -204,16 +209,18 @@ abstract class AbstractWorkflowController extends AbstractController
         // If we have only one possible transition, and it is meant to persist/flush
         // then we want to have a better label for the "continue" button
         $isSavePoint = false;
+        $buttonLabel = null;
         $transitions = $stateMachine->getEnabledTransitions($formWizard);
         if (count($transitions) === 1) {
             $transition = $transitions[array_key_last($transitions)];
             $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
             $isSavePoint = ($metadata['persist'] ?? false) === true;
+            $buttonLabel = $metadata['buttonLabel'] ?? ($isSavePoint ? 'Save and finish' : null);
         }
         $template = $formWizard->getStateTemplateMap()[$state] ?? $formWizard->getDefaultTemplate();
         $form->add('continue', ButtonType::class, [
             'type' => 'submit',
-            'label' => $isSavePoint ? 'Save and finish' : null,
+            'label' => $buttonLabel,
         ]);
 
         return [$form, $template];

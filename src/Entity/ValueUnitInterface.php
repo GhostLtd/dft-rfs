@@ -10,4 +10,5 @@ interface ValueUnitInterface
     public function setValue($value);
     public function getUnit() : ?string;
     public function setUnit(?string $unit);
+    public function isBlank(): bool;
 }

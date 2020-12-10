@@ -9,6 +9,7 @@ use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
 use App\Workflow\FormWizardInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +22,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/domestic-survey/initial-details", name="app_domesticsurvey_initialdetails_start")
      * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      * @param WorkflowInterface $domesticSurveyInitialDetailsStateMachine
      * @param Request $request
      * @param null $state

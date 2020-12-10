@@ -35,6 +35,11 @@ trait SurveyTrait {
      */
     private $submissionDate;
 
+    /**
+     * @ORM\Column(type="string", length=20, nullable=false)
+     */
+    private $state;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -91,6 +96,17 @@ trait SurveyTrait {
     {
         $this->submissionDate = $submissionDate;
 
+        return $this;
+    }
+
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    public function setState($state): self
+    {
+        $this->state = $state;
         return $this;
     }
 }

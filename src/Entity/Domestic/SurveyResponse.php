@@ -41,7 +41,7 @@ class SurveyResponse
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SOLD => self::IN_POSSESSION_SOLD,
     ];
 
-    const EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.unable-to-complete.reason.';
+    const EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-empty-survey.option.';
     const EMPTY_SURVEY_REASON_CHOICES = [
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NO_WORK => self::REASON_NO_WORK,
@@ -134,6 +134,12 @@ class SurveyResponse
     private $isInPossessionOfVehicle;
 
     /**
+     * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"reason_for_empty_survey"})
+     */
+    private $reasonForEmptySurvey;
+
+    /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -156,11 +162,6 @@ class SurveyResponse
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $actualVehicleLocation;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $ableToComplete;
 
     /**
      * @var Day[]
@@ -305,19 +306,6 @@ class SurveyResponse
         return $this;
     }
 
-    public function getAbleToComplete(): ?bool
-    {
-        return $this->ableToComplete;
-    }
-
-    public function setAbleToComplete(?bool $ableToComplete): self
-    {
-        $this->ableToComplete = $ableToComplete;
-        if ($ableToComplete) $this->setIsInPossessionOfVehicle(null);
-
-        return $this;
-    }
-
     public function getNewOwnerName(): ?string
     {
         return $this->newOwnerName;
@@ -378,11 +366,33 @@ class SurveyResponse
      */
     public function getDayByNumber($dayNumber): ?Day
     {
-        foreach ($this->days as $day) {
+        foreach ($this->days ?? [] as $day) {
             if ($day->getNumber() === $dayNumber) {
                 return $day;
             }
         }
         return null;
     }
+
+    public function getReasonForEmptySurvey()
+    {
+        return $this->reasonForEmptySurvey;
+    }
+
+    public function setReasonForEmptySurvey($reasonForEmptySurvey): self
+    {
+        $this->reasonForEmptySurvey = $reasonForEmptySurvey;
+        return $this;
+    }
+
+    public function hasJourneys()
+    {
+        foreach ($this->getDays() as $day)
+        {
+            $summaryOrStops = $day->getHasMoreThanFiveStops() ? $day->getSummary() : $day->getStops();
+            if (!empty($summaryOrStops)) return true;
+        }
+        return false;
+    }
+
 }

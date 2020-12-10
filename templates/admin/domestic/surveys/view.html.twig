@@ -30,7 +30,7 @@
 
             {% if 'Contact details' in tabs | keys %}
                 <div class="govuk-tabs__panel" id="tab-initial-details">
-                    {% with {domesticSurvey: survey, showActions: false} %}
+                    {% with {showActions: false} %}
                         {% include 'domestic_survey/includes/contact-details.html.twig' %}
                     {% endwith %}
                 </div>
@@ -38,7 +38,7 @@
 
             {% if 'Business details' in tabs | keys %}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
-                    {% with {domesticSurvey: survey, showActions: false} %}
+                    {% with {showActions: false} %}
                         {% include 'domestic_survey/includes/business-details.html.twig' %}
                     {% endwith %}
                </div>
@@ -46,7 +46,7 @@
 
             {% if 'Vehicle details' in tabs | keys %}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
-                    {% with {domesticSurvey: survey, showActions: false} %}
+                    {% with {showActions: false} %}
                         {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
                     {% endwith %}
                 </div>
@@ -54,7 +54,7 @@
 
             {% if 'Survey period' in tabs | keys %}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-survey-period">
-                    {% with {domesticSurvey: survey, showActions: false} %}
+                    {% with {showActions: false} %}
                         {% include 'admin/domestic/surveys/survey-week.html.twig' %}
                     {% endwith %}
                 </div>

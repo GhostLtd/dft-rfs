@@ -28,13 +28,15 @@ class ValidValueUnitValidator extends ConstraintValidator
 
         $validator = $this->context->getValidator()->inContext($this->context);
 
-        $validator->atPath('value')->validate($value->getValue(), [
-            new NotBlank(['message' => $constraint->valueBlankMessage]),
-            new PositiveOrZero(['message' => $constraint->valuePositiveMessage]),
-        ], ['Default']);
+        if (!$constraint->allowBlank || !$value->isBlank()) {
+            $validator->atPath('value')->validate($value->getValue(), [
+                new NotBlank(['message' => $constraint->valueBlankMessage]),
+                new PositiveOrZero(['message' => $constraint->valuePositiveMessage]),
+            ], ['Default']);
 
-        $validator->atPath('unit')->validate($value->getUnit(), [
-            new NotBlank(['message' => $constraint->unitBlankMessage]),
-        ], ['Default']);
+            $validator->atPath('unit')->validate($value->getUnit(), [
+                new NotBlank(['message' => $constraint->unitBlankMessage]),
+            ], ['Default']);
+        }
     }
 }

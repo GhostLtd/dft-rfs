@@ -1,0 +1,12 @@
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% block content %}
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+            Survey complete
+        </h1>
+        <div class="govuk-panel__body">
+            Your reference number<br><strong>{{ survey.startDate | date('Y') }}-{{ survey.registrationMark }}</strong>
+        </div>
+    </div>
+{% endblock %}

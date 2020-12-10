@@ -4,25 +4,27 @@
 <h2 class="govuk-heading-m">Vehicle details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
     {# vehicle weights #}
-    {% set vehicleWeightsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL')})): 'Change'} %}
-    {{ row(showActions,
-        'domestic.survey-response.vehicle-weights-and-fuel.fuel-quantity.label',
-        "#{domesticSurvey.response.vehicle.fuelQuantity.value} #{domesticSurvey.response.vehicle.fuelQuantity.unit}",
-        vehicleWeightsActionLinks) }}
+    {% set vehicleWeightsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS')})): 'Change'} %}
+    {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
+        {{ row(showActions,
+            'domestic.survey-response.vehicle-fuel.fuel-quantity.label',
+            "#{survey.response.vehicle.fuelQuantity.value} #{survey.response.vehicle.fuelQuantity.unit}",
+            vehicleWeightsActionLinks) }}
+    {% endif %}
     {{ row(showActions,
         'common.vehicle.gross-weight',
-        "#{domesticSurvey.response.vehicle.grossWeight} Kg",
+        "#{survey.response.vehicle.grossWeight} Kg",
         vehicleWeightsActionLinks) }}
     {{ row(showActions,
         'common.vehicle.carrying-capacity',
-        "#{domesticSurvey.response.vehicle.carryingCapacity} Kg",
+        "#{survey.response.vehicle.carryingCapacity} Kg",
         vehicleWeightsActionLinks) }}
 
     {# vehicle config #}
     {% set vehicleConfigActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})): 'Change'} %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">{{ 'common.vehicle.axle-configuration' | trans }}</dt>
-        <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{domesticSurvey.response.vehicle.axleConfiguration}.svg") }}<br>{{ (domesticSurvey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+        <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{survey.response.vehicle.axleConfiguration}.svg") }}<br>{{ (survey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
         {% if showActions -%}
             <dd class="govuk-summary-list__actions">
                 {{- actionLinks(vehicleConfigActionLinks) -}}

@@ -55,4 +55,9 @@ class Distance implements ValueUnitInterface
         $this->unit = $unit;
         return $this;
     }
+
+    public function isBlank(): bool
+    {
+        return empty($this->value);
+    }
 }

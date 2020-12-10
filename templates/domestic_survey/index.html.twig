@@ -7,33 +7,49 @@
     <h1 class="page-heading__heading govuk-heading-xl">Survey dashboard</h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('Vehicle', domesticSurvey.registrationMark) }}
-        {{ actionlessSummaryListRow('Start date', domesticSurvey.startDate | date('l, jS F Y')) }}
+        {{ actionlessSummaryListRow('Vehicle', survey.registrationMark) }}
+        {{ actionlessSummaryListRow('Start date', survey.startDate | date('l, jS F Y')) }}
     </dl>
-    {% if domesticSurvey.initialDetailsComplete and domesticSurvey.businessAndVehicleDetailsComplete %}
-        <h2 class="govuk-heading-m">Your survey week</h2>
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {% for dayNumber in 1..7 %}
-                {% set day = domesticSurvey.response.dayByNumber(dayNumber) %}
-                {{ summaryListRow(
-                    "Day #{dayNumber} (#{(domesticSurvey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
-                    day ? dayText(day) : 'Nothing recorded',
-                    {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
-                ) }}
-            {% endfor %}
-        </dl>
-        <p class="govuk-body">
-            <a href="{{ url('app_domesticsurvey_contactdetails') }}">View/change the contact, business and vehicle details you have already entered</a>.
-        </p>
+    {% if survey.initialDetailsComplete %}
+        {% if survey.businessAndVehicleDetailsComplete %}
+            <h2 class="govuk-heading-m">Your survey week</h2>
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% for dayNumber in 1..7 %}
+                    {% set day = survey.response.dayByNumber(dayNumber) %}
+                    {{ summaryListRow(
+                        "Day #{dayNumber} (#{(survey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
+                        day ? dayText(day) : 'Nothing recorded',
+                        {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'Change' : 'Add'}
+                    ) }}
+                {% endfor %}
+            </dl>
+            <p class="govuk-body">
+                <a href="{{ url('app_domesticsurvey_contactdetails') }}">View/change the contact, business and vehicle details you have already entered</a>.
+            </p>
+        {% else %}
+            {% include 'domestic_survey/includes/contact-details.html.twig' %}
+
+            {% if survey.initialDetailsComplete and (survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')) %}
+                <h2 class="govuk-heading-m">Next step</h2>
+                <p class="govuk-body">
+                    <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">Complete vehicle and business details</a>
+                </p>
+            {% endif %}
+        {% endif %}
     {% endif %}
 
-    {% if domesticSurvey.initialDetailsComplete %}
-        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+    {% if survey.initialDetailsComplete %}
+{#        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">#}
         <p class="govuk-body">
             When you have finished entering information for your survey week, you must submit your survey.
         </p>
         <p class="govuk-body">
-            <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_index') }}">Submit your survey</a>
+            <a class="govuk-button" data-module="govuk-button" href="{{
+                survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')
+                    ? url('app_domesticsurvey_closingdetails_start')
+                    : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::STATE_CONFIRM')})
+            }}">Submit your survey</a>
         </p>
 
     {% endif %}
