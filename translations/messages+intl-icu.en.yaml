@@ -131,6 +131,20 @@ domestic:
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'
 
+    reason-for-empty-survey:
+      reason-for-empty-survey:
+        label: 'Why have you been unable to complete any journeys?'
+        help: 'You have not entered any journey information for your survey week. Why is that?'
+      option:
+        not-taxed: 'The vehicle was not taxed'
+        no-work: 'There was no work'
+        repair: 'The vehicle was being repaired'
+        site-work-only: 'The vehicle is used solely for site work'
+        holiday: 'Not used owing to holiday'
+        maintenance: 'The vehicle was having MOT / service'
+        no-driver: 'There was no driver available'
+        other: 'Other'
+
     scrapped-details:
       date:
         label: 'When was the vehicle scrapped or stolen?'
@@ -180,18 +194,20 @@ domestic:
         label: How was the vehicle being operated during the survey week?
         help: ''
 
-    vehicle-weights-and-fuel:
-      heading: Vehicle weights and fuel
+    vehicle-weights:
+      heading: Vehicle weights
       help: ''
-      fuel-quantity:
-        label: How much fuel in total was put into this vehicle during the survey week?
-        help: ''
       gross-weight:
         label: Gross vehicle weight
         help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
       carrying-capacity:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
+
+    vehicle-fuel:
+      fuel-quantity:
+        label: Vehicle fuel
+        help: 'How much fuel in total was put into this vehicle during the survey week?'
 
     vehicle-trailer-configuration:
       trailer-configuration:
@@ -395,15 +411,6 @@ domestic:
 
 survey:
   domestic:
-    non-complete:
-      not-taxed: 'Not taxed'
-      no-work: 'No work'
-      repair: 'Being repaired'
-      site-work-only: 'Used solely for site work'
-      holiday: 'Not used owing to holiday'
-      maintenance: 'MOT / service'
-      no-driver: 'No driver'
-      other: 'Other'
     forms:
 
 

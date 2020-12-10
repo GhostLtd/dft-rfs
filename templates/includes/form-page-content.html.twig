@@ -1,5 +1,7 @@
+{% set useThirdsColumns = useThirdsColumns ?? true %}
+
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="{% if useThirdsColumns %}govuk-grid-column-two-thirds{% else %}govuk-grid-column-full{% endif %}">
         {% set heading = ("#{translation_prefix}.heading" | trans((heading_translation_parameters | default({})), heading_translation_domain | default(null)) ) %}
         {% if heading != "#{translation_prefix}.heading" and not heading is empty %}
             <h1 class="page-heading__heading govuk-heading-xl">{{ heading }}</h1>
@@ -8,7 +10,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="{% if useThirdsColumns %}govuk-grid-column-two-thirds{% else %}govuk-grid-column-full{% endif %}">
         {% set help = ("#{translation_prefix}.help" | trans((help_translation_parameters | default({})), help_translation_domain | default(null))) %}
         {% if help != "#{translation_prefix}.help" and not help is empty %}
             <p class="govuk-body">{{ help }}</p>
@@ -16,5 +18,5 @@
 
         {{ form(form) }}
     </div>
-    {% if oneThirdColumnContent | default(false) %}<div class="govuk-grid-column-one-third">{{ oneThirdColumnContent | raw }}</div>{% endif %}
+    {% if useThirdsColumns and (oneThirdColumnContent ?? false) %}<div class="govuk-grid-column-one-third">{{ oneThirdColumnContent | raw }}</div>{% endif %}
 </div>

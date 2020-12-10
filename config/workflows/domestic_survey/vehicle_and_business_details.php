@@ -17,8 +17,8 @@ return static function (ContainerConfigurator $container) {
                 'places' => [
                     StateObject::STATE_BUSINESS_DETAILS,
                     StateObject::STATE_CHANGE_BUSINESS_DETAILS,
-                    StateObject::STATE_VEHICLE_WEIGHTS_AND_FUEL,
-                    StateObject::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL,
+                    StateObject::STATE_VEHICLE_WEIGHTS,
+                    StateObject::STATE_CHANGE_VEHICLE_WEIGHTS,
                     StateObject::STATE_VEHICLE_TRAILER_CONFIGURATION,
                     StateObject::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION,
                     StateObject::STATE_VEHICLE_AXLE_CONFIGURATION,
@@ -30,10 +30,10 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'business-details-to-weights' => [
                         'from' => StateObject::STATE_BUSINESS_DETAILS,
-                        'to' =>  StateObject::STATE_VEHICLE_WEIGHTS_AND_FUEL,
+                        'to' =>  StateObject::STATE_VEHICLE_WEIGHTS,
                     ],
                     'weights-to-trailer-config' => [
-                        'from' => StateObject::STATE_VEHICLE_WEIGHTS_AND_FUEL,
+                        'from' => StateObject::STATE_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_VEHICLE_TRAILER_CONFIGURATION,
                     ],
                     'trailer-config-to-axle-config' => [
@@ -75,7 +75,7 @@ return static function (ContainerConfigurator $container) {
                     ],
                     'change-vehicle-weights' => [
                         'from' =>  StateObject::STATE_END,
-                        'to' =>  StateObject::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL,
+                        'to' =>  StateObject::STATE_CHANGE_VEHICLE_WEIGHTS,
                     ],
 
                     'finish-2' => [
@@ -84,7 +84,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_contactdetails',
                         ],
-                        'from' => [StateObject::STATE_CHANGE_VEHICLE_BODY, StateObject::STATE_CHANGE_BUSINESS_DETAILS, StateObject::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL],
+                        'from' => [StateObject::STATE_CHANGE_VEHICLE_BODY, StateObject::STATE_CHANGE_BUSINESS_DETAILS, StateObject::STATE_CHANGE_VEHICLE_WEIGHTS],
                         'to' =>  StateObject::STATE_END,
                     ],
 

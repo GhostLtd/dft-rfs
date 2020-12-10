@@ -7,14 +7,14 @@
     {% set businessDetailsActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')})): 'Change'} %}
     {{ row(showActions,
         'domestic.survey-response.business-details.number-of-employees.label',
-        "domestic.number-of-employees.#{domesticSurvey.response.numberOfEmployees}" | trans,
+        "domestic.number-of-employees.#{survey.response.numberOfEmployees}" | trans,
         businessDetailsActionLinks) }}
     {{ row(showActions,
         'domestic.survey-response.business-details.business-nature.label',
-        domesticSurvey.response.businessNature,
+        survey.response.businessNature,
         businessDetailsActionLinks) }}
     {{ row(showActions,
         'domestic.survey-response.business-details.operation-type.label',
-        (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ domesticSurvey.response.vehicle.operationType) | trans,
+        (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans,
         businessDetailsActionLinks) }}
 </dl>

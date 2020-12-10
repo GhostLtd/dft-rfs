@@ -25,14 +25,14 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
     /**
      * @param Survey $survey
-     * @param $dayNumber
-     * @return DaySummary
+     * @return SurveyResponse
      * @throws NonUniqueResultException
      */
     public function getBySurvey(Survey $survey)
     {
         return $this->createQueryBuilder('survey_response')
             ->select('survey_response, vehicle')
+            ->leftJoin('survey_response.survey', 'survey')
             ->leftJoin('survey_response.vehicle', 'vehicle')
             ->leftJoin('survey_response.days', 'days')
             ->andWhere('survey_response.survey = :survey')

@@ -8,6 +8,7 @@ use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\FormWizardInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +23,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/domestic-survey/day-{dayNumber}/summary/start", name="app_domesticsurvey_daysummary_start")
      * @Route("/domestic-survey/day-{dayNumber}/summary/{state}", name=self::ROUTE_NAME)
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      * @param WorkflowInterface $domesticSurveyDaySummaryStateMachine
      * @param Request $request
      * @param $dayNumber

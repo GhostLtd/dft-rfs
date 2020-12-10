@@ -9,6 +9,7 @@ use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\FormWizardInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +24,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     /**
      * @Route("/domestic-survey/day-{dayNumber}/stop/{state}", name="app_domesticsurvey_daystop_wizard")
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      * @param WorkflowInterface $domesticSurveyDayStopStateMachine
      * @param Request $request
      * @param $dayNumber

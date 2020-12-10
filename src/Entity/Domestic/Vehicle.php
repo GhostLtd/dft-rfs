@@ -18,7 +18,7 @@ class Vehicle
 
     /**
      * @ORM\Embedded(class=Volume::class)
-     * @AppAssert\ValidValueUnit(groups={"vehicle_fuel_quantity"})
+     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"vehicle_fuel_quantity"})
      */
     private $fuelQuantity;
 

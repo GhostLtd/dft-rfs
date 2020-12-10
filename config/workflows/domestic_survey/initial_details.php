@@ -52,7 +52,7 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
+                            'redirectRoute' => 'app_domesticsurvey_index',
                         ],
                         'from' => [
                             StateObject::STATE_ASK_HIREE_DETAILS,
@@ -65,7 +65,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
+                            'redirectRoute' => 'app_domesticsurvey_index',
                             'transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_YES],
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,

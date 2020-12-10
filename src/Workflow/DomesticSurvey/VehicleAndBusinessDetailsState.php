@@ -6,7 +6,7 @@ namespace App\Workflow\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\BusinessDetailsType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsAndFuelType;
+use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleAxleConfigurationType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleBodyType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleTrailerConfigurationType;
@@ -17,8 +17,8 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
 {
     const STATE_BUSINESS_DETAILS = 'business-details';
     const STATE_CHANGE_BUSINESS_DETAILS = 'change-business-details';
-    const STATE_VEHICLE_WEIGHTS_AND_FUEL = 'vehicle-weights-and-fuel';
-    const STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL = 'change-vehicle-weights-and-fuel';
+    const STATE_VEHICLE_WEIGHTS = 'vehicle-weights';
+    const STATE_CHANGE_VEHICLE_WEIGHTS = 'change-vehicle-weights';
     const STATE_VEHICLE_TRAILER_CONFIGURATION = 'vehicle-trailer-configuration';
     const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-vehicle-trailer-configuration';
     const STATE_VEHICLE_AXLE_CONFIGURATION = 'vehicle-axle-configuration';
@@ -30,8 +30,8 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
     private const FORM_MAP = [
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
         self::STATE_CHANGE_BUSINESS_DETAILS => BusinessDetailsType::class,
-        self::STATE_VEHICLE_WEIGHTS_AND_FUEL => VehicleWeightsAndFuelType::class,
-        self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL => VehicleWeightsAndFuelType::class,
+        self::STATE_VEHICLE_WEIGHTS => VehicleWeightsType::class,
+        self::STATE_CHANGE_VEHICLE_WEIGHTS => VehicleWeightsType::class,
         self::STATE_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
@@ -43,8 +43,8 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
     private const TEMPLATE_MAP = [
         self::STATE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
         self::STATE_CHANGE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
-        self::STATE_VEHICLE_WEIGHTS_AND_FUEL => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights-and-fuel.html.twig',
-        self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights-and-fuel.html.twig',
+        self::STATE_VEHICLE_WEIGHTS => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights.html.twig',
+        self::STATE_CHANGE_VEHICLE_WEIGHTS => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights.html.twig',
         self::STATE_VEHICLE_TRAILER_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-trailer-configuration.html.twig',
         self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-trailer-configuration.html.twig',
         self::STATE_VEHICLE_AXLE_CONFIGURATION => 'domestic_survey/vehicle_and_business_details/form-vehicle-axle-configuration.html.twig',
@@ -87,7 +87,7 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
     {
         if ($this->subject->getId()) {
             return in_array($state, [
-                self::STATE_CHANGE_VEHICLE_WEIGHTS_AND_FUEL,
+                self::STATE_CHANGE_VEHICLE_WEIGHTS,
                 self::STATE_CHANGE_BUSINESS_DETAILS,
                 self::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION,
             ]);

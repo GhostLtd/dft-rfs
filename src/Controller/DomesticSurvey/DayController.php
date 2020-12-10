@@ -14,6 +14,7 @@ use App\Workflow\DomesticSurveyInitialDetailsState;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -26,6 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class IndexController
  * @package App\Controller\DomesticSurvey
  * @Route("/domestic-survey")
+ * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DayController extends AbstractController
 {
