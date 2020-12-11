@@ -85,7 +85,7 @@ class DaySummary
         return $this->furthestStop;
     }
 
-    public function setFurthestStop(string $furthestStop): self
+    public function setFurthestStop(?string $furthestStop): self
     {
         $this->furthestStop = $furthestStop;
 
@@ -97,7 +97,7 @@ class DaySummary
         return $this->weightOfGoodsLoaded;
     }
 
-    public function setWeightOfGoodsLoaded(int $weightOfGoodsLoaded): self
+    public function setWeightOfGoodsLoaded(?int $weightOfGoodsLoaded): self
     {
         $this->weightOfGoodsLoaded = $weightOfGoodsLoaded;
 
@@ -109,7 +109,7 @@ class DaySummary
         return $this->weightOfGoodsUnloaded;
     }
 
-    public function setWeightOfGoodsUnloaded(int $weightOfGoodsUnloaded): self
+    public function setWeightOfGoodsUnloaded(?int $weightOfGoodsUnloaded): self
     {
         $this->weightOfGoodsUnloaded = $weightOfGoodsUnloaded;
 
@@ -121,7 +121,7 @@ class DaySummary
         return $this->numberOfStopsLoading;
     }
 
-    public function setNumberOfStopsLoading(int $numberOfStopsLoading): self
+    public function setNumberOfStopsLoading(?int $numberOfStopsLoading): self
     {
         $this->numberOfStopsLoading = $numberOfStopsLoading;
 
@@ -133,7 +133,7 @@ class DaySummary
         return $this->numberOfStopsUnloading;
     }
 
-    public function setNumberOfStopsUnloading(int $numberOfStopsUnloading): self
+    public function setNumberOfStopsUnloading(?int $numberOfStopsUnloading): self
     {
         $this->numberOfStopsUnloading = $numberOfStopsUnloading;
 
@@ -145,7 +145,7 @@ class DaySummary
         return $this->numberOfStopsLoadingAndUnloading;
     }
 
-    public function setNumberOfStopsLoadingAndUnloading(int $numberOfStopsLoadingAndUnloading): self
+    public function setNumberOfStopsLoadingAndUnloading(?int $numberOfStopsLoadingAndUnloading): self
     {
         $this->numberOfStopsLoadingAndUnloading = $numberOfStopsLoadingAndUnloading;
 
