@@ -22,6 +22,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
     protected $dayNumber;
     protected $stopNumber;
 
+    /** @var Day $day */
     protected $day;
     protected $stop;
 
@@ -45,16 +46,10 @@ class DayStopController extends AbstractSessionStateWorkflowController
         /** @var PasscodeUser $user */
         $user = $this->getUser();
 
-        /** @var Day $day */
-        $this->day = $this->entityManager->getRepository(Day::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $dayNumber);
         $this->dayNumber = $dayNumber;
 
-        if ($stopNumber === 'add') {
-            $this->stop = new DayStop();
-            $this->day->addStop($this->stop);
-        } else {
-            $this->stop = $this->day->getStopByNumber($stopNumber);
-        }
+        $this->day = $this->entityManager->getRepository(Day::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $dayNumber);
+        $this->stop = $stopNumber === 'add' ? (new DayStop()) : $this->day->getStopByNumber($stopNumber);
 
         return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);
     }
@@ -75,6 +70,8 @@ class DayStopController extends AbstractSessionStateWorkflowController
         if ($subject->getId()) {
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
             $formWizard->setSubject($this->entityManager->merge($subject));
+        } else {
+            $this->day->addStop($subject); // Ultimately causes stop->number to be set
         }
 
         return $formWizard;

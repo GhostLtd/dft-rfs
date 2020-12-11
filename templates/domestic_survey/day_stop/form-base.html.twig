@@ -1,16 +1,19 @@
 {% extends 'domestic_survey/form-base.html.twig' %}
 
 {% block oneThirdColumnContent -%}
-    <h2 class="govuk-heading-m">Adding a leg on day {{ subject.day.number }} ({{ subject.day.response.survey.startDate | date('F j, Y') }})</h2>
+    {% if subject.id is null %}
+        <h2 class="govuk-heading-m">Adding a leg on day {{ subject.day.number }} ({{ subject.day.response.survey.startDate | date('F j, Y') }})</h2>
 
-    {% if (subject.day.stops | length) > 0 %}
-        {% set previousLeg = subject.day.stops | last %}
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Previous leg on this day</h3>
-        <p class="govuk-body">{{ previousLeg.originLocation }} to {{ previousLeg.destinationLocation }}</p>
-    {% else %}
-        <p class="govuk-body">This is the first leg for the day</p>
+        {% set stops = subject.day.stops.values %}{# .values gives a 0-indexed array #}
+        {% if stops | length > 1 %}
+            {% set previousStage = stops[stops | length - 2] %}
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Previous journey stage on this day</h3>
+            <p class="govuk-body">{{ previousStage.originLocation }} to {{ previousStage.destinationLocation }}</p>
+        {% else %}
+            <p class="govuk-body">This is the first journey stage of the day</p>
+        {% endif %}
+
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     {% endif %}
-
-    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     {{ parent() }}
 {% endblock %}
