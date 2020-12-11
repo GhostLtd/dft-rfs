@@ -1,7 +1,7 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
 
 {% for stop in day.stops %}
-    <h2 class="govuk-heading-l">Stop {{ loop.index }}</h2>
+    <h2 class="govuk-heading-l">{{ 'domestic.day-view.stage'|trans({stage: loop.index}) }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {% set urlChange = url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number}) %}
 
