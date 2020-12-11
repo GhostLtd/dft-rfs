@@ -243,6 +243,7 @@ domestic:
     cargo-type: Cargo type
     weight-of-goods:
       label: Weight of goods
+      plain: "{value}kg"
       loaded: "{value}kg loaded"
       unloaded: "{value}kg unloaded"
     number-of-stops:
@@ -251,6 +252,9 @@ domestic:
       unloading: "{value} unloading"
       loading-and-unloading: "{value} both loading and unloading"
     distance:
+      plain:
+        miles: "{value} miles"
+        kilometers: "{value} kilometers"
       loaded:
         miles: "{value} miles loaded"
         kilometers: "{value} kilometers loaded"

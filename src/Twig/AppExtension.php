@@ -56,7 +56,10 @@ class AppExtension extends AbstractExtension
                 }
                 return ($stop->getGoodsDescription() === Day::GOODS_DESCRIPTION_OTHER
                     ? $stop->getGoodsDescriptionOther()
-                    : ($short ? $stop->getGoodsDescription() : "domestic.goods-description.options.{$stop->getGoodsDescription()}"));
+                    : ($short ?
+                        $stop->getGoodsDescription() :
+                        $this->translator->trans("domestic.goods-description.options.{$stop->getGoodsDescription()}")
+                    ));
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
         ];
