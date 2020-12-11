@@ -364,7 +364,7 @@ domestic:
     cargo-type:
       cargo-type-code:
         label: How were the goods are carried?
-        help: Mixed consignments should be recorded as "Other cargo type"
+        help: Mixed loads should be recorded as "Other cargo type"
 
     goods-weight:
       heading: Weight of goods
@@ -449,7 +449,7 @@ domestic:
     cargo-type:
       cargo-type-code:
         label: How were the goods are carried?
-        help: Mixed consignments should be recorded as "Other cargo type"
+        help: Mixed loads should be recorded as "Other cargo type"
 
     goods-weight:
       heading: Goods
@@ -758,7 +758,7 @@ goods:
       PS: ''
       NP: for example livestock, cars, plant
       RC: ''
-      OT: 'including swap bodies, boxes, crates and cylinders or mixed consignments'
+      OT: 'including swap bodies, boxes, crates and cylinders or mixed loads'
       NS: ''
 
 
