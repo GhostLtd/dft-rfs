@@ -37,10 +37,10 @@
             choiceLabel(bodyChoices, vehicle.bodyType) | trans,
             {(urlChangeVehicleBody): change}) }}
         {{ summaryListRow('common.vehicle.gross-weight' | trans,
-            "#{vehicle.grossWeight} Kg",
+            "#{vehicle.grossWeight|number_format}kg",
             {(urlChangeVehicleWeight): change}) }}
         {{ summaryListRow('common.vehicle.carrying-capacity' | trans,
-            "#{vehicle.carryingCapacity} Kg",
+            "#{vehicle.carryingCapacity|number_format}kg",
             {(urlChangeVehicleWeight): change}) }}
     </dl>
 
@@ -77,6 +77,6 @@
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
         {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
         <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button">Add Trip</a>
-        <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">Back to dashboard</a>
+        <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
     </p>
 {% endblock %}

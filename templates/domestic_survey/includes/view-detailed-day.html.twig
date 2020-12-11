@@ -3,7 +3,7 @@
 {% for stop in day.stops %}
     <h2 class="govuk-heading-l">Stop {{ loop.index }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {% set urlChange = url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}) %}
+        {% set urlChange = url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number}) %}
 
         {{ summaryListRow('domestic.day-view.start-location',
             (stop.originLocation | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
@@ -13,7 +13,7 @@
         ) }}
         {{ summaryListRow('domestic.day-view.distance-travelled',
             ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" |
-            trans({value: stop.distanceTravelled.value})
+            trans({value: stop.distanceTravelled.value|number_format})
         )) }}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
@@ -29,42 +29,16 @@
         {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
         {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans) }}
 
-        {{ summaryListRow('domestic.day-view.weight-of-goods.label', ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried}))) }}
+        {%- set wasLimitedBy -%}
+            {%- set factors = stop.wasLimitedBy -%}
+            {%- if factors is not empty %} — {{ ('domestic.day-view.limited-by.' ~ (factors | join('-and-'))) | trans }}{% endif -%}
+        {%- endset -%}
+
+        {{ summaryListRow('domestic.day-view.weight-of-goods.label',
+            ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy
+        ) }}
     </dl>
 {% endfor %}
-
-{#<table class="govuk-table">#}
-{#    {{ tableHeadComplex('domestic.day-view.legs-for-day', {#}
-{#        'domestic.day-view.table.origin': {},#}
-{#        'domestic.day-view.table.destination': {},#}
-{#        'domestic.day-view.table.distance': {numeric: true},#}
-{#        'domestic.day-view.table.goods': {},#}
-{#        '': {}#}
-{#    }) }}#}
-{#    <tbody class="govuk-table__body">#}
-{#    {% for stop in day.stops %}#}
-{#        <tr class="govuk-table__row">#}
-{#            {{ tableCell(stop.originLocation | default('-') ~ (stop | formatGoodsTransferDetails('loading', "\n"))) }}#}
-{#            {{ tableCell(stop.destinationLocation | default('-') ~ (stop | formatGoodsTransferDetails('unloading', "\n"))) }}#}
-{#            {{ tableCell(stop.distanceTravelled, {numeric: true}) }}#}
-{#            <td class="govuk-table__cell">#}
-{#                {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')#}
-{#                ? stop.goodsDescriptionOther#}
-{#                : ("domestic.goods-description.options.#{stop.goodsDescription}" | trans)#}
-{#                -}}#}
-{#                {%- if stop.cargoTypeCode | default(false) %} / {{#}
-{#                "goods.cargo-type.options.#{stop.cargoTypeCode}" | trans#}
-{#                -}}#}
-{#                {%- endif -%}#}
-{#            </td>#}
-{#            {{ tableCell(#}
-{#                actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'common.actions.change'}),#}
-{#                {actions: true}#}
-{#            ) }}#}
-{#        </tr>#}
-{#    {% endfor %}#}
-{#    </tbody>#}
-{#</table>#}
 <p class="govuk-body">
-    {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'domestic.day-view.actions.add-a-leg-for-this-journey'|trans) }}
+    {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
 </p>

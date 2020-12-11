@@ -17,7 +17,7 @@ class NumberOfTripsType extends AbstractType
                 'label' => 'international.survey-response.number-of-trips.annual-international-journey-count.label',
                 'help' => 'international.survey-response.number-of-trips.annual-international-journey-count.help',
                 'attr' => [
-                    'class' => 'govuk-input--width-3',
+                    'class' => 'govuk-input--width-5',
                 ],
             ])
         ;

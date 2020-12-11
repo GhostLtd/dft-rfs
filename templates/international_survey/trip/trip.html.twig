@@ -38,7 +38,10 @@
             }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
             {(urlReturnChange): change})
         }}
-        {{ summaryListRow('Round trip distance', trip.roundTripDistance, {(urlDistanceChange): change}) }}
+        {{ summaryListRow('Round trip distance',
+            ("common.distance.#{trip.roundTripDistance.unit}" |
+            trans({value: trip.roundTripDistance.value|number_format})
+        ), {(urlDistanceChange): change}) }}
         {{ summaryListRow('Countries transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
     </dl>
 

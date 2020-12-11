@@ -11,6 +11,9 @@ common:
     boolean:
       yes: Yes
       no: No
+  distance:
+    miles: "{value} miles"
+    kilometers: "{value} kilometers"
   limited-by:
     choices:
       space: At capacity by space
@@ -231,7 +234,7 @@ domestic:
       page: Day record ({date})
       more-than-five-stops: Summary day (more than 5 stops)
     actions:
-      add-a-leg-for-this-journey: Add a leg for this journey
+      add-a-stage-for-this-journey: Add a stage for this journey
       enter-information-for-this-journey: Enter information for this journey
     no-info: You haven't entered any information for this day yet
     start-location: Start location
@@ -241,6 +244,10 @@ domestic:
     goods-carried: Goods carried
     hazardous-goods: Hazardous goods
     cargo-type: Cargo type
+    limited-by:
+      space: At capacity by space
+      weight: At capacity by weight
+      space-and-weight: At capacity by space and weight
     weight-of-goods:
       label: Weight of goods
       plain: "{value}kg"
@@ -271,7 +278,6 @@ domestic:
       rail: unloaded via rail
       docks: unloaded via docks
       airport: unloaded via airport
-    legs-for-day: Legs/stops for this day
     table:
       origin: Origin
       destination: Destination
@@ -376,7 +382,7 @@ domestic:
   ## detailed day stop
   day-stop:
     origin:
-      heading: Where did the vehicle begin this leg of the journey?
+      heading: Where did the vehicle begin this stage of the journey?
       help: ''
       origin-location:
         label: Postcode or place-name and county
@@ -387,11 +393,11 @@ domestic:
 
     origin-ports:
       goods-transferred-from:
-        label: More details about the start of this leg
+        label: More details about the start of this stage
         help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     destination:
-      heading: Where did this leg of the journey end?
+      heading: Where did this stage of the journey end?
       help: ''
       destination-location:
         label: Postcode or place-name and county
@@ -416,12 +422,12 @@ domestic:
     distance-travelled:
       distance-travelled:
         label: Distance travelled
-        help: Enter the distance you travelled on this leg
+        help: Enter the distance you travelled on this stage
 
     goods-description:
       goods-description:
         label: Description of goods carried
-        help: Provide a basic description of the goods carried on this leg. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+        help: Provide a basic description of the goods carried on this stage. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
       goods-description-other:
         label: Other description
 
@@ -436,14 +442,14 @@ domestic:
         help: Mixed consignments should be recorded as "Other cargo type"
 
     goods-weight:
-      heading: 'Goods'
+      heading: Goods
       help: ''
       weight-of-goods-carried:
         label: Weight of goods
-        help: 'Total weight of goods carried on this leg'
+        help: Total weight of goods carried on this stage
       was-limited-by:
         label: Was your vehicle at full capacity?
-        help: 'Select the answers which best describe the load'
+        help: Select the answers which best describe the load
 
 
   # Day, create

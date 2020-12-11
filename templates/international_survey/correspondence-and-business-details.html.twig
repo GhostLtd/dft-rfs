@@ -25,7 +25,7 @@
     <h2 class="govuk-heading-m">Business details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
 
-        {{ gdsComponents.summaryListRow('Estimated number of international trips over the next 12 months', response.annualInternationalJourneyCount, {(urlNumberOfTrips): 'Change'}) }}
+        {{ gdsComponents.summaryListRow('Estimated number of international trips over the next 12 months', response.annualInternationalJourneyCount|number_format, {(urlNumberOfTrips): 'Change'}) }}
         {%- if response.isNoLongerActive %}
             {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
             {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
@@ -48,7 +48,7 @@
     {%- else -%}
         <p class="govuk-body">
             {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
-            <a href="{{ url(dashboardRoute) }}">Back to dashboard</a>
+            <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
         </p>
     {%- endif -%}
 {% endblock %}

@@ -14,11 +14,11 @@
         {{ summaryListRow('domestic.day-view.furthest-stop', day.summary.furthestStop | default('-')) }}
         {{ summaryListRow('domestic.day-view.distance-travelled',
             ("domestic.day-view.distance.loaded.#{day.summary.distanceTravelledLoaded.unit}" |
-            trans({value: day.summary.distanceTravelledLoaded.value})
+            trans({value: day.summary.distanceTravelledLoaded.value|number_format})
         ) ~
         ', ' ~
         ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
-        trans({value: day.summary.distanceTravelledUnloaded.value})
+        trans({value: day.summary.distanceTravelledUnloaded.value|number_format})
         )
         ) }}
         <div class="govuk-summary-list__row">
@@ -38,10 +38,10 @@
         {%- set weightOfGoods -%}
             {%- set parts = [] %}
             {%- if day.summary.weightOfGoodsLoaded -%}
-                {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.loaded' | trans({value: day.summary.weightOfGoodsLoaded})]) -%}
+                {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.loaded' | trans({value: day.summary.weightOfGoodsLoaded|number_format})]) -%}
             {%- endif -%}
             {%- if day.summary.weightOfGoodsUnloaded -%}
-                {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.unloaded' | trans({value: day.summary.weightOfGoodsUnloaded})]) -%}
+                {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.unloaded' | trans({value: day.summary.weightOfGoodsUnloaded|number_format})]) -%}
             {%- endif -%}
             {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
         {%- endset -%}

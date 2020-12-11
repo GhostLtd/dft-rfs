@@ -2,7 +2,6 @@
 
 namespace App\Form\DomesticSurvey\DaySummary;
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,12 +18,14 @@ class GoodsWeightType extends AbstractType
                 'label' => "{$translationKeyPrefix}.weight-of-goods-loaded.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-loaded.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-input--5'],
                 'suffix' => 'kg',
             ])
             ->add('weightOfGoodsUnloaded', Gds\NumberType::class, [
                 'label' => "{$translationKeyPrefix}.weight-of-goods-unloaded.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-unloaded.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-input--5'],
                 'suffix' => 'kg',
             ])
         ;

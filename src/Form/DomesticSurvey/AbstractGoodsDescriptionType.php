@@ -3,7 +3,6 @@
 namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,7 +20,6 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => "{$translationKeyPrefix}.goods-description.help",
                 'help_html' => true,
-                'attr' => ['class' => 'govuk-input--5'],
             ])
         ;
 
