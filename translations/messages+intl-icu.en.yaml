@@ -1,5 +1,14 @@
 service:
   name: Road Haulage Surveys
+  domestic:
+    name: Domestic Road Haulage Survey
+  international:
+    name: International Road Haulage Survey
+
+format:
+  date:
+    long: 'l, jS F Y'
+    short: 'jS M'
 
 common:
   actions:
