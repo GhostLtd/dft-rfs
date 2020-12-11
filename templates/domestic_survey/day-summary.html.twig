@@ -9,9 +9,11 @@
         <h2 class="govuk-heading-m">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
         {% if day.summary | default(false) %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {% set urlChange = url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}) %}
+
                 {{ summaryListRow('domestic.day-view.start-location',
-                    (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — '))
-                ) }}
+                    (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
+                    {(urlChange): 'common.actions.change'}) }}
                 {{ summaryListRow('domestic.day-view.destination-location',
                     (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — '))
                 ) }}

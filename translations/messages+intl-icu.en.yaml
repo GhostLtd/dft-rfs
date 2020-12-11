@@ -3,6 +3,7 @@ service:
 
 common:
   actions:
+    add: Add
     back-to-dashboard: Back to dashboard
     change: Change
     view: View
