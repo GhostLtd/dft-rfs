@@ -2,43 +2,27 @@
 
 namespace App\Controller\DomesticSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\DaySummary;
-use App\Entity\Domestic\Survey;
-use App\Entity\Domestic\SurveyResponse;
-use App\Entity\Domestic\Vehicle;
 use App\Entity\PasscodeUser;
 use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
-use App\Workflow\DomesticSurveyInitialDetailsState;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class IndexController
- * @package App\Controller\DomesticSurvey
- * @Route("/domestic-survey")
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="\d+"})
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DayController extends AbstractController
 {
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
-     * @param $dayNumber
-     * @return Response
-     * @Route("/day-{dayNumber}")
+     * @Route("")
      */
-    public function view(EntityManagerInterface $entityManager, Request $request, $dayNumber)
+    public function view(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -60,13 +44,9 @@ class DayController extends AbstractController
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
-     * @param $dayNumber
-     * @return Response
-     * @Route("/day-{dayNumber}/add")
+     * @Route("/add")
      */
-    public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber)
+    public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();

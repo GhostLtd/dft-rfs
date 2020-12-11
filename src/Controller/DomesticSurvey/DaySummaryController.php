@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber": "\d+"})
+ */
 class DaySummaryController extends AbstractSessionStateWorkflowController
 {
     public const ROUTE_NAME = 'app_domesticsurvey_daysummary_index';
@@ -21,8 +24,8 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     protected $dayNumber;
 
     /**
-     * @Route("/domestic-survey/day-{dayNumber}/summary/start", name="app_domesticsurvey_daysummary_start")
-     * @Route("/domestic-survey/day-{dayNumber}/summary/{state}", name=self::ROUTE_NAME)
+     * @Route("/summary/start", name="app_domesticsurvey_daysummary_start")
+     * @Route("/summary/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      * @param WorkflowInterface $domesticSurveyDaySummaryStateMachine
      * @param Request $request
