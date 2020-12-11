@@ -79,7 +79,12 @@ pre-enquiry:
 domestic:
   day:
     location.not-blank: Enter the location
-    border-crossing.not-blank: Enter the border crossing point
-    goods-description-other.not-blank: Describe the goods
+    location.max-length: "Location must be less {limit} characters or fewer"
+    border-crossing:
+      not-blank: Enter the border crossing point
+      max-length: "Location must be less {limit} characters or fewer"
+    goods-description-other:
+      not-blank: Describe the goods
+      max-length: "Description must be less {limit} characters or fewer"
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address

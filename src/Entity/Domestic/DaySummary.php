@@ -19,6 +19,7 @@ class DaySummary
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"day-summary.furthest-stop"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"day-summary.furthest-stop"})
      */
     private $furthestStop;
 

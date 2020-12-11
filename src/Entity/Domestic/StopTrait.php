@@ -19,12 +19,14 @@ trait StopTrait
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"origin"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin"})
      */
     private $originLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"destination"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination"})
      */
     private $destinationLocation;
 
@@ -55,6 +57,7 @@ trait StopTrait
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="domestic.day.border-crossing.not-blank", groups={"border-crossing"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.border-crossing.max-length", groups={"border-crossing"})
      */
     private $borderCrossingLocation;
 
@@ -67,6 +70,7 @@ trait StopTrait
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.goods-description-other.max-length", groups={"goods-description"})
      */
     private $goodsDescriptionOther;
 
