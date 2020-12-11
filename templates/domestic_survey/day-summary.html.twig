@@ -1,119 +1,13 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell %}
-
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.headings.page' | trans({date: day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y')}) }}</h1>
 
-    {% if day.hasMoreThanFiveStops %}
-        <h2 class="govuk-heading-m">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
-        {% if day.summary | default(false) %}
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {% set urlChange = url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}) %}
-
-                {{ summaryListRow('domestic.day-view.start-location',
-                    (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
-                    {(urlChange): 'common.actions.change'}) }}
-                {{ summaryListRow('domestic.day-view.destination-location',
-                    (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — '))
-                ) }}
-                {{ summaryListRow('domestic.day-view.furthest-stop', day.summary.furthestStop | default('-')) }}
-                {{ summaryListRow('domestic.day-view.distance-travelled',
-                    ("domestic.day-view.distance.loaded.#{day.summary.distanceTravelledLoaded.unit}" |
-                        trans({value: day.summary.distanceTravelledLoaded.value})
-                    ) ~
-                    ', ' ~
-                    ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
-                        trans({value: day.summary.distanceTravelledUnloaded.value})
-                    )
-                ) }}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{- day.summary | formatGoodsDescription }}
-                        {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-                        {%- if day.summary.hazardousGoodsCode %} — <em>{{ day.summary.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, day.summary.hazardousGoodsCode) | trans }}{% endif %}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {# Action Links #}
-                    </dd>
-                </div>
-                {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-                {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, day.summary.cargoTypeCode) | trans) }}
-
-                {%- set weightOfGoods -%}
-                    {%- set parts = [] %}
-                    {%- if day.summary.weightOfGoodsLoaded -%}
-                        {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.loaded' | trans({value: day.summary.weightOfGoodsLoaded})]) -%}
-                    {%- endif -%}
-                    {%- if day.summary.weightOfGoodsUnloaded -%}
-                        {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.unloaded' | trans({value: day.summary.weightOfGoodsUnloaded})]) -%}
-                    {%- endif -%}
-                    {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
-                {%- endset -%}
-                {{ summaryListRow('domestic.day-view.weight-of-goods.label', weightOfGoods) }}
-
-                {%- set numberOfStops -%}
-                    {%- set parts = [] %}
-                    {%- if day.summary.numberOfStopsLoading -%}
-                        {%- set parts = parts | merge(['domestic.day-view.number-of-stops.loading' | trans({value: day.summary.numberOfStopsLoading})]) -%}
-                    {%- endif -%}
-                    {%- if day.summary.numberOfStopsUnloading -%}
-                        {%- set parts = parts | merge(['domestic.day-view.number-of-stops.unloading' | trans({value: day.summary.numberOfStopsUnloading})]) -%}
-                    {%- endif -%}
-                    {%- if day.summary.numberOfStopsLoadingAndUnloading -%}
-                        {%- set parts = parts | merge(['domestic.day-view.number-of-stops.loading-and-unloading' | trans({value: day.summary.numberOfStopsLoadingAndUnloading})]) -%}
-                    {%- endif -%}
-                    {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
-                {%- endset -%}
-                {{ summaryListRow('domestic.day-view.number-of-stops.label', numberOfStops) }}
-            </dl>
-        {% else %}
-            <p class="govuk-body">
-                {{ 'domestic.day-view.no-info' | trans }}
-            </p>
-            <p class="govuk-body">
-                {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'domestic.day-view.actions.enter-information-for-this-journey'|trans) }}
-            </p>
-        {% endif %}
-    {% else %}
-        <h2 class="govuk-heading-m">Detailed day</h2>
-        <table class="govuk-table">
-            {{ tableHeadComplex('domestic.day-view.legs-for-day', {
-                'domestic.day-view.table.origin': {},
-                'domestic.day-view.table.destination': {},
-                'domestic.day-view.table.distance': {numeric: true},
-                'domestic.day-view.table.goods': {},
-                '': {}
-            }) }}
-            <tbody class="govuk-table__body">
-                {% for stop in day.stops %}
-                    <tr class="govuk-table__row">
-                        {{ tableCell(stop.originLocation | default('-') ~ (stop | formatGoodsTransferDetails('loading', "\n"))) }}
-                        {{ tableCell(stop.destinationLocation | default('-') ~ (stop | formatGoodsTransferDetails('unloading', "\n"))) }}
-                        {{ tableCell(stop.distanceTravelled, {numeric: true}) }}
-                        <td class="govuk-table__cell">
-                            {{- stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')
-                                ? stop.goodsDescriptionOther
-                                : ("domestic.goods-description.options.#{stop.goodsDescription}" | trans)
-                            -}}
-                            {%- if stop.cargoTypeCode | default(false) %} / {{
-                                "goods.cargo-type.options.#{stop.cargoTypeCode}" | trans
-                            -}}
-                            {%- endif -%}
-                        </td>
-                        {{ tableCell(
-                            actionLinks({(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number})): 'common.actions.change'}),
-                            {actions: true}
-                        ) }}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p class="govuk-body">
-            {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'domestic.day-view.actions.add-a-leg-for-this-journey'|trans) }}
-        </p>
-    {% endif %}
+    {%- if day.hasMoreThanFiveStops -%}
+        {%- include "domestic_survey/includes/view-summary-day.html.twig" -%}
+    {%- else -%}
+        {%- include "domestic_survey/includes/view-detailed-day.html.twig" -%}
+    {%- endif -%}
 
     <p class="govuk-body">
         <a href="{{ url('app_domesticsurvey_index') }}">{{ 'common.actions.back-to-dashboard' | trans }}</a>
