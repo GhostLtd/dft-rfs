@@ -3,7 +3,8 @@
 {% for stop in day.stops %}
     <h2 class="govuk-heading-l">{{ 'domestic.day-view.stage'|trans({stage: loop.index}) }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {% set urlChange = url('app_domesticsurvey_daystop_start', {dayNumber: day.number, legNumber: stop.number}) %}
+        {%- set params = {dayNumber: day.number, stopNumber: stop.number} -%}
+        {% set urlChange = url('app_domesticsurvey_daystop_start', params) %}
 
         {{ summaryListRow('domestic.day-view.start-location',
             (stop.originLocation | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
@@ -40,5 +41,5 @@
     </dl>
 {% endfor %}
 <p class="govuk-body">
-    {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
+    {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
 </p>
