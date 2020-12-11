@@ -11,22 +11,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     /**
-     * @Route("/", methods={"GET","POST"})
+     * @Route("/")
      * @param Request $request
      * @return Response
      */
     public function index(Request $request)
     {
-        $form = $this->createForm(GdsTestFormType::class);
-
-        if ($request->getMethod() === Request::METHOD_POST)
-        {
-            $form->handleRequest($request);
-        }
-
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
-            'form' => $form->createView(),
-        ]);
+        return $this->render('home/index.html.twig');
     }
 }

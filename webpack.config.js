@@ -79,6 +79,13 @@ Encore
         // optional target path, relative to the output dir
         to: 'icons/[name].[ext]',
     })
+
+    .copyFiles({
+        from: './node_modules/govuk-frontend/govuk/assets/images',
+
+        // optional target path, relative to the output dir
+        to: 'images/[name].[ext]',
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

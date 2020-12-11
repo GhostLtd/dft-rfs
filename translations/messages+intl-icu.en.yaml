@@ -1,5 +1,14 @@
 service:
-  name: Road Freight Statistics
+  name: Road Haulage Surveys
+  domestic:
+    name: Domestic Road Haulage Survey
+  international:
+    name: International Road Haulage Survey
+
+format:
+  date:
+    long: 'l, jS F Y'
+    short: 'jS M'
 
 common:
   actions:
@@ -88,11 +97,11 @@ domestic:
     help:
       empty-container: consignment was an empty freight container
       packaging: consignment was empty pallets, wire cages, roll cages or other packaging
-      groupage: mixed consignments where the main type represented less than 75% (three quarters) by weight
+      groupage: mixed loads where there was no main type
       empty: only if the vehicle carried nothing at all
       other-goods: ''
       # this help text key is intentionally different - see the form structure
-      other: Describe the goods. For example; Live Animals, Household Waste, Mail and/or Parcels, Raw Milk, Various Food Products, Quarrying Material, Plant Hire Equipment etc.
+      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
 
   transferred-port:
     options:
@@ -194,7 +203,7 @@ domestic:
         help: ''
       business-nature:
         label: What is the nature of your business?
-        help: "For example: Haulage; wholesaler of electrical goods; furniture manufacturer; etc."
+        help: "For example: Haulage, wholesaler of electrical goods, furniture manufacturer, etc."
       operation-type:
         label: How was the vehicle being operated during the survey week?
         help: ''
@@ -291,8 +300,8 @@ domestic:
       heading: Where did the vehicle start the day?
       help: ''
       origin-location:
-        label: Postcode or place-name and county
-        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE.\nWhere it is not available, please write the place name eg. Sheffield"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -306,10 +315,10 @@ domestic:
       heading: Where did the journey end?
       help: ''
       destination-location:
-        label: Postcode or place-name and county
-        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE.\nWhere it is not available, please write the place name eg. Sheffield"
       goods-unloaded:
-        label: Were goods un-loaded?
+        label: Were goods unloaded?
         help: ''
 
     destination-ports:
@@ -320,7 +329,7 @@ domestic:
     furthest-stop:
       furthest-stop:
         label: Furthest point on this day
-        help: Record the furthest place from the origin that the vehicle stopped to load and/or unload goods during this day
+        help: Record the furthest place from the starting point that the vehicle stopped to load and/or unload goods during this day. Please provide the postcode if you know it eg. HD1 3LE.\nWhere it is not available, please write the place name eg. Sheffield
 
     border-crossing:
       border-crossing-location:
@@ -332,7 +341,7 @@ domestic:
 
     distance-travelled:
       heading: How far did you travel?
-      help: "Tell us the total distance travelled for this day.\n\nRecord all empty mileage made during the Journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ Journey, include this empty mileage too."
+      help: "Tell us the total distance travelled for this day.\n\nInclude all empty mileage made during the journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ journey, include this empty mileage too."
       distance-travelled-unloaded:
         label: Distance travelled unloaded
         help: Enter the distance you travelled while your vehicle was empty
@@ -343,7 +352,7 @@ domestic:
     goods-description:
       goods-description:
         label: Description of goods carried
-        help: Provide a basic description of the goods carried on this day. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+        help: Provide a basic description of the goods carried on this day. For mixed loads, the main type of goods should be recorded.
       goods-description-other:
         label: Other description
 
@@ -371,13 +380,13 @@ domestic:
       heading: Number of stops
       help: ''
       number-of-stops-loading:
-        label: 'Goods loaded'
+        label: 'Goods loaded only'
         help: 'The number of stops where goods were loaded onto the vehicle only'
       number-of-stops-unloading:
-        label: 'Goods unloaded'
+        label: 'Goods unloaded only'
         help: 'The number of stops where goods were unloaded from the vehicle only'
       number-of-stops-both:
-        label: 'Goods loaded and unloaded'
+        label: 'Goods both loaded and unloaded at the same stop'
         help: 'The number of stops where goods were both loaded and unloaded'
 
   ## detailed day stop
@@ -386,8 +395,8 @@ domestic:
       heading: Where did the vehicle begin this stage of the journey?
       help: ''
       origin-location:
-        label: Postcode or place-name and county
-        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE.\nWhere it is not available, please write the place name eg. Sheffield"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -401,10 +410,10 @@ domestic:
       heading: Where did this stage of the journey end?
       help: ''
       destination-location:
-        label: Postcode or place-name and county
-        help: "Please provide the postcode if you know it eg. SW1P 4DR.\nWhere it is not available, please write the place name and county eg. Westminster, London"
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE.\nWhere it is not available, please write the place name eg. Sheffield"
       goods-unloaded:
-        label: Were goods un-loaded?
+        label: Were goods unloaded?
         help: ''
 
     destination-ports:
@@ -428,7 +437,7 @@ domestic:
     goods-description:
       goods-description:
         label: Description of goods carried
-        help: Provide a basic description of the goods carried on this stage. Where consignments are mixed, the main type of goods should be recorded when it represents 75% (three quarters) or more of the consignment weight.
+        help: Provide a basic description of the goods carried on this stage. For mixed loads, the main type of goods should be recorded.
       goods-description-other:
         label: Other description
 
@@ -458,11 +467,10 @@ domestic:
     number-of-stops:
       number-of-stops:
         label: "How many times did you stop on day {dayNumber}?"
-        help: A vehicle may make one or more stops in the course of a Journey to either load and/or unload goods.
-          Only stops for the loading/ unloading of goods or where a vehicle departs or returns to base should be
-          recorded.
+        help: A stop is where you loaded or unloaded goods, or where you departed/returned to base.
           <ul>
-          <li>Do not include stops where you did not load or unload goods</li>
+          <li>Include stops where you loaded or unload goods</li>
+          <li>Include stops where you departed from or returned to base</li>
           <li>Do not include meal/rest breaks, congestion</li>
           </ul>
 
@@ -482,7 +490,7 @@ survey:
           help:
           location:
             label: Please tell us where you started this stage
-            help: eg. SW1P 4DR; or Westminster, London
+            help: eg. HD1 3LE, or Sheffield
           goods-loaded:
             label: Were goods loaded at this location?
         departed-ports:
@@ -496,9 +504,9 @@ survey:
           help:
           location:
             label: Please tell us where you finished this stage
-            help: eg. SW1P 4DR; or Westminster, London
+            help: eg. HD1 3LE, or Sheffield
           goods-unloaded:
-            label: Were goods un-loaded at this location?
+            label: Were goods unloaded at this location?
         arrived-ports:
           heading: About this location
           help:
@@ -537,7 +545,7 @@ pre-enquiry:
       label: How many of the above vehicles will be used to conduct international journeys?
       help: ''
   employees-and-international-journeys:
-    heading: Employees and International Journeys
+    heading: Employees and international journeys
     employee-count:
       label: How many employees do you currently employee in this firm?
       help: ''
