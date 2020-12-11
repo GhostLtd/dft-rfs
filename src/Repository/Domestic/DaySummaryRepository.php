@@ -2,6 +2,7 @@
 
 namespace App\Repository\Domestic;
 
+use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -24,20 +25,20 @@ class DaySummaryRepository extends ServiceEntityRepository
 
     /**
      * @param Survey $survey
-     * @param $dayNumber
+     * @param Day $day
      * @return DaySummary
      * @throws NonUniqueResultException
      */
-    public function getBySurveyAndDayNumber(Survey $survey, $dayNumber)
+    public function getBySurveyAndDay(Survey $survey, Day $day)
     {
         $daySummary = $this->createQueryBuilder('day_summary')
             ->select('day_summary, day')
             ->leftJoin('day_summary.day', 'day')
             ->leftJoin('day.response', 'response')
-            ->where('day.number = :dayNumber')
+            ->where('day = :day')
             ->andWhere('response.survey = :survey')
             ->setParameters([
-                'dayNumber' => $dayNumber,
+                'day' => $day,
                 'survey' => $survey,
             ])
             ->setMaxResults(1)
@@ -45,7 +46,7 @@ class DaySummaryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
         if (is_null($daySummary)) {
             $daySummary = new DaySummary();
-            $daySummary->setDay($survey->getResponse()->getDayByNumber($dayNumber));
+            $daySummary->setDay($day);
         }
         return $daySummary;
     }

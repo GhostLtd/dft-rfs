@@ -474,8 +474,8 @@ domestic:
           <li>Do not include meal/rest breaks, congestion</li>
           </ul>
 
-        fewer-than-5: Fewer than 5 stops
-        5-or-more: 5 or more stops
+        fewer-than-5: 5 stops or fewer
+        5-or-more: More than 5 stops
 
 
 survey:

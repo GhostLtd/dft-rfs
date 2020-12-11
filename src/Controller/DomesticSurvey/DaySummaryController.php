@@ -3,6 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DaySummaryState;
@@ -11,11 +12,13 @@ use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber": "\d+"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DaySummaryController extends AbstractSessionStateWorkflowController
 {
@@ -50,7 +53,10 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
+        $day = $this->entityManager->getRepository(Day::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
+        if (!$day) throw new NotFoundHttpException();
+
+        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getBySurveyAndDay($user->getDomesticSurvey(), $day);
         if (is_null($formWizard->getSubject())) {
             $formWizard->setSubject($daySummary);
         }

@@ -11,9 +11,16 @@ use App\Workflow\FormWizardInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * Class DayStopController
+ * @package App\Controller\DomesticSurvey
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Security("is_granted('EDIT', user.getDomesticSurvey())")
+ */
 class DayStopController extends AbstractSessionStateWorkflowController
 {
     public const START_ROUTE = 'app_domesticsurvey_daystop_start';
@@ -28,16 +35,15 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     /**
      * @Route(
-     *     "/domestic-survey/day-{dayNumber}/stop-{stopNumber}/start",
+     *     "/stop-{stopNumber}/start",
      *     name=self::START_ROUTE,
      *     requirements={"stageNumber"="\d+|(add)"}
      * )
      * @Route(
-     *     "/domestic-survey/day-{dayNumber}/stop-{stopNumber}/{state}",
+     *     "/stop-{stopNumber}/{state}",
      *     name=self::WIZARD_ROUTE,
      *     requirements={"stageNumber"="\d+|(add)"}
      * )
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
     public function init(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, $stopNumber = "add", $state = null): Response
     {
@@ -49,6 +55,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
         $this->dayNumber = $dayNumber;
 
         $this->day = $this->entityManager->getRepository(Day::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $dayNumber);
+        if (!$this->day) throw new NotFoundHttpException();
         $this->stop = $stopNumber === 'add' ? (new DayStop()) : $this->day->getStopByNumber($stopNumber);
 
         return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);

@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="\d+"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DayController extends AbstractController

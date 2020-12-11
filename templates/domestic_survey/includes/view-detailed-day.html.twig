@@ -27,17 +27,19 @@
                 {# Action Links #}
             </dd>
         </div>
-        {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-        {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans) }}
+        {% if stop.goodsDescription != constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_EMPTY') %}
+            {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
+            {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans) }}
 
-        {%- set wasLimitedBy -%}
-            {%- set factors = stop.wasLimitedBy -%}
-            {%- if factors is not empty %} — {{ ('domestic.day-view.limited-by.' ~ (factors | join('-and-'))) | trans }}{% endif -%}
-        {%- endset -%}
+            {%- set wasLimitedBy -%}
+                {%- set factors = stop.wasLimitedBy -%}
+                {%- if factors is not empty %} — {{ ('domestic.day-view.limited-by.' ~ (factors | join('-and-'))) | trans }}{% endif -%}
+            {%- endset -%}
 
-        {{ summaryListRow('domestic.day-view.weight-of-goods.label',
-            ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy
-        ) }}
+            {{ summaryListRow('domestic.day-view.weight-of-goods.label',
+                ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy
+            ) }}
+        {% endif %}
     </dl>
 {% endfor %}
 <p class="govuk-body">
