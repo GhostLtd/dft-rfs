@@ -8,6 +8,8 @@
 
 {% block head -%}
     {{ encore_entry_link_tags('app') }}
+{#    {% include 'includes/hotjar-tracking.html.twig' %}#}
+    {% include 'includes/wisdom-tracking.html.twig' %}
 {%- endblock %}
 
 {% block bodyEnd %}
