@@ -71,17 +71,16 @@ class DayController extends AbstractController
         $clickedButton = $form->getClickedButton();
 
         if ($clickedButton && $clickedButton->getName() === 'continue') {
-            $entityManager->persist($day);
-            $entityManager->flush();
+            if ($form->isValid()) {
+                $entityManager->persist($day);
+                $entityManager->flush();
 
-            if ($day->getHasMoreThanFiveStops()) {
-                return $this->redirectToRoute('app_domesticsurvey_daysummary_start', ['dayNumber' => $dayNumber]);
-            } else {
-                return $this->redirectToRoute('app_domesticsurvey_daystop_start', ['dayNumber' => $dayNumber]);
+                if ($day->getHasMoreThanFiveStops() === true) {
+                    return $this->redirectToRoute('app_domesticsurvey_daysummary_start', ['dayNumber' => $dayNumber]);
+                } else if ($day->getHasMoreThanFiveStops() === false) {
+                    return $this->redirectToRoute('app_domesticsurvey_daystop_start', ['dayNumber' => $dayNumber]);
+                }
             }
-
-            // redirect back here... the summary screen
-//            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
         }
 
         // show the form/template

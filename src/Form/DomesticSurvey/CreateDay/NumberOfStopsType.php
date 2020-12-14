@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class NumberOfStopsType extends AbstractType
 {
@@ -30,6 +31,7 @@ class NumberOfStopsType extends AbstractType
                         'label_translation_parameters' => ['dayNumber' => $event->getData()->getNumber()],
                         'help_html' => true,
                         'help' => "{$translationKeyPrefix}.number-of-stops.help",
+                        'constraints' => new NotNull(['message' => 'common.choice.not-null'])
                     ])
                     ->add('continue', ButtonType::class, [
                         'type' => 'submit',
