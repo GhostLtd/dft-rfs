@@ -87,22 +87,6 @@ admin:
       access-code-2: "Access code #2"
 
 domestic:
-  goods-description:
-    options:
-      empty-container: Empty container
-      packaging: Packaging
-      groupage: Groupage
-      empty: Empty
-      other-goods: Specific goods / Other
-    help:
-      empty-container: consignment was an empty freight container
-      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
-      groupage: mixed loads where there was no main type
-      empty: only if the vehicle carried nothing at all
-      other-goods: ''
-      # this help text key is intentionally different - see the form structure
-      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
-
   transferred-port:
     options:
       0: None of the above
@@ -760,6 +744,21 @@ goods:
       RC: ''
       OT: 'including swap bodies, boxes, crates and cylinders or mixed loads'
       NS: ''
+  description:
+    options:
+      empty-container: Empty container
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
+      other-goods: Specific goods / Other
+    help:
+      empty-container: consignment was an empty freight container
+      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
+      groupage: mixed loads where there was no main type
+      empty: only if the vehicle carried nothing at all
+      other-goods: ''
+      # this help text key is intentionally different - see the form structure
+      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
 
 
 

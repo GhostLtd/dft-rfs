@@ -16,6 +16,14 @@ class Survey
 {
     use SurveyTrait;
 
+    const STATE_NEW = 'new';
+    const STATE_INVITED_USER = 'invited';
+    const STATE_REMINDED_USER = 'reminded';
+    const STATE_IN_PROGRESS = 'in-progress';
+    const STATE_CLOSED = 'closed';
+    const STATE_REJECTED = 'rejected';
+    const STATE_EXPORTED = 'exported';
+
     /**
      * @ORM\Column(type="string", length=255)
      */

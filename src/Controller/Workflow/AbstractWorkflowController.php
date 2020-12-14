@@ -116,6 +116,7 @@ abstract class AbstractWorkflowController extends AbstractController
             }
         }
 
+        dump($stateMachine);
         if (!$template) {
             throw new RuntimeException("Template not defined for state '{$state}' of '{$stateMachine->getName()}' state machine");
         }
@@ -141,11 +142,6 @@ abstract class AbstractWorkflowController extends AbstractController
         $this->setFormWizard($formWizard);
 
         $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
-
-//        if ($controllerCallbackMethod = $metadata['controllerCallback'] ?? false)
-//        {
-//            if (method_exists($this, $controllerCallbackMethod)) $this->$controllerCallbackMethod($formWizard);
-//        }
 
         if ($metadata['persist'] ?? false)
         {

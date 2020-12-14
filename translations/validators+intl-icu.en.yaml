@@ -29,6 +29,9 @@ common:
     not-blank: Enter an email address
   telephone:
     not-blank: Enter a phone number
+  string:
+    max-length: "The value you have entered is {value} characters long. It cannot be more than {limit}."
+
 
   survey-response:
     name:

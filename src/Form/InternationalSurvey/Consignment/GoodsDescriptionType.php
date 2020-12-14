@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\InternationalSurvey\Consignment;
 
 
 use App\Form\AbstractGoodsDescriptionType;
@@ -13,7 +13,7 @@ class GoodsDescriptionType extends AbstractGoodsDescriptionType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'translation_entity_key' => 'domestic.day-summary',
+            'translation_entity_key' => 'international.consignment',
             'is_summary_day' => true,
         ]);
     }

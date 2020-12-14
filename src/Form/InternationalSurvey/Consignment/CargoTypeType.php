@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\InternationalSurvey\Consignment;
 
 
 use App\Form\AbstractCargoTypeType;
@@ -13,8 +13,8 @@ class CargoTypeType extends AbstractCargoTypeType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'translation_entity_key' => 'domestic.day-summary',
-            'is_summary_day' => true,
+            'translation_entity_key' => 'international.consignment',
+            'is_summary_day' => false,
         ]);
 
     }

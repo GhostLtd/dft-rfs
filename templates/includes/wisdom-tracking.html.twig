@@ -6,10 +6,14 @@
     wisdom('init', 882); // <-- Your ProjectId is included here.
     /*  -- Wisdom -- End of Snippet -- */
 
-    {% if app.user -%}
-        wisdom('identify', "{{ app.user.username }}");
-    {%- else -%}
-        wisdom('logoutAndRestart')
-    {%- endif %}
+    wisdom('onReady', () => { // Wisdom is now running
+        {% if app.user -%}
+            wisdom('identify', "{{ app.user.username }}");
+        {%- else -%}
+            if ({{ (app.request.get('_route') == 'app_logout') ? 'true' : 'false' }}) {
+                wisdom('logoutAndRestart');
+            }
+        {%- endif %}
+    });
 </script>
 {% endif %}

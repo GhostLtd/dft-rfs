@@ -55,7 +55,7 @@
                         {{ tableCell(_self.location(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false)) }}
                         {{ tableCell(stop.distanceTravelled | formatValueUnit, {numeric: true}) }}
                         {{ tableCell(stop | formatGoodsDescription(true)) }}
-                        {% if stop.goodsDescription == constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_EMPTY') %}
+                        {% if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') %}
                             {{ tableCell('-') }}
                             {{ tableCell('-') }}
                             {{ tableCell('-', {numeric: true}) }}

@@ -61,6 +61,6 @@ abstract class AbstractHazardousGoodsType extends AbstractType
             'validation_groups' => 'hazardous-goods',
         ]);
         $resolver->setRequired(["translation_entity_key"]);
-        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.[change me]']);
+        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.consignment']);
     }
 }

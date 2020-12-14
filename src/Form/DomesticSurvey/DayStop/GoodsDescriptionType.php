@@ -4,7 +4,7 @@
 namespace App\Form\DomesticSurvey\DayStop;
 
 
-use App\Form\DomesticSurvey\AbstractGoodsDescriptionType;
+use App\Form\AbstractGoodsDescriptionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GoodsDescriptionType extends AbstractGoodsDescriptionType
@@ -13,7 +13,7 @@ class GoodsDescriptionType extends AbstractGoodsDescriptionType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'translation_entity_key' => 'day-stop',
+            'translation_entity_key' => 'domestic.day-stop',
             'is_summary_day' => false,
         ]);
     }

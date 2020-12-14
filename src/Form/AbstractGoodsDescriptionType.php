@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Form\DomesticSurvey;
+namespace App\Form;
 
-use App\Entity\Domestic\Day;
+use App\Entity\AbstractGoodsDescription;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,7 +12,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.goods-description";
+        $translationKeyPrefix = "{$options['translation_entity_key']}.goods-description";
         $builder
             ->add('goodsDescriptionFieldset', Gds\FieldsetType::class, [
                 'label' => "{$translationKeyPrefix}.goods-description.label",
@@ -23,17 +23,17 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
             ])
         ;
 
-        $goodsChoiceOptions = Day::GOODS_DESCRIPTION_CHOICES;
+        $goodsChoiceOptions = AbstractGoodsDescription::GOODS_DESCRIPTION_CHOICES;
         foreach ($goodsChoiceOptions as $k=>$v) {
             $goodsChoiceOptions[$k] = [
-                'help' => "domestic.goods-description.help.{$v}",
+                'help' => "goods.description.help.{$v}",
             ];
         }
-        $goodsChoiceOptions[Day::GOODS_DESCRIPTION_TRANSLATION_PREFIX . Day::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
+        $goodsChoiceOptions[AbstractGoodsDescription::GOODS_DESCRIPTION_TRANSLATION_PREFIX . AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
 
-        $choices = Day::GOODS_DESCRIPTION_CHOICES;
+        $choices = AbstractGoodsDescription::GOODS_DESCRIPTION_CHOICES;
         if ($options['is_summary_day']) {
-            unset($choices[array_search(Day::GOODS_DESCRIPTION_EMPTY, $choices)]);
+            unset($choices[array_search(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY, $choices)]);
         }
 
         $builder->get('goodsDescriptionFieldset')
@@ -44,18 +44,16 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
             ])
             ->add('goodsDescriptionOther', Gds\InputType::class, [
                 'label' => false,
-                'help' => "domestic.goods-description.help.other",
+                'help' => "goods.description.help.other",
             ])
             ;
     }
 
-    use StopTypeTrait {
-        StopTypeTrait::configureOptions as traitConfigureOptions;
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
-        $this->traitConfigureOptions($resolver);
+        $resolver->setRequired("translation_entity_key");
+        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.consignment']);
+
         $resolver->setDefaults([
             'is_summary_day' => false,
             'validation_groups' => 'goods-description',

@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
@@ -54,11 +55,11 @@ class AppExtension extends AbstractExtension
                 if (!in_array(StopTrait::class, class_uses($stop))) {
                     return '';
                 }
-                return ($stop->getGoodsDescription() === Day::GOODS_DESCRIPTION_OTHER
+                return ($stop->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
                     ? $stop->getGoodsDescriptionOther()
                     : ($short ?
                         $stop->getGoodsDescription() :
-                        $this->translator->trans("domestic.goods-description.options.{$stop->getGoodsDescription()}")
+                        $this->translator->trans("goods.description.options.{$stop->getGoodsDescription()}")
                     ));
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),

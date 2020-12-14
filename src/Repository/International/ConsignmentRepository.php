@@ -3,8 +3,13 @@
 namespace App\Repository\International;
 
 use App\Entity\International\Consignment;
+use App\Entity\International\SurveyResponse;
+use App\Entity\International\Trip;
+use App\Entity\International\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Consignment|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +22,22 @@ class ConsignmentRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Consignment::class);
+    }
+
+    public function workflowParamConverter(string $id): ?Consignment
+    {
+        if ($id === 'add') return new Consignment();
+
+        try {
+            $consignment = $this->createQueryBuilder('consignment')
+                ->leftJoin('consignment.trip', 'trip')
+                ->getQuery()
+                ->getOneOrNullResult();
+            if (!$consignment) throw new NotFoundHttpException();
+            return $consignment;
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
 
     // /**
