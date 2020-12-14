@@ -1,5 +1,6 @@
 menu:
   dashboard: 'Home'
+  logout: 'Logout'
   domestic.gb:
     root: 'CSRGT (GB)'
     surveys: 'Surveys'
