@@ -74,8 +74,14 @@ class DayController extends AbstractController
             $entityManager->persist($day);
             $entityManager->flush();
 
+            if ($day->getHasMoreThanFiveStops()) {
+                return $this->redirectToRoute('app_domesticsurvey_daysummary_start', ['dayNumber' => $dayNumber]);
+            } else {
+                return $this->redirectToRoute('app_domesticsurvey_daystop_start', ['dayNumber' => $dayNumber]);
+            }
+
             // redirect back here... the summary screen
-            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+//            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
         }
 
         // show the form/template

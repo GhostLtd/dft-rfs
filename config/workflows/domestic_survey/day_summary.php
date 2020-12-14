@@ -97,7 +97,10 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => [
+                                'routeName' => 'app_domesticsurvey_day_view',
+                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            ],
                         ],
                         'from' => StateObject::STATE_NUMBER_OF_STOPS,
                         'to' =>  StateObject::STATE_END,
