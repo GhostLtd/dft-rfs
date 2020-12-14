@@ -39,7 +39,8 @@
     {% endif %}
 
 
-    {% if survey.initialDetailsComplete %}
+    {% if survey.businessAndVehicleDetailsComplete
+        or (survey.initialDetailsComplete and survey.response.isInPossessionOfVehicle != constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES'))  %}
 {#        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">#}
         <p class="govuk-body">
             When you have finished entering information for your survey week, you must submit your survey.
