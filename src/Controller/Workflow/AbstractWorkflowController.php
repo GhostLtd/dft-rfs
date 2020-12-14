@@ -116,7 +116,6 @@ abstract class AbstractWorkflowController extends AbstractController
             }
         }
 
-        dump($stateMachine);
         if (!$template) {
             throw new RuntimeException("Template not defined for state '{$state}' of '{$stateMachine->getName()}' state machine");
         }
