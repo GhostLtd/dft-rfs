@@ -42,7 +42,7 @@ class AdminFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function getCredentials(Request $request)
     {
-        return dump($request->request->get('admin_login'));
+        return $request->request->get('admin_login');
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)

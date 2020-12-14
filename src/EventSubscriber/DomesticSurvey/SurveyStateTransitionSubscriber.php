@@ -32,9 +32,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionInviteUser(Event $event)
     {
         // ToDo: invite the user to take part
-        if (function_exists('dump')) {
-            dump('ToDo: invite domestic user');
-        }
     }
 
     public function onInteractiveLogin(InteractiveLoginEvent $event)
