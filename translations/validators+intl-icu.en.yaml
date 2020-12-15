@@ -10,7 +10,7 @@ common:
   number:
     invalid: Enter a number
     not-null: Enter a number
-    positive-or-zero: Must be positive
+    positive-or-zero: Must be zero or more
     positive: Must be positive
   value-unit:
     unit:

@@ -5,6 +5,7 @@ namespace App\Entity\International;
 use App\Entity\CargoTypeTrait;
 use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ConsignmentRepository;
+use App\Repository\International\StopRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,20 +23,16 @@ class Consignment
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Trip::class, inversedBy="stops")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $trip;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Stop::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"loading-stop"})
      */
     private $loadingStop;
 
     /**
      * @ORM\ManyToOne(targetEntity=Stop::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"unloading-stop"})
      */
     private $unloadingStop;
 
@@ -56,24 +53,20 @@ class Consignment
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="common.number.not-null", groups={"weight-of-goods-carried"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"weight-of-goods-carried"})
      */
     private $weightOfGoodsCarried;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Trip::class, inversedBy="consignments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $trip;
 
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getTrip(): ?Trip
-    {
-        return $this->trip;
-    }
-
-    public function setTrip(?Trip $trip): self
-    {
-        $this->trip = $trip;
-
-        return $this;
     }
 
     public function getLoadingStop(): ?Stop
@@ -137,13 +130,31 @@ class Consignment
     }
 
 
-    public function mergeChanges(Consignment $consignment)
+    public function mergeChanges(Consignment $consignment, StopRepository $stopRepository)
     {
         $this->setWeightOfGoodsCarried($consignment->getWeightOfGoodsCarried());
         $this->setGoodsDescription($consignment->getGoodsDescription());
+        $this->setGoodsDescriptionOther($consignment->getGoodsDescriptionOther());
         $this->setCargoTypeCode($consignment->getCargoTypeCode());
         $this->setHazardousGoodsCode($consignment->getHazardousGoodsCode());
-        $this->setLoadingStop($consignment->getLoadingStop());
-        $this->setUnloadingStop($consignment->getUnloadingStop());
+
+        if ($consignment->getLoadingStop()) {
+            $this->setLoadingStop($stopRepository->find($consignment->getLoadingStop()->getId()));
+        }
+        if ($consignment->getUnloadingStop()) {
+            $this->setUnloadingStop($stopRepository->find($consignment->getUnloadingStop()->getId()));
+        }
+    }
+
+    public function getTrip(): ?Trip
+    {
+        return $this->trip;
+    }
+
+    public function setTrip(?Trip $trip): self
+    {
+        $this->trip = $trip;
+
+        return $this;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Consignment;
+use App\Entity\International\Stop;
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
@@ -23,11 +24,12 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @Route("/international-survey/trips/{tripId}/consignment/{consignmentId}")
+ * @Entity("consignment", expr="repository.workflowParamConverter(consignmentId)")
+ * @Entity("trip", expr="repository.find(tripId)")
  */
 class ConsignmentWorkflowController extends AbstractSessionStateWorkflowController
 {
-    use SurveyHelperTrait;
-
+    public const ADD_ANOTHER_ROUTE = 'app_internationalsurvey_consignment_addanother';
     public const START_ROUTE = 'app_internationalsurvey_consignment_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_consignment_state';
 
@@ -42,10 +44,22 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
     private $trip;
 
     /**
-     * @Route("/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/add-another", name=self::ADD_ANOTHER_ROUTE)
+     * @param Consignment|null $consignment
+     * @param Trip|null $trip
+     * @param null $state
+     * @return Response
+     */
+    public function addAnother(Consignment $consignment = null, Trip $trip = null, $state = null): Response
+    {
+        $this->cleanUp();
+        return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $trip->getId(), 'consignmentId' => 'add']);
+    }
+
+
+    /**
+     * @Route("/state-{state}", name=self::WIZARD_ROUTE)
      * @Route("", name=self::START_ROUTE)
-     * @Entity("consignment", expr="repository.workflowParamConverter(consignmentId)")
-     * @Entity("trip", expr="repository.find(tripId)")
      * @param WorkflowInterface $internationalSurveyConsignmentStateMachine
      * @param Request $request
      * @param Consignment|null $consignment
@@ -71,7 +85,7 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
         $formWizard = $this->session->get($this->getSessionKey(), new ConsignmentState());
 
         $consignment = $formWizard->getSubject() ?? $this->consignment;
-        $this->consignment->mergeChanges($consignment);
+        $this->consignment->mergeChanges($consignment, $this->getDoctrine()->getRepository(Stop::class));
         if (!$this->consignment->getTrip()) $this->consignment->setTrip($this->trip);
         $formWizard->setSubject($this->consignment);
 

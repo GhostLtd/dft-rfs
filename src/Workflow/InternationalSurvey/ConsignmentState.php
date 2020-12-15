@@ -3,10 +3,13 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\Consignment;
+use App\Form\InternationalSurvey\Consignment\AddAnotherType;
 use App\Form\InternationalSurvey\Consignment\CargoTypeType;
 use App\Form\InternationalSurvey\Consignment\GoodsDescriptionType;
 use App\Form\InternationalSurvey\Consignment\GoodsWeightType;
 use App\Form\InternationalSurvey\Consignment\HazardousGoodsType;
+use App\Form\InternationalSurvey\Consignment\PlaceOfLoadingType;
+use App\Form\InternationalSurvey\Consignment\PlaceOfUnloadingType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
@@ -27,6 +30,9 @@ class ConsignmentState extends AbstractFormWizardState implements FormWizardInte
         self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
         self::STATE_CARGO_TYPE => CargoTypeType::class,
         self::STATE_WEIGHT_OF_GOODS => GoodsWeightType::class,
+        self::STATE_PLACE_OF_LOADING => PlaceOfLoadingType::class,
+        self::STATE_PLACE_OF_UNLOADING => PlaceOfUnloadingType::class,
+        self::STATE_ADD_ANOTHER => AddAnotherType::class,
     ];
 
     private const TEMPLATE_MAP = [
@@ -34,6 +40,9 @@ class ConsignmentState extends AbstractFormWizardState implements FormWizardInte
         self::STATE_HAZARDOUS_GOODS => 'international_survey/consignment/form-hazardous-goods.html.twig',
         self::STATE_CARGO_TYPE => 'international_survey/consignment/form-cargo-type.html.twig',
         self::STATE_WEIGHT_OF_GOODS => 'international_survey/consignment/form-weight-of-goods.html.twig',
+        self::STATE_PLACE_OF_LOADING => 'international_survey/consignment/form-place-of-loading.html.twig',
+        self::STATE_PLACE_OF_UNLOADING => 'international_survey/consignment/form-place-of-unloading.html.twig',
+        self::STATE_ADD_ANOTHER => 'international_survey/consignment/form-add-another.html.twig',
     ];
 
     /** @var Consignment */

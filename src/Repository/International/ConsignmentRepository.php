@@ -31,6 +31,8 @@ class ConsignmentRepository extends ServiceEntityRepository
         try {
             $consignment = $this->createQueryBuilder('consignment')
                 ->leftJoin('consignment.trip', 'trip')
+                ->where('consignment.id = :id')
+                ->setParameter('id', $id)
                 ->getQuery()
                 ->getOneOrNullResult();
             if (!$consignment) throw new NotFoundHttpException();

@@ -4,7 +4,7 @@
 namespace App\Entity;
 
 
-class AbstractGoodsDescription
+abstract class AbstractGoodsDescription
 {
     const GOODS_DESCRIPTION_EMPTY_CONTAINER = 'empty-container';
     const GOODS_DESCRIPTION_PACKAGING = 'packaging';

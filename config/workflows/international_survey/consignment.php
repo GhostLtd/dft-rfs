@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Workflow\InternationalSurvey\ConsignmentState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -52,11 +53,30 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_PLACE_OF_UNLOADING,
                         'to' => StateObject::STATE_ADD_ANOTHER,
                     ],
+                    'place_of_unloading_edited' => [
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => [
+                                'routeName' => 'app_internationalsurvey_trip_view',
+                                'parameterMappings' => [
+                                    'id' => 'trip.id',
+                                ],
+                            ],
+                        ],
+                        'from' => StateObject::STATE_PLACE_OF_UNLOADING,
+                        'to' => StateObject::STATE_END,
+                    ],
                     'finish' => [
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => '',
-                                'parameterMappings' => [],
+                                'routeName' => 'app_internationalsurvey_trip_view',
+                                'parameterMappings' => [
+                                    'id' => 'trip.id',
+                                ],
+                            ],
+                            'transitionWhenFormData' => [
+                                'property' => 'add_another',
+                                'value' => false,
                             ],
                         ],
                         'from' => StateObject::STATE_ADD_ANOTHER,
@@ -65,8 +85,15 @@ return static function (ContainerConfigurator $container) {
                     'add_another' => [
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => '',
-                                'parameterMappings' => [],
+                                'routeName' => ConsignmentWorkflowController::ADD_ANOTHER_ROUTE,
+                                'parameterMappings' => [
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
+                                ],
+                            ],
+                            'transitionWhenFormData' => [
+                                'property' => 'add_another',
+                                'value' => true,
                             ],
                         ],
                         'from' => StateObject::STATE_ADD_ANOTHER,
