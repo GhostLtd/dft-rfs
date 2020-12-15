@@ -18,35 +18,46 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ summaryListRow('Dates',
             trip.outboundDate == trip.returnDate ?
-                trip.outboundDate|format('D/m/Y') :
-                ('international.trip.summary.date-until-date'|trans({
-                    'from': trip.outboundDate|date('d/m/Y'),
-                    'until': trip.returnDate|date('d/m/Y'),
-                })),
-            {(urlDateChange): change}) }}
+            trip.outboundDate|format('D/m/Y') :
+            ('international.trip.summary.date-until-date'|trans({
+                'from': trip.outboundDate|date('d/m/Y'),
+                'until': trip.returnDate|date('d/m/Y'),
+            })),
+        {(urlDateChange): change}) }}
         {{ summaryListRow('Outbound journey',
             'international.trip.summary.origin-to-destination'|trans({
                 'origin': trip.outboundUkPort|capitalize,
                 'destination': trip.outboundForeignPort|capitalize,
             }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.outboundCargoState)|trans|lower ~ ")",
-            {(urlOutboundChange): change})
-        }}
+        {(urlOutboundChange): change}) }}
         {{ summaryListRow('Return journey',
             'international.trip.summary.origin-to-destination'|trans({
                 'origin': trip.returnForeignPort|capitalize,
                 'destination': trip.returnUkPort|capitalize,
             }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
-            {(urlReturnChange): change})
-        }}
+        {(urlReturnChange): change}) }}
         {{ summaryListRow('Round trip distance',
             ("common.distance.#{trip.roundTripDistance.unit}" |
             trans({value: trip.roundTripDistance.value|number_format})
         ), {(urlDistanceChange): change}) }}
         {{ summaryListRow('Countries transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
+
+        {% if trip.stops is not empty %}
+            {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
+            {{ summaryListRow('Stops', trip.stops | formatStops, {(url(stopsRoute, {tripId: trip.id})): change}) }}
+        {% endif %}
     </dl>
 
+    {% if trip.stops is empty %}
+        <h2 class="govuk-heading-m">Next steps</h2>
+    {% endif %}
     <p class="govuk-body">
+        {% if trip.stops is empty %}
+            {%- set addRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}
+            <a class="govuk-button" href="{{ url(addRoute, {tripId: trip.id}) }}">Add stops</a>
+        {% endif %}
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back to vehicle summary</a>
+        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back
+            to vehicle summary</a>
     </p>
 {% endblock %}

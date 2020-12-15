@@ -8,6 +8,7 @@ use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
+use App\Entity\International\Stop;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
@@ -16,6 +17,7 @@ use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
+use Doctrine\Common\Collections\Collection;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -62,6 +64,7 @@ class AppExtension extends AbstractExtension
                     ));
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
+            new TwigFilter('formatStops', [$this, 'formatStops']),
         ];
     }
 
@@ -118,6 +121,17 @@ class AppExtension extends AbstractExtension
         }
 
         return $nonBlankPrefix . $this->translator->trans("domestic.day-view." . join('.', $parts));
+    }
+
+    public function formatStops($stops): string
+    {
+        if ($stops && $stops instanceof Collection) {
+            return join(', ', $stops->map(function(Stop $stop) {
+                return $stop->getName();
+            })->toArray());
+        }
+
+        return '';
     }
 
     public function svgIcon(string $icon)
