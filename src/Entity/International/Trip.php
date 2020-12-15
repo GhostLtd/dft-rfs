@@ -100,7 +100,7 @@ class Trip
     private $roundTripDistance;
 
     /**
-     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip")
+     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip", orphanRemoval=true)
      * @ORM\OrderBy({"number" = "ASC"})
      * @var Stop[]|Collection
      */
