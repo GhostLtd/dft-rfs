@@ -34,12 +34,13 @@
         "symfony/twig-bundle": "^4.4",
         "symfony/validator": "4.4.*",
         "symfony/web-link": "4.4.*",
+        "symfony/web-profiler-bundle": "^4.4",
         "symfony/webpack-encore-bundle": "^1.7",
         "symfony/workflow": "4.4.*",
         "symfony/yaml": "4.4.*",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "symfony/web-profiler-bundle": "^4.4"
+        "twig/extra-bundle": "^3.1",
+        "twig/intl-extra": "^3.1",
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "symfony/browser-kit": "^4.4",

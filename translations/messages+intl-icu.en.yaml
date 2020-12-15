@@ -15,6 +15,8 @@ common:
     add: Add
     back-to-dashboard: Back to dashboard
     change: Change
+    remove: Remove
+    save-and-continue: Save and continue
     view: View
   choices:
     boolean:
@@ -636,6 +638,19 @@ international:
       carrying-capacity:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
+  stop:
+    stop:
+      heading: Where did you stop?
+      help: Only add stops where you loaded or unloaded goods
+      name:
+        label: Place
+        help: ''
+      country:
+        label: Country
+        help: ''
+    summary:
+      stop: "{number}. {place}, {country}"
+
   trip:
     summary:
       origin-to-destination: "{origin} to {destination}"
