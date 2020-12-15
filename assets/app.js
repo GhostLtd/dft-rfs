@@ -6,7 +6,6 @@
  */
 'use strict'
 
-import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/js/bundle';
 import * as gds from 'govuk-frontend';
 import accessibleAutocomplete from 'accessible-autocomplete';
 import 'accessible-autocomplete/dist/accessible-autocomplete.min.css';
