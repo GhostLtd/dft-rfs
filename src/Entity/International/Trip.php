@@ -101,6 +101,7 @@ class Trip
 
     /**
      * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip", orphanRemoval=true)
+     * @ORM\OrderBy({"number" = "ASC"})
      * @var Stop[]|Collection
      */
     private $stops;
@@ -458,6 +459,11 @@ class Trip
         $this->setRoundTripDistance($trip->getRoundTripDistance());
         $this->setCountriesTransitted($trip->getCountriesTransitted());
         $this->setCountriesTransittedOther($trip->getCountriesTransittedOther());
+    }
+
+    public function getNextStopNumber(): int
+    {
+        return ($this->stops->last()) ? $this->stops->last()->getNumber() + 1 : 1;
     }
 
     protected function renumberStops(): void

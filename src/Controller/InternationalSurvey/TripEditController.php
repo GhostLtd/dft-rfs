@@ -26,7 +26,7 @@ class TripEditController extends AbstractSessionStateWorkflowController
     protected $trip;
 
     /**
-     * @Route("/international-survey/trips/{tripId}/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/international-survey/trips/{tripId}/edit/{state}", name=self::WIZARD_ROUTE)
      */
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           Request $request,

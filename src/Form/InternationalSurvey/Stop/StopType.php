@@ -38,9 +38,15 @@ class StopType extends AbstractType
                 'placeholder' => '',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
-            ])->add('save', Gds\ButtonType::class, [
+            ])
+            ->add('save', Gds\ButtonType::class, [
                 'label' => 'common.actions.save-and-continue',
                 'type' => 'submit',
+            ])
+            ->add('cancel', Gds\ButtonType::class, [
+                'label' => 'common.actions.cancel',
+                'type' => 'submit',
+                'attr' => ['class' => 'govuk-button--secondary'],
             ]);
     }
 

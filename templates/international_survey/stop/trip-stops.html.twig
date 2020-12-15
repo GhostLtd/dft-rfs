@@ -4,26 +4,26 @@
 {% block content %}
     {%- from 'macros.html.twig' import addToListRow as row, addToListActionLinks as actionLinks -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">Stops for trip</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">Stops</h1>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {%- set changeRoute = constant('App\\Controller\\InternationalSurvey\\StopController::EDIT_ROUTE') -%}
+                {%- set removeRoute = constant('App\\Controller\\InternationalSurvey\\StopController::REMOVE_ROUTE') -%}
                 {% for stop in trip.stops %}
-                    {% set changeLink = '#change-' ~ stop.id %}
-                    {% set removeLink = '#remove-' ~ stop.id %}
+                    {% set changeLink = url(changeRoute, {tripId: trip.id, stopId: stop.id})%}
+                    {% set removeLink = url(removeRoute, {tripId: trip.id, stopId: stop.id})%}
                     {{ row('international.stop.summary.stop'|trans({number: loop.index, place: stop.name, country: stop.country|country_name}),
                         {(changeLink): 'common.actions.change', (removeLink): 'common.actions.remove'}
                     ) }}
                 {% endfor %}
             </dl>
 
-            <p class="govuk-body">
-                {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
-                <a href="{{ url(dashboardRoute, {id: trip.id}) }}" class="govuk-button govuk-button--secondary">Back to
-                    trip summary</a>
-            </p>
+            {{ form(form) }}
         </div>
-        <div class="govuk-grid-column-one-third">...</div>
+        <div class="govuk-grid-column-one-third">
+            {% include "international_survey/includes/trip-summary.html.twig" %}
+        </div>
     </div>
 {% endblock %}
