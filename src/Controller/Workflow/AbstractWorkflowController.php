@@ -142,11 +142,6 @@ abstract class AbstractWorkflowController extends AbstractController
 
         $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
 
-//        if ($controllerCallbackMethod = $metadata['controllerCallback'] ?? false)
-//        {
-//            if (method_exists($this, $controllerCallbackMethod)) $this->$controllerCallbackMethod($formWizard);
-//        }
-
         if ($metadata['persist'] ?? false)
         {
             if (!$this->entityManager->contains($formWizard->getSubject())) {

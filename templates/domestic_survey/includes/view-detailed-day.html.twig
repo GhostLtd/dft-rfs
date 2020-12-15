@@ -27,7 +27,7 @@
                 {# Action Links #}
             </dd>
         </div>
-        {% if stop.goodsDescription != constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_EMPTY') %}
+        {% if stop.goodsDescription != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') %}
             {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
             {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans) }}
 

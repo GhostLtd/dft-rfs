@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoTypeTrait;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -69,7 +70,7 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\Domestic\\Day::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
      * @Assert\Length(max=255, maxMessage="domestic.day.goods-description-other.max-length", groups={"goods-description"})
      */
     private $goodsDescriptionOther;
@@ -191,7 +192,7 @@ trait StopTrait
     {
         $this->goodsDescription = $goodsDescription;
 
-        if ($goodsDescription === Day::GOODS_DESCRIPTION_EMPTY) {
+        if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
             $this
                 ->setHazardousGoodsCode(null)
                 ->setCargoTypeCode(null)
@@ -216,6 +217,6 @@ trait StopTrait
 
     public function isGoodsDescriptionEmptyOption()
     {
-        return $this->goodsDescription === Day::GOODS_DESCRIPTION_EMPTY;
+        return $this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY;
     }
 }

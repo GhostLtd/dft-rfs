@@ -1,21 +1,19 @@
 <?php
 
 
-namespace App\Form\DomesticSurvey\DaySummary;
+namespace App\Form\InternationalSurvey\Consignment;
 
 
-use App\Form\AbstractCargoTypeType;
+use App\Form\AbstractAddAnotherType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CargoTypeType extends AbstractCargoTypeType
+class AddAnotherType extends AbstractAddAnotherType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'translation_entity_key' => 'domestic.day-summary',
-            'is_summary_day' => true,
+            'translation_key_prefix' => 'international.consignment.add-another',
         ]);
-
     }
 }

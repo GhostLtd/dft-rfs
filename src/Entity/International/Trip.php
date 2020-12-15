@@ -100,7 +100,7 @@ class Trip
     private $roundTripDistance;
 
     /**
-     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip")
      * @ORM\OrderBy({"number" = "ASC"})
      * @var Stop[]|Collection
      */
@@ -121,6 +121,11 @@ class Trip
      * @ORM\JoinColumn(nullable=false)
      */
     private $vehicle;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Consignment::class, mappedBy="trip")
+     */
+    private $consignments;
 
     /**
      * @Assert\Callback(groups={"trip_outbound_cargo_state"})
@@ -177,6 +182,7 @@ class Trip
     public function __construct()
     {
         $this->stops = new ArrayCollection();
+        $this->consignments = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -459,6 +465,36 @@ class Trip
         $this->setRoundTripDistance($trip->getRoundTripDistance());
         $this->setCountriesTransitted($trip->getCountriesTransitted());
         $this->setCountriesTransittedOther($trip->getCountriesTransittedOther());
+    }
+
+    /**
+     * @return Collection|Consignment[]
+     */
+    public function getConsignments(): Collection
+    {
+        return $this->consignments;
+    }
+
+    public function addConsignment(Consignment $consignment): self
+    {
+        if (!$this->consignments->contains($consignment)) {
+            $this->consignments[] = $consignment;
+            $consignment->setTrip($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConsignment(Consignment $consignment): self
+    {
+        if ($this->consignments->removeElement($consignment)) {
+            // set the owning side to null (unless already changed)
+            if ($consignment->getTrip() === $this) {
+                $consignment->setTrip(null);
+            }
+        }
+
+        return $this;
     }
 
     public function getNextStopNumber(): int

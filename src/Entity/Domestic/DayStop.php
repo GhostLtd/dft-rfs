@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
 use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\DayStopRepository;
@@ -141,7 +142,7 @@ class DayStop
 
     public function setGoodsDescription(?string $goodsDescription): self
     {
-        if ($goodsDescription === Day::GOODS_DESCRIPTION_EMPTY) {
+        if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
             $this
                 ->setWasLimitedBySpace(null)
                 ->setWasLimitedByWeight(null)

@@ -91,22 +91,6 @@ admin:
       access-code-2: "Access code #2"
 
 domestic:
-  goods-description:
-    options:
-      empty-container: Empty container
-      packaging: Packaging
-      groupage: Groupage
-      empty: Empty
-      other-goods: Specific goods / Other
-    help:
-      empty-container: consignment was an empty freight container
-      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
-      groupage: mixed loads where there was no main type
-      empty: only if the vehicle carried nothing at all
-      other-goods: ''
-      # this help text key is intentionally different - see the form structure
-      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
-
   transferred-port:
     options:
       0: None of the above
@@ -357,8 +341,6 @@ domestic:
       goods-description:
         label: Description of goods carried
         help: Provide a basic description of the goods carried on this day. For mixed loads, the main type of goods should be recorded.
-      goods-description-other:
-        label: Other description
 
     hazardous-goods:
       hazardous-goods:
@@ -442,8 +424,6 @@ domestic:
       goods-description:
         label: Description of goods carried
         help: Provide a basic description of the goods carried on this stage. For mixed loads, the main type of goods should be recorded.
-      goods-description-other:
-        label: Other description
 
     hazardous-goods:
       hazardous-goods:
@@ -655,7 +635,34 @@ international:
     remove:
       yes: "Yes, remove"
       no: "No, cancel"
-
+  consignment:
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this trip. For mixed loads, the main type of goods should be recorded.
+    hazardous-goods:
+      hazardous-goods:
+        label: Were these goods dangerous or hazardous?
+        help: Were the goods being transported classified as dangerous or hazardous?
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods are carried?
+        help: Mixed loads should be recorded as "Other cargo type"
+    goods-weight:
+      weight-of-goods-carried:
+        label: Weight of goods
+        help: The weight of goods should include any packaging or containers. Consignments of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+    place:
+      place-of-loading:
+        label: Place of loading
+        help: "Select the stop where you loaded this consignment"
+      place-of-unloading:
+        label: Place of unloading
+        help: "Select the stop where you unloaded this consignment"
+    add-another:
+      add-another:
+        label: Do you need to add another consignment?
+        help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
       origin-to-destination: "{origin} to {destination}"
@@ -781,6 +788,21 @@ goods:
       RC: ''
       OT: 'including swap bodies, boxes, crates and cylinders or mixed loads'
       NS: ''
+  description:
+    options:
+      empty-container: Empty container
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
+      other-goods: Specific goods / Other
+    help:
+      empty-container: consignment was an empty freight container
+      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
+      groupage: mixed loads where there was no main type
+      empty: only if the vehicle carried nothing at all
+      other-goods: ''
+      # this help text key is intentionally different - see the form structure
+      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
 
 
 

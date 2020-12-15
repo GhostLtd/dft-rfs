@@ -10,7 +10,7 @@ common:
   number:
     invalid: Enter a number
     not-null: Enter a number
-    positive-or-zero: Must be positive
+    positive-or-zero: Must be zero or more
     positive: Must be positive
   value-unit:
     unit:
@@ -29,6 +29,9 @@ common:
     not-blank: Enter an email address
   telephone:
     not-blank: Enter a phone number
+  string:
+    max-length: "The value you have entered is {value} characters long. It cannot be more than {limit}."
+
 
   survey-response:
     name:

@@ -24,7 +24,7 @@ abstract class AbstractCargoTypeType extends AbstractType
             unset($choices[array_search(CargoType::CODE_NS_EMPTY, $choices)]);
         }
 
-        $translationKeyPrefix = "{$options['translation_namespace_key']}.{$options['translation_entity_key']}.cargo-type";
+        $translationKeyPrefix = "{$options['translation_entity_key']}.cargo-type";
         $builder
             ->add('cargoTypeCode', Gds\ChoiceType::class, [
                 'choices' => $choices,
@@ -43,8 +43,7 @@ abstract class AbstractCargoTypeType extends AbstractType
             'is_summary_day' => false,
             'validation_groups' => 'cargo-type',
         ]);
-        $resolver->setRequired(["translation_entity_key", "translation_namespace_key"]);
-        $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);
-        $resolver->setAllowedValues("translation_namespace_key", ['domestic', 'international']);
+        $resolver->setRequired(["translation_entity_key"]);
+        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.consignment']);
     }
 }

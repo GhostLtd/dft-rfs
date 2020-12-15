@@ -41,14 +41,11 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\EventSubscriber\HashPasscodeSubscriber:
-        tags:
-            - { name: 'doctrine.event_subscriber' }
 
-    App\EventSubscriber\DomesticSurvey\SurveyStateLifecycleSubscriber:
-        tags:
-            - { name: 'doctrine.event_subscriber' }
-
+    _instanceof:
+        Doctrine\Common\EventSubscriber:
+            tags:
+                - { name: 'doctrine.event_subscriber' }
 
     App\EventSubscriber\AdminMenuEventSubscriber:
         arguments:
