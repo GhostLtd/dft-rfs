@@ -114,7 +114,7 @@ class Day
         return $this->hasMoreThanFiveStops;
     }
 
-    public function setHasMoreThanFiveStops(bool $hasMoreThanFiveStops): self
+    public function setHasMoreThanFiveStops(?bool $hasMoreThanFiveStops): self
     {
         $this->hasMoreThanFiveStops = $hasMoreThanFiveStops;
 

@@ -37,12 +37,12 @@ class DayStopController extends AbstractSessionStateWorkflowController
      * @Route(
      *     "/stop-{stopNumber}/start",
      *     name=self::START_ROUTE,
-     *     requirements={"stageNumber"="\d+|(add)"}
+     *     requirements={"stopNumber"="\d+|(add)"}
      * )
      * @Route(
      *     "/stop-{stopNumber}/{state}",
      *     name=self::WIZARD_ROUTE,
-     *     requirements={"stageNumber"="\d+|(add)"}
+     *     requirements={"stopNumber"="\d+|(add)"}
      * )
      */
     public function init(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, $stopNumber = "add", $state = null): Response
