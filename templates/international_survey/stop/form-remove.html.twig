@@ -1,2 +1,15 @@
-{% set translation_prefix = 'international.stop.remove' %}
 {% extends 'international_survey/form-base.html.twig' %}
+{% set translation_prefix = 'international.stop.remove' %}
+
+{% block content -%}
+    <h1 class="govuk-heading govuk-heading-xl">Remove stop?</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">Are you sure you want to remove {{ stop.name }} ({{ stop.country | country_name }}) from the list of stops?</p>
+            {%- include 'includes/form-page-content.html.twig' -%}
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% include "international_survey/includes/trip-summary.html.twig" %}
+        </div>
+    </div>
+{%- endblock %}
