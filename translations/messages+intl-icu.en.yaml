@@ -14,7 +14,11 @@ common:
   actions:
     add: Add
     back-to-dashboard: Back to dashboard
+    cancel: Cancel
     change: Change
+    continue: Continue
+    remove: Remove
+    save-and-continue: Save and continue
     view: View
   choices:
     boolean:
@@ -598,9 +602,6 @@ international:
       fewer-than-ten-employees:
         label: Does your firm employ fewer than 10 people in total, nationally?
         help: ''
-        choices:
-          yes: Yes
-          no: No
       business-nature:
         label: What is the nature of your business?
         help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
@@ -636,6 +637,25 @@ international:
       carrying-capacity:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
+  stop:
+    stop:
+      heading: Where did you stop?
+      help: Only add stops where you loaded or unloaded goods
+      name:
+        label: Place
+        help: ''
+      country:
+        label: Country
+        help: ''
+    summary:
+      stop: "{number}. {place}, {country}"
+      add-another:
+        label: Do you need to add another stop?
+        help: ''
+    remove:
+      yes: "Yes, remove"
+      no: "No, cancel"
+
   trip:
     summary:
       origin-to-destination: "{origin} to {destination}"
@@ -654,6 +674,7 @@ international:
       return-cargo-state: "Cargo state"
       distance: Round trip distance
       countries-transitted: Countries transitted
+      from-to: From {source} to {destination}
 
     dates:
       heading: Dates of Trip

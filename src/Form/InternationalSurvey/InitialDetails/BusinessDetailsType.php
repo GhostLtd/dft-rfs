@@ -15,8 +15,8 @@ class BusinessDetailsType extends AbstractType
     const NATURE_PREFIX = self::PREFIX . '.business-nature';
 
     const EMPLOYEES_CHOICES = [
-        self::EMPLOYEES_PREFIX.".choices.yes" => true,
-        self::EMPLOYEES_PREFIX.".choices.no" => false,
+        "common.choices.boolean.yes" => true,
+        "common.choices.boolean.no" => false,
     ];
 
     public function buildForm(FormBuilderInterface $builder, array $options)

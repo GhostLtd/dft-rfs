@@ -25,9 +25,10 @@ class TripRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('t')
-                ->select('t,v,r')
+                ->select('t,v,r,s')
                 ->leftJoin('t.vehicle', 'v')
                 ->leftJoin('v.surveyResponse', 'r')
+                ->leftJoin('t.stops', 's')
                 ->where('t.id = :id')
                 ->andWhere('r = :response')
                 ->getQuery()
