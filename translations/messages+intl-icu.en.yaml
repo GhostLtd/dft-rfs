@@ -17,6 +17,8 @@ common:
     cancel: Cancel
     change: Change
     continue: Continue
+    move-up: Move up
+    move-down: Move down
     remove: Remove
     save-and-continue: Save and continue
     view: View
@@ -630,10 +632,12 @@ international:
         label: Country
         help: ''
     summary:
-      stop: "{number}. {place}, {country}"
+      stop: "{place}, {country}"
       add-another:
         label: Do you need to add another stop?
         help: ''
+    re-order:
+      save: Save order
     remove:
       yes: "Yes, remove"
       no: "No, cancel"
@@ -720,7 +724,7 @@ international:
         help: ''
       was-limited:
         label: Was your vehicle at full capacity?
-        help: 'Select the answers which best describe the load'
+        help: Select the answers which best describe the load
     return-ports:
       heading: Return trip - to the UK
       help: ''
@@ -739,7 +743,7 @@ international:
         help: ''
       was-limited:
         label: Was your vehicle at full capacity?
-        help: 'Select the answers which best describe the load'
+        help: Select the answers which best describe the load
     distance:
       heading: Trip distance
       help: ''
@@ -790,13 +794,13 @@ goods:
     help:
       LB: ''
       SB: ''
-      LFC: 'including ISO containers'
-      OFC: 'including stillages'
+      LFC: including ISO containers
+      OFC: including stillages
       PL: ''
       PS: ''
       NP: for example livestock, cars, plant
       RC: ''
-      OT: 'including swap bodies, boxes, crates and cylinders or mixed loads'
+      OT: including swap bodies, boxes, crates and cylinders or mixed loads
       NS: ''
   description:
     options:
