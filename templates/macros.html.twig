@@ -8,7 +8,9 @@
 
 {% macro addToListRow(key, actions, options) -%}
     <div class="govuk-add-to-list__row {{ options.row_class | default('') }}">
-        <div class="govuk-add-to-list__key">{{ key | nl2br }}</div>
+        <div class="govuk-add-to-list__key">
+            {%- if options.noEscape | default(false) %}{{ key | raw }}{% else %}{{ key | nl2br }}{% endif %}
+        </div>
         {% if not (options.hideActions | default(false)) %}
             <div class="govuk-add-to-list__actions">
                 {{- _self.addToListActionLinks(actions) -}}

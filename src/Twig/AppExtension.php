@@ -76,6 +76,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardState', [$this, 'wizardState']),
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
+            new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
         ];
     }
 
@@ -180,5 +181,31 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function shiftMapping(array $mapping, int $key, string $direction): array {
+        if (!in_array($direction, ['up', 'down'])) {
+            throw new RuntimeException('Direction must be "up" or "down"');
+        }
+
+        if ($key < 0 || $key >= count($mapping)) {
+            throw new RuntimeException('Key out of bounds');
+        }
+
+        if (($key === 0 && $direction === 'up') || ($key === count($mapping) - 1 && $direction === 'down')) {
+            return $mapping;
+        }
+
+        $temp = $mapping[$key];
+
+        if ($direction === 'up') {
+            $mapping[$key] = $mapping[$key - 1];
+            $mapping[$key - 1] = $temp;
+        } else {
+            $mapping[$key] = $mapping[$key + 1];
+            $mapping[$key + 1] = $temp;
+        }
+
+        return $mapping;
     }
 }
