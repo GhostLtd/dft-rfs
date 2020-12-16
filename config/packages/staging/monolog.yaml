@@ -19,21 +19,3 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.form_validation.log"
             level: debug
             channels: [formValidation]
-
-# [START add_stackdriver_to_symfony_monolog]
-        google_cloud:
-            type: service
-            id: monolog_psr_batch_logger
-
-services:
-    # Monolog wrapper
-    monolog_psr_batch_logger:
-        class: Monolog\Handler\PsrHandler
-        arguments: ['@google_cloud_stackdriver_psr_batch_logger']
-
-    # PsrBatchLogger
-    google_cloud_stackdriver_psr_batch_logger:
-        class: Google\Cloud\Logging\PsrLogger
-        factory: ['Google\Cloud\Logging\LoggingClient', 'psrBatchLogger']
-        arguments: ['app']
-# [END add_stackdriver_to_symfony_monolog]

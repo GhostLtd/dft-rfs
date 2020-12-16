@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\Features;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
+use const http\Client\Curl\FEATURES;
 
 class Kernel extends BaseKernel
 {
@@ -51,4 +53,22 @@ class Kernel extends BaseKernel
         $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
+
+    public function getCacheDir()
+    {
+        if (Features::isEnabled(\App\Features::GAE_ENVIRONMENT)) {
+            return sys_get_temp_dir();
+        }
+        return parent::getCacheDir();
+    }
+
+    public function getLogDir()
+    {
+        if (Features::isEnabled(\App\Features::GAE_ENVIRONMENT)) {
+            return sys_get_temp_dir();
+        }
+        return parent::getLogDir();
+    }
 }
+
+

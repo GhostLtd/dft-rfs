@@ -1,0 +1,9 @@
+## GCP AppEngine config
+runtime: php74
+entrypoint: serve public/index.php
+
+handlers:
+    - url: /build
+      static_dir: public/build
+    - url: /.*
+      script: auto
