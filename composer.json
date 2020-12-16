@@ -17,6 +17,7 @@
         "google/cloud-logging": "^1.21",
         "laminas/laminas-code": "^3.4",
         "laminas/laminas-eventmanager": "^3.3",
+        "mariusbuescher/node-composer": "dev-master",
         "phpdocumentor/reflection-docblock": "^5.2",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "4.4.*",
