@@ -20,7 +20,7 @@ class Distance implements ValueUnitInterface
     ];
 
     /**
-     * @ORM\Column(type="integer", precision=10, scale=1, nullable=true)
+     * @ORM\Column(type="decimal", precision=10, scale=1, nullable=true)
      */
     private $value;
 
