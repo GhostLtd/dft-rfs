@@ -1,11 +1,11 @@
-{% set translation_prefix = 'international.trip-summary' %}
+{% set translation_prefix = 'international.trip.summary' %}
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">Trip Summary</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.trip-summary'|trans }}</a></h1>
 
     {%- set params = {tripId: trip.id} -%}
     {%- set urlDateChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DATES', params) -%}
@@ -16,7 +16,7 @@
     {%- set change = 'common.actions.change'|trans -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ summaryListRow('Dates',
+        {{ summaryListRow('international.trip.summary.dates',
             trip.outboundDate == trip.returnDate ?
             trip.outboundDate|format('D/m/Y') :
             ('international.trip.summary.date-until-date'|trans({
@@ -24,40 +24,39 @@
                 'until': trip.returnDate|date('d/m/Y'),
             })),
         {(urlDateChange): change}) }}
-        {{ summaryListRow('Outbound journey',
+        {{ summaryListRow('international.trip.summary.outbound-journey',
             'international.trip.summary.origin-to-destination'|trans({
                 'origin': trip.outboundUkPort|capitalize,
                 'destination': trip.outboundForeignPort|capitalize,
             }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.outboundCargoState)|trans|lower ~ ")",
         {(urlOutboundChange): change}) }}
-        {{ summaryListRow('Return journey',
+        {{ summaryListRow('international.trip.summary.return-journey',
             'international.trip.summary.origin-to-destination'|trans({
                 'origin': trip.returnForeignPort|capitalize,
                 'destination': trip.returnUkPort|capitalize,
             }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
         {(urlReturnChange): change}) }}
-        {{ summaryListRow('Round trip distance',
+        {{ summaryListRow('international.trip.summary.distance',
             ("common.distance.#{trip.roundTripDistance.unit}" |
             trans({value: trip.roundTripDistance.value|number_format})
         ), {(urlDistanceChange): change}) }}
-        {{ summaryListRow('Countries transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
+        {{ summaryListRow('international.trip.summary.countries-transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
 
         {% if trip.stops is not empty %}
             {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
-            {{ summaryListRow('Stops', trip.stops | formatStops, {(url(stopsRoute, {tripId: trip.id})): change}) }}
+            {{ summaryListRow('international.trip.summary.stops', trip.stops | formatStops, {(url(stopsRoute, {tripId: trip.id})): change}) }}
         {% endif %}
     </dl>
 
     {% if trip.stops is empty %}
-        <h2 class="govuk-heading-m">Next steps</h2>
+        <h2 class="govuk-heading-m">{{ common.headings.next-steps|trans }}</h2>
     {% endif %}
     <p class="govuk-body">
         {% if trip.stops is empty %}
             {%- set addRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}
-            <a class="govuk-button" href="{{ url(addRoute, {tripId: trip.id}) }}">Add stops</a>
+            <a class="govuk-button" href="{{ url(addRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-stops'|trans }}</a>
         {% endif %}
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">Back
-            to vehicle summary</a>
+        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
     </p>
 {% endblock %}

@@ -27,6 +27,8 @@ common:
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
+  headings:
+    next-steps: Next steps
   limited-by:
     choices:
       space: At capacity by space
@@ -665,6 +667,10 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
+      actions:
+        add-stops: Add stops
+        back-to-vehicle-summary: Back to vehicle summary
+      trip-summary: Trip summary
       origin-to-destination: "{origin} to {destination}"
       date-until-date: "{from} – {until}"
       cargo-state:
@@ -673,15 +679,19 @@ international:
         limited-by-weight: At capacity by weight
         limited-by-space-and-weight: At capacity by space and weight
         not-limited: Not at capacity
+      dates: Dates
+      outbound-journey: Outbound journey
       outbound: Outbound trip - from the UK
       outbound-ports: "Ports"
       outbound-cargo-state: "Cargo state"
       return: Return trip - to the UK
+      return-journey: Return journey
       return-ports: "Ports"
       return-cargo-state: "Cargo state"
       distance: Round trip distance
       countries-transitted: Countries transitted
       from-to: From {source} to {destination}
+      stops: Stops
 
     dates:
       heading: Dates of Trip
