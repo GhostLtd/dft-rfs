@@ -7,3 +7,6 @@ handlers:
     static_dir: public/build
   - url: /.*
     script: auto
+
+inbound_services:
+  - warmup
