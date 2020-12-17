@@ -11,8 +11,6 @@ handlers:
       Cache-Control: private
   - url: /.*
     script: auto
-    http_headers:
-      Cache-Control: private
 
 skip_files:
   - node_modules/
