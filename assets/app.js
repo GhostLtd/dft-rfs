@@ -35,3 +35,5 @@ document.addEventListener('click', function (event) {
     window.history.back();
 }, false);
 */
+
+console.log('js');

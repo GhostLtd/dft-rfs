@@ -12,8 +12,5 @@ handlers:
   - url: /.*
     script: auto
 
-skip_files:
-  - node_modules/
-
 inbound_services:
   - warmup
