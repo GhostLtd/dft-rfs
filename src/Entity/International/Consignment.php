@@ -3,6 +3,7 @@
 namespace App\Entity\International;
 
 use App\Entity\CargoTypeTrait;
+use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ConsignmentRepository;
 use App\Repository\International\StopRepository;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ConsignmentRepository::class)
  * @ORM\Table(name="international_consignment")
  */
-class Consignment
+class Consignment implements GoodsDescriptionInterface
 {
     /**
      * @ORM\Id

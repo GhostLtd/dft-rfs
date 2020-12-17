@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App\EventSubscriber\InternationalSurvey;
 
-
-use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -19,14 +16,19 @@ class ConsignmentFormWizardSubscriber implements EventSubscriberInterface
         return [
             // Guard events
             "{$prefix}.guard.place_of_unloading_entered" => 'guardAddEnd',
-            "{$prefix}.guard.place_of_unloading_edited" => 'guardEditEnd',
+            "{$prefix}.guard.place_of_unloading_changed" => 'guardEditEnd',
+            "{$prefix}.guard.hazardous_goods_entered" => 'guardAddEnd',
+            "{$prefix}.guard.hazardous_goods_changed" => 'guardEditEnd',
+            "{$prefix}.guard.cargo_type_entered" => 'guardAddEnd',
+            "{$prefix}.guard.cargo_type_changed" => 'guardEditEnd',
+            "{$prefix}.guard.weight_of_goods_entered" => 'guardAddEnd',
+            "{$prefix}.guard.weight_of_goods_changed" => 'guardEditEnd',
         ];
     }
 
 
     /**
      * Transition from UnloadingStop to End
-     * @param GuardEvent $event
      */
     public function guardEditEnd(GuardEvent $event)
     {
@@ -38,7 +40,6 @@ class ConsignmentFormWizardSubscriber implements EventSubscriberInterface
 
     /**
      * Transition from UnloadingStop to AddAnother
-     * @param GuardEvent $event
      */
     public function guardAddEnd(GuardEvent $event)
     {
@@ -47,11 +48,6 @@ class ConsignmentFormWizardSubscriber implements EventSubscriberInterface
             $event->setBlocked(true);
         }
     }
-
-
-
-
-
 
     /**
      * @var WorkflowInterface

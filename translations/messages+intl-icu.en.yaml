@@ -26,6 +26,13 @@ common:
     boolean:
       yes: Yes
       no: No
+  consignment:
+    cargo-type: Cargo type
+    goods: Goods
+    loaded-at: "Stop {number} — {name}, {country}"
+    place-of-loading: Loaded at
+    place-of-unloading: Unloaded at
+    weight: Weight
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -642,6 +649,10 @@ international:
       yes: "Yes, remove"
       no: "No, cancel"
   consignment:
+    summary:
+      heading: Consignment summary
+      actions:
+        back-to-trip-summary: Back to trip summary
     goods-description:
       goods-description:
         label: Description of goods carried
@@ -673,8 +684,10 @@ international:
     summary:
       actions:
         add-stops: Add stops
+        add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle summary
       trip-summary: Trip summary
+      consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
       date-until-date: "{from} – {until}"
       cargo-state:

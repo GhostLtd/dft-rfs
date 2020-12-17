@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\ConsignmentController;
 use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Workflow\InternationalSurvey\ConsignmentState as StateObject;
 
@@ -34,13 +35,58 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_HAZARDOUS_GOODS,
                         'to' => StateObject::STATE_CARGO_TYPE,
                     ],
+                    'hazardous_goods_changed' => [
+                        'name' => 'finish',
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => [
+                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
+                                'parameterMappings' => [
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
+                                ],
+                            ],
+                        ],
+                        'from' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'to' => StateObject::STATE_END,
+                    ],
                     'cargo_type_entered' => [
                         'from' => StateObject::STATE_CARGO_TYPE,
                         'to' => StateObject::STATE_WEIGHT_OF_GOODS,
                     ],
+                    'cargo_type_changed' => [
+                        'name' => 'finish',
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => [
+                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
+                                'parameterMappings' => [
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
+                                ],
+                            ],
+                        ],
+                        'from' => StateObject::STATE_CARGO_TYPE,
+                        'to' => StateObject::STATE_END,
+                    ],
                     'weight_of_goods_entered' => [
                         'from' => StateObject::STATE_WEIGHT_OF_GOODS,
                         'to' => StateObject::STATE_PLACE_OF_LOADING,
+                    ],
+                    'weight_of_goods_changed' => [
+                        'name' => 'finish',
+                        'metadata' => [
+                            'persist' => true,
+                            'redirectRoute' => [
+                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
+                                'parameterMappings' => [
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
+                                ],
+                            ],
+                        ],
+                        'from' => StateObject::STATE_WEIGHT_OF_GOODS,
+                        'to' => StateObject::STATE_END,
                     ],
                     'place_of_loading_entered' => [
                         'from' => StateObject::STATE_PLACE_OF_LOADING,
@@ -53,13 +99,15 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_PLACE_OF_UNLOADING,
                         'to' => StateObject::STATE_ADD_ANOTHER,
                     ],
-                    'place_of_unloading_edited' => [
+                    'place_of_unloading_changed' => [
+                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
-                                'routeName' => 'app_internationalsurvey_trip_view',
+                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
                                 'parameterMappings' => [
-                                    'id' => 'trip.id',
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
                                 ],
                             ],
                         ],
@@ -69,9 +117,10 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => 'app_internationalsurvey_trip_view',
+                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
                                 'parameterMappings' => [
-                                    'id' => 'trip.id',
+                                    'tripId' => 'trip.id',
+                                    'consignmentId' => 'id',
                                 ],
                             ],
                             'transitionWhenFormData' => [
@@ -98,6 +147,26 @@ return static function (ContainerConfigurator $container) {
                         ],
                         'from' => StateObject::STATE_ADD_ANOTHER,
                         'to' => StateObject::STATE_GOODS_DESCRIPTION,
+                    ],
+                    'goods_change' => [
+                        'from' => StateObject::STATE_END,
+                        'to' => StateObject::STATE_GOODS_DESCRIPTION,
+                    ],
+                    'place_of_loading_change' => [
+                        'from' => StateObject::STATE_END,
+                        'to' => StateObject::STATE_PLACE_OF_LOADING,
+                    ],
+                    'place_of_unloading_change' => [
+                        'from' => StateObject::STATE_END,
+                        'to' => StateObject::STATE_PLACE_OF_UNLOADING,
+                    ],
+                    'cargo_type_change' => [
+                        'from' => StateObject::STATE_END,
+                        'to' => StateObject::STATE_CARGO_TYPE,
+                    ],
+                    'weight_of_goods_change' => [
+                        'from' => StateObject::STATE_END,
+                        'to' => StateObject::STATE_WEIGHT_OF_GOODS,
                     ],
                 ]
             ],

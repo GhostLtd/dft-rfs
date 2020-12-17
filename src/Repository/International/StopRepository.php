@@ -27,6 +27,7 @@ class StopRepository extends ServiceEntityRepository
             ->join('stop.trip', 'trip')
             ->andWhere('trip = :trip')
             ->andWhere('stop.number >= :minStop')
+            ->orderBy('stop.number', 'ASC')
             ->setParameters([
                 'trip' => $consignment->getTrip(),
                 'minStop' => $minStop,
@@ -34,33 +35,4 @@ class StopRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
-
-    // /**
-    //  * @return InternationalStop[] Returns an array of InternationalStop objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?InternationalStop
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
