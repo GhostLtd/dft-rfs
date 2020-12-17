@@ -2,11 +2,13 @@
 {% set translation_prefix = 'international.stop.remove' %}
 
 {% block content -%}
-    <h1 class="govuk-heading govuk-heading-xl">Remove stop?</h1>
+    <h1 class="govuk-heading govuk-heading-xl">{{ 'international.stop.remove.heading'|trans }}</h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">Are you sure you want to remove {{ stop.name }} ({{ stop.country | country_name }}) from the list of stops?</p>
-            {%- include 'includes/form-page-content.html.twig' -%}
+            <p class="govuk-body">
+                {{ 'international.stop.remove.are-you-sure' | trans({name: stop.name, country: stop.country | country_name}) }}
+            </p>
+            {{ form(form) }}
         </div>
         <div class="govuk-grid-column-one-third">
             {% include "international_survey/includes/trip-summary.html.twig" %}

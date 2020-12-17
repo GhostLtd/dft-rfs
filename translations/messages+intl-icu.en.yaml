@@ -13,12 +13,15 @@ format:
 common:
   actions:
     add: Add
+    add-trip: Add trip
+    add-vehicle: Add vehicle
     back-to-dashboard: Back to dashboard
     cancel: Cancel
     change: Change
     continue: Continue
     move-up: Move up
     move-down: Move down
+    re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
     view: View
@@ -556,8 +559,23 @@ international:
 
   correspondence-and-business-details:
     title: Correspondence and Business Details
+    business-details: Business details
+    correspondence-details: Correspondence details
+    fewer-than-ten-employees: Employs fewer than 10 people nationally?
+    nature-of-business: Nature of business
+    number-of-trips: Estimated number of international trips over the next 12 months
+    still-active: Firm still performs international road haulage activities?
   summary:
     title: IRHS Survey summary
+    correspondence-and-business-details: Correspondence and Business Details
+    no-vehicles: No vehicles
+    registration: Registration
+    type-and-configuration: Type/configuration
+    status: Status
+    vehicles: Vehicles
+    view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
+
+
   thanks:
     title: Thanks
 
@@ -598,6 +616,11 @@ international:
         help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
 
   vehicle:
+    summary:
+      basic-details: Basic details
+      no-trips: No trips
+      trips: Trips
+      vehicle-summary: Vehicle summary
     vehicle-details:
       heading: 'Vehicle Details'
       help: ''
@@ -640,12 +663,15 @@ international:
         help: ''
     summary:
       stop: "{place}, {country}"
+      stops: Stops
       add-another:
         label: Do you need to add another stop?
         help: ''
     re-order:
       save: Save order
     remove:
+      heading: Remove stop?
+      are-you-sure: "Are you sure you want to remove {name} ({country}) from the list of stops?"
       yes: "Yes, remove"
       no: "No, cancel"
   consignment:

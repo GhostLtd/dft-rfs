@@ -7,41 +7,41 @@
     {%- import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents -%}
     {%- set response = survey.response -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">Correspondence and Business Details</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.correspondence-and-business-details.title'|trans }}</h1>
 
     {%- set urlCorrespondenceDetails = wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS') -%}
     {%- set urlNumberOfTrips = wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS') -%}
     {%- set urlActivityStatus = wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS') -%}
     {%- set urlBusinessDetails = wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS') -%}
 
-    <h2 class="govuk-heading-m">Correspondence details</h2>
+    <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.correspondence-details'|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
 
-        {{ gdsComponents.summaryListRow('Name', response.contactName, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Email', response.contactEmail, {(urlCorrespondenceDetails): 'Change'}) }}
-        {{ gdsComponents.summaryListRow('Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'Change'}) }}
+        {{ gdsComponents.summaryListRow('Name', response.contactName, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
+        {{ gdsComponents.summaryListRow('Email', response.contactEmail, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
+        {{ gdsComponents.summaryListRow('Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
     </dl>
 
-    <h2 class="govuk-heading-m">Business details</h2>
+    <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
 
-        {{ gdsComponents.summaryListRow('Estimated number of international trips over the next 12 months', response.annualInternationalJourneyCount|number_format, {(urlNumberOfTrips): 'Change'}) }}
+        {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.number-of-trips', response.annualInternationalJourneyCount|number_format, {(urlNumberOfTrips): 'common.actions.change'}) }}
         {%- if response.isNoLongerActive %}
             {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
             {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
 
-            {{ gdsComponents.summaryListRow('Firm still performs international road haulage activities?', activityStatus, {(urlActivityStatus): 'Change'}) }}
+            {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.still-active', activityStatus, {(urlActivityStatus): 'common.actions.change'}) }}
         {%- else %}
             {%- set employeesChoices = constant('App\\Form\\InternationalSurvey\\InitialDetails\\BusinessDetailsType::EMPLOYEES_CHOICES') -%}
             {%- set fewerThanTenEmployees = choiceLabel(employeesChoices, response.fewerThanTenEmployees, true) | trans -%}
 
-            {{ gdsComponents.summaryListRow('Nature of business', response.businessNature, {(urlBusinessDetails): 'Change'}) }}
-            {{ gdsComponents.summaryListRow('Employs fewer than 10 people nationally?', fewerThanTenEmployees, {(urlBusinessDetails): 'Change'}) }}
+            {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.nature-of-business', response.businessNature, {(urlBusinessDetails): 'common.actions.change'}) }}
+            {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.fewer-than-ten-employees', fewerThanTenEmployees, {(urlBusinessDetails): 'common.actions.change'}) }}
         {%- endif %}
     </dl>
 
     {%- if form -%}
-        <h2 class="govuk-heading-m">Next steps</h2>
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
         <p class="govuk-body">
             {{ form(form) }}
         </p>
