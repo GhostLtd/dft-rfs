@@ -6,6 +6,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 require dirname(__DIR__).'/config/bootstrap.php';
 
+switch (@parse_url($_SERVER['REQUEST_URI'])['path']) {
+    case '/_ah/warmup':
+        echo __DIR__;
+        system('../bin/console cache:clear');
+        echo "Warmup successful";
+        exit;
+}
+
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
 

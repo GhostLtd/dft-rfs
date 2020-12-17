@@ -20,7 +20,6 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig');
     }
 
-
     /**
      * @Route("/deploy-debug")
      * @param Request $request
@@ -34,8 +33,8 @@ class HomeController extends AbstractController
             exit;
         }
 
-        $this->listFiles("/workspace");
-        $this->listFiles("/workspace/config");
+        $this->listFiles("/workspace/*");
+        $this->listFiles("/workspace/config/*");
 
         exit;
         return $this->render('home/index.html.twig');
