@@ -88,7 +88,7 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
-        "gcp-build": "vendor/bin/npm install && vendor/bin/npm run deploy-build",
+        "gcp-build": "bin/deploy-build.sh",
         "post-install-cmd": [
             "@auto-scripts"
         ],
