@@ -26,6 +26,11 @@ trait SurveyTrait {
     private $surveyPeriodStart;
 
     /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $surveyPeriodEnd;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $responseStartDate;
@@ -73,6 +78,18 @@ trait SurveyTrait {
     {
         if (is_null($this->surveyPeriodStart)) return null;
         return (clone $this->surveyPeriodStart)->modify($modifier);
+    }
+
+    public function getSurveyPeriodEnd(): ?DateTimeInterface
+    {
+        return $this->surveyPeriodEnd;
+    }
+
+    public function setDueDate(?DateTimeInterface $surveyPeriodEnd): self
+    {
+        $this->surveyPeriodEnd = $surveyPeriodEnd;
+
+        return $this;
     }
 
     public function getResponseStartDate(): ?DateTimeInterface
