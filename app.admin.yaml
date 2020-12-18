@@ -2,8 +2,9 @@
 runtime: php74
 entrypoint: serve public/index.php
 instance_class: B1
-default_expiration: "5s"
 service: admin
+env_variables:
+    APP_ENV: "prod"
 
 manual_scaling:
     instances: 1

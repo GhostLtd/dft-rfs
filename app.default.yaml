@@ -1,0 +1,17 @@
+## GCP AppEngine config
+runtime: php74
+entrypoint: serve public/index.php
+service: default
+env_variables:
+  APP_ENV: "prod"
+
+default_expiration: "5s"
+
+handlers:
+  - url: /build
+    static_dir: public/build
+  - url: /.*
+    script: auto
+
+inbound_services:
+  - warmup
