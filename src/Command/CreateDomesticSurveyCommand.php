@@ -61,6 +61,7 @@ class CreateDomesticSurveyCommand extends Command
         $survey
             ->setRegistrationMark($reg)
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
+            ->setSurveyPeriodEnd(new DateTime('now +14 days'))
             ->setIsNorthernIreland(false)
             ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
         ;
@@ -75,10 +76,11 @@ class CreateDomesticSurveyCommand extends Command
         $this->entityManager->flush();
 
         $io->success('Domestic survey created');
-        $io->writeln("Vehicle reg  : {$reg}");
-        $io->writeln("Pass code 1  : {$username}");
-        $io->writeln("Pass code 2  : {$password}");
-        $io->writeln("Survey start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
+        $io->writeln("Vehicle reg         : {$reg}");
+        $io->writeln("Pass code 1         : {$username}");
+        $io->writeln("Pass code 2         : {$password}");
+        $io->writeln("Survey period start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
+        $io->writeln("Survey period end   : {$survey->getSurveyPeriodEnd()->format('Y-m-d')}");
         $io->writeln("");
 
         return 0;

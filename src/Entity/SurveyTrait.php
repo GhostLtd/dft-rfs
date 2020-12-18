@@ -85,6 +85,13 @@ trait SurveyTrait {
         return $this->surveyPeriodEnd;
     }
 
+    public function setSurveyPeriodEnd(?DateTimeInterface $surveyPeriodEnd): self
+    {
+        $this->surveyPeriodEnd = $surveyPeriodEnd;
+
+        return $this;
+    }
+
     public function setDueDate(?DateTimeInterface $surveyPeriodEnd): self
     {
         $this->surveyPeriodEnd = $surveyPeriodEnd;
