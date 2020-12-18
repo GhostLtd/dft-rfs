@@ -17,7 +17,7 @@ trait SurveyTrait {
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dispatchDate;
+    private $notifiedDate;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -45,14 +45,14 @@ trait SurveyTrait {
         return $this->id;
     }
 
-    public function getDispatchDate(): ?DateTimeInterface
+    public function getNotifiedDate(): ?DateTimeInterface
     {
-        return $this->dispatchDate;
+        return $this->notifiedDate;
     }
 
-    public function setDispatchDate(?DateTimeInterface $dispatchDate): self
+    public function setNotifiedDate(?DateTimeInterface $notifiedDate): self
     {
-        $this->dispatchDate = $dispatchDate;
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }

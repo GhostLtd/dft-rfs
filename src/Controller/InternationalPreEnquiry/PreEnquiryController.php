@@ -114,12 +114,12 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
         if (!$preEnquiry) {
             $company = $companyRepo->fetchOrCreateTestCompany();
 
-            $dispatchDate = new DateTime();
-            $dueDate = (clone $dispatchDate)->modify('+4 weeks');
+            $notifiedDate = new DateTime();
+            $dueDate = (clone $notifiedDate)->modify('+4 weeks');
 
             $preEnquiry = (new PreEnquiry())
                 ->setCompany($company)
-                ->setDispatchDate($dispatchDate)
+                ->setNotifiedDate($notifiedDate)
                 ->setDueDate($dueDate);
 
             $this->entityManager->persist($preEnquiry);
