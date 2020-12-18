@@ -23,7 +23,7 @@ trait SurveyTrait {
      * @ORM\Column(type="date", nullable=true)
      * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
      */
-    private $startDate;
+    private $surveyPeriodStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -57,22 +57,22 @@ trait SurveyTrait {
         return $this;
     }
 
-    public function getStartDate(): ?DateTimeInterface
+    public function getSurveyPeriodStart(): ?DateTimeInterface
     {
-        return $this->startDate;
+        return $this->surveyPeriodStart;
     }
 
-    public function setStartDate(?DateTimeInterface $startDate): self
+    public function setSurveyPeriodStart(?DateTimeInterface $surveyPeriodStart): self
     {
-        $this->startDate = $startDate;
+        $this->surveyPeriodStart = $surveyPeriodStart;
 
         return $this;
     }
 
-    public function getStartDateModifiedBy($modifier)
+    public function getSurveyPeriodStartModifiedBy($modifier)
     {
-        if (is_null($this->startDate)) return null;
-        return (clone $this->startDate)->modify($modifier);
+        if (is_null($this->surveyPeriodStart)) return null;
+        return (clone $this->surveyPeriodStart)->modify($modifier);
     }
 
     public function getResponseStartDate(): ?DateTimeInterface

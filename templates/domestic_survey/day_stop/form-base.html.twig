@@ -2,7 +2,7 @@
 
 {% block oneThirdColumnContent -%}
     {% if subject.id is null %}
-        <h2 class="govuk-heading-m">Adding a leg on day {{ subject.day.number }} ({{ subject.day.response.survey.startDate | date('F j, Y') }})</h2>
+        <h2 class="govuk-heading-m">Adding a leg on day {{ subject.day.number }} ({{ subject.day.response.survey.surveyPeriodStart | date('F j, Y') }})</h2>
 
         {% set stops = subject.day.stops.values %}{# .values gives a 0-indexed array #}
         {% if stops | length > 1 %}

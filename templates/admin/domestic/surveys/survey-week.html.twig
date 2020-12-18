@@ -31,7 +31,7 @@
 {% for dayNumber in 1..7 -%}
     <table class="govuk-table">
         {%- set day = survey.response.dayByNumber(dayNumber) -%}
-        {% set caption = "Day #{dayNumber} (#{(survey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')}) " ~ (day ? dayText(day) : 'Nothing recorded') %}
+        {% set caption = "Day #{dayNumber} (#{(survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')}) " ~ (day ? dayText(day) : 'Nothing recorded') %}
         <tbody class="govuk-table__body">
         {% if day %}
             {% if day.hasMoreThanFiveStops %}

@@ -1,7 +1,7 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
 {% block content %}
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.headings.page' | trans({date: day.response.survey.startDateModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y')}) }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.headings.page' | trans({date: day.response.survey.surveyPeriodStartModifiedBy('+' ~ (day.number-1) ~ ' days') | date('jS F, Y')}) }}</h1>
 
     {%- if day.hasMoreThanFiveStops -%}
         {%- include "domestic_survey/includes/view-summary-day.html.twig" -%}

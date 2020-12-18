@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Utility\PasscodeGenerator;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -59,7 +60,7 @@ class CreateDomesticSurveyCommand extends Command
         $survey = new Survey();
         $survey
             ->setRegistrationMark($reg)
-            ->setStartDate(new \DateTime('now +7 days'))
+            ->setSurveyPeriodStart(new DateTime('now +7 days'))
             ->setIsNorthernIreland(false)
             ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
         ;
@@ -74,10 +75,10 @@ class CreateDomesticSurveyCommand extends Command
         $this->entityManager->flush();
 
         $io->success('Domestic survey created');
-        $io->writeln("Vehicle reg : {$reg}");
-        $io->writeln("Pass code 1 : {$username}");
-        $io->writeln("Pass code 2 : {$password}");
-        $io->writeln("Survey due  : {$survey->getStartDate()->format('Y-m-d')}");
+        $io->writeln("Vehicle reg  : {$reg}");
+        $io->writeln("Pass code 1  : {$username}");
+        $io->writeln("Pass code 2  : {$password}");
+        $io->writeln("Survey start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
         $io->writeln("");
 
         return 0;

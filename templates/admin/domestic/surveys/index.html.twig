@@ -10,7 +10,7 @@
         {% for survey in surveys %}
             <tr class="govuk-table__row">
                 {{ tableCell(survey.passcodeUser.username, {}) }}
-                {{ tableCell(survey.startDate | date ('Y-m-d'), {}) }}
+                {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
                 {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
                 {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
                 {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
