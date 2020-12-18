@@ -1,17 +1,22 @@
 steps:
     # Install dependencies
     - name: node
+      id: 'node-install'
       entrypoint: yarn
       args: ['install', '--frozen-lockfile']
     # Run custom commands
     - name: node
+      id: 'node-build'
       entrypoint: yarn
       args: ['run', 'deploy-build']
+      waitFor: ['node-install']
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
       args: ["app", "deploy", "$PROJECT_ID.app.default.yaml"]
+      waitFor: ['node-build']
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
       args: ["app", "deploy", "$PROJECT_ID.app.admin.yaml"]
+      waitFor: ['node-build']
 
 timeout: "900s"
