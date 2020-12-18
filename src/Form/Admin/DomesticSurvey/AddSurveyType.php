@@ -22,7 +22,7 @@ class AddSurveyType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ])
-            ->add('startDate', Gds\DateType::class, [
+            ->add('surveyPeriodStart', Gds\DateType::class, [
                 'label' => "{$translationKeyPrefix}.start-date.label",
                 'help' => "{$translationKeyPrefix}.start-date.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
