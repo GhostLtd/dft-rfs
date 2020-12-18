@@ -9,9 +9,9 @@ steps:
       args: ['run', 'deploy-build']
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "config/gcloud-build/dft-sres-rfs-test/app.default.yaml"]
+      args: ["app", "deploy", "$PROJECT_ID.app.default.yaml"]
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "config/gcloud-build/dft-sres-rfs-test/app.admin.yaml"]
+      args: ["app", "deploy", "$PROJECT_ID.app.admin.yaml"]
 
 timeout: "900s"
