@@ -42,7 +42,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
                 $metadata->getProjectId()
             );
             list($email, $id) = $this->validateAssertion($user->getPassword(), $audience);
-            return $email === $user->getUsername();
+            return $id === $user->getUsername();
         } catch (\Exception $e) {
             return false;
         }
