@@ -9,8 +9,6 @@ env_variables:
   FRONTEND_HOSTNAME: "dft-sres-rfs-test.ew.r.appspot.com"
   ADMIN_HOSTNAME: "admin-dot-dft-sres-rfs-test.ew.r.appspot.com"
 
-default_expiration: "5s"
-
 handlers:
   - url: /build
     static_dir: public/build
