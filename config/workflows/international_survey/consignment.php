@@ -36,7 +36,6 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_CARGO_TYPE,
                     ],
                     'hazardous_goods_changed' => [
-                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
@@ -55,7 +54,6 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_WEIGHT_OF_GOODS,
                     ],
                     'cargo_type_changed' => [
-                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
@@ -74,7 +72,6 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_PLACE_OF_LOADING,
                     ],
                     'weight_of_goods_changed' => [
-                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
@@ -100,7 +97,6 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_ADD_ANOTHER,
                     ],
                     'place_of_unloading_changed' => [
-                        'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => [
