@@ -7,8 +7,6 @@ default_expiration: "5s"
 handlers:
   - url: /build
     static_dir: public/build
-    http_headers:
-      Cache-Control: private
   - url: /.*
     script: auto
 

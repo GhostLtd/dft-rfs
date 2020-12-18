@@ -1,0 +1,13 @@
+steps:
+    # Install dependencies
+    - name: node
+      entrypoint: yarn
+      args: ['install']
+    # Run custom commands
+    - name: node
+      entrypoint: yarn
+      args: ['run', 'deploy-build']
+    # deploy
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ["app", "deploy"]
+timeout: "600s"

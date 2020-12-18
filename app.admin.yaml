@@ -11,8 +11,6 @@ manual_scaling:
 handlers:
     - url: /build
       static_dir: public/build
-      http_headers:
-          Cache-Control: private
     - url: /.*
       script: auto
 
