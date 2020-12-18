@@ -2,19 +2,19 @@
 
 namespace App\Entity\International;
 
+use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
 use App\Repository\International\SurveyResponseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
  * @ORM\Table(name="international_survey_response")
  */
-class SurveyResponse
+class SurveyResponse extends AbstractSurveyResponse
 {
     const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
     const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
@@ -82,26 +82,7 @@ class SurveyResponse
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $fewerThanTenEmployees;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
     private $initialDetailsSignedOff;
-
-    /**
-     * @Assert\Callback(groups={"business_details"})
-     */
-    public function validateFewerThanTenEmployees(ExecutionContextInterface $context)
-    {
-        // fewerThanTenEmployees is allowed to be null ONLY IF the company is no longer active...
-        if (!$this->isNoLongerActive() && $this->getFewerThanTenEmployees() === null) {
-            $context
-                ->buildViolation('international.survey-response.fewer-than-ten-employees.not-null')
-                ->atPath('fewerThanTenEmployees')
-                ->addViolation();
-        }
-    }
 
     use SurveyResponseTrait;
 
@@ -150,7 +131,7 @@ class SurveyResponse
 
         if ($this->isNoLongerActive()) {
             $this->setBusinessNature(null);
-            $this->setFewerThanTenEmployees(null);
+            $this->setNumberOfEmployees(null);
             $this->setInitialDetailsSignedOff(null);
         }
 
@@ -211,18 +192,6 @@ class SurveyResponse
         return $this;
     }
 
-    public function getFewerThanTenEmployees(): ?bool
-    {
-        return $this->fewerThanTenEmployees;
-    }
-
-    public function setFewerThanTenEmployees(?bool $fewerThanTenEmployees): self
-    {
-        $this->fewerThanTenEmployees = $fewerThanTenEmployees;
-
-        return $this;
-    }
-
     public function isInitialDetailsSignedOff(): ?bool
     {
         return $this->initialDetailsSignedOff;
@@ -257,7 +226,7 @@ class SurveyResponse
 
         // N.B. The order of these calls is important as some setters cause other setters to be triggered
         $this->setBusinessNature($response->getBusinessNature());
-        $this->setFewerThanTenEmployees($response->getFewerThanTenEmployees());
+        $this->setNumberOfEmployees($response->getNumberOfEmployees());
         $this->setActivityStatus($response->getActivityStatus());
         $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
     }

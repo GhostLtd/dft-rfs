@@ -45,6 +45,14 @@ common:
     choices:
       space: At capacity by space
       weight: At capacity by weight
+  number-of-employees:
+    1-9: '1 - 9'
+    10-49: '10 - 49'
+    50-249: '50 - 249'
+    250-499: '250 - 499'
+    500-10000: '500 - 10,000'
+    10001-30000: '10,001 - 30,000'
+    '>30000': 'More than 30,000'
   value-unit:
     unit: Unit
   vehicle:
@@ -112,15 +120,6 @@ domestic:
       1: Shipping port or docks
       2: Rail depot / terminal
       4: Airport
-
-  number-of-employees:
-    1-9: '1 - 9'
-    10-49: '10 - 49'
-    50-249: '50 - 249'
-    250-499: '250 - 499'
-    500-10000: '500 - 10,000'
-    10001-30000: '10,001 - 30,000'
-    '>30000': 'More than 30,000'
 
   survey-response:
 
@@ -562,7 +561,7 @@ international:
     title: Correspondence and Business Details
     business-details: Business details
     correspondence-details: Correspondence details
-    fewer-than-ten-employees: Employs fewer than 10 people nationally?
+    number-of-employees: Number of employees nationally
     nature-of-business: Nature of business
     number-of-trips: Estimated number of international trips over the next 12 months
     still-active: Firm still performs international road haulage activities?
@@ -616,6 +615,9 @@ international:
       help: ''
       fewer-than-ten-employees:
         label: Does your firm employ fewer than 10 people in total, nationally?
+        help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
         help: ''
       business-nature:
         label: What is the nature of your business?

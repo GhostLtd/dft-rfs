@@ -3,6 +3,7 @@
 namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\Vehicle;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -16,10 +17,9 @@ class BusinessDetailsType extends AbstractType
         $translationKeyPrefix = "domestic.survey-response.business-details";
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
-                'choices' => SurveyResponse::EMPLOYEES_CHOICES,
+                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
                 'label' => "{$translationKeyPrefix}.number-of-employees.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
-//                'attr' => ['class' => 'govuk-input--width-5'],
                 'help' => "{$translationKeyPrefix}.number-of-employees.help",
             ])
             ->add('businessNature', Gds\InputType::class, [

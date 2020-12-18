@@ -132,7 +132,7 @@ trait SurveyTrait {
         return $this;
     }
 
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }

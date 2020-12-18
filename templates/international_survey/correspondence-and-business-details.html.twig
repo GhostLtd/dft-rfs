@@ -32,11 +32,11 @@
 
             {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.still-active', activityStatus, {(urlActivityStatus): 'common.actions.change'}) }}
         {%- else %}
-            {%- set employeesChoices = constant('App\\Form\\InternationalSurvey\\InitialDetails\\BusinessDetailsType::EMPLOYEES_CHOICES') -%}
-            {%- set fewerThanTenEmployees = choiceLabel(employeesChoices, response.fewerThanTenEmployees, true) | trans -%}
+            {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
+            {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
 
             {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.nature-of-business', response.businessNature, {(urlBusinessDetails): 'common.actions.change'}) }}
-            {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.fewer-than-ten-employees', fewerThanTenEmployees, {(urlBusinessDetails): 'common.actions.change'}) }}
+            {{ gdsComponents.summaryListRow('international.correspondence-and-business-details.number-of-employees', numberOfEmployees, {(urlBusinessDetails): 'common.actions.change'}) }}
         {%- endif %}
     </dl>
 
