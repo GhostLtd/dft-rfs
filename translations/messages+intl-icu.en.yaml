@@ -98,7 +98,8 @@ admin:
     survey-created:
       registration-mark: Registration mark
       type: Type
-      start-date: Start date
+      period-start: Survey period start
+      period-end: Survey period end
       invitation-email: Invitation email
       invitation-address: Invitation address
       access-code-1: "Access code #1"
