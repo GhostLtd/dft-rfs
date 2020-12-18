@@ -1,0 +1,17 @@
+steps:
+    # Install dependencies
+    - name: node
+      entrypoint: yarn
+      args: ['install', '--frozen-lockfile']
+    # Run custom commands
+    - name: node
+      entrypoint: yarn
+      args: ['run', 'deploy-build']
+    # deploy
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ["app", "deploy", "config/gcloud-build/dft-sres-rfs-test/app.default.yaml"]
+    # deploy
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ["app", "deploy", "config/gcloud-build/dft-sres-rfs-test/app.admin.yaml"]
+
+timeout: "900s"
