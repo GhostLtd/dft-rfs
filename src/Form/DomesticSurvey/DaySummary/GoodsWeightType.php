@@ -18,14 +18,14 @@ class GoodsWeightType extends AbstractType
                 'label' => "{$translationKeyPrefix}.weight-of-goods-loaded.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-loaded.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-5'],
+                'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
             ->add('weightOfGoodsUnloaded', Gds\NumberType::class, [
                 'label' => "{$translationKeyPrefix}.weight-of-goods-unloaded.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-unloaded.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-5'],
+                'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
         ;

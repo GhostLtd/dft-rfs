@@ -19,7 +19,7 @@ class GoodsWeightType extends AbstractType
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-label--xl'],
                 'help' => "{$translationKeyPrefix}.weight-of-goods-carried.help",
-                'attr' => ['class' => 'govuk-input--width-5'],
+                'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
         ;
