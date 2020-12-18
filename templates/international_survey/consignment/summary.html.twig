@@ -36,7 +36,7 @@
                 {%- endset -%}
                 {{ summaryListRow('common.consignment.goods', goodsCopy | raw, {(urlGoodsChange): change}) }}
                 {{ summaryListRow('common.consignment.cargo-type', choiceLabel(cargoChoices, consignment.cargoTypeCode) | trans, {(urlCargoTypeChange): change}) }}
-                {{ summaryListRow('common.consignment.weight', consignment.weightOfGoodsCarried ~ 'kg', {(urlWeightChange): change}) }}
+                {{ summaryListRow('common.consignment.weight', (consignment.weightOfGoodsCarried|number_format) ~ 'kg', {(urlWeightChange): change}) }}
             </dl>
             {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
             <a href="{{ url(dashboardRoute, {id: trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.consignment.summary.actions.back-to-trip-summary'|trans }}</a>

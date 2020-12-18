@@ -39,12 +39,13 @@ class Consignment implements GoodsDescriptionInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull(message="common.choice.invalid", groups={"goods-description"})
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"goods-description"})
      */
     private $goodsDescriptionOther;

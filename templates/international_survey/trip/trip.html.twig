@@ -62,7 +62,7 @@
                     {%- endmacro -%}
 
                     {{ tableCell(consignment | formatGoodsDescription ) }}
-                    {{ tableCell(consignment.weightOfGoodsCarried ~ 'kg') }}
+                    {{ tableCell((consignment.weightOfGoodsCarried|number_format) ~ 'kg') }}
                     {{ _self.loadingCell(consignment.loadingStop) }}
                     {{ _self.loadingCell(consignment.unloadingStop) }}
                     {{ tableCell(viewContents, {actions: true}) }}
