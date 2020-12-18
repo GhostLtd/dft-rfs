@@ -4,6 +4,7 @@ namespace App\Entity\International;
 
 use App\Repository\International\StopRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=StopRepository::class)
@@ -26,11 +27,13 @@ class Stop
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"stop"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"stop"})
      */
     private $country;
 
@@ -61,7 +64,7 @@ class Stop
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -73,7 +76,7 @@ class Stop
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
