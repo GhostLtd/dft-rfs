@@ -34,7 +34,7 @@
             </tr>
             {% else %}
             <tr class="govuk-table__row">
-                {{ tableCell('international.summary.no-vehicles', {colSpan: 4}) }}
+                {{ tableCell('international.summary.no-vehicles'|trans, {colSpan: 4}) }}
             </tr>
             {%- endfor %}
             </tbody>

@@ -17,7 +17,7 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ summaryListRow('international.trip.summary.dates',
             trip.outboundDate == trip.returnDate ?
-            trip.outboundDate|format('D/m/Y') :
+            trip.outboundDate|date('d/m/Y') :
             ('international.trip.summary.date-until-date'|trans({
                 'from': trip.outboundDate|date('d/m/Y'),
                 'until': trip.returnDate|date('d/m/Y'),
@@ -39,7 +39,7 @@
             ("common.distance.#{trip.roundTripDistance.unit}" |
             trans({value: trip.roundTripDistance.value|number_format})
         ), {(urlDistanceChange): change}) }}
-        {{ summaryListRow('international.trip.summary.countries-transitted', trip.allCountriesTransitted, {(urlCountriesTransittedChange): change}) }}
+        {{ summaryListRow('international.trip.summary.countries-transitted', trip.allCountriesTransitted|default('-'), {(urlCountriesTransittedChange): change}) }}
 
         {%- if trip.stops is not empty -%}
             {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
