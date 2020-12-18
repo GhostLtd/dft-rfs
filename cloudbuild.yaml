@@ -2,7 +2,7 @@ steps:
     # Install dependencies
     - name: node
       entrypoint: yarn
-      args: ['install']
+      args: ['install', '--frozen-lockfile']
     # Run custom commands
     - name: node
       entrypoint: yarn
