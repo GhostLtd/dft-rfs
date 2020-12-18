@@ -39,7 +39,9 @@ security:
             provider: passwd_file
             guard:
                 authenticators:
+                    - App\Security\GoogleIapAuthenticator
                     - App\Security\AdminFormAuthenticator
+            entry_point: App\Security\AdminFormAuthenticator
             logout:
                 path: admin_logout
                 target: admin_login

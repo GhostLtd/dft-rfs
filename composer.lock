@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a9ed4bf1cfab3b42622463e74b562c1",
+    "content-hash": "67f0b3c2d096787eb0229606b6b9a5b7",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -2091,6 +2091,60 @@
                 "url"
             ],
             "time": "2020-09-30T07:37:11+00:00"
+        },
+        {
+            "name": "kelvinmo/simplejwt",
+            "version": "v0.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kelvinmo/simplejwt.git",
+                "reference": "65631d18cee47d15a936522c2fdc37d95448236b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kelvinmo/simplejwt/zipball/65631d18cee47d15a936522c2fdc37d95448236b",
+                "reference": "65631d18cee47d15a936522c2fdc37d95448236b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-hash": "*",
+                "ext-openssl": "*",
+                "php": "^5.4 || ^7.1",
+                "symfony/console": "~2.8 || ^4.0"
+            },
+            "require-dev": {
+                "ext-bz2": "*",
+                "ext-phar": "*",
+                "phing/phing": "2.*",
+                "phpunit/phpunit": "4.*"
+            },
+            "bin": [
+                "bin/jwkstool"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SimpleJWT\\": "src/SimpleJWT"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kelvin Mo",
+                    "email": "kmo@users.sourceforge.net"
+                }
+            ],
+            "description": "An simple JSON Web Token library for PHP.",
+            "homepage": "https://github.com/kelvinmo/simplejwt",
+            "keywords": [
+                "JOSE",
+                "JWE",
+                "jwt"
+            ],
+            "time": "2020-09-26T01:00:11+00:00"
         },
         {
             "name": "laminas/laminas-code",

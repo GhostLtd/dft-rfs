@@ -138,6 +138,9 @@
     "justinrainbow/json-schema": {
         "version": "5.2.10"
     },
+    "kelvinmo/simplejwt": {
+        "version": "v0.4.2"
+    },
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
