@@ -23,7 +23,7 @@ class FileUserProvider implements UserProviderInterface
     protected function loadUsersFromFile($usersFile)
     {
         if (is_null($usersFile)) return;
-        if (!file_exists($usersFile)) throw new FileNotFoundException($usersFile);
+        if (!file_exists($usersFile)) return;
         $userFileLines = file($usersFile);
         foreach ($userFileLines as $line)
         {
