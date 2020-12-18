@@ -566,8 +566,13 @@ international:
     nature-of-business: Nature of business
     number-of-trips: Estimated number of international trips over the next 12 months
     still-active: Firm still performs international road haulage activities?
+  sidebar-summary:
+    title: International Survey
+    company: Company
+    period-start: Survey period start
+    period-end: Survey period end
   summary:
-    title: IRHS Survey summary
+    title: International Survey summary
     correspondence-and-business-details: Correspondence and Business Details
     no-vehicles: No vehicles
     registration: Registration
