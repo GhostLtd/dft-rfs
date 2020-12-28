@@ -9,6 +9,7 @@ parameters:
     frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
     container.dumper.inline_factories: true
+    app_features_empty: none
 
 services:
     # default configuration for services in *this* file
@@ -27,6 +28,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+
+    App\Features:
+        arguments:
+            $enableFeatures: '%env(csv:default:app_features_empty:APP_FEATURES)%'
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
@@ -57,3 +62,10 @@ services:
     App\EventSubscriber\AdminMenuEventSubscriber:
         arguments:
             $hostname: '%admin_hostname%'
+
+    App\DataCollector\FeaturesCollector:
+        tags:
+            -
+                name:     data_collector
+                template: 'data_collector/features.html.twig'
+                id:       'app.features_collector'
