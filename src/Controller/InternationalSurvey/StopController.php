@@ -88,13 +88,13 @@ class StopController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
+            $cancel = $form->get('cancel');
+
+            if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
+            }
+
             if ($form->isValid()) {
-                $cancel = $form->get('cancel');
-
-                if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
-                    return $this->redirectToRoute(self::SUMMARY_ROUTE, ['tripId' => $tripId]);
-                }
-
                 if (!$stopId) {
                     /** @var Stop $stop */
                     $stop = $form->getData();
