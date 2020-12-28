@@ -15,6 +15,7 @@ use App\Entity\International\Stop;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
+use App\ExpressionLanguage\FeatureExpressionProvider;
 use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
@@ -22,10 +23,12 @@ use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -80,7 +83,16 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
+            new TwigFunction('feature', [$this, 'feature']),
         ];
+    }
+
+    public function feature($str) {
+        try {
+            return FeatureExpressionProvider::feature($str);
+        } catch(Exception $e) {
+            throw new SyntaxError("Unknown feature '${str}'");
+        }
     }
 
     public function formatRegMark($regMark)
