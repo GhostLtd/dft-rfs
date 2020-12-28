@@ -17,13 +17,18 @@ trait SurveyTrait {
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dispatchDate;
+    private $notifiedDate;
 
     /**
      * @ORM\Column(type="date", nullable=true)
      * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
      */
-    private $startDate;
+    private $surveyPeriodStart;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $surveyPeriodEnd;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -45,34 +50,62 @@ trait SurveyTrait {
         return $this->id;
     }
 
-    public function getDispatchDate(): ?DateTimeInterface
+    public function getNotifiedDate(): ?DateTimeInterface
     {
-        return $this->dispatchDate;
+        return $this->notifiedDate;
     }
 
-    public function setDispatchDate(?DateTimeInterface $dispatchDate): self
+    public function setNotifiedDate(?DateTimeInterface $notifiedDate): self
     {
-        $this->dispatchDate = $dispatchDate;
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }
 
-    public function getStartDate(): ?DateTimeInterface
+    public function getSurveyPeriodStart(): ?DateTimeInterface
     {
-        return $this->startDate;
+        return $this->surveyPeriodStart;
     }
 
-    public function setStartDate(?DateTimeInterface $startDate): self
+    public function setSurveyPeriodStart(?DateTimeInterface $surveyPeriodStart): self
     {
-        $this->startDate = $startDate;
+        $this->surveyPeriodStart = $surveyPeriodStart;
 
         return $this;
     }
 
-    public function getStartDateModifiedBy($modifier)
+    public function getSurveyPeriodStartModifiedBy($modifier)
     {
-        if (is_null($this->startDate)) return null;
-        return (clone $this->startDate)->modify($modifier);
+        if (is_null($this->surveyPeriodStart)) return null;
+        return (clone $this->surveyPeriodStart)->modify($modifier);
+    }
+
+    public function getSurveyPeriodEnd(): ?DateTimeInterface
+    {
+        return $this->surveyPeriodEnd;
+    }
+
+    public function setSurveyPeriodEnd(?DateTimeInterface $surveyPeriodEnd): self
+    {
+        $this->surveyPeriodEnd = $surveyPeriodEnd;
+
+        return $this;
+    }
+
+    public function getSurveyPeriodInDays(): ?int
+    {
+        if (!$this->surveyPeriodEnd || !$this->surveyPeriodStart) {
+            return null;
+        }
+
+        return $this->getSurveyPeriodEnd()->diff($this->surveyPeriodStart)->days + 1;
+    }
+
+    public function setDueDate(?DateTimeInterface $surveyPeriodEnd): self
+    {
+        $this->surveyPeriodEnd = $surveyPeriodEnd;
+
+        return $this;
     }
 
     public function getResponseStartDate(): ?DateTimeInterface
@@ -99,7 +132,7 @@ trait SurveyTrait {
         return $this;
     }
 
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }

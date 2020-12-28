@@ -80,11 +80,17 @@ class InitialDetailsState extends AbstractFormWizardState implements FormWizardI
         $isCommitted = $response && !!$response->getId();
 
         if ($isCommitted) {
-            return in_array($state, [
+            $validStates = [
                 InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS,
                 InitialDetailsState::STATE_REQUEST_NUMBER_OF_TRIPS,
                 InitialDetailsState::STATE_REQUEST_BUSINESS_DETAILS,
-            ]);
+            ];
+
+            if ($response->isNoLongerActive()) {
+                $validStates[] = InitialDetailsState::STATE_REQUEST_ACTIVITY_STATUS;
+            }
+
+            return in_array($state, $validStates);
         }
 
         return false;

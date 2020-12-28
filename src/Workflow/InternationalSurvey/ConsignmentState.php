@@ -76,4 +76,24 @@ class ConsignmentState extends AbstractFormWizardState implements FormWizardInte
     {
         return null;
     }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        if (!$this->subject instanceof Consignment) {
+            return false;
+        }
+
+        $alternativeStartStates = [
+            self::STATE_PLACE_OF_LOADING,
+            self::STATE_PLACE_OF_UNLOADING,
+
+            self::STATE_GOODS_DESCRIPTION,
+            self::STATE_CARGO_TYPE,
+            self::STATE_WEIGHT_OF_GOODS,
+        ];
+
+        return $this->subject->getId() ?
+            in_array($state, $alternativeStartStates) :
+            false;
+    }
 }

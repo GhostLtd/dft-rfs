@@ -7,20 +7,20 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, tableCell, tableHead -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">IRHS Summary</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.summary.title'|trans }}</h1>
 
     {%- if response.isInitialDetailsSignedOff() | default(false) -%}
-        <h2 class="page-heading__heading govuk-heading-l">Business and Correspondence details</h2>
+        <h2 class="page-heading__heading govuk-heading-l">{{ 'international.summary.correspondence-and-business-details'|trans }}</h2>
 
         <p class="govuk-body">
             {%- set businessDashboardRoute = constant('App\\Controller\\InternationalSurvey\\BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE') -%}
-            <a href="{{ url(businessDashboardRoute) }}">View/change the business and correspondence details you have already entered</a>
+            <a href="{{ url(businessDashboardRoute) }}">{{ 'international.summary.view-business-and-correspondence-details'|trans }}</a>
         </p>
 
-        <h2 class="page-heading__heading govuk-heading-l">Vehicles</h2>
+        <h2 class="page-heading__heading govuk-heading-l">{{ 'international.summary.vehicles'|trans }}</h2>
 
         <table class="govuk-table">
-            {{ tableHead(false, ['Registration', 'Type/configuration', 'Status', '']) }}
+            {{ tableHead(false, ['international.summary.registration', 'international.summary.type-and-configuration', 'international.summary.status', '']) }}
             <tbody class="govuk-table__body">
             {%- for vehicle in vehicles %}
             <tr class="govuk-table__row">
@@ -34,7 +34,7 @@
             </tr>
             {% else %}
             <tr class="govuk-table__row">
-                {{ tableCell('No vehicles', {colSpan: 4}) }}
+                {{ tableCell('international.summary.no-vehicles'|trans, {colSpan: 4}) }}
             </tr>
             {%- endfor %}
             </tbody>
@@ -42,7 +42,7 @@
 
         <p class="govuk-body">
             {%- set addVehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleAddController::START_ROUTE') -%}
-            <a href="{{ url(addVehicleRoute) }}" class="govuk-button">Add vehicle</a>
+            <a href="{{ url(addVehicleRoute) }}" class="govuk-button">{{ 'common.actions.add-vehicle'|trans }}</a>
         </p>
     {% endif %}
 {% endblock %}

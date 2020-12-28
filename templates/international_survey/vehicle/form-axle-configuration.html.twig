@@ -1,3 +1,7 @@
 {% set translation_prefix = 'international.vehicle.axle-configuration' %}
 {% form_theme form 'domestic_survey/vehicle_and_business_details/theme-vehicle-icons.html.twig' %}
 {% extends 'international_survey/form-base.html.twig' %}
+
+{% set oneThirdColumnContent %}
+    {% include "international_survey/includes/survey-summary.html.twig" %}
+{% endset %}

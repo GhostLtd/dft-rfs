@@ -31,6 +31,7 @@ class StopController extends AbstractController
     public const ADD_ROUTE = self::SUMMARY_PREFIX."_add";
     public const EDIT_ROUTE = self::SUMMARY_PREFIX."_edit";
     public const REMOVE_ROUTE = self::SUMMARY_PREFIX."_remove";
+    public const REORDER_ROUTE = self::SUMMARY_PREFIX."_reorder";
 
     protected $tripRepository;
 
@@ -147,6 +148,56 @@ class StopController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/stops/re-order", name=self::REORDER_ROUTE)
+     */
+    public function reorder(UserInterface $user, Request $request, EntityManagerInterface $entityManager, string $tripId): Response
+    {
+        $response = $this->getSurveyResponse($user);
+        $trip = $this->getTrip($response, $tripId);
+
+        /** @var Stop[] $stops */
+        $stops = $trip->getStops()->toArray();
+
+        $mappingParam = $request->query->get('mapping', null);
+        $sortedStops = $this->getSortedStops($stops, $mappingParam);
+
+        $mapping = array_map(function(Stop $stop) {
+            return $stop->getNumber();
+        }, $sortedStops);
+
+        $form = $this->createForm(ConfirmationType::class, null, [
+            'yes_label' => 'international.stop.re-order.save',
+            'no_label' => 'common.actions.cancel',
+        ]);
+
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $yes = $form->get('yes');
+
+                if ($yes instanceof SubmitButton && $yes->isClicked()) {
+                    foreach($mapping as $i => $newPosition) {
+                        $stops[$newPosition - 1]->setNumber($i + 1);
+                    }
+                    $entityManager->flush();
+                }
+
+                return $this->redirectToRoute(StopController::SUMMARY_ROUTE, ['tripId' => $tripId]);
+            }
+        }
+
+        return $this->render('international_survey/stop/re-order.html.twig', [
+            'mapping' => $mapping,
+            'trip' => $trip,
+            'sortedStops' => $sortedStops,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    // -----
+
     protected function getTrip(SurveyResponse $response, string $tripId): Trip
     {
         $trip = $this->tripRepository->findOneByIdAndSurveyResponse($tripId, $response);
@@ -173,5 +224,42 @@ class StopController extends AbstractController
         }
 
         return $stop;
+    }
+
+    protected function getSortedStops(array $stops, ?string $mapping): array
+    {
+        if ($mapping && preg_match('/^\d+(,\d+)*$/', $mapping)) {
+            $mapping = explode(',', $mapping);
+        } else {
+            $mapping = null;
+        }
+
+        if (!$mapping || !$this->isMappingValid($mapping, count($stops))) {
+            $mapping = range(1, count($stops));
+        }
+
+        $sortedStops = [];
+        for($i=0; $i<count($mapping); $i++) {
+            $sortedStops[$i] = $stops[$mapping[$i] - 1];
+        }
+
+        return $sortedStops;
+    }
+
+    protected function isMappingValid(array $mapping, int $numberOfStops): bool
+    {
+        $usedCheck = array_fill(1, $numberOfStops, false);
+
+        foreach($mapping as $value) {
+            if (isset($usedCheck[$value])) {
+                $usedCheck[$value] = true;
+            }
+        }
+
+        $validCount = array_reduce($usedCheck, function($carry, $item) {
+            return $carry + ($item ? 1 : 0);
+        }, 0);
+
+        return $validCount === $numberOfStops;
     }
 }

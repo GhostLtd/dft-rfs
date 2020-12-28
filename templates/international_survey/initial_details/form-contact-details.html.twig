@@ -1,2 +1,6 @@
 {% set translation_prefix = 'international.survey-response.contact-details' %}
 {% extends 'international_survey/form-base.html.twig' %}
+
+{% set oneThirdColumnContent %}
+    {% include "international_survey/includes/survey-summary.html.twig" %}
+{% endset %}

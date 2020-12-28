@@ -62,7 +62,8 @@ class CreateInternationalSurveyCommand extends Command
         $survey = new Survey();
         $survey
             ->setReferenceNumber($referenceNumber)
-            ->setStartDate(new DateTime('now +7 days'))
+            ->setSurveyPeriodStart(new DateTime('now +7 days'))
+            ->setSurveyPeriodEnd(new DateTime('now +'.(rand(1, 28) + 7).' days'))
             ->setCompany($company);
         ;
         $user = new PasscodeUser();
@@ -77,9 +78,10 @@ class CreateInternationalSurveyCommand extends Command
         $this->entityManager->flush();
 
         $io->success('International survey created');
-        $io->writeln("Pass code 1 : {$username}");
-        $io->writeln("Pass code 2 : {$password}");
-        $io->writeln("Survey due  : {$survey->getStartDate()->format('Y-m-d')}");
+        $io->writeln("Pass code 1         : {$username}");
+        $io->writeln("Pass code 2         : {$password}");
+        $io->writeln("Survey period start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
+        $io->writeln("Survey period end   : {$survey->getSurveyPeriodEnd()->format('Y-m-d')}");
         $io->writeln("");
 
         return 0;

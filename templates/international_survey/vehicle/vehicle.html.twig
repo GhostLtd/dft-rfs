@@ -5,7 +5,7 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">Vehicle Summary</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.vehicle.summary.vehicle-summary'|trans }}</h1>
 
     {%- set params = {vehicleId: vehicle.id} -%}
     {%- set urlVehicleDetails = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params) -%}
@@ -14,7 +14,7 @@
     {%- set urlChangeVehicleWeight = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params) -%}
     {%- set change = 'common.actions.change'|trans -%}
 
-    <h2 class="page-heading__heading govuk-heading-l">Basic Details</h2>
+    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.basic-details'|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
         {{ summaryListRow('common.vehicle.registration-mark',
@@ -44,7 +44,7 @@
             {(urlChangeVehicleWeight): change}) }}
     </dl>
 
-    <h2 class="page-heading__heading govuk-heading-l">Trips</h2>
+    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips'|trans }}</h2>
 
     <table class="govuk-table">
         {{ tableHead(false, ['Outward trip', 'Return trip', 'Status', '']) }}
@@ -67,7 +67,7 @@
             </tr>
         {% else %}
             <tr class="govuk-table__row">
-                {{ tableCell('No trips', {colSpan: 4}) }}
+                {{ tableCell('international.vehicle.summary.no-trips'|trans, {colSpan: 4}) }}
             </tr>
         {%- endfor %}
         </tbody>
@@ -76,7 +76,7 @@
     <p class="govuk-body">
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
         {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
-        <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button">Add Trip</a>
+        <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button">{{ 'common.actions.add-trip'|trans }}</a>
         <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
     </p>
 {% endblock %}

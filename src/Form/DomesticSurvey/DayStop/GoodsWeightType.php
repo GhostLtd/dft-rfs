@@ -18,7 +18,7 @@ class GoodsWeightType extends AbstractType
             ->add('weightOfGoodsCarried', Gds\NumberType::class, [
                 'label' => "{$translationKeyPrefix}.weight-of-goods-carried.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-carried.help",
-                'attr' => ['class' => 'govuk-input--width-5'],
+                'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'suffix' => 'kg',
             ])

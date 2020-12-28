@@ -39,7 +39,7 @@
   .govuk-add-to-list__actions {
     margin-bottom: govuk-spacing(3);
     @include govuk-media-query($from: tablet) {
-      width: 20%;
+      width: 50%;
       padding-right: 0;
       text-align: right;
     }
@@ -53,6 +53,11 @@
     //@include govuk-typography-weight-bold;
     @include govuk-media-query($from: tablet) {
       width: 50%;
+    }
+
+    strong {
+      width: 30px;
+      display: inline-block;
     }
   }
 

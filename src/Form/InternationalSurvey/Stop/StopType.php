@@ -55,6 +55,7 @@ class StopType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Stop::class,
             'choice_translation_locale' => $this->locale,
+            'validation_groups' => ['stop'],
         ]);
     }
 }

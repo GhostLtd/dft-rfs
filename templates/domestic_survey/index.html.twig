@@ -8,7 +8,7 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('Vehicle', survey.registrationMark) }}
-        {{ actionlessSummaryListRow('Start date', survey.startDate | date('l, jS F Y')) }}
+        {{ actionlessSummaryListRow('Start date', survey.surveyPeriodStart | date('l, jS F Y')) }}
     </dl>
     {% if survey.initialDetailsComplete %}
         {% if survey.businessAndVehicleDetailsComplete %}
@@ -17,7 +17,7 @@
                 {% for dayNumber in 1..7 %}
                     {% set day = survey.response.dayByNumber(dayNumber) %}
                     {{ summaryListRow(
-                        "Day #{dayNumber} (#{(survey.startDateModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
+                        "Day #{dayNumber} (#{(survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
                         day ? dayText(day) : 'Nothing recorded',
                         {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'common.actions.view' : 'common.actions.add'}
                     ) }}

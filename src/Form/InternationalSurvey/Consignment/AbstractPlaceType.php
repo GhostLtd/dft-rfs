@@ -6,7 +6,6 @@ use App\Entity\International\Consignment;
 use App\Entity\International\Stop;
 use App\Repository\International\StopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -18,14 +17,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractPlaceType extends AbstractType
 {
-    /**
-     * @var StopRepository
-     */
     private $stopRepository;
 
-    /**
-     * @var RequestStack
-     */
     private $requestStack;
 
     public function __construct(StopRepository $stopRepository, RequestStack $requestStack)
@@ -55,8 +48,9 @@ abstract class AbstractPlaceType extends AbstractType
 
     /**
      * @param ArrayCollection | Stop[] $stops
+     * @return Stop[]
      */
-    protected function getChoicesForStops($stops)
+    protected function getChoicesForStops($stops): array
     {
         $choices = [];
         foreach ($stops as $stop) {
@@ -65,7 +59,7 @@ abstract class AbstractPlaceType extends AbstractType
         return $choices;
     }
 
-    protected function getLabelForStop(Stop $stop)
+    protected function getLabelForStop(Stop $stop): string
     {
         $country = Countries::getName(strtoupper($stop->getCountry()), $this->requestStack->getCurrentRequest()->getLocale());
         return "{$stop->getName()}, {$country} (stop {$stop->getNumber()})";

@@ -20,6 +20,7 @@ class ContactDetailsType extends AbstractType
                 'label_attr' => [
                     'class' => 'govuk-label--s',
                 ],
+                'attr' => ['class' => 'govuk-input--width-20'],
             ])
             ->add('contactTelephone', Gds\InputType::class, [
                 'label' => "{$prefix}.contact-telephone.label",
@@ -27,6 +28,7 @@ class ContactDetailsType extends AbstractType
                 'label_attr' => [
                     'class' => 'govuk-label--s',
                 ],
+                'attr' => ['class' => 'govuk-input--width-20'],
             ])
             ->add('contactEmail', Gds\EmailType::class, [
                 'label' => "{$prefix}.contact-email.label",
@@ -34,6 +36,7 @@ class ContactDetailsType extends AbstractType
                 'label_attr' => [
                     'class' => 'govuk-label--s',
                 ],
+                'attr' => ['class' => 'govuk-input--width-20'],
             ])
         ;
     }

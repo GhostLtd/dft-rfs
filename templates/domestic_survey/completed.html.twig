@@ -6,7 +6,7 @@
             Survey complete
         </h1>
         <div class="govuk-panel__body">
-            Your reference number<br><strong>{{ survey.startDate | date('Y') }}-{{ survey.registrationMark }}</strong>
+            Your reference number<br><strong>{{ survey.surveyPeriodStart | date('Y') }}-{{ survey.registrationMark }}</strong>
         </div>
     </div>
 {% endblock %}

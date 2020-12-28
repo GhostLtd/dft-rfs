@@ -1,0 +1,35 @@
+{% set translation_prefix = 'international.trip-stops' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from 'macros.html.twig' import addToListRow as row, addToListActionLinks as actionLinks -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'common.actions.re-order-stops'|trans }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {%- set reorderRoute = constant('App\\Controller\\InternationalSurvey\\StopController::REORDER_ROUTE') -%}
+                {%- for stop in sortedStops -%}
+                    {%- set moveUpLink = url(reorderRoute, {tripId: trip.id, mapping: shiftMapping(mapping, loop.index0, 'up')|join(',')}) -%}
+                    {%- set moveDownLink = url(reorderRoute, {tripId: trip.id, mapping: shiftMapping(mapping, loop.index0, 'down')|join(',')}) -%}
+                    {%- set key =
+                        ("<strong>#{loop.index}.</strong> "|raw) ~
+                        ('international.stop.summary.stop'|trans({place: stop.name, country: stop.country|country_name})|e) -%}
+                    {%- set links = [] -%}
+                    {%- if not loop.first %}{% set links = links|merge({(moveUpLink): 'common.actions.move-up'}) %}{% endif -%}
+                    {%- if not loop.last %}
+                        {% set links = links|merge({(moveDownLink): 'common.actions.move-down'}) %}
+                    {% endif -%}
+
+                    {{ row(key, links, {noEscape: true}) }}
+                {%- endfor -%}
+            </dl>
+
+            {{ form(form) }}
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% include "international_survey/includes/trip-summary.html.twig" %}
+        </div>
+    </div>
+{% endblock %}

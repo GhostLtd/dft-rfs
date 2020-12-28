@@ -20,7 +20,7 @@ class PlaceOfUnloadingType extends AbstractPlaceType
             'minimum_stop' => function(FormEvent $event){
                 /** @var Consignment $consignment */
                 $consignment = $event->getData();
-                return 1 + ($consignment->getLoadingStop()->getNumber() ?? 0);
+                return ($consignment->getLoadingStop()->getNumber() ?? 0);
             },
         ]);
     }

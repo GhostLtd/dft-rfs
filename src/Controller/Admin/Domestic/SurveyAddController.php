@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Utility\PasscodeGenerator;
+use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,11 @@ class SurveyAddController extends AbstractController
                     ->setPlainPassword($password = $passcodeGenerator->generatePasscode())
                     ->setDomesticSurvey($survey);
 
+                $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
+                $surveyPeriodEnd->add(new DateInterval('P7D'));
+
                 $survey
+                    ->setSurveyPeriodEnd($surveyPeriodEnd)
                     ->setIsNorthernIreland($type === 'ni')
                     ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
                     ->setPasscodeUser($user);

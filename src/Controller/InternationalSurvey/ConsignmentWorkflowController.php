@@ -4,27 +4,21 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Consignment;
-use App\Entity\International\Stop;
-use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
-use App\Entity\International\Vehicle;
-use App\Repository\International\ConsignmentRepository;
+use App\Repository\International\StopRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ConsignmentState;
-use App\Workflow\InternationalSurvey\VehicleState;
-use Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/international-survey/trips/{tripId}/consignment/{consignmentId}")
- * @Entity("consignment", expr="repository.workflowParamConverter(consignmentId)")
+ * @Route("/international-survey/trips/{tripId}/consignment")
  * @Entity("trip", expr="repository.find(tripId)")
  */
 class ConsignmentWorkflowController extends AbstractSessionStateWorkflowController
@@ -43,30 +37,31 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
      */
     private $trip;
 
+    protected $stopRepository;
+
+    public function __construct(StopRepository $stopRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    {
+        parent::__construct($entityManager, $session);
+        $this->stopRepository = $stopRepository;
+    }
+
     /**
      * @Route("/add-another", name=self::ADD_ANOTHER_ROUTE)
-     * @param Consignment|null $consignment
-     * @param Trip|null $trip
-     * @param null $state
-     * @return Response
      */
-    public function addAnother(Consignment $consignment = null, Trip $trip = null, $state = null): Response
+    public function addAnother(Trip $trip = null): Response
     {
+        if ($trip === null) {
+            throw new NotFoundHttpException();
+        }
+
         $this->cleanUp();
         return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $trip->getId(), 'consignmentId' => 'add']);
     }
 
-
     /**
-     * @Route("/state-{state}", name=self::WIZARD_ROUTE)
-     * @Route("", name=self::START_ROUTE)
-     * @param WorkflowInterface $internationalSurveyConsignmentStateMachine
-     * @param Request $request
-     * @param Consignment|null $consignment
-     * @param Trip|null $trip
-     * @param null $state
-     * @return Response
-     * @throws Exception
+     * @Route("/{consignmentId}/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/{consignmentId}/start", name=self::START_ROUTE)
+     * @Entity("consignment", expr="repository.workflowParamConverter(consignmentId)")
      */
     public function index(WorkflowInterface $internationalSurveyConsignmentStateMachine,
                           Request $request,
@@ -74,6 +69,10 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
                           Trip $trip = null,
                           $state = null): Response
     {
+        if ($trip === null || $consignment === null) {
+            throw new NotFoundHttpException();
+        }
+
         $this->consignment = $consignment;
         $this->trip = $trip;
         return $this->doWorkflow($internationalSurveyConsignmentStateMachine, $request, $state);
@@ -85,8 +84,12 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
         $formWizard = $this->session->get($this->getSessionKey(), new ConsignmentState());
 
         $consignment = $formWizard->getSubject() ?? $this->consignment;
-        $this->consignment->mergeChanges($consignment, $this->getDoctrine()->getRepository(Stop::class));
-        if (!$this->consignment->getTrip()) $this->consignment->setTrip($this->trip);
+        $this->consignment->mergeChanges($consignment, $this->stopRepository);
+
+        if (!$this->consignment->getTrip()) {
+            $this->consignment->setTrip($this->trip);
+        }
+
         $formWizard->setSubject($this->consignment);
 
         return $formWizard;

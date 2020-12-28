@@ -39,6 +39,12 @@ trait SurveyResponseTrait
      */
     private $contactEmail;
 
+    /**
+     * @ORM\Column(type="string", length=20, nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"business_details"})
+     */
+    private $numberOfEmployees;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -89,6 +95,18 @@ trait SurveyResponseTrait
     public function setContactEmail(?string $contactEmail): self
     {
         $this->contactEmail = $contactEmail;
+
+        return $this;
+    }
+
+    public function getNumberOfEmployees(): ?string
+    {
+        return $this->numberOfEmployees;
+    }
+
+    public function setNumberOfEmployees(?string $numberOfEmployees): self
+    {
+        $this->numberOfEmployees = $numberOfEmployees;
 
         return $this;
     }

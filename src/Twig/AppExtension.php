@@ -3,18 +3,21 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Address;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
+use App\Entity\GoodsDescriptionInterface;
 use App\Entity\International\Stop;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
+use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
@@ -54,7 +57,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
             new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
             new TwigFilter('formatGoodsDescription', function($stop, $short = false){
-                if (!in_array(StopTrait::class, class_uses($stop))) {
+                if (!$stop instanceof GoodsDescriptionInterface) {
                     return '';
                 }
                 return ($stop->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
@@ -76,6 +79,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardState', [$this, 'wizardState']),
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
+            new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
         ];
     }
 
@@ -150,6 +154,7 @@ class AppExtension extends AbstractExtension
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
         'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
+        'international-consignment' => ['class' => ConsignmentState::class, 'route' => ConsignmentWorkflowController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {
@@ -180,5 +185,31 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function shiftMapping(array $mapping, int $key, string $direction): array {
+        if (!in_array($direction, ['up', 'down'])) {
+            throw new RuntimeException('Direction must be "up" or "down"');
+        }
+
+        if ($key < 0 || $key >= count($mapping)) {
+            throw new RuntimeException('Key out of bounds');
+        }
+
+        if (($key === 0 && $direction === 'up') || ($key === count($mapping) - 1 && $direction === 'down')) {
+            return $mapping;
+        }
+
+        $temp = $mapping[$key];
+
+        if ($direction === 'up') {
+            $mapping[$key] = $mapping[$key - 1];
+            $mapping[$key - 1] = $temp;
+        } else {
+            $mapping[$key] = $mapping[$key + 1];
+            $mapping[$key + 1] = $temp;
+        }
+
+        return $mapping;
     }
 }

@@ -13,10 +13,15 @@ format:
 common:
   actions:
     add: Add
+    add-trip: Add trip
+    add-vehicle: Add vehicle
     back-to-dashboard: Back to dashboard
     cancel: Cancel
     change: Change
     continue: Continue
+    move-up: Move up
+    move-down: Move down
+    re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
     view: View
@@ -24,6 +29,13 @@ common:
     boolean:
       yes: Yes
       no: No
+  consignment:
+    cargo-type: Cargo type
+    goods: Goods
+    loaded-at: "Stop {number} — {name}, {country}"
+    place-of-loading: Loaded at
+    place-of-unloading: Unloaded at
+    weight: Weight
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -33,6 +45,14 @@ common:
     choices:
       space: At capacity by space
       weight: At capacity by weight
+  number-of-employees:
+    1-9: '1 - 9'
+    10-49: '10 - 49'
+    50-249: '50 - 249'
+    250-499: '250 - 499'
+    500-10000: '500 - 10,000'
+    10001-30000: '10,001 - 30,000'
+    '>30000': 'More than 30,000'
   value-unit:
     unit: Unit
   vehicle:
@@ -86,7 +106,8 @@ admin:
     survey-created:
       registration-mark: Registration mark
       type: Type
-      start-date: Start date
+      period-start: Survey period start
+      period-end: Survey period end
       invitation-email: Invitation email
       invitation-address: Invitation address
       access-code-1: "Access code #1"
@@ -99,15 +120,6 @@ domestic:
       1: Shipping port or docks
       2: Rail depot / terminal
       4: Airport
-
-  number-of-employees:
-    1-9: '1 - 9'
-    10-49: '10 - 49'
-    50-249: '50 - 249'
-    250-499: '250 - 499'
-    500-10000: '500 - 10,000'
-    10001-30000: '10,001 - 30,000'
-    '>30000': 'More than 30,000'
 
   survey-response:
 
@@ -547,8 +559,28 @@ international:
 
   correspondence-and-business-details:
     title: Correspondence and Business Details
+    business-details: Business details
+    correspondence-details: Correspondence details
+    number-of-employees: Number of employees nationally
+    nature-of-business: Nature of business
+    number-of-trips: Estimated number of international trips over the next 12 months
+    still-active: Firm still performs international road haulage activities?
+  sidebar-summary:
+    title: International Survey
+    company: Company
+    period-start: Survey period start
+    period-end: Survey period end
   summary:
-    title: IRHS Survey summary
+    title: International Survey summary
+    correspondence-and-business-details: Correspondence and Business Details
+    no-vehicles: No vehicles
+    registration: Registration
+    type-and-configuration: Type/configuration
+    status: Status
+    vehicles: Vehicles
+    view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
+
+
   thanks:
     title: Thanks
 
@@ -584,11 +616,19 @@ international:
       fewer-than-ten-employees:
         label: Does your firm employ fewer than 10 people in total, nationally?
         help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
+        help: ''
       business-nature:
         label: What is the nature of your business?
         help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
 
   vehicle:
+    summary:
+      basic-details: Basic details
+      no-trips: No trips
+      trips: Trips
+      vehicle-summary: Vehicle summary
     vehicle-details:
       heading: 'Vehicle Details'
       help: ''
@@ -630,14 +670,23 @@ international:
         label: Country
         help: ''
     summary:
-      stop: "{number}. {place}, {country}"
+      stop: "{place}, {country}"
+      stops: Stops
       add-another:
         label: Do you need to add another stop?
         help: ''
+    re-order:
+      save: Save order
     remove:
+      heading: Remove stop?
+      are-you-sure: "Are you sure you want to remove {name} ({country}) from the list of stops?"
       yes: "Yes, remove"
       no: "No, cancel"
   consignment:
+    summary:
+      heading: Consignment summary
+      actions:
+        back-to-trip-summary: Back to trip summary
     goods-description:
       goods-description:
         label: Description of goods carried
@@ -669,8 +718,10 @@ international:
     summary:
       actions:
         add-stops: Add stops
+        add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle summary
       trip-summary: Trip summary
+      consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
       date-until-date: "{from} – {until}"
       cargo-state:
@@ -720,7 +771,7 @@ international:
         help: ''
       was-limited:
         label: Was your vehicle at full capacity?
-        help: 'Select the answers which best describe the load'
+        help: Select the answers which best describe the load
     return-ports:
       heading: Return trip - to the UK
       help: ''
@@ -739,7 +790,7 @@ international:
         help: ''
       was-limited:
         label: Was your vehicle at full capacity?
-        help: 'Select the answers which best describe the load'
+        help: Select the answers which best describe the load
     distance:
       heading: Trip distance
       help: ''
@@ -790,13 +841,13 @@ goods:
     help:
       LB: ''
       SB: ''
-      LFC: 'including ISO containers'
-      OFC: 'including stillages'
+      LFC: including ISO containers
+      OFC: including stillages
       PL: ''
       PS: ''
       NP: for example livestock, cars, plant
       RC: ''
-      OT: 'including swap bodies, boxes, crates and cylinders or mixed loads'
+      OT: including swap bodies, boxes, crates and cylinders or mixed loads
       NS: ''
   description:
     options:

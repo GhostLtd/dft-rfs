@@ -4,6 +4,7 @@ namespace App\Entity\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
+use App\Entity\GoodsDescriptionInterface;
 use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\DayStopRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=DayStopRepository::class)
  * @ORM\Table("domestic_day_stop")
  */
-class DayStop
+class DayStop implements GoodsDescriptionInterface
 {
     use StopTrait {
         setGoodsDescription as traitSetGoodsDescription;

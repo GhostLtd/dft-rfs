@@ -3,6 +3,7 @@
 namespace App\Entity\International;
 
 use App\Entity\CargoTypeTrait;
+use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ConsignmentRepository;
 use App\Repository\International\StopRepository;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ConsignmentRepository::class)
  * @ORM\Table(name="international_consignment")
  */
-class Consignment
+class Consignment implements GoodsDescriptionInterface
 {
     /**
      * @ORM\Id
@@ -38,12 +39,13 @@ class Consignment
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull(message="common.choice.invalid", groups={"goods-description"})
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="domestic.day.goods-description-other.not-blank", groups={"goods-description"})
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"goods-description"})
      */
     private $goodsDescriptionOther;

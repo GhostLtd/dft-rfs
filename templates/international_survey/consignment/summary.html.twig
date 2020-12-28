@@ -1,0 +1,48 @@
+{% set translation_prefix = 'international.trip.summary' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.consignment.summary.heading'|trans }}</h1>
+
+    {%- set params = {tripId: trip.id, consignmentId: consignment.id} -%}
+    {%- set urlLoadingChange = wizardUrl('international-consignment', 'STATE_PLACE_OF_LOADING', params) -%}
+    {%- set urlUnloadingChange = wizardUrl('international-consignment', 'STATE_PLACE_OF_UNLOADING', params) -%}
+    {%- set urlGoodsChange = wizardUrl('international-consignment', 'STATE_GOODS_DESCRIPTION', params) -%}
+    {%- set urlCargoTypeChange = wizardUrl('international-consignment', 'STATE_CARGO_TYPE', params) -%}
+    {%- set urlWeightChange = wizardUrl('international-consignment', 'STATE_WEIGHT_OF_GOODS', params) -%}
+    {%- set change = 'common.actions.change'|trans -%}
+
+    {%- macro loadingRow(stop, label, actionLinks) -%}
+        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow -%}
+        {{ summaryListRow(label,
+            'common.consignment.loaded-at'|trans({number: stop.number, name: stop.name, country: stop.country|country_name}),
+            actionLinks
+        ) }}
+    {%- endmacro -%}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
+
+                {{ _self.loadingRow(consignment.loadingStop, 'common.consignment.place-of-loading', {(urlLoadingChange): change}) }}
+                {{ _self.loadingRow(consignment.unloadingStop, 'common.consignment.place-of-unloading', {(urlUnloadingChange): change}) }}
+                {%- set goodsCopy -%}
+                    {{ consignment | formatGoodsDescription }}
+                    {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
+                    {%- if consignment.hazardousGoodsCode %} — <em>{{ consignment.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, consignment.hazardousGoodsCode) | trans }}{% endif %}
+                {%- endset -%}
+                {{ summaryListRow('common.consignment.goods', goodsCopy | raw, {(urlGoodsChange): change}) }}
+                {{ summaryListRow('common.consignment.cargo-type', choiceLabel(cargoChoices, consignment.cargoTypeCode) | trans, {(urlCargoTypeChange): change}) }}
+                {{ summaryListRow('common.consignment.weight', (consignment.weightOfGoodsCarried|number_format) ~ 'kg', {(urlWeightChange): change}) }}
+            </dl>
+            {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
+            <a href="{{ url(dashboardRoute, {id: trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.consignment.summary.actions.back-to-trip-summary'|trans }}</a>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% include "international_survey/includes/trip-summary.html.twig" %}
+        </div>
+    </div>
+{% endblock %}
