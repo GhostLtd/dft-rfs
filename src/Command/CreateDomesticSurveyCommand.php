@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Address;
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Utility\PasscodeGenerator;
@@ -57,20 +58,27 @@ class CreateDomesticSurveyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $reg = $input->getArgument('reg') ?? "AA19PPP";
 
+        $user = (new PasscodeUser())
+            ->setUsername($username = $this->passcodeGenerator->generatePasscode())
+            ->setPlainPassword($password = ($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode()))
+        ;
+
         $survey = new Survey();
         $survey
+            ->setInvitationEmail('test@example.com')
+            ->setInvitationAddress((new Address())
+                ->setLine1('123 Test Street')
+                ->setLine2('Test Town or City')
+                ->setPostcode('B10 9TJ')
+            )
             ->setRegistrationMark($reg)
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
             ->setSurveyPeriodEnd(new DateTime('now +14 days'))
             ->setIsNorthernIreland(false)
             ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
+            ->setPasscodeUser($user)
         ;
-        $user = new PasscodeUser();
-        $user
-            ->setUsername($username = $this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($password = ($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode()))
-            ->setDomesticSurvey($survey);
-        ;
+        $survey->setPasscodeUser($user);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

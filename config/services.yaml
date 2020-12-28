@@ -8,6 +8,7 @@ imports:
 parameters:
     frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
+    alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     container.dumper.inline_factories: true
 
 services:
@@ -17,6 +18,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $appEnvironment: '%env(APP_ENV)%'
+            $frontendHostname: '%frontend_hostname%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -48,7 +50,6 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-
     _instanceof:
         Doctrine\Common\EventSubscriber:
             tags:
@@ -57,3 +58,9 @@ services:
     App\EventSubscriber\AdminMenuEventSubscriber:
         arguments:
             $hostname: '%admin_hostname%'
+
+    Alphagov\Notifications\Client:
+        factory: '@App\Utility\AlphagovNotify\ClientFactory'
+        arguments:
+            $apiKey: '%alphagov_notify_api_key%'
+
