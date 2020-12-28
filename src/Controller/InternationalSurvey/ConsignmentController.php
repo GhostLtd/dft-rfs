@@ -5,11 +5,15 @@ namespace App\Controller\InternationalSurvey;
 use App\Entity\International\Consignment;
 use App\Entity\International\Trip;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
+ */
 class ConsignmentController extends AbstractController
 {
     public const SUMMARY_ROUTE = 'app_internationalsurvey_consignment_summary';

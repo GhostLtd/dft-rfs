@@ -10,6 +10,7 @@ use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -20,6 +21,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 /**
  * @Route("/international-survey/trips/{tripId}/consignment")
  * @Entity("trip", expr="repository.find(tripId)")
+ * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
  */
 class ConsignmentWorkflowController extends AbstractSessionStateWorkflowController
 {

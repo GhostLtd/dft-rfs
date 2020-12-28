@@ -69,3 +69,7 @@ services:
                 name:     data_collector
                 template: 'data_collector/features.html.twig'
                 id:       'app.features_collector'
+
+    App\ExpressionLanguage\FeatureExpressionProvider:
+        tags:
+            - { name: 'security.expression_language_provider' }

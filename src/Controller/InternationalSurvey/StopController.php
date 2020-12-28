@@ -11,6 +11,7 @@ use App\Form\ConfirmationType;
 use App\Form\InternationalSurvey\Stop\StopType;
 use App\Repository\International\TripRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/international-survey/trips/{tripId}", requirements={"tripId" = Utility::UUID_REGEX})
+ * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
  */
 class StopController extends AbstractController
 {
