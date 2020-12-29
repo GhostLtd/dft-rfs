@@ -670,8 +670,8 @@ international:
         label: Country
         help: ''
       loading:
-        label: Did you load or unload goods at this stop?
-        help: You should only add places where you either loaded or unloaded goods
+        label: What did you do at this stop?
+        help: ''
         choices:
           load: Loaded goods
           unload: Unloaded goods
@@ -757,6 +757,7 @@ international:
   trip:
     summary:
       actions:
+        add-action: Add action
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle summary

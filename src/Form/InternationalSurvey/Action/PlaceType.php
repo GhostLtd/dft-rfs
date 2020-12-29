@@ -51,7 +51,6 @@ class PlaceType extends AbstractType
                     "{$prefix}.loading.choices.unload" => false,
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-radios--inline'],
             ]);
     }
 

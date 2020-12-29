@@ -128,6 +128,11 @@ class Trip
     private $consignments;
 
     /**
+     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip")
+     */
+    private $actions;
+
+    /**
      * @Assert\Callback(groups={"trip_outbound_cargo_state"})
      */
     public function validateOutboundCargoState(ExecutionContextInterface $context) {
@@ -183,6 +188,7 @@ class Trip
     {
         $this->stops = new ArrayCollection();
         $this->consignments = new ArrayCollection();
+        $this->actions = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -508,5 +514,35 @@ class Trip
         foreach($this->stops as $stop) {
             $stop->setNumber($count++);
         }
+    }
+
+    /**
+     * @return Collection|Action[]
+     */
+    public function getActions(): Collection
+    {
+        return $this->actions;
+    }
+
+    public function addAction(Action $action): self
+    {
+        if (!$this->actions->contains($action)) {
+            $this->actions[] = $action;
+            $action->setTrip($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAction(Action $action): self
+    {
+        if ($this->actions->removeElement($action)) {
+            // set the owning side to null (unless already changed)
+            if ($action->getTrip() === $this) {
+                $action->setTrip(null);
+            }
+        }
+
+        return $this;
     }
 }

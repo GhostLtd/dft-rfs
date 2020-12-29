@@ -3,6 +3,13 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\Action;
+use App\Form\InternationalSurvey\Action\AddAnotherType;
+use App\Form\InternationalSurvey\Action\CargoTypeType;
+use App\Form\InternationalSurvey\Action\GoodsDescriptionType;
+use App\Form\InternationalSurvey\Action\GoodsLoadedWeightType;
+use App\Form\InternationalSurvey\Action\GoodsUnloadedWeightType;
+use App\Form\InternationalSurvey\Action\HazardousGoodsType;
+use App\Form\InternationalSurvey\Action\PlaceType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 use InvalidArgumentException;
@@ -22,9 +29,29 @@ class ActionState extends AbstractFormWizardState implements FormWizardInterface
     const STATE_END = 'end';
 
     private const FORM_MAP = [
+        self::STATE_PLACE => PlaceType::class,
+        self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
+        self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
+        self::STATE_CARGO_TYPE => CargoTypeType::class,
+        self::STATE_WEIGHT_LOADED => GoodsLoadedWeightType::class,
+        self::STATE_WEIGHT_UNLOADED => GoodsUnloadedWeightType::class,
+
+        // self::STATE_CONSIGNMENT_UNLOADED => ...
+
+        self::STATE_ADD_ANOTHER => AddAnotherType::class,
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_PLACE => 'international_survey/action/form-place.html.twig',
+        self::STATE_GOODS_DESCRIPTION => 'international_survey/action/form-goods-description.html.twig',
+        self::STATE_HAZARDOUS_GOODS => 'international_survey/action/form-hazardous-goods.html.twig',
+        self::STATE_CARGO_TYPE => 'international_survey/action/form-cargo-type.html.twig',
+        self::STATE_WEIGHT_LOADED => 'international_survey/action/form-weight-loaded.html.twig',
+        self::STATE_WEIGHT_UNLOADED => 'international_survey/action/form-weight-unloaded.html.twig',
+
+        // self::STATE_CONSIGNMENT_UNLOADED => ...
+
+        self::STATE_ADD_ANOTHER => 'international_survey/action/form-add-another.html.twig',
     ];
 
     /** @var Action */

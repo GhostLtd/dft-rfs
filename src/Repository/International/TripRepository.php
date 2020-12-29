@@ -48,4 +48,24 @@ class TripRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function findByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Trip
+    {
+        try {
+            return $this->createQueryBuilder('t')
+                ->select('t,v,r')
+                ->leftJoin('t.vehicle', 'v')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->where('t.id = :id')
+                ->andWhere('r = :response')
+                ->getQuery()
+                ->setParameters([
+                    'id' => $id,
+                    'response' => $response,
+                ])
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
 }

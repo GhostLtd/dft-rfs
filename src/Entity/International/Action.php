@@ -74,6 +74,12 @@ class Action
      */
     private $unloadingActions;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Trip::class, inversedBy="actions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $trip;
+
     public function __construct()
     {
         $this->unloadingActions = new ArrayCollection();
@@ -230,6 +236,18 @@ class Action
                 $unloadingAction->setLoadingAction(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTrip(): ?Trip
+    {
+        return $this->trip;
+    }
+
+    public function setTrip(?Trip $trip): self
+    {
+        $this->trip = $trip;
 
         return $this;
     }
