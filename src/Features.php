@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Exception;
+
 class Features
 {
     public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
@@ -25,6 +27,25 @@ class Features
     public function isEnabled($feature): bool
     {
         return in_array($feature, $this->enabledFeatures);
+    }
+
+    /**
+     * @param $feature
+     * @return bool
+     * @throws Exception
+     */
+    public function isEnabledSafe($feature): bool
+    {
+        $allFeatures = array_merge(
+            array_values(self::FEATURE_MAP),
+            array_values(PreKernelFeatures::AUTO_FEATURE_MAP)
+        );
+
+        if (!in_array($feature, $allFeatures)) {
+            throw new Exception("Unknown feature '${feature}'");
+        }
+
+        return $this->isEnabled($feature);
     }
 
     public function getEnabledFeatures(): array

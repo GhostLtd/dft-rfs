@@ -21,7 +21,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 /**
  * @Route("/international-survey/trips/{tripId}/consignment")
  * @Entity("trip", expr="repository.find(tripId)")
- * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
+ * @Security("is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
  */
 class ConsignmentWorkflowController extends AbstractSessionStateWorkflowController
 {
