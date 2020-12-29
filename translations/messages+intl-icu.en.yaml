@@ -659,6 +659,46 @@ international:
       carrying-capacity:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
+  action:
+    place:
+      heading: Where did you stop?
+      help: Only add stops where you loaded or unloaded goods
+      name:
+        label: Place
+        help: ''
+      country:
+        label: Country
+        help: ''
+      loading:
+        label: Did you load or unload goods at this stop?
+        help: You should only add places where you either loaded or unloaded goods
+        choices:
+          load: Loaded goods
+          unload: Unloaded goods
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this trip. For mixed loads, the main type of goods should be recorded.
+    hazardous-goods:
+      hazardous-goods:
+        label: Were these goods dangerous or hazardous?
+        help: Were the goods being transported classified as dangerous or hazardous?
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods are carried?
+        help: Mixed loads should be recorded as "Other cargo type"
+    goods-weight-loaded:
+      weight-of-goods:
+        label: Weight of goods loaded
+        help: The weight of goods should include any packaging or containers
+    goods-weight-unloaded:
+      weight-of-goods:
+        label: Weight of goods unloaded
+        help: ''
+    add-another:
+      add-another:
+        label: Do you need to add another action?
+        help: You must tell us about every time when you either loaded or unloaded goods
   stop:
     stop:
       heading: Where did you stop?

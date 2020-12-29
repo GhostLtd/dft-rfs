@@ -77,13 +77,15 @@
         <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
     {%- endif -%}
     <p class="govuk-body">
-        {%- if trip.stops is empty -%}
-            {%- set addStopRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}
-            <a class="govuk-button" href="{{ url(addStopRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-stops'|trans }}</a>
-        {%- else -%}
-            {%- set addConsignmentRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentWorkflowController::START_ROUTE') -%}
-            <a class="govuk-button" href="{{ url(addConsignmentRoute, {tripId: trip.id, consignmentId: 'add'}) }}">{{ 'international.trip.summary.actions.add-consignment'|trans }}</a>
-        {%- endif -%}
+        {% if is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS')) %}
+            {%- if trip.stops is empty -%}
+                {%- set addStopRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}
+                <a class="govuk-button" href="{{ url(addStopRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-stops'|trans }}</a>
+            {%- else -%}
+                {%- set addConsignmentRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentWorkflowController::START_ROUTE') -%}
+                <a class="govuk-button" href="{{ url(addConsignmentRoute, {tripId: trip.id, consignmentId: 'add'}) }}">{{ 'international.trip.summary.actions.add-consignment'|trans }}</a>
+            {%- endif -%}
+        {% endif %}
         {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
         <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
     </p>
