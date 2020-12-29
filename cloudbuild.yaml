@@ -14,12 +14,12 @@ steps:
     # copy common app deploy files
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
       id: 'copy-common-deploy-files'
-      args: ['gsutil', 'cp', 'config/gcloud-build/all/*', '.']
+      args: ['gsutil', 'rsync', 'config/gcloud-build/all/', '.']
       waitFor: ['-']
     # copy project specific app deploy files
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
       id: 'copy-project-deploy-files'
-      args: ['gsutil', 'cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
+      args: ['gsutil', 'rsync', 'config/gcloud-build/$PROJECT_ID/', '.']
       waitFor: ['copy-common-deploy-files']
 
     # deploy default service
