@@ -14,7 +14,7 @@ steps:
     # copy project relevant app deploy files
     - name: 'alpine'
       id: 'copy-deploy-files'
-      args: ['cp', './config/gcloud-deploy/$PROJECT_ID/*', '.']
+      args: ['cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
       waitFor: ['-']
 
     # deploy
