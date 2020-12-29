@@ -12,9 +12,9 @@ steps:
       waitFor: ['node-install']
 
     # copy project relevant app deploy files
-    - name: 'alpine'
+    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
       id: 'copy-deploy-files'
-      args: ['cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
+      args: ['gsutil', 'cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
       waitFor: ['-']
 
     # deploy
