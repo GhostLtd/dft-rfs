@@ -28,7 +28,7 @@ class FeatureExpressionProvider implements ExpressionFunctionProviderInterface
                 return "is_feature_enabled(${str})";
             }, function($arguments, $str) {
                 try {
-                    return $this->features->isEnabledSafe($str);
+                    return $this->features->isEnabled($str, true);
                 } catch (Exception $e) {
                     throw new SyntaxError("Unknown feature '${str}'");
                 }

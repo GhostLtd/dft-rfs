@@ -99,7 +99,7 @@ class AppExtension extends AbstractExtension
 
     public function isFeatureEnabled($str) {
         try {
-            return $this->features->isEnabledSafe($str);
+            return $this->features->isEnabled($str, true);
         } catch(Exception $e) {
             throw new SyntaxError("Unknown feature '${str}'");
         }

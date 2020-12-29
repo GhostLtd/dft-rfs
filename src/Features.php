@@ -24,17 +24,25 @@ class Features
         $this->enabledFeatures = array_merge($preKernelFeatures, $features);
     }
 
-    public function isEnabled($feature): bool
+    /**
+     * @param $feature
+     * @param bool $checkFeatureIsValid An optional safety check to ensure the feature being requested is even a defined feature
+     * @return bool
+     * @throws Exception
+     */
+    public function isEnabled($feature, $checkFeatureIsValid = false): bool
     {
+        if ($checkFeatureIsValid) {
+            $this->checkFeatureIsValid($feature);
+        }
         return in_array($feature, $this->enabledFeatures);
     }
 
     /**
      * @param $feature
-     * @return bool
      * @throws Exception
      */
-    public function isEnabledSafe($feature): bool
+    private function checkFeatureIsValid($feature)
     {
         $allFeatures = array_merge(
             array_values(self::FEATURE_MAP),
@@ -44,8 +52,6 @@ class Features
         if (!in_array($feature, $allFeatures)) {
             throw new Exception("Unknown feature '${feature}'");
         }
-
-        return $this->isEnabled($feature);
     }
 
     public function getEnabledFeatures(): array
