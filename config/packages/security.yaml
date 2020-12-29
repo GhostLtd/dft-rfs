@@ -72,3 +72,6 @@ security:
         ## Admin
         - { host: '^%admin_hostname%$', path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER }
+
+        ## Others
+        - { path: ^/cron(/.*)?$, allow_if: "request.headers.get('X-Appengine-Cron') === 'true'" }

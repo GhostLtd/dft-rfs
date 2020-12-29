@@ -33,4 +33,9 @@ steps:
       args: ["app", "deploy", "app.admin.yaml"]
       waitFor: ['node-build', 'copy-project-deploy-files']
 
+    # deploy cron jobs
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ["app", "deploy", "cron.yaml"]
+      waitFor: ['deploy-default-service', 'deploy-admin-service']
+
 timeout: "900s"
