@@ -6,41 +6,29 @@ class Features
 {
     public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
 
-    /**
-     * These features are enabled automatically when the specified ENV vars are present
-     */
-    private const AUTO_FEATURE_MAP = [
-        'GAE_INSTANCE' => self::GAE_ENVIRONMENT,
+    // Use IRHS consignment / stops model rather than newer actions model
+    public const IRHS_CONSIGNMENTS_AND_STOPS = 'IRHS_CONSIGNMENTS_AND_STOPS';
+
+    public const FEATURE_MAP = [
+        'irhs-consignments-and-stops' => self::IRHS_CONSIGNMENTS_AND_STOPS,
     ];
 
-//    /**
-//     * These features are enabled when present in the APP_FEATURES ENV var
-//     */
-//    private const CONFIG_FEATURE_MAP = [
-//        'gae-environment' => self::GAE_ENVIRONMENT,
-//    ];
+    private $enabledFeatures;
 
-
-    private static function detectFeatures()
+    public function __construct($enableFeatures = [])
     {
-        $enabledFeatures = [];
-
-//        if ($config = getenv('APP_FEATURES')) {
-//            $configFeatures = str_getcsv($config);
-//            $enabledFeatures = array_intersect_key(self::CONFIG_FEATURE_MAP, array_flip($configFeatures));
-//        }
-
-        foreach (self::AUTO_FEATURE_MAP as $envVar => $feature) {
-            if (getenv($envVar)) $enabledFeatures[] = $feature;
-        }
-
-        return $enabledFeatures;
+        $preKernelFeatures = PreKernelFeatures::getEnabledFeatures();
+        $features = array_intersect_key(self::FEATURE_MAP, array_flip($enableFeatures));
+        $this->enabledFeatures = array_merge($preKernelFeatures, $features);
     }
 
-    public static function isEnabled($feature)
+    public function isEnabled($feature): bool
     {
-        static $features;
-        if (empty($features)) $features = self::detectFeatures();
-        return in_array($feature, $features);
+        return in_array($feature, $this->enabledFeatures);
+    }
+
+    public function getEnabledFeatures(): array
+    {
+        return $this->enabledFeatures;
     }
 }
