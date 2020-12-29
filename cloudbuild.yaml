@@ -11,19 +11,26 @@ steps:
       args: ['run', 'deploy-build']
       waitFor: ['node-install']
 
-    # copy project relevant app deploy files
+    # copy common app deploy files
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
-      id: 'copy-deploy-files'
-      args: ['gsutil', 'cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
+      id: 'copy-common-deploy-files'
+      args: ['gsutil', 'cp', 'config/gcloud-build/all/*', '.']
       waitFor: ['-']
+    # copy project specific app deploy files
+    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+      id: 'copy-project-deploy-files'
+      args: ['gsutil', 'cp', 'config/gcloud-build/$PROJECT_ID/*', '.']
+      waitFor: ['copy-common-deploy-files']
 
-    # deploy
+    # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
+      id: 'deploy-default-service'
       args: ["app", "deploy", "app.default.yaml"]
-      waitFor: ['node-build', 'copy-deploy-files']
-    # deploy
+      waitFor: ['node-build', 'copy-project-deploy-files']
+    # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
+      id: 'deploy-admin-service'
       args: ["app", "deploy", "app.admin.yaml"]
-      waitFor: ['node-build', 'copy-deploy-files']
+      waitFor: ['node-build', 'copy-project-deploy-files']
 
 timeout: "900s"
