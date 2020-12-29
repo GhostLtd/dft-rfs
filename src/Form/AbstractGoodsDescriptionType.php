@@ -52,8 +52,6 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired("translation_entity_key");
-        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.consignment']);
-
         $resolver->setDefaults([
             'is_summary_day' => false,
             'validation_groups' => 'goods-description',

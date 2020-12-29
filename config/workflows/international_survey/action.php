@@ -1,8 +1,8 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Controller\InternationalSurvey\ConsignmentController;
-use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
+use App\Controller\InternationalSurvey\ActionAddController;
+use App\Controller\InternationalSurvey\TripController;
 use App\Workflow\InternationalSurvey\ActionState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -47,11 +47,17 @@ return static function (ContainerConfigurator $container) {
                     'weight_of_goods_entered' => [
                         'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_ADD_ANOTHER,
+                        'metadata' => [
+                            'persist' => true,
+                        ],
                     ],
 
                     'finish_edit_loaded' => [
                         'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_END,
+                        'metadata' => [
+                            'persist' => true,
+                        ],
                     ],
 
                     'goods_unloaded' => [
@@ -65,11 +71,17 @@ return static function (ContainerConfigurator $container) {
                     'unloaded_weight_entered' => [
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                         'to' => StateObject::STATE_ADD_ANOTHER,
+                        'metadata' => [
+                            'persist' => true,
+                        ],
                     ],
 
                     'finish_edit_unloaded' => [
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                         'to' => StateObject::STATE_END,
+                        'metadata' => [
+                            'persist' => true,
+                        ],
                     ],
 
                     'finish_dont_add_another' => [
@@ -77,10 +89,9 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_END,
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => ConsignmentController::SUMMARY_ROUTE,
+                                'routeName' => TripController::TRIP_ROUTE,
                                 'parameterMappings' => [
-                                    'tripId' => 'trip.id',
-                                    'consignmentId' => 'id',
+                                    'id' => 'trip.id',
                                 ],
                             ],
                             'transitionWhenFormData' => [
@@ -94,9 +105,9 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_END,
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => ConsignmentWorkflowController::ADD_ANOTHER_ROUTE,
+                                'routeName' => ActionAddController::ADD_ANOTHER_ROUTE,
                                 'parameterMappings' => [
-                                    'actionId' => 'id',
+                                    'tripId' => 'trip.id',
                                 ],
                             ],
                             'transitionWhenFormData' => [

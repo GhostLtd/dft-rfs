@@ -5,6 +5,7 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
+use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ActionState;
@@ -17,12 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Route("/international-survey/trips/{tripId}")
+ */
 class ActionAddController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
 
     public const START_ROUTE = 'app_internationalsurvey_action_add_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_action_add_state';
+    public const ADD_ANOTHER_ROUTE = 'app_internationalsurvey_action_add_another';
 
     protected $surveyResponse;
 
@@ -31,30 +36,33 @@ class ActionAddController extends AbstractSessionStateWorkflowController
 
     protected $tripRepository;
 
-    public function __construct(TripRepository $tripRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    protected $actionRepository;
+
+    public function __construct(TripRepository $tripRepository, ActionRepository $actionRepository, EntityManagerInterface $entityManager, SessionInterface $session)
     {
         parent::__construct($entityManager, $session);
+        $this->actionRepository = $actionRepository;
         $this->tripRepository = $tripRepository;
     }
 
     /**
-     * @Route("/international-survey/trips/{tripId}/add-action/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/international-survey/trips/{tripId}/add-action", name=self::START_ROUTE)
+     * @Route("/add-action/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/add-action", name=self::START_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyActionStateMachine,
-                          Request $request,
-                          UserInterface $user,
-                          string $tripId,
-                          ?string $state = null): Response
+    public function index(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $tripId, ?string $state = null): Response
     {
-        $this->surveyResponse = $this->getSurveyResponse($user);
-        $this->trip = $this->tripRepository->findByIdAndSurveyResponse($tripId, $this->surveyResponse);
-
-        if (!$this->trip) {
-            throw new NotFoundHttpException();
-        }
-
+        $this->loadSurveyAndTrip($user, $tripId);
         return $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
+    }
+
+    /**
+     * @Route("/add-another-action", name=self::ADD_ANOTHER_ROUTE)
+     */
+    public function addAnother(UserInterface  $user, string $tripId): Response
+    {
+        $this->loadSurveyAndTrip($user, $tripId);
+        $this->cleanUp();
+        return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $this->trip->getId()]);
     }
 
     protected function getFormWizard(): FormWizardInterface
@@ -78,5 +86,20 @@ class ActionAddController extends AbstractSessionStateWorkflowController
         $action->setTrip($this->trip);
         $this->entityManager->persist($action);
         $formWizard->setSubject($action);
+    }
+
+    protected function preFlush($subject)
+    {
+        $subject->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
+    }
+
+    protected function loadSurveyAndTrip(UserInterface $user, string $tripId): void
+    {
+        $this->surveyResponse = $this->getSurveyResponse($user);
+        $this->trip = $this->tripRepository->findByIdAndSurveyResponse($tripId, $this->surveyResponse);
+
+        if (!$this->trip) {
+            throw new NotFoundHttpException();
+        }
     }
 }

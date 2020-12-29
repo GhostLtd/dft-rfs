@@ -141,19 +141,20 @@ abstract class AbstractWorkflowController extends AbstractController
         $this->setFormWizard($formWizard);
 
         $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
+        $subject = $formWizard->getSubject();
 
         if ($metadata['persist'] ?? false)
         {
-            if (!$this->entityManager->contains($formWizard->getSubject())) {
-                $this->entityManager->persist($formWizard->getSubject());
+            if (!$this->entityManager->contains($subject)) {
+                $this->entityManager->persist($subject);
             };
+            $this->preFlush($subject);
             $this->entityManager->flush();
         }
 
         if ($redirectRoute = $metadata['redirectRoute'] ?? false)
         {
             if (is_array($redirectRoute)) {
-                $subject = $formWizard->getSubject();
                 $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
                 // e.g. redirectRoute = ['routeName' => 'app_summary', 'parameterMappings' => ['id' => 'vehicleId']]
@@ -203,7 +204,6 @@ abstract class AbstractWorkflowController extends AbstractController
 
         // If we have only one possible transition, and it is meant to persist/flush
         // then we want to have a better label for the "continue" button
-        $isSavePoint = false;
         $buttonLabel = null;
         $transitions = $stateMachine->getEnabledTransitions($formWizard);
         if (count($transitions) === 1) {
@@ -219,5 +219,10 @@ abstract class AbstractWorkflowController extends AbstractController
         ]);
 
         return [$form, $template];
+    }
+
+    protected function preFlush($subject)
+    {
+        // Overridable hook point
     }
 }

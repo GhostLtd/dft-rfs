@@ -44,6 +44,5 @@ abstract class AbstractCargoTypeType extends AbstractType
             'validation_groups' => 'cargo-type',
         ]);
         $resolver->setRequired(["translation_entity_key"]);
-        $resolver->setAllowedValues("translation_entity_key", ['domestic.day-summary', 'domestic.day-stop', 'international.consignment']);
     }
 }

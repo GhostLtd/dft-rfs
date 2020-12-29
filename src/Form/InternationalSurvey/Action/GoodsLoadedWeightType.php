@@ -2,7 +2,7 @@
 
 namespace App\Form\InternationalSurvey\Action;
 
-use App\Entity\International\Consignment;
+use App\Entity\International\Action;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,7 +28,7 @@ class GoodsLoadedWeightType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Consignment::class,
+            'data_class' => Action::class,
             'validation_groups' => 'action-loaded-weight',
         ]);
     }
