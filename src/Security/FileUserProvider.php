@@ -32,7 +32,7 @@ class FileUserProvider implements UserProviderInterface
             {
                 $username = trim($userParts[0]);
                 $password = trim($userParts[1]);
-                $user = new User($username, $password, ['ROLE_ADMIN_USER']);
+                $user = new User($username, $password, ['ROLE_ADMIN_FORM_USER']);
                 $this->users[$username] = $user;
             }
         }

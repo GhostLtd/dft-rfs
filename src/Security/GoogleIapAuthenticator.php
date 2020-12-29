@@ -29,7 +29,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        return new User($credentials['username'], $credentials['assertion'], ['ROLE_ADMIN_USER']);
+        return new User($credentials['username'], $credentials['assertion'], ['ROLE_ADMIN_IAP_USER']);
     }
 
     public function checkCredentials($credentials, UserInterface $user)

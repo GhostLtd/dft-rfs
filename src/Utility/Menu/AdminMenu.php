@@ -64,8 +64,7 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('dashboard', 'menu.international.sub-item-2', $this->router->generate('admin_logout'), [], []),
             ]),*/
 
-            new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], []),
-
+            new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], ['ROLE_ADMIN_FORM_USER']),
         ]);
     }
 }
