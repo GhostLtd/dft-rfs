@@ -54,7 +54,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_END,
                     ],
 
-                    'good_unloaded' => [
+                    'goods_unloaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_CONSIGNMENT_UNLOADED
                     ],
