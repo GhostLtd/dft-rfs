@@ -10,13 +10,21 @@ steps:
       entrypoint: yarn
       args: ['run', 'deploy-build']
       waitFor: ['node-install']
+
+    # copy project relevant app deploy files
+    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+      id: 'copy-deploy-files'
+      entrypoint: gsutil
+      args: ['cp', 'config/gcloud-deploy/$PROJECT_ID/*' '.']
+      waitFor: ['-']
+
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "$PROJECT_ID.app.default.yaml"]
-      waitFor: ['node-build']
+      args: ["app", "deploy", "app.default.yaml"]
+      waitFor: ['node-build', 'copy-deploy-files']
     # deploy
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "$PROJECT_ID.app.admin.yaml"]
-      waitFor: ['node-build']
+      args: ["app", "deploy", "app.admin.yaml"]
+      waitFor: ['node-build', 'copy-deploy-files']
 
 timeout: "900s"
