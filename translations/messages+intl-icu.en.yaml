@@ -660,6 +660,7 @@ international:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
   action:
+    stop: '{goods} from stop {number} - {place}, {country}'
     place:
       heading: Where did you stop?
       help: Only add stops where you loaded or unloaded goods
@@ -675,6 +676,9 @@ international:
         choices:
           load: Loaded goods
           unload: Unloaded goods
+    unloading:
+      label: Which goods did you unload?
+      help: ''
     goods-description:
       goods-description:
         label: Description of goods carried
@@ -692,6 +696,12 @@ international:
         label: Weight of goods loaded
         help: The weight of goods should include any packaging or containers
     goods-weight-unloaded:
+      group:
+        label: 'Weight unloaded'
+        help: ''
+      unloaded-all:
+        label: 'Did you unload all {weight}kg of {goods} from {place}, {country}?'
+        help: ''
       weight-of-goods:
         label: Weight of goods unloaded
         help: ''

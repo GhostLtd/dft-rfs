@@ -88,8 +88,15 @@ class ActionAddController extends AbstractSessionStateWorkflowController
         $formWizard->setSubject($action);
     }
 
+    /** @param Action $subject */
     protected function preFlush($subject)
     {
+        $loadedAction = $subject->getLoadingAction();
+
+        if ($loadedAction) {
+            $subject->setLoadingAction($this->actionRepository->find($loadedAction->getId()));
+        }
+
         $subject->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
     }
 

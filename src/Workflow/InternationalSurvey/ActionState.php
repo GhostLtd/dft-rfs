@@ -9,6 +9,7 @@ use App\Form\InternationalSurvey\Action\GoodsDescriptionType;
 use App\Form\InternationalSurvey\Action\GoodsLoadedWeightType;
 use App\Form\InternationalSurvey\Action\GoodsUnloadedWeightType;
 use App\Form\InternationalSurvey\Action\HazardousGoodsType;
+use App\Form\InternationalSurvey\Action\LoadingPlaceType;
 use App\Form\InternationalSurvey\Action\PlaceType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
@@ -36,7 +37,7 @@ class ActionState extends AbstractFormWizardState implements FormWizardInterface
         self::STATE_WEIGHT_LOADED => GoodsLoadedWeightType::class,
         self::STATE_WEIGHT_UNLOADED => GoodsUnloadedWeightType::class,
 
-        // self::STATE_CONSIGNMENT_UNLOADED => ...
+        self::STATE_CONSIGNMENT_UNLOADED => LoadingPlaceType::class,
 
         self::STATE_ADD_ANOTHER => AddAnotherType::class,
     ];
@@ -48,9 +49,7 @@ class ActionState extends AbstractFormWizardState implements FormWizardInterface
         self::STATE_CARGO_TYPE => 'international_survey/action/form-cargo-type.html.twig',
         self::STATE_WEIGHT_LOADED => 'international_survey/action/form-weight-loaded.html.twig',
         self::STATE_WEIGHT_UNLOADED => 'international_survey/action/form-weight-unloaded.html.twig',
-
-        // self::STATE_CONSIGNMENT_UNLOADED => ...
-
+        self::STATE_CONSIGNMENT_UNLOADED => 'international_survey/action/form-unloaded.html.twig',
         self::STATE_ADD_ANOTHER => 'international_survey/action/form-add-another.html.twig',
     ];
 

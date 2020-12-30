@@ -2,13 +2,21 @@
 
 namespace App\Entity\International;
 
+use App\Entity\CargoTypeTrait;
+use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ActionRepository;
+use App\Form\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ActionRepository::class)
+ * @ORM\Table(name="international_action")
+ *
+ * @AppAssert\CanBeUnloaded(groups={"action-place"})
+ * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight"})
  */
 class Action
 {
@@ -26,46 +34,51 @@ class Action
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"action-place"}, message="common.place.place")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"action-place"}, message="common.place.country")
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(groups={"goods-description"}, message="common.choice.invalid")
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"goods-description"})
      */
     private $goodsDescriptionOther;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"action-unloaded-weight"}, message="international.action.unloading.weight-not-null")
+     * @Assert\Range(groups={"action-unloaded-weight"}, min=1, minMessage="international.action.unloading.weight-more-than-one")
+     *
+     * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight"})
+     * @Assert\Positive(message="common.number.positive", groups={"action-loaded-weight"})
      */
     private $weightOfGoods;
 
-    /**
-     * @ORM\Column(type="string", length=5, nullable=true)
-     */
-    private $hazardousGoodsCode;
-
-    /**
-     * @ORM\Column(type="string", length=4, nullable=true)
-     */
-    private $cargoTypeCode;
+    use HazardousGoodsTrait;
+    use CargoTypeTrait;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotNull(groups={"action-place"}, message="common.choice.not-null")
      */
     private $loading;
 
     /**
      * @ORM\ManyToOne(targetEntity=Action::class, inversedBy="unloadingActions")
+     * @Assert\NotNull(groups={"action-loading-place"}, message="common.choice.not-null")
      */
     private $loadingAction;
 
@@ -107,7 +120,7 @@ class Action
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -119,7 +132,7 @@ class Action
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
@@ -155,33 +168,9 @@ class Action
         return $this->weightOfGoods;
     }
 
-    public function setWeightOfGoods(int $weightOfGoods): self
+    public function setWeightOfGoods(?int $weightOfGoods): self
     {
         $this->weightOfGoods = $weightOfGoods;
-
-        return $this;
-    }
-
-    public function getHazardousGoodsCode(): ?string
-    {
-        return $this->hazardousGoodsCode;
-    }
-
-    public function setHazardousGoodsCode(?string $hazardousGoodsCode): self
-    {
-        $this->hazardousGoodsCode = $hazardousGoodsCode;
-
-        return $this;
-    }
-
-    public function getCargoTypeCode(): ?string
-    {
-        return $this->cargoTypeCode;
-    }
-
-    public function setCargoTypeCode(?string $cargoTypeCode): self
-    {
-        $this->cargoTypeCode = $cargoTypeCode;
 
         return $this;
     }
@@ -191,7 +180,7 @@ class Action
         return $this->loading;
     }
 
-    public function setLoading(bool $loading): self
+    public function setLoading(?bool $loading): self
     {
         $this->loading = $loading;
 

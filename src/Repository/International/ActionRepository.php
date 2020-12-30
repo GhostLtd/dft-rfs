@@ -4,6 +4,7 @@ namespace App\Repository\International;
 
 use App\Entity\International\Action;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,7 +20,7 @@ class ActionRepository extends ServiceEntityRepository
         parent::__construct($registry, Action::class);
     }
 
-    public function getNextNumber(string $tripId)
+    public function getNextNumber(string $tripId): int
     {
         $currentMax = $this->createQueryBuilder('a')
             ->select('max(a.number)')
@@ -28,8 +29,24 @@ class ActionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
 
-        dump($currentMax);
-
         return $currentMax ? ($currentMax + 1) : 1;
+    }
+
+    /**
+     * @return ArrayCollection|Action[]
+     */
+    public function getLoadingActions(string $tripId)
+    {
+        return $this->createQueryBuilder('a')
+            ->select('a')
+            ->where('a.trip = :tripId')
+            ->andWhere('a.loading = :loading')
+            ->setParameters([
+                'tripId' => $tripId,
+                'loading' => true,
+            ])
+            ->orderBy('a.number', 'ASC')
+            ->getQuery()
+            ->execute();
     }
 }
