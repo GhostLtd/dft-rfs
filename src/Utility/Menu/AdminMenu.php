@@ -3,8 +3,8 @@
 namespace App\Utility\Menu;
 
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 class AdminMenu implements MenuInterface
 {
@@ -13,7 +13,7 @@ class AdminMenu implements MenuInterface
     /**
      * @var AuthorizationCheckerInterface
      */
-    protected $authorizationChecker;
+    protected $security;
 
     /**
      * @var RouterInterface
@@ -21,21 +21,14 @@ class AdminMenu implements MenuInterface
     protected $router;
 
     /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
      * NavBar constructor.
-     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param Security $security
      * @param RouterInterface $router
-     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, RouterInterface $router, TokenStorageInterface $tokenStorage)
+    public function __construct(Security $security, RouterInterface $router)
     {
-        $this->authorizationChecker = $authorizationChecker;
+        $this->security = $security;
         $this->router = $router;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -43,7 +36,7 @@ class AdminMenu implements MenuInterface
      */
     public function getMenuItems()
     {
-        return $this->filterMenuItemsByRole($this->authorizationChecker, [
+        return $this->filterMenuItemsByRole($this->security, [
             new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
             new MenuDivider(),
             new RoleMenuItem('domestic', 'menu.domestic.gb.root', null, [

@@ -30,7 +30,7 @@ class CronController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function index(Request $request, KernelInterface $kernel)
+    public function messengerConsumer(Request $request, KernelInterface $kernel)
     {
         return $this->runCommand(
             $kernel,
