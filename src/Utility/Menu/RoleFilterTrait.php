@@ -2,16 +2,16 @@
 
 namespace App\Utility\Menu;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 trait RoleFilterTrait
 {
     /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param Security $security
      * @param MenuItemInterface[] $menuItems
      * @return MenuItemInterface[]
      */
-    protected function filterMenuItemsByRole(AuthorizationCheckerInterface $authorizationChecker, array $menuItems)
+    protected function filterMenuItemsByRole(Security $security, array $menuItems)
     {
         $filteredMenuItems = [];
 
@@ -26,7 +26,7 @@ trait RoleFilterTrait
                     $allowedAccess = false;
 
                     foreach ($roles as $role) {
-                        if ($authorizationChecker->isGranted($role)) {
+                        if ($security->getToken() && $security->isGranted($role)) {
                             $allowedAccess = true;
                             break;
                         }
@@ -38,7 +38,7 @@ trait RoleFilterTrait
                         $menuItem->getId(),
                         $menuItem->getTitle(),
                         $menuItem->getUrl(),
-                        $this->filterMenuItemsByRole($authorizationChecker, $menuItem->getChildren()),
+                        $this->filterMenuItemsByRole($security, $menuItem->getChildren()),
                         $menuItem->getRoles(),
                         $menuItem->getOptions()
                     );
@@ -50,7 +50,7 @@ trait RoleFilterTrait
                     $menuItem->getId(),
                     $menuItem->getTitle(),
                     $menuItem->getUrl(),
-                    $this->filterMenuItemsByRole($authorizationChecker, $menuItem->getChildren()),
+                    $this->filterMenuItemsByRole($security, $menuItem->getChildren()),
                     $menuItem->getOptions()
                 );
             }

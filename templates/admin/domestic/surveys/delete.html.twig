@@ -1,0 +1,18 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText     %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-l">Delete Survey</h1>
+
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
+            {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
+            {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
+        </dl>
+
+        {{ warningText('This will permanently delete the survey and all associated vehicle and journey data.') }}
+
+        {{ form(form) }}
+    </div>
+{% endblock %}

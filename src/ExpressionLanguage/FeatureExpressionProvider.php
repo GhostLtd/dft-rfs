@@ -11,33 +11,28 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class FeatureExpressionProvider implements ExpressionFunctionProviderInterface
 {
+    /**
+     * @var Features
+     */
+    private $features;
+
+    public function __construct(Features $features)
+    {
+        $this->features = $features;
+    }
+
     public function getFunctions()
     {
         return [
-            new ExpressionFunction('feature', function($str) {
-                return "feature(${str})";
+            new ExpressionFunction('is_feature_enabled', function($str) {
+                return "is_feature_enabled(${str})";
             }, function($arguments, $str) {
                 try {
-                    return self::feature($str);
+                    return $this->features->isEnabled($str, true);
                 } catch (Exception $e) {
                     throw new SyntaxError("Unknown feature '${str}'");
                 }
             })
         ];
-    }
-
-    public static function feature($str) {
-        {
-            $allFeatures = array_merge(
-                array_values(Features::FEATURE_MAP),
-                array_values(PreKernelFeatures::AUTO_FEATURE_MAP)
-            );
-
-            if (!in_array($str, $allFeatures)) {
-                throw new Exception("Unknown feature '${str}'");
-            }
-
-            return $str;
-        }
     }
 }

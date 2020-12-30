@@ -15,12 +15,12 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/{type}", name="admin_domestic_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
  */
 class SurveyAddController extends AbstractController
 {
     /**
-     * @Route("/surveys/add", name="surveys_add")
+     * @Route("/add", name="surveys_add")
      */
     public function add(Request $request, PasscodeGenerator $passcodeGenerator, EntityManagerInterface $entityManager, string $type): Response
     {

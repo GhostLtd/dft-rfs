@@ -11,6 +11,8 @@ class PreKernelFeatures
         'GAE_INSTANCE' => Features::GAE_ENVIRONMENT,
     ];
 
+    private static $enabledFeatures = null;
+
     private static function detectFeatures(): array
     {
         $enabledFeatures = [];
@@ -23,13 +25,11 @@ class PreKernelFeatures
     }
 
     public static function getEnabledFeatures(): array {
-        static $features;
-
-        if (empty($features)) {
-            $features = self::detectFeatures();
+        if (is_null(self::$enabledFeatures)) {
+            self::$enabledFeatures = self::detectFeatures();
         }
 
-        return $features;
+        return self::$enabledFeatures;
     }
 
     public static function isEnabled($feature): bool

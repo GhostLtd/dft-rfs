@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/international-survey/trips/{tripId}", requirements={"tripId" = Utility::UUID_REGEX})
- * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
+ * @Security("is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
  */
 class StopController extends AbstractController
 {

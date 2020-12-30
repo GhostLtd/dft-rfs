@@ -24,7 +24,10 @@
     {% set vehicleConfigActionLinks = {(url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})): 'Change'} %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">{{ 'common.vehicle.axle-configuration' | trans }}</dt>
-        <dd class="govuk-summary-list__value">{{ svgIcon("lorry-#{survey.response.vehicle.axleConfiguration}.svg") }}<br>{{ (survey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) }}</dd>
+        <dd class="govuk-summary-list__value">
+            {{- svgIcon("lorry-#{survey.response.vehicle.axleConfiguration}.svg") -}}<br>
+            {{- (survey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) -}}
+        </dd>
         {% if showActions -%}
             <dd class="govuk-summary-list__actions">
                 {{- actionLinks(vehicleConfigActionLinks) -}}

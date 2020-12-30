@@ -60,6 +60,7 @@ abstract class Vehicle
 
     static function getAxleConfigurationTranslationKey($axleConfigCode)
     {
+        if (!$axleConfigCode) return null;
         return array_flip(self::AXLE_CONFIGURATION_CHOICES[100 * floor($axleConfigCode / 100)])[$axleConfigCode];
     }
 }

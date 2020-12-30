@@ -77,7 +77,7 @@
         <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
     {%- endif -%}
     <p class="govuk-body">
-        {% if is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS')) %}
+        {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
             {# Consignments / stops #}
             {%- if trip.stops is empty -%}
                 {%- set addStopRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}

@@ -2,12 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Features;
 use App\Form\AdminLoginType;
-use App\Form\PasscodeLoginType;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,6 +27,10 @@ class FileSecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Session $session): Response
     {
+        if ($this->isGranted('ROLE_ADMIN_USER')) {
+            return $this->redirectToRoute('admin_index');
+        }
+
         $form = $this->createForm(AdminLoginType::class);
 
         // get the login error if there is one

@@ -178,3 +178,29 @@
     </ul>
 {%- endmacro %}
 
+{% macro notificationBanner(notification) -%}
+    {%- set type = notification.options.type | default(false) -%}
+    <div class="govuk-notification-banner {% if type %}govuk-notification-banner--{{ type }}{% endif %}" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                {{- notification.title -}}
+            </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            <p class="govuk-notification-banner__heading">
+                {{- notification.heading -}}
+            </p>
+            {{ notification.content | raw }}
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro warningText(content) -%}
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            {{- content -}}
+        </strong>
+    </div>
+{%- endmacro %}

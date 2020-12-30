@@ -19,34 +19,4 @@ class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig');
     }
-
-    /**
-     * @Route("/deploy-debug")
-     * @param Request $request
-     * @return Response
-     */
-    public function deploymentDebug(Request $request)
-    {
-        dump($request->query->all());
-        if ($request->query->has('pi')) {
-            phpinfo();
-            exit;
-        }
-
-        $this->listFiles("/workspace/*");
-        $this->listFiles("/workspace/config/*");
-
-        exit;
-        return $this->render('home/index.html.twig');
-    }
-
-    protected function listFiles($folder) {
-        dump(glob($folder));
-//        $list = glob($folder);
-//        echo "<pre>\n";
-//        foreach ($list as $file) {
-//            echo "$file\n";
-//        }
-//        echo "</pre>\n";
-    }
 }

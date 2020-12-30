@@ -15,7 +15,7 @@ use App\Entity\International\Stop;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
-use App\ExpressionLanguage\FeatureExpressionProvider;
+use App\Features;
 use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
@@ -42,12 +42,22 @@ class AppExtension extends AbstractExtension
     protected $router;
 
     protected $translator;
+    /**
+     * @var Features
+     */
+    private $features;
 
-    public function __construct(KernelInterface $kernel, RouterInterface $router, TranslatorInterface $translator) {
+    public function __construct(
+        KernelInterface $kernel,
+        RouterInterface $router,
+        TranslatorInterface $translator,
+        Features $features
+    ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
         $this->router = $router;
         $this->translator = $translator;
+        $this->features = $features;
     }
 
     public function getFilters()
@@ -83,13 +93,13 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
-            new TwigFunction('feature', [$this, 'feature']),
+            new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
         ];
     }
 
-    public function feature($str) {
+    public function isFeatureEnabled($str) {
         try {
-            return FeatureExpressionProvider::feature($str);
+            return $this->features->isEnabled($str, true);
         } catch(Exception $e) {
             throw new SyntaxError("Unknown feature '${str}'");
         }

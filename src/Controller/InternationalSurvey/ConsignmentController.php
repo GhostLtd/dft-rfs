@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Security("is_granted(feature('IRHS_CONSIGNMENTS_AND_STOPS'))")
+ * @Security("is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
  */
 class ConsignmentController extends AbstractController
 {

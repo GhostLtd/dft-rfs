@@ -10,13 +10,32 @@ steps:
       entrypoint: yarn
       args: ['run', 'deploy-build']
       waitFor: ['node-install']
-    # deploy
+
+    # copy common app deploy files
+    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+      id: 'copy-common-deploy-files'
+      args: ['gsutil', 'rsync', 'config/gcloud-build/all/', '.']
+      waitFor: ['-']
+    # copy project specific app deploy files
+    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+      id: 'copy-project-deploy-files'
+      args: ['gsutil', 'rsync', 'config/gcloud-build/$PROJECT_ID/', '.']
+      waitFor: ['copy-common-deploy-files']
+
+    # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "$PROJECT_ID.app.default.yaml"]
-      waitFor: ['node-build']
-    # deploy
+      id: 'deploy-default-service'
+      args: ["app", "deploy", "app.default.yaml"]
+      waitFor: ['node-build', 'copy-project-deploy-files']
+    # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "$PROJECT_ID.app.admin.yaml"]
-      waitFor: ['node-build']
+      id: 'deploy-admin-service'
+      args: ["app", "deploy", "app.admin.yaml"]
+      waitFor: ['node-build', 'copy-project-deploy-files']
+
+    # deploy cron jobs
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ["app", "deploy", "cron.yaml"]
+      waitFor: ['deploy-default-service', 'deploy-admin-service']
 
 timeout: "900s"

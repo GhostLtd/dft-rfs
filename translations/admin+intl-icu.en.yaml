@@ -15,3 +15,10 @@ menu:
     root: 'IRHS'
     sub-item-1: 'test'
     sub-item-2: 'test'
+
+
+domestic:
+  survey:
+    delete:
+      delete.label: Yes, delete this survey
+      cancel.label: Cancel
