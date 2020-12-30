@@ -32,7 +32,7 @@ class SurveysController extends AbstractController
      * @param $type
      * @param Survey $survey
      * @return Response
-     * @Route("/{survey}", name="surveydetails")
+     * @Route("/view/{survey}", name="surveydetails")
      */
     public function viewDetails($type, Survey $survey): Response
     {

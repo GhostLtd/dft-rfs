@@ -28,6 +28,7 @@ class SurveyRepository extends ServiceEntityRepository
     public function findByTypeWithResponseAndVehicle($isNorthernIreland = false)
     {
         return $this->createQueryBuilder('survey')
+            ->select('survey, passcode_user, response, vehicle')
             ->leftJoin('survey.passcodeUser', 'passcode_user')
             ->leftJoin('survey.response', 'response')
             ->leftJoin('response.vehicle', 'vehicle')

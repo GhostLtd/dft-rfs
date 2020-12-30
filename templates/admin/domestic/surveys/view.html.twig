@@ -24,6 +24,10 @@
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
     </dl>
 
+    {% if is_granted('ROLE_ADMIN_FORM_USER') %}
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_surveys_delete', {type: 'gb', survey: survey.id}) }}">Delete survey</a>
+    {% endif %}
+
     {% if tabs | default(false) %}
         <div class="govuk-tabs" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
