@@ -6,6 +6,7 @@ use App\Workflow\FormWizardInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -22,15 +23,21 @@ abstract class AbstractWorkflowController extends AbstractController
      */
     protected $entityManager;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
     abstract protected function getFormWizard(): FormWizardInterface;
     abstract protected function setFormWizard(FormWizardInterface $formWizard);
     abstract protected function cleanUp();
 
     abstract protected function getRedirectUrl($state): Response;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $log)
     {
         $this->entityManager = $entityManager;
+        $this->log = $log;
     }
 
     /**
@@ -112,6 +119,10 @@ abstract class AbstractWorkflowController extends AbstractController
                 if (count($transitions) === 1)
                 {
                     return $this->applyTransitionAndRedirect($request, $stateMachine, $formWizard, $transitions[0]);
+                } else {
+                    // log the fact we encountered two or more transitions
+                    $transitionNames = join(", ", array_map(function(Transition $a){return $a->getName();}, $transitions));
+                    $this->log->alert("[FormWizard] Multiple transitions on {$request->getPathInfo()}: {$transitionNames}");
                 }
             }
         }

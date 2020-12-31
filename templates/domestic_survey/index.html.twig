@@ -18,7 +18,7 @@
                     {% set day = survey.response.dayByNumber(dayNumber) %}
                     {{ summaryListRow(
                         "Day #{dayNumber} (#{(survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
-                        day ? dayText(day) : 'Nothing recorded',
+                        dayText(day),
                         {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): 'common.actions.change'}
                     ) }}
                 {% endfor %}

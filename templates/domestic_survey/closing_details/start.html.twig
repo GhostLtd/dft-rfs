@@ -1,0 +1,16 @@
+{% set translation_prefix = 'domestic.survey-response.start' %}
+{% set useThirdsColumns = false %}
+{% extends 'domestic_survey/form-base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">Final questions</h1>
+
+    <p class="govuk-body">
+        There are a few more questions to answer before you can submit your survey. It should take less than 5 minutes.
+    </p>
+    <p class="govuk-body">
+        Please ensure that all the information you have entered so far is correct and complete before continuing. You can <a href="{{ url('app_domesticsurvey_index') }}">go back</a> and check if you're unsure.
+    </p>
+
+    {{ parent() }}
+{% endblock %}

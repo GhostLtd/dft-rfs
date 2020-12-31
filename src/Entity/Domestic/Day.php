@@ -173,4 +173,12 @@ class Day
 
         return $this;
     }
+
+    public function isComplete(): bool
+    {
+        return $this->getHasMoreThanFiveStops()
+            ? (bool) $this->getSummary()
+            : count($this->getStops()) > 0
+            ;
+    }
 }

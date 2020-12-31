@@ -4,31 +4,31 @@
 namespace App\Workflow\DomesticSurvey;
 
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use App\Form\DomesticSurvey\ClosingDetails\MissingDaysType;
 use App\Form\DomesticSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\BusinessDetailsType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleAxleConfigurationType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleBodyType;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleTrailerConfigurationType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardInterface;
 
 class ClosingDetailsState extends AbstractFormWizardState implements FormWizardInterface
 {
+    const STATE_START = 'start';
     const STATE_VEHICLE_FUEL = 'vehicle-fuel';
+    const STATE_MISSING_DAYS = 'missing-days';
     const STATE_REASON_EMPTY_SURVEY = 'empty-survey';
     const STATE_CONFIRM = 'confirm';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
+        self::STATE_MISSING_DAYS => MissingDaysType::class,
         self::STATE_VEHICLE_FUEL => VehicleFuelType::class,
         self::STATE_REASON_EMPTY_SURVEY => ReasonEmptySurveyType::class,
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_START => 'domestic_survey/closing_details/start.html.twig',
+        self::STATE_MISSING_DAYS => 'domestic_survey/closing_details/form-missing-days.html.twig',
         self::STATE_VEHICLE_FUEL => 'domestic_survey/closing_details/form-vehicle-fuel.html.twig',
         self::STATE_REASON_EMPTY_SURVEY => 'domestic_survey/closing_details/form-reason-for-empty-survey.html.twig',
         self::STATE_CONFIRM => 'domestic_survey/closing_details/confirm.html.twig',

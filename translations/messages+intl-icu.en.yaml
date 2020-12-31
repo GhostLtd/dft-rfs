@@ -476,6 +476,15 @@ domestic:
         5-or-more: More than 5 stops
 
 
+
+  closing-details:
+    missing-days:
+      heading: Missing days
+      help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
+      missing-days:
+        label: Is this information correct?
+        help: ''
+
 survey:
   domestic:
     forms:
