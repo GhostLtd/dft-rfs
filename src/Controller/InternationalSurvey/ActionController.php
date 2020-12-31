@@ -109,9 +109,25 @@ class ActionController extends AbstractSessionStateWorkflowController
             }
 
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
+                $trip = $this->action->getTrip();
+
+                $actionsIdsToRemove = $this->action->getUnloadingActions()->map(function(Action $action) {
+                    return $action->getId();
+                })->toArray();
+
+                foreach($trip->getActions() as $action) {
+                    if (in_array($action->getId(), $actionsIdsToRemove)) {
+                        $trip->removeAction($action);
+                        $this->entityManager->remove($action);
+                    }
+                }
+
                 $this->entityManager->remove($this->action);
+                $trip->removeAction($this->action);
+                $trip->renumberActions();
+
                 $this->entityManager->flush();
-                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->action->getTrip()->getId()]);
+                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $trip->getId()]);
             }
         }
 

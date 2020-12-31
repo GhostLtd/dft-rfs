@@ -545,4 +545,12 @@ class Trip
 
         return $this;
     }
+
+    public function renumberActions(): void
+    {
+        $count = 1;
+        foreach($this->actions as $action) {
+            $action->setNumber($count++);
+        }
+    }
 }
