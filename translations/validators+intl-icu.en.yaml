@@ -97,5 +97,8 @@ domestic:
     border-crossing:
       not-blank: Enter the border crossing point
       max-length: "Location must be less {limit} characters or fewer"
+  day-stop:
+    was-at-capacity:
+      invalid: "Was your vehicle at capacity by weight, space, or both?"
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address

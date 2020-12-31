@@ -27,10 +27,24 @@ class DayStop implements GoodsDescriptionInterface
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-stop.goods-weight"})
-     * @Assert\Positive(message="common.number.positive", groups={"day-stop.goods-weight"})
+     * @Assert\NotNull(message="common.number.not-null", groups={"goods-weight"})
+     * @Assert\Positive(message="common.number.positive", groups={"goods-weight"})
      */
     private $weightOfGoodsCarried;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $wasAtCapacity;
+
+    /**
+     * !! unused - needed for validation attachment
+     * @Assert\Expression("!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())",
+     *     groups={"at-capacity"},
+     *     message="domestic.day-stop.was-at-capacity.invalid"
+     * )
+     */
+    private $wasLimitedBy;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -44,7 +58,7 @@ class DayStop implements GoodsDescriptionInterface
 
     /**
      * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(groups={"day-stop.distance-travelled"})
+     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"day-stop.distance-travelled"})
      */
     private $distanceTravelled;
 
@@ -78,6 +92,20 @@ class DayStop implements GoodsDescriptionInterface
         return $this;
     }
 
+    public function getWasAtCapacity(): ?bool
+    {
+        return $this->wasAtCapacity;
+    }
+
+    public function setWasAtCapacity(?bool $wasAtCapacity): self
+    {
+        if (!$wasAtCapacity) {
+            $this->setWasLimitedBy([]);
+        }
+        $this->wasAtCapacity = $wasAtCapacity;
+        return $this;
+    }
+
     public function getWasLimitedByWeight(): ?bool
     {
         return $this->wasLimitedByWeight;
@@ -98,7 +126,7 @@ class DayStop implements GoodsDescriptionInterface
         return $limitedBy;
     }
 
-    public function setWasLimitedBy(?array $limitedBy): self
+    public function setWasLimitedBy(array $limitedBy = []): self
     {
         $this->setWasLimitedBySpace(in_array('space', $limitedBy));
         $this->setWasLimitedByWeight(in_array('weight', $limitedBy));

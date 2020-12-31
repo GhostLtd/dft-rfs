@@ -43,5 +43,6 @@
     </dl>
 {% endfor %}
 <p class="govuk-body">
-    {{ buttonLink(url('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
+    {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
+    {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}
 </p>

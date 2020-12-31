@@ -1,0 +1,28 @@
+{% set translation_prefix = 'domestic.closing-details.missing-days' %}
+{% set useThirdsColumns = false %}
+{% extends 'domestic_survey/form-base.html.twig' %}
+{% from 'domestic_survey/includes/macros.html.twig' import dayText %}
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow %}
+
+{% block content %}
+    {%- include 'includes/form-page-content.html.twig' with {
+        oneThirdColumnContent: block('oneThirdColumnContent'),
+        preFormContent: block('preFormContent'),
+        help_translation_parameters: help_translation_parameters | default({}) | merge({registrationMark: subject.survey.registrationMark})
+    } -%}
+{% endblock %}
+
+{% block preFormContent %}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {% for dayNumber in 1..7 %}
+            {% set day = subject.survey.response.dayByNumber(dayNumber) %}
+            {% if not (day | default(false)) %}
+{#                {{ actionlessSummaryListRow("Day #{ dayNumber }", (subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')) }}#}
+                {{ actionlessSummaryListRow(
+                    "Day #{dayNumber} (#{(subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
+                    dayText(day),
+                ) }}
+            {% endif %}
+        {% endfor %}
+    </dl>
+{% endblock %}

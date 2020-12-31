@@ -16,6 +16,8 @@
             <p class="govuk-body">{{ help }}</p>
         {% endif %}
 
+        {% if preFormContent ?? false %}{{ preFormContent | raw }}{% endif %}
+
         {{ form(form) }}
     </div>
     {% if useThirdsColumns and (oneThirdColumnContent ?? false) %}<div class="govuk-grid-column-one-third">{{ oneThirdColumnContent | raw }}</div>{% endif %}

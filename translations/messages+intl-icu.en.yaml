@@ -263,6 +263,7 @@ domestic:
     actions:
       add-a-stage-for-this-journey: Add a stage for this journey
       enter-information-for-this-journey: Enter information for this journey
+      complete: Day complete
     stage: Stage {stage}
     no-info: You haven't entered any information for this day yet
     start-location: Start location
@@ -471,8 +472,11 @@ domestic:
       weight-of-goods-carried:
         label: Weight of goods
         help: Total weight of goods carried on this stage
-      was-limited-by:
+      was-at-capacity:
         label: Was your vehicle at full capacity?
+        help: ''
+      was-limited-by:
+        label: ''
         help: Select the answers which best describe the load
 
 
@@ -491,6 +495,15 @@ domestic:
         fewer-than-5: 5 stops or fewer
         5-or-more: More than 5 stops
 
+
+
+  closing-details:
+    missing-days:
+      heading: Missing days
+      help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
+      missing-days:
+        label: Is this information correct?
+        help: ''
 
 survey:
   domestic:

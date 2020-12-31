@@ -9,6 +9,7 @@ use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,9 +27,9 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
      */
     private $domesticSurveyStateMachine;
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, WorkflowInterface $domesticSurveyStateMachine)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $log, SessionInterface $session, WorkflowInterface $domesticSurveyStateMachine)
     {
-        parent::__construct($entityManager, $session);
+        parent::__construct($entityManager, $log, $session);
         $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
     }
 
