@@ -62,6 +62,9 @@
         {%- endset -%}
         {{ summaryListRow('domestic.day-view.number-of-stops.label', numberOfStops) }}
     </dl>
+    <p class="govuk-body">
+        {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}
+    </p>
 {% else %}
     <p class="govuk-body">
         {{ 'domestic.day-view.no-info' | trans }}

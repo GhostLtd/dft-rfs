@@ -58,7 +58,7 @@ class DayStop implements GoodsDescriptionInterface
 
     /**
      * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(groups={"day-stop.distance-travelled"})
+     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"day-stop.distance-travelled"})
      */
     private $distanceTravelled;
 

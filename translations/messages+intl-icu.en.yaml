@@ -247,6 +247,7 @@ domestic:
     actions:
       add-a-stage-for-this-journey: Add a stage for this journey
       enter-information-for-this-journey: Enter information for this journey
+      complete: Day complete
     stage: Stage {stage}
     no-info: You haven't entered any information for this day yet
     start-location: Start location
