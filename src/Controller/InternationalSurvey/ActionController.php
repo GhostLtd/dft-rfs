@@ -5,12 +5,14 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
+use App\Entity\Utility;
 use App\Form\InternationalSurvey\Action\DeleteActionType;
 use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,17 +24,21 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @Route("/international-survey")
+ * @Security("!is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
  */
 class ActionController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
 
-    public const START_ROUTE = 'app_internationalsurvey_action_add_start';
-    public const WIZARD_ROUTE = 'app_internationalsurvey_action_add_state';
-    public const ADD_ANOTHER_ROUTE = 'app_internationalsurvey_action_add_another';
-    public const EDIT_ROUTE = 'app_internationalsurvey_action_edit_state';
-    public const VIEW_ROUTE = 'app_internationalsurvey_action_view';
-    public const DELETE_ROUTE = 'app_internationalsurvey_action_delete';
+    private const ROUTE_PREFIX = 'app_internationalsurvey_action';
+
+    public const START_ROUTE = self::ROUTE_PREFIX.'_add_start';
+    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'_add_state';
+    public const ADD_ANOTHER_ROUTE = self::ROUTE_PREFIX.'_add_another';
+    public const EDIT_ROUTE = self::ROUTE_PREFIX.'_edit_state';
+    public const VIEW_ROUTE = self::ROUTE_PREFIX.'_view';
+    public const DELETE_ROUTE = self::ROUTE_PREFIX.'_delete';
+    public const REORDER_ROUTE = self::ROUTE_PREFIX.'_reorder';
 
     private const MODE_EDIT = 'edit';
     private const MODE_ADD = 'add';
@@ -60,8 +66,8 @@ class ActionController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/trips/{tripId}/add-action/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/trips/{tripId}/add-action", name=self::START_ROUTE)
+     * @Route("/trips/{tripId}/add-action/{state}", name=self::WIZARD_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
+     * @Route("/trips/{tripId}/add-action", name=self::START_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      */
     public function add(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $tripId, ?string $state = null): Response
     {
@@ -71,7 +77,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/trips/{tripId}/add-another-action", name=self::ADD_ANOTHER_ROUTE)
+     * @Route("/trips/{tripId}/add-another-action", name=self::ADD_ANOTHER_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      */
     public function addAnother(UserInterface  $user, string $tripId): Response
     {
@@ -81,7 +87,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/actions/{actionId}", name=self::VIEW_ROUTE)
+     * @Route("/actions/{actionId}", name=self::VIEW_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
     public function view(UserInterface $user, string $actionId) {
         $this->loadSurveyAndAction($user, $actionId);
@@ -92,7 +98,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE)
+     * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
     public function delete(UserInterface $user, Request $request, string $actionId) {
         $this->loadSurveyAndAction($user, $actionId);
@@ -138,7 +144,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/actions/{actionId}/edit/{state}", name=self::EDIT_ROUTE)
+     * @Route("/actions/{actionId}/edit/{state}", name=self::EDIT_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
     public function edit(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $actionId, string $state): Response
     {
@@ -161,7 +167,6 @@ class ActionController extends AbstractSessionStateWorkflowController
             case self::MODE_ADD:
                 $action = $formWizard->getSubject() ?? new Action();
                 $action->setTrip($this->trip);
-                $this->entityManager->persist($action);
                 $formWizard->setSubject($action);
                 break;
         }

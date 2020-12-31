@@ -76,7 +76,6 @@ class TripAddController extends AbstractSessionStateWorkflowController
     {
         $trip = $formWizard->getSubject() ?? new Trip();
         $trip->setVehicle($vehicle);
-        $this->entityManager->persist($trip);
         $formWizard->setSubject($trip);
     }
 }

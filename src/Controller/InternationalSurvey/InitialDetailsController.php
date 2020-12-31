@@ -48,11 +48,6 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $databaseResponse = $survey->getResponse() ?? new SurveyResponse();
         $databaseResponse->mergeInitialDetails($response);
         $survey->setResponse($databaseResponse);
-
-        if (!$this->entityManager->contains($databaseResponse)) {
-            $this->entityManager->persist($databaseResponse);
-        }
-
         $formWizard->setSubject($databaseResponse);
 
         return $formWizard;

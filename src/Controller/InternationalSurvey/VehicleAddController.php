@@ -54,7 +54,6 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
     {
         $vehicle = $formWizard->getSubject() ?? new Vehicle();
         $vehicle->setSurveyResponse($response);
-        $this->entityManager->persist($vehicle);
         $formWizard->setSubject($vehicle);
     }
 }
