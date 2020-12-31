@@ -42,7 +42,7 @@ class LoadingPlaceType extends AbstractType
                     'label' => "{$prefix}.label",
                     'label_attr' => ['class' => 'govuk-label--xl'],
                     'help' => "{$prefix}.help",
-                    'choices' => dump($this->getChoicesForPlace($action)),
+                    'choices' => $this->getChoicesForPlace($action),
                 ]);
         });
     }
@@ -56,7 +56,6 @@ class LoadingPlaceType extends AbstractType
 
         $choices = [];
         foreach ($loadingActions as $loadingAction) {
-
             if ($loadingAction->getId() === $currentLoadingAction->getId()) {
                 $loadingAction = $currentLoadingAction;
             }

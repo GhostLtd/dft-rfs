@@ -1,7 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Controller\InternationalSurvey\ActionAddController;
+use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\TripController;
 use App\Workflow\InternationalSurvey\ActionState as StateObject;
 
@@ -117,7 +117,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_END,
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => ActionAddController::ADD_ANOTHER_ROUTE,
+                                'routeName' => ActionController::ADD_ANOTHER_ROUTE,
                                 'parameterMappings' => [
                                     'tripId' => 'trip.id',
                                 ],
