@@ -12,6 +12,7 @@ use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,9 +59,9 @@ class ActionController extends AbstractSessionStateWorkflowController
 
     protected $actionRepository;
 
-    public function __construct(ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
     {
-        parent::__construct($entityManager, $session);
+        parent::__construct($entityManager, $logger, $session);
         $this->actionRepository = $actionRepository;
         $this->tripRepository = $tripRepository;
     }

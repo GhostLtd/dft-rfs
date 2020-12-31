@@ -9,6 +9,7 @@ use App\Repository\International\StopRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,9 +42,9 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
 
     protected $stopRepository;
 
-    public function __construct(StopRepository $stopRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(StopRepository $stopRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
     {
-        parent::__construct($entityManager, $session);
+        parent::__construct($entityManager, $logger, $session);
         $this->stopRepository = $stopRepository;
     }
 

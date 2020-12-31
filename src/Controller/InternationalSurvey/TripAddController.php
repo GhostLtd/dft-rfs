@@ -9,6 +9,7 @@ use App\Repository\International\VehicleRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -31,9 +32,9 @@ class TripAddController extends AbstractSessionStateWorkflowController
 
     protected $vehicleRepository;
 
-    public function __construct(VehicleRepository $vehicleRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(VehicleRepository $vehicleRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
     {
-        parent::__construct($entityManager, $session);
+        parent::__construct($entityManager, $logger, $session);
         $this->vehicleRepository = $vehicleRepository;
     }
 
