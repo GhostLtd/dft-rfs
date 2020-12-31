@@ -42,18 +42,25 @@ class LoadingPlaceType extends AbstractType
                     'label' => "{$prefix}.label",
                     'label_attr' => ['class' => 'govuk-label--xl'],
                     'help' => "{$prefix}.help",
-                    'choices' => $this->getChoicesForPlace($action->getTrip()->getId()),
+                    'choices' => dump($this->getChoicesForPlace($action)),
                 ]);
         });
     }
 
-    protected function getChoicesForPlace(string $tripId): array
+    protected function getChoicesForPlace(Action $action): array
     {
-        $actions = $this->actionRepository->getLoadingActions($tripId);
+        $tripId = $action->getTrip()->getId();
+        $loadingActions = $this->actionRepository->getLoadingActions($tripId);
+
+        $currentLoadingAction = $action->getLoadingAction();
 
         $choices = [];
-        foreach ($actions as $action) {
-            $choices[$this->getLabelForLoadingAction($action)] = $action;
+        foreach ($loadingActions as $loadingAction) {
+
+            if ($loadingAction->getId() === $currentLoadingAction->getId()) {
+                $loadingAction = $currentLoadingAction;
+            }
+            $choices[$this->getLabelForLoadingAction($loadingAction)] = $loadingAction;
         }
 
         return $choices;

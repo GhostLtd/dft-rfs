@@ -41,44 +41,46 @@
         ), {(urlDistanceChange): change}) }}
         {{ summaryListRow('international.trip.summary.countries-transitted', trip.allCountriesTransitted|default('-'), {(urlCountriesTransittedChange): change}) }}
 
-        {%- if trip.stops is not empty -%}
+        {%- if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') and trip.stops is not empty -%}
             {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
             {{ summaryListRow('international.trip.summary.stops', trip.stops | formatStops, {(url(stopsRoute, {tripId: trip.id})): change}) }}
         {%- endif -%}
     </dl>
 
-    {%- if trip.consignments is not empty -%}
-        <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.consignments'|trans }}</a></h2>
-        <table class="govuk-table">
-            {{ tableHead(false, ['common.consignment.goods', 'common.consignment.weight', 'common.consignment.place-of-loading', 'common.consignment.place-of-unloading', '']) }}
-            <tbody class="govuk-table__body">
-            {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentController::SUMMARY_ROUTE') -%}
-            {%- for consignment in trip.consignments %}
-                <tr class="govuk-table__row">
-                    {%- set viewContents = actionLinks({(url(viewRoute, {tripId: trip.id, consignmentId: consignment.id})): 'common.actions.view'|trans}) -%}
-                    {%- macro loadingCell(stop) -%}
-                        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
-                        {{ tableCell('common.consignment.loaded-at'|trans({number: stop.number, name: stop.name, country: stop.country|country_name})) }}
-                    {%- endmacro -%}
+    {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
+    {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
+        {# -------------------------------------------------------------------------------- #}
+        {#  Stops and consignments                                                          #}
+        {# -------------------------------------------------------------------------------- #}
+        {%- if trip.consignments is not empty -%}
+            <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.consignments'|trans }}</a></h2>
+            <table class="govuk-table">
+                {{ tableHead(false, ['common.consignment.goods', 'common.consignment.weight', 'common.consignment.place-of-loading', 'common.consignment.place-of-unloading', '']) }}
+                <tbody class="govuk-table__body">
+                {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentController::SUMMARY_ROUTE') -%}
+                {%- for consignment in trip.consignments %}
+                    <tr class="govuk-table__row">
+                        {%- set viewContents = actionLinks({(url(viewRoute, {tripId: trip.id, consignmentId: consignment.id})): 'common.actions.view'|trans}) -%}
+                        {%- macro loadingCell(stop) -%}
+                            {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
+                            {{ tableCell('common.consignment.loaded-at'|trans({number: stop.number, name: stop.name, country: stop.country|country_name})) }}
+                        {%- endmacro -%}
 
-                    {{ tableCell(consignment | formatGoodsDescription ) }}
-                    {{ tableCell((consignment.weightOfGoodsCarried|number_format) ~ 'kg') }}
-                    {{ _self.loadingCell(consignment.loadingStop) }}
-                    {{ _self.loadingCell(consignment.unloadingStop) }}
-                    {{ tableCell(viewContents, {actions: true}) }}
-                </tr>
-            {%- endfor %}
-            </tbody>
-        </table>
+                        {{ tableCell(consignment | formatGoodsDescription ) }}
+                        {{ tableCell((consignment.weightOfGoodsCarried|number_format) ~ 'kg') }}
+                        {{ _self.loadingCell(consignment.loadingStop) }}
+                        {{ _self.loadingCell(consignment.unloadingStop) }}
+                        {{ tableCell(viewContents, {actions: true}) }}
+                    </tr>
+                {%- endfor %}
+                </tbody>
+            </table>
+        {%- endif -%}
 
-    {%- endif -%}
-
-    {%- if trip.stops is empty or trip.consignments is empty -%}
-        <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
-    {%- endif -%}
-    <p class="govuk-body">
-        {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
-            {# Consignments / stops #}
+        {%- if trip.stops is empty or trip.consignments is empty -%}
+            <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
+        {%- endif -%}
+        <p class="govuk-body">
             {%- if trip.stops is empty -%}
                 {%- set addStopRoute = constant('App\\Controller\\InternationalSurvey\\StopController::ADD_ROUTE') -%}
                 <a class="govuk-button" href="{{ url(addStopRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-stops'|trans }}</a>
@@ -86,12 +88,48 @@
                 {%- set addConsignmentRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentWorkflowController::START_ROUTE') -%}
                 <a class="govuk-button" href="{{ url(addConsignmentRoute, {tripId: trip.id, consignmentId: 'add'}) }}">{{ 'international.trip.summary.actions.add-consignment'|trans }}</a>
             {%- endif -%}
+            <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
+        </p>
+    {% else %}
+        {# -------------------------------------------------------------------------------- #}
+        {#  Actions                                                                         #}
+        {# -------------------------------------------------------------------------------- #}
+        {%- if trip.actions is empty -%}
+            <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
         {%- else -%}
-            {# Actions #}
+            <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.action'|trans }}</a></h2>
+            <table class="govuk-table">
+                {{ tableHead(false, ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', '']) }}
+                <tbody class="govuk-table__body">
+                {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
+                {%- for action in trip.actions %}
+                    <tr class="govuk-table__row">
+                        {%- set viewContents = actionLinks({(url(viewRoute, {actionId: action.id})): 'common.actions.view'|trans}) -%}
+
+                        {{ tableCell(action.number) }}
+                        {{ tableCell('common.action.place-name'|trans({name: action.name, country: action.country|country_name})) }}
+                        {{ tableCell((action.loading ? 'common.action.loading' : 'common.action.unloading')|trans) }}
+                        {{ tableCell((action.weightOfGoods|number_format) ~ 'kg') }}
+
+                        {% if action.loading %}
+                            {{ tableCell(formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther)) }}
+                            {{ tableCell('-') }}
+                        {% else %}
+                            {%- set loadingAction = action.loadingAction -%}
+                            {{ tableCell(formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)) }}
+                            {{ tableCell(loadingAction.number ~ '. ' ~ loadingAction.name) }}
+                        {% endif %}
+
+                        {{ tableCell(viewContents, {actions: true}) }}
+                    </tr>
+                {%- endfor %}
+                </tbody>
+            </table>
+        {%- endif -%}
+        <p class="govuk-body">
             {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionAddController::START_ROUTE') -%}
             <a class="govuk-button" href="{{ url(addActionRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-action'|trans }}</a>
-        {%- endif -%}
-        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-        <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
-    </p>
+            <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
+        </p>
+    {% endif %}
 {% endblock %}

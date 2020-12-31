@@ -36,6 +36,20 @@ common:
     place-of-loading: Loaded at
     place-of-unloading: Unloaded at
     weight: Weight
+  action:
+    place: Place
+    type: Action
+    goods: Goods
+    weight: Weight
+    loading: Loaded
+    unloading: Unloaded
+    is-hazardous: Hazardous goods?
+    not-hazardous: Not hazardous
+    loaded-or-unloaded: Action type
+    from: From
+    cargo-type: Cargo type
+    place-name: "{name}, {country}"
+    goods-from-place: "{goods} from {number}. {name}, {country}"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -571,7 +585,7 @@ international:
     period-start: Survey period start
     period-end: Survey period end
   summary:
-    title: International Survey summary
+    title: International Survey details
     correspondence-and-business-details: Correspondence and Business Details
     no-vehicles: No vehicles
     registration: Registration
@@ -628,7 +642,7 @@ international:
       basic-details: Basic details
       no-trips: No trips
       trips: Trips
-      vehicle-summary: Vehicle summary
+      vehicle-summary: Vehicle details
     vehicle-details:
       heading: 'Vehicle Details'
       help: ''
@@ -661,6 +675,11 @@ international:
         help: Total weight of cargo that can be carried
   action:
     stop: '{goods} from stop {number} - {place}, {country}'
+    summary:
+      heading-loading: Loading — action {number}
+      heading-unloading: Unloading — action {number}
+      actions:
+        back-to-trip-summary: Back to trip details
     place:
       heading: Where did you stop?
       help: Only add stops where you loaded or unloaded goods
@@ -734,9 +753,9 @@ international:
       no: "No, cancel"
   consignment:
     summary:
-      heading: Consignment summary
+      heading: Consignment details
       actions:
-        back-to-trip-summary: Back to trip summary
+        back-to-trip-summary: Back to trip details
     goods-description:
       goods-description:
         label: Description of goods carried
@@ -766,12 +785,13 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
+      action: Loading/Unloading Actions
       actions:
         add-action: Add action
         add-stops: Add stops
         add-consignment: Add consignment
-        back-to-vehicle-summary: Back to vehicle summary
-      trip-summary: Trip summary
+        back-to-vehicle-summary: Back to vehicle details
+      trip-summary: Trip details
       consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
       date-until-date: "{from} – {until}"

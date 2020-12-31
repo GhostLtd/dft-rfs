@@ -3,8 +3,10 @@
 namespace App\Repository\International;
 
 use App\Entity\International\Action;
+use App\Entity\International\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -35,7 +37,7 @@ class ActionRepository extends ServiceEntityRepository
     /**
      * @return ArrayCollection|Action[]
      */
-    public function getLoadingActions(string $tripId)
+    public function getLoadingActions(string $tripId): array
     {
         return $this->createQueryBuilder('a')
             ->select('a')
@@ -48,5 +50,27 @@ class ActionRepository extends ServiceEntityRepository
             ->orderBy('a.number', 'ASC')
             ->getQuery()
             ->execute();
+    }
+
+    public function findOneByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Action
+    {
+        try {
+            return $this->createQueryBuilder('a')
+                ->select('a,la,t,v,r')
+                ->leftJoin('a.trip', 't')
+                ->leftJoin('t.vehicle', 'v')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->leftJoin('a.loadingAction', 'la')
+                ->where('a.id = :actionId')
+                ->andWhere('r = :response')
+                ->setParameters([
+                    'actionId' => $id,
+                    'response' => $response,
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
 }

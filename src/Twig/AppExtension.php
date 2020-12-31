@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\InternationalSurvey\ActionEditController;
 use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
@@ -18,6 +19,7 @@ use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
 use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
+use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
@@ -70,15 +72,9 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
             new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
             new TwigFilter('formatGoodsDescription', function($stop, $short = false){
-                if (!$stop instanceof GoodsDescriptionInterface) {
-                    return '';
-                }
-                return ($stop->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
-                    ? $stop->getGoodsDescriptionOther()
-                    : ($short ?
-                        $stop->getGoodsDescription() :
-                        $this->translator->trans("goods.description.options.{$stop->getGoodsDescription()}")
-                    ));
+                return $stop instanceof GoodsDescriptionInterface ?
+                    $this->formatGoodsDescription($stop->getGoodsDescription(), $stop->getGoodsDescriptionOther(), $short) :
+                    '';
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatStops', [$this, 'formatStops']),
@@ -94,7 +90,15 @@ class AppExtension extends AbstractExtension
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
+            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription'])
         ];
+    }
+
+    public function formatGoodsDescription(?string $goodsDescription, ?string $goodsDescriptionOther, bool $short = false)
+    {
+        return $goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
+            ? $goodsDescriptionOther
+            : ($short ? $goodsDescription : $this->translator->trans("goods.description.options.{$goodsDescription}"));
     }
 
     public function isFeatureEnabled($str) {
@@ -177,6 +181,7 @@ class AppExtension extends AbstractExtension
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
         'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
         'international-consignment' => ['class' => ConsignmentState::class, 'route' => ConsignmentWorkflowController::WIZARD_ROUTE],
+        'international-action' => ['class' => ActionState::class, 'route' => ActionEditController::WIZARD_ROUTE],
     ];
 
     protected function getWizardMeta(string $wizard): array {

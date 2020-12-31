@@ -5,6 +5,8 @@ namespace App\Form\InternationalSurvey\Action;
 use App\Entity\International\Action;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,18 +42,27 @@ class PlaceType extends AbstractType
                 'placeholder' => '',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
-            ])
-            ->add('loading', Gds\ChoiceType::class, [
-                'label' => "{$prefix}.loading.label",
-                'help' => "{$prefix}.loading.help",
-                'expanded' => true,
-                'multiple' => false,
-                'choices' => [
-                    "{$prefix}.loading.choices.load" => true,
-                    "{$prefix}.loading.choices.unload" => false,
-                ],
-                'label_attr' => ['class' => 'govuk-label--s'],
             ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $prefix) {
+            /** @var Action $action */
+            $action = $event->getData();
+            $form = $event->getForm();
+
+            if ($action->getId() === null) {
+                $form->add('loading', Gds\ChoiceType::class, [
+                    'label' => "{$prefix}.loading.label",
+                    'help' => "{$prefix}.loading.help",
+                    'expanded' => true,
+                    'multiple' => false,
+                    'choices' => [
+                        "{$prefix}.loading.choices.load" => true,
+                        "{$prefix}.loading.choices.unload" => false,
+                    ],
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                ]);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

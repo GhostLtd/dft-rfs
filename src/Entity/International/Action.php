@@ -240,4 +240,18 @@ class Action
 
         return $this;
     }
+
+    // -----
+
+    public function mergeActionChanges(Action $action)
+    {
+        $this->setName($action->getName());
+        $this->setCountry($action->getCountry());
+        $this->setGoodsDescription($action->getGoodsDescription());
+        $this->setGoodsDescriptionOther($action->getGoodsDescriptionOther());
+        $this->setWeightOfGoods($action->getWeightOfGoods());
+        $this->setHazardousGoodsCode($action->getHazardousGoodsCode());
+        $this->setCargoTypeCode($action->getCargoTypeCode());
+        $this->setLoadingAction($action->getLoadingAction());
+    }
 }

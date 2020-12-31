@@ -56,6 +56,12 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_END,
                         'metadata' => [
+                            'redirectRoute' => [
+                                'routeName' => TripController::TRIP_ROUTE,
+                                'parameterMappings' => [
+                                    'id' => 'trip.id',
+                                ],
+                            ],
                             'persist' => true,
                         ],
                     ],
@@ -80,6 +86,12 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                         'to' => StateObject::STATE_END,
                         'metadata' => [
+                            'redirectRoute' => [
+                                'routeName' => TripController::TRIP_ROUTE,
+                                'parameterMappings' => [
+                                    'id' => 'trip.id',
+                                ],
+                            ],
                             'persist' => true,
                         ],
                     ],
