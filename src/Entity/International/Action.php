@@ -83,7 +83,7 @@ class Action
     private $loadingAction;
 
     /**
-     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="loadingAction")
+     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="loadingAction", cascade="remove")
      */
     private $unloadingActions;
 

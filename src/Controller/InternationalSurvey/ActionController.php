@@ -5,15 +5,16 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
+use App\Form\InternationalSurvey\Action\DeleteActionType;
 use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -31,6 +32,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     public const ADD_ANOTHER_ROUTE = 'app_internationalsurvey_action_add_another';
     public const EDIT_ROUTE = 'app_internationalsurvey_action_edit_state';
     public const VIEW_ROUTE = 'app_internationalsurvey_action_view';
+    public const DELETE_ROUTE = 'app_internationalsurvey_action_delete';
 
     private const MODE_EDIT = 'edit';
     private const MODE_ADD = 'add';
@@ -82,41 +84,50 @@ class ActionController extends AbstractSessionStateWorkflowController
      * @Route("/actions/{actionId}", name=self::VIEW_ROUTE)
      */
     public function view(UserInterface $user, string $actionId) {
-        $response = $this->getSurveyResponse($user);
+        $this->loadSurveyAndAction($user, $actionId);
 
-        if (!$response) {
-            throw new AccessDeniedHttpException();
+        return $this->render('international_survey/action/view.html.twig', [
+            'action' => $this->action,
+        ]);
+    }
+
+    /**
+     * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE)
+     */
+    public function delete(UserInterface $user, Request $request, string $actionId) {
+        $this->loadSurveyAndAction($user, $actionId);
+        $form = $this->createForm(DeleteActionType::class);
+
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            $cancel = $form->get('cancel');
+            $delete = $form->get('delete');
+
+            if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                return $this->redirectToRoute(self::VIEW_ROUTE, ['actionId' => $actionId]);
+            }
+
+            if ($delete instanceof SubmitButton && $delete->isClicked()) {
+                $this->entityManager->remove($this->action);
+                $this->entityManager->flush();
+                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->action->getTrip()->getId()]);
+            }
         }
 
-        $action = $this->actionRepository->findOneByIdAndSurveyResponse($actionId, $response);
-
-        if (!$action) {
-            throw new NotFoundHttpException();
-        }
-
-        return $this->render('international_survey/action/summary.html.twig', [
-            'action' => $action,
+        return $this->render('international_survey/action/delete.html.twig', [
+            'action' => $this->action,
+            'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/actions/{actionId}/edit/{state}", name=self::EDIT_ROUTE)
      */
-    public function edit(WorkflowInterface $internationalSurveyActionStateMachine,
-                          Request $request,
-                          ActionRepository $actionRepository,
-                          UserInterface $user,
-                          string $actionId,
-                          string $state): Response
+    public function edit(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $actionId, string $state): Response
     {
-        $surveyResponse = $this->getSurveyResponse($user);
-        $this->action = $actionRepository->findOneByIdAndSurveyResponse($actionId, $surveyResponse);
+        $this->loadSurveyAndAction($user, $actionId);
         $this->mode = self::MODE_EDIT;
-
-        if (!$this->action) {
-            throw new NotFoundHttpException();
-        }
-
         return $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
     }
 
@@ -169,6 +180,16 @@ class ActionController extends AbstractSessionStateWorkflowController
         $this->trip = $this->tripRepository->findByIdAndSurveyResponse($tripId, $this->surveyResponse);
 
         if (!$this->trip) {
+            throw new NotFoundHttpException();
+        }
+    }
+
+    protected function loadSurveyAndAction(UserInterface $user, string $actionId): void
+    {
+        $surveyResponse = $this->getSurveyResponse($user);
+        $this->action = $this->actionRepository->findOneByIdAndSurveyResponse($actionId, $surveyResponse);
+
+        if (!$this->action) {
             throw new NotFoundHttpException();
         }
     }

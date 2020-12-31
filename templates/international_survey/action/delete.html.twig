@@ -1,0 +1,49 @@
+{% set translation_prefix = 'international.action.summary' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">
+        {{ 'international.action.summary.heading-delete'|trans({number: action.number}) }}
+    </h1>
+
+    {%- set params = {actionId: action.id} -%}
+    {%- set urlChange = wizardUrl('international-action', 'STATE_PLACE', params) -%}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
+                {%- set loadingAction = action.loadingAction -%}
+                {%- set options = {hideActions: true} -%}
+
+                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action.country|country_name}), {}, options) }}
+                {%- if action.loading -%}
+                    {%- set goods = formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther) -%}
+                    {{ summaryListRow('common.action.type', 'common.action.loading-goods'|trans({goods: goods}), {}, options) }}
+                {%- else -%}
+                    {%- set goods = formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther) -%}
+                    {%- set goodsCopy = 'common.action.unloading-goods'|trans({name: action.name, country: action.country|country_name, number: loadingAction.number, goods: goods}) -%}
+                    {{ summaryListRow('common.action.type', goodsCopy, {}, options) }}
+                {%- endif -%}
+            </dl>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    {% if action.loading %}
+                        Are you sure you want to delete this loading action and related unloading actions?
+                    {% else %}
+                        Are you sure you want to delete this unloading action?
+                    {% endif %}
+                </strong>
+            </div>
+
+            {{ form(form) }}
+        </div>
+        <div class="govuk-grid-column-one-third">
+{#            {% include "international_survey/includes/trip-summary.html.twig" %}#}
+        </div>
+    </div>
+{% endblock %}

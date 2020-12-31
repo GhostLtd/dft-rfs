@@ -50,6 +50,8 @@ common:
     cargo-type: Cargo type
     place-name: "{name}, {country}"
     goods-from-place: "{goods} from {number}. {name}, {country}"
+    loading-goods: "Loading {goods}"
+    unloading-goods: "Unloading {goods} from {number}. {name}, {country}"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -675,11 +677,16 @@ international:
         help: Total weight of cargo that can be carried
   action:
     stop: '{goods} from stop {number} - {place}, {country}'
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel
     summary:
       heading-loading: Loading — action {number}
       heading-unloading: Unloading — action {number}
+      heading-delete: Delete action {number}?
       actions:
         back-to-trip-summary: Back to trip details
+        delete: Delete action
     place:
       heading: Where did you stop?
       help: Only add stops where you loaded or unloaded goods

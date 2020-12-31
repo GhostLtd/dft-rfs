@@ -56,7 +56,7 @@ class LoadingPlaceType extends AbstractType
 
         $choices = [];
         foreach ($loadingActions as $loadingAction) {
-            if ($loadingAction->getId() === $currentLoadingAction->getId()) {
+            if ($currentLoadingAction && $loadingAction->getId() === $currentLoadingAction->getId()) {
                 $loadingAction = $currentLoadingAction;
             }
             $choices[$this->getLabelForLoadingAction($loadingAction)] = $loadingAction;
