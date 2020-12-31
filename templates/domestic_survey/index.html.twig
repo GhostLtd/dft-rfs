@@ -19,7 +19,7 @@
                     {{ summaryListRow(
                         "Day #{dayNumber} (#{(survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M')})",
                         day ? dayText(day) : 'Nothing recorded',
-                        {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): day ? 'common.actions.view' : 'common.actions.add'}
+                        {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): 'common.actions.change'}
                     ) }}
                 {% endfor %}
             </dl>
