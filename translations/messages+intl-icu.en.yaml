@@ -455,8 +455,11 @@ domestic:
       weight-of-goods-carried:
         label: Weight of goods
         help: Total weight of goods carried on this stage
-      was-limited-by:
+      was-at-capacity:
         label: Was your vehicle at full capacity?
+        help: ''
+      was-limited-by:
+        label: ''
         help: Select the answers which best describe the load
 
 

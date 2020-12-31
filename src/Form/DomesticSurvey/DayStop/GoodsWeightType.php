@@ -22,6 +22,18 @@ class GoodsWeightType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'suffix' => 'kg',
             ])
+            ->add('wasAtCapacity', Gds\ChoiceType::class, [
+                'label' => "{$translationKeyPrefix}.was-at-capacity.label",
+                'help' => "{$translationKeyPrefix}.was-at-capacity.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'choices' => [
+                    "common.choices.boolean.yes" => true,
+                    "common.choices.boolean.no" => false,
+                ],
+                'choice_options' => [
+                    "common.choices.boolean.yes" => ['conditional_form_name' => 'wasLimitedBy'],
+                ],
+            ])
             ->add('wasLimitedBy', LimitedByType::class, [
                 'label' => "{$translationKeyPrefix}.was-limited-by.label",
                 'help' => "{$translationKeyPrefix}.was-limited-by.help",
@@ -34,7 +46,7 @@ class GoodsWeightType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => DayStop::class,
-            'validation_groups' => 'day-stop.goods-weight'
+            'validation_groups' => ['goods-weight', 'at-capacity'],
         ]);
     }
 }
