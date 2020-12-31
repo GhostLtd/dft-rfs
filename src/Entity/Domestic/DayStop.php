@@ -34,12 +34,17 @@ class DayStop implements GoodsDescriptionInterface
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\Expression("!value or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())",
+     */
+    private $wasAtCapacity;
+
+    /**
+     * !! unused - needed for validation attachment
+     * @Assert\Expression("!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())",
      *     groups={"at-capacity"},
      *     message="domestic.day-stop.was-at-capacity.invalid"
      * )
      */
-    private $wasAtCapacity;
+    private $wasLimitedBy;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)

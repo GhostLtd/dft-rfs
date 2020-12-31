@@ -90,6 +90,6 @@ domestic:
       max-length: "Location must be less {limit} characters or fewer"
   day-stop:
     was-at-capacity:
-      invalid: "If the vehicle was at capacity, you must specify if it was by weight or space or both"
+      invalid: "Was your vehicle at capacity by weight, space, or both?"
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
