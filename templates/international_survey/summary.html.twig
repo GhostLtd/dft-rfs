@@ -43,6 +43,9 @@
         <p class="govuk-body">
             {%- set addVehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleAddController::START_ROUTE') -%}
             <a href="{{ url(addVehicleRoute) }}" class="govuk-button">{{ 'common.actions.add-vehicle'|trans }}</a>
+
+            {%- set submitSurveyRoute = constant('App\\Controller\\InternationalSurvey\\ClosingDetailsController::START_ROUTE') -%}
+            <a href="{{ url(submitSurveyRoute) }}" class="govuk-button">{{ 'common.actions.submit-survey'|trans }}</a>
         </p>
     {% endif %}
 {% endblock %}

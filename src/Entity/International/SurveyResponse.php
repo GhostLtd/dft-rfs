@@ -28,20 +28,20 @@ class SurveyResponse extends AbstractSurveyResponse
          self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_STILL_ACTIVE => self::ACTIVITY_STATUS_STILL_ACTIVE,
     ];
 
-    const NOT_USED_NO_INTERNATIONAL_WORK = 'no-international_work';
-    const NOT_USED_ON_HOLIDAY = 'on-holiday';
-    const NOT_USED_REPAIR = 'repair';
-    const NOT_USED_NO_VEHICLES_AVAILABLE = 'no-vehicles';
-    const NOT_USED_OTHER = 'other';
+    const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
+    const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
+    const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
+    const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
 
-    const NOT_USED_PREFIX = 'international.survey-response.not-used.';
-    const NOT_USED_CHOICES_PREFIX = self::NOT_USED_PREFIX . 'choices.';
-    const NOT_USED_CHOICES = [
-        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_NO_INTERNATIONAL_WORK => self::NOT_USED_NO_INTERNATIONAL_WORK,
-        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_ON_HOLIDAY => self::NOT_USED_ON_HOLIDAY,
-        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_REPAIR => self::NOT_USED_REPAIR,
-        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_NO_VEHICLES_AVAILABLE => self::NOT_USED_NO_VEHICLES_AVAILABLE,
-        self::NOT_USED_CHOICES_PREFIX . self::NOT_USED_OTHER => self::NOT_USED_OTHER,
+    const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
+    const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
+    const REASON_FOR_EMPTY_SURVEY_CHOICES = [
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK => self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE => self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_OTHER => self::REASON_FOR_EMPTY_SURVEY_OTHER,
     ];
 
     /**
@@ -66,7 +66,7 @@ class SurveyResponse extends AbstractSurveyResponse
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      */
-    private $notUsed;
+    private $reasonForEmptySurvey;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist", "remove"})
@@ -138,14 +138,14 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
-    public function getNotUsedStatus(): ?string
+    public function getReasonForEmptySurvey(): ?string
     {
-        return $this->notUsed;
+        return $this->reasonForEmptySurvey;
     }
 
-    public function setNotUsedStatus(?string $notUsed): self
+    public function setReasonForEmptySurvey(?string $reasonForEmptySurvey): self
     {
-        $this->notUsed = $notUsed;
+        $this->reasonForEmptySurvey = $reasonForEmptySurvey;
 
         return $this;
     }
@@ -231,8 +231,19 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
     }
 
-    public function canSubmit()
+    public function mergeClosingDetails(SurveyResponse $response)
+    {
+        $this->setReasonForEmptySurvey($response->getReasonForEmptySurvey());
+    }
+
+    public function canSubmit(): bool
     {
         return $this->isNoLongerActive(); // TODO: Add further check cases
+    }
+
+    public function isFilledOut(): bool
+    {
+        // TODO: More extensive checks
+        return !$this->vehicles->isEmpty();
     }
 }
