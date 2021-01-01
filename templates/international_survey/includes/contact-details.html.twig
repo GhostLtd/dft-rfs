@@ -1,0 +1,12 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{% set showActions = showActions ?? true %}
+
+{%- set urlCorrespondenceDetails = wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS') -%}
+
+<h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.correspondence-details'|trans }}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
+    {{ row(showActions, 'Name', response.contactName, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
+    {{ row(showActions, 'Email', response.contactEmail, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
+    {{ row(showActions, 'Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
+</dl>

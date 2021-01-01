@@ -9,18 +9,11 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.correspondence-and-business-details.title'|trans }}</h1>
 
-    {%- set urlCorrespondenceDetails = wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS') -%}
+    {%- include "international_survey/includes/contact-details.html.twig" -%}
+
     {%- set urlNumberOfTrips = wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS') -%}
     {%- set urlActivityStatus = wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS') -%}
     {%- set urlBusinessDetails = wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS') -%}
-
-    <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.correspondence-details'|trans }}</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-
-        {{ gdsComponents.summaryListRow('Name', response.contactName, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
-        {{ gdsComponents.summaryListRow('Email', response.contactEmail, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
-        {{ gdsComponents.summaryListRow('Phone', response.contactTelephone, {(urlCorrespondenceDetails): 'common.actions.change'}) }}
-    </dl>
 
     <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">

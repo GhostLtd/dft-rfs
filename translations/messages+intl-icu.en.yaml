@@ -25,6 +25,7 @@ common:
     re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
+    submit-survey: Submit survey
     view: View
   choices:
     boolean:
@@ -642,6 +643,16 @@ international:
     title: Thanks
 
   survey-response:
+    reason-for-empty-survey:
+      reason-for-empty-survey:
+        label: 'If no vehicles in your fleet were used during the survey period please state why'
+        help: ''
+      choices:
+        no-international-work: No international work during this period
+        on-holiday: Firm on holiday during this period
+        repair: All vehicles in repair
+        no-vehicles: No vehicles available for international work
+        other: Other
     contact-details:
       heading: Contact details
       help: Who should the Department for Transport team contact about the survey?

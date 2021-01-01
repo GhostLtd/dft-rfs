@@ -146,7 +146,7 @@ abstract class AbstractWorkflowController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    private function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardInterface $formWizard, Transition $transition)
+    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardInterface $formWizard, Transition $transition)
     {
         $stateMachine->apply($formWizard, $transition->getName());
         $this->setFormWizard($formWizard);

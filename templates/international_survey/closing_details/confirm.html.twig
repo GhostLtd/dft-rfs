@@ -1,0 +1,13 @@
+{% set translation_prefix = 'international.survey-response.confirm-submission' %}
+{% set useThirdsColumns = false %}
+{% extends 'international_survey/form-base.html.twig' %}
+
+{% block content %}
+    {% with {response: subject, showActions: false} %}
+        {% include 'international_survey/includes/contact-details.html.twig' %}
+
+        <p class="govuk-body">Please ensure that all the information you have entered is correct and complete before submitting your survey. You can <a href="{{ url('app_internationalsurvey_summary') }}">go back</a> and check if you're unsure.</p>
+    {% endwith %}
+
+    {{ parent() }}
+{% endblock %}
