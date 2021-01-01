@@ -10,6 +10,7 @@ use App\Form\AddAnotherType;
 use App\Form\ConfirmationType;
 use App\Form\InternationalSurvey\Stop\StopType;
 use App\Repository\International\TripRepository;
+use App\Utility\ReorderUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -162,7 +163,7 @@ class StopController extends AbstractController
         $stops = $trip->getStops()->toArray();
 
         $mappingParam = $request->query->get('mapping', null);
-        $sortedStops = $this->getSortedStops($stops, $mappingParam);
+        $sortedStops = ReorderUtils::getSortedItems($stops, $mappingParam);
 
         $mapping = array_map(function(Stop $stop) {
             return $stop->getNumber();
@@ -226,42 +227,5 @@ class StopController extends AbstractController
         }
 
         return $stop;
-    }
-
-    protected function getSortedStops(array $stops, ?string $mapping): array
-    {
-        if ($mapping && preg_match('/^\d+(,\d+)*$/', $mapping)) {
-            $mapping = explode(',', $mapping);
-        } else {
-            $mapping = null;
-        }
-
-        if (!$mapping || !$this->isMappingValid($mapping, count($stops))) {
-            $mapping = range(1, count($stops));
-        }
-
-        $sortedStops = [];
-        for($i=0; $i<count($mapping); $i++) {
-            $sortedStops[$i] = $stops[$mapping[$i] - 1];
-        }
-
-        return $sortedStops;
-    }
-
-    protected function isMappingValid(array $mapping, int $numberOfStops): bool
-    {
-        $usedCheck = array_fill(1, $numberOfStops, false);
-
-        foreach($mapping as $value) {
-            if (isset($usedCheck[$value])) {
-                $usedCheck[$value] = true;
-            }
-        }
-
-        $validCount = array_reduce($usedCheck, function($carry, $item) {
-            return $carry + ($item ? 1 : 0);
-        }, 0);
-
-        return $validCount === $numberOfStops;
     }
 }

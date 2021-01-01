@@ -21,6 +21,7 @@ common:
     continue: Continue
     move-up: Move up
     move-down: Move down
+    re-order-actions: Re-order actions
     re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
@@ -52,6 +53,10 @@ common:
     goods-from-place: "{goods} from {number}. {name}, {country}"
     loading-goods: "Loading {goods}"
     unloading-goods: "Unloading {goods} from {number}. {name}, {country}"
+    loading-goods-at: "Loading {goods} at {name}, {country}"
+    unloading-goods-at: "Unloading {goods} at {name}, {country}"
+    loaded-at: "Loaded at {name}, {country}"
+    unloaded-at: "Unloaded at {name}, {country}"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -689,6 +694,8 @@ international:
         label: Carrying capacity
         help: Total weight of cargo that can be carried
   action:
+    re-order:
+      save: Save order
     stop: '{goods} from stop {number} - {place}, {country}'
     delete:
       delete.label: Yes, delete this action

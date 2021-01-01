@@ -78,6 +78,12 @@ international:
       not-null: Choose an option
       cannot-be-both: Vehicle cannot be both empty and full
   action:
+    re-order:
+      invalid-order: >-
+        {number, plural,
+          one {Goods were unloaded at stop {list} before they were loaded}
+          other {Goods were unloaded at stops {list} before they were loaded}
+        }
     unloading:
       bad-trip: Action must be linked to a persisted Trip
       must-load-first: Goods must be loaded prior to unloading

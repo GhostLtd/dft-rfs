@@ -13,6 +13,7 @@ class ConfirmationType extends AbstractType
     {
         $builder->add('yes', ButtonType::class, [
             'label' => $options['yes_label'],
+            'disabled' => $options['yes_disabled'],
         ]);
 
         if ($options['no_enabled']) {
@@ -30,6 +31,7 @@ class ConfirmationType extends AbstractType
         $resolver->setDefaults([
             'no_label' => 'common.actions.cancel',
             'no_enabled' => true,
+            'yes_disabled' => false,
         ]);
 
         $resolver->setAllowedValues('no_enabled', [true, false]);

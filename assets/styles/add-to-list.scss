@@ -39,7 +39,7 @@
   .govuk-add-to-list__actions {
     margin-bottom: govuk-spacing(3);
     @include govuk-media-query($from: tablet) {
-      width: 50%;
+      width: 35%;
       padding-right: 0;
       text-align: right;
     }
@@ -52,7 +52,7 @@
     margin-bottom: govuk-spacing(1);
     //@include govuk-typography-weight-bold;
     @include govuk-media-query($from: tablet) {
-      width: 50%;
+      width: 65%;
     }
 
     strong {
@@ -64,7 +64,7 @@
   // Expand width when value is last column (no action)
   .govuk-add-to-list__value:last-child {
     @include govuk-media-query($from: tablet) {
-      width: 50%;
+      width: 65%;
     }
   }
 

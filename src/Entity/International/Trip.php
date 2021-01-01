@@ -129,6 +129,7 @@ class Trip
 
     /**
      * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip")
+     * @ORM\OrderBy({"number" = "ASC"})
      */
     private $actions;
 
