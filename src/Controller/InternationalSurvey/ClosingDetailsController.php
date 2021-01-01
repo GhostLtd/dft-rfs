@@ -37,8 +37,8 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
 
             if ($this->session->has($this->getSessionKey())) {
                 $referer = parse_url($request->headers->get('referer', ''));
-                $summaryUrl = $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
-                if ($referer['path'] === $summaryUrl->getTargetUrl()) {
+                $summaryUrl = $this->redirectToRoute('app_internationalsurvey_summary');
+                if (($referer['path'] ?? false) === $summaryUrl->getTargetUrl()) {
                     // if the referer is summary screen, start the wizard
                     $formWizard->setState(ClosingDetailsState::STATE_START);
                 } else {
