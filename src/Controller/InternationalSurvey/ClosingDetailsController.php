@@ -24,16 +24,25 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
      * @Route("/international-survey/closing-details/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/closing-details", name=self::START_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, UserInterface $user, string $state = null): Response
+    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, UserInterface $user, $frontendHostname, string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse($user);
 
         if (!$state || $state === ClosingDetailsState::STATE_START) {
+            $formWizard = $this->getFormWizard();
+
             if ($this->session->has($this->getSessionKey())) {
-                return $this->redirectToRoute('app_internationalsurvey_summary');
+                $referer = parse_url($request->headers->get('referer', ''));
+                $summaryUrl = $this->redirectToRoute('app_internationalsurvey_summary');
+                if ($referer['path'] === $summaryUrl->getTargetUrl()) {
+                    // if the referer is summary screen, start the wizard
+                    $formWizard->setState(ClosingDetailsState::STATE_START);
+                } else {
+                    // otherwise the referer must be within the wizard already, go back to summary
+                    return $summaryUrl;
+                }
             }
 
-            $formWizard = $this->getFormWizard();
             $transitions = array_values($internationalSurveyClosingDetailsStateMachine->getEnabledTransitions($formWizard));
             return $this->applyTransitionAndRedirect($request, $internationalSurveyClosingDetailsStateMachine, $formWizard, $transitions[0]);
         }
