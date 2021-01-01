@@ -3,13 +3,20 @@
 namespace App\EventSubscriber\InternationalSurvey;
 
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
-use DateTime;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 {
+    private $internationalSurveyStateMachine;
+
+    public function __construct(WorkflowInterface $internationalSurveyStateMachine)
+    {
+        $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
+    }
+
     public static function getSubscribedEvents()
     {
         $prefix = 'workflow.international_survey_closing_details';
@@ -27,12 +34,11 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
     {
         $stateObject = $this->getStateObject($event);
         $survey = $stateObject->getSubject()->getSurvey();
-        $survey->setSubmissionDate(new DateTime('now'));
 
-//        if ($this->domesticSurveyStateMachine->can($survey, 'complete'))
-//        {
-//            $this->domesticSurveyStateMachine->apply($survey, 'complete');
-//        }
+        if ($this->internationalSurveyStateMachine->can($survey, 'complete'))
+        {
+            $this->internationalSurveyStateMachine->apply($survey, 'complete');
+        }
     }
 
     public function guardFilledOut(GuardEvent $event)
