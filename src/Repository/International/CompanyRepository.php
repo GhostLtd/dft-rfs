@@ -27,9 +27,8 @@ class CompanyRepository extends ServiceEntityRepository
         parent::__construct($registry, Company::class);
     }
 
-    public function fetchOrCreateTestCompany()
+    public function fetchOrCreateTestCompany($companyName = "Test sprockets inc")
     {
-        $companyName = 'Test sprockets inc';
         $company = $this->findOneBy(['businessName' => $companyName]);
 
         if (!$company) {

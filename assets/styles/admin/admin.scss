@@ -2,9 +2,7 @@
 @import "login";
 @import "menu";
 
-.page__admin-survey-add-success {
-  .govuk-summary-list__row.access-code .govuk-summary-list__value {
-    font-family: monospace;
-    font-size: 140%;
-  }
+.govuk-summary-list__row.access-code .govuk-summary-list__value {
+  font-family: monospace;
+  font-size: 140%;
 }

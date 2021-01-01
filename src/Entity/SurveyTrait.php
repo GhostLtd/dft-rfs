@@ -101,13 +101,6 @@ trait SurveyTrait {
         return $this->getSurveyPeriodEnd()->diff($this->surveyPeriodStart)->days + 1;
     }
 
-    public function setDueDate(?DateTimeInterface $surveyPeriodEnd): self
-    {
-        $this->surveyPeriodEnd = $surveyPeriodEnd;
-
-        return $this;
-    }
-
     public function getResponseStartDate(): ?DateTimeInterface
     {
         return $this->responseStartDate;

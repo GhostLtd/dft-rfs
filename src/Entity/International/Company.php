@@ -37,6 +37,7 @@ class Company
 
     /**
      * @ORM\ManyToOne(targetEntity=SamplingGroup::class, inversedBy="companies")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $samplingGroup;
 

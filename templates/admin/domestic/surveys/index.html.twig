@@ -1,17 +1,18 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks, tag %}
     <h1 class="govuk-heading-l">Surveys</h1>
 
     <table class="govuk-table">
-        {{ tableHead('Surveys unordered', ['User', 'Start date', 'Reg Mark', 'In Posession', 'Business nature', 'Employees', '']) }}
+        {{ tableHead('Surveys unordered', ['User', 'Start date', 'Reg Mark', 'Status', 'In Posession', 'Business nature', 'Employees', '']) }}
         <tbody class="govuk-table__body">
         {% for survey in surveys %}
             <tr class="govuk-table__row">
                 {{ tableCell(survey.passcodeUser.username, {}) }}
                 {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
                 {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
+                {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
                 {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
                 {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
                 {{ tableCell(survey.response ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}

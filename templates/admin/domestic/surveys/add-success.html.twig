@@ -3,37 +3,36 @@
 {%- set bodyClasses = 'page__admin-survey-add-success' -%}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
 
     <h1 class="page-heading__heading govuk-heading-xl">Survey created</h1>
 
     <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
-    {%- set options = {hideActions: true} -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ summaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark, null, options) }}
-        {{ summaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)'), null, options) }}
-        {{ summaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y'), null, options) }}
-        {{ summaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y'), null, options) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y')) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y')) }}
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'admin.domestic.survey-created.invitation-email' | trans | nl2br }}</dt>
             <dd class="govuk-summary-list__value">
                 {%- if survey.invitationEmail -%}
 {%- set bodyText -%}
-Access code 1: {{ user.username }}
-Access code 2: {{ password }}
+Access code 1: {{ survey.passcodeUser.username }}
+Access code 2: {{ survey.passcodeUser.plainPassword }}
 {%- endset -%}
-                    {%- set mailLink = "mailto:#{survey.invitationEmail}?subject=Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
+                    {%- set mailLink = "mailto:#{survey.invitationEmail}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
                     <a href="{{ mailLink }}">{{ survey.invitationEmail }}</a>
                 {%- else -%}-
                 {%- endif %}
             </dd>
         </div>
-        {{ summaryListRow('admin.domestic.survey-created.invitation-address', survey.invitationAddress.isFilled ?
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.invitation-address', survey.invitationAddress.isFilled ?
             (survey.invitationAddress | formatAddress(true)) :
-            '-', null, options) }}
-        {{ summaryListRow('admin.domestic.survey-created.access-code-1', user.username, null, options|merge({'row_class': 'access-code'})) }}
-        {{ summaryListRow('admin.domestic.survey-created.access-code-2', password, null, options|merge({'row_class': 'access-code'})) }}
+            '-', null) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', survey.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
     </dl>
 {% endblock %}

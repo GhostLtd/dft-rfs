@@ -5,16 +5,14 @@ menu:
     root: 'CSRGT (GB)'
     surveys: 'Surveys'
     survey-add: 'Add Survey'
-    sub-item-2: 'test'
   domestic.ni:
     root: 'CSRGT (NI)'
     surveys: 'Surveys'
     survey-add: 'Add Survey'
-    sub-item-2: 'test'
   international:
     root: 'IRHS'
-    sub-item-1: 'test'
-    sub-item-2: 'test'
+    surveys: 'Surveys'
+    survey-add: 'Add Survey'
 
 
 domestic:

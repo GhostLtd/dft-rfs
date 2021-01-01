@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
-use App\Entity\PasscodeUser;
 use App\Repository\International\CompanyRepository;
+use App\Repository\PasscodeUserRepository;
 use App\Utility\PasscodeGenerator;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,13 +29,16 @@ class CreateInternationalSurveyCommand extends Command
     private $passcodeGenerator;
 
     private $appEnvironment;
+    /**
+     * @var PasscodeUserRepository
+     */
+    private $passcodeUserRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, $appEnvironment)
+    public function __construct(EntityManagerInterface $entityManager, PasscodeUserRepository $passcodeUserRepository)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
-        $this->passcodeGenerator = $passcodeGenerator;
-        $this->appEnvironment = $appEnvironment;
+        $this->passcodeUserRepository = $passcodeUserRepository;
     }
 
     protected function configure()
@@ -50,7 +53,7 @@ class CreateInternationalSurveyCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         // TODO: Learn how to reference numbers are actually generated and update accordingly
-        $referenceNumber = $this->passcodeGenerator->generatePasscode();
+        $referenceNumber = random_int(10000, 99999);
 
         // TODO: Use a real company
         /**
@@ -64,22 +67,16 @@ class CreateInternationalSurveyCommand extends Command
             ->setReferenceNumber($referenceNumber)
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
             ->setSurveyPeriodEnd(new DateTime('now +'.(rand(1, 28) + 7).' days'))
-            ->setCompany($company);
-        ;
-        $user = new PasscodeUser();
-        $user
-            ->setUsername($username = $this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($password = $this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($password = ($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode()))
-            ->setInternationalSurvey($survey);
+            ->setCompany($company)
+            ->setPasscodeUser($user = $this->passcodeUserRepository->createNewPasscodeUser())
         ;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $io->success('International survey created');
-        $io->writeln("Pass code 1         : {$username}");
-        $io->writeln("Pass code 2         : {$password}");
+        $io->writeln("Pass code 1         : {$user->getUsername()}");
+        $io->writeln("Pass code 2         : {$user->getPlainPassword()}");
         $io->writeln("Survey period start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
         $io->writeln("Survey period end   : {$survey->getSurveyPeriodEnd()->format('Y-m-d')}");
         $io->writeln("");

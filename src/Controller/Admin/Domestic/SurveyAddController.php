@@ -3,9 +3,8 @@
 namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
-use App\Utility\PasscodeGenerator;
+use App\Repository\PasscodeUserRepository;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +21,7 @@ class SurveyAddController extends AbstractController
     /**
      * @Route("/add", name="surveys_add")
      */
-    public function add(Request $request, PasscodeGenerator $passcodeGenerator, EntityManagerInterface $entityManager, string $type): Response
+    public function add(Request $request, PasscodeUserRepository $passcodeUserRepository, EntityManagerInterface $entityManager, string $type): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -36,11 +35,6 @@ class SurveyAddController extends AbstractController
                     throw new BadRequestHttpException();
                 }
 
-                $user = (new PasscodeUser())
-                    ->setUsername($username = $passcodeGenerator->generatePasscode())
-                    ->setPlainPassword($password = $passcodeGenerator->generatePasscode())
-                    ->setDomesticSurvey($survey);
-
                 $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
                 $surveyPeriodEnd->add(new DateInterval('P7D'));
 
@@ -48,16 +42,14 @@ class SurveyAddController extends AbstractController
                     ->setSurveyPeriodEnd($surveyPeriodEnd)
                     ->setIsNorthernIreland($type === 'ni')
                     ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
-                    ->setPasscodeUser($user);
+                    ->setPasscodeUser($passcodeUserRepository->createNewPasscodeUser());
 
-                $entityManager->persist($user);
+                $entityManager->persist($survey->getPasscodeUser());
                 $entityManager->persist($survey);
                 $entityManager->flush();
 
                 return $this->render('admin/domestic/surveys/add-success.html.twig', [
-                    'user' => $user,
                     'survey' => $survey,
-                    'password' => $password,
                 ]);
             }
         }

@@ -104,6 +104,10 @@ admin:
     username.label: Username
     password.label: Password
   domestic:
+    survey:
+      state:
+        invited: govuk-tag--grey
+        closed: govuk-tag--green
     add-survey:
       registration-mark:
         label: Registration mark
@@ -128,6 +132,23 @@ admin:
       invitation-address: Invitation address
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
+  international:
+    company:
+      business-name:
+        label: Company/Business name
+        help: ''
+    survey:
+      reference-number:
+        label: 'Reference number'
+        help: ''
+      period-start:
+        label: 'Survey start date'
+        help: ''
+      period-end:
+        label: 'Survey end date'
+      period-days:
+        label: 'Survey period (days)'
+        help: ''
 
 domestic:
   transferred-port:

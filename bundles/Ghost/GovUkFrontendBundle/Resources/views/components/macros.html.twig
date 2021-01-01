@@ -151,6 +151,8 @@
     >
             {%- if options.translate | default(false) -%}
                 {{ options.content | default(value) | trans | nl2br }}
+            {%- elseif options.html | default(false) -%}
+                {{ options.content | default(value) | raw }}
             {%- else -%}
                 {{ options.content | default(value) | nl2br }}
             {%- endif -%}</{{ element }}>
