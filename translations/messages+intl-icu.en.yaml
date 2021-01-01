@@ -408,7 +408,7 @@ domestic:
 
     cargo-type:
       cargo-type-code:
-        label: How were the goods are carried?
+        label: How were the goods carried?
         help: Mixed loads should be recorded as "Other cargo type"
 
     goods-weight:
@@ -491,7 +491,7 @@ domestic:
 
     cargo-type:
       cargo-type-code:
-        label: How were the goods are carried?
+        label: How were the goods carried?
         help: Mixed loads should be recorded as "Other cargo type"
 
     goods-weight:
@@ -758,7 +758,7 @@ international:
         help: Were the goods being transported classified as dangerous or hazardous?
     cargo-type:
       cargo-type-code:
-        label: How were the goods are carried?
+        label: How were the goods carried?
         help: Mixed loads should be recorded as "Other cargo type"
     goods-weight-loaded:
       weight-of-goods:
@@ -816,7 +816,7 @@ international:
         help: Were the goods being transported classified as dangerous or hazardous?
     cargo-type:
       cargo-type-code:
-        label: How were the goods are carried?
+        label: How were the goods carried?
         help: Mixed loads should be recorded as "Other cargo type"
     goods-weight:
       weight-of-goods-carried:

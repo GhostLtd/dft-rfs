@@ -15,7 +15,7 @@ class CargoType
     const CODE_NP_NO_PACKAGING = "NP";
     const CODE_RC_ROLL_CAGES = "RC";
     const CODE_OT_OTHER_CARGO_TYPES = "OT";
-    const CODE_NS_EMPTY = "NS";
+//    const CODE_NS_EMPTY = "NS";
 
     const TRANSLATION_PREFIX = "goods.cargo-type.options.";
 
@@ -29,6 +29,6 @@ class CargoType
         self::TRANSLATION_PREFIX . self::CODE_NP_NO_PACKAGING => self::CODE_NP_NO_PACKAGING,
         self::TRANSLATION_PREFIX . self::CODE_RC_ROLL_CAGES => self::CODE_RC_ROLL_CAGES,
         self::TRANSLATION_PREFIX . self::CODE_OT_OTHER_CARGO_TYPES => self::CODE_OT_OTHER_CARGO_TYPES,
-        self::TRANSLATION_PREFIX . self::CODE_NS_EMPTY => self::CODE_NS_EMPTY,
+//        self::TRANSLATION_PREFIX . self::CODE_NS_EMPTY => self::CODE_NS_EMPTY,
     ];
 }
