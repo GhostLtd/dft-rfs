@@ -47,10 +47,10 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
             return;
         }
 
-        if ($this->internationalSurveyStateMachine->can($entity, 'invite_user')) {
-            $this->internationalSurveyStateMachine->apply($entity, 'invite_user');
-            $this->entityManager->flush();
-        }
+//        if ($this->internationalSurveyStateMachine->can($entity, 'invite_user')) {
+//            $this->internationalSurveyStateMachine->apply($entity, 'invite_user');
+//            $this->entityManager->flush();
+//        }
     }
 
     public function getSubscribedEvents()
