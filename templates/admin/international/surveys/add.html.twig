@@ -2,6 +2,8 @@
 
 {% block adminContent %}
     {% if form is defined %}
+        <h1 class="govuk-heading-l">Add international survey</h1>
+
         {{ form(form) }}
     {% else %}
         {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}

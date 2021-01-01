@@ -154,6 +154,8 @@ admin:
       period-days:
         label: 'Survey period (days)'
         help: ''
+      submit:
+        label: Add survey
 
 domestic:
   transferred-port:
