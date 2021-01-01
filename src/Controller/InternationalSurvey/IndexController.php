@@ -2,8 +2,10 @@
 
 namespace App\Controller\InternationalSurvey;
 
+use App\Entity\International\Survey;
 use App\Repository\International\SurveyRepository;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,6 +14,7 @@ class IndexController extends AbstractController
 {
     use SurveyHelperTrait;
 
+    public const COMPLETED_ROUTE = 'app_internationalsurvey_completed';
     public const SUMMARY_ROUTE = 'app_internationalsurvey_summary';
 
     protected $surveyRepo;
@@ -22,13 +25,21 @@ class IndexController extends AbstractController
     }
 
     /**
+     * @Route("/international-survey/completed", name=self::COMPLETED_ROUTE)
+     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
+     */
+    public function completed() {
+        return $this->render('international_survey/thanks.html.twig');
+    }
+
+    /**
      * @Route("/international-survey", name=self::SUMMARY_ROUTE)
      */
     public function index(UserInterface $user) {
         $survey = $this->getSurvey($user);
 
-        if ($survey->getSubmissionDate()) {
-            return $this->render('international_survey/thanks.html.twig');
+        if ($survey->getState() === Survey::STATE_CLOSED) {
+            return $this->redirectToRoute(self::COMPLETED_ROUTE);
         }
 
         if (!$survey->isInitialDetailsComplete()) {

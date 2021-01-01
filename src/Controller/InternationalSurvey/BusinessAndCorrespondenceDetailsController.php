@@ -7,12 +7,16 @@ use App\Repository\International\SurveyRepository;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
+ */
 class BusinessAndCorrespondenceDetailsController extends AbstractController
 {
     use SurveyHelperTrait;

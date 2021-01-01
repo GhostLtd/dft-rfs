@@ -5,12 +5,16 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
+ */
 class ClosingDetailsController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
@@ -24,7 +28,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
      * @Route("/international-survey/closing-details/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/closing-details", name=self::START_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, UserInterface $user, $frontendHostname, string $state = null): Response
+    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, UserInterface $user, string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse($user);
 
@@ -33,7 +37,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
 
             if ($this->session->has($this->getSessionKey())) {
                 $referer = parse_url($request->headers->get('referer', ''));
-                $summaryUrl = $this->redirectToRoute('app_internationalsurvey_summary');
+                $summaryUrl = $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
                 if ($referer['path'] === $summaryUrl->getTargetUrl()) {
                     // if the referer is summary screen, start the wizard
                     $formWizard->setState(ClosingDetailsState::STATE_START);

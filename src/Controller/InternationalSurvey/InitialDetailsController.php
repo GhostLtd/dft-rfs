@@ -7,11 +7,15 @@ use App\Entity\International\SurveyResponse;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
+ */
 class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;

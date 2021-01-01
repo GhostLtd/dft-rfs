@@ -3,12 +3,16 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Repository\International\TripRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
+ */
 class TripController extends AbstractController
 {
     use SurveyHelperTrait;

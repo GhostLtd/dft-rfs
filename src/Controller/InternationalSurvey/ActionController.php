@@ -28,6 +28,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 /**
  * @Route("/international-survey")
  * @Security("!is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
  */
 class ActionController extends AbstractSessionStateWorkflowController
 {

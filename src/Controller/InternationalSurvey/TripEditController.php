@@ -7,6 +7,7 @@ use App\Entity\International\Trip;
 use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardInterface;
 use App\Workflow\InternationalSurvey\TripState;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -14,6 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
+ */
 class TripEditController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;

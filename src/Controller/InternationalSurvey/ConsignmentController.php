@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Security("is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS')")
+ * @Security("is_granted('EDIT', user.getInternationalSurvey())")
  */
 class ConsignmentController extends AbstractController
 {
