@@ -33,9 +33,6 @@ return static function (ContainerConfigurator $container) {
                     'request_confirmation' => [
                         'from' => StateObject::STATE_REASON_EMPTY_SURVEY,
                         'to' => StateObject::STATE_CONFIRM,
-                        'metadata' => [
-                            'buttonLabel' => 'Save and continue',
-                        ],
                     ],
                     'finish' => [
                         'from' => StateObject::STATE_CONFIRM,

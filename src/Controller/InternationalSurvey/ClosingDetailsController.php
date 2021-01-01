@@ -29,11 +29,13 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         $this->surveyResponse = $this->getSurveyResponse($user);
 
         if (!$state || $state === ClosingDetailsState::STATE_START) {
-            if (!$this->session->get($this->getSessionKey())) {
-                $formWizard = $this->getFormWizard();
-                $transitions = array_values($internationalSurveyClosingDetailsStateMachine->getEnabledTransitions($formWizard));
-                return $this->applyTransitionAndRedirect($request, $internationalSurveyClosingDetailsStateMachine, $formWizard, $transitions[0]);
+            if ($this->session->has($this->getSessionKey())) {
+                return $this->redirectToRoute('app_internationalsurvey_summary');
             }
+
+            $formWizard = $this->getFormWizard();
+            $transitions = array_values($internationalSurveyClosingDetailsStateMachine->getEnabledTransitions($formWizard));
+            return $this->applyTransitionAndRedirect($request, $internationalSurveyClosingDetailsStateMachine, $formWizard, $transitions[0]);
         }
 
         return $this->doWorkflow($internationalSurveyClosingDetailsStateMachine, $request, $state);
