@@ -68,6 +68,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\NotNull(groups={"reason_for_empty_survey"}, message="common.choice.invalid")
      */
     private $reasonForEmptySurvey;
 
