@@ -4,6 +4,7 @@
 namespace App\Workflow\DomesticSurvey;
 
 
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\DayStop;
 use App\Form\DomesticSurvey\DayStop\BorderCrossingType;
 use App\Form\DomesticSurvey\DayStop\CargoTypeType;
@@ -86,5 +87,22 @@ class DayStopState extends AbstractFormWizardState implements FormWizardInterfac
     public function getDefaultTemplate()
     {
         return null;
+    }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        if ($this->subject->getId()) {
+            switch($state) {
+                case self::STATE_ORIGIN:
+                case self::STATE_DESTINATION:
+                case self::STATE_DISTANCE_TRAVELLED:
+                case self::STATE_GOODS_DESCRIPTION:
+                    return true;
+
+                case self::STATE_GOODS_WEIGHT :
+                    return $this->subject->getGoodsDescription() !== AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY;
+            }
+        }
+        return parent::isValidAlternativeStartState($state);
     }
 }

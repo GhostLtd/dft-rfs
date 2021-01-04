@@ -297,6 +297,7 @@ domestic:
     no-info: You haven't entered any information for this day yet
     start-location: Start location
     destination-location: Destination location
+    border-crossing: Border crossing
     furthest-stop: Furthest stop
     distance-travelled: Distance travelled
     goods-carried: Goods carried

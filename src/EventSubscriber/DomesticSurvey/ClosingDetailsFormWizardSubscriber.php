@@ -89,6 +89,7 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 
 
     /**
+     * Needed to close the domestic survey
      * @var WorkflowInterface
      */
     private $domesticSurveyStateMachine;

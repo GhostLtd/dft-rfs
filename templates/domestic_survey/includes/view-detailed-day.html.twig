@@ -8,14 +8,29 @@
 
         {{ summaryListRow('domestic.day-view.start-location',
             (stop.originLocation | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
-        {(urlChange): 'common.actions.change'}) }}
+            {(urlChange): 'common.actions.change'}) }}
         {{ summaryListRow('domestic.day-view.destination-location',
-            (stop.destinationLocation | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — '))
+            (stop.destinationLocation | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — ')),
+            {(urlChange): 'common.actions.change'}
         ) }}
+        {% if stop.day.response.survey.isNorthernIreland %}
+            {{ summaryListRow('domestic.day-view.border-crossing',
+                stop.borderCrossingLocation | default('-'),
+                {(urlChange): 'common.actions.change'}
+            ) }}
+        {% endif %}
+
+
+        {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_DISTANCE_TRAVELLED')}) -%}
+        {% set urlChange = url('app_domesticsurvey_daystop_wizard', params) %}
         {{ summaryListRow('domestic.day-view.distance-travelled',
             ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" |
             trans({value: stop.distanceTravelled.value|number_format})
-        )) }}
+        ), {(urlChange): 'common.actions.change'}
+        ) }}
+
+        {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_DESCRIPTION')}) -%}
+        {% set urlChange = url('app_domesticsurvey_daystop_wizard', params) %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
             <dd class="govuk-summary-list__value">
@@ -24,20 +39,23 @@
                 {%- if stop.hazardousGoodsCode %} — <em>{{ stop.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, stop.hazardousGoodsCode) | trans }}{% endif %}
             </dd>
             <dd class="govuk-summary-list__actions">
-                {# Action Links #}
+                {{ actionLinks({(urlChange): 'common.actions.change'}) }}
             </dd>
         </div>
         {% if stop.goodsDescription != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') %}
             {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-            {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans) }}
+            {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans, {(urlChange): 'common.actions.change'}) }}
 
             {%- set wasLimitedBy -%}
                 {%- set factors = stop.wasLimitedBy -%}
                 {%- if factors is not empty %} — {{ ('domestic.day-view.limited-by.' ~ (factors | join('-and-'))) | trans }}{% endif -%}
             {%- endset -%}
 
+            {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')}) -%}
+            {% set urlChange = url('app_domesticsurvey_daystop_wizard', params) %}
             {{ summaryListRow('domestic.day-view.weight-of-goods.label',
-                ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy
+                ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy,
+                {(urlChange): 'common.actions.change'}
             ) }}
         {% endif %}
     </dl>
