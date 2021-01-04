@@ -5,11 +5,15 @@ namespace App;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
-class Kernel extends BaseKernel
+class Kernel extends BaseKernel implements CompilerPassInterface
 {
     use MicroKernelTrait;
 
@@ -66,6 +70,27 @@ class Kernel extends BaseKernel
             return sys_get_temp_dir();
         }
         return parent::getLogDir();
+    }
+
+    public function process(ContainerBuilder $container)
+    {
+        if ($container->hasDefinition('workflow.security.expression_language')) {
+            $definition = $container->findDefinition('workflow.security.expression_language');
+            foreach ($container->findTaggedServiceIds('workflow.expression_language_provider') as $id => $attributes) {
+                $definition->addMethodCall('registerProvider', [new Reference($id)]);
+            }
+        }
+
+        if ($container->hasDefinition('validator.expression')) {
+            $definition = $container->findDefinition('validator.expression');
+            $providers = $container->findTaggedServiceIds('validator.expression_language_provider');
+
+            $expressionLanguage = (new Definition(ExpressionLanguage::class, [
+                null, array_map(function($service){return new Reference($service);}, array_keys($providers))
+            ]));
+            $definition->setArguments([$expressionLanguage]);
+        }
+
     }
 }
 

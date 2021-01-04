@@ -79,3 +79,13 @@ services:
     App\ExpressionLanguage\FeatureExpressionProvider:
         tags:
             - { name: 'security.expression_language_provider' }
+            - { name: 'router.expression_language_provider' }
+            - { name: 'workflow.expression_language_provider' }
+            - { name: 'validator.expression_language_provider' }
+
+    App\ExpressionLanguage\GeneralExpressionProvider:
+        tags:
+            - { name: 'security.expression_language_provider' }
+            - { name: 'router.expression_language_provider' }
+            - { name: 'workflow.expression_language_provider' }
+            - { name: 'validator.expression_language_provider' }
