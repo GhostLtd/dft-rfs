@@ -6,6 +6,7 @@ use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -25,12 +26,15 @@ class Survey
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey"})
+     * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey"})
      */
     private $referenceNumber;
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid(groups={"add_survey"})
      */
     private $company;
 

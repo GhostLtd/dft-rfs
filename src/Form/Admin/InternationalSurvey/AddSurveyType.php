@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class AddSurveyType extends AbstractType
 {
@@ -37,6 +38,7 @@ class AddSurveyType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-radios--inline'],
                 'mapped' => false,
+                'constraints' => new NotNull(['message' => 'common.choice.not-null', 'groups' => ['add_survey']]),
                 'choices' => [
                     '1 day' => 1,
                     '7 days' => 7,
@@ -56,6 +58,7 @@ class AddSurveyType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
+            'validation_groups' => 'add_survey',
         ]);
     }
 }
