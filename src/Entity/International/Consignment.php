@@ -56,7 +56,9 @@ class Consignment implements GoodsDescriptionInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="common.number.not-null", groups={"weight-of-goods-carried"})
-     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"weight-of-goods-carried"})
+     * @Assert\Range(groups={"weight-of-goods-carried"},
+     *     min=0, minMessage="common.number.positive",
+     *     max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoodsCarried;
 

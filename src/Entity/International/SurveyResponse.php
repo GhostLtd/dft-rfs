@@ -62,6 +62,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\NotNull(groups={"activity_status"}, message="common.choice.invalid")
      */
     private $activityStatus;
 
