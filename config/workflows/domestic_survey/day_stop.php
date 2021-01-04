@@ -119,7 +119,6 @@ return static function (ContainerConfigurator $container) {
                     'cargo_type_to_goods_weight' => [
                         'from' => StateObject::STATE_CARGO_TYPE,
                         'to' => StateObject::STATE_GOODS_WEIGHT,
-                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
 
                     'finish' => [
@@ -178,12 +177,6 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => array_merge($editEndMetadata, [
                             'buttonLabel' => 'Continue',
                         ]),
-                    ],
-                    'edit_cargo_type' => [
-                        'from' => StateObject::STATE_CARGO_TYPE,
-                        'to' => StateObject::STATE_GOODS_WEIGHT,
-                        'guard' => '!is_empty(subject.getSubject().getId())',
-                        'metadata' => $editEndMetadata,
                     ],
 
                 ]
