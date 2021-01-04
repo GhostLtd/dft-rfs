@@ -7,20 +7,28 @@
 
         {{ summaryListRow('domestic.day-view.start-location',
             (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
-        {(urlChange): 'common.actions.change'}) }}
-        {{ summaryListRow('domestic.day-view.destination-location',
-            (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — '))
+            {(urlChange): 'common.actions.change'}
         ) }}
-        {{ summaryListRow('domestic.day-view.furthest-stop', day.summary.furthestStop | default('-')) }}
+        {{ summaryListRow('domestic.day-view.destination-location',
+            (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — ')),
+            {(urlChange): 'common.actions.change'}
+        ) }}
+        {{ summaryListRow('domestic.day-view.furthest-stop', day.summary.furthestStop | default('-'),
+            {(urlChange): 'common.actions.change'}
+        )}}
+
+        {% set urlChange = url('app_domesticsurvey_daysummary_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_DISTANCE_TRAVELLED')}) %}
         {{ summaryListRow('domestic.day-view.distance-travelled',
             ("domestic.day-view.distance.loaded.#{day.summary.distanceTravelledLoaded.unit}" |
-            trans({value: day.summary.distanceTravelledLoaded.value|number_format})
-        ) ~
-        ', ' ~
-        ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
-        trans({value: day.summary.distanceTravelledUnloaded.value|number_format})
-        )
+                trans({value: day.summary.distanceTravelledLoaded.value|number_format})
+            ) ~ ', ' ~
+            ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
+                trans({value: day.summary.distanceTravelledUnloaded.value|number_format})
+            ),
+            {(urlChange): 'common.actions.change'}
         ) }}
+
+        {% set urlChange = url('app_domesticsurvey_daysummary_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_GOODS_DESCRIPTION')}) %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
             <dd class="govuk-summary-list__value">
@@ -29,11 +37,11 @@
                 {%- if day.summary.hazardousGoodsCode %} — <em>{{ day.summary.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, day.summary.hazardousGoodsCode) | trans }}{% endif %}
             </dd>
             <dd class="govuk-summary-list__actions">
-                {# Action Links #}
+                {{ actionLinks({(urlChange): 'common.actions.change'}) }}
             </dd>
         </div>
         {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-        {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, day.summary.cargoTypeCode) | trans) }}
+        {{ summaryListRow('domestic.day-view.cargo-type', choiceLabel(cargoChoices, day.summary.cargoTypeCode) | trans, {(urlChange): 'common.actions.change'}) }}
 
         {%- set weightOfGoods -%}
             {%- set parts = [] %}
@@ -45,7 +53,8 @@
             {%- endif -%}
             {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
         {%- endset -%}
-        {{ summaryListRow('domestic.day-view.weight-of-goods.label', weightOfGoods) }}
+        {% set urlChange = url('app_domesticsurvey_daysummary_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_GOODS_WEIGHT')}) %}
+        {{ summaryListRow('domestic.day-view.weight-of-goods.label', weightOfGoods, {(urlChange): 'common.actions.change'}) }}
 
         {%- set numberOfStops -%}
             {%- set parts = [] %}
@@ -60,7 +69,8 @@
             {%- endif -%}
             {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
         {%- endset -%}
-        {{ summaryListRow('domestic.day-view.number-of-stops.label', numberOfStops) }}
+        {% set urlChange = url('app_domesticsurvey_daysummary_index', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_NUMBER_OF_STOPS')}) %}
+        {{ summaryListRow('domestic.day-view.number-of-stops.label', numberOfStops, {(urlChange): 'common.actions.change'}) }}
     </dl>
     <p class="govuk-body">
         {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}

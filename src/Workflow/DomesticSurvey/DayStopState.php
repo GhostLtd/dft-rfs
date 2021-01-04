@@ -94,7 +94,6 @@ class DayStopState extends AbstractFormWizardState implements FormWizardInterfac
         if ($this->subject->getId()) {
             switch($state) {
                 case self::STATE_ORIGIN:
-                case self::STATE_DESTINATION:
                 case self::STATE_DISTANCE_TRAVELLED:
                 case self::STATE_GOODS_DESCRIPTION:
                     return true;

@@ -4,6 +4,7 @@
 namespace App\Workflow\DomesticSurvey;
 
 
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
 use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
@@ -95,4 +96,20 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardInter
     {
         return null;
     }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        if ($this->subject->getId()) {
+            switch($state) {
+                case self::STATE_ORIGIN:
+                case self::STATE_DISTANCE_TRAVELLED:
+                case self::STATE_GOODS_DESCRIPTION:
+                case self::STATE_GOODS_WEIGHT :
+                case self::STATE_NUMBER_OF_STOPS :
+                    return true;
+            }
+        }
+        return parent::isValidAlternativeStartState($state);
+    }
+
 }

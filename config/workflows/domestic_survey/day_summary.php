@@ -4,6 +4,14 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use App\Workflow\DomesticSurvey\DaySummaryState as StateObject;
 
 return static function (ContainerConfigurator $container) {
+    $editEndMetadata =  [
+        'persist' => true,
+        'redirectRoute' => [
+            'routeName' => 'app_domesticsurvey_day_view',
+            'parameterMappings' => ['dayNumber' => 'day.number'],
+        ],
+    ];
+
     $container->extension('framework', [
         'workflows' => [
             'domestic_survey_day_summary' => [
@@ -30,67 +38,72 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
-                    'origin-to-origin-port' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'goodsLoaded', 'value' => true]],
+                    'origin_to_origin_port' => [
                         'from' => StateObject::STATE_ORIGIN,
                         'to' =>  StateObject::STATE_ORIGIN_PORTS,
+                        'guard' => 'subject.getSubject().getGoodsLoaded()',
                     ],
-                    'origin-port-to-destination' => [
+                    'origin_port_to_destination' => [
                         'from' => StateObject::STATE_ORIGIN_PORTS,
                         'to' =>  StateObject::STATE_DESTINATION,
                     ],
-                    'origin-to-destination' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'goodsLoaded', 'value' => false]],
+                    'origin_to_destination' => [
                         'from' => StateObject::STATE_ORIGIN,
                         'to' =>  StateObject::STATE_DESTINATION,
+                        'guard' => '!subject.getSubject().getGoodsLoaded()',
                     ],
-                    'destination-to-destination-port' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => true]],
+                    'destination_to_destination_port' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_DESTINATION_PORTS,
+                        'guard' => 'subject.getSubject().getGoodsUnloaded()',
                     ],
-                    'destination-port-to-furthest-stop' => [
+                    'destination_port_to_furthest_stop' => [
                         'from' => StateObject::STATE_DESTINATION_PORTS,
                         'to' =>  StateObject::STATE_FURTHEST_STOP,
                     ],
-                    'destination-to-furthest-stop' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'goodsUnloaded', 'value' => false]],
+                    'destination_to_furthest_stop' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_FURTHEST_STOP,
+                        'guard' => '!subject.getSubject().getGoodsUnloaded()',
                     ],
-                    'furthest-stop-to-border-crossing' => [
-                        'metadata' => ['transitionWhenCallback' => 'isNorthernIrelandSurvey'],
+                    'furthest_stop_to_border_crossing' => [
                         'from' => StateObject::STATE_FURTHEST_STOP,
                         'to' =>  StateObject::STATE_BORDER_CROSSING,
+                        'guard' => 'subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
                     ],
-                    'border-crossing-to-distance-travelled' => [
+                    'border_crossing_to_distance_travelled' => [
                         'from' =>  StateObject::STATE_BORDER_CROSSING,
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'guard' => 'is_empty(subject.getSubject().getId())'
                     ],
-                    'furthest-stop-to-distance-travelled' => [
-                        'metadata' => ['transitionWhenCallbackNot' => 'isNorthernIrelandSurvey'],
+                    'furthest_stop_to_distance_travelled' => [
                         'from' => StateObject::STATE_FURTHEST_STOP,
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'guard' => 'is_empty(subject.getSubject().getId())
+                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
                     ],
-                    'distance-travelled-to-goods-description' => [
+                    'distance_travelled_to_goods_description' => [
                         'from' => StateObject::STATE_DISTANCE_TRAVELLED,
                         'to' =>  StateObject::STATE_GOODS_DESCRIPTION,
+                        'guard' => 'is_empty(subject.getSubject().getId())'
                     ],
-                    'goods-description-to-hazardous-goods' => [
+                    'goods_description_to_hazardous_goods' => [
                         'from' =>  StateObject::STATE_GOODS_DESCRIPTION,
                         'to' => StateObject::STATE_HAZARDOUS_GOODS,
                     ],
-                    'hazardous-goods-to-cargo-type' => [
+                    'hazardous_goods_to_cargo_type' => [
                         'from' => StateObject::STATE_HAZARDOUS_GOODS,
                         'to' => StateObject::STATE_CARGO_TYPE,
                     ],
-                    'cargo-type-to-goods-weight' => [
+                    'cargo_type_to_goods_weight' => [
                         'from' => StateObject::STATE_CARGO_TYPE,
                         'to' => StateObject::STATE_GOODS_WEIGHT,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
-                    'goods-weight-to-number-of-stops' => [
+                    'goods_weight_to_number_of_stops' => [
                         'from' => StateObject::STATE_GOODS_WEIGHT,
                         'to' => StateObject::STATE_NUMBER_OF_STOPS,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
 
 
@@ -105,6 +118,43 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_NUMBER_OF_STOPS,
                         'to' =>  StateObject::STATE_END,
                     ],
+
+                    'edit_locations_gb' => [
+                        'from' => StateObject::STATE_FURTHEST_STOP,
+                        'to' =>  StateObject::STATE_END,
+                        'guard' => '!is_empty(subject.getSubject().getId())
+                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
+                        'metadata' => $editEndMetadata,
+                    ],
+                    'edit_locations_ni' => [
+                        'from' =>  StateObject::STATE_BORDER_CROSSING,
+                        'to' => StateObject::STATE_END,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                        'metadata' => $editEndMetadata,
+                    ],
+
+
+                    'edit_distance_travelled' => [
+                        'from' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'to' =>  StateObject::STATE_END,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                        'metadata' => $editEndMetadata,
+                    ],
+
+
+                    'edit_goods' => [
+                        'from' => StateObject::STATE_CARGO_TYPE,
+                        'to' => StateObject::STATE_END,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                        'metadata' => $editEndMetadata,
+                    ],
+                    'edit_goods_weight' => [
+                        'from' => StateObject::STATE_GOODS_WEIGHT,
+                        'to' => StateObject::STATE_END,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                        'metadata' => $editEndMetadata,
+                    ],
+
                 ]
             ],
         ],
