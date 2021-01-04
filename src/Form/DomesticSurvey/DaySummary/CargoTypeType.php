@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DaySummary;
-
 
 use App\Form\AbstractCargoTypeType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,8 +12,6 @@ class CargoTypeType extends AbstractCargoTypeType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'translation_entity_key' => 'domestic.day-summary',
-            'is_summary_day' => true,
         ]);
-
     }
 }

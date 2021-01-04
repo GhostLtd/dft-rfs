@@ -59,6 +59,7 @@ class SurveyResponse extends AbstractSurveyResponse
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"hiree_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details"})
      */
     private $hireeName;
 
@@ -67,18 +68,20 @@ class SurveyResponse extends AbstractSurveyResponse
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.email.not-blank", groups={"hiree_details"})
      * @Assert\Email(message="common.email.invalid", groups={"hiree_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details"})
      */
     private $hireeEmail;
 
     /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"hiree_details"})
+     * @AppAssert\ValidAddress(groups={"hiree_details"}, validatePostcode=true)
      */
     private $hireeAddress;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"sold_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details"})
      */
     private $newOwnerName;
 
@@ -86,12 +89,13 @@ class SurveyResponse extends AbstractSurveyResponse
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.email.not-blank", groups={"sold_details"})
      * @Assert\Email(message="common.email.invalid", groups={"sold_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details"})
      */
     private $newOwnerEmail;
 
     /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"sold_details"})
+     * @AppAssert\ValidAddress(groups={"sold_details"}, validatePostcode=true)
      */
     private $newOwnerAddress;
 

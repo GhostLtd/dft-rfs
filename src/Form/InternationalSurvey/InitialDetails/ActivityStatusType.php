@@ -29,6 +29,7 @@ class ActivityStatusType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'validation_groups' => ['activity_status'],
         ]);
     }
 }

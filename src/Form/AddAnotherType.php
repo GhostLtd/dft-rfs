@@ -7,6 +7,7 @@ use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class AddAnotherType extends AbstractType
 {
@@ -24,6 +25,9 @@ class AddAnotherType extends AbstractType
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-radios--inline'],
+                'constraints' => [
+                    new NotNull(['message' => 'common.choice.not-null']),
+                ]
             ])->add('submit', ButtonType::class, [
                 'label' => 'common.actions.continue',
             ]);

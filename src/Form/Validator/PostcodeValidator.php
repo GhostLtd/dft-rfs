@@ -23,7 +23,7 @@ class PostcodeValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        $regex = '/^[A-Z]{1,2}\d[A-Z0-9]? ?\d[A-Z]{2}$/';
+        $regex = '/^[A-Z]{1,2}\d[A-Z0-9]? ?\d[A-Z]{2}$/i';
 
         if (!preg_match($regex, $value)) {
             $this->context->buildViolation($constraint->message)->addViolation();
