@@ -14,7 +14,6 @@ class CargoTypeType extends AbstractCargoTypeType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'translation_entity_key' => 'domestic.day-stop',
-            'is_summary_day' => false,
         ]);
 
     }
