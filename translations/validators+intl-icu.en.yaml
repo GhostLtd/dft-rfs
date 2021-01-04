@@ -12,6 +12,7 @@ common:
     not-null: Enter a number
     positive-or-zero: Enter a positive number or zero
     positive: Enter a positive number
+    max: "Cannot be more than {max}"
   place:
     place: Enter a place
     country: Enter a country

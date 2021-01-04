@@ -25,12 +25,18 @@ trait VehicleTrait
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.gross-weight.not-blank")
+     * @Assert\Range(groups={"vehicle_weight"},
+     *     min=0, minMessage="common.number.positive",
+     *     max=2000000000, maxMessage="common.number.max")
      */
     private $grossWeight;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.carrying-capacity.not-blank")
+     * @Assert\Range(groups={"vehicle_weight"},
+     *     min=0, minMessage="common.number.positive",
+     *     max=2000000000, maxMessage="common.number.max")
      */
     private $carryingCapacity;
 

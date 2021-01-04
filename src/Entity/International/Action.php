@@ -35,12 +35,14 @@ class Action
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"action-place"}, message="common.place.place")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"action-place"}, message="common.place.country")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place"})
      */
     private $country;
 
@@ -63,7 +65,9 @@ class Action
      * @Assert\Range(groups={"action-unloaded-weight"}, min=1, minMessage="international.action.unloading.weight-more-than-one")
      *
      * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight"})
-     * @Assert\Positive(message="common.number.positive", groups={"action-loaded-weight"})
+     * @Assert\Range(groups={"action-loaded-weight"},
+     *     min=0, minMessage="common.number.positive",
+     *     max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoods;
 

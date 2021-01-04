@@ -27,7 +27,7 @@ class RegistrationMarkHelper
             $this->registrationMark = strtoupper(str_replace(' ', '', $registrationMark));
 
             $this->current = !!preg_match($currentRegex, $this->registrationMark);
-            $this->valid = $this->current || !!preg_match($regex, $this->registrationMark);
+            $this->valid = strlen($this->registrationMark) < 256 && ($this->current || !!preg_match($regex, $this->registrationMark));
 
             if ($this->valid) {
                 // We only format (with a space, that is) the output of modern (current) registration marks, as this

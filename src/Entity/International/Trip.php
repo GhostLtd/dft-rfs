@@ -29,19 +29,21 @@ class Trip
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates"})
+     * @Assert\NotBlank(groups={"trip_dates"}, message="common.date.not-null")
      */
     private $outboundDate;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
      */
     private $outboundUkPort;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
      */
     private $outboundForeignPort;
 
@@ -62,19 +64,21 @@ class Trip
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates"})
+     * @Assert\NotBlank(groups={"trip_dates"}, message="common.date.not-null")
      */
     private $returnDate;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
      */
     private $returnUkPort;
 
@@ -112,7 +116,8 @@ class Trip
     private $countriesTransitted = [];
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(max=2000, maxMessage="common.string.max-length", groups={"trip_countries_transitted"})
      */
     private $countriesTransittedOther;
 
@@ -146,8 +151,6 @@ class Trip
     public function validateReturnCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'return');
     }
-
-
 
     /**
      * @Assert\Callback(groups={"trip_dates"})

@@ -15,20 +15,23 @@ trait SurveyResponseTrait
     private $id;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(groups={"business_details"}, message="common.survey-response.business-nature.not-blank")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"business_details"})
      */
     private $businessNature;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"contact_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details"})
      */
     private $contactName;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
      * @Assert\NotBlank(message="common.telephone.not-blank", groups={"contact_details"})
+     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"contact_details"})
      */
     private $contactTelephone;
 
@@ -36,12 +39,14 @@ trait SurveyResponseTrait
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.email.not-blank", groups={"contact_details"})
      * @Assert\Email(message="common.email.invalid", groups={"contact_details"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details"})
      */
     private $contactEmail;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      * @Assert\NotNull(message="common.choice.not-null", groups={"business_details"})
+     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details"})
      */
     private $numberOfEmployees;
 

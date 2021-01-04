@@ -28,12 +28,14 @@ class Stop
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"stop"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"stop"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"stop"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"stop"})
      */
     private $country;
 
