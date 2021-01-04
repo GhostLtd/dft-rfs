@@ -58,7 +58,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'passcode2' => $survey->getPasscodeUser()->getPlainPassword(),
         ];
 
-        if ($survey->getInvitationAddress())
+        if ($survey->getInvitationAddress()->isFilled())
         {
             $this->messageBus->dispatch(new Letter(
                 Survey::class,
