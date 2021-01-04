@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\InternationalSurvey\Consignment;
-
 
 use App\Form\AbstractCargoTypeType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,6 +13,5 @@ class CargoTypeType extends AbstractCargoTypeType
         $resolver->setDefaults([
             'translation_entity_key' => 'international.consignment',
         ]);
-
     }
 }

@@ -13,6 +13,5 @@ class CargoTypeType extends AbstractCargoTypeType
         $resolver->setDefaults([
             'translation_entity_key' => 'international.action',
         ]);
-
     }
 }
