@@ -40,9 +40,10 @@ class ActionRepository extends ServiceEntityRepository
     public function getLoadingActions(string $tripId): array
     {
         return $this->createQueryBuilder('a')
-            ->select('a')
+            ->select('a, ua')
             ->where('a.trip = :tripId')
             ->andWhere('a.loading = :loading')
+            ->leftJoin('a.unloadingActions', 'ua')
             ->setParameters([
                 'tripId' => $tripId,
                 'loading' => true,
@@ -56,11 +57,12 @@ class ActionRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('a')
-                ->select('a,la,t,v,r')
+                ->select('a,la,t,v,r,ua')
                 ->leftJoin('a.trip', 't')
                 ->leftJoin('t.vehicle', 'v')
                 ->leftJoin('v.surveyResponse', 'r')
                 ->leftJoin('a.loadingAction', 'la')
+                ->leftJoin('a.unloadingActions', 'ua')
                 ->where('a.id = :actionId')
                 ->andWhere('r = :response')
                 ->setParameters([

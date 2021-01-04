@@ -36,13 +36,16 @@ class LoadingPlaceType extends AbstractType
 
             $prefix = 'international.action.unloading';
 
+            [$choices, $choiceOptions] = $this->getChoicesForPlace($action);
+
             $event->getForm()
                 ->add('loadingAction', Gds\ChoiceType::class, [
                     'label_is_page_heading' => true,
                     'label' => "{$prefix}.label",
                     'label_attr' => ['class' => 'govuk-label--xl'],
                     'help' => "{$prefix}.help",
-                    'choices' => $this->getChoicesForPlace($action),
+                    'choices' => $choices,
+                    'choice_options' => $choiceOptions,
                 ]);
         });
     }
@@ -55,14 +58,33 @@ class LoadingPlaceType extends AbstractType
         $currentLoadingAction = $action->getLoadingAction();
 
         $choices = [];
+        $choiceOptions = [];
         foreach ($loadingActions as $loadingAction) {
             if ($currentLoadingAction && $loadingAction->getId() === $currentLoadingAction->getId()) {
                 $loadingAction = $currentLoadingAction;
             }
-            $choices[$this->getLabelForLoadingAction($loadingAction)] = $loadingAction;
+
+            $label = $this->getLabelForLoadingAction($loadingAction);
+
+            $isFullyUnloaded = false;
+            foreach($loadingAction->getUnloadingActions() as $unloadingAction) {
+                if ($unloadingAction->getWeightUnloadedAll() && $unloadingAction !== $action) {
+                    $isFullyUnloaded = true;
+                    break;
+                }
+            }
+
+            $choices[$label] = $loadingAction;
+
+            if ($isFullyUnloaded) {
+                $choiceOptions[$label] = [
+                    'disabled' => true,
+                    'help' => 'common.action.fully-unloaded',
+                ];
+            }
         }
 
-        return $choices;
+        return [$choices, $choiceOptions];
     }
 
     protected function getLabelForLoadingAction(Action $action): string

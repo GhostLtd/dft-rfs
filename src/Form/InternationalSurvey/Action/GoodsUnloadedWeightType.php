@@ -5,6 +5,7 @@ namespace App\Form\InternationalSurvey\Action;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\International\Action;
 use App\Form\InternationalSurvey\Action\DataMapper\GoodsUnloadedWeightDataMapper;
+use App\Repository\International\ActionRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -17,6 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GoodsUnloadedWeightType extends AbstractType
 {
+    protected $actionRepository;
     protected $requestStack;
     protected $translator;
 
@@ -27,8 +29,9 @@ class GoodsUnloadedWeightType extends AbstractType
         self::CHOICE_NO => false,
     ];
 
-    public function __construct(RequestStack $requestStack, TranslatorInterface $translator)
+    public function __construct(RequestStack $requestStack, TranslatorInterface $translator, ActionRepository $actionRepository)
     {
+        $this->actionRepository = $actionRepository;
         $this->requestStack = $requestStack;
         $this->translator = $translator;
     }
@@ -40,7 +43,8 @@ class GoodsUnloadedWeightType extends AbstractType
             /** @var Action $action */
             $action = $event->getData();
 
-            $loadingAction = $action->getLoadingAction();
+            // Fetching the loadingAction like this means its unloadingActions will be correctly populated...
+            $loadingAction = $this->actionRepository->findOneByIdAndSurveyResponse($action->getLoadingAction()->getId(), $action->getTrip()->getVehicle()->getSurveyResponse());
 
             $country = Countries::getName(strtoupper($loadingAction->getCountry()), $this->requestStack->getCurrentRequest()->getLocale());
 
@@ -48,42 +52,43 @@ class GoodsUnloadedWeightType extends AbstractType
                 $loadingAction->getGoodsDescriptionOther() :
                 $this->translator->trans("goods.description.options.{$loadingAction->getGoodsDescription()}");
 
-            $translationParameters = [
-                'weight' => $loadingAction->getWeightOfGoods(),
-                'place' => $loadingAction->getName(),
-                'country' => $country,
-                'goods' => $goods,
-            ];
-
             $prefix = "international.action.goods-weight-unloaded";
-            $fieldsetPrefix = "{$prefix}.group";
             $weightPrefix = "{$prefix}.weight-of-goods";
             $unloadedAllPrefix = "{$prefix}.unloaded-all";
 
             $form = $event->getForm();
-            $form->add('group', Gds\FieldsetType::class, [
-                'label' => "{$fieldsetPrefix}.label",
-                'label_translation_parameters' => $translationParameters,
-                'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => "{$fieldsetPrefix}.help",
-                'attr' => ['class' => 'govuk-input--5'],
-            ]);
 
-            $fieldset = $form->get('group');
+            $unloadingActions = $loadingAction->getUnloadingActions();
 
-            $fieldset
-                ->add("unloadedAll", Gds\ChoiceType::class, [
-                    'label' => "{$unloadedAllPrefix}.label",
-                    'help' => "{$unloadedAllPrefix}.help",
-                    'label_attr' => ['class' => 'govuk-label--s'],
-                    'choices' => self::CHOICES,
-                    'choice_options' => [
-                        self::CHOICE_NO => [
-                            'conditional_form_name' => 'weightOfGoods',
+            $numberOfOtherUnloadingActions = 0;
+            foreach($unloadingActions as $unloadingAction) {
+                if ($unloadingAction->getId() !== $action->getId()) {
+                    $numberOfOtherUnloadingActions++;
+                }
+            }
+
+            if ($numberOfOtherUnloadingActions === 0) {
+                $form
+                    ->add("weightUnloadedAll", Gds\ChoiceType::class, [
+                        'label' => "{$unloadedAllPrefix}.label",
+                        'help' => "{$unloadedAllPrefix}.help",
+                        'label_translation_parameters' => [
+                            'weight' => $loadingAction->getWeightOfGoods(),
+                            'place' => $loadingAction->getName(),
+                            'country' => $country,
+                            'goods' => $goods,
                         ],
-                    ],
-                ])
+                        'label_attr' => ['class' => 'govuk-label--s'],
+                        'choices' => self::CHOICES,
+                        'choice_options' => [
+                            self::CHOICE_NO => [
+                                'conditional_form_name' => 'weightOfGoods',
+                            ],
+                        ],
+                    ]);
+            }
+
+            $form
                 ->add('weightOfGoods', Gds\NumberType::class, [
                     'label' => "{$weightPrefix}.label",
                     'label_attr' => ['class' => 'govuk-label--s'],

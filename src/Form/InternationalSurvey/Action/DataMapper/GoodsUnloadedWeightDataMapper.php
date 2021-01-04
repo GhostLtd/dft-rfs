@@ -23,28 +23,21 @@ class GoodsUnloadedWeightDataMapper implements DataMapperInterface
         /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
-        if (!isset($forms['unloadedAll']) || !isset($forms['weightOfGoods'])) {
+        if (!isset($forms['weightOfGoods'])) {
             return;
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $fullWeightOfGoods = $this->getFullWeightOfGoods($viewData);
-
+        // Set fields present on the form, from the entity
         $weightOfGoods = $accessor->getValue($viewData, "WeightOfGoods");
+        $unloadedAll = $accessor->getValue($viewData, "WeightUnloadedAll");
 
-        if ($weightOfGoods === null) {
-            $unloadedAll = null;
-        } else {
-            $unloadedAll = $weightOfGoods === $fullWeightOfGoods;
-
-            if ($unloadedAll) {
-                $weightOfGoods = null;
-            }
-        }
-
-        $forms['unloadedAll']->setData($unloadedAll);
         $forms['weightOfGoods']->setData($weightOfGoods);
+
+        if (isset($forms['weightUnloadedAll'])) {
+            $forms['weightUnloadedAll']->setData($unloadedAll);
+        }
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -58,14 +51,15 @@ class GoodsUnloadedWeightDataMapper implements DataMapperInterface
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $unloadedAll = $forms['unloadedAll']->getData();
-        $weightOfGoods = $unloadedAll ? $this->getFullWeightOfGoods($viewData) : $forms['weightOfGoods']->getData();
+        $weightOfGoods = $forms['weightOfGoods']->getData();
+        $unloadedAll = false;
 
+        if (isset($forms['weightUnloadedAll'])) {
+            $unloadedAll = $forms['weightUnloadedAll']->getData();
+            $weightOfGoods = $unloadedAll ? null : $weightOfGoods;
+        }
+
+        $accessor->setValue($viewData, 'WeightUnloadedAll', $unloadedAll);
         $accessor->setValue($viewData, "WeightOfGoods", $weightOfGoods);
-    }
-
-    protected function getFullWeightOfGoods(Action $action): ?int {
-        $loadingAction = $action->getLoadingAction();
-        return $loadingAction ? $loadingAction->getWeightOfGoods() : null;
     }
 }

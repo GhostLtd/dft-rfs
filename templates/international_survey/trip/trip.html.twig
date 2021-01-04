@@ -92,7 +92,7 @@
         </p>
     {% else %}
         {# -------------------------------------------------------------------------------- #}
-        {#  Actions                                                                         #}
+        {#  Loading/Unloading Actions                                                       #}
         {# -------------------------------------------------------------------------------- #}
         {%- if trip.actions is empty -%}
             <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
@@ -110,20 +110,26 @@
                         {{ tableCell(action.number) }}
                         {{ tableCell('common.action.place-name'|trans({name: action.name, country: action.country|country_name})) }}
                         {{ tableCell((action.loading ? 'common.action.loading' : 'common.action.unloading')|trans) }}
-                        {{ tableCell((action.weightOfGoods|number_format) ~ 'kg') }}
 
-                        {% if action.loading %}
+                        {%- if action.loading or not action.weightUnloadedAll -%}
+                            {{ tableCell((action.weightOfGoods|number_format) ~ 'kg') }}
+                        {%- else -%}
+                            {{ tableCell('common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'})) }}
+                        {%- endif -%}
+
+
+                        {%- if action.loading -%}
                             {{ tableCell(formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther)) }}
                             {{ tableCell('-') }}
-                        {% else %}
+                        {%- else -%}
                             {%- set loadingAction = action.loadingAction -%}
                             {{ tableCell(formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)) }}
                             {{ tableCell(loadingAction.number ~ '. ' ~ loadingAction.name) }}
-                        {% endif %}
+                        {%- endif -%}
 
                         {{ tableCell(viewContents, {actions: true}) }}
                     </tr>
-                {%- endfor %}
+                {%- endfor -%}
                 </tbody>
             </table>
             {%- if showReorderLink %}

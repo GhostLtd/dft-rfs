@@ -5,6 +5,8 @@ namespace App\Form\Validator;
 use App\Entity\International\Action;
 use App\Repository\International\ActionRepository;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -40,11 +42,27 @@ class UnloadedWeightValidator extends ConstraintValidator
         }
 
         if ($value->getLoading() === false) {
+            $validator = $this->context->getValidator()->inContext($this->context);
             $loadingAction = $value->getLoadingAction();
 
-            if ($loadingAction) {
-                if ($value->getWeightOfGoods() > $loadingAction->getWeightOfGoods()) {
-                    $this->context->buildViolation($constraint->message)->atPath('weightOfGoods')->addViolation();
+            $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
+                new Range([
+                    'min' => 1,
+                    'minMessage' => $constraint->minMessage,
+                    'max' => 2000000000,
+                    'maxMessage' => $constraint->maxMessage,
+                ]),
+            ], ['Default']);
+
+            if ($validator->getViolations()->count() === 0 && !$value->getWeightUnloadedAll()) {
+                $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
+                    new NotBlank(['message' => 'common.string.not-blank'])
+                ], ['Default']);
+
+                if ($loadingAction) {
+                    if ($value->getWeightOfGoods() > $loadingAction->getWeightOfGoods()) {
+                        $this->context->buildViolation($constraint->message)->atPath('weightOfGoods')->addViolation();
+                    }
                 }
             }
         }

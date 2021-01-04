@@ -60,10 +60,15 @@ class Action
     private $goodsDescriptionOther;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"action-unloaded-weight"}, message="international.action.unloading.weight-not-null")
-     * @Assert\Range(groups={"action-unloaded-weight"}, min=1, minMessage="international.action.unloading.weight-more-than-one")
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Assert\NotNull(groups={"action-unloaded-weight"}, message="common.choice.invalid")
+     */
+    private $weightUnloadedAll;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
      *
+     * N.B. action-unloaded-weight validation is performed by UnloadedWeight class validator
      * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight"})
      * @Assert\Range(groups={"action-loaded-weight"},
      *     min=0, minMessage="common.number.positive",
@@ -245,6 +250,22 @@ class Action
         return $this;
     }
 
+    public function getWeightUnloadedAll(): ?bool
+    {
+        return $this->weightUnloadedAll;
+    }
+
+    public function setWeightUnloadedAll(?bool $weightUnloadedAll): self
+    {
+        $this->weightUnloadedAll = $weightUnloadedAll;
+
+        if ($weightUnloadedAll) {
+            $this->setWeightOfGoods(null);
+        }
+
+        return $this;
+    }
+
     // -----
 
     public function mergeActionChanges(Action $action)
@@ -254,6 +275,7 @@ class Action
         $this->setGoodsDescription($action->getGoodsDescription());
         $this->setGoodsDescriptionOther($action->getGoodsDescriptionOther());
         $this->setWeightOfGoods($action->getWeightOfGoods());
+        $this->setWeightUnloadedAll($action->getWeightUnloadedAll());
         $this->setHazardousGoodsCode($action->getHazardousGoodsCode());
         $this->setCargoTypeCode($action->getCargoTypeCode());
         $this->setLoadingAction($action->getLoadingAction());

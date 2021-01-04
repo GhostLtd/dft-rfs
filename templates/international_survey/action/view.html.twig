@@ -30,7 +30,12 @@
                     {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action.country|country_name, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
                     {{ summaryListRow('common.action.goods', goodsCopy, {(urlChange): change}) }}
                 {%- endif -%}
-                {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlChange): change}) }}
+
+                {%- if action.loading or not action.weightUnloadedAll -%}
+                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlChange): change}) }}
+                {%- else -%}
+                    {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), {(urlChange): change}) }}
+                {%- endif -%}
 
                 {%- if action.loading -%}
                     {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}

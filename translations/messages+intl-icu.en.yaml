@@ -58,6 +58,8 @@ common:
     unloading-goods-at: "Unloading {goods} at {name}, {country}"
     loaded-at: "Loaded at {name}, {country}"
     unloaded-at: "Unloaded at {name}, {country}"
+    unloaded-all: "All ({weight})"
+    fully-unloaded: "Unavailable - already fully unloaded"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -777,9 +779,8 @@ international:
         label: Weight of goods loaded
         help: The weight of goods should include any packaging or containers
     goods-weight-unloaded:
-      group:
-        label: 'Weight unloaded'
-        help: ''
+      heading: 'Weight unloaded'
+      help: ''
       unloaded-all:
         label: 'Did you unload all {weight}kg of {goods} from {place}, {country}?'
         help: ''
