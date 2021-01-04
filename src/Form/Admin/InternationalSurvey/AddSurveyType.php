@@ -21,7 +21,7 @@ class AddSurveyType extends AbstractType
             ->add('company', CompanyType::class, [
                 'label' => false,
             ])
-            ->add('referenceNumber', Gds\NumberType::class, [
+            ->add('referenceNumber', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.reference-number.label",
                 'help' => "{$translationKeyPrefix}.reference-number.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
