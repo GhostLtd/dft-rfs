@@ -64,6 +64,7 @@ class Survey
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Email(groups={"add_survey"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey"})
      */
     private $invitationEmail;
 
