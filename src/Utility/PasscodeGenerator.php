@@ -30,6 +30,10 @@ class PasscodeGenerator
 
     public function isValidPasscode($passcode, $preventRepeating = 4, $preventSequential = 4)
     {
+        if (strlen($passcode) !== 8) {
+            return false;
+        }
+
         // reject if 4 consecutive numbers same
         if ($this->hasRepeatingDigits($passcode, $preventRepeating)) {
             return false;
