@@ -16,7 +16,7 @@ class FeaturesCollector extends DataCollector
         $this->features = $features;
     }
 
-    public function collect(Request $request, Response $response)
+    public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         $this->data = [
             'features' => $this->features->getEnabledFeatures(),

@@ -38,6 +38,8 @@ class TextareaTypeTest extends FormTestCase
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 
         $formOptions = parent::mapJsonOptions($fixtureOptions);
+        $formOptions['csrf_protection'] = false;
+
         foreach ($fixtureOptions as $option => $value)
         {
             switch ($option)

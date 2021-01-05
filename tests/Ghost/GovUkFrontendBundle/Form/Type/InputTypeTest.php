@@ -58,6 +58,8 @@ class InputTypeTest extends FormTestCase
         $fixtureOptions = array_diff_key($fixtureOptions, array_fill_keys($ignoredOptions, 0));
 
         $formOptions = parent::mapJsonOptions($fixtureOptions);
+        $formOptions['csrf_protection'] = false;
+
         foreach ($fixtureOptions as $option => $value)
         {
             switch ($option)
