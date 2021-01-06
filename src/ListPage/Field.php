@@ -11,12 +11,14 @@ class Field
     protected ?array $choices;
     protected string $label;
     protected string $propertyPath;
+    protected array $cellOptions;
     protected bool $sortable;
 
-    public function __construct(string $label, string $propertyPath)
+    public function __construct(string $label, string $propertyPath, array $cellOptions = [])
     {
         $this->label = $label;
         $this->propertyPath = $propertyPath;
+        $this->cellOptions = $cellOptions;
 
         $this->type = null;
         $this->choices = null;
@@ -64,6 +66,11 @@ class Field
     public function getSortable(): bool
     {
         return $this->sortable;
+    }
+
+    public function getCellOptions(): array
+    {
+        return $this->cellOptions;
     }
 
     // -----

@@ -1,0 +1,74 @@
+{%- macro listTableStart(data, form) -%}
+    {{ form_start(form) }}
+    <table class="govuk-table list-table">
+        {{ _self.tableHeader(data, form) }}
+        <tbody class="govuk-table__body">
+{%- endmacro -%}
+
+{%- macro listTableEnd(data, form) -%}
+        </tbody>
+    </table>
+    {{ form_end(form) }}
+    {{ _self.pagination(data) }}
+{%- endmacro -%}
+
+{%- macro tableHeader(data, form) -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell %}
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        {%- for field in data.fields -%}
+            {%- set up = '<a href="' ~ execute(data.orderUrlGenerator, [field.parameterName, 'ASC']) ~
+                '" class="list-table__order--up' ~
+                (data.order == field.parameterName and data.orderDirection == 'ASC' ? ' list-table__order--active' : '') ~
+                '"></a>' -%}
+            {%- set down = '<a href="' ~ execute(data.orderUrlGenerator, [field.parameterName, 'DESC']) ~
+                '" class="list-table__order--down' ~
+                (data.order == field.parameterName and data.orderDirection == 'DESC' ? ' list-table__order--active' : '') ~
+                '"></a>' -%}
+            {%- set contents = '<div>' ~
+                (form[field.parameterName] is defined ?
+                    form_widget(form[field.parameterName]) :
+                    field.label|e) ~
+                ' ' ~ up ~ down ~ '</div>'
+            -%}
+            {{- tableCell(contents, field.cellOptions|merge({element: 'th', html: true})) -}}
+        {%- endfor -%}
+        {{- tableCell('<div>' ~ form_widget(form.buttons) ~ '</div>', {element: 'th', html: true}) -}}
+    </tr>
+    </thead>
+{%- endmacro -%}
+
+{%- macro page(page) -%}
+    <span class="govuk-visually-hidden">Page </span>{{ page }}
+{%- endmacro -%}
+
+{%- macro pagination(data) -%}
+    <nav class="govuk-pagination__container" aria-label="Pagination">
+        <div class="previous">
+            {% if data.previousUrl %}<a href="{{ data.previousUrl }}">Previous page</a>{% endif %}
+        </div>
+        <div class="govuk-pagination">
+            <ul>
+                {%- for entry in data.paginationUrls -%}
+                    {%- set page = entry[0] -%}
+                    {%- set url = entry[1] -%}
+                    {%- set isCurrent = page == data.page -%}
+                    <li{% if isCurrent %} class="govuk-pagination__active"{% endif %}>
+                        {%- if page == '...' -%}
+                            ...
+                        {%- else -%}
+                            {%- if isCurrent -%}
+                                {{ _self.page(page) }}
+                            {%- else -%}
+                                <a href="{{ url }}">{{ _self.page(page) }}</a>
+                            {%- endif -%}
+                        {%- endif -%}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="next">
+            {% if data.nextUrl %}<a href="{{ data.nextUrl }}">Next page</a>{% endif %}
+        </div>
+    </nav>
+{%- endmacro -%}

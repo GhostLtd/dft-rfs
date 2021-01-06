@@ -4,6 +4,8 @@
 namespace App\ListPage;
 
 
+use Closure;
+
 class ListPageData
 {
     protected int $page;
@@ -13,9 +15,12 @@ class ListPageData
     protected ?string $nextUrl;
     protected ?string $previousUrl;
     protected array $paginationUrls;
-    protected array $parameterNames;
+    protected Closure $orderUrlGenerator;
+    protected array $fields;
+    protected ?string $order;
+    protected ?string $orderDirection;
 
-    public function __construct(int $page, int $numPages, int $numRecords, array $entities, ?string $nextUrl, ?string $previousUrl, array $paginationUrls, array $parameterNames)
+    public function __construct(int $page, int $numPages, int $numRecords, array $entities, ?string $nextUrl, ?string $previousUrl, array $paginationUrls, array $fields, Closure $orderUrlGenerator, ?string $order, ?string $orderDirection)
     {
         $this->page = $page;
         $this->numPages = $numPages;
@@ -24,7 +29,10 @@ class ListPageData
         $this->nextUrl = $nextUrl;
         $this->previousUrl = $previousUrl;
         $this->paginationUrls = $paginationUrls;
-        $this->parameterNames = $parameterNames;
+        $this->fields = $fields;
+        $this->orderUrlGenerator = $orderUrlGenerator;
+        $this->order = $order;
+        $this->orderDirection = $orderDirection;
     }
 
     public function getPage(): int
@@ -62,8 +70,23 @@ class ListPageData
         return $this->paginationUrls;
     }
 
-    public function getParameterNames(): array
+    public function getFields(): array
     {
-        return $this->parameterNames;
+        return $this->fields;
+    }
+
+    public function getOrderUrlGenerator(): Closure
+    {
+        return $this->orderUrlGenerator;
+    }
+
+    public function getOrder(): ?string
+    {
+        return $this->order;
+    }
+
+    public function getOrderDirection(): ?string
+    {
+        return $this->orderDirection;
     }
 }

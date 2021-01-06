@@ -23,6 +23,12 @@ abstract class AbstractListPage
     protected ?array $formData;
     protected ?array $requestData;
 
+    protected ?string $routeName;
+    protected ?array $routeParams;
+
+    protected ?string $order;
+    protected ?string $orderDirection;
+
     public function __construct(EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         $this->entityManager = $entityManager;
@@ -37,20 +43,27 @@ abstract class AbstractListPage
 
     abstract protected function getEntityClass(): string;
 
-    abstract protected function getPageRouteAndParameters(): array;
+    protected function getExtraQueryParameters(): array
+    {
+        return [];
+    }
 
     public function getClearUrl(): string
     {
         return $this->getPageUrl(1, true);
     }
 
-    public function getPageUrl(int $page, bool $excludeRequestData = false): string
+    public function getPageUrl(int $page, bool $excludeRequestData = false, bool $excludeOrderData = false, array $extraData = []): string
     {
-        [$route, $params] = $this->getPageRouteAndParameters();
-        return $this->router->generate($route, array_merge(
-            $params,
+        $orderData = ($this->order && $this->orderDirection) ?
+            ['orderBy' => $this->order, 'orderDirection' => $this->orderDirection] : [];
+
+        return $this->router->generate($this->routeName, array_merge(
+            $this->routeParams,
             ['page' => $page],
-            $excludeRequestData ? [] : $this->requestData
+            $excludeRequestData ? [] : $this->requestData,
+            $excludeOrderData ? [] : $orderData,
+            $extraData,
         ));
     }
 
@@ -72,10 +85,24 @@ abstract class AbstractListPage
             throw new NotFoundHttpException();
         }
 
+        $this->routeName = $request->attributes->get('_route');
+        $this->routeParams = $request->attributes->get('_route_params');
+
+        $order = $request->query->get('orderBy', null);
+        $orderDirection = $request->query->get('orderDirection', null);
+
+        if ($order && $orderDirection && in_array($order, $this->getParameterNames()) && in_array($orderDirection, ['ASC', 'DESC'])) {
+            $this->order = $order;
+            $this->orderDirection = $orderDirection;
+        } else {
+            $this->order = null;
+            $this->orderDirection = null;
+        }
+
         $form = $this->getFiltersForm()->handleRequest($request);
         $this->formData = array_filter($form->getData() ?? [], fn($x) => $x !== null);
 
-        // Generate requestData from formData (essentially {regMark: 'wibble'} -> {filter: {regMark: 'wibble'}})
+        // Generate requestData from formData (essentially regMark='wibble' -> filter[regMark]='wibble')
         $formName = $form->getName();
         $this->requestData = [];
         foreach($this->formData as $key => $value) {
@@ -92,7 +119,7 @@ abstract class AbstractListPage
 
     protected function getItemsPerPage(): int
     {
-        return 5;
+        return 2;
     }
 
     protected function addToQueryBuilder(QueryBuilder $queryBuilder): QueryBuilder
@@ -126,7 +153,22 @@ abstract class AbstractListPage
             }
         }
 
-        return $qb->setParameters($parameters);
+        if ($this->order && $this->orderDirection) {
+            $field = $this->getFieldByParameterName($this->order);
+            $qb->addOrderBy($field->getPropertyPath(), $this->orderDirection);
+        }
+
+        return $qb->setParameters(array_merge($this->getExtraQueryParameters(), $parameters));
+    }
+
+    protected function getFieldByParameterName(string $parameterName): ?Field
+    {
+        foreach($this->getFields() as $field) {
+            if ($field->getParameterName() === $parameterName) {
+                return $field;
+            }
+        }
+        return null;
     }
 
     public function getFiltersForm(): FormInterface
@@ -167,9 +209,9 @@ abstract class AbstractListPage
 
         $paginator = new Paginator($queryBuilder);
         $numRecords = $paginator->count();
-        $numPages = ceil($numRecords / $itemsPerPage);
+        $numPages = intval(ceil($numRecords / $itemsPerPage));
 
-        if ($this->page > $numPages) {
+        if ($numRecords !== 0 && $this->page > $numPages) {
             throw new NotFoundHttpException();
         }
 
@@ -181,7 +223,25 @@ abstract class AbstractListPage
         $previousUrl = $page > 1 ? $this->getPageUrl($page - 1) : null;
         $nextUrl = $page < $numPages ? $this->getPageUrl($page + 1) : null;
 
-        return new ListPageData($page, $numPages, $numRecords, $paginator->getQuery()->execute(), $nextUrl, $previousUrl, $paginationUrls, $this->getParameterNames());
+        $orderUrlGenerator = function(string $order, string $orderDirection) {
+            return ($order === $this->order && $orderDirection === $this->orderDirection) ?
+                $this->getPageUrl(1, false, true) :
+                $this->getPageUrl(1, false, true, ['orderBy' => $order, 'orderDirection' => $orderDirection]);
+        };
+
+        return new ListPageData(
+            $page,
+            $numPages,
+            $numRecords,
+            $paginator->getQuery()->execute(),
+            $nextUrl,
+            $previousUrl,
+            $paginationUrls,
+            $this->getFields(),
+            $orderUrlGenerator,
+            $this->order,
+            $this->orderDirection,
+        );
     }
 
     protected function generatePaginationPageList(int $page, int $numPages, int $adjacents = 2): array
