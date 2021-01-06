@@ -1,0 +1,24 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    <h1 class="govuk-heading-l">Surveys</h1>
+
+    {{ listTableStart(data, form) }}
+    {% for survey in data.entities %}
+        <tr class="govuk-table__row">
+            {{ tableCell(survey.passcodeUser.username, {}) }}
+            {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
+            {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
+            {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
+            {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
+            {{ tableCell(survey.response ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
+            {{ tableCell(actionLinks({(url('admin_domestic_surveydetails', app.request.get('_route_params') | default({}) | merge({survey: survey.id}))): 'details'}), {}) }}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form) }}
+{% endblock %}

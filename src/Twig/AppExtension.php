@@ -24,6 +24,7 @@ use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
+use Closure;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use RuntimeException;
@@ -90,7 +91,8 @@ class AppExtension extends AbstractExtension
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
-            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription'])
+            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
+            new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
         ];
     }
 

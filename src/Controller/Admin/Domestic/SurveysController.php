@@ -3,8 +3,10 @@
 namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use App\ListPage\Domestic\SurveyListPage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,6 +27,27 @@ class SurveysController extends AbstractController
     {
         return $this->render('admin/domestic/surveys/index.html.twig', [
             'surveys' => $this->getDoctrine()->getRepository(Survey::class)->findByTypeWithResponseAndVehicle($type === 'ni'),
+        ]);
+    }
+
+    /**
+     * @param $type
+     * @return Response
+     * @Route("/list", name="surveys_list")
+     */
+    public function list(SurveyListPage $listPage, Request $request, string $type): Response
+    {
+        $listPage
+            ->setType($type)
+            ->handleRequest($request);
+
+        if ($listPage->isClearClicked()) {
+            return new RedirectResponse($listPage->getClearUrl());
+        }
+
+        return $this->render('admin/domestic/surveys/list.html.twig', [
+            'data' => $listPage->getData(),
+            'form' => $listPage->getFiltersForm()->createView(),
         ]);
     }
 
