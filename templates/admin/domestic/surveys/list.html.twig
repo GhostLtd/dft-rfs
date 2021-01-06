@@ -1,0 +1,82 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% macro pagination(listPageData) %}
+
+{% endmacro %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks, tag %}
+    <h1 class="govuk-heading-l">Surveys</h1>
+
+    {{ form_start(form) }}
+    <table class="govuk-table list-page-table">
+
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                {% for label, parameter in data.parameterNames %}
+                <th class="govuk-table__header">
+                    {% if form[parameter] is defined %}
+                        {{ form_widget(form[parameter]) }}
+                    {% else %}
+                        {{ label }}
+                    {% endif %}
+                </th>
+                {% endfor %}
+                <th class="govuk-table__header">
+                    {{ form_widget(form.buttons) }}
+                </th>
+            </tr>
+        </thead>
+
+{#        {{ tableHead(false, ['User', 'Start date', 'Reg Mark', 'Status', 'In Posession', 'Business nature', 'Employees', '']) }}#}
+        <tbody class="govuk-table__body">
+        {% for survey in data.entities %}
+            <tr class="govuk-table__row">
+                {{ tableCell(survey.passcodeUser.username, {}) }}
+                {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
+                {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
+                {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
+                {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
+                {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
+                {{ tableCell(survey.response ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
+                {# {{ tableCell(survey.response., {}) }} #}
+                {# {{ tableCell(survey., {}) }} #}
+                {{ tableCell(actionLinks({(url('admin_domestic_surveydetails', app.request.get('_route_params') | default({}) | merge({survey: survey.id}))): 'details'}), {}) }}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {{ form_end(form) }}
+
+    <nav class="govuk-pagination__container" aria-label="Pagination">
+        <div class="previous">
+            {% if data.previousUrl %}<a href="{{ data.previousUrl }}">Previous page</a>{% endif %}
+        </div>
+        <div class="govuk-pagination">
+            <ul>
+                {%- macro page(page) -%}
+                    <span class="govuk-visually-hidden">Page </span>{{ page }}
+                {%- endmacro -%}
+                {%- for entry in data.paginationUrls -%}
+                    {%- set page = entry[0] -%}
+                    {%- set url = entry[1] -%}
+                    {%- set isCurrent = page == data.page -%}
+                    <li{% if isCurrent %} class="govuk-pagination__active"{% endif %}>
+                        {%- if page == '...' -%}
+                            ...
+                        {%- else -%}
+                            {%- if isCurrent -%}
+                                {{ _self.page(page) }}
+                            {%- else -%}
+                                <a href="{{ url }}">{{ _self.page(page) }}</a>
+                            {%- endif -%}
+                        {%- endif -%}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="next">
+            {% if data.nextUrl %}<a href="{{ data.nextUrl }}">Next page</a>{% endif %}
+        </div>
+    </nav>
+{% endblock %}
