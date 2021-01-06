@@ -3,6 +3,7 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
+use App\Entity\BlameLoggable;
 use App\Entity\Distance;
 use App\Entity\GoodsDescriptionInterface;
 use App\Form\Validator as AppAssert;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=DayStopRepository::class)
  * @ORM\Table("domestic_day_stop")
  */
-class DayStop implements GoodsDescriptionInterface
+class DayStop implements GoodsDescriptionInterface, BlameLoggable
 {
     use StopTrait {
         setGoodsDescription as traitSetGoodsDescription;
@@ -205,4 +206,18 @@ class DayStop implements GoodsDescriptionInterface
         return $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
     }
 
+    public function getBlameLogLabel()
+    {
+        return "Day {$this->getDay()->getNumber()}/Stop {$this->getNumber()}: {$this->getOriginLocation()} to {$this->getDestinationLocation()}";
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Day::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getDay()->getId();
+    }
 }
