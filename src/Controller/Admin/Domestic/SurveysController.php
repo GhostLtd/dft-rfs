@@ -8,19 +8,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class SurveysController
- * @package App\Controller\Admin\Domestic
- *
  * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
  */
 class SurveysController extends AbstractController
 {
     /**
-     * @param $type
-     * @return Response
      * @Route("", name="surveys")
      */
     public function list(SurveyListPage $listPage, Request $request, string $type): Response
@@ -34,19 +30,21 @@ class SurveysController extends AbstractController
         }
 
         return $this->render('admin/domestic/surveys/list.html.twig', [
+            'type' => $type,
             'data' => $listPage->getData(),
             'form' => $listPage->getFiltersForm()->createView(),
         ]);
     }
 
     /**
-     * @param $type
-     * @param Survey $survey
-     * @return Response
      * @Route("/view/{survey}", name="surveydetails")
      */
     public function viewDetails($type, Survey $survey): Response
     {
+        if ($survey->getIsNorthernIreland() !== ($type === 'ni')) {
+            throw new NotFoundHttpException();
+        }
+
         return $this->render('admin/domestic/surveys/view.html.twig', [
             'survey' => $survey,
         ]);

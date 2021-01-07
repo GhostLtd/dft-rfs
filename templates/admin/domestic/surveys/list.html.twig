@@ -3,7 +3,7 @@
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    <h1 class="govuk-heading-l">Surveys</h1>
+    <h1 class="govuk-heading-l">{{ "admin.domestic.survey.title-#{type}"|trans }}</h1>
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}

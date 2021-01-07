@@ -1,11 +1,9 @@
 <?php
 
-
 namespace App\Controller\Admin\International\Survey;
 
-
+use App\Entity\International\Survey;
 use App\ListPage\International\SurveyListPage;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,16 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/irhs/surveys")
- * Class IndexController
- * @package App\Controller\Admin\International\Survey
+ * @Route("/irhs/surveys", name="admin_international_survey_")
  */
-class IndexController extends AbstractController
+class SurveyController extends AbstractController
 {
     /**
-     * @Route("")
+     * @Route("", name="list")
      */
-    public function index(SurveyListPage $listPage, Request $request): Response
+    public function list(SurveyListPage $listPage, Request $request): Response
     {
         $listPage
             ->handleRequest($request);
@@ -38,11 +34,12 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("")
-     * @Template("admin/international/surveys/view.html.twig")
+     * @Route("/view/{survey}", name="view")
      */
-    public function view()
+    public function view(Survey $survey): Response
     {
-        return [];
+        return $this->render('admin/international/surveys/view.html.twig', [
+            'survey' => $survey,
+        ]);
     }
 }
