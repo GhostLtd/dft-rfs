@@ -54,7 +54,7 @@ class SurveyResponse extends AbstractSurveyResponse
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(groups={"number_of_trips"}, message="international.survey-response.annual-international-journey-count.not-null")
-     * @Assert\Positive(message="common.number.positive", groups={"number_of_trips"})
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"number_of_trips"})
      * @Assert\Range(groups={"number_of_trips"}, max=2000000000, maxMessage="common.number.max")
      */
     private $annualInternationalJourneyCount;
