@@ -5,6 +5,7 @@ namespace App\ListPage;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -49,11 +50,7 @@ class ListPageForm extends AbstractType
             ]));
         }
 
-        $builder->add('buttons', null, [
-            'compound' => true,
-        ]);
-
-        $builder->get('buttons')
+        $builder
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Apply',
             ])
@@ -62,13 +59,17 @@ class ListPageForm extends AbstractType
                 'attr' => [
                     'class' => 'govuk-button--warning',
                 ]
-            ]);
+            ])
+            ->add('orderBy', HiddenType::class)
+            ->add('orderDirection', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'method' => 'get',
+            'csrf_protection' => false,
+            'allow_extra_fields' => true,
         ]);
 
         $resolver->setRequired('fields');
@@ -77,6 +78,6 @@ class ListPageForm extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'filter';
+        return null;
     }
 }
