@@ -185,7 +185,7 @@ class Day implements BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return "{$this->getResponse()->getSurvey()->getRegistrationMark()}: {$this->getNumber()}";
+        return "#{$this->getNumber()}";
     }
 
     public function getAssociatedEntityClass()

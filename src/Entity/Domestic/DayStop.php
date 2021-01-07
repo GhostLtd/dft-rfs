@@ -208,7 +208,7 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return "Day {$this->getDay()->getNumber()}/Stop {$this->getNumber()}: {$this->getOriginLocation()} to {$this->getDestinationLocation()}";
+        return "#{$this->getNumber()}: {$this->getOriginLocation()} to {$this->getDestinationLocation()}";
     }
 
     public function getAssociatedEntityClass()

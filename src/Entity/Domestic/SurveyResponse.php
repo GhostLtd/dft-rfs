@@ -364,8 +364,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return "{$this->getSurvey()->getRegistrationMark()} started "
-            . (!is_null($this->getSurvey()->getSurveyPeriodStart()) ? $this->getSurvey()->getSurveyPeriodStart()->format('Y-m-d') : '[unknown]');
+        return $this->getContactName();
     }
 
     public function getAssociatedEntityClass()

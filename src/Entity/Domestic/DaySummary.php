@@ -197,7 +197,7 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return "Day {$this->getDay()->getNumber()}: {$this->getOriginLocation()} to {$this->getDestinationLocation()}";
+        return "{$this->getOriginLocation()} to {$this->getDestinationLocation()}";
     }
 
     public function getAssociatedEntityClass()
