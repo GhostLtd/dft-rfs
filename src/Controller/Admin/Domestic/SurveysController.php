@@ -23,18 +23,6 @@ class SurveysController extends AbstractController
      * @return Response
      * @Route("", name="surveys")
      */
-    public function index($type): Response
-    {
-        return $this->render('admin/domestic/surveys/index.html.twig', [
-            'surveys' => $this->getDoctrine()->getRepository(Survey::class)->findByTypeWithResponseAndVehicle($type === 'ni'),
-        ]);
-    }
-
-    /**
-     * @param $type
-     * @return Response
-     * @Route("/list", name="surveys_list")
-     */
     public function list(SurveyListPage $listPage, Request $request, string $type): Response
     {
         $listPage

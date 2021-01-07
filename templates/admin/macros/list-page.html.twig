@@ -25,13 +25,15 @@
                 '" class="list-table__order--down' ~
                 (data.order == field.parameterName and data.orderDirection == 'DESC' ? ' list-table__order--active' : '') ~
                 '"></a>' -%}
+            {%- set sortFragment = field.getSortable ? (' ' ~ up ~ down) : '' -%}
+
             {%- set contents = '<div>' ~
                 (form[field.parameterName] is defined ?
                     form_widget(form[field.parameterName]) :
                     field.label|e) ~
-                ' ' ~ up ~ down ~ '</div>'
+                sortFragment ~ '</div>'
             -%}
-            {{- tableCell(contents, field.cellOptions|merge({element: 'th', html: true})) -}}
+            {{- tableCell(contents, field.getCellOptions|merge({element: 'th', html: true})) -}}
         {%- endfor -%}
         {{- tableCell('<div>' ~ form_widget(form) ~ '</div>', {element: 'th', html: true}) -}}
     </tr>

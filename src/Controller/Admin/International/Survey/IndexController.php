@@ -4,9 +4,12 @@
 namespace App\Controller\Admin\International\Survey;
 
 
-use App\Repository\International\SurveyRepository;
+use App\ListPage\International\SurveyListPage;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,15 +21,20 @@ class IndexController extends AbstractController
 {
     /**
      * @Route("")
-     * @Template("admin/international/surveys/index.html.twig")
-     * @param SurveyRepository $surveyRepository
-     * @return array
      */
-    public function index(SurveyRepository $surveyRepository)
+    public function index(SurveyListPage $listPage, Request $request): Response
     {
-        return [
-            'surveys' => $surveyRepository->findAll(),
-        ];
+        $listPage
+            ->handleRequest($request);
+
+        if ($listPage->isClearClicked()) {
+            return new RedirectResponse($listPage->getClearUrl());
+        }
+
+        return $this->render('admin/international/surveys/list.html.twig', [
+            'data' => $listPage->getData(),
+            'form' => $listPage->getFiltersForm()->createView(),
+        ]);
     }
 
     /**

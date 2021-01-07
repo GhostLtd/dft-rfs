@@ -91,7 +91,12 @@ abstract class AbstractListPage
         $order = $request->query->get('orderBy', null);
         $orderDirection = $request->query->get('orderDirection', null);
 
-        if ($order && $orderDirection && $this->getFieldByParameterName($order) !== null && in_array($orderDirection, ['ASC', 'DESC'])) {
+        if ($order &&
+            $orderDirection &&
+            ($field = $this->getFieldByParameterName($order)) !== null &&
+            $field->getSortable() &&
+            in_array($orderDirection, ['ASC', 'DESC']))
+        {
             $this->order = $order;
             $this->orderDirection = $orderDirection;
         } else {

@@ -146,6 +146,9 @@ admin:
         label: Company/Business name
         help: ''
     survey:
+      state:
+        invited: govuk-tag--grey
+        closed: govuk-tag--green
       reference-number:
         label: 'Reference number'
         help: ''
