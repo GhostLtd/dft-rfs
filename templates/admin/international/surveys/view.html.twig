@@ -1,13 +1,21 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{% block adminContent %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag, tableCell, tableHeadComplex -%}
     {%- if survey.response | default(false) -%}
-        {%- set tabs = {
-            'Contact details': 'tab-initial-details',
+        {%- set tabs = {} -%}
+
+        {%- if survey.response.noLongerActive == false -%}
+            {%- set tabs = tabs|merge({
+                'Vehicles': 'tab-vehicles',
+            }) -%}
+        {%- endif -%}
+
+        {%- set tabs = tabs|merge({
+            'Correspondence details': 'tab-correspondence',
             'Business details': 'tab-business-details',
-        } -%}
-    {% endif %}
+        }) -%}
+    {%- endif -%}
 
     <h1 class="govuk-heading-l">IRHS Survey {{ survey.referenceNumber }}</h1>
 
@@ -17,29 +25,65 @@
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
     </dl>
 
-{#    {% if is_granted('ROLE_ADMIN_FORM_USER') %}#}
+{#    {% if is_granted('ROLE_ADMIN_FORM_USER') %} #}
 {#        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {survey: survey.id}) }}">Delete survey</a>#}
 {#    {% endif %}#}
 
-        {% if tabs | default(false) %}
-        <div class="govuk-tabs" data-module="govuk-tabs">
-            {{ tabsHead(tabs) }}
+    {%- if tabs is defined -%}
+    <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+        {{ tabsHead(tabs) }}
 
-            {% if 'Contact details' in tabs | keys %}
-                <div class="govuk-tabs__panel" id="tab-initial-details">
-                    {% with {showActions: false, response: survey.response} %}
-                        {% include 'international_survey/includes/contact-details.html.twig' %}
-                    {% endwith %}
-                </div>
-            {% endif %}
+        {%- if 'Vehicles' in tabs | keys -%}
+            <div class="govuk-tabs__panel" id="tab-vehicles">
+                <h2 class="govuk-heading-m">Vehicles</h2>
 
-            {% if 'Business details' in tabs | keys %}
-                <div class="govuk-tabs__panel" id="tab-business-details">
-                    {% with {showActions: false, response: survey.response} %}
-                        {% include 'international_survey/includes/business-details.html.twig' %}
-                    {% endwith %}
-                </div>
+                {%- with {vehicles: survey.response.vehicles, survey: survey} -%}
+                    {%- include 'international_survey/includes/admin-vehicles.html.twig' -%}
+                {%- endwith -%}
+            </div>
+        {%- endif -%}
+
+        {%- if 'Correspondence details' in tabs | keys -%}
+            <div class="govuk-tabs__panel" id="tab-correspondence">
+                {%- with {showActions: false, response: survey.response} -%}
+                    {%- include 'international_survey/includes/contact-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+        {%- endif -%}
+
+        {%- if 'Business details' in tabs | keys -%}
+            <div class="govuk-tabs__panel" id="tab-business-details">
+                {%- with {showActions: false, response: survey.response} -%}
+                    {%- include 'international_survey/includes/business-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+        {%- endif -%}
+    </div>
+    {%- endif -%}
+
+    {%- if vehicle is defined -%}
+        <h2 class="govuk-heading-l">Trips for {{ vehicle.registrationMark }}</h2>
+
+        {%- for trip in vehicle.trips -%}
+            <h3 class="govuk-heading-m admin-surveys__trip-header">Trip #{{ loop.index }}</h3>
+            {%- with {showActions: false, trip: trip} -%}
+                {%- include "international_survey/includes/trip.html.twig" -%}
+            {%- endwith -%}
+
+            {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
+                {# Not implemented #}
+            {% else %}
+                <h4 class="govuk-heading-s">Consignment actions</h4>
+                {%- if trip.actions is not empty -%}
+                    {%- with {showActions: false, trip:trip, bottomMargin: 9, isAdmin: true} -%}
+                        {%- include "international_survey/includes/actions.html.twig" -%}
+                    {%- endwith -%}
+                {%- else -%}
+                    <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
+                {%- endif -%}
             {% endif %}
-        </div>
-        {% endif %}
-{% endblock %}
+        {%- else -%}
+            <div class="govuk-body">No trips</div>
+        {%- endfor %}
+    {%- endif -%}
+{%- endblock -%}

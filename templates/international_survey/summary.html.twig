@@ -19,26 +19,7 @@
 
         <h2 class="page-heading__heading govuk-heading-l">{{ 'international.summary.vehicles'|trans }}</h2>
 
-        <table class="govuk-table">
-            {{ tableHead(false, ['international.summary.registration', 'international.summary.type-and-configuration', 'international.summary.status', '']) }}
-            <tbody class="govuk-table__body">
-            {%- for vehicle in vehicles %}
-            <tr class="govuk-table__row">
-                {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
-                {%- set viewContents = actionLinks({(url(vehicleRoute, {vehicleId: vehicle.id})): 'common.actions.view'|trans}) -%}
-
-                {{ tableCell(vehicle.formattedRegistrationMark) }}
-                {{ tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) }}
-                {{ tableCell('-') }}
-                {{ tableCell(viewContents, {actions: true}) }}
-            </tr>
-            {% else %}
-            <tr class="govuk-table__row">
-                {{ tableCell('international.summary.no-vehicles'|trans, {colSpan: 4}) }}
-            </tr>
-            {%- endfor %}
-            </tbody>
-        </table>
+        {%- include "international_survey/includes/vehicles.html.twig" -%}
 
         <p class="govuk-body">
             {%- set addVehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleAddController::START_ROUTE') -%}

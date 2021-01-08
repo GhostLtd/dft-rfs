@@ -1,0 +1,22 @@
+<h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.consignments'|trans }}</a></h2>
+<table class="govuk-table">
+    {{ tableHead(false, ['common.consignment.goods', 'common.consignment.weight', 'common.consignment.place-of-loading', 'common.consignment.place-of-unloading', '']) }}
+    <tbody class="govuk-table__body">
+    {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ConsignmentController::SUMMARY_ROUTE') -%}
+    {%- for consignment in trip.consignments %}
+        <tr class="govuk-table__row">
+            {%- set viewContents = actionLinks({(url(viewRoute, {tripId: trip.id, consignmentId: consignment.id})): 'common.actions.view'|trans}) -%}
+            {%- macro loadingCell(stop) -%}
+                {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
+                {{ tableCell('common.consignment.loaded-at'|trans({number: stop.number, name: stop.name, country: stop.country|country_name})) }}
+            {%- endmacro -%}
+
+            {{ tableCell(consignment | formatGoodsDescription ) }}
+            {{ tableCell((consignment.weightOfGoodsCarried|number_format) ~ 'kg') }}
+            {{ _self.loadingCell(consignment.loadingStop) }}
+            {{ _self.loadingCell(consignment.unloadingStop) }}
+            {{ tableCell(viewContents, {actions: true}) }}
+        </tr>
+    {%- endfor %}
+    </tbody>
+</table>
