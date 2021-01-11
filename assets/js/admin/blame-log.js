@@ -24,7 +24,8 @@
 
                     renderjson
                         .set_show_to_level(1)
-                        .set_icons('+', '-');
+                        // .set_icons('+', '-')
+                        ;
                     propertiesRow.querySelector('td').insertAdjacentElement('beforeend', renderjson(properties));
                 }
 
