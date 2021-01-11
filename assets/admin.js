@@ -9,7 +9,9 @@
  */
 'use strict'
 
-import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
+import './app';
+
+// import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
 import './styles/admin/admin.scss';
 require('./js/admin/blame-log');
 

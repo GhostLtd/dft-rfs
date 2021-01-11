@@ -92,6 +92,8 @@ Encore
         to: 'images/[name].[ext]',
     })
 ;
+
+// Since we're actually running two websites, there's no advantage to split chunking (actually disadvantage)
 if (!Encore.isProduction()) {
     Encore.splitEntryChunks();
 }
