@@ -9,7 +9,7 @@
  */
 'use strict'
 
-// any SCSS you import will output into a single css file (app.css in this case)
+import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
 import './styles/admin/admin.scss';
 require('./js/admin/blame-log');
 
