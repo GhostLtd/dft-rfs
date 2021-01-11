@@ -1,7 +1,7 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {% block adminContent %}
-    {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHead, tableCell, actionList %}
+    {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHead, tableCell, actionLinks %}
     <table class="govuk-table govuk-table__blamelog">
         {{ tableHead('caption', ['class', 'description', 'action', 'user', 'date', 'properties']) }}
         <tbody class="govuk-table__body">
@@ -13,12 +13,11 @@
                     {{ tableCell(item.userId) }}
                     {{ tableCell(item.date | date('Y-m-d H:i')) }}
                     {{ tableCell(
-                        actionList({
-                            url: 'javascript:',
+                        actionLinks({'javascript:': {
                             label: 'view',
                             class: 'js-govuk-blamelog--properties',
                             attributes: {'data-properties': item.propertiesForDisplay | json_encode}
-                        }),
+                        }}),
                         {html: true}
                     ) }}
                 </tr>

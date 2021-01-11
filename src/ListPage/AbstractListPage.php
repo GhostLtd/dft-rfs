@@ -117,7 +117,7 @@ abstract class AbstractListPage
 
     protected function getItemsPerPage(): int
     {
-        return 2;
+        return 20;
     }
 
     protected function addToQueryBuilder(QueryBuilder $queryBuilder): QueryBuilder

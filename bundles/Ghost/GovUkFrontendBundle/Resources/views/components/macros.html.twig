@@ -1,6 +1,6 @@
-{% macro attributes(attr) %}
-    {{ block('attributes', 'form_div_layout.html.twig') }}
-{% endmacro %}
+{% macro attributes(attr) -%}
+    {{- block('attributes', 'form_div_layout.html.twig') -}}
+{%- endmacro %}
 
 {% macro breadcrumbs(params) -%}
     {%- strict false -%}
@@ -74,66 +74,45 @@
     </div>
 {%- endmacro %}
 
-{% macro actionList(actions) %}
-    {%- if actions.url | default(false) -%}
-        {{- _self.action(actions) -}}
+{% macro actionLinks(actionLinks, options) %}
+    {%- if actionLinks | length == 1 -%}
+        {{- _self.actionLink((actionLinks | keys) | first, actionLinks | first) -}}
     {%- else -%}
-        <ul class="govuk-summary-list__actions-list">
-            {%- for action in actions -%}
-                <li class="govuk-summary-list__actions-list-item">
-                    {{- _self.action(action) -}}
-                </li>
-            {%- endfor -%}
-        </ul>
-    {% endif %}
-{% endmacro %}
-
-{% macro action(action) -%}
-    {%- if action | default(false) -%}
+        {% set options = options | default({}) %}
         {%- with {
-            attributes: action.attributes | default({}) | merge({
-                class: "govuk-link "
-                    ~ ((action.hidden | default(false)) ? "govuk-visually-hidden " : "")
-                    ~ (action.class | default("")),
-                href: action.url
-            }),
+            cssBlock: options.cssBlock | default('govuk-summary-list')
         } -%}
-            <a {{ _self.attributes(attributes) }} }>{{- action.label | trans }}</a>
+            <ul class="{{ cssBlock }}__actions-list">
+                {%- for url, action in actionLinks -%}
+                    <li class="{{ cssBlock }}__actions-list-item">
+                        {{- _self.actionLink(url, action) -}}
+                    </li>
+                {%- endfor -%}
+            </ul>
         {%- endwith -%}
     {%- endif -%}
 {% endmacro %}
 
-{% macro actionLinks(actionLinks) %}
-    {% deprecated "The actionLinks macro is deprecated. Use the actionList instead." %}
-    {%- if actionLinks | length == 1 -%}
-        {{- _self.actionLink((actionLinks | keys) | first, actionLinks | first) -}}
-    {%- else -%}
-        <ul class="govuk-summary-list__actions-list">
-            {%- for url, action in actionLinks -%}
-                <li class="govuk-summary-list__actions-list-item">
-                    {{- _self.actionLink(url, action) -}}
-                </li>
-            {%- endfor -%}
-        </ul>
-    {%- endif -%}
-{% endmacro %}
-
-{# action can either be string with action, or array [action, actionHidden] #}
-{% macro actionLink(url, action) -%}
-    {% deprecated "The actionLink macro is deprecated. Use the actionLinkList instead." %}
 {# action can either be string with action, or array [action, actionHidden, (options)] #}
-{% macro actionLink(url, action, options) -%}
+{% macro actionLink(url, action) -%}
     {%- if action | default(false) -%}
-        {%- if action is iterable -%}
-            {%- set options = action[2] | default({}) -%}
-            {%- set actionHidden = action[1] -%}
-            {%- set action = action[0] -%}
-        {%- else -%}
-            {%- set options = {} -%}
-        {%- endif -%}
-        <a class="govuk-link{{ options.class is defined ? " #{options.class}" : '' }}" href="{{ url }}">
-            {{- action | trans }}{% if actionHidden | default(false) %}<span class="govuk-visually-hidden"> {{ actionHidden | trans }}</span>{% endif -%}
-        </a>
+        {# if action is iterable, it contains the options #}
+        {% set options = action is iterable ? action : {} %}
+        {%- with {
+            action: action is iterable ? action.label : action,
+            attributes: options.attributes | default({}) | merge({
+                class: (
+                    "govuk-link "
+                    ~ (options.class | default(""))
+                ) | trim,
+                href: url
+            }),
+        } -%}
+            <a {{- _self.attributes(attributes) -}}>
+                {{- action | trans -}}
+                {%- if options.srHiddenSuffix | default(false) %}<span class="govuk-visually-hidden"> {{ options.srHiddenSuffix | trans }}</span>{% endif -%}
+            </a>
+        {%- endwith -%}
     {%- endif -%}
 {%- endmacro %}
 
