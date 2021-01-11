@@ -74,7 +74,37 @@
     </div>
 {%- endmacro %}
 
+{% macro actionList(actions) %}
+    {%- if actions.url | default(false) -%}
+        {{- _self.action(actions) -}}
+    {%- else -%}
+        <ul class="govuk-summary-list__actions-list">
+            {%- for action in actions -%}
+                <li class="govuk-summary-list__actions-list-item">
+                    {{- _self.action(action) -}}
+                </li>
+            {%- endfor -%}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro action(action) -%}
+    {%- if action | default(false) -%}
+        {%- with {
+            attributes: action.attributes | default({}) | merge({
+                class: "govuk-link "
+                    ~ ((action.hidden | default(false)) ? "govuk-visually-hidden " : "")
+                    ~ (action.class | default("")),
+                href: action.url
+            }),
+        } -%}
+            <a {{ _self.attributes(attributes) }} }>{{- action.label | trans }}</a>
+        {%- endwith -%}
+    {%- endif -%}
+{% endmacro %}
+
 {% macro actionLinks(actionLinks) %}
+    {% deprecated "The actionLinks macro is deprecated. Use the actionList instead." %}
     {%- if actionLinks | length == 1 -%}
         {{- _self.actionLink((actionLinks | keys) | first, actionLinks | first) -}}
     {%- else -%}
@@ -90,6 +120,7 @@
 
 {# action can either be string with action, or array [action, actionHidden] #}
 {% macro actionLink(url, action) -%}
+    {% deprecated "The actionLink macro is deprecated. Use the actionLinkList instead." %}
     {%- if action | default(false) -%}
         {%- if action is iterable -%}
             {%- set actionHidden = action[1] -%}
@@ -136,19 +167,19 @@
     {% set baseClass = ((element == 'td') ? 'govuk-table__cell' : 'govuk-table__header') %}
     {%- with {
         options: (options | default({})) | merge({
+        }),
+        attributes: options.attributes | default({}) | merge({
+            scope: (element == 'th') ? (options.scope | default('col')) : false,
             class: ("#{baseClass} "
                 ~ ((options.actions | default(false)) or (options.numeric | default(false)) ? "#{baseClass}--numeric " : '')
                 ~ (options.class | default(''))
             ) | trim,
-            colSpan: options.colSpan | default(false),
-            rowSpan: options.rowSpan | default(false),
-        })
+            colspan: options.colSpan | default(false),
+            rowspan: options.rowSpan | default(false),
+        }),
     } -%}
-    <{{ element }} class="{{ options.class }}"
-            {%- if element == 'th' %}scope="{{ options.scope | default('col') }}"{% endif -%}
-            {%- if options.colSpan %} colspan="{{ options.colSpan }}"{% endif -%}
-            {%- if options.rowSpan %} rowspan="{{ options.rowSpan }}"{% endif -%}
-    >
+
+    <{{ element }} {{ _self.attributes(attributes) }}>
             {%- if options.translate | default(false) -%}
                 {{ options.content | default(value) | trans | nl2br }}
             {%- elseif options.html | default(false) -%}

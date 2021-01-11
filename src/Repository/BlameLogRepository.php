@@ -5,11 +5,48 @@ namespace App\Repository;
 use App\Entity\BlameLog\BlameLog;
 use App\Entity\BlameLoggable;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 
 class BlameLogRepository extends EntityRepository
 {
     public const INITIAL_ENTRY_COUNT = 5;
+
+    public function getAllLogsForEntity(BlameLoggable $entity, $maxDepth = 3)
+    {
+        $relatedIds = $ids = [
+            $entity->getId(),
+        ];
+
+        for ($depth = 1; $depth <= $maxDepth; $depth++)
+        {
+            $relatedIds = $this->getRelatedIdsFromLog($relatedIds);
+            $ids = array_merge($ids, $relatedIds);
+        }
+
+        return $this->createQueryBuilder('blame_log')
+            ->select('blame_log')
+            ->where('blame_log.entityId IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('blame_log.date', 'asc')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    protected function getRelatedIdsFromLog(array $entityIds)
+    {
+        $result = $this->createQueryBuilder('blame_log')
+            ->select('blame_log.entityId')
+            ->distinct()
+            ->andWhere('blame_log.associatedId IN (:assocId)')
+            ->setParameters([
+                'assocId' => $entityIds,
+            ])
+            ->getQuery()
+            ->getArrayResult();
+        return array_column($result, 'entityId');
+    }
 
     /**
      * @param $class

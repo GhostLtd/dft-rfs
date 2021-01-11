@@ -131,6 +131,17 @@ class BlameLog
         return $this->properties;
     }
 
+    public function getPropertiesForDisplay(): ?array
+    {
+        switch($this->type) {
+            case self::TYPE_INSERT :
+                return array_map(function($a){return $a[1];}, $this->properties);
+//            case self::TYPE_UPDATE :
+//                return array_map(function($a){return [$a[0] => $a[1]];}, $this->properties);
+        }
+        return $this->properties;
+    }
+
     public function setProperties(?array $properties)
     {
         $this->properties = $properties;

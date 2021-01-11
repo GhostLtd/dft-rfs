@@ -2,8 +2,11 @@
 
 namespace App\Controller\Admin\Domestic;
 
+use App\Entity\BlameLog\BlameLog;
 use App\Entity\Domestic\Survey;
 use App\ListPage\Domestic\SurveyListPage;
+use App\Repository\BlameLogRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,4 +66,21 @@ class SurveysController extends AbstractController
             'survey' => $survey,
         ]);
     }
+
+    /**
+     * @param EntityManagerInterface $blameLogEntityManager
+     * @param $type
+     * @param Survey $survey
+     * @return Response
+     * @Route("/view/{survey}/audit-log", name="surveylogs")
+     */
+    public function viewLog(EntityManagerInterface $blameLogEntityManager, $type, Survey $survey): Response
+    {
+        $blameLogRepository = $blameLogEntityManager->getRepository(BlameLog::class);
+        return $this->render('admin/domestic/surveys/log.html.twig', [
+            'survey' => $survey,
+            'log' => $blameLogRepository->getAllLogsForEntity($survey),
+        ]);
+    }
+
 }

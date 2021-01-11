@@ -1,0 +1,29 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHead, tableCell, actionList %}
+    <table class="govuk-table govuk-table__blamelog">
+        {{ tableHead('caption', ['class', 'description', 'action', 'user', 'date', 'properties']) }}
+        <tbody class="govuk-table__body">
+            {% for item in log %}
+                <tr class="govuk-table__row">
+                    {{ tableCell(item.class | replace({'App\\Entity\\Domestic\\': ''})) }}
+                    {{ tableCell(item.description) }}
+                    {{ tableCell(item.type) }}
+                    {{ tableCell(item.userId) }}
+                    {{ tableCell(item.date | date('Y-m-d H:i')) }}
+                    {{ tableCell(
+                        actionList({
+                            url: 'javascript:',
+                            label: 'view',
+                            class: 'js-govuk-blamelog--properties',
+                            attributes: {'data-properties': item.propertiesForDisplay | json_encode}
+                        }),
+                        {html: true}
+                    ) }}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
