@@ -3,13 +3,10 @@
 @import "login";
 @import "menu";
 @import "pagination";
+@import "surveys";
 @import "blame-log";
 
 .govuk-summary-list__row.access-code .govuk-summary-list__value {
   font-family: monospace;
   font-size: 140%;
-}
-
-.admin-surveys__trip-header {
-  border-bottom: 4px solid govuk-colour('mid-grey');
 }

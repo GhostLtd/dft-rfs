@@ -1,8 +1,0 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
-{%- from 'macros.html.twig' import displayAxleConfiguration -%}
-{%- set showActions = showActions ?? true -%}
-
-<dl class="govuk-summary-list govuk-!-margin-bottom-9">
-    {{- row(showActions, 'international.summary.registration', vehicle.registrationMark, {('#'): 'common.actions.view'}) -}}
-    {{- row(showActions, 'international.summary.type-and-configuration', displayAxleConfiguration(vehicle.axleConfiguration), {('#'): 'common.actions.view'}) -}}
-</dl>

@@ -2,7 +2,6 @@
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
-{%- set vehicleRoute = constant('App\\Controller\\Admin\\International\\Survey\\SurveyController::VEHICLE_ROUTE') -%}
 
 <table class="govuk-table govuk-!-margin-bottom-9">
     {{- tableHeadComplex(false, {
@@ -29,8 +28,7 @@
             {{- tableCell("#{vehicle.carryingCapacity|number_format}kg", {numeric: true}) -}}
             {%- if showActions -%}
                 {%- set viewContents = actionLinks({
-                    (url(vehicleRoute, {survey: survey.id, vehicle: vehicle.id}) ~ '#trips'): 'View trips',
-                    ('#'): 'common.actions.change'|trans,
+                    ('#' ~ vehicle.id): ['View', false, {class: 'govuk-link--no-visited-state'}],
                 }) -%}
                 {{- tableCell(viewContents, {actions: true}) -}}
             {%- endif -%}
