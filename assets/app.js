@@ -10,7 +10,7 @@
 'use strict'
 
 import * as gds from 'govuk-frontend';
-import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
+// import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
 import accessibleAutocomplete from 'accessible-autocomplete';
 import 'accessible-autocomplete/dist/accessible-autocomplete.min.css';
 
@@ -25,6 +25,7 @@ for(var i=0; i<autocompleteElements.length; i++) {
 
 // any SCSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
+// import './styles/bundles.scss';
 
 
 /*
