@@ -50,7 +50,7 @@ abstract class AbstractListPage
 
     public function getClearUrl(): string
     {
-        return $this->getPageUrl(1, true);
+        return $this->getPageUrl(1, true, true);
     }
 
     public function getPageUrl(int $page, bool $excludeRequestData = false, bool $excludeOrderData = false, array $extraData = []): string
@@ -60,10 +60,10 @@ abstract class AbstractListPage
 
         return $this->router->generate($this->routeName, array_merge(
             $this->routeParams,
-            ['page' => $page],
             $excludeRequestData ? [] : $this->requestData,
             $excludeOrderData ? [] : $orderData,
             $extraData,
+            ['page' => $page],
         ));
     }
 
@@ -91,7 +91,12 @@ abstract class AbstractListPage
         $order = $request->query->get('orderBy', null);
         $orderDirection = $request->query->get('orderDirection', null);
 
-        if ($order && $orderDirection && in_array($order, $this->getParameterNames()) && in_array($orderDirection, ['ASC', 'DESC'])) {
+        if ($order &&
+            $orderDirection &&
+            ($field = $this->getFieldByParameterName($order)) !== null &&
+            $field->getSortable() &&
+            in_array($orderDirection, ['ASC', 'DESC']))
+        {
             $this->order = $order;
             $this->orderDirection = $orderDirection;
         } else {
@@ -101,19 +106,12 @@ abstract class AbstractListPage
 
         $form = $this->getFiltersForm()->handleRequest($request);
         $this->formData = array_filter($form->getData() ?? [], fn($x) => $x !== null);
-
-        // Generate requestData from formData (essentially regMark='wibble' -> filter[regMark]='wibble')
-        $formName = $form->getName();
-        $this->requestData = [];
-        foreach($this->formData as $key => $value) {
-            $name = "{$formName}[{$key}]";
-            $this->requestData[$name] = $value;
-        }
+        $this->requestData = array_filter($this->formData, fn($key) => !in_array($key, ['orderBy', 'orderDirection']), ARRAY_FILTER_USE_KEY);
     }
 
     public function isClearClicked(): bool
     {
-        $clear = $this->getFiltersForm()->get('buttons')->get('clear');
+        $clear = $this->getFiltersForm()->get('clear');
         return $clear instanceof SubmitButton && $clear->isClicked();
     }
 
@@ -163,12 +161,8 @@ abstract class AbstractListPage
 
     protected function getFieldByParameterName(string $parameterName): ?Field
     {
-        foreach($this->getFields() as $field) {
-            if ($field->getParameterName() === $parameterName) {
-                return $field;
-            }
-        }
-        return null;
+        $matchingFields = array_filter($this->getFields(), fn(Field $field) => $field->getParameterName() === $parameterName);
+        return count($matchingFields) === 1 ? current($matchingFields) : null;
     }
 
     public function getFiltersForm(): FormInterface
@@ -182,20 +176,6 @@ abstract class AbstractListPage
         }
 
         return $form;
-    }
-
-    public function getParameterNames(): array
-    {
-        static $parameterNames;
-
-        if (!$parameterNames) {
-            $parameterNames = [];
-            foreach($this->getFields() as $field) {
-                $parameterNames[$field->getLabel()] = $field->getParameterName();
-            }
-        }
-
-        return $parameterNames;
     }
 
     public function getData(): ListPageData

@@ -113,6 +113,8 @@ admin:
     password.label: Password
   domestic:
     survey:
+      title-ni: CSRGT (NI) Surveys
+      title-gb: CSRGT (GB) Surveys
       state:
         invited: govuk-tag--grey
         closed: govuk-tag--green
@@ -146,6 +148,10 @@ admin:
         label: Company/Business name
         help: ''
     survey:
+      title: IRHS Surveys
+      state:
+        invited: govuk-tag--grey
+        closed: govuk-tag--green
       reference-number:
         label: 'Reference number'
         help: ''
