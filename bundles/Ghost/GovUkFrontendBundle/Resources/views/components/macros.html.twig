@@ -88,14 +88,17 @@
     {%- endif -%}
 {% endmacro %}
 
-{# action can either be string with action, or array [action, actionHidden] #}
-{% macro actionLink(url, action) -%}
+{# action can either be string with action, or array [action, actionHidden, (options)] #}
+{% macro actionLink(url, action, options) -%}
     {%- if action | default(false) -%}
         {%- if action is iterable -%}
+            {%- set options = action[2] | default({}) -%}
             {%- set actionHidden = action[1] -%}
             {%- set action = action[0] -%}
+        {%- else -%}
+            {%- set options = {} -%}
         {%- endif -%}
-        <a class="govuk-link" href="{{ url }}">
+        <a class="govuk-link{{ options.class is defined ? " #{options.class}" : '' }}" href="{{ url }}">
             {{- action | trans }}{% if actionHidden | default(false) %}<span class="govuk-visually-hidden"> {{ actionHidden | trans }}</span>{% endif -%}
         </a>
     {%- endif -%}

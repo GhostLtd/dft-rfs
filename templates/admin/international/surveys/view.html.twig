@@ -17,7 +17,7 @@
         }) -%}
     {%- endif -%}
 
-    <h1 class="govuk-heading-l">IRHS Survey {{ survey.referenceNumber }}</h1>
+    <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
@@ -61,29 +61,43 @@
     </div>
     {%- endif -%}
 
-    {%- if vehicle is defined -%}
-        <h2 class="govuk-heading-l">Trips for {{ vehicle.registrationMark }}</h2>
+    {% if survey.response and (survey.response.vehicles is not empty) %}
+        {% for vehicle in survey.response.vehicles %}
+            <div class="govuk-!-padding-bottom-4">
+                <h2 class="govuk-heading-l admin-surveys__vehicle-header" id="{{ vehicle.id }}">Vehicle — {{ vehicle.registrationMark|formatRegMark }}
+                    <a class="admin-surveys__back-to-top govuk-link--no-visited-state" href="#top">Back to top</a>
+                </h2>
 
-        {%- for trip in vehicle.trips -%}
-            <h3 class="govuk-heading-m admin-surveys__trip-header">Trip #{{ loop.index }}</h3>
-            {%- with {showActions: false, trip: trip} -%}
-                {%- include "international_survey/includes/trip.html.twig" -%}
-            {%- endwith -%}
+                <h3 class="govuk-heading-m">Vehicle details</h3>
 
-            {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
-                {# Not implemented #}
-            {% else %}
-                <h4 class="govuk-heading-s">Consignment actions</h4>
-                {%- if trip.actions is not empty -%}
-                    {%- with {showActions: false, trip:trip, bottomMargin: 9, isAdmin: true} -%}
-                        {%- include "international_survey/includes/actions.html.twig" -%}
+                {% with {vehicle: vehicle, showActions: false} %}
+                    {% include "international_survey/includes/admin-vehicle.html.twig" %}
+                {% endwith %}
+
+                <h3 class="govuk-heading-m">Trips</h3>
+
+                {%- for trip in vehicle.trips -%}
+                    <h3 class="govuk-heading-s admin-surveys__trip-header">Trip #{{ loop.index }}</h3>
+                    {%- with {showActions: false, trip: trip} -%}
+                        {%- include "international_survey/includes/trip.html.twig" -%}
                     {%- endwith -%}
+
+                    {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
+                        {# Not implemented #}
+                    {% else %}
+                        <h4 class="govuk-heading-s">Consignment actions</h4>
+                        {%- if trip.actions is not empty -%}
+                            {%- with {showActions: false, trip:trip, bottomMargin: 9, isAdmin: true} -%}
+                                {%- include "international_survey/includes/actions.html.twig" -%}
+                            {%- endwith -%}
+                        {%- else -%}
+                            <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
+                        {%- endif -%}
+                    {% endif %}
                 {%- else -%}
-                    <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
-                {%- endif -%}
-            {% endif %}
-        {%- else -%}
-            <div class="govuk-body">No trips</div>
-        {%- endfor %}
+                    <div class="govuk-body">No trips</div>
+                {%- endfor %}
+            </div>
+        {%- endfor -%}
     {%- endif -%}
 {%- endblock -%}
