@@ -40,4 +40,4 @@ document.addEventListener('click', function (event) {
 }, false);
 */
 
-console.log('js');
+// console.log('js');

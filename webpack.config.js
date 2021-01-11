@@ -6,6 +6,10 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
+// if (!Encore.isProduction()) {
+//     Encore.splitEntryChunks(true);
+// }
+
 Encore
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
@@ -30,11 +34,12 @@ Encore
     //.addEntry('page2', './assets/page2.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    .splitEntryChunks()
+    // .splitEntryChunks()
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
-    .enableSingleRuntimeChunk()
+    // .enableSingleRuntimeChunk()
+    .disableSingleRuntimeChunk()
 
     /*
      * FEATURE CONFIG
@@ -87,5 +92,9 @@ Encore
         to: 'images/[name].[ext]',
     })
 ;
+if (!Encore.isProduction()) {
+    Encore.splitEntryChunks();
+}
+
 
 module.exports = Encore.getWebpackConfig();
