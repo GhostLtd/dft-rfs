@@ -27,45 +27,40 @@ class DaySummary implements GoodsDescriptionInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight"})
-     * @Assert\Range(groups={"day-summary.goods-weight"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.goods-weight"})
+     * @Assert\Range(groups={"day-summary.goods-weight"}, max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoodsLoaded;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight"})
-     * @Assert\Range(groups={"day-summary.goods-weight"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.goods-weight"})
+     * @Assert\Range(groups={"day-summary.goods-weight"}, max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoodsUnloaded;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
-     * @Assert\Range(groups={"day-summary.number-of-stops"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops"})
+     * @Assert\Range(groups={"day-summary.number-of-stops"}, max=2000000000, maxMessage="common.number.max")
      */
     private $numberOfStopsLoading;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
-     * @Assert\Range(groups={"day-summary.number-of-stops"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops"})
+     * @Assert\Range(groups={"day-summary.number-of-stops"}, max=2000000000, maxMessage="common.number.max")
      */
     private $numberOfStopsUnloading;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops"})
-     * @Assert\Range(groups={"day-summary.number-of-stops"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops"})
+     * @Assert\Range(groups={"day-summary.number-of-stops"}, max=2000000000, maxMessage="common.number.max")
      */
     private $numberOfStopsLoadingAndUnloading;
 

@@ -27,4 +27,21 @@ class SurveyRepository extends ServiceEntityRepository
 
         parent::__construct($registry, Survey::class);
     }
+
+    public function findWithVehiclesAndTrips(string $id)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s, r, v, t, a, p')
+            ->leftJoin('s.response', 'r')
+            ->leftJoin('r.vehicles', 'v')
+            ->leftJoin('v.trips', 't')
+            ->leftJoin('t.actions', 'a')
+            ->leftJoin('s.passcodeUser', 'p')
+            ->where('s.id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -1,0 +1,46 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- from 'macros.html.twig' import displayAxleConfiguration -%}
+
+{%- set showActions = showActions ?? true -%}
+{%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
+
+{%- set params = {tripId: trip.id} -%}
+{%- set urlDateChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DATES', params) -%}
+{%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_OUTBOUND_PORTS', params) -%}
+{%- set urlReturnChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_RETURN_PORTS', params) -%}
+{%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DISTANCE', params) -%}
+{%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED', params) -%}
+{%- set change = 'common.actions.change'|trans -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {{ row(showActions, 'international.trip.summary.dates',
+        trip.outboundDate == trip.returnDate ?
+        trip.outboundDate|date('d/m/Y') :
+        ('international.trip.summary.date-until-date'|trans({
+            'from': trip.outboundDate|date('d/m/Y'),
+            'until': trip.returnDate|date('d/m/Y'),
+        })),
+    {(urlDateChange): change}) }}
+    {{ row(showActions, 'international.trip.summary.outbound-journey',
+        'international.trip.summary.origin-to-destination'|trans({
+            'origin': trip.outboundUkPort|capitalize,
+            'destination': trip.outboundForeignPort|capitalize,
+        }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.outboundCargoState)|trans|lower ~ ")",
+    {(urlOutboundChange): change}) }}
+    {{ row(showActions, 'international.trip.summary.return-journey',
+        'international.trip.summary.origin-to-destination'|trans({
+            'origin': trip.returnForeignPort|capitalize,
+            'destination': trip.returnUkPort|capitalize,
+        }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
+    {(urlReturnChange): change}) }}
+    {{ row(showActions, 'international.trip.summary.distance',
+        ("common.distance.#{trip.roundTripDistance.unit}" |
+        trans({value: trip.roundTripDistance.value|number_format})
+    ), {(urlDistanceChange): change}) }}
+    {{ row(showActions, 'international.trip.summary.countries-transitted', trip.allCountriesTransitted|default('-'), {(urlCountriesTransittedChange): change}) }}
+
+    {%- if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') and trip.stops is not empty -%}
+        {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
+        {{ row(showActions, 'international.trip.summary.stops', trip.stops | formatStops, {(url(stopsRoute, {tripId: trip.id})): change}) }}
+    {%- endif -%}
+</dl>

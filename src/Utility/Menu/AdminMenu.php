@@ -51,8 +51,8 @@ class AdminMenu implements MenuInterface
             new MenuDivider(),
 
             new RoleMenuItem('international', 'menu.international.root', null, [
-                new RoleMenuItem('surveys', 'menu.international.surveys', $this->router->generate('app_admin_international_survey_index_index'), [], []),
-                new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('app_admin_international_survey_add_add'), [], []),
+                new RoleMenuItem('survey', 'menu.international.surveys', $this->router->generate('admin_international_survey_list'), [], []),
+                new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('admin_international_survey_add'), [], []),
             ]),
             new MenuDivider(),
 

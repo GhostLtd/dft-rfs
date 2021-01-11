@@ -28,9 +28,8 @@ class DayStop implements GoodsDescriptionInterface
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\NotNull(message="common.number.not-null", groups={"goods-weight"})
-     * @Assert\Range(groups={"goods-weight"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero (message="common.number.positive", groups={"goods-weight"})
+     * @Assert\Range(groups={"goods-weight"}, max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoodsCarried;
 

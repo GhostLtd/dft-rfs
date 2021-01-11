@@ -4,4 +4,4 @@
 <p class="govuk-body">{{ app.user.domesticSurvey.surveyPeriodStart | date('F j, Y') }}</p>
 
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Vehicle</h3>
-<p class="govuk-body">{{ app.user.domesticSurvey.registrationMark }}</p>
+<p class="govuk-body">{{ app.user.domesticSurvey.registrationMark | formatRegMark }}</p>

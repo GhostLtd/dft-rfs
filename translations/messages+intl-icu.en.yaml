@@ -113,6 +113,8 @@ admin:
     password.label: Password
   domestic:
     survey:
+      title-ni: CSRGT (NI) Surveys
+      title-gb: CSRGT (GB) Surveys
       state:
         invited: govuk-tag--grey
         closed: govuk-tag--green
@@ -146,6 +148,10 @@ admin:
         label: Company/Business name
         help: ''
     survey:
+      title: IRHS Surveys
+      state:
+        invited: govuk-tag--grey
+        closed: govuk-tag--green
       reference-number:
         label: 'Reference number'
         help: ''
@@ -848,9 +854,9 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
-      action: Loading/Unloading Actions
+      action: Consignment actions
       actions:
-        add-action: Add action
+        add-action: Add consignment action
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle details
@@ -877,6 +883,9 @@ international:
       countries-transitted: Countries transitted
       from-to: From {source} to {destination}
       stops: Stops
+      help:
+        action-what: What is a consignment action?
+        action-explanation: "Please record each place where consignments were loaded or unloaded, in the order that they occurred."
 
     dates:
       heading: Dates of Trip

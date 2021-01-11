@@ -1,0 +1,42 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableCell, actionLinks -%}
+{%- from 'macros.html.twig' import displayAxleConfiguration -%}
+
+{%- set showActions = showActions ?? true -%}
+
+<table class="govuk-table govuk-!-margin-bottom-9">
+    {{- tableHeadComplex(false, {
+        ('international.summary.registration'): {},
+        ('international.summary.status'): {},
+        ('international.summary.type-and-configuration'): {},
+        ('common.vehicle.operation-type'): {},
+        ('common.vehicle.body-type'): {},
+        ('common.vehicle.gross-weight'): {numeric: true},
+        ('common.vehicle.carrying-capacity'): {numeric: true},
+        (''): {},
+    }) -}}
+    {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
+    {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
+    <tbody class="govuk-table__body">
+    {%- for vehicle in vehicles -%}
+        <tr class="govuk-table__row">
+            {{- tableCell(vehicle.formattedRegistrationMark) -}}
+            {{- tableCell('-') -}}
+            {{- tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) -}}
+            {{- tableCell(choiceLabel(operationChoices, vehicle.operationType) | trans) -}}
+            {{- tableCell(choiceLabel(bodyChoices, vehicle.bodyType) | trans) -}}
+            {{- tableCell("#{vehicle.grossWeight|number_format}kg", {numeric: true}) -}}
+            {{- tableCell("#{vehicle.carryingCapacity|number_format}kg", {numeric: true}) -}}
+            {%- if showActions -%}
+                {%- set viewContents = actionLinks({
+                    ('#' ~ vehicle.id): ['View', false, {class: 'govuk-link--no-visited-state'}],
+                }) -%}
+                {{- tableCell(viewContents, {actions: true}) -}}
+            {%- endif -%}
+        </tr>
+    {%- else -%}
+        <tr class="govuk-table__row">
+            {{- tableCell('international.summary.no-vehicles'|trans, {colSpan: showActions ? 8 : 7}) -}}
+        </tr>
+    {%- endfor -%}
+    </tbody>
+</table>

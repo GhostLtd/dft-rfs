@@ -66,6 +66,10 @@ class PasscodeGeneratorTest extends TestCase
             [false, "97555597"],
             [false, "55559797"],
             [false, "97975555"],
+
+            // zero pad
+            [false, "1030507"],
+            [true, "01030507"],
         ];
     }
 

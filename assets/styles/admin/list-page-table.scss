@@ -1,0 +1,50 @@
+@import "~govuk-frontend/govuk/base";
+
+.list-table {
+  .govuk-table__header {
+    vertical-align: middle;
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
+    .govuk-button {
+      margin-bottom: 0;
+    }
+
+    color: govuk-colour('dark-grey');
+
+    input,
+    input[type="text"]::placeholder,
+    select {
+      font-weight: bold;
+      color: govuk-colour('dark-grey');
+
+      border-color: govuk-colour('mid-grey');
+    }
+
+    &.govuk-table__header--numeric {
+      input,
+      select {
+        text-align: right;
+      }
+    }
+
+    a {
+      color: govuk-colour('mid-grey');
+      margin-left: govuk-spacing(1);
+
+      &.list-table__order--up {
+        @include govuk-shape-arrow('up', 0.8rem);
+      }
+
+      &.list-table__order--down {
+        @include govuk-shape-arrow('down', 0.8rem);
+      }
+
+      &.list-table__order--active {
+        color: govuk-colour('blue');
+      }
+    }
+  }
+}

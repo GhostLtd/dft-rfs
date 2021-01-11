@@ -70,9 +70,8 @@ class Action
      *
      * N.B. action-unloaded-weight validation is performed by UnloadedWeight class validator
      * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight"})
-     * @Assert\Range(groups={"action-loaded-weight"},
-     *     min=0, minMessage="common.number.positive",
-     *     max=2000000000, maxMessage="common.number.max")
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"action-loaded-weight"})
+     * @Assert\Range(groups={"action-loaded-weight"}, max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoods;
 

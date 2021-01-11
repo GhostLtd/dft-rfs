@@ -25,7 +25,7 @@ class PasscodeUser implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="integer", length=10, unique=true)
+     * @ORM\Column(type="string", length=10, unique=true)
      */
     private $username;
 
@@ -55,12 +55,12 @@ class PasscodeUser implements UserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?int
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername(int $username): self
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
 

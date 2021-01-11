@@ -6,6 +6,7 @@ use App\Entity\International\Action;
 use App\Repository\International\ActionRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
@@ -46,9 +47,10 @@ class UnloadedWeightValidator extends ConstraintValidator
             $loadingAction = $value->getLoadingAction();
 
             $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
+                new Positive([
+                    'message' => 'common.number.positive',
+                ]),
                 new Range([
-                    'min' => 1,
-                    'minMessage' => $constraint->minMessage,
                     'max' => 2000000000,
                     'maxMessage' => $constraint->maxMessage,
                 ]),

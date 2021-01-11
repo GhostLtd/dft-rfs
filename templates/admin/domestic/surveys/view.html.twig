@@ -1,7 +1,7 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {% block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {
             'Contact details': 'tab-initial-details',
@@ -19,6 +19,7 @@
 
 {#    <h2 class="govuk-heading-m">Survey details</h2>#}
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}

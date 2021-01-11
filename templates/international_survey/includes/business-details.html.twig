@@ -1,0 +1,24 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- set showActions = showActions ?? true -%}
+
+{%- set urlNumberOfTrips = wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS') -%}
+{%- set urlActivityStatus = wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS') -%}
+{%- set urlBusinessDetails = wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS') -%}
+
+<h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
+    {{- row(showActions, 'international.correspondence-and-business-details.number-of-trips', response.annualInternationalJourneyCount|number_format, {(urlNumberOfTrips): 'common.actions.change'}) -}}
+    {%- if response.isNoLongerActive -%}
+        {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
+        {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
+
+        {{- row(showActions, 'international.correspondence-and-business-details.still-active', activityStatus, {(urlActivityStatus): 'common.actions.change'}) -}}
+    {%- else -%}
+        {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
+        {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
+
+        {{- row(showActions, 'international.correspondence-and-business-details.nature-of-business', response.businessNature, {(urlBusinessDetails): 'common.actions.change'}) -}}
+        {{- row(showActions, 'international.correspondence-and-business-details.number-of-employees', numberOfEmployees | default('-'), {(urlBusinessDetails): 'common.actions.change'}) -}}
+    {%- endif -%}
+</dl>

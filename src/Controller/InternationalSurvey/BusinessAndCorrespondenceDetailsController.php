@@ -13,6 +13,7 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @Security("is_granted('EDIT', user.getInternationalSurvey())")
@@ -33,7 +34,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
     /**
      * @Route("/international-survey/correspondence-and-business-details", name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user, Request $request, EntityManagerInterface $entityManager) {
+    public function index(UserInterface $user, Request $request, EntityManagerInterface $entityManager, WorkflowInterface $internationalSurveyStateMachine) {
         $survey = $this->getSurvey($user);
 
         if (!$survey->isInitialDetailsComplete()) {
@@ -72,6 +73,12 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
                 if ($canSubmitAsNoLongerActive) {
                     // Not trading or domestic journeys only
                     $survey->setSubmissionDate(new DateTime());
+                    $response->setInitialDetailsSignedOff(true);
+
+                    if ($internationalSurveyStateMachine->can($survey, 'complete'))
+                    {
+                        $internationalSurveyStateMachine->apply($survey, 'complete');
+                    }
                 } elseif (!$detailsComplete) {
                     // Confirming that correspondence + business details look ok
                     $response->setInitialDetailsSignedOff(true);
