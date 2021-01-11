@@ -284,10 +284,10 @@ class Action implements BlameLoggable
     public function getBlameLogLabel()
     {
         return $this->getLoading()
-            ? "Loading: {$this->weightOfGoods}kg {$this->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}"
-            : $this->getWeightUnloadedAll()
+            ? ("Loading: {$this->weightOfGoods}kg {$this->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
+            : ($this->getWeightUnloadedAll()
                 ? "Unloading: All {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}"
-                : "Unloading: {$this->weightOfGoods}kg {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}"
+                : "Unloading: {$this->weightOfGoods}kg {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
         ;
     }
 
