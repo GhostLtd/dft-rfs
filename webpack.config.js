@@ -6,9 +6,10 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
-// if (!Encore.isProduction()) {
-//     Encore.splitEntryChunks(true);
-// }
+// Since we're actually running two websites, there's no advantage to split chunking (actually disadvantage)
+if (!Encore.isProduction()) {
+    Encore.splitEntryChunks();
+}
 
 Encore
     // directory where compiled assets will be stored
@@ -92,11 +93,5 @@ Encore
         to: 'images/[name].[ext]',
     })
 ;
-
-// Since we're actually running two websites, there's no advantage to split chunking (actually disadvantage)
-if (!Encore.isProduction()) {
-    Encore.splitEntryChunks();
-}
-
 
 module.exports = Encore.getWebpackConfig();
