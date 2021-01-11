@@ -18,5 +18,7 @@
         "build": "encore production --progress",
         "deploy-build": "encore production"
     },
-    "dependencies": {}
+    "dependencies": {
+        "renderjson": "^1.4.0"
+    }
 }

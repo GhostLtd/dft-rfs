@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\BlameLoggable;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey
+class Survey implements BlameLoggable
 {
     use SurveyTrait;
 
@@ -120,5 +121,21 @@ class Survey
     public function isInitialDetailsComplete(): bool
     {
         return !!$this->response;
+    }
+
+    public function getBlameLogLabel()
+    {
+        return "{$this->getReferenceNumber()} started "
+            . (!is_null($this->getSurveyPeriodStart()) ? $this->getSurveyPeriodStart()->format('Y-m-d') : '[unknown]');
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return null;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return null;
     }
 }

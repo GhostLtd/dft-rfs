@@ -3,6 +3,7 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Address;
+use App\Entity\BlameLoggable;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
-class Survey
+class Survey implements BlameLoggable
 {
     use SurveyTrait;
 
@@ -212,4 +213,19 @@ class Survey
         return $this;
     }
 
+    public function getBlameLogLabel()
+    {
+        return "{$this->registrationMark} started "
+            . (!is_null($this->getSurveyPeriodStart()) ? $this->getSurveyPeriodStart()->format('Y-m-d') : '[unknown]');
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return null;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return null;
+    }
 }

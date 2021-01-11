@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
 use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ActionRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @AppAssert\CanBeUnloaded(groups={"action-place"})
  * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight"})
  */
-class Action
+class Action implements BlameLoggable
 {
     /**
      * @ORM\Id
@@ -278,5 +279,25 @@ class Action
         $this->setHazardousGoodsCode($action->getHazardousGoodsCode());
         $this->setCargoTypeCode($action->getCargoTypeCode());
         $this->setLoadingAction($action->getLoadingAction());
+    }
+
+    public function getBlameLogLabel()
+    {
+        return $this->getLoading()
+            ? ("Loading: {$this->weightOfGoods}kg {$this->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
+            : ($this->getWeightUnloadedAll()
+                ? "Unloading: All {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}"
+                : "Unloading: {$this->weightOfGoods}kg {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
+        ;
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Trip::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getTrip()->getId();
     }
 }

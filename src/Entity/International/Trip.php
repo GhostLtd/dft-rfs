@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\BlameLoggable;
 use App\Entity\Distance;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\TripRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ORM\Entity(repositoryClass=TripRepository::class)
  * @ORM\Table(name="international_trip")
  */
-class Trip
+class Trip implements BlameLoggable
 {
     /**
      * @ORM\Id
@@ -556,5 +557,21 @@ class Trip
         foreach($this->actions as $action) {
             $action->setNumber($count++);
         }
+    }
+
+    public function getBlameLogLabel()
+    {
+        return "{$this->getOutboundUkPort()} -> {$this->getOutboundForeignPort()} on "
+            . (!is_null($this->getOutboundDate()) ? $this->getOutboundDate()->format('Y-m-d') : '[unknown]');
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Vehicle::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getVehicle()->getId();
     }
 }

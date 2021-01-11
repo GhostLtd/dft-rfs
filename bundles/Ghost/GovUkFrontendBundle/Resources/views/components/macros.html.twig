@@ -1,6 +1,6 @@
-{% macro attributes(attr) %}
-    {{ block('attributes', 'form_div_layout.html.twig') }}
-{% endmacro %}
+{% macro attributes(attr) -%}
+    {{- block('attributes', 'form_div_layout.html.twig') -}}
+{%- endmacro %}
 
 {% macro breadcrumbs(params) -%}
     {%- strict false -%}
@@ -74,33 +74,45 @@
     </div>
 {%- endmacro %}
 
-{% macro actionLinks(actionLinks) %}
+{% macro actionLinks(actionLinks, options) %}
     {%- if actionLinks | length == 1 -%}
         {{- _self.actionLink((actionLinks | keys) | first, actionLinks | first) -}}
     {%- else -%}
-        <ul class="govuk-summary-list__actions-list">
-            {%- for url, action in actionLinks -%}
-                <li class="govuk-summary-list__actions-list-item">
-                    {{- _self.actionLink(url, action) -}}
-                </li>
-            {%- endfor -%}
-        </ul>
+        {% set options = options | default({}) %}
+        {%- with {
+            cssBlock: options.cssBlock | default('govuk-summary-list')
+        } -%}
+            <ul class="{{ cssBlock }}__actions-list">
+                {%- for url, action in actionLinks -%}
+                    <li class="{{ cssBlock }}__actions-list-item">
+                        {{- _self.actionLink(url, action) -}}
+                    </li>
+                {%- endfor -%}
+            </ul>
+        {%- endwith -%}
     {%- endif -%}
 {% endmacro %}
 
 {# action can either be string with action, or array [action, actionHidden, (options)] #}
-{% macro actionLink(url, action, options) -%}
+{% macro actionLink(url, action) -%}
     {%- if action | default(false) -%}
-        {%- if action is iterable -%}
-            {%- set options = action[2] | default({}) -%}
-            {%- set actionHidden = action[1] -%}
-            {%- set action = action[0] -%}
-        {%- else -%}
-            {%- set options = {} -%}
-        {%- endif -%}
-        <a class="govuk-link{{ options.class is defined ? " #{options.class}" : '' }}" href="{{ url }}">
-            {{- action | trans }}{% if actionHidden | default(false) %}<span class="govuk-visually-hidden"> {{ actionHidden | trans }}</span>{% endif -%}
-        </a>
+        {# if action is iterable, it contains the options #}
+        {% set options = action is iterable ? action : {} %}
+        {%- with {
+            action: action is iterable ? action.label : action,
+            attributes: options.attributes | default({}) | merge({
+                class: (
+                    "govuk-link "
+                    ~ (options.class | default(""))
+                ) | trim,
+                href: url
+            }),
+        } -%}
+            <a {{- _self.attributes(attributes) -}}>
+                {{- action | trans -}}
+                {%- if options.srHiddenSuffix | default(false) %}<span class="govuk-visually-hidden"> {{ options.srHiddenSuffix | trans }}</span>{% endif -%}
+            </a>
+        {%- endwith -%}
     {%- endif -%}
 {%- endmacro %}
 
@@ -139,19 +151,19 @@
     {% set baseClass = ((element == 'td') ? 'govuk-table__cell' : 'govuk-table__header') %}
     {%- with {
         options: (options | default({})) | merge({
+        }),
+        attributes: options.attributes | default({}) | merge({
+            scope: (element == 'th') ? (options.scope | default('col')) : false,
             class: ("#{baseClass} "
                 ~ ((options.actions | default(false)) or (options.numeric | default(false)) ? "#{baseClass}--numeric " : '')
                 ~ (options.class | default(''))
             ) | trim,
-            colSpan: options.colSpan | default(false),
-            rowSpan: options.rowSpan | default(false),
-        })
+            colspan: options.colSpan | default(false),
+            rowspan: options.rowSpan | default(false),
+        }),
     } -%}
-    <{{ element }} class="{{ options.class }}"
-            {%- if element == 'th' %}scope="{{ options.scope | default('col') }}"{% endif -%}
-            {%- if options.colSpan %} colspan="{{ options.colSpan }}"{% endif -%}
-            {%- if options.rowSpan %} rowspan="{{ options.rowSpan }}"{% endif -%}
-    >
+
+    <{{ element }} {{ _self.attributes(attributes) }}>
             {%- if options.translate | default(false) -%}
                 {{ options.content | default(value) | trans | nl2br }}
             {%- elseif options.html | default(false) -%}

@@ -47,8 +47,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
         if (is_null($formWizard->getSubject())) {
             $vehicle = (new Vehicle())
-                ->setRegistrationMark($survey->getRegistrationMark());
-            $surveyResponse = $survey->getResponse() ?? (new SurveyResponse())->setVehicle($vehicle);
+                ->setRegistrationMark($survey->getRegistrationMark())
+                ->setResponse($surveyResponse = $survey->getResponse() ?? (new SurveyResponse()))
+            ;
             $surveyResponse->setSurvey($survey);
             $formWizard->setSubject($surveyResponse);
         } else {

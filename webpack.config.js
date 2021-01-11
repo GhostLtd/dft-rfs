@@ -6,6 +6,11 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
+// Since we're actually running two websites, there's no advantage to split chunking (actually disadvantage)
+if (!Encore.isProduction()) {
+    Encore.splitEntryChunks();
+}
+
 Encore
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
@@ -30,11 +35,12 @@ Encore
     //.addEntry('page2', './assets/page2.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    .splitEntryChunks()
+    // .splitEntryChunks()
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
-    .enableSingleRuntimeChunk()
+    // .enableSingleRuntimeChunk()
+    .disableSingleRuntimeChunk()
 
     /*
      * FEATURE CONFIG

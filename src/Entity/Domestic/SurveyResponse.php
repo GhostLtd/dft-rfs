@@ -3,6 +3,7 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Address;
+use App\Entity\BlameLoggable;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
 use App\Repository\Domestic\SurveyResponseRepository;
@@ -17,7 +18,7 @@ use App\Form\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
  * @ORM\Table("domestic_survey_response")
  */
-class SurveyResponse extends AbstractSurveyResponse
+class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 {
     const IN_POSSESSION_YES = 'yes';
     const IN_POSSESSION_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
@@ -124,7 +125,7 @@ class SurveyResponse extends AbstractSurveyResponse
     private $survey;
 
     /**
-     * @ORM\OneToOne(targetEntity=Vehicle::class, cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Vehicle::class, inversedBy="response", cascade={"persist"})
      * @Assert\Valid(groups={
      *     "vehicle_axle_configuration",
      *     "vehicle_body_type",
@@ -361,4 +362,18 @@ class SurveyResponse extends AbstractSurveyResponse
         return false;
     }
 
+    public function getBlameLogLabel()
+    {
+        return $this->getContactName();
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Survey::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getSurvey()->getId();
+    }
 }

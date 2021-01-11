@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\BlameLoggable;
 use App\Repository\International\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=CompanyRepository::class)
  * @ORM\Table(name="international_company")
  */
-class Company
+class Company implements BlameLoggable
 {
     /**
      * @ORM\Id
@@ -137,5 +138,20 @@ class Company
         $this->samplingGroup = $samplingGroup;
 
         return $this;
+    }
+
+    public function getBlameLogLabel()
+    {
+        return "{$this->getBusinessName()}";
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return null;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return null;
     }
 }

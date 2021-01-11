@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsTrait;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ConsignmentRepository::class)
  * @ORM\Table(name="international_consignment")
  */
-class Consignment implements GoodsDescriptionInterface
+class Consignment implements GoodsDescriptionInterface, BlameLoggable
 {
     /**
      * @ORM\Id
@@ -159,5 +160,20 @@ class Consignment implements GoodsDescriptionInterface
         $this->trip = $trip;
 
         return $this;
+    }
+
+    public function getBlameLogLabel()
+    {
+        return $this->getGoodsDescriptionOther() ?? $this->getGoodsDescription();
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Trip::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getTrip()->getId();
     }
 }

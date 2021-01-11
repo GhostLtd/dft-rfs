@@ -3,10 +3,14 @@
  *
  * We recommend including the built version of this JavaScript file
  * (and its CSS file) in your base layout (base.html.twig).
+ *
+ * Coding standards...
+ * https://gds-way.cloudapps.digital/manuals/programming-languages/js.html
  */
 'use strict'
 
 import * as gds from 'govuk-frontend';
+// import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
 import accessibleAutocomplete from 'accessible-autocomplete';
 import 'accessible-autocomplete/dist/accessible-autocomplete.min.css';
 
@@ -21,6 +25,7 @@ for(var i=0; i<autocompleteElements.length; i++) {
 
 // any SCSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
+// import './styles/bundles.scss';
 
 
 /*
@@ -36,4 +41,4 @@ document.addEventListener('click', function (event) {
 }, false);
 */
 
-console.log('js');
+// console.log('js');

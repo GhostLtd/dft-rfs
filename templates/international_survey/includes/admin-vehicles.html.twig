@@ -28,7 +28,7 @@
             {{- tableCell("#{vehicle.carryingCapacity|number_format}kg", {numeric: true}) -}}
             {%- if showActions -%}
                 {%- set viewContents = actionLinks({
-                    ('#' ~ vehicle.id): ['View', false, {class: 'govuk-link--no-visited-state'}],
+                    ('#' ~ vehicle.id): {label: 'View', class: 'govuk-link--no-visited-state'},
                 }) -%}
                 {{- tableCell(viewContents, {actions: true}) -}}
             {%- endif -%}

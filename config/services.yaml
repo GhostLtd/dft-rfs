@@ -20,6 +20,7 @@ services:
         bind:
             $appEnvironment: '%env(APP_ENV)%'
             $frontendHostname: '%frontend_hostname%'
+            $blameLogEntityManager: '@doctrine.orm.blame_log_entity_manager'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

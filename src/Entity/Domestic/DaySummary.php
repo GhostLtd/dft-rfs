@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\BlameLoggable;
 use App\Entity\Distance;
 use App\Entity\GoodsDescriptionInterface;
 use App\Repository\Domestic\DaySummaryRepository;
@@ -13,7 +14,7 @@ use App\Form\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
  * @ORM\Table("domestic_day_summary")
  */
-class DaySummary implements GoodsDescriptionInterface
+class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 {
     use StopTrait;
 
@@ -192,5 +193,20 @@ class DaySummary implements GoodsDescriptionInterface
         $this->day = $day;
 
         return $this;
+    }
+
+    public function getBlameLogLabel()
+    {
+        return "{$this->getOriginLocation()} to {$this->getDestinationLocation()}";
+    }
+
+    public function getAssociatedEntityClass()
+    {
+        return Day::class;
+    }
+
+    public function getAssociatedEntityId()
+    {
+        return $this->getDay()->getId();
     }
 }
