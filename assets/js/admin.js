@@ -12,6 +12,6 @@
 import './common';
 
 import '../styles/admin.scss';
-require('./admin/blame-log');
+import './admin/blame-log';
 
 GOVUK.rfsBlameLog.initAll();
