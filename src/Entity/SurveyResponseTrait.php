@@ -16,37 +16,37 @@ trait SurveyResponseTrait
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"business_details"}, message="common.survey-response.business-nature.not-blank")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"business_details"})
+     * @Assert\NotBlank(groups={"business_details", "admin_business_details"}, message="common.survey-response.business-nature.not-blank")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"business_details", "admin_business_details"})
      */
     private $businessNature;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"contact_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details"})
+     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
     private $contactName;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
-     * @Assert\NotBlank(message="common.telephone.not-blank", groups={"contact_details"})
-     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"contact_details"})
+     * @Assert\NotBlank(message="common.telephone.not-blank", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
     private $contactTelephone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"contact_details"})
-     * @Assert\Email(message="common.email.invalid", groups={"contact_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details"})
+     * @Assert\NotBlank(message="common.email.not-blank", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Email(message="common.email.invalid", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
     private $contactEmail;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"business_details"})
-     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"business_details", "admin_business_details"})
+     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details", "admin_business_details"})
      */
     private $numberOfEmployees;
 

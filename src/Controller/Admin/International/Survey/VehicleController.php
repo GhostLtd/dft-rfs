@@ -7,6 +7,7 @@ use App\Form\Admin\InternationalSurvey\VehicleType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,14 +29,17 @@ class VehicleController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $entityManager->flush();
+                $submit = $form->get('submit');
+                if ($submit instanceof SubmitButton && $submit->isClicked()) {
+                    $entityManager->flush();
+                }
                 return new RedirectResponse(
                     $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $vehicle->getSurveyResponse()->getSurvey()->getId()]).
                     "#{$vehicle->getId()}");
             }
         }
 
-        return $this->render('admin/international/vehicle/view.html.twig', [
+        return $this->render('admin/international/vehicle/edit.html.twig', [
             'vehicle' => $vehicle,
             'form' => $form->createView(),
         ]);

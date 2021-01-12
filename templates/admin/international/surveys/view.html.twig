@@ -45,17 +45,25 @@
 
         {%- if 'Correspondence details' in tabs | keys -%}
             <div class="govuk-tabs__panel" id="tab-correspondence">
-                {%- with {showActions: false, response: survey.response} -%}
+                {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
                     {%- include 'international_survey/includes/contact-details.html.twig' -%}
                 {%- endwith -%}
+
+                <div>
+                    <a class="govuk-button" href="{{ path('admin_international_survey_correspondence_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> correspondence details</span></a>
+                </div>
             </div>
         {%- endif -%}
 
         {%- if 'Business details' in tabs | keys -%}
             <div class="govuk-tabs__panel" id="tab-business-details">
-                {%- with {showActions: false, response: survey.response} -%}
+                {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
                     {%- include 'international_survey/includes/business-details.html.twig' -%}
                 {%- endwith -%}
+
+                <div>
+                    <a class="govuk-button" href="{{ path('admin_international_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
+                </div>
             </div>
         {%- endif -%}
     </div>

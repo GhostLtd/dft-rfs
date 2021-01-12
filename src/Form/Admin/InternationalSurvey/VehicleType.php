@@ -59,6 +59,10 @@ class VehicleType extends AbstractType
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
+            ])
+            ->add('cancel', Gds\ButtonType::class, [
+                'label' => 'Cancel',
+                'attr' => ['class' => 'govuk-button--secondary'],
             ]);
     }
 
