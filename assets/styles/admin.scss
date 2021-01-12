@@ -1,0 +1,15 @@
+//@import '../../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle';
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+
+@import "admin/container";
+@import "admin/list-page-table";
+@import "admin/login";
+@import "admin/menu";
+@import "admin/pagination";
+@import "admin/surveys";
+@import "admin/blame-log";
+
+.govuk-summary-list__row.access-code .govuk-summary-list__value {
+  font-family: monospace;
+  font-size: 140%;
+}

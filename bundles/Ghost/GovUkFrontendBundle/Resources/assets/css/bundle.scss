@@ -1,6 +1,5 @@
 // Point directly at the assets in node_modules - webpack can resolve this
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
-
 @import "~govuk-frontend/govuk/all.scss";
 
 @import "govuk-button";

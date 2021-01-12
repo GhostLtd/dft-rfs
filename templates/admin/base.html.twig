@@ -10,12 +10,10 @@
 {% endblock %}
 
 {% block head -%}
-    {{ parent() }}
     {{ encore_entry_link_tags('admin') }}
 {%- endblock %}
 
 {% block bodyEnd %}
-    {{ parent() }}
     {{ encore_entry_script_tags('admin') }}
 {% endblock %}
 
