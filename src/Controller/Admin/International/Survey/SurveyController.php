@@ -39,8 +39,8 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/view/{survey}", name=self::VIEW_ROUTE)
-     * @Entity("survey", expr="repository.findWithVehiclesAndTrips(survey)")
+     * @Route("/view/{surveyId}", name=self::VIEW_ROUTE)
+     * @Entity("survey", expr="repository.findWithVehiclesAndTrips(surveyId)")
      */
     public function view(Survey $survey): Response
     {

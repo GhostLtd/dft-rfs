@@ -15,7 +15,7 @@
             {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
             {{ tableCell((survey.response and survey.response.numberOfEmployees) ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
-            {{ tableCell(actionLinks({(url('admin_international_survey_view', {survey: survey.id})): 'details'}), {}) }}
+            {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

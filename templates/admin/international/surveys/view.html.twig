@@ -74,6 +74,10 @@
                     {% include "international_survey/includes/admin-vehicle.html.twig" %}
                 {% endwith %}
 
+                <div class="govuk-!-margin-bottom-5">
+                    <a class="govuk-button" href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit vehicle<span class="govuk-visually-hidden"> {{ vehicle.registrationMark|formatRegMark }}</span></a>
+                </div>
+
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}

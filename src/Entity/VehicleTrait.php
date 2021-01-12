@@ -18,52 +18,52 @@ trait VehicleTrait
 
     /**
      * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank(groups={"vehicle_registration"}, message="common.vehicle.vehicle-registration.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_registration", "admin_vehicle"}, message="common.vehicle.vehicle-registration.not-blank")
      */
     private $registrationMark;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.gross-weight.not-blank")
-     * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight"})
-     * @Assert\Range(groups={"vehicle_weight"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\NotBlank(groups={"vehicle_weight", "admin_vehicle"}, message="common.vehicle.gross-weight.not-blank")
+     * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight", "admin_vehicle"})
+     * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, max=2000000000, maxMessage="common.number.max")
      */
     private $grossWeight;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_weight"}, message="common.vehicle.carrying-capacity.not-blank")
-     * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight"})
-     * @Assert\Range(groups={"vehicle_weight"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\NotBlank(groups={"vehicle_weight", "admin_vehicle"}, message="common.vehicle.carrying-capacity.not-blank")
+     * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight", "admin_vehicle"})
+     * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, max=2000000000, maxMessage="common.number.max")
      */
     private $carryingCapacity;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_operation_type"}, message="common.vehicle.operation-type.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_operation_type", "admin_vehicle"}, message="common.vehicle.operation-type.not-blank")
      */
     private $operationType;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_trailer_configuration"}, message="common.vehicle.trailer-configuration.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_trailer_configuration", "admin_vehicle"}, message="common.vehicle.trailer-configuration.not-blank")
      */
     private $trailerConfiguration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_axle_configuration"}, message="common.vehicle.axle-configuration.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_axle_configuration", "admin_vehicle"}, message="common.vehicle.axle-configuration.not-blank")
      */
     private $axleConfiguration;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_body_type"}, message="common.vehicle.body-type.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_body_type", "admin_vehicle"}, message="common.vehicle.body-type.not-blank")
      */
     private $bodyType;
 
     /**
-     * @Assert\Callback(groups={"vehicle_weight"})
+     * @Assert\Callback(groups={"vehicle_weight", "admin_vehicle"})
      */
     public function validateWeight(ExecutionContextInterface $context) {
         if ($this->carryingCapacity !== null && $this->carryingCapacity >= $this->grossWeight) {
@@ -152,6 +152,12 @@ trait VehicleTrait
 
     public function setAxleConfiguration(?int $axleConfiguration): self
     {
+        if ($axleConfiguration === null) {
+            $this->trailerConfiguration = null;
+        } else {
+            $this->trailerConfiguration = intval($axleConfiguration / 100) * 100;
+        }
+
         $this->axleConfiguration = $axleConfiguration;
 
         return $this;
