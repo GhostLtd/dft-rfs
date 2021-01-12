@@ -122,7 +122,15 @@ class AppExtension extends AbstractExtension
         }
 
         $separator = $addNewlines ? ",\n": ", ";
-        return implode($separator, array_filter([$address->getLine1(), $address->getLine2(), $address->getLine3(), $address->getLine4(), $address->getPostcode()]));
+        return implode($separator, array_filter([
+            $address->getLine1(),
+            $address->getLine2(),
+            $address->getLine3(),
+            $address->getLine4(),
+            method_exists($address, 'getLine5') ? $address->getLine5() : null,
+            method_exists($address, 'getLine6') ? $address->getLine6() : null,
+            $address->getPostcode(),
+        ]));
     }
 
     function formatGoodsTransferDetails($stop, $loadingOrUnloading, $nonBlankPrefix = '') {

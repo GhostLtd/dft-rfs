@@ -15,30 +15,41 @@ class Address
         return implode(", ", array_filter([$this->line1, $this->line2, $this->line3, $this->line4, $this->postcode]));
     }
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $line1;
+    public function toArray()
+    {
+        return [
+            'line1' => $this->line1,
+            'line2' => $this->line2,
+            'line3' => $this->line3,
+            'line4' => $this->line4,
+            'postcode' => $this->postcode,
+        ];
+    }
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $line2;
+    protected $line1;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $line3;
+    protected $line2;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $line4;
+    protected $line3;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $line4;
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
      */
-    private $postcode;
+    protected $postcode;
 
     public function getLine1(): ?string
     {

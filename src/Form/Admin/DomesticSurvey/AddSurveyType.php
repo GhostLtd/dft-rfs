@@ -4,6 +4,7 @@ namespace App\Form\Admin\DomesticSurvey;
 
 use App\Entity\Domestic\Survey;
 use App\Form\AddressType;
+use App\Form\LongAddressType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,7 +33,7 @@ class AddSurveyType extends AbstractType
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('invitationAddress', AddressType::class, [
+            ->add('invitationAddress', LongAddressType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-address.label",
                 'help' => "{$translationKeyPrefix}.invitation-address.help",
                 'label_attr' => ['class' => 'govuk-label--s'],

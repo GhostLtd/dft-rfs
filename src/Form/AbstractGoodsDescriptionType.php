@@ -13,15 +13,6 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $translationKeyPrefix = "{$options['translation_entity_key']}.goods-description";
-        $builder
-            ->add('goodsDescriptionFieldset', Gds\FieldsetType::class, [
-                'label' => "{$translationKeyPrefix}.goods-description.label",
-                'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => "{$translationKeyPrefix}.goods-description.help",
-                'help_html' => true,
-            ])
-        ;
 
         $goodsChoiceOptions = AbstractGoodsDescription::GOODS_DESCRIPTION_CHOICES;
         foreach ($goodsChoiceOptions as $k=>$v) {
@@ -36,11 +27,15 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
             unset($choices[array_search(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY, $choices)]);
         }
 
-        $builder->get('goodsDescriptionFieldset')
+        $builder
             ->add('goodsDescription', Gds\ChoiceType::class, [
                 'choices' => $choices,
                 'choice_options' => $goodsChoiceOptions,
-                'label' => false,
+                'label' => "{$translationKeyPrefix}.goods-description.label",
+                'label_is_page_heading' => true,
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'help' => "{$translationKeyPrefix}.goods-description.help",
+                'help_html' => true,
             ])
             ->add('goodsDescriptionOther', Gds\InputType::class, [
                 'label' => false,
