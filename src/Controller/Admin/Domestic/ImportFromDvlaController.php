@@ -62,13 +62,12 @@ class ImportFromDvlaController extends AbstractController
             'choice_loader' => new CallbackChoiceLoader(function() use ($data) {
                 return array_combine(array_map('serialize', $data), array_keys($data));
             }),
-                'choice_label' => function($choice, $key, $value) {
-                    $data = unserialize($key);
-                    $regMark = new RegistrationMarkHelper($data[DvlaImporter::COL_REG_MARK]);
-                    $address1 = ucwords($data[DvlaImporter::COL_ADDRESS_1]);
-                    return "{$regMark->getFormattedRegistrationMark()} - {$address1} / {$data[DvlaImporter::COL_POSTCODE]}";
-                },
-//                'choice_value' => function
+            'choice_label' => function($choice, $key, $value) {
+                $data = unserialize($key);
+                $regMark = new RegistrationMarkHelper($data[DvlaImporter::COL_REG_MARK]);
+                $address1 = ucwords(strtolower($data[DvlaImporter::COL_ADDRESS_1]));
+                return "{$regMark->getFormattedRegistrationMark()} - {$address1} / {$data[DvlaImporter::COL_POSTCODE]}";
+            },
         ]);
         $form = $formBuilder->getForm();
 
