@@ -30,20 +30,20 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates"}, message="common.date.not-null")
+     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="common.date.not-null")
      */
     private $outboundDate;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports"})
+     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
      */
     private $outboundUkPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports"})
+     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
      */
     private $outboundForeignPort;
@@ -65,20 +65,20 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates"}, message="common.date.not-null")
+     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="common.date.not-null")
      */
     private $returnDate;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports"})
+     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports"})
+     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
      */
     private $returnUkPort;
@@ -100,7 +100,7 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(groups={"trip_distance"})
+     * @AppAssert\ValidValueUnit(groups={"trip_distance", "admin_trip"})
      */
     private $roundTripDistance;
 
@@ -118,7 +118,7 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Assert\Length(max=2000, maxMessage="common.string.max-length", groups={"trip_countries_transitted"})
+     * @Assert\Length(max=2000, maxMessage="common.string.max-length", groups={"trip_countries_transitted", "admin_trip"})
      */
     private $countriesTransittedOther;
 
@@ -154,7 +154,7 @@ class Trip implements BlameLoggable
     }
 
     /**
-     * @Assert\Callback(groups={"trip_dates"})
+     * @Assert\Callback(groups={"trip_dates", "admin_trip"})
      */
     public function validateDates(ExecutionContextInterface $context) {
         $outboundDate = $this->getOutboundDate();

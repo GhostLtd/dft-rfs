@@ -14,6 +14,13 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
   font-size: 140%;
 }
 
+legend.govuk-fieldset__legend--underline,
+.govuk-label.govuk-label--underline,
+.govuk-heading--underline {
+  border-bottom: 4px solid govuk-colour('bright-purple');
+  width: 100%;
+}
+
 .govuk-select {
   &.govuk-select--width-30 {
     max-width: 56ex + 3ex;

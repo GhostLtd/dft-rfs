@@ -2,8 +2,8 @@
 
 namespace App\Controller\Admin\International\Survey;
 
-use App\Entity\International\Vehicle;
-use App\Form\Admin\InternationalSurvey\VehicleType;
+use App\Entity\International\Trip;
+use App\Form\Admin\InternationalSurvey\TripType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,17 +13,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class VehicleController extends AbstractController
+class TripController extends AbstractController
 {
-    public const EDIT_ROUTE = "admin_international_vehicle_edit";
+    public const EDIT_ROUTE = "admin_international_trip_edit";
 
     /**
-     * @Route("/vehicle/{vehicleId}/edit", name=self::EDIT_ROUTE)
-     * @Entity("vehicle", expr="repository.find(vehicleId)")
+     * @Route("/trip/{tripId}/edit", name=self::EDIT_ROUTE)
+     * @Entity("trip", expr="repository.find(tripId)")
      */
-    public function edit(Vehicle $vehicle, Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(Trip $trip, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(VehicleType::class, $vehicle);
+        $form = $this->createForm(TripType::class, $trip);
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
@@ -34,13 +34,13 @@ class VehicleController extends AbstractController
                     $entityManager->flush();
                 }
                 return new RedirectResponse(
-                    $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $vehicle->getSurveyResponse()->getSurvey()->getId()]).
-                    "#{$vehicle->getId()}");
+                    $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $trip->getVehicle()->getSurveyResponse()->getSurvey()->getId()]).
+                    "#{$trip->getId()}");
             }
         }
 
-        return $this->render('admin/international/vehicle/edit.html.twig', [
-            'vehicle' => $vehicle,
+        return $this->render('admin/international/trip/edit.html.twig', [
+            'trip' => $trip,
             'form' => $form->createView(),
         ]);
     }
