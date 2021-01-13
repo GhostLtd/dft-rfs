@@ -40,10 +40,8 @@ class SurveyAddController extends AbstractController
 
                 $survey
                     ->setSurveyPeriodEnd($surveyPeriodEnd)
-                    ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
-                    ->setPasscodeUser($passcodeUserRepository->createNewPasscodeUser());
+                    ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED);
 
-                $entityManager->persist($survey->getPasscodeUser());
                 $entityManager->persist($survey);
                 $entityManager->flush();
 

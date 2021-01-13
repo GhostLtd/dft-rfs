@@ -5,6 +5,7 @@ namespace App\EventSubscriber\DomesticSurvey;
 
 
 use App\Entity\Domestic\Survey;
+use App\Repository\PasscodeUserRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -13,20 +14,18 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStateLifecycleSubscriber implements EventSubscriber
 {
-    /**
-     * @var WorkflowInterface
-     */
     private $domesticSurveyStateMachine;
-
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $passcodeUserRepository;
 
-    public function __construct(WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        WorkflowInterface $domesticSurveyStateMachine,
+        EntityManagerInterface $entityManager,
+        PasscodeUserRepository $passcodeUserRepository
+    ) {
         $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
         $this->entityManager = $entityManager;
+        $this->passcodeUserRepository = $passcodeUserRepository;
     }
 
     public function prePersist(LifecycleEventArgs $args)
@@ -38,6 +37,12 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
 
         // it's a new survey
         $entity->setState(Survey::STATE_NEW);
+        if (!$entity->getPasscodeUser()) {
+            $entity->setPasscodeUser($this->passcodeUserRepository->createNewPasscodeUser());
+        }
+        if (!$entity->getReminderState()) {
+            $entity->setReminderState(Survey::REMINDER_STATE_INITIAL);
+        }
     }
 
     public function postPersist(LifecycleEventArgs $args)

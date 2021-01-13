@@ -4,12 +4,12 @@
 namespace App\Utility;
 
 
+use App\Entity\Domestic\Survey;
+use App\Entity\LongAddress;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class DvlaImporter
 {
@@ -43,16 +43,13 @@ class DvlaImporter
 
     private $regex;
 
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
+    public function __construct()
     {
         $this->regex = "/^";
         foreach (self::COLUMN_WIDTHS as $name => $length) {
             $this->regex .= "(?<$name>.{{$length}})";
         }
         $this->regex .= "/";
-        $this->validator = $validator;
     }
 
     public function getDataAndOptions(FormInterface $form) {
@@ -146,8 +143,28 @@ class DvlaImporter
         return $matches;
     }
 
-    protected function createSurvey($columns)
+    public function createSurvey($surveyOptions, $surveyData)
     {
-
+        $normalizer = new ObjectNormalizer();
+        /** @var Survey $survey */
+        $survey = $normalizer->denormalize($surveyOptions, Survey::class);
+        return $survey
+            ->setRegistrationMark($surveyData[self::COL_REG_MARK])
+            ->setInvitationAddress($this->createAddress($surveyData))
+            ;
     }
+
+    protected function createAddress($surveyData)
+    {
+        return (new LongAddress())
+            ->setLine1($surveyData[self::COL_ADDRESS_1])
+            ->setLine2($surveyData[self::COL_ADDRESS_2])
+            ->setLine3($surveyData[self::COL_ADDRESS_3])
+            ->setLine4($surveyData[self::COL_ADDRESS_4])
+            ->setLine5($surveyData[self::COL_ADDRESS_5])
+            ->setLine6($surveyData[self::COL_ADDRESS_6])
+            ->setPostcode($surveyData[self::COL_POSTCODE])
+            ;
+    }
+
 }

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Address;
 use App\Entity\Domestic\Survey;
+use App\Entity\LongAddress;
 use App\Repository\PasscodeUserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,26 +58,25 @@ class CreateDomesticSurveyCommand extends Command
         $survey = new Survey();
         $survey
             ->setInvitationEmail('test@example.com')
-            ->setInvitationAddress((new Address())
-                ->setLine1('123 Test Street')
-                ->setLine2('Test Town or City')
-                ->setPostcode('B10 9TJ')
-            )
+//            ->setInvitationAddress((new LongAddress())
+//                ->setLine1('123 Test Street')
+//                ->setLine2('Test Town or City')
+//                ->setPostcode('B10 9TJ')
+//            )
             ->setRegistrationMark($reg)
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
             ->setSurveyPeriodEnd(new DateTime('now +14 days'))
             ->setIsNorthernIreland(false)
             ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
-            ->setPasscodeUser($user = $this->passcodeUserRepository->createNewPasscodeUser())
         ;
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($survey);
         $this->entityManager->flush();
 
         $io->success('Domestic survey created');
         $io->writeln("Vehicle reg         : {$reg}");
-        $io->writeln("Pass code 1         : {$user->getUsername()}");
-        $io->writeln("Pass code 2         : {$user->getPlainPassword()}");
+        $io->writeln("Pass code 1         : {$survey->getPasscodeUser()->getUsername()}");
+        $io->writeln("Pass code 2         : {$survey->getPasscodeUser()->getPlainPassword()}");
         $io->writeln("Survey period start : {$survey->getSurveyPeriodStart()->format('Y-m-d')}");
         $io->writeln("Survey period end   : {$survey->getSurveyPeriodEnd()->format('Y-m-d')}");
         $io->writeln("");
