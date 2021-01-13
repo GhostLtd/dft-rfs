@@ -83,12 +83,18 @@ class SurveyController extends AbstractController
 
         $form = $this->createForm($formClass, $response);
 
-        if ($request->getMethod() === Request::METHOD_POST && $form->handleRequest($request)->isValid()) {
-            $submit = $form->get('submit');
-            if ($submit instanceof SubmitButton && $submit->isClicked()) {
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            $isValid = $form->isValid();
+            if ($isValid) {
                 $entityManager->flush();
             }
-            return new RedirectResponse($this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#'.$redirectTab);
+
+            $cancel = $form->get('cancel');
+            if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
+                return new RedirectResponse($this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#'.$redirectTab);
+            }
         }
 
         return $this->render("admin/international/surveys/edit-{$templateName}.html.twig", [

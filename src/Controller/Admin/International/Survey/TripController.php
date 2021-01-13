@@ -28,13 +28,15 @@ class TripController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            if ($form->isValid()) {
-                $submit = $form->get('submit');
-                if ($submit instanceof SubmitButton && $submit->isClicked()) {
-                    $entityManager->flush();
-                }
+            $isValid = $form->isValid();
+            if ($isValid) {
+                $entityManager->flush();
+            }
+
+            $cancel = $form->get('cancel');
+            if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
                 return new RedirectResponse(
-                    $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $trip->getVehicle()->getSurveyResponse()->getSurvey()->getId()]).
+                    $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $trip->getVehicle()->getSurveyResponse()->getSurvey()->getId()]) .
                     "#{$trip->getId()}");
             }
         }
