@@ -72,7 +72,7 @@
     {% if survey.response and (survey.response.vehicles is not empty) %}
         {% for vehicle in survey.response.vehicles %}
             <div class="govuk-!-padding-bottom-4">
-                <h2 class="govuk-heading-l admin-surveys__vehicle-header" id="{{ vehicle.id }}">Vehicle — {{ vehicle.registrationMark|formatRegMark }}
+                <h2 class="govuk-heading-l govuk-heading--underline" id="{{ vehicle.id }}">Vehicle — {{ vehicle.registrationMark|formatRegMark }}
                     <a class="admin-surveys__back-to-top govuk-link--no-visited-state" href="#top">Back to top</a>
                 </h2>
 
