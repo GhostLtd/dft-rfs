@@ -3,19 +3,18 @@
 
 namespace App\Controller\Admin\Domestic;
 
+use App\Form\Admin\DomesticSurvey\ImportDvlaFileUploadType;
+use App\Form\Admin\DomesticSurvey\ImportDvlaReviewDataType;
 use App\Utility\DvlaImporter;
-use App\Utility\RegistrationMarkHelper;
-use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/{type}/surveys/import", name="admin_domestic_importdvla_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt/dvla-import", name="admin_domestic_importdvla_")
  */
 class ImportFromDvlaController extends AbstractController
 {
@@ -25,18 +24,21 @@ class ImportFromDvlaController extends AbstractController
      * @Route("", name="index")
      * @Template()
      */
-    public function index(Request $request, Session $session)
+    public function index(Request $request, Session $session, DvlaImporter $dvlaImporter)
     {
-        $form = $this->createFormBuilder()
-            ->add('file', Gds\FileUploadType::class)
-            ->add('submit', Gds\ButtonType::class, ['type' => 'submit'])
-            ->getForm()
-            ;
+        $form = $this->createForm(ImportDvlaFileUploadType::class);
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            $dvlaImport = new DvlaImporter();
-            $session->set(self::SESSION_KEY, $dvlaImport->getDataFromFile($form->get('file')->getData()));
-            return $this->redirectToRoute('admin_domestic_importdvla_moderate', $request->attributes->all());
+
+        if ($form->isSubmitted())
+        {
+            /** @var UploadedFile $file */
+            $file = $form->get('file')->getData();
+            $importData = $dvlaImporter->getDataAndOptions($form);
+
+            if ($form->isValid()) {
+                $session->set(self::SESSION_KEY, $importData);
+                return $this->redirectToRoute('admin_domestic_importdvla_review', $request->attributes->all());
+            }
         }
 
         return [
@@ -45,35 +47,31 @@ class ImportFromDvlaController extends AbstractController
     }
 
     /**
-     * @Route("/moderate", name="moderate")
-     * @Template("admin/domestic/import_from_dvla/index.html.twig")
+     * @Route("/review", name="review")
+     * @Template()
      */
-    public function moderateResults(Session $session)
+    public function review(Request $request, Session $session)
     {
         // grab the data from the session
-        $data = $session->get(self::SESSION_KEY, []);
-
-        // create a form
-        $formBuilder = $this->createFormBuilder(array_fill_keys(array_keys($data), true));
-        $formBuilder->add('imported_data', Gds\ChoiceType::class, [
-            'inherit_data' => true,
-            'expanded' => true,
-            'multiple' => true,
-            'choice_loader' => new CallbackChoiceLoader(function() use ($data) {
-                return array_combine(array_map('serialize', $data), array_keys($data));
-            }),
-            'choice_label' => function($choice, $key, $value) {
-                $data = unserialize($key);
-                $regMark = new RegistrationMarkHelper($data[DvlaImporter::COL_REG_MARK]);
-                $address1 = ucwords(strtolower($data[DvlaImporter::COL_ADDRESS_1]));
-                return "{$regMark->getFormattedRegistrationMark()} - {$address1} / {$data[DvlaImporter::COL_POSTCODE]}";
-            },
+        $data = $session->get(self::SESSION_KEY, false);
+        if ($data === false) {
+            return $this->redirectToRoute('admin_domestic_importdvla_index');
+        }
+        $form = $this->createForm(ImportDvlaReviewDataType::class, [], [
+            'dvla_data' => $data['importData'],
+            'dvla_filename' => $data['filename'],
         ]);
-        $form = $formBuilder->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $surveysSelected = array_intersect_key($data['importData'], $form->get('review_data')->getData());
+            dump($surveysSelected);
+        }
 
         // show it
-        return [
+        return array_merge($data, [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 }

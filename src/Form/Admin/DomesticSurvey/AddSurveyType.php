@@ -23,6 +23,15 @@ class AddSurveyType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ])
+            ->add('isNorthernIreland', Gds\ChoiceType::class, [
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'label' => 'Survey region',
+                'attr' => ['class' => 'govuk-radios--inline'],
+                'choices' => [
+                    'GB' => false,
+                    'NI' => true,
+                ]
+            ])
             ->add('surveyPeriodStart', Gds\DateType::class, [
                 'label' => "{$translationKeyPrefix}.start-date.label",
                 'help' => "{$translationKeyPrefix}.start-date.help",

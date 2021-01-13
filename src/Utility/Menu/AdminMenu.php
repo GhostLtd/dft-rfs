@@ -39,14 +39,11 @@ class AdminMenu implements MenuInterface
         return $this->filterMenuItemsByRole($this->security, [
             new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
             new MenuDivider(),
-            new RoleMenuItem('domestic', 'menu.domestic.gb.root', null, [
-                new RoleMenuItem('dashboard', 'menu.domestic.gb.surveys', $this->router->generate('admin_domestic_surveys', ['type' => 'gb']), [], []),
-                new RoleMenuItem('dashboard', 'menu.domestic.gb.survey-add', $this->router->generate('admin_domestic_surveys_add', ['type' => 'gb']), [], []),
-            ]),
-            new MenuDivider(),
-            new RoleMenuItem('domestic', 'menu.domestic.ni.root', null, [
-                new RoleMenuItem('dashboard', 'menu.domestic.ni.surveys', $this->router->generate('admin_domestic_surveys', ['type' => 'ni']), [], []),
-                new RoleMenuItem('dashboard', 'menu.domestic.ni.survey-add', $this->router->generate('admin_domestic_surveys_add', ['type' => 'ni']), [], []),
+            new RoleMenuItem('domestic', 'menu.domestic.root', null, [
+                new RoleMenuItem('surveys-gb', 'menu.domestic.surveys-gb', $this->router->generate('admin_domestic_surveys', ['type' => 'gb']), [], []),
+                new RoleMenuItem('surveys-ni', 'menu.domestic.surveys-ni', $this->router->generate('admin_domestic_surveys', ['type' => 'ni']), [], []),
+                new RoleMenuItem('dvla-import', 'menu.domestic.dvla-import', $this->router->generate('admin_domestic_importdvla_index'), [], []),
+                new RoleMenuItem('add-survey', 'menu.domestic.survey-add', $this->router->generate('admin_domestic_survey_add'), [], []),
             ]),
             new MenuDivider(),
 

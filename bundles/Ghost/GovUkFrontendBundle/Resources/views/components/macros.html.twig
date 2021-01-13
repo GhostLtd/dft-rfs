@@ -212,12 +212,18 @@
     </div>
 {%- endmacro %}
 
-{% macro warningText(content) -%}
-    <div class="govuk-warning-text">
+{% macro warningText(content, options) -%}
+    {%- with {
+        class: ('govuk-warning-text '
+            ~ (options.class ?? '')
+        ) | trim,
+    } -%}
+    <div class="{{ class }}">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
         <strong class="govuk-warning-text__text">
             <span class="govuk-warning-text__assistive">Warning</span>
             {{- content -}}
         </strong>
     </div>
+    {%- endwith -%}
 {%- endmacro %}
