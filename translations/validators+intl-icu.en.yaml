@@ -23,6 +23,7 @@ common:
       not-blank: Enter a value
       positive-or-zero: Enter a positive number or zero
   address:
+    gov-notify-requires-3-lines: Enter at least 3 lines of the address
     line-1:
       not-blank: Enter a value
     postcode:

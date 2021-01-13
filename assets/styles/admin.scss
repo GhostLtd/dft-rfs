@@ -8,6 +8,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/pagination";
 @import "admin/surveys";
 @import "admin/blame-log";
+@import "admin/domestic-dvla-import";
 
 .govuk-summary-list__row.access-code .govuk-summary-list__value {
   font-family: monospace;

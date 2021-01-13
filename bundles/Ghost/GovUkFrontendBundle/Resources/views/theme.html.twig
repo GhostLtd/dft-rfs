@@ -165,18 +165,19 @@
 {%- endblock %}
 
 {%- block gds_input_widget -%}
+    {% set blockClass = blockClass | default('govuk-input') %}
     {%- set attr = attr|merge({
-        class: ('govuk-input ' ~
-            (errors is not empty ? 'govuk-input--error ' : '') ~
+        class: ("#{blockClass} " ~
+            (errors is not empty ? "#{blockClass}--error " : '') ~
             attr.class|default(''))|trim
     }) -%}
-    {% if prefix | default(false) or suffix | default(false) %}<div class="govuk-input__wrapper">{% endif %}
+    {% if prefix | default(false) or suffix | default(false) %}<div class="{{ blockClass }}__wrapper">{% endif %}
     {% if prefix | default(false) %}
-        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: prefix, affix_html: prefix_html, class: 'govuk-input__prefix'} %}
+        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: prefix, affix_html: prefix_html, class: "#{blockClass}__prefix"} %}
     {% endif %}
     {{ block('form_widget_simple') }}
     {% if suffix | default(false) %}
-        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: suffix, affix_html: suffix_html, class: 'govuk-input__suffix'} %}
+        {% include '@GhostGovUkFrontend/includes/gds_input_widget_affix.html.twig' with {affix: suffix, affix_html: suffix_html, class: "#{blockClass}__suffix"} %}
     {% endif %}
     {% if prefix | default(false) or suffix | default(false) %}</div>{% endif %}
 {%- endblock -%}
@@ -478,7 +479,8 @@
             {{- form_label(form, null, {element: 'legend'}) }}
             {{- form_help(form) -}}
             {{- form_errors(form) -}}
-            {%- for child in form -%}
+            {# only render children that have not already been rendered #}
+            {%- for child in form | filter(child => not child.rendered) -%}
                 {{- form_row(child) -}}
             {%- endfor -%}
         </fieldset>

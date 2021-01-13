@@ -1,14 +1,12 @@
 menu:
   dashboard: 'Home'
   logout: 'Logout'
-  domestic.gb:
-    root: 'CSRGT (GB)'
-    surveys: 'Surveys'
+  domestic:
+    root: 'CSRGT'
+    surveys-gb: 'Surveys (GB)'
+    surveys-ni: 'Surveys (NI)'
     survey-add: 'Add Survey'
-  domestic.ni:
-    root: 'CSRGT (NI)'
-    surveys: 'Surveys'
-    survey-add: 'Add Survey'
+    dvla-import: 'DVLA bulk import'
   international:
     root: 'IRHS'
     surveys: 'Surveys'

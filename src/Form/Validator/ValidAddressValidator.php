@@ -3,8 +3,10 @@
 namespace App\Form\Validator;
 
 use App\Entity\Address;
+use App\Entity\LongAddress;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -32,6 +34,12 @@ class ValidAddressValidator extends ConstraintValidator
         $lengthValidator = new Length(['max' => 255, 'maxMessage' => $constraint->maxLengthMessage]);
 
         if (!$constraint->allowBlank || $value->isFilled()) {
+            // If it's a long postcode (for submission to notify, or import from DVLA), we need a minimum of 3 lines
+            if ($value instanceof LongAddress && $value->getFilledLinesCount() < 3) {
+                $this->context->buildViolation('common.address.gov-notify-requires-3-lines')
+                    ->addViolation();
+            }
+
             $validator->atPath('line1')->validate($value->getLine1(), [
                 new NotBlank(['message' => $constraint->line1BlankMessage]),
                 $lengthValidator,
