@@ -1,25 +1,9 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
 {% set showActions = showActions ?? true %}
 
-<h2 class="govuk-heading-m">Contact details</h2>
-<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+<dl class="govuk-summary-list govuk-!-margin-bottom-1">
     {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})): 'Change'} %}
     {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', survey.response.contactName, contactDetailsActionLinks) }}
     {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone, contactDetailsActionLinks) }}
     {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail, contactDetailsActionLinks) }}
-    {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
-
-    {{ row(showActions, 'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
-    {% if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
-        {{ row(showActions, 'domestic.survey-response.hiree-details.name.label', survey.response.hireeName, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.hiree-details.email.label', survey.response.hireeEmail, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.hiree-details.address.label', survey.response.hireeAddress, canCompleteActionLinks) }}
-    {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
-        {{ row(showActions, 'domestic.survey-response.scrapped-details.date.label', survey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
-    {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
-        {{ row(showActions, 'domestic.survey-response.sold-details.date.label', survey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-name.label', survey.response.newOwnerName, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-email.label', survey.response.newOwnerEmail, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details.new-owner-address.label', survey.response.newOwnerAddress, canCompleteActionLinks) }}
-    {% endif %}
 </dl>

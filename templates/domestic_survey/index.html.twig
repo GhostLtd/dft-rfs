@@ -28,7 +28,7 @@
                 {% endfor %}
             </dl>
         {% else %}
-            {% include 'domestic_survey/includes/contact-details.html.twig' %}
+            {% include 'domestic_survey/includes/initial-details.html.twig' %}
 
             {% if survey.initialDetailsComplete and (survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')) %}
                 <h2 class="govuk-heading-m">Next step</h2>
