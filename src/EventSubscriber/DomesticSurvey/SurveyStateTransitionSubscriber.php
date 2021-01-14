@@ -54,8 +54,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $survey = $event->getSubject();
         $personalisation =                 [
             'invitation_link' => "http://{$this->frontendHostname}/login",
-            'passcode1' => $survey->getPasscodeUser()->getUsername(),
-            'passcode2' => $survey->getPasscodeUser()->getPlainPassword(),
+            'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
+            'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
 
         if ($survey->getInvitationAddress()->isFilled())

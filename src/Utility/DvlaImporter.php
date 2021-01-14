@@ -4,12 +4,12 @@
 namespace App\Utility;
 
 
+use App\Entity\Domestic\Survey;
+use App\Entity\LongAddress;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class DvlaImporter
 {
@@ -43,16 +43,13 @@ class DvlaImporter
 
     private $regex;
 
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
+    public function __construct()
     {
         $this->regex = "/^";
         foreach (self::COLUMN_WIDTHS as $name => $length) {
             $this->regex .= "(?<$name>.{{$length}})";
         }
         $this->regex .= "/";
-        $this->validator = $validator;
     }
 
     public function getDataAndOptions(FormInterface $form) {
@@ -89,8 +86,8 @@ class DvlaImporter
         // is Northern Ireland
         if (!isset($aggregateSurveyOptions['isNorthernIreland'])) {
             $optionsForm->get('isNorthernIreland')->addError(new FormError('The survey region could not be auto-detected from the filename. Please select a region.'));
-        } else if ($autoDetectedSurveyOptions['isNorthernIreland']
-                && $formSurveyOptions['isNorthernIreland'] !== $autoDetectedSurveyOptions['isNorthernIreland']) {
+        } else if (($autoDetectedSurveyOptions['isNorthernIreland'] ?? null)
+                !== $aggregateSurveyOptions['isNorthernIreland']) {
             $aggregateSurveyOptions['overriddenRegion'] = true;
         }
 
@@ -133,21 +130,43 @@ class DvlaImporter
         while(!feof($handle)){
             $line = fgets($handle);
             if (empty($line)) continue;
-            $surveyData[] = $this->parseLine($line);
+            if ($lineData = $this->parseLine($line)) $surveyData[] = $lineData;
         }
         return $surveyData;
     }
 
     protected function parseLine($line)
     {
-        preg_match($this->regex, $line, $matches);
-        $matches = array_intersect_key($matches, self::COLUMN_WIDTHS);
-        $matches = array_map('trim', $matches);
-        return $matches;
+        if (preg_match($this->regex, $line, $matches)) {
+            $matches = array_intersect_key($matches, self::COLUMN_WIDTHS);
+            $matches = array_map('trim', $matches);
+            return $matches;
+        }
+        return null;
     }
 
-    protected function createSurvey($columns)
+    public function createSurvey($surveyOptions, $surveyData)
     {
-
+        $normalizer = new ObjectNormalizer();
+        /** @var Survey $survey */
+        $survey = $normalizer->denormalize($surveyOptions, Survey::class);
+        return $survey
+            ->setRegistrationMark($surveyData[self::COL_REG_MARK])
+            ->setInvitationAddress($this->createAddress($surveyData))
+            ;
     }
+
+    protected function createAddress($surveyData)
+    {
+        return (new LongAddress())
+            ->setLine1($surveyData[self::COL_ADDRESS_1])
+            ->setLine2($surveyData[self::COL_ADDRESS_2])
+            ->setLine3($surveyData[self::COL_ADDRESS_3])
+            ->setLine4($surveyData[self::COL_ADDRESS_4])
+            ->setLine5($surveyData[self::COL_ADDRESS_5])
+            ->setLine6($surveyData[self::COL_ADDRESS_6])
+            ->setPostcode($surveyData[self::COL_POSTCODE])
+            ;
+    }
+
 }
