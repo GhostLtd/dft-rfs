@@ -994,10 +994,10 @@ goods:
       NS: ''
   description:
     options:
-      empty-container: Empty container
+      empty-container: Freight container - no contents
       packaging: Packaging
       groupage: Groupage
-      empty: Empty
+      empty: None - the vehicle was empty
       other-goods: Specific goods / Other
     help:
       empty-container: consignment was an empty freight container

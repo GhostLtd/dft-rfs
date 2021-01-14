@@ -5,18 +5,20 @@
 {% block content %}
     <h1 class="page-heading__heading govuk-heading-xl">Welcome to your {{ 'service.domestic.name' | trans }}</h1>
 
-    <p class="govuk-body">The survey takes place over the course of a week. Your survey week starts on {{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.long' | trans) }}.</p>
-    <p class="govuk-body">We recommend answering the initial questions as soon as possible. After that, it will probably take around 10 minutes to enter your journey information on each day of your survey week.</p>
+    <div class="govuk-grid-row govuk-!-padding-bottom-5">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">The survey takes place over the course of a week and relates to the vehicle with registration mark {{ app.user.domesticSurvey.registrationMark | formatRegMark }}. Your survey week starts on {{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.long' | trans) }}.</p>
+            <p class="govuk-body">We recommend answering the initial questions as soon as possible. After that, it will probably take around 10 minutes to enter your journey information on each day of your survey week.</p>
 
-    <h2 class="govuk-heading-m">Initial questions</h2>
-    <p class="govuk-body">We now want to ask you some initial questions.</p>
-    <p class="govuk-body">The questions will cover:</p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>Who to contact about this survey</li>
-        <li>If you will be in possession of the vehicle for your survey week</li>
-        <li>Some essential details about your business and the vehicle</li>
-    </ul>
-    <p class="govuk-body">It will take around 5 minutes</p>
+            <h2 class="govuk-heading-m">Initial questions</h2>
+            <p class="govuk-body">We now want to ask you some initial questions. These questions will take around 5 minutes to answer, and they will cover:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Who to contact about this survey</li>
+                <li>Information about your business</li>
+                <li>Essential details about the vehicle (like gross carrying capacity and body/trailer configurations)</li>
+            </ul>
+        </div>
+    </div>
 
     {{ form(form) }}
 {% endblock %}
