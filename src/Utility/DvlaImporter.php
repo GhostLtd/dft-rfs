@@ -86,8 +86,8 @@ class DvlaImporter
         // is Northern Ireland
         if (!isset($aggregateSurveyOptions['isNorthernIreland'])) {
             $optionsForm->get('isNorthernIreland')->addError(new FormError('The survey region could not be auto-detected from the filename. Please select a region.'));
-        } else if ($autoDetectedSurveyOptions['isNorthernIreland']
-                && $formSurveyOptions['isNorthernIreland'] !== $autoDetectedSurveyOptions['isNorthernIreland']) {
+        } else if (($autoDetectedSurveyOptions['isNorthernIreland'] ?? null)
+                !== $aggregateSurveyOptions['isNorthernIreland']) {
             $aggregateSurveyOptions['overriddenRegion'] = true;
         }
 
@@ -130,17 +130,19 @@ class DvlaImporter
         while(!feof($handle)){
             $line = fgets($handle);
             if (empty($line)) continue;
-            $surveyData[] = $this->parseLine($line);
+            if ($lineData = $this->parseLine($line)) $surveyData[] = $lineData;
         }
         return $surveyData;
     }
 
     protected function parseLine($line)
     {
-        preg_match($this->regex, $line, $matches);
-        $matches = array_intersect_key($matches, self::COLUMN_WIDTHS);
-        $matches = array_map('trim', $matches);
-        return $matches;
+        if (preg_match($this->regex, $line, $matches)) {
+            $matches = array_intersect_key($matches, self::COLUMN_WIDTHS);
+            $matches = array_map('trim', $matches);
+            return $matches;
+        }
+        return null;
     }
 
     public function createSurvey($surveyOptions, $surveyData)

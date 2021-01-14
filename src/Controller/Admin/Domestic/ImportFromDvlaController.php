@@ -40,7 +40,7 @@ class ImportFromDvlaController extends AbstractController
 
             if ($form->isValid()) {
                 $session->set(self::SESSION_KEY, $importData);
-                return $this->redirectToRoute('admin_domestic_importdvla_review', $request->attributes->all());
+                return $this->redirectToRoute('admin_domestic_importdvla_review');
             }
         }
 
@@ -60,7 +60,7 @@ class ImportFromDvlaController extends AbstractController
         if ($data === false) {
             return $this->redirectToRoute('admin_domestic_importdvla_index');
         }
-        $form = $this->createForm(ImportDvlaReviewDataType::class, [], [
+        $form = $this->createForm(ImportDvlaReviewDataType::class, null, [
             'dvla_data' => $data['importData'],
             'dvla_filename' => $data['filename'],
         ]);
@@ -76,7 +76,7 @@ class ImportFromDvlaController extends AbstractController
                 $surveys[] = $survey;
             }
             $entityManager->flush();
-//            $session->remove(self::SESSION_KEY);
+            $session->remove(self::SESSION_KEY);
             $session->getFlashBag()->add('summary', ['surveyOptions' => $data['surveyOptions'], 'surveys' => $surveys]);
             $session->getFlashBag()->add('notification',
                 new NotificationBanner('Success', 'Surveys created', 'The surveys have been created', ['type' => 'success'])
@@ -100,6 +100,8 @@ class ImportFromDvlaController extends AbstractController
         $data = $session->getFlashBag()->get('summary', []);
         if (!empty($data)) {
             $data = reset($data);
+        } else {
+            return $this->redirectToRoute('admin_domestic_importdvla_index');
         }
         return $data;
     }

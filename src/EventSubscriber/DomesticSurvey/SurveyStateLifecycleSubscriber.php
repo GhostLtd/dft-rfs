@@ -54,7 +54,7 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
 
         if ($this->domesticSurveyStateMachine->can($entity, 'invite_user')) {
             $this->domesticSurveyStateMachine->apply($entity, 'invite_user');
-            $this->entityManager->flush();
+//            $this->entityManager->flush();
         }
     }
 
