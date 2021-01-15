@@ -124,13 +124,13 @@
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
                         {%- else -%}
-                            <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
+                            <div class="govuk-body govuk-!-margin-bottom-5">No consignment actions</div>
                         {%- endif -%}
 
                         <div class="govuk-!-margin-bottom-9 govuk-body">
-                        {%- if isReOrderable -%}
                             <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action</a>
                             <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action</a>
+                        {%- if isReOrderable -%}
                             <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
                         {%- endif -%}
                         </div>
