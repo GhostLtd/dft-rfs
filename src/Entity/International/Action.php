@@ -87,7 +87,7 @@ class Action implements BlameLoggable
 
     /**
      * @ORM\ManyToOne(targetEntity=Action::class, inversedBy="unloadingActions")
-     * @Assert\NotNull(groups={"action-loading-place"}, message="common.choice.not-null")
+     * @Assert\NotNull(groups={"action-loading-place", "admin_action_unload"}, message="common.choice.not-null")
      */
     private $loadingAction;
 

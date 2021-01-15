@@ -72,10 +72,13 @@ class UnloadedWeightValidator extends ConstraintValidator
 
                     // On the frontend, it should be impossible to trigger this error, as you won't get the choice to
                     // "unload all" if the load is already partially unloaded.
-                    $loadingCountExcludingThisOne = $loadingAction->getUnloadingActionCountExcluding($value);
 
-                    if ($loadingCountExcludingThisOne !== 0) {
-                        $this->context->buildViolation('international.action.unloading.cannot-unload')->atPath('weightUnloadedAll')->addViolation();
+                    if ($loadingAction) {
+                        $loadingCountExcludingThisOne = $loadingAction->getUnloadingActionCountExcluding($value);
+
+                        if ($loadingCountExcludingThisOne !== 0) {
+                            $this->context->buildViolation('international.action.unloading.cannot-unload')->atPath('weightUnloadedAll')->addViolation();
+                        }
                     }
                 }
             }

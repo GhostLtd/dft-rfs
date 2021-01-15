@@ -32,6 +32,14 @@ class ActionLoadType extends AbstractType
         [$hazardousChoices, $hazardousChoiceOptions] = $this->hazardousGoodsHelper->getFormChoicesAndOptions(true, true, false);
         [$cargoChoices, $cargoChoiceOptions] = CargoType::getFormChoicesAndOptions();
 
+        $addPlaceholder = function(array $choices) use ($options):array {
+            if (!$options['placeholders']) {
+                return $choices;
+            }
+
+            return array_merge(['' => null], $choices);
+        };
+
         $builder
             ->add('name', Gds\InputType::class, [
                 'label' => "Place",
@@ -58,7 +66,7 @@ class ActionLoadType extends AbstractType
             ])
             ->add('hazardousGoodsCode', Gds\ChoiceType::class, [
                 'expanded' => false,
-                'choices' => $hazardousChoices,
+                'choices' => $addPlaceholder($hazardousChoices),
                 'choice_options' => $hazardousChoiceOptions,
                 'label' => "Were these goods dangerous or hazardous?",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -66,7 +74,7 @@ class ActionLoadType extends AbstractType
             ])
             ->add('cargoTypeCode', Gds\ChoiceType::class, [
                 'expanded' => false,
-                'choices' => $cargoChoices,
+                'choices' => $addPlaceholder($cargoChoices),
                 'choice_options' => $cargoChoiceOptions,
                 'label' => "How were the goods carried?",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -90,6 +98,7 @@ class ActionLoadType extends AbstractType
     {
         $resolver->setDefaults([
             'validation_groups' => ['admin_action_load'],
+            'placeholders' => false,
         ]);
     }
 }

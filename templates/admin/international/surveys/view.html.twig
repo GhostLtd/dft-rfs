@@ -118,20 +118,22 @@
                         {# Not implemented #}
                     {% else %}
                         <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Consignment actions</h4>
+                        {%- set isReOrderable = trip.actions|length  > 1-%}
                         {%- if trip.actions is not empty -%}
-                            {%- set isReOrderable = trip.actions|length -%}
-                            {%- with {trip:trip, bottomMargin: isReOrderable ? 2 : 9, isAdmin: true} -%}
+                            {%- with {trip:trip, bottomMargin: 2, isAdmin: true} -%}
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
-
-                            {%- if isReOrderable -%}
-                                <div class="govuk-!-margin-bottom-9 govuk-body">
-                                    <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
-                                </div>
-                            {%- endif -%}
                         {%- else -%}
                             <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
                         {%- endif -%}
+
+                        <div class="govuk-!-margin-bottom-9 govuk-body">
+                        {%- if isReOrderable -%}
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action</a>
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action</a>
+                            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
+                        {%- endif -%}
+                        </div>
                     {% endif %}
                 {%- else -%}
                     <div class="govuk-body">No trips</div>
