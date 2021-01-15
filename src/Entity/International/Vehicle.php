@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
  * @ORM\Table(name="international_vehicle")
  *
- * @AppAssert\ValidRegistration(groups={"vehicle_registration"})
+ * @AppAssert\ValidRegistration(groups={"vehicle_registration", "admin_vehicle"})
  */
 class Vehicle implements BlameLoggable
 {

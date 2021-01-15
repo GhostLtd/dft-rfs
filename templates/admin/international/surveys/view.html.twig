@@ -40,6 +40,12 @@
                     {%- with {vehicles: survey.response.vehicles, survey: survey} -%}
                         {%- include 'international_survey/includes/admin-vehicles.html.twig' -%}
                     {%- endwith -%}
+
+                    <div>
+                        <a class="govuk-button"
+                           href="{{ path('admin_international_vehicle_add', {surveyId: survey.id}) }}">Add<span
+                                    class="govuk-visually-hidden"> vehicle</span></a>
+                    </div>
                 </div>
             {%- endif -%}
 

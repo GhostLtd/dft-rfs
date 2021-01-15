@@ -18,6 +18,14 @@ class VehicleType extends AbstractType
             'Articulated' => Vehicle::AXLE_CONFIGURATION_CHOICES[300],
         ];
 
+        $addPlaceholder = function(array $choices) use ($options):array {
+            if (!$options['placeholders']) {
+                return $choices;
+            }
+
+            return array_merge(['' => null], $choices);
+        };
+
         $builder
             ->add('registrationMark', Gds\InputType::class, [
                 'label' => "Registration Mark",
@@ -27,21 +35,21 @@ class VehicleType extends AbstractType
             ->add('axleConfiguration', Gds\ChoiceType::class, [
                 'label' => "Type/configuration",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => $typeAndConfigurationChoices,
+                'choices' => $addPlaceholder($typeAndConfigurationChoices),
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
             ])
             ->add('operationType', Gds\ChoiceType::class, [
                 'label' => 'Operation type',
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => Vehicle::OPERATION_TYPE_CHOICES,
+                'choices' => $addPlaceholder(Vehicle::OPERATION_TYPE_CHOICES),
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
             ])
             ->add('bodyType', Gds\ChoiceType::class, [
                 'label' => 'Vehicle/trailer body type',
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
+                'choices' => $addPlaceholder(Vehicle::BODY_CONFIGURATION_CHOICES),
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
             ])
@@ -70,6 +78,7 @@ class VehicleType extends AbstractType
     {
         $resolver->setDefaults([
             'validation_groups' => ['admin_vehicle'],
+            'placeholders' => false,
         ]);
     }
 }
