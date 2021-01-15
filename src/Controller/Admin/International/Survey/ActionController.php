@@ -19,7 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ActionController extends AbstractController
 {
-    public const EDIT_ROUTE = "admin_international_action_edit";
+    private const ROUTE_PREFIX = "admin_international_action_";
+
+    public const EDIT_ROUTE = self::ROUTE_PREFIX . "edit";
+    public const REORDER_ROUTE = self::ROUTE_PREFIX . "reorder";
 
     /**
      * @Route("/action/{actionId}/edit", name=self::EDIT_ROUTE)
