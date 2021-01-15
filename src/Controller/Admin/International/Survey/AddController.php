@@ -35,10 +35,7 @@ class AddController extends AbstractController
                 $surveyPeriodEnd->add(new DateInterval("P{$periodDays}D"));
                 $survey->setSurveyPeriodEnd($surveyPeriodEnd);
 
-                $survey->setPasscodeUser($passcodeUserRepository->createNewPasscodeUser());
-
                 $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($survey->getPasscodeUser());
                 $entityManager->persist($survey->getCompany());
                 $entityManager->persist($survey);
                 $entityManager->flush();
