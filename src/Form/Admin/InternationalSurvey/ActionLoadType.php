@@ -32,9 +32,6 @@ class ActionLoadType extends AbstractType
         [$hazardousChoices, $hazardousChoiceOptions] = $this->hazardousGoodsHelper->getFormChoicesAndOptions(true, true, false);
         [$cargoChoices, $cargoChoiceOptions] = CargoType::getFormChoicesAndOptions();
 
-        dump($hazardousChoices);
-        dump($hazardousChoiceOptions);
-
         $builder
             ->add('name', Gds\InputType::class, [
                 'label' => "Place",
