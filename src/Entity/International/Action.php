@@ -35,28 +35,28 @@ class Action implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place", "admin_action_unload"}, message="common.place.place")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload"})
+     * @Assert\NotBlank(groups={"action-place", "admin_action_unload", "admin_action_load"}, message="common.place.place")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place", "admin_action_unload"}, message="common.place.country")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload"})
+     * @Assert\NotBlank(groups={"action-place", "admin_action_unload", "admin_action_load"}, message="common.place.country")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(groups={"goods-description"}, message="common.choice.invalid")
+     * @Assert\NotNull(groups={"goods-description", "admin_action_load"}, message="common.choice.invalid")
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"goods-description"})
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description", "admin_action_load"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"goods-description", "admin_action_load"})
      */
     private $goodsDescriptionOther;
 
@@ -70,9 +70,9 @@ class Action implements BlameLoggable
      * @ORM\Column(type="integer", nullable=true)
      *
      * N.B. action-unloaded-weight validation is performed by UnloadedWeight class validator
-     * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight"})
-     * @Assert\PositiveOrZero(message="common.number.positive", groups={"action-loaded-weight"})
-     * @Assert\Range(groups={"action-loaded-weight"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight", "admin_action_load"})
+     * @Assert\PositiveOrZero(message="common.number.positive", groups={"action-loaded-weight", "admin_action_load"})
+     * @Assert\Range(groups={"action-loaded-weight", "admin_action_load"}, max=2000000000, maxMessage="common.number.max")
      */
     private $weightOfGoods;
 

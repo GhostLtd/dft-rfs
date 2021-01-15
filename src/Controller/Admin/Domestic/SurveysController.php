@@ -51,10 +51,9 @@ class SurveysController extends AbstractController
 
     /**
      * @param EntityManagerInterface $blameLogEntityManager
-     * @param $type
      * @param Survey $survey
      * @return Response
-     * @Route("/view/{survey}/audit-log", name="surveylogs")
+     * @Route("/survey/view/{survey}/audit-log", name="surveylogs")
      */
     public function viewLog(EntityManagerInterface $blameLogEntityManager, Survey $survey): Response
     {

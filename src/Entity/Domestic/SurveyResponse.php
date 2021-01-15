@@ -376,4 +376,25 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     {
         return $this->getSurvey()->getId();
     }
+
+    public function mergeInitialDetails(SurveyResponse $response)
+    {
+        $this->setContactName($response->getContactName());
+        $this->setContactEmail($response->getContactEmail());
+        $this->setContactTelephone($response->getContactTelephone());
+
+        $this->setIsInPossessionOfVehicle($response->getIsInPossessionOfVehicle());
+
+        $this->setHireeAddress($response->getHireeAddress());
+        $this->setHireeEmail($response->getHireeEmail());
+        $this->setHireeName($response->getHireeName());
+
+        $this->setNewOwnerAddress($response->getNewOwnerAddress());
+        $this->setNewOwnerEmail($response->getNewOwnerEmail());
+        $this->setNewOwnerName($response->getNewOwnerName());
+
+        $this->setUnableToCompleteDate($response->getUnableToCompleteDate());
+
+        return $this;
+    }
 }
