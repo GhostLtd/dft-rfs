@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="international_action")
  *
  * @AppAssert\CanBeUnloaded(groups={"action-place"})
- * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight"})
+ * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight", "admin_action_unload"})
  */
 class Action implements BlameLoggable
 {
@@ -35,15 +35,15 @@ class Action implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place"}, message="common.place.place")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place"})
+     * @Assert\NotBlank(groups={"action-place", "admin_action_unload"}, message="common.place.place")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place"}, message="common.place.country")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place"})
+     * @Assert\NotBlank(groups={"action-place", "admin_action_unload"}, message="common.place.country")
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload"})
      */
     private $country;
 
@@ -62,7 +62,7 @@ class Action implements BlameLoggable
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(groups={"action-unloaded-weight"}, message="common.choice.invalid")
+     * @Assert\NotNull(groups={"action-unloaded-weight", "admin_action_unload"}, message="common.choice.invalid")
      */
     private $weightUnloadedAll;
 
@@ -279,6 +279,14 @@ class Action implements BlameLoggable
         $this->setHazardousGoodsCode($action->getHazardousGoodsCode());
         $this->setCargoTypeCode($action->getCargoTypeCode());
         $this->setLoadingAction($action->getLoadingAction());
+    }
+
+    public function getUnloadingActionCountExcluding(Action $excludedAction): int
+    {
+        $excludedId = $excludedAction->getId();
+        return $this->unloadingActions->filter(function(Action $action) use ($excludedId) {
+            return $action->getId() !== $excludedId;
+        })->count();
     }
 
     public function getBlameLogLabel()

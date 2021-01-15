@@ -14,23 +14,12 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
     {
         $translationKeyPrefix = "{$options['translation_entity_key']}.goods-description";
 
-        $goodsChoiceOptions = AbstractGoodsDescription::GOODS_DESCRIPTION_CHOICES;
-        foreach ($goodsChoiceOptions as $k=>$v) {
-            $goodsChoiceOptions[$k] = [
-                'help' => "goods.description.help.{$v}",
-            ];
-        }
-        $goodsChoiceOptions[AbstractGoodsDescription::GOODS_DESCRIPTION_TRANSLATION_PREFIX . AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER]['conditional_form_name'] = 'goodsDescriptionOther';
-
-        $choices = AbstractGoodsDescription::GOODS_DESCRIPTION_CHOICES;
-        if ($options['is_summary_day']) {
-            unset($choices[array_search(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY, $choices)]);
-        }
+        [$choices, $choiceOptions] = AbstractGoodsDescription::getFormChoicesAndOptions($options['is_summary_day']);
 
         $builder
             ->add('goodsDescription', Gds\ChoiceType::class, [
                 'choices' => $choices,
-                'choice_options' => $goodsChoiceOptions,
+                'choice_options' => $choiceOptions,
                 'label' => "{$translationKeyPrefix}.goods-description.label",
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],

@@ -58,16 +58,7 @@ class GoodsUnloadedWeightType extends AbstractType
 
             $form = $event->getForm();
 
-            $unloadingActions = $loadingAction->getUnloadingActions();
-
-            $numberOfOtherUnloadingActions = 0;
-            foreach($unloadingActions as $unloadingAction) {
-                if ($unloadingAction->getId() !== $action->getId()) {
-                    $numberOfOtherUnloadingActions++;
-                }
-            }
-
-            if ($numberOfOtherUnloadingActions === 0) {
+            if ($loadingAction->getUnloadingActionCountExcluding($action) === 0) {
                 $form
                     ->add("weightUnloadedAll", Gds\ChoiceType::class, [
                         'label' => "{$unloadedAllPrefix}.label",

@@ -31,4 +31,16 @@ class CargoType
         self::TRANSLATION_PREFIX . self::CODE_OT_OTHER_CARGO_TYPES => self::CODE_OT_OTHER_CARGO_TYPES,
 //        self::TRANSLATION_PREFIX . self::CODE_NS_EMPTY => self::CODE_NS_EMPTY,
     ];
+
+    public static function getFormChoicesAndOptions(): array
+    {
+        $choiceOptions = [];
+        foreach (CargoType::CHOICES as $k=>$v) {
+            $choiceOptions[$k] = [
+                'help' => "goods.cargo-type.help.{$v}",
+            ];
+        }
+
+        return [CargoType::CHOICES, $choiceOptions];
+    }
 }

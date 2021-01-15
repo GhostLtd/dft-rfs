@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/irhs")
+ */
 class TripController extends AbstractController
 {
     public const EDIT_ROUTE = "admin_international_trip_edit";

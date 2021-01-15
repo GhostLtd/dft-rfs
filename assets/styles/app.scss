@@ -1,7 +1,5 @@
-//@import '../../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle';
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 
-@import "app/accessible-autocomplete";
 @import "app/add-to-list";
 @import "app/choice-label-icons";
 @import "app/choice-label-bring-to-attention";
@@ -18,15 +16,4 @@ body {
 
 .govuk-add-to-list__key .goods {
     margin-left: 30px;
-}
-
-.govuk-radios__item {
-    input[type="radio"][disabled] {
-        & + label {
-            text-decoration: line-through;
-            & + .govuk-radios__hint {
-                color: #aaa; // Make help text matching grey if field disabled
-            }
-        }
-    }
 }

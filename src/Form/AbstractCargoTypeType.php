@@ -12,17 +12,12 @@ abstract class AbstractCargoTypeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $choiceOptions = CargoType::CHOICES;
-        foreach ($choiceOptions as $k=>$v) {
-            $choiceOptions[$k] = [
-                'help' => "goods.cargo-type.help.{$v}",
-            ];
-        }
+        [$choices, $choiceOptions] = CargoType::getFormChoicesAndOptions();
 
         $translationKeyPrefix = "{$options['translation_entity_key']}.cargo-type";
         $builder
             ->add('cargoTypeCode', Gds\ChoiceType::class, [
-                'choices' => CargoType::CHOICES,
+                'choices' => $choices,
                 'choice_options' => $choiceOptions,
                 'label' => "{$translationKeyPrefix}.cargo-type-code.label",
                 'label_is_page_heading' => true,

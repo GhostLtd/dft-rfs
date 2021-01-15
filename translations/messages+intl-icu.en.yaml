@@ -19,6 +19,7 @@ common:
     cancel: Cancel
     change: Change
     continue: Continue
+    edit: Edit
     move-up: Move up
     move-down: Move down
     re-order-actions: Re-order actions
@@ -59,7 +60,10 @@ common:
     loaded-at: "Loaded at {name}, {country}"
     unloaded-at: "Unloaded at {name}, {country}"
     unloaded-all: "All ({weight})"
-    fully-unloaded: "Unavailable - already fully unloaded"
+    fully-unloaded: "Fully unloaded - unavailable"
+    weight-none-unloaded: "None unloaded - {loaded}kg remaining"
+    weight-partially-unloaded: "Partially unloaded - {unloaded}/{loaded}kg ({remaining}kg remaining)"
+    weight-fully-unloaded: "Fully unloaded - {unloaded}/{loaded}kg"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -954,7 +958,6 @@ goods:
   hazardous:
     0: Goods were not classified as dangerous or hazardous
     1: Explosive
-    2: Gases
     '2.1': Flammable gas
     '2.2': Non-flammable, non-toxic gas
     '2.3': Toxic gas
@@ -969,6 +972,16 @@ goods:
     7: Radioactive material
     8: Corrosive substance
     9: Miscellaneous dangerous goods
+    group:
+      1: Explosives
+      2: Gases
+      3: Flammable liquids
+      4: Flammable solids
+      5: Oxidising substances
+      6: Toxic substances
+      7: Radioactive materials
+      8: Corrosive substances
+      9: Miscellaneous dangerous goods
   cargo-type:
     options:
       LB: Liquid bulk

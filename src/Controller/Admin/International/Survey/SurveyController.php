@@ -47,7 +47,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/view/{surveyId}", name=self::VIEW_ROUTE)
+     * @Route("/{surveyId}", name=self::VIEW_ROUTE)
      * @Entity("survey", expr="repository.findWithVehiclesAndTrips(surveyId)")
      */
     public function view(Survey $survey): Response
@@ -58,7 +58,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/survey/{surveyId}/edit-correspondence-details", name=self::EDIT_CORRESPONDENCE_ROUTE)
+     * @Route("/{surveyId}/edit-correspondence-details", name=self::EDIT_CORRESPONDENCE_ROUTE)
      * @Entity("survey", expr="repository.find(surveyId)")
      */
     public function editCorrespondenceDetails(Survey $survey, Request $request, EntityManagerInterface $entityManager): Response
@@ -67,7 +67,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/survey/{surveyId}/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
+     * @Route("/{surveyId}/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
      * @Entity("survey", expr="repository.find(surveyId)")
      */
     public function editBusinessDetails(Survey $survey, Request $request, EntityManagerInterface $entityManager): Response

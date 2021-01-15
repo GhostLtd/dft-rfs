@@ -101,9 +101,9 @@
                     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
                         {# Not implemented #}
                     {% else %}
-                        <h4 class="govuk-heading-s">Consignment actions</h4>
+                        <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Consignment actions</h4>
                         {%- if trip.actions is not empty -%}
-                            {%- with {showActions: false, trip:trip, bottomMargin: 9, isAdmin: true} -%}
+                            {%- with {trip:trip, bottomMargin: 9, isAdmin: true} -%}
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
                         {%- else -%}
