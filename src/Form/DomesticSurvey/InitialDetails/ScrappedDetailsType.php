@@ -15,8 +15,7 @@ class ScrappedDetailsType extends AbstractType
         $builder
             ->add('unableToCompleteDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.scrapped-details.date.label',
-//                'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'label_attr' => ['class' => ($options['is_child_form'] ? 'govuk-fieldset__legend--s' : 'govuk-fieldset__legend--xl')],
                 'help' => 'domestic.survey-response.scrapped-details.date.help',
             ])
         ;
@@ -27,6 +26,7 @@ class ScrappedDetailsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => 'scrapped_details',
+            'is_child_form' => false,
         ]);
     }
 }
