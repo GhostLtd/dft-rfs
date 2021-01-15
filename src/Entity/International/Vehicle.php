@@ -28,6 +28,7 @@ class Vehicle implements BlameLoggable
 
     /**
      * @ORM\OneToMany(targetEntity=Trip::class, mappedBy="vehicle")
+     * @ORM\OrderBy({"outboundDate": "ASC", "returnDate": "ASC"})
      */
     private $trips;
 

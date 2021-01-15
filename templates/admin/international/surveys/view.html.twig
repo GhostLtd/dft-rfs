@@ -97,12 +97,14 @@
                     <a class="govuk-button"
                        href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit<span
                                 class="govuk-visually-hidden"> vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
+                    <a class="govuk-button"
+                       href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip</a>
                 </div>
 
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}
-                    <h3 class="govuk-heading-s admin-surveys__trip-header">Trip #{{ loop.index }}</h3>
+                    <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">Trip #{{ loop.index }}</h3>
                     {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}
                     {%- endwith -%}
@@ -124,7 +126,7 @@
 
                             {%- if isReOrderable -%}
                                 <div class="govuk-!-margin-bottom-9 govuk-body">
-                                    <a class="govuk-link" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
+                                    <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
                                 </div>
                             {%- endif -%}
                         {%- else -%}
