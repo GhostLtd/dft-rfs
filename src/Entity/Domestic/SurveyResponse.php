@@ -298,7 +298,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     }
 
     /**
-     * @return Collection|Day[]
+     * @return Collection | Day[]
      */
     public function getDays(): Collection
     {

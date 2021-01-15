@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\Admin\DomesticSurvey;
+namespace App\Form\Admin\DomesticSurvey\Edit;
 
 
 use App\Entity\Domestic\SurveyResponse;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class InitialAndBusinessAndVehicleDetailsType extends AbstractType
+class InitialDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

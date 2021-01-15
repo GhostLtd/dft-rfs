@@ -27,7 +27,7 @@ class DistanceTravelledType extends AbstractType
         $builder
             ->add('distanceTravelled', ValueUnitType::class, [
                 'label' => "{$translationKeyPrefix}.distance-travelled.label",
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => $options['is_child_form'] ? 'govuk-label--s': 'govuk-label--xl'],
                 'label_is_page_heading' => true,
                 'help' => "{$translationKeyPrefix}.distance-travelled.help",
                 'value_options' => $valueOptions,
@@ -42,7 +42,8 @@ class DistanceTravelledType extends AbstractType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'data_class' => DayStop::class,
-            'validation_groups' => 'day-stop.distance-travelled'
+            'validation_groups' => 'day-stop.distance-travelled',
+            'is_child_form' => false,
         ]);
     }
 }
