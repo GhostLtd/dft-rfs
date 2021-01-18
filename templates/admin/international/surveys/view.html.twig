@@ -30,7 +30,7 @@
     {# {% endif %} #}
 
     {%- if tabs is defined -%}
-        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+        <div class="govuk-tabs govuk-!-margin-bottom-4" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
 
             {%- if 'Vehicles' in tabs | keys -%}
@@ -78,6 +78,10 @@
             {%- endif -%}
         </div>
     {%- endif -%}
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {surveyId: survey.id}) }}">Delete survey</a>
+    </div>
 
     {% if survey.response and (survey.response.vehicles is not empty) %}
         {% for vehicle in survey.response.vehicles %}

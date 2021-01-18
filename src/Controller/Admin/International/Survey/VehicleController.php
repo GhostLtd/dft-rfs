@@ -2,11 +2,11 @@
 
 namespace App\Controller\Admin\International\Survey;
 
-use App\Entity\International\Action;
 use App\Entity\International\Survey;
 use App\Entity\International\Vehicle;
-use App\Form\Admin\InternationalSurvey\TripDeleteType;
+use App\Form\Admin\InternationalSurvey\VehicleDeleteType;
 use App\Form\Admin\InternationalSurvey\VehicleType;
+use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -99,9 +99,9 @@ class VehicleController extends AbstractController
      * @Route("/vehicle/{vehicleId}/delete", name=self::DELETE_ROUTE)
      * @Entity("vehicle", expr="repository.find(vehicleId)")
      */
-    public function delete(Vehicle $vehicle, Request $request): Response
+    public function delete(Vehicle $vehicle, Request $request, DeleteHelper $deleteHelper): Response
     {
-        $form = $this->createForm(TripDeleteType::class);
+        $form = $this->createForm(VehicleDeleteType::class);
 
         $survey = $vehicle->getSurveyResponse()->getSurvey();
         $redirectUrl = $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]);
@@ -111,17 +111,7 @@ class VehicleController extends AbstractController
 
             $delete = $form->get('delete');
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                foreach($vehicle->getTrips() as $trip) {
-                    foreach ($trip->getActions()->filter(fn(Action $action) => $action->getLoading()) as $action) {
-                        foreach ($action->getUnloadingActions() as $unloadingAction) {
-                            $this->entityManager->remove($unloadingAction);
-                        }
-                        $this->entityManager->remove($action);
-                    }
-                    $this->entityManager->remove($trip);
-                }
-                $this->entityManager->remove($vehicle);
-                $this->entityManager->flush();
+                $deleteHelper->deleteVehicle($vehicle);
 
                 $this->addFlash('notification', new NotificationBanner('Success', "Vehicle successfully deleted", "The vehicle was deleted.", ['type' => 'success']));
                 return new RedirectResponse($redirectUrl);
