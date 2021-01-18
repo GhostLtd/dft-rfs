@@ -112,7 +112,6 @@ class TripController extends AbstractController
                     foreach($action->getUnloadingActions() as $unloadingAction) {
                         $this->entityManager->remove($unloadingAction);
                     }
-
                     $this->entityManager->remove($action);
                 }
                 $this->entityManager->remove($trip);
