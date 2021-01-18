@@ -6,14 +6,18 @@
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
     <h1 class="page-heading__heading govuk-heading-xl">Survey dashboard</h1>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {{ actionlessSummaryListRow('Vehicle', survey.registrationMark) }}
         {{ actionlessSummaryListRow('Start date', survey.surveyPeriodStart | date('l, jS F Y')) }}
     </dl>
     {% if survey.initialDetailsComplete %}
         {% if survey.businessAndVehicleDetailsComplete %}
+            <p class="govuk-body govuk-!-margin-bottom-7">
+                <a href="{{ url('app_domesticsurvey_contactdetails') }}">View/change the contact, business and vehicle details you have already entered</a>.
+            </p>
+
             <h2 class="govuk-heading-m">Your survey week</h2>
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-7">
                 {% for dayNumber in 1..7 %}
                     {% set day = survey.response.dayByNumber(dayNumber) %}
                     {{ summaryListRow(
@@ -23,11 +27,8 @@
                     ) }}
                 {% endfor %}
             </dl>
-            <p class="govuk-body">
-                <a href="{{ url('app_domesticsurvey_contactdetails') }}">View/change the contact, business and vehicle details you have already entered</a>.
-            </p>
         {% else %}
-            {% include 'domestic_survey/includes/contact-details.html.twig' %}
+            {% include 'domestic_survey/includes/initial-details.html.twig' %}
 
             {% if survey.initialDetailsComplete and (survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')) %}
                 <h2 class="govuk-heading-m">Next step</h2>
@@ -42,15 +43,17 @@
     {% if survey.businessAndVehicleDetailsComplete
         or (survey.initialDetailsComplete and survey.response.isInPossessionOfVehicle != constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES'))  %}
 {#        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">#}
+{#
         <p class="govuk-body">
-            When you have finished entering information for your survey week, you must submit your survey.
+            When you have finished entering information for your survey week.
         </p>
+#}
         <p class="govuk-body">
             <a class="govuk-button" data-module="govuk-button" href="{{
                 survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')
                     ? url('app_domesticsurvey_closingdetails_start')
                     : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::STATE_CONFIRM')})
-            }}">Submit your survey</a>
+            }}">Complete survey week</a>
         </p>
 
     {% endif %}
