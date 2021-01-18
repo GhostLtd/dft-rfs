@@ -25,54 +25,65 @@
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
     </dl>
 
-{#    {% if is_granted('ROLE_ADMIN_FORM_USER') %} #}
-{#        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {survey: survey.id}) }}">Delete survey</a>#}
-{#    {% endif %}#}
+    {# {% if is_granted('ROLE_ADMIN_FORM_USER') %} #}
+    {# <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {survey: survey.id}) }}">Delete survey</a> #}
+    {# {% endif %} #}
 
     {%- if tabs is defined -%}
-    <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
-        {{ tabsHead(tabs) }}
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+            {{ tabsHead(tabs) }}
 
-        {%- if 'Vehicles' in tabs | keys -%}
-            <div class="govuk-tabs__panel" id="tab-vehicles">
-                <h2 class="govuk-heading-m">Vehicles</h2>
+            {%- if 'Vehicles' in tabs | keys -%}
+                <div class="govuk-tabs__panel" id="tab-vehicles">
+                    <h2 class="govuk-heading-m">Vehicles</h2>
 
-                {%- with {vehicles: survey.response.vehicles, survey: survey} -%}
-                    {%- include 'international_survey/includes/admin-vehicles.html.twig' -%}
-                {%- endwith -%}
-            </div>
-        {%- endif -%}
+                    {%- with {vehicles: survey.response.vehicles, survey: survey} -%}
+                        {%- include 'international_survey/includes/admin-vehicles.html.twig' -%}
+                    {%- endwith -%}
 
-        {%- if 'Correspondence details' in tabs | keys -%}
-            <div class="govuk-tabs__panel" id="tab-correspondence">
-                {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
-                    {%- include 'international_survey/includes/contact-details.html.twig' -%}
-                {%- endwith -%}
-
-                <div>
-                    <a class="govuk-button" href="{{ path('admin_international_survey_correspondence_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> correspondence details</span></a>
+                    <div>
+                        <a class="govuk-button"
+                           href="{{ path('admin_international_vehicle_add', {surveyId: survey.id}) }}">Add<span
+                                    class="govuk-visually-hidden"> vehicle</span></a>
+                    </div>
                 </div>
-            </div>
-        {%- endif -%}
+            {%- endif -%}
 
-        {%- if 'Business details' in tabs | keys -%}
-            <div class="govuk-tabs__panel" id="tab-business-details">
-                {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
-                    {%- include 'international_survey/includes/business-details.html.twig' -%}
-                {%- endwith -%}
+            {%- if 'Correspondence details' in tabs | keys -%}
+                <div class="govuk-tabs__panel" id="tab-correspondence">
+                    {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
+                        {%- include 'international_survey/includes/contact-details.html.twig' -%}
+                    {%- endwith -%}
 
-                <div>
-                    <a class="govuk-button" href="{{ path('admin_international_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
+                    <div>
+                        <a class="govuk-button"
+                           href="{{ path('admin_international_survey_correspondence_edit', {surveyId: survey.id}) }}">Edit<span
+                                    class="govuk-visually-hidden"> correspondence details</span></a>
+                    </div>
                 </div>
-            </div>
-        {%- endif -%}
-    </div>
+            {%- endif -%}
+
+            {%- if 'Business details' in tabs | keys -%}
+                <div class="govuk-tabs__panel" id="tab-business-details">
+                    {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
+                        {%- include 'international_survey/includes/business-details.html.twig' -%}
+                    {%- endwith -%}
+
+                    <div>
+                        <a class="govuk-button"
+                           href="{{ path('admin_international_survey_business_edit', {surveyId: survey.id}) }}">Edit<span
+                                    class="govuk-visually-hidden"> business details</span></a>
+                    </div>
+                </div>
+            {%- endif -%}
+        </div>
     {%- endif -%}
 
     {% if survey.response and (survey.response.vehicles is not empty) %}
         {% for vehicle in survey.response.vehicles %}
             <div class="govuk-!-padding-bottom-4">
-                <h2 class="govuk-heading-l govuk-heading--underline" id="{{ vehicle.id }}">Vehicle — {{ vehicle.registrationMark|formatRegMark }}
+                <h2 class="govuk-heading-l govuk-heading--underline" id="{{ vehicle.id }}">Vehicle
+                    — {{ vehicle.registrationMark|formatRegMark }}
                     <a class="admin-surveys__back-to-top govuk-link--no-visited-state" href="#top">Back to top</a>
                 </h2>
 
@@ -83,32 +94,46 @@
                 {% endwith %}
 
                 <div class="govuk-!-margin-bottom-5">
-                    <a class="govuk-button" href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
+                    <a class="govuk-button"
+                       href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit<span
+                                class="govuk-visually-hidden"> vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
+                    <a class="govuk-button"
+                       href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip</a>
                 </div>
 
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}
-                    <h3 class="govuk-heading-s admin-surveys__trip-header">Trip #{{ loop.index }}</h3>
+                    <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">Trip #{{ loop.index }}</h3>
                     {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}
                     {%- endwith -%}
 
                     <div class="govuk-!-margin-bottom-5">
-                        <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit<span class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
+                        <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit<span
+                                    class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
                     </div>
 
                     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
                         {# Not implemented #}
                     {% else %}
                         <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Consignment actions</h4>
+                        {%- set isReOrderable = trip.actions|length  > 1-%}
                         {%- if trip.actions is not empty -%}
-                            {%- with {trip:trip, bottomMargin: 9, isAdmin: true} -%}
+                            {%- with {trip:trip, bottomMargin: 2, isAdmin: true} -%}
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
                         {%- else -%}
-                            <div class="govuk-body govuk-!-margin-bottom-9">No consignment actions</div>
+                            <div class="govuk-body govuk-!-margin-bottom-5">No consignment actions</div>
                         {%- endif -%}
+
+                        <div class="govuk-!-margin-bottom-9 govuk-body">
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action</a>
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action</a>
+                        {%- if isReOrderable -%}
+                            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
+                        {%- endif -%}
+                        </div>
                     {% endif %}
                 {%- else -%}
                     <div class="govuk-body">No trips</div>

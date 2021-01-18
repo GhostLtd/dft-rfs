@@ -34,6 +34,28 @@ class ActionRepository extends ServiceEntityRepository
         return $currentMax ? ($currentMax + 1) : 1;
     }
 
+    public function findOneByIdWithRelatedActions(string $id)
+    {
+        try {
+            return $this->createQueryBuilder('a')
+                ->select('a,la,t,v,r,ua,s')
+                ->leftJoin('a.trip', 't')
+                ->leftJoin('t.vehicle', 'v')
+                ->leftJoin('v.surveyResponse', 'r')
+                ->leftJoin('r.survey', 's')
+                ->leftJoin('a.loadingAction', 'la')
+                ->leftJoin('a.unloadingActions', 'ua')
+                ->where('a.id = :actionId')
+                ->setParameters([
+                    'actionId' => $id,
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
     /**
      * @return ArrayCollection|Action[]
      */

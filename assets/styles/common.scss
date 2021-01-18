@@ -1,4 +1,7 @@
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+
 @import "common/accessible-autocomplete";
+@import "common/add-to-list";
 @import "common/radios";
 @import "common/value-unit-field";
 @import "common/warning-text";

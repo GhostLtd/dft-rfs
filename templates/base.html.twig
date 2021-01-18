@@ -18,7 +18,11 @@
 
 {% block headerBar %}
     {{ govukHeader({
-        serviceName: ('service.name' | trans)
+        serviceName: ('service.name' | trans),
+        navigation: (is_granted('ROLE_SURVEY_USER')
+            ? [{href: path('app_logout'), text: 'Logout'}]
+            : false
+        ),
     }) }}
 {% endblock %}
 

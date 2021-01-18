@@ -41,7 +41,7 @@
                     {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
                     {%- set hazardousGoodsCopy -%}
                         {%- if action.hazardousGoodsCode -%}
-                            <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, action.hazardousGoodsCode)|trans }}
+                            <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), action.hazardousGoodsCode)|trans }}
                         {%- else -%}
                             {{ 'common.action.not-hazardous'|trans }}
                         {%- endif -%}

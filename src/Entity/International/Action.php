@@ -87,7 +87,7 @@ class Action implements BlameLoggable
 
     /**
      * @ORM\ManyToOne(targetEntity=Action::class, inversedBy="unloadingActions")
-     * @Assert\NotNull(groups={"action-loading-place"}, message="common.choice.not-null")
+     * @Assert\NotNull(groups={"action-loading-place", "admin_action_unload"}, message="common.choice.not-null")
      */
     private $loadingAction;
 
@@ -306,6 +306,7 @@ class Action implements BlameLoggable
 
     public function getAssociatedEntityId()
     {
-        return $this->getTrip()->getId();
+        $trip = $this->getTrip();
+        return $trip ? $trip->getId() : null;
     }
 }

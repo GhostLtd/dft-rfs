@@ -9,7 +9,7 @@ trait HazardousGoodsTrait
 {
     /**
      * @ORM\Column(type="string", length=5, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"hazardous-goods"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"hazardous-goods", "admin_action_load"})
      */
     private $hazardousGoodsCode;
 

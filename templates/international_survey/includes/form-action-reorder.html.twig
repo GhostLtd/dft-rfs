@@ -1,0 +1,50 @@
+{%- from 'macros.html.twig' import addToListRow as row, addToListActionLinks as actionLinks -%}
+
+{%- if not unloadedBeforeLoaded is empty -%}
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li>
+                    <a href="#order-list">{{ 'international.action.re-order.invalid-order'|trans({
+                            number: unloadedBeforeLoaded|length,
+                            list: unloadedBeforeLoaded|join(', '),
+                        }, 'validators') }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{%- endif -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="order-list">
+    {%- set reorderRoute = app.request.attributes.get('_route') -%}
+    {%- for action in sortedActions -%}
+        {%- set moveUpLink = url(reorderRoute, {tripId: trip.id, mapping: shiftMapping(mapping, loop.index0, 'up')|join(',')}) -%}
+        {%- set moveDownLink = url(reorderRoute, {tripId: trip.id, mapping: shiftMapping(mapping, loop.index0, 'down')|join(',')}) -%}
+
+        {%- set key -%}
+            {%- set translationString = action.loading ? 'common.action.loaded-at' : 'common.action.unloaded-at' -%}
+            {%- if action.loading -%}
+                {%- set goodsCopy = formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther) -%}
+            {%- else -%}
+                {%- set loadingAction = action.loadingAction -%}
+                {%- set goods = formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther) -%}
+                {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: loadingAction.name, country: loadingAction.country|country_name, goods: goods, number: loadingAction.number}) %}
+            {%- endif -%}
+            <strong>{{ action.number }}.</strong>{{ translationString|trans({name: action.name, country: action.country|country_name}) }}<br>
+            <div class="goods">{{ goodsCopy }}</div>
+        {%- endset -%}
+
+        {%- set links = [] -%}
+        {%- if not loop.first %}{% set links = links|merge({(moveUpLink): 'common.actions.move-up'}) %}{% endif -%}
+        {%- if not loop.last %}
+            {% set links = links|merge({(moveDownLink): 'common.actions.move-down'}) %}
+        {% endif -%}
+
+        {{ row(key, links, {noEscape: true}) }}
+    {%- endfor -%}
+</dl>
+
+{{ form(form) }}

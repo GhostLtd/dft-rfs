@@ -426,6 +426,31 @@ class Trip implements BlameLoggable
         return $this;
     }
 
+    /**
+     * @return Collection|Action[]
+     */
+    public function getActions(): Collection
+    {
+        return $this->actions;
+    }
+
+    public function addAction(Action $action): self
+    {
+        if (!$this->actions->contains($action)) {
+            $this->actions[] = $action;
+            $action->setTrip($this);
+            $this->renumberActions();
+        }
+
+        return $this;
+    }
+
+    public function removeAction(Action $action): self
+    {
+        $this->actions->removeElement($action);
+        return $this;
+    }
+
     // -----
 
     public function getOutboundCargoState(): string {
@@ -513,42 +538,17 @@ class Trip implements BlameLoggable
         return ($this->stops->last()) ? $this->stops->last()->getNumber() + 1 : 1;
     }
 
+    public function getNextActionNumber(): int
+    {
+        return ($this->actions->last()) ? $this->actions->last()->getNumber() + 1 : 1;
+    }
+
     protected function renumberStops(): void
     {
         $count = 1;
         foreach($this->stops as $stop) {
             $stop->setNumber($count++);
         }
-    }
-
-    /**
-     * @return Collection|Action[]
-     */
-    public function getActions(): Collection
-    {
-        return $this->actions;
-    }
-
-    public function addAction(Action $action): self
-    {
-        if (!$this->actions->contains($action)) {
-            $this->actions[] = $action;
-            $action->setTrip($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAction(Action $action): self
-    {
-        if ($this->actions->removeElement($action)) {
-            // set the owning side to null (unless already changed)
-            if ($action->getTrip() === $this) {
-                $action->setTrip(null);
-            }
-        }
-
-        return $this;
     }
 
     public function renumberActions(): void

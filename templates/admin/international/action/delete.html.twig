@@ -1,0 +1,24 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
+    <h1 class="govuk-heading-l" id="top">Delete Action</h1>
+
+    {%- if action.loading -%}
+        {%- set filter = [action.id]|merge(action.unloadingActions|map(a => a.id)) -%}
+    {%- else -%}
+        {%- set filter = [action.id] -%}
+    {%- endif -%}
+
+    {%- with {isAdmin: true, showActions: false, trip: action.trip, filter: filter} -%}
+        {%- include "international_survey/includes/actions.html.twig" -%}
+    {%- endwith -%}
+
+    {%- if filter|length > 1 -%}
+        {{ warningText('This will permanently delete this loading action and all related unloading actions (shown above).') }}
+    {%- else -%}
+        {{ warningText('This will permanently delete this action.') }}
+    {%- endif -%}
+
+    {{ form(form) }}
+{%- endblock -%}
