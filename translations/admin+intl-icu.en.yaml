@@ -18,3 +18,9 @@ domestic:
     delete:
       delete.label: Yes, delete this survey
       cancel.label: Cancel
+
+international:
+  action:
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel

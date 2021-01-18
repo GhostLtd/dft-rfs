@@ -2,7 +2,7 @@
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
-{%- set isAdmin = isAdmin ?? false -%}
+{%- set isAdmin = isAdmin ?? isAdminDelete ?? false -%}
 {%- set bottomMargin = bottomMargin ?? 6 -%}
 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
 {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
@@ -17,6 +17,7 @@
     {%- endif -%}
     <tbody class="govuk-table__body">
     {%- for action in trip.actions %}
+        {%- if filter is not defined or action.id in filter -%}
         <tr class="govuk-table__row">
             {{ tableCell(action.number) }}
             {{ tableCell('common.action.place-name'|trans({name: action.name, country: action.country|country_name})) }}
@@ -41,7 +42,7 @@
             {%- if isAdmin -%}
                 {%- set hazardousGoods -%}
                     {%- if action.hazardousGoodsCode -%}
-                        <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, action.hazardousGoodsCode) | trans }}
+                        <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), action.hazardousGoodsCode) | trans }}
                     {%- else -%}
                         -
                     {%- endif -%}
@@ -51,19 +52,22 @@
             {%- endif -%}
 
             {%- if showActions -%}
-                {% if isAdmin %}
+                {%- if isAdmin -%}
                     {%- set editContents -%}
+                        {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\Survey\\ActionController::DELETE_ROUTE') -%}
+                        <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">Delete</a>
                         {%- set editRoute = constant('App\\Controller\\Admin\\International\\Survey\\ActionController::EDIT_ROUTE') -%}
                         <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">Edit</a>
                     {%- endset -%}
                     {{ tableCell(editContents, {actions: true}) }}
-                {% else %}
+                {%- else -%}
                     {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
                     {%- set viewContents = actionLinks({(url(viewRoute, {actionId: action.id})): 'common.actions.view'|trans}) -%}
                     {{ tableCell(viewContents, {actions: true}) }}
-                {% endif %}
+                {%- endif -%}
             {%- endif -%}
         </tr>
+        {%- endif -%}
     {%- endfor -%}
     </tbody>
 </table>
