@@ -306,6 +306,7 @@ class Action implements BlameLoggable
 
     public function getAssociatedEntityId()
     {
-        return $this->getTrip()->getId();
+        $trip = $this->getTrip();
+        return $trip ? $trip->getId() : null;
     }
 }

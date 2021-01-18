@@ -447,13 +447,7 @@ class Trip implements BlameLoggable
 
     public function removeAction(Action $action): self
     {
-        if ($this->actions->removeElement($action)) {
-            // set the owning side to null (unless already changed)
-            if ($action->getTrip() === $this) {
-                $action->setTrip(null);
-            }
-        }
-
+        $this->actions->removeElement($action);
         return $this;
     }
 
