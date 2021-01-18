@@ -115,8 +115,6 @@ class ActionController extends AbstractController
      */
     public function delete(Action $action, Request $request): Response
     {
-        dump($action);
-
         $form = $this->createForm(ActionDeleteType::class);
 
         $trip = $action->getTrip();

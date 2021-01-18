@@ -112,6 +112,8 @@
                     <div class="govuk-!-margin-bottom-5">
                         <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit<span
                                     class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
+                        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_trip_delete', {tripId: trip.id}) }}">Delete<span
+                                    class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
                     </div>
 
                     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
