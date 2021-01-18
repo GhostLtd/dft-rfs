@@ -1,7 +1,7 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {} -%}
 
@@ -19,11 +19,7 @@
 
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
-        {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
-        {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
-    </dl>
+    {%- include "international_survey/includes/survey-basics.html.twig" -%}
 
     {# {% if is_granted('ROLE_ADMIN_FORM_USER') %} #}
     {# <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {survey: survey.id}) }}">Delete survey</a> #}

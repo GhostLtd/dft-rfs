@@ -56,11 +56,13 @@ class DeleteHelper
     {
         $response = $survey->getResponse();
 
-        foreach($response->getVehicles() as $vehicle) {
-            $this->deleteVehicle($vehicle, false);
+        if ($response) {
+            foreach ($response->getVehicles() as $vehicle) {
+                $this->deleteVehicle($vehicle, false);
+            }
+            $this->entityManager->remove($response);
         }
 
-        $this->entityManager->remove($response);
         $this->entityManager->remove($survey);
         $flush && $this->entityManager->flush();
     }
