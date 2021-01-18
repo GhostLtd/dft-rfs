@@ -1,3 +1,5 @@
+@import "~govuk-frontend/govuk/base";
+
 $gutter: 15px;
 $menuWidth: 200px;
 
@@ -11,10 +13,9 @@ html.govuk-template {
   margin-right: $gutter;
 }
 
-.govuk-header__container {
-  //border-bottom: none;
-  //margin-bottom: 0;
-  border-bottom-color: #b81d70;
+.govuk-header__container,
+body .govuk-header{
+  border-color: govuk-colour('bright-purple');
 }
 
 .govuk-main-wrapper {

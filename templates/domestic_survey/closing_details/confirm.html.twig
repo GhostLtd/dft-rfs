@@ -3,25 +3,18 @@
 {% extends 'domestic_survey/form-base.html.twig' %}
 
 {% block content %}
-    {% with {survey: subject.survey, showActions: false} %}
-        {% include 'domestic_survey/includes/contact-details.html.twig' %}
+    <h1 class="govuk-heading-xl">Submit your survey</h1>
 
-        <p class="govuk-body">Please ensure that all the information you have entered is correct and complete before submitting your survey. You can <a href="{{ url('app_domesticsurvey_index') }}">go back</a> and check if you're unsure.</p>
-{#
-        {% if survey.businessAndVehicleDetailsComplete %}
-            {% include 'domestic_survey/includes/business-details.html.twig' %}
-            {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
-        {% endif %}
+    <div class="govuk-!-padding-bottom-5">
+        <h2 class="govuk-heading-m">Contact details</h2>
+        <p class="govuk-body">We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey</p>
+        {% with {survey: subject.survey, showActions: false} %}
+            {% include 'domestic_survey/includes/contact-details.html.twig' %}
+        {% endwith %}
+    </div>
 
-        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
-#}
-
-{#        <p class="govuk-body">#}
-{#            <a href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>#}
-{#        </p>#}
-
-
-    {% endwith %}
+    <h2 class="govuk-heading-m">Confirm and submit</h2>
+    <p class="govuk-body">Please confirm that all the information you have entered in the survey is correct and complete before submitting it. You can <a href="{{ url('app_domesticsurvey_index') }}">go back</a> and check if you're unsure.</p>
 
     {{ parent() }}
 {% endblock %}

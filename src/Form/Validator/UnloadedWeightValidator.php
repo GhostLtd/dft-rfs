@@ -56,14 +56,29 @@ class UnloadedWeightValidator extends ConstraintValidator
                 ]),
             ], ['Default']);
 
-            if ($validator->getViolations()->count() === 0 && !$value->getWeightUnloadedAll()) {
-                $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
-                    new NotBlank(['message' => 'common.string.not-blank'])
-                ], ['Default']);
+            if ($validator->getViolations()->count() === 0) {
+                if (!$value->getWeightUnloadedAll()) {
+                    $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
+                        new NotBlank(['message' => 'common.string.not-blank'])
+                    ], ['Default']);
 
-                if ($loadingAction) {
-                    if ($value->getWeightOfGoods() > $loadingAction->getWeightOfGoods()) {
-                        $this->context->buildViolation($constraint->message)->atPath('weightOfGoods')->addViolation();
+                    if ($loadingAction) {
+                        if ($value->getWeightOfGoods() > $loadingAction->getWeightOfGoods()) {
+                            $this->context->buildViolation($constraint->message)->atPath('weightOfGoods')->addViolation();
+                        }
+                    }
+                } else {
+                    // This bit's for the admin form.
+
+                    // On the frontend, it should be impossible to trigger this error, as you won't get the choice to
+                    // "unload all" if the load is already partially unloaded.
+
+                    if ($loadingAction) {
+                        $loadingCountExcludingThisOne = $loadingAction->getUnloadingActionCountExcluding($value);
+
+                        if ($loadingCountExcludingThisOne !== 0) {
+                            $this->context->buildViolation('international.action.unloading.cannot-unload')->atPath('weightUnloadedAll')->addViolation();
+                        }
                     }
                 }
             }

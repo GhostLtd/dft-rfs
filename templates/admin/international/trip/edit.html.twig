@@ -1,0 +1,8 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    <h1 class="govuk-heading-l" id="top">Edit Trip</h1>
+
+    {%- form_theme form "admin/international/trip/theme.html.twig" -%}
+    {{ form(form) }}
+{%- endblock -%}

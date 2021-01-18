@@ -12,7 +12,7 @@
 {%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED', params) -%}
 {%- set change = 'common.actions.change'|trans -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
     {{ row(showActions, 'international.trip.summary.dates',
         trip.outboundDate == trip.returnDate ?
         trip.outboundDate|date('d/m/Y') :

@@ -1,0 +1,27 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText %}
+    <h1 class="govuk-heading-xl">Review DVLA data for import</h1>
+
+    <p class="govuk-body">When submitting this form, a Domestic Survey will be created for each item that is selected below.</p>
+    <p class="govuk-body">
+        The surveys will be created for the <strong>{{ surveyOptions.isNorthernIreland ? 'NI' : 'GB' }} region</strong>
+        and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('l, jS F Y') }}</strong>
+    </p>
+
+    {{ warningText('An invitation letter will be sent to each Survey recipient') }}
+
+
+    {% if surveyOptions.surveyPeriodStart < date('today') %}
+        {{ warningText('The survey start date is in the past') }}
+    {% endif %}
+
+    {% if surveyOptions.overriddenRegion ?? false %}
+        {{ warningText('The survey region selected does not match the region that was auto-detected from the filename') }}
+    {% endif %}
+
+
+
+    {{ form(form) }}
+{% endblock %}

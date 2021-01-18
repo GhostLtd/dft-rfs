@@ -9,7 +9,7 @@ trait CargoTypeTrait
 {
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"cargo-type"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"cargo-type", "admin_action_load"})
      */
     private $cargoTypeCode;
 

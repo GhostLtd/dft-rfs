@@ -15,12 +15,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt", name="admin_domestic_")
  */
 class SurveysController extends AbstractController
 {
     /**
-     * @Route("", name="surveys")
+     * @Route("/surveys/{type}", name="surveys", requirements={"type": "gb|ni"})
      */
     public function list(SurveyListPage $listPage, Request $request, string $type): Response
     {
@@ -40,14 +40,10 @@ class SurveysController extends AbstractController
     }
 
     /**
-     * @Route("/view/{survey}", name="surveydetails")
+     * @Route("/survey/view/{survey}", name="surveydetails")
      */
-    public function viewDetails($type, Survey $survey): Response
+    public function viewDetails(Survey $survey): Response
     {
-        if ($survey->getIsNorthernIreland() !== ($type === 'ni')) {
-            throw new NotFoundHttpException();
-        }
-
         return $this->render('admin/domestic/surveys/view.html.twig', [
             'survey' => $survey,
         ]);
@@ -55,12 +51,11 @@ class SurveysController extends AbstractController
 
     /**
      * @param EntityManagerInterface $blameLogEntityManager
-     * @param $type
      * @param Survey $survey
      * @return Response
-     * @Route("/view/{survey}/audit-log", name="surveylogs")
+     * @Route("/survey/view/{survey}/audit-log", name="surveylogs")
      */
-    public function viewLog(EntityManagerInterface $blameLogEntityManager, $type, Survey $survey): Response
+    public function viewLog(EntityManagerInterface $blameLogEntityManager, Survey $survey): Response
     {
         $blameLogRepository = $blameLogEntityManager->getRepository(BlameLog::class);
         return $this->render('admin/domestic/surveys/log.html.twig', [

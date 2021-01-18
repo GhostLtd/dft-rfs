@@ -4,7 +4,7 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {
-            'Contact details': 'tab-initial-details',
+            'Initial details': 'tab-initial-details',
         } -%}
         {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
             {%- set tabs = tabs | merge({
@@ -33,10 +33,10 @@
         <div class="govuk-tabs" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
 
-            {% if 'Contact details' in tabs | keys %}
+            {% if 'Initial details' in tabs | keys %}
                 <div class="govuk-tabs__panel" id="tab-initial-details">
                     {% with {showActions: false} %}
-                        {% include 'domestic_survey/includes/contact-details.html.twig' %}
+                        {% include 'domestic_survey/includes/initial-details.html.twig' %}
                     {% endwith %}
                 </div>
             {% endif %}

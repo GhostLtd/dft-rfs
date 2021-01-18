@@ -1,12 +1,9 @@
-@import '../../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle';
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
 
-@import "accessible-autocomplete";
-@import "add-to-list";
-@import "choice-label-icons";
-@import "choice-label-bring-to-attention";
-@import "value-unit-field";
-@import "vehicle-icons";
-@import "passcode-fieldset";
+@import "app/choice-label-icons";
+@import "app/choice-label-bring-to-attention";
+@import "app/vehicle-icons";
+@import "app/passcode-fieldset";
 
 body {
     background-color: lightgray;
@@ -18,15 +15,4 @@ body {
 
 .govuk-add-to-list__key .goods {
     margin-left: 30px;
-}
-
-.govuk-radios__item {
-    input[type="radio"][disabled] {
-        & + label {
-            text-decoration: line-through;
-            & + .govuk-radios__hint {
-                color: #aaa; // Make help text matching grey if field disabled
-            }
-        }
-    }
 }

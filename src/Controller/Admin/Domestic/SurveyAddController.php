@@ -14,14 +14,14 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt/survey/add", name="admin_domestic_")
  */
 class SurveyAddController extends AbstractController
 {
     /**
-     * @Route("/add", name="surveys_add")
+     * @Route("", name="survey_add")
      */
-    public function add(Request $request, PasscodeUserRepository $passcodeUserRepository, EntityManagerInterface $entityManager, string $type): Response
+    public function add(Request $request, PasscodeUserRepository $passcodeUserRepository, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -40,11 +40,8 @@ class SurveyAddController extends AbstractController
 
                 $survey
                     ->setSurveyPeriodEnd($surveyPeriodEnd)
-                    ->setIsNorthernIreland($type === 'ni')
-                    ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
-                    ->setPasscodeUser($passcodeUserRepository->createNewPasscodeUser());
+                    ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED);
 
-                $entityManager->persist($survey->getPasscodeUser());
                 $entityManager->persist($survey);
                 $entityManager->flush();
 

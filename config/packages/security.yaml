@@ -2,6 +2,8 @@ security:
     encoders:
         App\Entity\PasscodeUser:
             algorithm: 'bcrypt'
+            # these users have a short lifespan, and bulk creation of surveys/users needs faster hashing
+            cost: 8
         Symfony\Component\Security\Core\User\User:
             algorithm: 'bcrypt'
 
@@ -53,6 +55,8 @@ security:
     role_hierarchy:
         ROLE_ADMIN_FORM_USER: ROLE_ADMIN_USER
         ROLE_ADMIN_IAP_USER: ROLE_ADMIN_USER
+        ROLE_DOMESTIC_SURVEY_USER: ROLE_SURVEY_USER
+        ROLE_INTERNATIONAL_SURVEY_USER: ROLE_SURVEY_USER
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

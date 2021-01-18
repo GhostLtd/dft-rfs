@@ -9,11 +9,9 @@
  */
 'use strict'
 
-// import './app';
+import './common';
 
-// import '../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle.scss'
-// import './styles/bundles.scss';
-import './styles/admin/admin.scss';
-require('./js/admin/blame-log');
+import '../styles/admin.scss';
+import './admin/blame-log';
 
 GOVUK.rfsBlameLog.initAll();

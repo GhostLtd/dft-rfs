@@ -9,7 +9,9 @@
 
 <table class="govuk-table govuk-!-margin-bottom-{{ bottomMargin }}">
     {%- if isAdmin -%}
-        {{- tableHead(false, ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', 'Cargo Type', 'Hazardous?']) -}}
+        {%- set headers = ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', 'Cargo Type', 'Hazardous?'] -%}
+        {%- if showActions -%}{%- set headers = headers | merge(['']) -%}{%- endif -%}
+        {{- tableHead(false, headers) -}}
     {%- else -%}
         {{- tableHead(false, ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', '']) -}}
     {%- endif -%}
@@ -49,9 +51,17 @@
             {%- endif -%}
 
             {%- if showActions -%}
-                {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
-                {%- set viewContents = actionLinks({(url(viewRoute, {actionId: action.id})): 'common.actions.view'|trans}) -%}
-                {{ tableCell(viewContents, {actions: true}) }}
+                {% if isAdmin %}
+                    {%- set editContents -%}
+                        {%- set editRoute = constant('App\\Controller\\Admin\\International\\Survey\\ActionController::EDIT_ROUTE') -%}
+                        <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">Edit</a>
+                    {%- endset -%}
+                    {{ tableCell(editContents, {actions: true}) }}
+                {% else %}
+                    {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
+                    {%- set viewContents = actionLinks({(url(viewRoute, {actionId: action.id})): 'common.actions.view'|trans}) -%}
+                    {{ tableCell(viewContents, {actions: true}) }}
+                {% endif %}
             {%- endif -%}
         </tr>
     {%- endfor -%}

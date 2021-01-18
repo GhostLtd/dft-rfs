@@ -12,7 +12,7 @@ common:
     not-null: Enter a number
     positive-or-zero: Enter a positive number or zero
     positive: Enter a positive number
-    max: "Cannot be more than {max}"
+    max: "Cannot be more than {limit}"
   place:
     place: Enter a place
     country: Enter a country
@@ -23,6 +23,7 @@ common:
       not-blank: Enter a value
       positive-or-zero: Enter a positive number or zero
   address:
+    gov-notify-requires-3-lines: Enter at least 3 lines of the address
     line-1:
       not-blank: Enter a value
     postcode:
@@ -87,6 +88,7 @@ international:
           other {Goods were unloaded at stops {list} before they were loaded}
         }
     unloading:
+      cannot-unload: Cannot fully unload - goods already partially unloaded
       bad-trip: Action must be linked to a persisted Trip
       must-load-first: Goods must be loaded prior to unloading
       weight-not-null: Enter a weight

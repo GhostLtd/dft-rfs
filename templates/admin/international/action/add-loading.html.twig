@@ -1,0 +1,8 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    <h1 class="govuk-heading-l" id="top">Add Loading Action</h1>
+
+    {%- form_theme form "admin/international/action/theme.html.twig" -%}
+    {{ form(form) }}
+{%- endblock -%}

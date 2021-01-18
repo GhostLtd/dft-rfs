@@ -22,6 +22,24 @@ class SurveyRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param $id
+     * @return Survey
+     */
+    public function findOneByIdWithResponseAndVehicle($id)
+    {
+        return $this->createQueryBuilder('survey')
+            ->select('survey, passcode_user, response, vehicle')
+            ->leftJoin('survey.passcodeUser', 'passcode_user')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.vehicle', 'vehicle')
+            ->where('survey.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+    /**
      * @param bool $isNorthernIreland
      * @return Survey[]
      */

@@ -1,0 +1,10 @@
+.govuk-radios__item {
+  input[type="radio"][disabled] {
+    & + label {
+      text-decoration: line-through;
+      & + .govuk-radios__hint {
+        color: #aaa; // Make help text matching grey if field disabled
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\PasscodeUser;
@@ -39,9 +40,12 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
      */
     protected function getFormWizard(): FormWizardInterface
     {
+        $em = $this->getDoctrine()->getManager();
+
         /** @var PasscodeUser $user */
         $user = $this->getUser();
         $survey = $user->getDomesticSurvey();
+        $survey = $em->getRepository(Survey::class)->findOneByIdWithResponseAndVehicle($survey->getId());
 
         /** @var InitialDetailsState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
@@ -52,14 +56,16 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
             ;
             $surveyResponse->setSurvey($survey);
             $formWizard->setSubject($surveyResponse);
-        } else {
-            $surveyResponse = $formWizard->getSubject();
-            $surveyResponse->setSurvey($survey);
         }
 
         if ($formWizard->getSubject()->getId()) {
-            // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-            $formWizard->setSubject($this->getDoctrine()->getManager()->merge($formWizard->getSubject()));
+            $surveyResponse = $survey->getResponse();
+            $surveyResponse
+                ->mergeInitialDetails($formWizard->getSubject())
+              ;
+            $formWizard->setSubject($surveyResponse);
+        } else {
+            $survey->setResponse($formWizard->getSubject());
         }
 
         return $formWizard;

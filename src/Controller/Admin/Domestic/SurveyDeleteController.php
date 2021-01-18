@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/{type}/surveys", name="admin_domestic_", requirements={"type": "gb|ni"})
+ * @Route("/csrgt/survey", name="admin_domestic_")
  */
 class SurveyDeleteController extends AbstractController
 {
@@ -54,12 +54,11 @@ class SurveyDeleteController extends AbstractController
 
                 $this->addFlash('notification', new NotificationBanner('Success', "Survey successfully deleted", "The survey for {$survey->getRegistrationMark()} was deleted.", ['type' => 'success']));
 
-                return $this->redirectToRoute('admin_domestic_surveys', ['type' => $request->attributes->get('type')]);
+                return $this->redirectToRoute('admin_domestic_surveys', ['type' => $survey->getIsNorthernIreland() ? 'ni' : 'gb']);
             } else {
                 $this->addFlash('notification', new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
 
                 return $this->redirectToRoute('admin_domestic_surveydetails', [
-                    'type' => $request->attributes->get('type'),
                     'survey' => $survey->getId()
                 ]);
             }

@@ -4,6 +4,7 @@ namespace App\Entity\Domestic;
 
 use App\Entity\Address;
 use App\Entity\BlameLoggable;
+use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
@@ -80,10 +81,10 @@ class Survey implements BlameLoggable
     private $invitationEmail;
 
     /**
-     * @ORM\Embedded(class=Address::class)
+     * @ORM\Embedded(class=LongAddress::class)
      * @AppAssert\ValidAddress(groups={"add_survey"}, validatePostcode=true, allowBlank=true)
      *
-     * @var Address|null
+     * @var LongAddress|null
      */
     private $invitationAddress;
 
@@ -201,12 +202,12 @@ class Survey implements BlameLoggable
         return $this;
     }
 
-    public function getInvitationAddress(): ?Address
+    public function getInvitationAddress(): ?LongAddress
     {
         return $this->invitationAddress;
     }
 
-    public function setInvitationAddress(?Address $invitationAddress): self
+    public function setInvitationAddress(?LongAddress $invitationAddress): self
     {
         $this->invitationAddress = $invitationAddress;
 
