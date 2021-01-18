@@ -93,6 +93,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
             new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
+            new TwigFunction('flatten', [$this, 'flatten']),
         ];
     }
 
@@ -222,6 +223,19 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function flatten(array $choices): array {
+        $output = [];
+        foreach($choices as $label => $choice) {
+            if (is_array($choice)) {
+                $output = array_merge($output, $this->flatten($choice));
+            } else {
+                $output[$label] = $choice;
+            }
+        }
+
+        return $output;
     }
 
     public function shiftMapping(array $mapping, int $key, string $direction): array {

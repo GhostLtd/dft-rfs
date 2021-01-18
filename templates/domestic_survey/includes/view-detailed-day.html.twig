@@ -36,7 +36,7 @@
             <dd class="govuk-summary-list__value">
                 {{- stop | formatGoodsDescription }}
                 {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-                {%- if stop.hazardousGoodsCode %} — <em>{{ stop.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, stop.hazardousGoodsCode) | trans }}{% endif %}
+                {%- if stop.hazardousGoodsCode %} — <em>{{ stop.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), stop.hazardousGoodsCode) | trans }}{% endif %}
             </dd>
             <dd class="govuk-summary-list__actions">
                 {{ actionLinks({(urlChange): 'common.actions.change'}) }}

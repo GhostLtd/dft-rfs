@@ -32,7 +32,7 @@
                 {%- set goodsCopy -%}
                     {{ consignment | formatGoodsDescription }}
                     {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-                    {%- if consignment.hazardousGoodsCode %} — <em>{{ consignment.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, consignment.hazardousGoodsCode) | trans }}{% endif %}
+                    {%- if consignment.hazardousGoodsCode %} — <em>{{ consignment.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), consignment.hazardousGoodsCode) | trans }}{% endif %}
                 {%- endset -%}
                 {{ summaryListRow('common.consignment.goods', goodsCopy | raw, {(urlGoodsChange): change}) }}
                 {{ summaryListRow('common.consignment.cargo-type', choiceLabel(cargoChoices, consignment.cargoTypeCode) | trans, {(urlCargoTypeChange): change}) }}

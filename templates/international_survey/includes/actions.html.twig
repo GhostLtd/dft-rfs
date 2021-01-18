@@ -42,7 +42,7 @@
             {%- if isAdmin -%}
                 {%- set hazardousGoods -%}
                     {%- if action.hazardousGoodsCode -%}
-                        <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(hazardousGoodsChoices, action.hazardousGoodsCode) | trans }}
+                        <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), action.hazardousGoodsCode) | trans }}
                     {%- else -%}
                         -
                     {%- endif -%}
