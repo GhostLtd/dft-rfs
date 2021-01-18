@@ -52,7 +52,7 @@ common:
       not-blank: Choose the type of body this vehicle has
     carrying-capacity:
       not-blank: Enter the vehicle's carrying capacity
-      not-more-than-gross-weight: Carrying capcity cannot be more than the vehicle's gross weight
+      not-more-than-gross-weight: Carrying capacity cannot be more than the vehicle's gross weight
     gross-weight:
       not-blank: Enter the vehicle's gross weight
     operation-type:
