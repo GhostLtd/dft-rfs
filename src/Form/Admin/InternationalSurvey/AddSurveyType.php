@@ -49,6 +49,11 @@ class AddSurveyType extends AbstractType
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => "{$translationKeyPrefix}.submit.label",
+            ])
+            ->add('cancel', Gds\ButtonType::class, [
+                'type' => 'submit',
+                'label' => "common.actions.cancel",
+                'attr' => ['class' => 'govuk-button--secondary'],
             ]);
 
             ;

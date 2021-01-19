@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin\International\Survey;
+namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\BusinessDetailsType;

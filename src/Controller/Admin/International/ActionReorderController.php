@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin\International\Survey;
+namespace App\Controller\Admin\International;
 
 use App\Controller\AbstractActionReorderController;
 use App\Entity\International\Trip;

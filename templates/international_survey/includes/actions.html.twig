@@ -54,9 +54,9 @@
             {%- if showActions -%}
                 {%- if isAdmin -%}
                     {%- set editContents -%}
-                        {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\Survey\\ActionController::DELETE_ROUTE') -%}
+                        {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE') -%}
                         <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">Delete</a>
-                        {%- set editRoute = constant('App\\Controller\\Admin\\International\\Survey\\ActionController::EDIT_ROUTE') -%}
+                        {%- set editRoute = constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE') -%}
                         <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">Edit</a>
                     {%- endset -%}
                     {{ tableCell(editContents, {actions: true}) }}

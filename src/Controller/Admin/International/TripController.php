@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin\International\Survey;
+namespace App\Controller\Admin\International;
 
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
@@ -29,8 +29,8 @@ class TripController extends AbstractController
     public const DELETE_ROUTE = self::ROUTE_PREFIX . "delete";
     public const EDIT_ROUTE = self::ROUTE_PREFIX."edit";
 
-    protected $entityManager;
-    protected $requestStack;
+    protected EntityManagerInterface $entityManager;
+    protected RequestStack $requestStack;
 
     public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
     {
