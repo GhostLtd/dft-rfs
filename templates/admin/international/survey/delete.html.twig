@@ -1,0 +1,19 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">Delete Survey</h1>
+
+
+        {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
+            {%- include "international_survey/includes/survey-basics.html.twig" -%}
+            {%- if survey.response -%}
+                {%- include "international_survey/includes/contact-details.html.twig" -%}
+                {%- include "international_survey/includes/business-details.html.twig" -%}
+            {%- endif -%}
+        {%- endwith -%}
+
+    {{ warningText('This will permanently delete this survey and all related vehicles, trips and consignment actions.') }}
+
+    {{ form(form) }}
+{%- endblock -%}
