@@ -5,8 +5,11 @@ namespace App\Controller\Admin\International\Survey;
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\BusinessDetailsType;
 use App\Form\Admin\InternationalSurvey\CorrespondenceDetailsType;
+use App\Form\Admin\InternationalSurvey\SurveyDeleteType;
 use App\ListPage\International\SurveyListPage;
+use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -22,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveyController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_international_survey_';
+    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const LIST_ROUTE = self::ROUTE_PREFIX.'list';
     public const VIEW_ROUTE = self::ROUTE_PREFIX.'view';
 
@@ -98,6 +102,35 @@ class SurveyController extends AbstractController
         }
 
         return $this->render("admin/international/surveys/edit-{$templateName}.html.twig", [
+            'survey' => $survey,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/survey/{surveyId}/delete", name=self::DELETE_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     */
+    public function delete(Survey $survey, Request $request, DeleteHelper $deleteHelper): Response
+    {
+        $form = $this->createForm(SurveyDeleteType::class);
+
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            $delete = $form->get('delete');
+            if ($delete instanceof SubmitButton && $delete->isClicked()) {
+                $deleteHelper->deleteSurvey($survey);
+
+                $this->addFlash('notification', new NotificationBanner('Success', "Survey successfully deleted", "The survey was deleted.", ['type' => 'success']));
+                return new RedirectResponse($this->generateUrl(SurveyController::LIST_ROUTE));
+            } else {
+                $this->addFlash('notification', new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
+                return new RedirectResponse($this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]));
+            }
+        }
+
+        return $this->render('admin/international/survey/delete.html.twig', [
             'survey' => $survey,
             'form' => $form->createView(),
         ]);

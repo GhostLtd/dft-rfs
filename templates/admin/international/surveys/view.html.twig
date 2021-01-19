@@ -1,7 +1,7 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {} -%}
 
@@ -19,18 +19,14 @@
 
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
-        {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
-        {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
-    </dl>
+    {%- include "international_survey/includes/survey-basics.html.twig" -%}
 
     {# {% if is_granted('ROLE_ADMIN_FORM_USER') %} #}
     {# <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {survey: survey.id}) }}">Delete survey</a> #}
     {# {% endif %} #}
 
     {%- if tabs is defined -%}
-        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+        <div class="govuk-tabs govuk-!-margin-bottom-4" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
 
             {%- if 'Vehicles' in tabs | keys -%}
@@ -79,6 +75,10 @@
         </div>
     {%- endif -%}
 
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_delete', {surveyId: survey.id}) }}">Delete survey</a>
+    </div>
+
     {% if survey.response and (survey.response.vehicles is not empty) %}
         {% for vehicle in survey.response.vehicles %}
             <div class="govuk-!-padding-bottom-4">
@@ -99,6 +99,7 @@
                                 class="govuk-visually-hidden"> vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
                     <a class="govuk-button"
                        href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip</a>
+                    <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle</a>
                 </div>
 
                 <h3 class="govuk-heading-m">Trips</h3>
@@ -112,6 +113,7 @@
                     <div class="govuk-!-margin-bottom-5">
                         <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit<span
                                     class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
+                        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_trip_delete', {tripId: trip.id}) }}">Delete Trip</a>
                     </div>
 
                     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}

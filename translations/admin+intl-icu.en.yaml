@@ -24,3 +24,15 @@ international:
     delete:
       delete.label: Yes, delete this action
       cancel.label: Cancel
+  trip:
+    delete:
+      delete.label: Yes, delete this trip
+      cancel.label: Cancel
+  survey:
+    delete:
+      delete.label: Yes, delete this survey
+      cancel.label: Cancel
+  vehicle:
+    delete:
+      delete.label: Yes, delete this vehicle
+      cancel.label: Cancel

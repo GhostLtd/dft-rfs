@@ -7,6 +7,7 @@ use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\ActionDeleteType;
 use App\Form\Admin\InternationalSurvey\ActionLoadType;
 use App\Form\Admin\InternationalSurvey\ActionUnloadType;
+use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -113,10 +114,8 @@ class ActionController extends AbstractController
      * @Route("/action/{actionId}/delete", name=self::DELETE_ROUTE)
      * @Entity("action", expr="repository.findOneByIdWithRelatedActions(actionId)")
      */
-    public function delete(Action $action, Request $request): Response
+    public function delete(Action $action, Request $request, DeleteHelper $deleteHelper): Response
     {
-        dump($action);
-
         $form = $this->createForm(ActionDeleteType::class);
 
         $trip = $action->getTrip();
@@ -132,14 +131,7 @@ class ActionController extends AbstractController
 
             $delete = $form->get('delete');
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                foreach ($action->getUnloadingActions() as $unloadingAction) {
-                    $trip->removeAction($unloadingAction);
-                    $this->entityManager->remove($unloadingAction);
-                }
-                $trip->removeAction($action);
-                $trip->renumberActions();
-                $this->entityManager->remove($action);
-                $this->entityManager->flush();
+                $deleteHelper->deleteAction($action);
 
                 $this->addFlash('notification', new NotificationBanner('Success', "Action successfully deleted", "The consignment action was deleted.", ['type' => 'success']));
                 return new RedirectResponse($redirectUrl);
