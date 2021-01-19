@@ -6,6 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
+use App\Workflow\FormWizardManager;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,26 +35,19 @@ class TripAddController extends AbstractSessionStateWorkflowController
     /** @var Vehicle */
     protected $vehicle;
 
-    protected $vehicleRepository;
-
-    public function __construct(VehicleRepository $vehicleRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
-    {
-        parent::__construct($entityManager, $logger, $session);
-        $this->vehicleRepository = $vehicleRepository;
-    }
-
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip", name=self::START_ROUTE)
      */
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
+                          VehicleRepository $vehicleRepository,
                           Request $request,
                           UserInterface $user,
                           string $vehicleId,
                           ?string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse($user);
-        $this->vehicle = $this->vehicleRepository->findByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
+        $this->vehicle = $vehicleRepository->findByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();

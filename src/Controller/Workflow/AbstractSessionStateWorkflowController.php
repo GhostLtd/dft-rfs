@@ -2,6 +2,7 @@
 
 namespace App\Controller\Workflow;
 
+use App\Workflow\FormWizardManager;
 use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -16,9 +17,9 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
 
     protected $session;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $log, SessionInterface $session)
+    public function __construct(FormWizardManager $formWizardManager, EntityManagerInterface $entityManager, LoggerInterface $log, SessionInterface $session)
     {
-        parent::__construct($entityManager, $log);
+        parent::__construct($formWizardManager, $entityManager, $log);
         $this->session = $session;
     }
 
