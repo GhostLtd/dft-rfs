@@ -15,24 +15,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Valid;
 
 class InitialDetailsType extends AbstractType implements DataMapperInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $dateValidation = function(string $group) {
-            return new NotNull([
-                'message' => "common.date.not-null",
-                'groups' => [$group],
-            ]);
-        };
-
-//        $validValidation = function(string $group) {
-//            return new Valid(['groups' => [$group]]);
-//        };
-
         $builder
             ->setDataMapper($this)
             ->add('contact_details', ContactDetailsType::class, [
@@ -55,19 +42,15 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ->add('sold_details', SoldDetailsType::class, [
                 'label' => false,
                 'inherit_data' => true,
-                'date_mapped' => false,
+                'validation_groups' => null,
                 'date_property_path' => null,
-                'date_constraints' => [$dateValidation('admin_sold')],
-//                'constraints' => [$validValidation('admin_sold')],
             ])
             ->add('scrapped_details', ScrappedDetailsType::class, [
                 'label' => false,
                 'is_child_form' => true,
                 'inherit_data' => true,
-                'date_mapped' => false,
+                'validation_groups' => null,
                 'date_property_path' => null,
-                'date_constraints' => [$dateValidation('admin_scrapped')],
-//                'constraints' => [$validValidation('admin_scrapped')],
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
@@ -98,7 +81,6 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                         break;
                 }
 
-                dump($validationGroups);
                 return $validationGroups;
             }
         ]);
@@ -113,6 +95,10 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         if (!$viewData instanceof SurveyResponse) {
             throw new Exception\UnexpectedTypeException($viewData, SurveyResponse::class);
         }
+
+        // This data mapper takes care of two things...
+        // a) Getting the date data to/from the correct form field (soldDate, scrappedDate or neither)
+        // b) Setting fields related to the non-chosen options to null (e.g. choose "hire" and sold/scrapped fields will be nulled)
 
         /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
@@ -156,22 +142,12 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
         }
 
+        // If you say "hire", it'll give you the "sold" fields. If you say "scrapped", it'll give you "sold" + "hire" fields etc.
         $getFieldsExcluding = function(string $excludeGroup) {
-            $fields = [];
-
-            if ($excludeGroup !== 'hire') {
-                $fields = array_merge($fields, ['hireeAddress', 'hireeName', 'hireeEmail']);
-            }
-
-            if ($excludeGroup !== 'scrapped') {
-                $fields = array_merge($fields, []);
-            }
-
-            if ($excludeGroup !== 'sold') {
-                $fields = array_merge($fields, ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail']);
-            }
-
-            return $fields;
+            return array_merge(...array_values(array_filter([
+                'hire' => ['hireeAddress', 'hireeName', 'hireeEmail'],
+                'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
+            ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
         };
 
         switch ($isInPossession) {

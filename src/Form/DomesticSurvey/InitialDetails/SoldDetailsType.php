@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class SoldDetailsType extends AbstractType
 {
@@ -18,9 +19,13 @@ class SoldDetailsType extends AbstractType
                 'label' => 'domestic.survey-response.sold-details.date.label',
                 'help' => 'domestic.survey-response.sold-details.date.help',
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'constraints' => [
+                    new NotNull([
+                    'message' => "common.date.not-null",
+                    'groups' => ['admin_sold'],
+                    ])
+                ],
                 'property_path' => $options['date_property_path'],
-                'constraints' => $options['date_constraints'],
-                'mapped' => $options['date_mapped'],
             ])
             ->add('newOwnerName', Gds\InputType::class, [
                 'label' => 'domestic.survey-response.sold-details.new-owner-name.label',
@@ -45,9 +50,7 @@ class SoldDetailsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => 'sold_details',
-            'date_constraints' => null,
             'date_property_path' => 'unableToCompleteDate',
-            'date_mapped' => true,
         ]);
     }
 }
