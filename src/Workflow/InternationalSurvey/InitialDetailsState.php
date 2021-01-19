@@ -8,10 +8,10 @@ use App\Form\InternationalSurvey\InitialDetails\BusinessDetailsType;
 use App\Form\InternationalSurvey\InitialDetails\ContactDetailsType;
 use App\Form\InternationalSurvey\InitialDetails\NumberOfTripsType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class InitialDetailsState extends AbstractFormWizardState implements FormWizardInterface
+class InitialDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';

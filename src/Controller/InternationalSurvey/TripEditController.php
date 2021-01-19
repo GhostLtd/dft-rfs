@@ -5,7 +5,7 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Trip;
 use App\Repository\International\TripRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,9 +49,9 @@ class TripEditController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new TripState());
 
         $trip = $formWizard->getSubject() ?? $this->trip;

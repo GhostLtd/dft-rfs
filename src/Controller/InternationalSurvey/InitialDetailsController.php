@@ -4,7 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -38,13 +38,13 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         $survey = $this->getSurvey($this->getUser());
 
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
 
         $response = $formWizard->getSubject() ?? $survey->getResponse() ?? new SurveyResponse();

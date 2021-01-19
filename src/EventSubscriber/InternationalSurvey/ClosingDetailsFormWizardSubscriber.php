@@ -21,10 +21,6 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
     {
         $prefix = 'workflow.international_survey_closing_details';
         return [
-            // Guard events
-            "{$prefix}.guard.filled_out" => 'guardFilledOut',
-            "{$prefix}.guard.not_filled_out" => 'guardNotFilledOut',
-
             // Transition events
             "{$prefix}.transition.finish" => 'transitionFinish',
         ];
@@ -38,22 +34,6 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
         if ($this->internationalSurveyStateMachine->can($survey, 'complete'))
         {
             $this->internationalSurveyStateMachine->apply($survey, 'complete');
-        }
-    }
-
-    public function guardFilledOut(GuardEvent $event)
-    {
-        $stateObject = $this->getStateObject($event);
-        if (!$stateObject->getSubject()->isFilledOut()) {
-            $event->setBlocked(true);
-        }
-    }
-
-    public function guardNotFilledOut(GuardEvent $event)
-    {
-        $stateObject = $this->getStateObject($event);
-        if ($stateObject->getSubject()->isFilledOut()) {
-            $event->setBlocked(true);
         }
     }
 

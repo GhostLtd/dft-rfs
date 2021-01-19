@@ -11,9 +11,9 @@ use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
 use App\Form\DomesticSurvey\InitialDetails\InPossessionOfVehicleType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class InitialDetailsState extends AbstractFormWizardState implements FormWizardInterface
+class InitialDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_REQUEST_CONTACT_DETAILS = 'contact-details';

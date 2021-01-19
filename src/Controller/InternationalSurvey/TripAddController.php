@@ -6,7 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -62,9 +62,9 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new TripState());
 
         $this->setSubjectOnWizard($this->vehicle, $formWizard);
@@ -77,7 +77,7 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
 
-    protected function setSubjectOnWizard(Vehicle $vehicle, FormWizardInterface $formWizard): void
+    protected function setSubjectOnWizard(Vehicle $vehicle, FormWizardStateInterface $formWizard): void
     {
         $trip = $formWizard->getSubject() ?? new Trip();
         $trip->setVehicle($vehicle);

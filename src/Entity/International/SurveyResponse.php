@@ -55,7 +55,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotNull(groups={"number_of_trips", "admin_business_details"}, message="international.survey-response.annual-international-journey-count.not-null")
-     * @Assert\PositiveOrZero(message="common.number.positive", groups={"number_of_trips", "admin_business_details"})
+     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"number_of_trips", "admin_business_details"})
      * @Assert\Range(groups={"number_of_trips", "admin_business_details"}, max=2000000000, maxMessage="common.number.max")
      */
     private $annualInternationalJourneyCount;

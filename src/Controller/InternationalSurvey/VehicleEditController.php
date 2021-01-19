@@ -5,7 +5,7 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,9 +49,9 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new VehicleState());
 
         $vehicle = $formWizard->getSubject() ?? $this->vehicle;

@@ -7,7 +7,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DaySummaryState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,9 +44,9 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();

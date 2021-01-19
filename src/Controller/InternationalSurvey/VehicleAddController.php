@@ -5,7 +5,7 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,9 +39,9 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new VehicleState());
 
         $this->setSubjectOnWizard($this->surveyResponse, $formWizard);
@@ -54,7 +54,7 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
 
-    protected function setSubjectOnWizard(SurveyResponse $response, FormWizardInterface $formWizard): void
+    protected function setSubjectOnWizard(SurveyResponse $response, FormWizardStateInterface $formWizard): void
     {
         $vehicle = $formWizard->getSubject() ?? new Vehicle();
         $vehicle->setSurveyResponse($response);

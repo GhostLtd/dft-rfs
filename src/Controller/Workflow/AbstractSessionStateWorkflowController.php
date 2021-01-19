@@ -2,7 +2,7 @@
 
 namespace App\Controller\Workflow;
 
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -22,7 +22,7 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
         $this->session = $session;
     }
 
-    protected function setFormWizard(FormWizardInterface $formWizard)
+    protected function setFormWizard(FormWizardStateInterface $formWizard)
     {
         $this->session->set($this->getSessionKey(), $formWizard);
     }

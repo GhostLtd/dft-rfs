@@ -8,7 +8,7 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +36,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         $em = $this->getDoctrine()->getManager();
 

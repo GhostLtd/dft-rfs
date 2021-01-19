@@ -25,10 +25,12 @@ return static function (ContainerConfigurator $container) {
                     'not_filled_out' => [
                         'from' => StateObject::STATE_START,
                         'to' => StateObject::STATE_REASON_EMPTY_SURVEY,
+                        'guard' => '!subject.getSubject().isFilledOut()',
                     ],
                     'filled_out' => [
                         'from' => StateObject::STATE_START,
                         'to' => StateObject::STATE_CONFIRM,
+                        'guard' => 'subject.getSubject().isFilledOut()',
                     ],
                     'request_confirmation' => [
                         'from' => StateObject::STATE_REASON_EMPTY_SURVEY,

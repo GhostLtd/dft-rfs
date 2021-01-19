@@ -6,7 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Consignment;
 use App\Entity\International\Trip;
 use App\Repository\International\StopRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -82,7 +82,7 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
         return $this->doWorkflow($internationalSurveyConsignmentStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var ConsignmentState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ConsignmentState());

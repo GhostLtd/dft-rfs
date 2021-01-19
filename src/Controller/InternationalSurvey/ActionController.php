@@ -11,7 +11,7 @@ use App\Form\InternationalSurvey\Action\DeleteActionType;
 use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
 use App\Utility\ReorderUtils;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -218,9 +218,9 @@ class ActionController extends AbstractSessionStateWorkflowController
         ]);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ActionState());
 
         switch($this->mode) {

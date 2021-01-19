@@ -27,6 +27,7 @@ return static function (ContainerConfigurator $container) {
                     'missing_days' => [
                         'from' =>  StateObject::STATE_START,
                         'to' => StateObject::STATE_MISSING_DAYS,
+                        'guard' => 'subject.getSubject().getDays().count() !== 7',
                     ],
                     'back_to_dashboard' => [
                         'from' => StateObject::STATE_MISSING_DAYS,
@@ -42,6 +43,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'transitionWhenFormData' => ['property' => 'missing_days', 'value' => true]
                         ],
+                        'guard' => 'subject.getSubject().hasJourneys()',
                     ],
                     'empty_survey' => [
                         'from' => StateObject::STATE_MISSING_DAYS,
@@ -49,10 +51,12 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'transitionWhenFormData' => ['property' => 'missing_days', 'value' => true]
                         ],
+                        'guard' => '!subject.getSubject().hasJourneys()',
                     ],
                     'request_fuel_added_no_issues' => [
                         'from' =>  StateObject::STATE_START,
                         'to' => StateObject::STATE_VEHICLE_FUEL,
+                        'guard' => 'subject.getSubject().hasJourneys() && subject.getSubject().getDays().count() === 7'
                     ],
 
                     'request_confirmation' => [

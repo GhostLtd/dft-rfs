@@ -35,19 +35,19 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_ASK_IN_POSSESSION,
                     ],
                     'request-hiree-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_ON_HIRE]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_HIREE_DETAILS,
+                        'guard' => sprintf("subject.getSubject().getIsInPossessionOfVehicle() === '%s'", SurveyResponse::IN_POSSESSION_ON_HIRE),
                     ],
                     'request-scrapped-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SCRAPPED_DETAILS,
+                        'guard' => sprintf("subject.getSubject().getIsInPossessionOfVehicle() === '%s'", SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN),
                     ],
                     'request-sold-details' => [
-                        'metadata' => ['transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_SOLD]],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_ASK_SOLD_DETAILS,
+                        'guard' => sprintf("subject.getSubject().getIsInPossessionOfVehicle() === '%s'", SurveyResponse::IN_POSSESSION_SOLD),
                     ],
                     'finish' => [
                         'metadata' => [
@@ -66,10 +66,11 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_index',
-                            'transitionWhenFormData' => ['property' => 'isInPossessionOfVehicle', 'value' => SurveyResponse::IN_POSSESSION_YES],
+                            'buttonLabel' => 'Continue'
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_END,
+                        'guard' => sprintf("subject.getSubject().getIsInPossessionOfVehicle() === '%s'", SurveyResponse::IN_POSSESSION_YES),
                     ],
                     'change-contact-details' => [
                         'from' =>  StateObject::STATE_END,

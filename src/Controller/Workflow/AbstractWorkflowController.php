@@ -2,7 +2,7 @@
 
 namespace App\Controller\Workflow;
 
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
@@ -28,8 +28,8 @@ abstract class AbstractWorkflowController extends AbstractController
      */
     private $log;
 
-    abstract protected function getFormWizard(): FormWizardInterface;
-    abstract protected function setFormWizard(FormWizardInterface $formWizard);
+    abstract protected function getFormWizard(): FormWizardStateInterface;
+    abstract protected function setFormWizard(FormWizardStateInterface $formWizard);
     abstract protected function cleanUp();
 
     abstract protected function getRedirectUrl($state): Response;
@@ -76,6 +76,7 @@ abstract class AbstractWorkflowController extends AbstractController
             if ($form->isValid()) {
                 $transitions = $stateMachine->getEnabledTransitions($formWizard);
 
+                // Filter transitions based on form data (not accessible by guards)
                 foreach ($transitions as $k=>$v) {
                     $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($v);
 
@@ -83,32 +84,7 @@ abstract class AbstractWorkflowController extends AbstractController
                         $data = $form->get($transitionWhenFormData['property'])->getData();
                         $value = $transitionWhenFormData['value'];
 
-                        if (is_array($value) ? in_array($data, $value) : $data === $value) {
-                            return $this->applyTransitionAndRedirect($request, $stateMachine, $formWizard, $v);
-                        } else {
-                            unset($transitions[$k]);
-                        }
-                    }
-
-                    $transitionCallback = $metadata['transitionWhenCallback'] ?? false;
-                    $invertCallbackResponse = false;
-
-                    if (!$transitionCallback) {
-                        $transitionCallback = $metadata['transitionWhenCallbackNot'] ?? false;
-                        $invertCallbackResponse = true;
-                    }
-
-                    if ($transitionCallback) {
-                        $data = $form->getData();
-                        $shouldKeep = is_array($transitionCallback) ?
-                            $transitionCallback($data) :
-                            $data !== null && $data->$transitionCallback();
-
-                        if ($invertCallbackResponse) {
-                            $shouldKeep = !$shouldKeep;
-                        }
-
-                        if (!$shouldKeep) {
+                        if (!(is_array($value) ? in_array($data, $value) : $data === $value)) {
                             unset($transitions[$k]);
                         }
                     }
@@ -141,12 +117,12 @@ abstract class AbstractWorkflowController extends AbstractController
     /**
      * @param Request $request
      * @param WorkflowInterface $stateMachine
-     * @param FormWizardInterface $formWizard
+     * @param FormWizardStateInterface $formWizard
      * @param Transition $transition
      * @return Response
      * @throws Exception
      */
-    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardInterface $formWizard, Transition $transition)
+    protected function applyTransitionAndRedirect(Request $request, WorkflowInterface $stateMachine, FormWizardStateInterface $formWizard, Transition $transition)
     {
         $stateMachine->apply($formWizard, $transition->getName());
         $this->setFormWizard($formWizard);
@@ -189,11 +165,11 @@ abstract class AbstractWorkflowController extends AbstractController
     }
 
     /**
-     * @param FormWizardInterface $formWizard
+     * @param FormWizardStateInterface $formWizard
      * @param WorkflowInterface $stateMachine
      * @return array
      */
-    protected function getFormAndTemplate(FormWizardInterface $formWizard, WorkflowInterface $stateMachine)
+    protected function getFormAndTemplate(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine)
     {
         $state = $formWizard->getState();
         $formMap = $formWizard->getStateFormMap();

@@ -3,7 +3,7 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,9 +54,9 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyClosingDetailsStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ClosingDetailsState());
 
         $surveyResponse = $formWizard->getSubject() ?? $this->surveyResponse;
