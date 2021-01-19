@@ -14,10 +14,13 @@ class SoldDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('unableToCompleteDate', Gds\DateType::class, [
+            ->add('soldDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.sold-details.date.label',
                 'help' => 'domestic.survey-response.sold-details.date.help',
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'property_path' => $options['date_property_path'],
+                'constraints' => $options['date_constraints'],
+                'mapped' => $options['date_mapped'],
             ])
             ->add('newOwnerName', Gds\InputType::class, [
                 'label' => 'domestic.survey-response.sold-details.new-owner-name.label',
@@ -41,7 +44,10 @@ class SoldDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
-            'validation_groups' => 'sold_details'
+            'validation_groups' => 'sold_details',
+            'date_constraints' => null,
+            'date_property_path' => 'unableToCompleteDate',
+            'date_mapped' => true,
         ]);
     }
 }

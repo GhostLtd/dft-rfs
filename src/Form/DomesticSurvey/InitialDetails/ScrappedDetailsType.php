@@ -13,10 +13,13 @@ class ScrappedDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('unableToCompleteDate', Gds\DateType::class, [
+            ->add('scrappedDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.scrapped-details.date.label',
                 'label_attr' => ['class' => ($options['is_child_form'] ? 'govuk-fieldset__legend--s' : 'govuk-fieldset__legend--xl')],
                 'help' => 'domestic.survey-response.scrapped-details.date.help',
+                'property_path' => $options['date_property_path'],
+                'constraints' => $options['date_constraints'],
+                'mapped' => $options['date_mapped'],
             ])
         ;
     }
@@ -27,6 +30,9 @@ class ScrappedDetailsType extends AbstractType
             'data_class' => SurveyResponse::class,
             'validation_groups' => 'scrapped_details',
             'is_child_form' => false,
+            'date_constraints' => null,
+            'date_property_path' => 'unableToCompleteDate',
+            'date_mapped' => true,
         ]);
     }
 }

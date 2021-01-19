@@ -3,7 +3,7 @@
 
 <h2 class="govuk-heading-m">Initial details</h2>
 {% include 'domestic_survey/includes/contact-details.html.twig' %}
-<dl class="govuk-summary-list govuk-!-margin-bottom-7">
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 7 }}">
     {% set canCompleteActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_ASK_IN_POSSESSION')})): 'Change'} %}
     {{ row(showActions, 'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
     {% if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_ON_HIRE') %}
