@@ -6,6 +6,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
@@ -49,7 +50,13 @@ abstract class AbstractOriginType extends AbstractType
         $this->traitConfigureOptions($resolver);
 
         $resolver->setDefaults([
-            'validation_groups' => ['origin', 'origin-ports']
+            'validation_groups' => function(FormInterface $form) {
+                /** @var StopTrait $data */
+                $data = $form->getData();
+                return $data->getGoodsLoaded()
+                    ? ['origin', 'origin-ports']
+                    : 'origin';
+            },
         ]);
     }
 }
