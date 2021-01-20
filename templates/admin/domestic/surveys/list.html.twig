@@ -12,10 +12,10 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{ tableCell(survey.response ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
-            {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
-            {{ tableCell(survey.response ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
-            {{ tableCell(actionLinks({(url('admin_domestic_surveydetails', app.request.get('_route_params') | default({}) | merge({survey: survey.id}))): 'details'}), {}) }}
+            {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
+            {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? survey.response.businessNature : '-', {}) }}
+            {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
+            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

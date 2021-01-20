@@ -21,6 +21,7 @@ class BusinessDetailsType extends AbstractType
                 'label' => "{$translationKeyPrefix}.number-of-employees.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.number-of-employees.help",
+                'expanded' => $options['expanded_employees'],
             ])
             ->add('businessNature', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.business-nature.label",
@@ -43,6 +44,7 @@ class BusinessDetailsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => ['business_details', 'vehicle_operation_type'],
+            'expanded_employees' => true,
         ]);
     }
 }

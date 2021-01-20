@@ -25,67 +25,36 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_ORIGIN,
-                    StateObject::STATE_ORIGIN_PORTS,
                     StateObject::STATE_DESTINATION,
-                    StateObject::STATE_DESTINATION_PORTS,
                     StateObject::STATE_BORDER_CROSSING,
                     StateObject::STATE_DISTANCE_TRAVELLED,
                     StateObject::STATE_GOODS_DESCRIPTION,
                     StateObject::STATE_HAZARDOUS_GOODS,
                     StateObject::STATE_CARGO_TYPE,
                     StateObject::STATE_GOODS_WEIGHT,
-//                    StateObject::STATE_,
 
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
-                    'goods_loaded' => [
-                        'from' => StateObject::STATE_ORIGIN,
-                        'to' =>  StateObject::STATE_ORIGIN_PORTS,
-                        'guard' => 'subject.getSubject().getGoodsLoaded()',
-                    ],
-                    'origin_port_to_destination' => [
-                        'from' => StateObject::STATE_ORIGIN_PORTS,
-                        'to' =>  StateObject::STATE_DESTINATION,
-                    ],
-                    'goods_not_loaded' => [
+                    'origin_to_destination' => [
                         'from' => StateObject::STATE_ORIGIN,
                         'to' =>  StateObject::STATE_DESTINATION,
-                        'guard' => '!subject.getSubject().getGoodsLoaded()',
                     ],
-                    'goods_not_unloaded_ni_only' => [
+                    'destination_to_border_crossing_ni_only' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_BORDER_CROSSING,
-                        'guard' => 'subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland() && !subject.getSubject().getGoodsUnloaded()',
+                        'guard' => 'subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
                     ],
-                    'goods_not_unloaded_gb_only' => [
+                    'destination_to_distance_travelled' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
                         'guard' => 'is_empty(subject.getSubject().getId())
-                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()
-                            && !subject.getSubject().getGoodsUnloaded()',
-                    ],
-                    'goods_unloaded_gb_or_ni' => [
-                        'from' => StateObject::STATE_DESTINATION,
-                        'to' =>  StateObject::STATE_DESTINATION_PORTS,
-                        'guard' => 'subject.getSubject().getGoodsUnloaded()',
-                    ],
-                    'goods_unloaded_ni_only' => [
-                        'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_BORDER_CROSSING,
-                        'guard' => 'subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland() && subject.getSubject().getGoodsUnloaded()',
+                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
                     ],
                     'border_crossing_to_distance_travelled' => [
                         'from' =>  StateObject::STATE_BORDER_CROSSING,
                         'to' => StateObject::STATE_DISTANCE_TRAVELLED,
                         'guard' => 'is_empty(subject.getSubject().getId())',
-                    ],
-                    'goods_unloaded_gb_only' => [
-                        'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_DISTANCE_TRAVELLED,
-                        'guard' => 'is_empty(subject.getSubject().getId())
-                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()
-                            && subject.getSubject().getGoodsUnloaded()',
                     ],
                     'distance_travelled_to_goods_description' => [
                         'from' => StateObject::STATE_DISTANCE_TRAVELLED,
@@ -100,7 +69,7 @@ return static function (ContainerConfigurator $container) {
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => [
                             'persist' => true,
-                            'buttonLabel' => 'Continue',
+                            'submitLabel' => 'Continue',
                             'redirectRoute' => [
                                 'routeName' => 'app_domesticsurvey_day_view',
                                 'parameterMappings' => ['dayNumber' => 'day.number'],
@@ -133,22 +102,13 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_END,
                     ],
 
-                    // The next three states are the possible end points of changing locations sub-wizard
-                    // goods unloaded (GB), goods not unloaded (GB) and Edit border crossing (NI)
-                    'edit_goods_not_unloaded_gb_only' => [
+                    // The next two states are the possible end points of changing locations sub-wizard
+                    // Destination (GB) and Edit border crossing (NI)
+                    'edit_origin_and_destination_gb_only' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_END,
                         'guard' => '!is_empty(subject.getSubject().getId())
-                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()
-                            && !subject.getSubject().getGoodsUnloaded()',
-                        'metadata' => $editEndMetadata,
-                    ],
-                    'edit_goods_unloaded_gb_only' => [
-                        'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_END,
-                        'guard' => '!is_empty(subject.getSubject().getId())
-                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()
-                            && subject.getSubject().getGoodsUnloaded()',
+                            && !subject.getSubject().getDay().getResponse().getSurvey().getIsNorthernIreland()',
                         'metadata' => $editEndMetadata,
                     ],
                     'edit_border_crossing' => [
@@ -175,7 +135,7 @@ return static function (ContainerConfigurator $container) {
                         'guard' => '!is_empty(subject.getSubject().getId())
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => array_merge($editEndMetadata, [
-                            'buttonLabel' => 'Continue',
+                            'submitLabel' => 'Continue',
                         ]),
                     ],
 

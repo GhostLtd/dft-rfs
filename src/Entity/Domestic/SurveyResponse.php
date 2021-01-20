@@ -59,44 +59,44 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"hiree_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details"})
+     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"hiree_details", "admin_on_hire"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      */
     private $hireeName;
 
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"hiree_details"})
-     * @Assert\Email(message="common.email.invalid", groups={"hiree_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details"})
+     * @Assert\NotBlank(message="common.email.not-blank", groups={"hiree_details", "admin_on_hire"})
+     * @Assert\Email(message="common.email.invalid", groups={"hiree_details", "admin_on_hire"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      */
     private $hireeEmail;
 
     /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"hiree_details"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"hiree_details", "admin_on_hire"}, validatePostcode=true)
      */
     private $hireeAddress;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"sold_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details"})
+     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"sold_details", "admin_sold"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      */
     private $newOwnerName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"sold_details"})
-     * @Assert\Email(message="common.email.invalid", groups={"sold_details"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details"})
+     * @Assert\NotBlank(message="common.email.not-blank", groups={"sold_details", "admin_sold"})
+     * @Assert\Email(message="common.email.invalid", groups={"sold_details", "admin_sold"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      */
     private $newOwnerEmail;
 
     /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"sold_details"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"sold_details", "admin_sold"}, validatePostcode=true)
      */
     private $newOwnerAddress;
 
@@ -298,7 +298,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     }
 
     /**
-     * @return Collection|Day[]
+     * @return Collection | Day[]
      */
     public function getDays(): Collection
     {
@@ -364,7 +364,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return $this->getContactName();
+        return "{$this->getContactName()}";
     }
 
     public function getAssociatedEntityClass()

@@ -90,7 +90,6 @@ class Kernel extends BaseKernel implements CompilerPassInterface
             ]));
             $definition->setArguments([$expressionLanguage]);
         }
-
     }
 }
 

@@ -6,6 +6,9 @@ use App\Controller\InternationalSurvey\TripController;
 use App\Workflow\InternationalSurvey\ActionState as StateObject;
 
 return static function (ContainerConfigurator $container) {
+    $expressionEditing = 'subject.getSubject().getId()';
+    $expressionCreating = '!subject.getSubject().getId()';
+
     $container->extension('framework', [
         'workflows' => [
             'international_survey_action' => [
@@ -31,6 +34,7 @@ return static function (ContainerConfigurator $container) {
                     'goods_loaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_GOODS_DESCRIPTION,
+                        'guard' => 'subject.getSubject().getLoading()',
                     ],
                     'goods_description_entered' => [
                         'from' => StateObject::STATE_GOODS_DESCRIPTION,
@@ -47,6 +51,7 @@ return static function (ContainerConfigurator $container) {
                     'weight_of_goods_entered' => [
                         'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_ADD_ANOTHER,
+                        'guard' => $expressionCreating,
                         'metadata' => [
                             'persist' => true,
                         ],
@@ -55,6 +60,7 @@ return static function (ContainerConfigurator $container) {
                     'finish_edit_loaded' => [
                         'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_END,
+                        'guard' => $expressionEditing,
                         'metadata' => [
                             'redirectRoute' => [
                                 'routeName' => TripController::TRIP_ROUTE,
@@ -68,7 +74,8 @@ return static function (ContainerConfigurator $container) {
 
                     'goods_unloaded' => [
                         'from' => StateObject::STATE_PLACE,
-                        'to' => StateObject::STATE_CONSIGNMENT_UNLOADED
+                        'to' => StateObject::STATE_CONSIGNMENT_UNLOADED,
+                        'guard' => '!subject.getSubject().getLoading()',
                     ],
                     'unloaded_consignment_selected' => [
                         'from' => StateObject::STATE_CONSIGNMENT_UNLOADED,
@@ -77,6 +84,7 @@ return static function (ContainerConfigurator $container) {
                     'unloaded_weight_entered' => [
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                         'to' => StateObject::STATE_ADD_ANOTHER,
+                        'guard' => $expressionCreating,
                         'metadata' => [
                             'persist' => true,
                         ],
@@ -85,6 +93,7 @@ return static function (ContainerConfigurator $container) {
                     'finish_edit_unloaded' => [
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                         'to' => StateObject::STATE_END,
+                        'guard' => $expressionEditing,
                         'metadata' => [
                             'redirectRoute' => [
                                 'routeName' => TripController::TRIP_ROUTE,

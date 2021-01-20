@@ -7,17 +7,23 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class ScrappedDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('unableToCompleteDate', Gds\DateType::class, [
+            ->add('scrappedDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.scrapped-details.date.label',
-//                'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'help' => 'domestic.survey-response.scrapped-details.date.help',
+                'label_attr' => ['class' => ($options['is_child_form'] ? 'govuk-fieldset__legend--s' : 'govuk-fieldset__legend--xl')],
+                'constraints' => [
+                    new NotNull([
+                        'message' => "common.date.not-null",
+                        'groups' => ['admin_scrapped'],
+                    ])
+                ],
+                'property_path' => $options['date_property_path'],
             ])
         ;
     }
@@ -27,6 +33,8 @@ class ScrappedDetailsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => 'scrapped_details',
+            'is_child_form' => false,
+            'date_property_path' => 'unableToCompleteDate',
         ]);
     }
 }

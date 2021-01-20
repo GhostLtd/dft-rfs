@@ -9,10 +9,10 @@ use App\Form\InternationalPreEnquiry\CorrespondenceDetailsType;
 use App\Form\InternationalPreEnquiry\EmployeesAndInternationalJourneysType;
 use App\Form\InternationalPreEnquiry\VehicleQuestionsType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class PreEnquiryState extends AbstractFormWizardState implements FormWizardInterface
+class PreEnquiryState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_INTRODUCTION = 'introduction';
     const STATE_COMPANY_NAME = 'company-name';

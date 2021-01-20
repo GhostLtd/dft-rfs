@@ -35,9 +35,15 @@
 
             {% if 'Initial details' in tabs | keys %}
                 <div class="govuk-tabs__panel" id="tab-initial-details">
-                    {% with {showActions: false} %}
+                    {% with {showActions: false, marginBottom: 4} %}
                         {% include 'domestic_survey/includes/initial-details.html.twig' %}
                     {% endwith %}
+
+                    <div>
+                        <a class="govuk-button"
+                           href="{{ path('admin_domestic_survey_initial_edit', {surveyId: survey.id}) }}">Edit<span
+                                    class="govuk-visually-hidden"> initial details</span></a>
+                    </div>
                 </div>
             {% endif %}
 

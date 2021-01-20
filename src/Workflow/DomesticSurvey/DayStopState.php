@@ -17,14 +17,12 @@ use App\Form\DomesticSurvey\DayStop\HazardousGoodsType;
 use App\Form\DomesticSurvey\DayStop\OriginPortsType;
 use App\Form\DomesticSurvey\DayStop\OriginType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class DayStopState extends AbstractFormWizardState implements FormWizardInterface
+class DayStopState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_ORIGIN = 'origin';
-    const STATE_ORIGIN_PORTS = 'origin-ports';
     const STATE_DESTINATION = 'destination';
-    const STATE_DESTINATION_PORTS = 'destination-ports';
     const STATE_BORDER_CROSSING = 'border-crossing';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
     const STATE_GOODS_DESCRIPTION = 'goods-description';
@@ -35,9 +33,7 @@ class DayStopState extends AbstractFormWizardState implements FormWizardInterfac
 
     private const FORM_MAP = [
         self::STATE_ORIGIN => OriginType::class,
-        self::STATE_ORIGIN_PORTS => OriginPortsType::class,
         self::STATE_DESTINATION => DestinationType::class,
-        self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_BORDER_CROSSING => BorderCrossingType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
         self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
@@ -48,9 +44,7 @@ class DayStopState extends AbstractFormWizardState implements FormWizardInterfac
 
     private const TEMPLATE_MAP = [
         self::STATE_ORIGIN => 'domestic_survey/day_stop/form-origin.html.twig',
-        self::STATE_ORIGIN_PORTS => 'domestic_survey/day_stop/form-origin-ports.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_stop/form-destination.html.twig',
-        self::STATE_DESTINATION_PORTS => 'domestic_survey/day_stop/form-destination-ports.html.twig',
         self::STATE_BORDER_CROSSING => 'domestic_survey/day_stop/form-border-crossing.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_stop/form-distance-travelled.html.twig',
         self::STATE_GOODS_DESCRIPTION => 'domestic_survey/day_stop/form-goods-description.html.twig',

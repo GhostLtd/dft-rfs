@@ -5,7 +5,7 @@ namespace App\EventSubscriber;
 
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -72,7 +72,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
 
         $sessionVars = $this->session->all();
         foreach ($sessionVars as $key => $var) {
-            if ($var instanceof FormWizardInterface && $key != $exclude) {
+            if ($var instanceof FormWizardStateInterface && $key != $exclude) {
                 $this->log->notice("[FormWizard] Removing wizard var: {$key}");
                 $this->session->remove($key);
             }

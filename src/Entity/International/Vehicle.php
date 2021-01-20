@@ -83,8 +83,8 @@ class Vehicle implements BlameLoggable
     {
         $this->setRegistrationMark($vehicle->getRegistrationMark());
         $this->setOperationType($vehicle->getOperationType());
-        $this->setTrailerConfiguration($vehicle->getTrailerConfiguration());
         $this->setAxleConfiguration($vehicle->getAxleConfiguration());
+        $this->setTrailerConfiguration($vehicle->getTrailerConfiguration()); // Order is important
         $this->setBodyType($vehicle->getBodyType());
         $this->setCarryingCapacity($vehicle->getCarryingCapacity());
         $this->setGrossWeight($vehicle->getGrossWeight());

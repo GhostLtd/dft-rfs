@@ -3,7 +3,7 @@
 
 namespace App\Workflow;
 
-abstract class AbstractFormWizardState implements FormWizardInterface
+abstract class AbstractFormWizardState implements FormWizardStateInterface
 {
     protected $state;
 

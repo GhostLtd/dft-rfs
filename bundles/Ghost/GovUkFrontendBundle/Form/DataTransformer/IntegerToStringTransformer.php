@@ -25,7 +25,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
 
     public function transform($value)
     {
-        if (empty($value)) {
+        if ($value === null || $value === '') {
             return '';
         }
 

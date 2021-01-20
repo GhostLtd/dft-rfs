@@ -11,7 +11,8 @@ use App\Form\InternationalSurvey\Action\DeleteActionType;
 use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
 use App\Utility\ReorderUtils;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardManager;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -61,12 +62,17 @@ class ActionController extends AbstractSessionStateWorkflowController
     protected $actionRepository;
 
     protected $tripRepository;
+    /**
+     * @var FormWizardManager
+     */
+    private $formWizardManager;
 
-    public function __construct(ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
+    public function __construct(FormWizardManager $formWizardManager, ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
     {
-        parent::__construct($entityManager, $logger, $session);
+        parent::__construct($formWizardManager, $entityManager, $logger, $session);
         $this->actionRepository = $actionRepository;
         $this->tripRepository = $tripRepository;
+        $this->formWizardManager = $formWizardManager;
     }
 
     /**
@@ -218,9 +224,9 @@ class ActionController extends AbstractSessionStateWorkflowController
         ]);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ActionState());
 
         switch($this->mode) {
@@ -231,9 +237,16 @@ class ActionController extends AbstractSessionStateWorkflowController
                 break;
             case self::MODE_ADD:
                 $action = $formWizard->getSubject() ?? new Action();
+                $action->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
                 $action->setTrip($this->trip);
                 $formWizard->setSubject($action);
                 break;
+        }
+
+        $subject = $formWizard->getSubject();
+        $loadedAction = $subject->getLoadingAction();
+        if ($loadedAction) {
+            $subject->setLoadingAction($this->actionRepository->find($loadedAction->getId()));
         }
 
         return $formWizard;
@@ -246,18 +259,11 @@ class ActionController extends AbstractSessionStateWorkflowController
             $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'state' => $state]);
     }
 
-    /** @param Action $subject */
-    protected function preFlush($subject)
+    protected function getCancelUrl(): ?Response
     {
-        $loadedAction = $subject->getLoadingAction();
-
-        if ($loadedAction) {
-            $subject->setLoadingAction($this->actionRepository->find($loadedAction->getId()));
-        }
-
-        if ($this->mode === self::MODE_ADD) {
-            $subject->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
-        }
+        return ($this->action && $this->action->getId())
+            ? $this->redirectToRoute(self::VIEW_ROUTE, ['actionId' => $this->action->getId()])
+            : $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);
     }
 
     protected function loadSurveyAndTrip(UserInterface $user, string $tripId): void

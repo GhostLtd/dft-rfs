@@ -1,0 +1,24 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
+    <h1 class="govuk-heading-l" id="top">Delete Trip</h1>
+
+    {%- set showActions = trip.actions|length > 1 -%}
+
+    {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
+        {%- include "international_survey/includes/trip.html.twig" -%}
+    {%- endwith -%}
+
+    {%- if showActions -%}
+        {%- with {isAdmin: true, showActions: false, trip: trip, marginBottom: 4} -%}
+            {%- include "international_survey/includes/actions.html.twig" -%}
+        {%- endwith -%}
+
+        {{ warningText('This will permanently delete this trip and all related consignment actions (shown above).') }}
+    {%- else -%}
+        {{ warningText('This will permanently delete this trip.') }}
+    {%- endif -%}
+
+    {{ form(form) }}
+{%- endblock -%}

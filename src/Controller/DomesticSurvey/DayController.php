@@ -70,7 +70,10 @@ class DayController extends AbstractController
         $form->handleRequest($request);
         $clickedButton = $form->getClickedButton();
 
-        if ($clickedButton && $clickedButton->getName() === 'continue') {
+        if ($form->isSubmitted()) {
+            if ($clickedButton->getName() === 'cancel') {
+                return $this->redirectToRoute('app_domesticsurvey_index');
+            }
             if ($form->isValid()) {
                 $entityManager->persist($day);
                 $entityManager->flush();

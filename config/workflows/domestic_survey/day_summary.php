@@ -24,9 +24,7 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_ORIGIN,
-                    StateObject::STATE_ORIGIN_PORTS,
                     StateObject::STATE_DESTINATION,
-                    StateObject::STATE_DESTINATION_PORTS,
                     StateObject::STATE_BORDER_CROSSING,
                     StateObject::STATE_DISTANCE_TRAVELLED,
                     StateObject::STATE_FURTHEST_STOP,
@@ -38,33 +36,13 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
-                    'origin_to_origin_port' => [
-                        'from' => StateObject::STATE_ORIGIN,
-                        'to' =>  StateObject::STATE_ORIGIN_PORTS,
-                        'guard' => 'subject.getSubject().getGoodsLoaded()',
-                    ],
-                    'origin_port_to_destination' => [
-                        'from' => StateObject::STATE_ORIGIN_PORTS,
-                        'to' =>  StateObject::STATE_DESTINATION,
-                    ],
                     'origin_to_destination' => [
                         'from' => StateObject::STATE_ORIGIN,
                         'to' =>  StateObject::STATE_DESTINATION,
-                        'guard' => '!subject.getSubject().getGoodsLoaded()',
-                    ],
-                    'destination_to_destination_port' => [
-                        'from' => StateObject::STATE_DESTINATION,
-                        'to' =>  StateObject::STATE_DESTINATION_PORTS,
-                        'guard' => 'subject.getSubject().getGoodsUnloaded()',
-                    ],
-                    'destination_port_to_furthest_stop' => [
-                        'from' => StateObject::STATE_DESTINATION_PORTS,
-                        'to' =>  StateObject::STATE_FURTHEST_STOP,
                     ],
                     'destination_to_furthest_stop' => [
                         'from' => StateObject::STATE_DESTINATION,
                         'to' =>  StateObject::STATE_FURTHEST_STOP,
-                        'guard' => '!subject.getSubject().getGoodsUnloaded()',
                     ],
                     'furthest_stop_to_border_crossing' => [
                         'from' => StateObject::STATE_FURTHEST_STOP,

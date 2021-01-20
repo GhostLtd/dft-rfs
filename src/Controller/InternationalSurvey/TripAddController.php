@@ -6,7 +6,8 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardManager;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -34,26 +35,19 @@ class TripAddController extends AbstractSessionStateWorkflowController
     /** @var Vehicle */
     protected $vehicle;
 
-    protected $vehicleRepository;
-
-    public function __construct(VehicleRepository $vehicleRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
-    {
-        parent::__construct($entityManager, $logger, $session);
-        $this->vehicleRepository = $vehicleRepository;
-    }
-
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip", name=self::START_ROUTE)
      */
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
+                          VehicleRepository $vehicleRepository,
                           Request $request,
                           UserInterface $user,
                           string $vehicleId,
                           ?string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse($user);
-        $this->vehicle = $this->vehicleRepository->findByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
+        $this->vehicle = $vehicleRepository->findByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();
@@ -62,9 +56,9 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new TripState());
 
         $this->setSubjectOnWizard($this->vehicle, $formWizard);
@@ -77,7 +71,12 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
 
-    protected function setSubjectOnWizard(Vehicle $vehicle, FormWizardInterface $formWizard): void
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $this->vehicle->getId()]);
+    }
+
+    protected function setSubjectOnWizard(Vehicle $vehicle, FormWizardStateInterface $formWizard): void
     {
         $trip = $formWizard->getSubject() ?? new Trip();
         $trip->setVehicle($vehicle);
