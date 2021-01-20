@@ -4,9 +4,6 @@
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.reference-number'|trans }}</h3>
 <p class="govuk-body">{{ survey.referenceNumber }}</p>
 
-<h3 class="govuk-heading-s govuk-!-margin-bottom-1">Company</h3>
-<p class="govuk-body">{{ survey.company.businessName }}</p>
-
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period-start'|trans }}</h3>
 <p class="govuk-body">{{ survey.surveyPeriodStart | date('F j, Y') }}</p>
 
@@ -14,3 +11,6 @@
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period-end'|trans }}</h3>
 <p class="govuk-body">{{ survey.surveyPeriodEnd | date('F j, Y') }}</p>
 {% endif %}
+
+<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.vehicle'|trans }}</h3>
+<p class="govuk-body">{{ vehicle.registrationMark | formatRegMark }}</p>

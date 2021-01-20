@@ -641,6 +641,8 @@ international:
     company: Company
     period-start: Survey period start
     period-end: Survey period end
+    reference-number: Reference number
+    vehicle: Vehicle registration mark
   summary:
     title: International Survey details
     correspondence-and-business-details: Correspondence and Business Details
