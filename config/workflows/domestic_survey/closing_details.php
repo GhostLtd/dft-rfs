@@ -64,7 +64,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_CONFIRM,
                         'metadata' => [
                             'persist' => true,
-                            'buttonLabel' => 'Save and continue',
+                            'submitLabel' => 'Save and continue',
                         ],
                     ],
 
@@ -74,7 +74,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_closed',
-                            'buttonLabel' => 'Confirm and submit survey',
+                            'submitLabel' => 'Confirm and submit survey',
                         ],
                     ],
 

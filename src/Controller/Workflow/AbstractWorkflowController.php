@@ -28,6 +28,7 @@ abstract class AbstractWorkflowController extends AbstractController
     abstract protected function cleanUp();
 
     abstract protected function getRedirectUrl($state): Response;
+    abstract protected function getCancelUrl(): ?Response;
 
     public function __construct(FormWizardManager $formWizardManager, EntityManagerInterface $entityManager, LoggerInterface $log)
     {
@@ -68,7 +69,11 @@ abstract class AbstractWorkflowController extends AbstractController
         $form->handleRequest($request);
 
         // validate/state-transition
-        if (!is_null($form->getClickedButton())) {
+        if (!is_null($button = $form->getClickedButton())) {
+            if ($button->getName() === 'cancel') {
+                $url = $this->getCancelUrl();
+                if ($url) return $url;
+            }
             if ($form->isValid()) {
                 $transitions = $this->formWizardManager->getFilteredTransitions($stateMachine, $formWizard, $form);
 
@@ -125,7 +130,7 @@ abstract class AbstractWorkflowController extends AbstractController
      */
     protected function getFormAndTemplate(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine)
     {
-        $form = $this->formWizardManager->createForm($formWizard, $stateMachine);
+        $form = $this->formWizardManager->createForm($formWizard, $stateMachine, $this->getCancelUrl() !== null);
         $template = $formWizard->getStateTemplateMap()[$formWizard->getState()] ?? $formWizard->getDefaultTemplate();
 
         return [$form, $template];

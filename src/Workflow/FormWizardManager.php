@@ -48,7 +48,7 @@ class FormWizardManager
         return array_values($transitions);
     }
 
-    public function createForm(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine)
+    public function createForm(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine, $showCancelButton = true)
     {
         $state = $formWizard->getState();
         $formMap = $formWizard->getStateFormMap();
@@ -70,18 +70,27 @@ class FormWizardManager
 
         // If we have only one possible transition, and it is meant to persist/flush
         // then we want to have a better label for the "continue" button
-        $buttonLabel = null;
+        $submitLabel = null;
+        $cancelLabel = null;
         $transitions = $stateMachine->getEnabledTransitions($formWizard);
         if (count($transitions) === 1) {
             $transition = $transitions[array_key_last($transitions)];
             $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
             $isSavePoint = ($metadata['persist'] ?? false) === true;
-            $buttonLabel = $metadata['buttonLabel'] ?? ($isSavePoint ? 'Save and finish' : null);
+            $submitLabel = $metadata['submitLabel'] ?? ($isSavePoint ? 'Save and continue' : null);
+            $cancelLabel = $metadata['cancelLabel'] ?? null;
         }
         $form->add('continue', ButtonType::class, [
             'type' => 'submit',
-            'label' => $buttonLabel,
+            'label' => $submitLabel,
         ]);
+        if ($showCancelButton) {
+            $form->add('cancel', ButtonType::class, [
+                'type' => 'submit',
+                'label' => $cancelLabel,
+                'attr' => ['class' => 'govuk-button--secondary'],
+            ]);
+        }
 
         return $form;
     }

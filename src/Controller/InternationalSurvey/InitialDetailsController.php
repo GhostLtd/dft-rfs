@@ -61,4 +61,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
+    }
 }

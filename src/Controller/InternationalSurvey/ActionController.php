@@ -259,6 +259,11 @@ class ActionController extends AbstractSessionStateWorkflowController
             $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'state' => $state]);
     }
 
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
+    }
+
     protected function loadSurveyAndTrip(UserInterface $user, string $tripId): void
     {
         $this->surveyResponse = $this->getSurveyResponse($user);

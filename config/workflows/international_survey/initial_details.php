@@ -64,7 +64,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE,
-                            'buttonLabel' => 'Continue',
+                            'submitLabel' => 'Continue',
                         ],
                         'from' => StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                         'to' =>  StateObject::STATE_SUMMARY,

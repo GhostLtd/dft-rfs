@@ -63,4 +63,9 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     {
         return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute('app_domesticsurvey_contactdetails');
+    }
 }

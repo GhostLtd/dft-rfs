@@ -71,6 +71,11 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
 
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
+    }
+
     protected function setSubjectOnWizard(Vehicle $vehicle, FormWizardStateInterface $formWizard): void
     {
         $trip = $formWizard->getSubject() ?? new Trip();

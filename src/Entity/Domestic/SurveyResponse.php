@@ -364,7 +364,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     public function getBlameLogLabel()
     {
-        return $this->getContactName();
+        return "{$this->getContactName()}";
     }
 
     public function getAssociatedEntityClass()

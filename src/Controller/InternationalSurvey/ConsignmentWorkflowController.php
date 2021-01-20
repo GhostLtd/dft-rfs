@@ -96,4 +96,9 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'consignmentId' => $this->consignment->getId() ?? 'add', 'state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
+    }
 }

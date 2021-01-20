@@ -66,7 +66,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_index',
-                            'buttonLabel' => 'Continue'
+                            'submitLabel' => 'Continue'
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_END,

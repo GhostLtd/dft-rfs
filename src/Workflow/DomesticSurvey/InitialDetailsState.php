@@ -53,7 +53,9 @@ class InitialDetailsState extends AbstractFormWizardState implements FormWizardS
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === SurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        if (!is_null($subject) && !get_class($subject) === SurveyResponse::class) {
+            throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        }
         $this->subject = $subject;
         return $this;
     }

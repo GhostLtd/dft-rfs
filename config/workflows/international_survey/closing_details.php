@@ -42,7 +42,7 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => IndexController::SUMMARY_ROUTE,
-                            'buttonLabel' => 'Confirm and submit survey',
+                            'submitLabel' => 'Confirm and submit survey',
                         ],
                     ],
 

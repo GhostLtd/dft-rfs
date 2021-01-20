@@ -73,4 +73,9 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     {
         return $this->redirectToRoute(self::ROUTE_NAME, ['dayNumber' => $this->dayNumber, 'state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $this->dayNumber]);
+    }
 }

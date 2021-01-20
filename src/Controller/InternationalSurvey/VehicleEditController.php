@@ -65,4 +65,9 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
+    }
 }
