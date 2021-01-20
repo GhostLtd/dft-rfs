@@ -3,6 +3,7 @@
 namespace App\Form\InternationalSurvey\Action;
 
 use App\Entity\International\Action;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -14,7 +15,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class PlaceType extends AbstractType
 {
-    protected $locale;
+    protected string $locale;
 
     public function __construct(RequestStack $requestStack)
     {
@@ -50,6 +51,42 @@ class PlaceType extends AbstractType
             $form = $event->getForm();
 
             if ($action->getId() === null) {
+                /** @var Action[]|Collection $loadingActions */
+                $loadingActions = $action->getTrip()->getActions()->filter(fn(Action $a) => $a->getLoading());
+
+                $allFullyUnloaded = true;
+                foreach($loadingActions as $loadingAction) {
+                    $unloadingActions = $loadingAction->getUnloadingActions();
+
+                    if ($unloadingActions->count() === 1) {
+                        /** @var Action $firstUnloadingAction */
+                        $firstUnloadingAction = $unloadingActions->first();
+
+                        if (!$firstUnloadingAction->getWeightUnloadedAll()) {
+                            $allFullyUnloaded = false;
+                            break;
+                        }
+                    } else {
+                        // If it has zero unloadings, it's not unloaded.
+                        // If it has more than one, then we've not flagged to "unload all", but rather are unloading partially.
+                        $allFullyUnloaded = false;
+                        break;
+                    }
+                }
+
+                $choiceOptions = [];
+                if ($loadingActions->count() === 0) {
+                    $choiceOptions["{$prefix}.loading.choices.unload"] = [
+                        'disabled' => true,
+                        'help' => "{$prefix}.loading.no-goods-loaded",
+                    ];
+                } else if ($allFullyUnloaded) {
+                    $choiceOptions["{$prefix}.loading.choices.unload"] = [
+                        'disabled' => true,
+                        'help' => "{$prefix}.loading.all-goods-fully-loaded",
+                    ];
+                }
+
                 $form->add('loading', Gds\ChoiceType::class, [
                     'label' => "{$prefix}.loading.label",
                     'help' => "{$prefix}.loading.help",
@@ -59,6 +96,7 @@ class PlaceType extends AbstractType
                         "{$prefix}.loading.choices.load" => true,
                         "{$prefix}.loading.choices.unload" => false,
                     ],
+                    'choice_options' => $choiceOptions,
                     'label_attr' => ['class' => 'govuk-label--s'],
                 ]);
             }

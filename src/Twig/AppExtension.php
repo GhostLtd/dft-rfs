@@ -17,6 +17,7 @@ use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
+use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
@@ -40,30 +41,29 @@ class AppExtension extends AbstractExtension
 {
     const TRANSFER_UNLOADING = 'unloading';
     const TRANSFER_LOADING = 'loading';
-    protected $iconsDir;
 
-    protected $router;
-
-    protected $translator;
-    /**
-     * @var Features
-     */
-    private $features;
+    protected string $iconsDir;
+    protected RouterInterface $router;
+    protected TranslatorInterface $translator;
+    protected Features $features;
+    protected LoadingPlaceHelper $loadingPlaceHelper;
 
     public function __construct(
         KernelInterface $kernel,
         RouterInterface $router,
         TranslatorInterface $translator,
-        Features $features
+        Features $features,
+        LoadingPlaceHelper $loadingPlaceHelper
     ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
         $this->router = $router;
         $this->translator = $translator;
         $this->features = $features;
+        $this->loadingPlaceHelper = $loadingPlaceHelper;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
@@ -82,7 +82,7 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
@@ -94,17 +94,19 @@ class AppExtension extends AbstractExtension
             new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
             new TwigFunction('flatten', [$this, 'flatten']),
+            new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
+            new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
         ];
     }
 
-    public function formatGoodsDescription(?string $goodsDescription, ?string $goodsDescriptionOther, bool $short = false)
+    public function formatGoodsDescription(?string $goodsDescription, ?string $goodsDescriptionOther, bool $short = false): ?string
     {
         return $goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
             ? $goodsDescriptionOther
             : ($short ? $goodsDescription : $this->translator->trans("goods.description.options.{$goodsDescription}"));
     }
 
-    public function isFeatureEnabled($str) {
+    public function isFeatureEnabled($str): bool {
         try {
             return $this->features->isEnabled($str, true);
         } catch(Exception $e) {
@@ -112,7 +114,7 @@ class AppExtension extends AbstractExtension
         }
     }
 
-    public function formatRegMark($regMark)
+    public function formatRegMark($regMark): ?string
     {
         return (new RegistrationMarkHelper($regMark))->getFormattedRegistrationMark();
     }
@@ -134,7 +136,7 @@ class AppExtension extends AbstractExtension
         ]));
     }
 
-    function formatGoodsTransferDetails($stop, $loadingOrUnloading, $nonBlankPrefix = '') {
+    function formatGoodsTransferDetails($stop, $loadingOrUnloading, $nonBlankPrefix = ''): string {
         if (!in_array(StopTrait::class, class_uses($stop)) || !in_array($loadingOrUnloading, [self::TRANSFER_LOADING, self::TRANSFER_UNLOADING])) {
             return '';
         }
@@ -176,7 +178,7 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
-    public function svgIcon(string $icon)
+    public function svgIcon(string $icon): string
     {
         if (basename($icon) !== $icon) {
             throw new RuntimeException('Icon name must not contain path elements');
@@ -186,7 +188,7 @@ class AppExtension extends AbstractExtension
         return file_exists($path) ? file_get_contents($path) : '';
     }
 
-    protected $wizardMapping = [
+    protected array $wizardMapping = [
         'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
@@ -203,12 +205,12 @@ class AppExtension extends AbstractExtension
         return $this->wizardMapping[$wizard];
     }
 
-    public function wizardState(string $wizard, string $state) {
+    public function wizardState(string $wizard, string $state): string {
         $class = $this->getWizardMeta($wizard)['class'];
         return constant("$class::$state");
     }
 
-    public function wizardUrl(string $wizard, string $state, array $params=[]) {
+    public function wizardUrl(string $wizard, string $state, array $params=[]): string {
         $route = $this->getWizardMeta($wizard)['route'];
         $stateParams = ['state' => $this->wizardState($wizard, $state)];
 

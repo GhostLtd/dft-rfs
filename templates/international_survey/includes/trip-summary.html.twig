@@ -1,5 +1,13 @@
 <h2 class="govuk-heading-m">Trip summary</h2>
 
+{%- if loadedCargo ?? false -%}
+    {%- set action = form.vars.data -%}
+    {%- set loadingAction = action.loadingAction -%}
+    {%- set cargoSummary = unloadingSummary(loadingAction, action) -%}
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Consignment</h3>
+    <p class="govuk-body">{{ labelForLoadingAction(loadingAction) }}<br>{{ 'common.action.weight-status'|trans(cargoSummary) }}</p>
+{%- endif -%}
+
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Vehicle</h3>
 <p class="govuk-body">{{ trip.vehicle.registrationMark|formatRegMark }}</p>
 

@@ -4,6 +4,7 @@ namespace App\Entity\International;
 
 use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
+use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsTrait;
 use App\Repository\International\ActionRepository;
 use App\Form\Validator as AppAssert;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @AppAssert\CanBeUnloaded(groups={"action-place"})
  * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight", "admin_action_unload"})
  */
-class Action implements BlameLoggable
+class Action implements BlameLoggable, GoodsDescriptionInterface
 {
     /**
      * @ORM\Id

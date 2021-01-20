@@ -11,9 +11,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoadingPlaceHelper
 {
-    protected $actionRepository;
-    protected $translator;
-    protected $requestStack;
+    protected ActionRepository $actionRepository;
+    protected TranslatorInterface $translator;
+    protected RequestStack $requestStack;
 
     public function __construct(ActionRepository $actionRepository, TranslatorInterface $translator, RequestStack $requestStack)
     {
@@ -94,7 +94,7 @@ class LoadingPlaceHelper
         ];
     }
 
-    protected function getLabelForLoadingAction(Action $action): string
+    public function getLabelForLoadingAction(Action $action): string
     {
         $country = Countries::getName(strtoupper($action->getCountry()), $this->requestStack->getCurrentRequest()->getLocale());
 

@@ -64,6 +64,7 @@ common:
     weight-none-unloaded: "None unloaded - {loaded}kg remaining"
     weight-partially-unloaded: "Partially unloaded - {unloaded}/{loaded}kg ({remaining}kg remaining)"
     weight-fully-unloaded: "Fully unloaded - {unloaded}/{loaded}kg"
+    weight-status: "{unloaded}/{loaded}kg unloaded"
   distance:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
@@ -768,6 +769,8 @@ international:
       loading:
         label: What did you do at this stop?
         help: ''
+        no-goods-loaded: No goods yet loaded
+        all-goods-fully-loaded: All goods fully unloaded
         choices:
           load: Loaded goods
           unload: Unloaded goods
