@@ -52,7 +52,9 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            // The contact details route redirects to the index if business details is incomplete
+                            // Redirecting here, means we always end up in the right place regardless of state
+                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
                         ],
                         'from' => [
                             StateObject::STATE_ASK_HIREE_DETAILS,
@@ -65,7 +67,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
                             'submitLabel' => 'Continue'
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
