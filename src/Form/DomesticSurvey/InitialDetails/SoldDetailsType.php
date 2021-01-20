@@ -21,8 +21,8 @@ class SoldDetailsType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'constraints' => [
                     new NotNull([
-                    'message' => "common.date.not-null",
-                    'groups' => ['admin_sold'],
+                        'message' => "common.date.not-null",
+                        'groups' => ['admin_sold'],
                     ])
                 ],
                 'property_path' => $options['date_property_path'],
