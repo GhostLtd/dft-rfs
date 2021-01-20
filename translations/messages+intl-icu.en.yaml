@@ -717,7 +717,7 @@ international:
         label: Registration mark of vehicle
         help: ''
       operation-type:
-        label: How was the vehicle being operated during the survey week?
+        label: How was the vehicle being operated during the survey period?
         help: ''
     vehicle-trailer-configuration:
       trailer-configuration:
