@@ -301,6 +301,7 @@ domestic:
     headings:
       page: Day record ({date})
       more-than-five-stops: Summary day (more than 5 stops)
+      five-stops-or-fewer: Detailed day (5 stops or fewer)
     actions:
       add-a-stage-for-this-journey: Add a stage for this journey
       enter-information-for-this-journey: Enter information for this journey

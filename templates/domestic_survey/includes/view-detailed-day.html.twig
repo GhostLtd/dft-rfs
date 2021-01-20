@@ -1,7 +1,8 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
 
+<h2 class="govuk-heading-l">{{ 'domestic.day-view.headings.five-stops-or-fewer' | trans }}</h2>
 {% for stop in day.stops %}
-    <h2 class="govuk-heading-l">{{ 'domestic.day-view.stage'|trans({stage: loop.index}) }}</h2>
+    <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: loop.index}) }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set params = {dayNumber: day.number, stopNumber: stop.number} -%}
         {% set urlChange = url('app_domesticsurvey_daystop_start', params) %}
@@ -59,6 +60,10 @@
             ) }}
         {% endif %}
     </dl>
+{% else %}
+    <p class="govuk-body">
+        {{ 'domestic.day-view.no-info' | trans }}
+    </p>
 {% endfor %}
 <p class="govuk-body">
     {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
