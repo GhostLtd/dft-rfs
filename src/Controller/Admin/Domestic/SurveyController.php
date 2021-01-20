@@ -4,13 +4,16 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\BlameLog\BlameLog;
 use App\Entity\Domestic\Survey;
+use App\Form\Admin\DomesticSurvey\Edit\InitialDetailsType;
 use App\ListPage\Domestic\SurveyListPage;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -71,4 +74,42 @@ class SurveyController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{surveyId}/edit-initial-details", name=self::EDIT_INITIAL_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     */
+    public function editInitialDetails(Survey $survey, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        return $this->surveyEdit($survey, $request, $entityManager, InitialDetailsType::class, 'initial-details', 'tab-initial-details');
+    }
+
+    protected function surveyEdit(Survey $survey, Request $request, EntityManagerInterface $entityManager, string $formClass, string $templateName, string $redirectTab) {
+        $response = $survey->getResponse();
+        if (!$response) {
+            throw new NotFoundHttpException();
+        }
+
+        $form = $this->createForm($formClass, $response);
+
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            $isValid = $form->isValid();
+            if ($isValid) {
+                $entityManager->flush();
+            }
+
+            $cancel = $form->get('cancel');
+            if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
+                return new RedirectResponse($this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#'.$redirectTab);
+            }
+
+            dump($form->getData());
+        }
+
+        return $this->render("admin/domestic/surveys/edit-{$templateName}.html.twig", [
+            'survey' => $survey,
+            'form' => $form->createView(),
+        ]);
+    }
 }
