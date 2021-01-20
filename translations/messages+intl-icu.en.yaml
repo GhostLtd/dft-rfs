@@ -369,7 +369,7 @@ domestic:
 
     origin-ports:
       goods-transferred-from:
-        label: More details about the start
+        label: Were the goods transferred from another mode of transport?
         help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     destination:
@@ -384,7 +384,7 @@ domestic:
 
     destination-ports:
       goods-transferred-to:
-        label: More details about the destination
+        label: Were the goods transferred to another mode of transport?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     furthest-stop:
@@ -462,7 +462,7 @@ domestic:
 
     origin-ports:
       goods-transferred-from:
-        label: More details about the start of this stage
+        label: Were the goods transferred from another mode of transport?
         help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     destination:
@@ -477,7 +477,7 @@ domestic:
 
     destination-ports:
       goods-transferred-to:
-        label: More details about the destination
+        label: Were the goods transferred to another mode of transport?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     border-crossing:
