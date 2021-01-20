@@ -68,6 +68,6 @@ class TripEditController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);
     }
 }

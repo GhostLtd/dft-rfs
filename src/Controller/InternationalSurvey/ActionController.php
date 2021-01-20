@@ -261,7 +261,9 @@ class ActionController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return ($this->action && $this->action->getId())
+            ? $this->redirectToRoute(self::VIEW_ROUTE, ['actionId' => $this->action->getId()])
+            : $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);
     }
 
     protected function loadSurveyAndTrip(UserInterface $user, string $tripId): void

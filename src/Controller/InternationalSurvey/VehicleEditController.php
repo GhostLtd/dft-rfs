@@ -68,6 +68,6 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return $this->redirectToRoute(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $this->vehicle->getId()]);
     }
 }

@@ -23,6 +23,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_initial_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_initial_state';
 
+    /** @var SurveyResponse */
+    protected $surveyResponse;
+
     /**
      * @Route("/international-survey/initial-details/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/initial-details", name=self::START_ROUTE)
@@ -54,6 +57,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $survey->setResponse($databaseResponse);
         $formWizard->setSubject($databaseResponse);
 
+        $this->surveyResponse = $formWizard->getSubject();
         return $formWizard;
     }
 
@@ -64,6 +68,6 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return $this->surveyResponse->getId() ? $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE) : null;
     }
 }

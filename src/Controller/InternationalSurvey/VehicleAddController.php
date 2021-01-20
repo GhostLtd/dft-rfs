@@ -56,7 +56,7 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
     }
 
     protected function setSubjectOnWizard(SurveyResponse $response, FormWizardStateInterface $formWizard): void
