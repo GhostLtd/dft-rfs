@@ -23,17 +23,6 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     public const START_ROUTE_NAME = 'app_domesticsurvey_closingdetails_start';
 
     /**
-     * @var WorkflowInterface
-     */
-    private $domesticSurveyStateMachine;
-
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $log, SessionInterface $session, WorkflowInterface $domesticSurveyStateMachine)
-    {
-        parent::__construct($entityManager, $log, $session);
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
-    }
-
-    /**
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
      * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")

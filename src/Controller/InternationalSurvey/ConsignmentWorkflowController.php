@@ -4,6 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Consignment;
+use App\Entity\International\Stop;
 use App\Entity\International\Trip;
 use App\Repository\International\StopRepository;
 use App\Workflow\FormWizardStateInterface;
@@ -40,14 +41,6 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
      * @var Trip
      */
     private $trip;
-
-    protected $stopRepository;
-
-    public function __construct(StopRepository $stopRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
-    {
-        parent::__construct($entityManager, $logger, $session);
-        $this->stopRepository = $stopRepository;
-    }
 
     /**
      * @Route("/add-another", name=self::ADD_ANOTHER_ROUTE)
@@ -88,7 +81,7 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
         $formWizard = $this->session->get($this->getSessionKey(), new ConsignmentState());
 
         $consignment = $formWizard->getSubject() ?? $this->consignment;
-        $this->consignment->mergeChanges($consignment, $this->stopRepository);
+        $this->consignment->mergeChanges($consignment, $this->entityManager->getRepository(Stop::class));
 
         if (!$this->consignment->getTrip()) {
             $this->consignment->setTrip($this->trip);
