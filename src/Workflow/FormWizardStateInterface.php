@@ -4,7 +4,7 @@
 namespace App\Workflow;
 
 
-interface FormWizardInterface
+interface FormWizardStateInterface
 {
     public function getState();
     public function setState($state);

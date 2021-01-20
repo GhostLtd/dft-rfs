@@ -4,7 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -23,6 +23,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_initial_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_initial_state';
 
+    /** @var SurveyResponse */
+    protected $surveyResponse;
+
     /**
      * @Route("/international-survey/initial-details/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/initial-details", name=self::START_ROUTE)
@@ -38,13 +41,13 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         $survey = $this->getSurvey($this->getUser());
 
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
 
         $response = $formWizard->getSubject() ?? $survey->getResponse() ?? new SurveyResponse();
@@ -54,11 +57,17 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $survey->setResponse($databaseResponse);
         $formWizard->setSubject($databaseResponse);
 
+        $this->surveyResponse = $formWizard->getSubject();
         return $formWizard;
     }
 
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
+    }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->surveyResponse->getId() ? $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE) : null;
     }
 }

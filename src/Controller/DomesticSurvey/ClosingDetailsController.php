@@ -6,7 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\ClosingDetailsState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -21,17 +21,6 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
 {
     public const ROUTE_NAME = 'app_domesticsurvey_closingdetails_index';
     public const START_ROUTE_NAME = 'app_domesticsurvey_closingdetails_start';
-
-    /**
-     * @var WorkflowInterface
-     */
-    private $domesticSurveyStateMachine;
-
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $log, SessionInterface $session, WorkflowInterface $domesticSurveyStateMachine)
-    {
-        parent::__construct($entityManager, $log, $session);
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
-    }
 
     /**
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
@@ -49,9 +38,9 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -76,4 +65,10 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     {
         return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
     }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute('app_domesticsurvey_index');
+    }
+
 }

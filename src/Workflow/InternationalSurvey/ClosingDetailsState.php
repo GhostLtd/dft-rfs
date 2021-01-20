@@ -5,10 +5,10 @@ namespace App\Workflow\InternationalSurvey;
 use App\Entity\International\SurveyResponse;
 use App\Form\InternationalSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class ClosingDetailsState extends AbstractFormWizardState implements FormWizardInterface
+class ClosingDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_START = 'start';
     const STATE_REASON_EMPTY_SURVEY = 'empty-survey';

@@ -4,9 +4,10 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Consignment;
+use App\Entity\International\Stop;
 use App\Entity\International\Trip;
 use App\Repository\International\StopRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -41,14 +42,6 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
      */
     private $trip;
 
-    protected $stopRepository;
-
-    public function __construct(StopRepository $stopRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
-    {
-        parent::__construct($entityManager, $logger, $session);
-        $this->stopRepository = $stopRepository;
-    }
-
     /**
      * @Route("/add-another", name=self::ADD_ANOTHER_ROUTE)
      */
@@ -82,13 +75,13 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
         return $this->doWorkflow($internationalSurveyConsignmentStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var ConsignmentState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ConsignmentState());
 
         $consignment = $formWizard->getSubject() ?? $this->consignment;
-        $this->consignment->mergeChanges($consignment, $this->stopRepository);
+        $this->consignment->mergeChanges($consignment, $this->entityManager->getRepository(Stop::class));
 
         if (!$this->consignment->getTrip()) {
             $this->consignment->setTrip($this->trip);
@@ -102,5 +95,10 @@ class ConsignmentWorkflowController extends AbstractSessionStateWorkflowControll
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'consignmentId' => $this->consignment->getId() ?? 'add', 'state' => $state]);
+    }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
     }
 }

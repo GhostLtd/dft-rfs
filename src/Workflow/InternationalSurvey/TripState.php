@@ -11,10 +11,10 @@ use App\Form\InternationalSurvey\Trip\OutboundPortsType;
 use App\Form\InternationalSurvey\Trip\ReturnCargoStateType;
 use App\Form\InternationalSurvey\Trip\ReturnPortsType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class TripState extends AbstractFormWizardState implements FormWizardInterface
+class TripState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_REQUEST_TRIP_DATES = 'dates';
     const STATE_REQUEST_TRIP_OUTBOUND_PORTS = 'outbound-ports';

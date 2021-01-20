@@ -100,7 +100,7 @@ return static function (ContainerConfigurator $container) {
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => [
                             'persist' => true,
-                            'buttonLabel' => 'Continue',
+                            'submitLabel' => 'Continue',
                             'redirectRoute' => [
                                 'routeName' => 'app_domesticsurvey_day_view',
                                 'parameterMappings' => ['dayNumber' => 'day.number'],
@@ -175,7 +175,7 @@ return static function (ContainerConfigurator $container) {
                         'guard' => '!is_empty(subject.getSubject().getId())
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => array_merge($editEndMetadata, [
-                            'buttonLabel' => 'Continue',
+                            'submitLabel' => 'Continue',
                         ]),
                     ],
 

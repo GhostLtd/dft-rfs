@@ -7,7 +7,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +36,9 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     }
 
     /**
-     * @return FormWizardInterface
+     * @return FormWizardStateInterface
      */
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -62,5 +62,10 @@ class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowCo
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
+    }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute('app_domesticsurvey_contactdetails');
     }
 }

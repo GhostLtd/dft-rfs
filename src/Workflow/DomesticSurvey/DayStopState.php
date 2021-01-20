@@ -17,9 +17,9 @@ use App\Form\DomesticSurvey\DayStop\HazardousGoodsType;
 use App\Form\DomesticSurvey\DayStop\OriginPortsType;
 use App\Form\DomesticSurvey\DayStop\OriginType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class DayStopState extends AbstractFormWizardState implements FormWizardInterface
+class DayStopState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_ORIGIN = 'origin';
     const STATE_ORIGIN_PORTS = 'origin-ports';

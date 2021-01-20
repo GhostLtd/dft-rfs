@@ -36,6 +36,10 @@ class NumberOfStopsType extends AbstractType
                     ->add('continue', ButtonType::class, [
                         'type' => 'submit',
                     ])
+                    ->add('cancel', ButtonType::class, [
+                        'type' => 'submit',
+                        'attr' => ['class' => 'govuk-button--secondary'],
+                    ])
                     ;
             });
         ;

@@ -11,9 +11,9 @@ use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleAxleConfigurationTy
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleBodyType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleTrailerConfigurationType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements FormWizardInterface
+class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_BUSINESS_DETAILS = 'business-details';
     const STATE_CHANGE_BUSINESS_DETAILS = 'change-business-details';

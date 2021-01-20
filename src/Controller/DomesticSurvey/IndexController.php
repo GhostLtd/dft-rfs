@@ -59,6 +59,10 @@ class IndexController extends AbstractController
             return $this->redirectToRoute("app_domesticsurvey_initialdetails_start");
         }
 
+        if (!$domesticSurvey->isBusinessAndVehicleDetailsComplete()) {
+            return $this->redirectToRoute('app_domesticsurvey_index');
+        }
+
         // show summary
         return $this->render('domestic_survey/contact-and-business-details.html.twig', [
             'survey' => $domesticSurvey,

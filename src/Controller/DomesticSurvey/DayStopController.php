@@ -7,7 +7,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\DayStopState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,9 +61,9 @@ class DayStopController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var FormWizardInterface $formWizard */
+        /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DayStopState());
         $subject = $formWizard->getSubject();
 
@@ -87,5 +87,10 @@ class DayStopController extends AbstractSessionStateWorkflowController
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
+    }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $this->dayNumber]);
     }
 }

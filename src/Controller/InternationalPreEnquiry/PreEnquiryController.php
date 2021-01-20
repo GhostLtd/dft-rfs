@@ -9,7 +9,7 @@ use App\Entity\International\PreEnquiryResponse;
 use App\Form\InternationalPreEnquiry\SubmitPreEnquiryType;
 use App\Repository\International\CompanyRepository;
 use App\Repository\International\PreEnquiryRepository;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use DateTime;
 use Symfony\Component\Form\SubmitButton;
@@ -66,7 +66,7 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($preEnquiryStateMachine, $request, $state);
     }
 
-    protected function getFormWizard(): FormWizardInterface
+    protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var PreEnquiryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new PreEnquiryState());
@@ -83,6 +83,11 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
+    }
+
+    protected function getCancelUrl(): ?Response
+    {
+        return null;
     }
 
     protected function getSurveyResponse(?PreEnquiryResponse $existingResponse): PreEnquiryResponse

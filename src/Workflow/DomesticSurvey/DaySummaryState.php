@@ -19,9 +19,9 @@ use App\Form\DomesticSurvey\DaySummary\OriginType;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class DaySummaryState extends AbstractFormWizardState implements FormWizardInterface
+class DaySummaryState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_ORIGIN = 'origin';
     const STATE_ORIGIN_PORTS = 'origin-ports';

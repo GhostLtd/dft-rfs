@@ -12,10 +12,10 @@ use App\Form\InternationalSurvey\Action\HazardousGoodsType;
 use App\Form\InternationalSurvey\Action\LoadingPlaceType;
 use App\Form\InternationalSurvey\Action\PlaceType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class ActionState extends AbstractFormWizardState implements FormWizardInterface
+class ActionState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_PLACE = 'place';
     const STATE_GOODS_DESCRIPTION = 'goods-description';

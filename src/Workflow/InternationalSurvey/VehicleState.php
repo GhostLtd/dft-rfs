@@ -10,10 +10,10 @@ use App\Form\InternationalSurvey\Vehicle\VehicleDetailsType;
 use App\Form\InternationalSurvey\Vehicle\VehicleTrailerConfigurationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleWeightType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class VehicleState extends AbstractFormWizardState implements FormWizardInterface
+class VehicleState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_REQUEST_VEHICLE_DETAILS = 'vehicle-registration';
     const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';

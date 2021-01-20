@@ -11,10 +11,10 @@ use App\Form\InternationalSurvey\Consignment\HazardousGoodsType;
 use App\Form\InternationalSurvey\Consignment\PlaceOfLoadingType;
 use App\Form\InternationalSurvey\Consignment\PlaceOfUnloadingType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
-class ConsignmentState extends AbstractFormWizardState implements FormWizardInterface
+class ConsignmentState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_GOODS_DESCRIPTION = 'goods-description';
     const STATE_HAZARDOUS_GOODS = 'hazardous-goods';

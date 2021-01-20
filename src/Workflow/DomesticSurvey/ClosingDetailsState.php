@@ -9,9 +9,9 @@ use App\Form\DomesticSurvey\ClosingDetails\MissingDaysType;
 use App\Form\DomesticSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
 use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardInterface;
+use App\Workflow\FormWizardStateInterface;
 
-class ClosingDetailsState extends AbstractFormWizardState implements FormWizardInterface
+class ClosingDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_START = 'start';
     const STATE_VEHICLE_FUEL = 'vehicle-fuel';
