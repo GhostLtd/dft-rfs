@@ -902,6 +902,11 @@ international:
       return-date:
         label: Date of return to the UK
         help: ''
+    ports:
+      help:
+        ports-which: Which ports should I specify?
+        ports-explanation: "If your trip *only* included carrying goods to/from the Republic of Ireland, please state the ports you used to travel from GB to Ireland.\n\nOtherwise state the ports you used to travel to/from mainland Europe, even if you travelled through Ireland on your way."
+
     outbound-ports:
       heading: Outbound trip - from the UK
       help: ''
