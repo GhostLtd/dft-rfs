@@ -886,7 +886,7 @@ international:
       return-ports: "Ports"
       return-cargo-state: "Cargo state"
       distance: Round trip distance
-      countries-transitted: Countries transitted
+      countries-transitted: Countries travelled through
       from-to: From {source} to {destination}
       stops: Stops
       help:
@@ -950,7 +950,7 @@ international:
       heading: Which countries did you travel through?
       help: ''
       countries-transitted:
-        label: Choose from commonly transitted countries
+        label: Choose from commonly travelled countries
         help: ''
       countries-transitted-other:
         label: Enter any other countries separated by commas
