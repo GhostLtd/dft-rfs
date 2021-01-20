@@ -74,6 +74,7 @@ international:
   trip:
     dates:
       not-return-before-departure: Return date must be the same as or after date of leaving
+      outside-period: Date must be within the survey period
     outbound-was-empty:
       not-null: Choose an option
       cannot-be-both: Vehicle cannot be both empty and full

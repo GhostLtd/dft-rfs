@@ -160,7 +160,17 @@ class Trip implements BlameLoggable
         $outboundDate = $this->getOutboundDate();
         $returnDate = $this->getReturnDate();
 
-        if (!$outboundDate && !$returnDate) {
+        $survey = $this->getVehicle()->getSurveyResponse()->getSurvey();
+        $start = $survey->getSurveyPeriodStart();
+        $end = $survey->getSurveyPeriodEnd();
+
+        if ($outboundDate && ($outboundDate < $start || $outboundDate > $end)) {
+            $context->buildViolation('international.trip.dates.outside-period')
+                ->atPath('outboundDate')
+                ->addViolation();
+        }
+
+        if (!$outboundDate || !$returnDate) {
             return;
         }
 
