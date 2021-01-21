@@ -55,9 +55,9 @@
                 {%- if isAdmin -%}
                     {%- set editContents -%}
                         {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE') -%}
-                        <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">Delete</a>
+                        <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
                         {%- set editRoute = constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE') -%}
-                        <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">Edit</a>
+                        <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
                     {%- endset -%}
                     {{ tableCell(editContents, {actions: true}) }}
                 {%- else -%}

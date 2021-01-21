@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Security("is_granted('EDIT', user.getInternationalSurvey())")
@@ -30,10 +31,12 @@ class TripController extends AbstractController
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const TRIP_ROUTE = self::ROUTE_PREFIX.'view';
 
+    protected TranslatorInterface $translator;
     protected TripRepository $tripRepository;
 
-    public function __construct(TripRepository $tripRepository)
+    public function __construct(TranslatorInterface $translator, TripRepository $tripRepository)
     {
+        $this->translator = $translator;
         $this->tripRepository = $tripRepository;
     }
 
@@ -58,14 +61,15 @@ class TripController extends AbstractController
             $form->handleRequest($request);
 
             $delete = $form->get('delete');
+            $translationPrefix = 'international.trip-delete.notification';
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $vehicleId = $trip->getVehicle()->getId();
                 $deleteHelper->deleteTrip($trip);
 
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Trip successfully deleted", "The trip was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($translationPrefix));
                 return new RedirectResponse($this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]));
             } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Trip not deleted', "The request to delete this trip was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($translationPrefix));
                 return new RedirectResponse($this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]));
             }
         }

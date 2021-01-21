@@ -1,11 +1,11 @@
-{% set translation_prefix = 'international.action.summary' %}
+{% set translation_prefix = 'international.action-delete' %}
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, warningText -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">
-        {{ 'international.action.summary.heading-delete'|trans({number: action.number}) }}
+        {{ "#{translation_prefix}.heading-delete"|trans({number: action.number}) }}
     </h1>
 
     {%- if action.loading -%}
@@ -18,17 +18,11 @@
         {%- include "international_survey/includes/actions.html.twig" -%}
     {%- endwith -%}
 
-    <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            {% if action.loading %}
-                Are you sure you want to delete this loading action and related unloading actions? (shown above)
-            {% else %}
-                Are you sure you want to delete this unloading action?
-            {% endif %}
-        </strong>
-    </div>
+    {%- if action.loading -%}
+        {{ warningText("#{translation_prefix}.delete-loading"|trans) }}
+    {%- else -%}
+        {{ warningText("#{translation_prefix}.delete-unloading"|trans) }}
+    {%- endif -%}
 
     {{ form(form) }}
 {% endblock %}

@@ -3,7 +3,7 @@
 
 {%- block content -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
-    <h1 class="govuk-heading-l" id="top">Delete trip</h1>
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
     {%- set showActions = trip.actions|length > 1 -%}
 
@@ -16,9 +16,9 @@
             {%- include "international_survey/includes/actions.html.twig" -%}
         {%- endwith -%}
 
-        {{ warningText('This will permanently delete this trip and all related consignment actions (shown above).') }}
+        {{ warningText("#{translation_prefix}.delete-multi"|trans) }}
     {%- else -%}
-        {{ warningText('This will permanently delete this trip.') }}
+        {{ warningText("#{translation_prefix}.delete"|trans) }}
     {%- endif -%}
 
     {{ form(form) }}

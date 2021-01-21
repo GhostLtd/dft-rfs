@@ -113,15 +113,17 @@ class ActionController extends AbstractSessionStateWorkflowController
             $cancel = $form->get('cancel');
             $delete = $form->get('delete');
 
+            $translationPrefix = 'international.action-delete.notification';
+
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Consignment action not deleted', "The request to delete this consignment action was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($translationPrefix));
                 return $this->redirectToRoute(self::VIEW_ROUTE, ['actionId' => $actionId]);
             }
 
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $tripId = $this->action->getTrip()->getId();
                 $deleteHelper->deleteAction($this->action);
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Consignment action successfully deleted", "The consignment action was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($translationPrefix));
                 return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
             }
         }
