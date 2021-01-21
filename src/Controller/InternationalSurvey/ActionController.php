@@ -166,7 +166,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/trips/{tripId}/reorder-actions", name=self::REORDER_ROUTE)
      */
-    public function reorder(UserInterface $user, Request $request, EntityManagerInterface $entityManager, string $tripId): Response
+    public function reorder(UserInterface $user, Request $request, string $tripId): Response
     {
         $this->loadSurveyAndTrip($user, $tripId);
 
@@ -204,14 +204,17 @@ class ActionController extends AbstractSessionStateWorkflowController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid() && empty($unloadedBeforeLoaded)) {
-                $yes = $form->get('yes');
-
-                if ($yes instanceof SubmitButton && $yes->isClicked()) {
-                    $entityManager->flush();
+            $redirectResponse = $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
+            if ($form->isSubmitted()) {
+                $cancel = $form->get('no');
+                if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                    return $redirectResponse;
                 }
 
-                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
+                if ($form->isValid() && empty($unloadedBeforeLoaded)) {
+                    $this->entityManager->flush();
+                    return $redirectResponse;
+                }
             }
         }
 

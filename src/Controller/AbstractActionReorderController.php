@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractActionReorderController extends AbstractController
 {
-    protected $entityManager;
+    protected EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -61,14 +61,16 @@ abstract class AbstractActionReorderController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid() && empty($unloadedBeforeLoaded)) {
-                $yes = $form->get('yes');
-
-                if ($yes instanceof SubmitButton && $yes->isClicked()) {
-                    $this->entityManager->flush();
+            if ($form->isSubmitted()) {
+                $cancel = $form->get('no');
+                if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                    return $this->getRedirectResponse($trip);
                 }
 
-                return $this->getRedirectResponse($trip);
+                if ($form->isValid() && empty($unloadedBeforeLoaded)) {
+                    $this->entityManager->flush();
+                    return $this->getRedirectResponse($trip);
+                }
             }
         }
 
