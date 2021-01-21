@@ -58,7 +58,7 @@ class VehicleRepository extends ServiceEntityRepository
         return $count > 0;
     }
 
-    public function findByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Vehicle
+    public function findOneByIdAndSurveyResponse(string $id, SurveyResponse $response): ?Vehicle
     {
         try {
             return $this->createQueryBuilder('v')

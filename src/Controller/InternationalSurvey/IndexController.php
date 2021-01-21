@@ -7,6 +7,7 @@ use App\Repository\International\SurveyRepository;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,7 +18,7 @@ class IndexController extends AbstractController
     public const COMPLETED_ROUTE = 'app_internationalsurvey_completed';
     public const SUMMARY_ROUTE = 'app_internationalsurvey_summary';
 
-    protected $surveyRepo;
+    protected SurveyRepository $surveyRepo;
 
     public function __construct(SurveyRepository $surveyRepo)
     {
@@ -28,14 +29,14 @@ class IndexController extends AbstractController
      * @Route("/international-survey/completed", name=self::COMPLETED_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
-    public function completed() {
+    public function completed(): Response {
         return $this->render('international_survey/thanks.html.twig');
     }
 
     /**
      * @Route("/international-survey", name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user) {
+    public function index(UserInterface $user): Response {
         $survey = $this->getSurvey($user);
 
         if ($survey->getState() === Survey::STATE_CLOSED) {

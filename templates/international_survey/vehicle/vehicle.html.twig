@@ -15,7 +15,7 @@
     {%- set change = 'common.actions.change'|trans -%}
 
     <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.basic-details'|trans }}</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
         {{ summaryListRow('common.vehicle.registration-mark',
             vehicle.formattedRegistrationMark,
@@ -43,6 +43,10 @@
             "#{vehicle.carryingCapacity|number_format}kg",
             {(urlChangeVehicleWeight): change}) }}
     </dl>
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--warning" href="{{ path('app_internationalsurvey_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle</a>
+    </div>
 
     <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips'|trans }}</h2>
 

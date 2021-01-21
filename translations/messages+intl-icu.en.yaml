@@ -654,6 +654,8 @@ international:
     vehicles: Vehicles
     view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
 
+  vehicle-delete:
+    title: Delete vehicle
 
   thanks:
     title: Thanks

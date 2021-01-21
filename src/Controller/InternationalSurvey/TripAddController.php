@@ -3,18 +3,15 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
-use App\Workflow\FormWizardManager;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -30,10 +27,8 @@ class TripAddController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_trip_add_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_trip_add_state';
 
-    protected $surveyResponse;
-
-    /** @var Vehicle */
-    protected $vehicle;
+    protected SurveyResponse $surveyResponse;
+    protected ?Vehicle $vehicle;
 
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip/{state}", name=self::WIZARD_ROUTE)
@@ -47,7 +42,7 @@ class TripAddController extends AbstractSessionStateWorkflowController
                           ?string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse($user);
-        $this->vehicle = $vehicleRepository->findByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
+        $this->vehicle = $vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();

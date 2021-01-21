@@ -40,7 +40,7 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
                           string $state): Response
     {
         $surveyResponse = $this->getSurveyResponse($user);
-        $this->vehicle = $vehicleRepository->findByIdAndSurveyResponse($vehicleId, $surveyResponse);
+        $this->vehicle = $vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $surveyResponse);
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();

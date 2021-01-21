@@ -1,0 +1,16 @@
+{% set translation_prefix = 'international.vehicle-delete' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{%- block content -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">Delete Vehicle</h1>
+
+    {%- with {showActions: false, vehicle: vehicle, marginBottom: 4} -%}
+        {%- include "international_survey/includes/admin-vehicle.html.twig" -%}
+    {%- endwith -%}
+
+    {{ warningText('This will permanently delete this vehicle and all related trips and consignment actions.') }}
+
+    {{ form(form) }}
+{%- endblock -%}
+
