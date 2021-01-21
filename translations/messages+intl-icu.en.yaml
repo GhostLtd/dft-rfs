@@ -278,10 +278,10 @@ domestic:
       help: ''
       gross-weight:
         label: Gross vehicle weight
-        help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+        help: Total weight of vehicle including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
       carrying-capacity:
         label: Carrying capacity
-        help: Total weight of cargo that can be carried
+        help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
 
     vehicle-fuel:
       fuel-quantity:
@@ -780,10 +780,11 @@ international:
       help: ''
       gross-weight:
         label: Gross vehicle weight
-        help: Total weight of vehicle plus maximum possible weight of cargo that can be carried
+        help: Total weight of vehicle including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
       carrying-capacity:
         label: Carrying capacity
-        help: Total weight of cargo that can be carried
+        help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
+
   action:
     re-order:
       save: Save order
