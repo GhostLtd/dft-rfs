@@ -14,10 +14,8 @@
             {% endblock %}
         </div>
         <div class="govuk-grid-column-content">
-            {% from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner %}
-            {% for message in app.flashes('notification') %}
-                {{ notificationBanner(message) }}
-            {% endfor %}
+            {% from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners %}
+            {{ flashNotificationBanners() }}
 
             {% block adminContent %}
                 <p class="govuk-body">Content</p>

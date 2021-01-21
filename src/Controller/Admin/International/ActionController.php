@@ -133,10 +133,10 @@ class ActionController extends AbstractController
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $deleteHelper->deleteAction($action);
 
-                $this->addFlash('notification', new NotificationBanner('Success', "Action successfully deleted", "The consignment action was deleted.", ['type' => 'success']));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Action successfully deleted", "The consignment action was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
                 return new RedirectResponse($redirectUrl);
             } else {
-                $this->addFlash('notification', new NotificationBanner('Important', 'Action not deleted', "The request to delete this consignment action was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Action not deleted', "The request to delete this consignment action was cancelled."));
                 return new RedirectResponse($redirectUrl);
             }
         }

@@ -6,9 +6,13 @@ namespace Ghost\GovUkFrontendBundle\Model;
 
 class NotificationBanner
 {
+    const FLASH_BAG_TYPE = 'notification-banner';
+
     public $title;
     public $heading;
     public $content;
+
+    const STYLE_SUCCESS = 'success';
 
     /**
      * Valid options are:
@@ -17,7 +21,7 @@ class NotificationBanner
      */
     public $options;
 
-    public function __construct($title, $heading, $content, $options = ['type' => false])
+    public function __construct($title, $heading, $content, $options = [])
     {
         $this->title = $title;
         $this->heading = $heading;

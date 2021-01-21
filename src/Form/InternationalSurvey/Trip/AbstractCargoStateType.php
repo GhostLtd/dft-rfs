@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractCargoStateType extends AbstractType
@@ -48,6 +49,10 @@ abstract class AbstractCargoStateType extends AbstractType
                         'conditional_form_name' => 'wasLimitedBy',
                     ],
                 ],
+                'constraints' => new NotNull([
+                    'message' => 'common.choice.not-null',
+                    'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
+                ]),
             ])
             ->add("wasEmpty", Gds\ChoiceType::class, [
                 'label' => "{$emptyPrefix}.label",

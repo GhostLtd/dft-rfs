@@ -113,10 +113,10 @@ class VehicleController extends AbstractController
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $deleteHelper->deleteVehicle($vehicle);
 
-                $this->addFlash('notification', new NotificationBanner('Success', "Vehicle successfully deleted", "The vehicle was deleted.", ['type' => 'success']));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Vehicle successfully deleted", "The vehicle was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
                 return new RedirectResponse($redirectUrl);
             } else {
-                $this->addFlash('notification', new NotificationBanner('Important', 'Vehicle not deleted', "The request to delete this vehicle was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Vehicle not deleted', "The request to delete this vehicle was cancelled."));
                 return new RedirectResponse($redirectUrl);
             }
         }

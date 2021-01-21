@@ -77,8 +77,8 @@ class ImportFromDvlaController extends AbstractController
             $entityManager->flush();
             $session->remove(self::SESSION_KEY);
             $session->getFlashBag()->add('summary', ['surveyOptions' => $data['surveyOptions'], 'surveys' => $surveys]);
-            $session->getFlashBag()->add('notification',
-                new NotificationBanner('Success', 'Surveys created', 'The surveys have been created', ['type' => 'success'])
+            $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE,
+                new NotificationBanner('Success', 'Surveys created', 'The surveys have been created', ['style' => NotificationBanner::STYLE_SUCCESS])
             );
 
             return $this->redirectToRoute('admin_domestic_importdvla_summary');

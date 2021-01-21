@@ -39,17 +39,17 @@ class CargoStateDataMapper implements DataMapperInterface
         $wasEmpty = $accessor->getValue($viewData, "{$this->direction}WasEmpty");
         $wasLimitedBy = [];
 
-        if ($accessor->getValue($viewData, "{$this->direction}WasLimitedBySpace")) {
+        if ($limitedBySpace = $accessor->getValue($viewData, "{$this->direction}WasLimitedBySpace")) {
             $wasLimitedBy[] = 'space';
         }
 
-        if ($accessor->getValue($viewData, "{$this->direction}WasLimitedByWeight")) {
+        if ($limitedByWeight = $accessor->getValue($viewData, "{$this->direction}WasLimitedByWeight")) {
             $wasLimitedBy[] = 'weight';
         }
 
         $forms['wasEmpty']->setData($wasEmpty);
         $forms['wasLimitedBy']->setData($wasLimitedBy);
-        $forms['wasAtCapacity']->setData(count($wasLimitedBy) > 0);
+        $forms['wasAtCapacity']->setData(is_null($limitedBySpace) && is_null($limitedByWeight) ? null : count($wasLimitedBy) > 0);
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -65,12 +65,12 @@ class CargoStateDataMapper implements DataMapperInterface
 
         $wasAtCapacity = $forms['wasAtCapacity']->getData();
 
-        if (!$wasAtCapacity) {
+        if ($wasAtCapacity === false) {
             $wasEmpty = $forms['wasEmpty']->getData();
             $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
             $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", false);
             $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", false);
-        } else {
+        } elseif ($wasAtCapacity === true) {
             $wasLimitedBy = $forms['wasLimitedBy']->getData();
             $accessor->setValue($viewData, "{$this->direction}WasEmpty", false);
             $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", in_array('space', $wasLimitedBy));

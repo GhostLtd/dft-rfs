@@ -122,10 +122,10 @@ class SurveyController extends AbstractController
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $deleteHelper->deleteSurvey($survey);
 
-                $this->addFlash('notification', new NotificationBanner('Success', "Survey successfully deleted", "The survey was deleted.", ['type' => 'success']));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Survey successfully deleted", "The survey was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
                 return new RedirectResponse($this->generateUrl(SurveyController::LIST_ROUTE));
             } else {
-                $this->addFlash('notification', new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
                 return new RedirectResponse($this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]));
             }
         }
