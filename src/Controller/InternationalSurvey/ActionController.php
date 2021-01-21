@@ -17,6 +17,7 @@ use App\Workflow\FormWizardManager;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\SubmitButton;
@@ -113,12 +114,14 @@ class ActionController extends AbstractSessionStateWorkflowController
             $delete = $form->get('delete');
 
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Consignment action not deleted', "The request to delete this consignment action was cancelled."));
                 return $this->redirectToRoute(self::VIEW_ROUTE, ['actionId' => $actionId]);
             }
 
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $tripId = $this->action->getTrip()->getId();
                 $deleteHelper->deleteAction($this->action);
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Consignment action successfully deleted", "The consignment action was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
                 return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
             }
         }

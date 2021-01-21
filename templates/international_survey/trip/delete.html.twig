@@ -1,8 +1,9 @@
-{% extends 'admin/base-with-nav.twig' %}
+{% set translation_prefix = 'international.trip-delete' %}
+{% extends 'international_survey/base.html.twig' %}
 
-{%- block adminContent -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Delete Trip</h1>
+{%- block content -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">Delete trip</h1>
 
     {%- set showActions = trip.actions|length > 1 -%}
 
@@ -11,7 +12,7 @@
     {%- endwith -%}
 
     {%- if showActions -%}
-        {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
+        {%- with {isAdmin: true, showActions: false, trip: trip, marginBottom: 4} -%}
             {%- include "international_survey/includes/actions.html.twig" -%}
         {%- endwith -%}
 
@@ -22,3 +23,4 @@
 
     {{ form(form) }}
 {%- endblock -%}
+

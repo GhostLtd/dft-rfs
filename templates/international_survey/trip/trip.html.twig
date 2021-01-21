@@ -15,7 +15,13 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.trip-summary'|trans }}</h1>
 
-    {%- include "international_survey/includes/trip.html.twig" -%}
+    {%- with {marginBottom: 5} -%}
+        {%- include "international_survey/includes/trip.html.twig" -%}
+    {%- endwith -%}
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--warning" href="{{ path('app_internationalsurvey_trip_delete', {tripId: trip.id}) }}">Delete trip</a>
+    </div>
 
     {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
