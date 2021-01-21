@@ -920,14 +920,16 @@ international:
         label: Foreign port of arrival
         help: ''
     outbound-cargo-state:
-      cargo-state:
-        label: Outbound trip - from the UK
+      heading: Outbound trip - from the UK
+      help: ''
+      was-at-capacity:
+        label: Was your vehicle at full capacity?
         help: ''
       was-empty:
         label: Was your vehicle empty?
         help: ''
       was-limited:
-        label: Was your vehicle at full capacity?
+        label: Was your vehicle at capacity by space, by weight or by both?
         help: Select the answers which best describe the load
     return-ports:
       heading: Return trip - to the UK
@@ -939,8 +941,10 @@ international:
         label: UK port of arrival
         help: ''
     return-cargo-state:
-      cargo-state:
-        label: Return trip - to the UK
+      heading: Return trip - to the UK
+      help: ''
+      was-at-capacity:
+        label: Was your vehicle at full capacity?
         help: ''
       was-empty:
         label: Was your vehicle empty?

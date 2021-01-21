@@ -81,6 +81,7 @@ international:
     return-was-empty:
       not-null: Choose an option
       cannot-be-both: Vehicle cannot be both empty and full
+    cargo-state-how-at-capacity: How was the vehicle at capacity?
   action:
     re-order:
       invalid-order: >-

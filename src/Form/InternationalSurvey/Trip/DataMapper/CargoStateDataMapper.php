@@ -27,9 +27,9 @@ class CargoStateDataMapper implements DataMapperInterface
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!isset($forms['wasEmpty']) || !isset($forms['wasLimitedBy'])) {
             return;
         }
@@ -49,29 +49,32 @@ class CargoStateDataMapper implements DataMapperInterface
 
         $forms['wasEmpty']->setData($wasEmpty);
         $forms['wasLimitedBy']->setData($wasLimitedBy);
+        $forms['wasAtCapacity']->setData(count($wasLimitedBy) > 0);
     }
 
     public function mapFormsToData($forms, &$viewData)
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!$viewData instanceof Trip) {
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $wasEmpty = $forms['wasEmpty']->getData();
-        $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
+        $wasAtCapacity = $forms['wasAtCapacity']->getData();
 
-        // Naughty, but forcing both wasLimitedBy fields to be false, if wasEmpty
-        // (In any case, that part of the form will be hidden, if wasEmpty was chosen)
-        $wasLimitedBy = $wasEmpty ?
-            [] :
-            $forms['wasLimitedBy']->getData();
-
-        $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", in_array('space', $wasLimitedBy));
-        $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", in_array('weight', $wasLimitedBy));
+        if (!$wasAtCapacity) {
+            $wasEmpty = $forms['wasEmpty']->getData();
+            $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", false);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", false);
+        } else {
+            $wasLimitedBy = $forms['wasLimitedBy']->getData();
+            $accessor->setValue($viewData, "{$this->direction}WasEmpty", false);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", in_array('space', $wasLimitedBy));
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", in_array('weight', $wasLimitedBy));
+        }
     }
 }
