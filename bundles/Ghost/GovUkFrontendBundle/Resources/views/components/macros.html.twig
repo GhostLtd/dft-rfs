@@ -195,21 +195,37 @@
     </ul>
 {%- endmacro %}
 
+{% macro flashNotificationBanners() %}
+    {% for message in app.flashes(constant('\\Ghost\\GovUkFrontendBundle\\Model\\NotificationBanner::FLASH_BAG_TYPE')) %}
+        {{ _self.notificationBanner(message) }}
+    {% endfor %}
+{% endmacro %}
+
 {% macro notificationBanner(notification) -%}
-    {%- set type = notification.options.type | default(false) -%}
-    <div class="govuk-notification-banner {% if type %}govuk-notification-banner--{{ type }}{% endif %}" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__header">
-            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                {{- notification.title -}}
-            </h2>
+    {%- with {
+        attr: {
+            class: ("govuk-notification-banner "
+                ~ ((notification.options.style | default(false)) ? "govuk-notification-banner--#{notification.options.style}" : "")
+                ) | trim,
+            role: 'alert',
+            'aria-labelledby': "govuk-notification-banner-title",
+            'data-module': "govuk-notification-banner",
+        }
+    } -%}
+        <div {{ _self.attributes(attr) -}}>
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    {{- notification.title -}}
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading">
+                    {{- notification.heading -}}
+                </p>
+                {{ notification.content | raw }}
+            </div>
         </div>
-        <div class="govuk-notification-banner__content">
-            <p class="govuk-notification-banner__heading">
-                {{- notification.heading -}}
-            </p>
-            {{ notification.content | raw }}
-        </div>
-    </div>
+    {% endwith %}
 {%- endmacro %}
 
 {% macro warningText(content, options) -%}

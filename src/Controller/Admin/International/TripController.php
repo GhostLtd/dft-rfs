@@ -110,10 +110,10 @@ class TripController extends AbstractController
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
                 $deleteHelper->deleteTrip($trip);
 
-                $this->addFlash('notification', new NotificationBanner('Success', "Trip successfully deleted", "The trip was deleted.", ['type' => 'success']));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Trip successfully deleted", "The trip was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
                 return new RedirectResponse($redirectUrl);
             } else {
-                $this->addFlash('notification', new NotificationBanner('Important', 'Trip not deleted', "The request to delete this trip was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Trip not deleted', "The request to delete this trip was cancelled."));
                 return new RedirectResponse($redirectUrl);
             }
         }

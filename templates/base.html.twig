@@ -1,35 +1,36 @@
-{% extends "@GhostGovUkFrontend/template.html.twig" %}
+{% extends "base-common.html.twig" %}
 
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader -%}
 
-{% block pageTitle -%}
-    {{- 'service.name' | trans }} - GOV.UK
-{%- endblock %}
-
 {% block head -%}
     {{ encore_entry_link_tags('app') }}
-{#    {% include 'includes/hotjar-tracking.html.twig' %}#}
     {% include 'includes/wisdom-tracking.html.twig' %}
 {%- endblock %}
-
-{% block bodyEnd %}
-    {{ encore_entry_script_tags('app') }}
-{% endblock %}
 
 {% block headerBar %}
     {{ govukHeader({
         serviceName: ('service.name' | trans),
         navigation: (is_granted('ROLE_SURVEY_USER')
-            ? [{href: path('app_logout'), text: 'Logout'}]
-            : false
+        ? [{href: path('app_logout'), text: 'Logout'}]
+        : false
         ),
     }) }}
 {% endblock %}
 
-{% block beforeContent -%}
-    {%- block backLink -%}
-        {%- if (formWizardState | default(false)) and formWizardState.previousHistoryState -%}
-            <a href="{{ url(app.request.get('_route'), app.request.get('_route_params') | default({}) | merge({state: formWizardState.previousHistoryState})) }}" class="govuk-back-link">Back</a>
-        {%- endif -%}
-    {%- endblock -%}
-{%- endblock %}
+{% block main %}
+    <div class="govuk-width-container {{ containerClasses | default('') }}">
+        {% block beforeContent -%}
+            {{ parent() }}
+        {%- endblock %}
+        <main class="govuk-main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
+            {%- from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners -%}
+            {{ flashNotificationBanners() }}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
+
+{% block bodyEnd %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}

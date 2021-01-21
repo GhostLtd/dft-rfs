@@ -52,11 +52,11 @@ class SurveyDeleteController extends AbstractController
                 $entityManager->remove($survey);
                 $entityManager->flush();
 
-                $this->addFlash('notification', new NotificationBanner('Success', "Survey successfully deleted", "The survey for {$survey->getRegistrationMark()} was deleted.", ['type' => 'success']));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Survey successfully deleted", "The survey for {$survey->getRegistrationMark()} was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
 
                 return $this->redirectToRoute('admin_domestic_surveys', ['type' => $survey->getIsNorthernIreland() ? 'ni' : 'gb']);
             } else {
-                $this->addFlash('notification', new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
 
                 return $this->redirectToRoute('admin_domestic_surveydetails', [
                     'survey' => $survey->getId()

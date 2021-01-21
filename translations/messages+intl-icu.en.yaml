@@ -719,6 +719,7 @@ international:
       registration-mark:
         label: Registration mark of vehicle
         help: ''
+        changed-notification-content: "The registration mark of this vehicle has been changed from {oldValue} to {newValue}. Make sure that the other details of the vehicle are still correct."
       operation-type:
         label: How was the vehicle being operated during the survey period?
         help: ''
