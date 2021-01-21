@@ -80,6 +80,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     /**
      * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="surveyResponse", orphanRemoval=true)
+     * @ORM\OrderBy({"registrationMark": "ASC"})
      */
     private $vehicles;
 
