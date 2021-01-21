@@ -78,10 +78,10 @@
         {%- endif -%}
         <p class="govuk-body">
             {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
-            <a class="govuk-button"
-               href="{{ url(addActionRoute, {tripId: trip.id}) }}">{{ 'international.trip.summary.actions.add-action'|trans }}</a>
-            <a href="{{ url(dashboardRoute, {vehicleId: trip.vehicle.id}) }}"
-               class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
+            {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
+            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button">{{ 'international.trip.summary.actions.add-action'|trans }}</a>
+            <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+            <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
         </p>
     {% endif %}
 {% endblock %}

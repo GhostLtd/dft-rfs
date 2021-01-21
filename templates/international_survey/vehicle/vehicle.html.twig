@@ -78,9 +78,10 @@
     </table>
 
     <p class="govuk-body">
-        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        {%- set dashboardUrl = url(constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE')) -%}
         {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
         <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button">{{ 'common.actions.add-trip'|trans }}</a>
-        <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
+        <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete'|trans }}</a>
+        <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
     </p>
 {% endblock %}

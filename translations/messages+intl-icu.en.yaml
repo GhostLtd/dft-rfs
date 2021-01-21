@@ -909,6 +909,8 @@ international:
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle details
+        trip-complete: Trip complete
+        vehicle-complete: Vehicle complete
       trip-summary: Trip details
       consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
