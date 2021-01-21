@@ -4,12 +4,14 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Action;
+use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use App\Entity\Utility;
 use App\Form\ConfirmationType;
 use App\Form\InternationalSurvey\Action\DeleteActionType;
 use App\Repository\International\ActionRepository;
 use App\Repository\International\TripRepository;
+use App\Utility\International\DeleteHelper;
 use App\Utility\ReorderUtils;
 use App\Workflow\FormWizardManager;
 use App\Workflow\FormWizardStateInterface;
@@ -45,27 +47,17 @@ class ActionController extends AbstractSessionStateWorkflowController
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'_delete';
     public const REORDER_ROUTE = self::ROUTE_PREFIX.'_reorder';
 
-    private const MODE_EDIT = 'edit';
-    private const MODE_ADD = 'add';
+    protected const MODE_EDIT = 'edit';
+    protected const MODE_ADD = 'add';
 
-    protected $surveyResponse;
+    protected SurveyResponse $surveyResponse;
+    protected ?Trip $trip;
+    protected ?Action $action;
+    protected string $mode;
 
-    /** @var Trip */
-    protected $trip;
-
-    /** @var Action */
-    protected $action;
-
-    /** @var string */
-    protected $mode;
-
-    protected $actionRepository;
-
-    protected $tripRepository;
-    /**
-     * @var FormWizardManager
-     */
-    private $formWizardManager;
+    protected ActionRepository $actionRepository;
+    protected TripRepository $tripRepository;
+    protected FormWizardManager $formWizardManager;
 
     public function __construct(FormWizardManager $formWizardManager, ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session)
     {
@@ -110,7 +102,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
-    public function delete(UserInterface $user, Request $request, string $actionId) {
+    public function delete(UserInterface $user, Request $request, string $actionId, DeleteHelper $deleteHelper) {
         $this->loadSurveyAndAction($user, $actionId);
         $form = $this->createForm(DeleteActionType::class);
 
@@ -125,25 +117,9 @@ class ActionController extends AbstractSessionStateWorkflowController
             }
 
             if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $trip = $this->action->getTrip();
-
-                $actionsIdsToRemove = $this->action->getUnloadingActions()->map(function(Action $action) {
-                    return $action->getId();
-                })->toArray();
-
-                foreach($trip->getActions() as $action) {
-                    if (in_array($action->getId(), $actionsIdsToRemove)) {
-                        $trip->removeAction($action);
-                        $this->entityManager->remove($action);
-                    }
-                }
-
-                $this->entityManager->remove($this->action);
-                $trip->removeAction($this->action);
-                $trip->renumberActions();
-
-                $this->entityManager->flush();
-                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $trip->getId()]);
+                $tripId = $this->action->getTrip()->getId();
+                $deleteHelper->deleteAction($this->action);
+                return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
             }
         }
 
