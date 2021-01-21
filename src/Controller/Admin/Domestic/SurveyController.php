@@ -103,8 +103,6 @@ class SurveyController extends AbstractController
             if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
                 return new RedirectResponse($this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#'.$redirectTab);
             }
-
-            dump($form->getData());
         }
 
         return $this->render("admin/domestic/surveys/edit-{$templateName}.html.twig", [

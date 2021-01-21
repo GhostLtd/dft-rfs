@@ -100,7 +100,7 @@ class DvlaImporter
 
     protected function getAutoDetectedSurveyOptions(FormInterface $form)
     {
-        $originalFilename = dump($this->getOriginalFilename($form->get('file')->getData()));
+        $originalFilename = $this->getOriginalFilename($form->get('file')->getData());
 
         $regex = '/^csrgt_output(_(?<ni>ni))?_surveyweek_(?<week>\d{1,2})_(?<gendate>\d{12})\d{2}$/';
         if (preg_match($regex, $originalFilename, $matches)) {
