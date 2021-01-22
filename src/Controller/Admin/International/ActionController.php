@@ -90,17 +90,20 @@ class ActionController extends AbstractController
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
-
-            $isValid = $form->isValid();
-            if ($isValid) {
-                $this->entityManager->flush();
-            }
+            $surveyId = $action->getTrip()->getVehicle()->getSurveyResponse()->getSurvey()->getId();
+            $redirectResponse = new RedirectResponse(
+                $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $surveyId]) .
+                "#actions-{$action->getTrip()->getId()}"
+            );
 
             $cancel = $form->get('cancel');
-            if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
-                return new RedirectResponse(
-                    $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $action->getTrip()->getVehicle()->getSurveyResponse()->getSurvey()->getId()]) .
-                    "#actions-{$action->getTrip()->getId()}");
+            if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                return $redirectResponse;
+            };
+
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+                return $redirectResponse;
             }
         }
 
