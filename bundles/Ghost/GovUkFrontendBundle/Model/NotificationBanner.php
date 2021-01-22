@@ -7,12 +7,11 @@ namespace Ghost\GovUkFrontendBundle\Model;
 class NotificationBanner
 {
     const FLASH_BAG_TYPE = 'notification-banner';
+    const STYLE_SUCCESS = 'success';
 
     public $title;
     public $heading;
     public $content;
-
-    const STYLE_SUCCESS = 'success';
 
     /**
      * Valid options are:

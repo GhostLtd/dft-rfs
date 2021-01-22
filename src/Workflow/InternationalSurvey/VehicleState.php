@@ -4,6 +4,7 @@ namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
+use App\Form\InternationalSurvey\Vehicle\ConfirmDatesType;
 use App\Form\InternationalSurvey\Vehicle\VehicleAxleConfigurationType;
 use App\Form\InternationalSurvey\Vehicle\VehicleBodyType;
 use App\Form\InternationalSurvey\Vehicle\VehicleDetailsType;
@@ -16,6 +17,7 @@ use InvalidArgumentException;
 class VehicleState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_REQUEST_VEHICLE_DETAILS = 'vehicle-registration';
+    const STATE_REQUEST_CONFIRM_DATES = 'confirm-dates';
     const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';
     const STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION = 'axle-configuration';
     const STATE_REQUEST_VEHICLE_BODY = 'vehicle-body';
@@ -31,6 +33,7 @@ class VehicleState extends AbstractFormWizardState implements FormWizardStateInt
 
     private const FORM_MAP = [
         self::STATE_REQUEST_VEHICLE_DETAILS => VehicleDetailsType::class,
+        self::STATE_REQUEST_CONFIRM_DATES => ConfirmDatesType::class,
         self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
         self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => VehicleAxleConfigurationType::class,
         self::STATE_REQUEST_VEHICLE_BODY => VehicleBodyType::class,
@@ -45,6 +48,7 @@ class VehicleState extends AbstractFormWizardState implements FormWizardStateInt
 
     private const TEMPLATE_MAP = [
         self::STATE_REQUEST_VEHICLE_DETAILS => 'international_survey/vehicle/form-vehicle-registration.html.twig',
+        self::STATE_REQUEST_CONFIRM_DATES => 'international_survey/vehicle/form-confirm-dates.html.twig',
         self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => 'international_survey/vehicle/form-trailer-configuration.html.twig',
         self::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION => 'international_survey/vehicle/form-axle-configuration.html.twig',
         self::STATE_REQUEST_VEHICLE_BODY => 'international_survey/vehicle/form-vehicle-body.html.twig',

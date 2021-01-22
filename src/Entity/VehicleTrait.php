@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Workflow\FormWizardManager;
 
 trait VehicleTrait
 {
@@ -19,8 +21,10 @@ trait VehicleTrait
     /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank(groups={"vehicle_registration", "admin_vehicle"}, message="common.vehicle.vehicle-registration.not-blank")
+     * @Groups({FormWizardManager::NOTIFICATION_BANNER_NORMALIZER_GROUP})
      */
     private $registrationMark;
+
 
     /**
      * @ORM\Column(type="integer", nullable=true)

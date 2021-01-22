@@ -1,0 +1,14 @@
+{% macro tripStartHelp() %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">{{ 'international.trip.start-date.help.summary'|trans }}</span>
+        </summary>
+        <div class="govuk-details__text">
+            <ul class="govuk-list govuk-list--bullet">
+                <li>{{ 'international.trip.start-date.help.text.1' | trans }}</li>
+                <li>{{ 'international.trip.start-date.help.text.2' | trans }}</li>
+            </ul>
+            <p class="govuk-body">{{ 'international.trip.start-date.help.note'|trans|nl2br }}</p>
+        </div>
+    </details>
+{% endmacro %}

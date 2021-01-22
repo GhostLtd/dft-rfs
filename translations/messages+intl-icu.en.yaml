@@ -1021,6 +1021,13 @@ international:
       countries-transitted-other:
         label: Enter any other countries separated by commas
         help: e.g. Switzerland, Italy
+    start-date:
+      help:
+        summary: 'What date do you use to decide if a trip is relevant to the survey?'
+        text:
+          1: "If a vehicle left empty, use the date it left."
+          2: "If a vehicle left loaded, use the date it was loaded."
+        note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
 
 goods:
   hazardous:
