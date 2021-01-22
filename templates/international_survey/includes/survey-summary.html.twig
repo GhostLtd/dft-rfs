@@ -1,16 +1,11 @@
 {% set survey = app.user.internationalSurvey %}
 <h2 class="govuk-heading-m">{{ 'international.sidebar-summary.title'|trans }}</h2>
 
-<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.reference-number'|trans }}</h3>
-<p class="govuk-body">{{ survey.referenceNumber }}</p>
-
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Company</h3>
 <p class="govuk-body">{{ survey.company.businessName }}</p>
 
-<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period-start'|trans }}</h3>
-<p class="govuk-body">{{ survey.surveyPeriodStart | date('F j, Y') }}</p>
-
-{% if survey.surveyPeriodInDays > 1 %}
-<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period-end'|trans }}</h3>
-<p class="govuk-body">{{ survey.surveyPeriodEnd | date('F j, Y') }}</p>
-{% endif %}
+<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period'|trans }}</h3>
+<p class="govuk-body">
+    <span class="nowrap">{{- survey.surveyPeriodStart | date('M j Y') -}}</span>
+    {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('M j Y') -}}</span>{% endif %}
+</p>

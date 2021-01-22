@@ -645,6 +645,7 @@ international:
   sidebar-summary:
     title: International Survey
     company: Company
+    period: Survey period
     period-start: Survey period start
     period-end: Survey period end
     reference-number: Reference number
