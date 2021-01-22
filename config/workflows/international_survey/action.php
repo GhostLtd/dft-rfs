@@ -116,7 +116,7 @@ return static function (ContainerConfigurator $container) {
                                 ],
                             ],
                             'transitionWhenFormData' => [
-                                'property' => 'add_another',
+                                'property' => 'confirm',
                                 'value' => false,
                             ],
                         ],
@@ -132,7 +132,7 @@ return static function (ContainerConfigurator $container) {
                                 ],
                             ],
                             'transitionWhenFormData' => [
-                                'property' => 'add_another',
+                                'property' => 'confirm',
                                 'value' => true,
                             ],
                         ],

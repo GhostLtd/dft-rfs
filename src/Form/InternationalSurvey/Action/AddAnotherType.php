@@ -2,10 +2,10 @@
 
 namespace App\Form\InternationalSurvey\Action;
 
-use App\Form\AbstractAddAnotherType;
+use App\Form\AbstractConfirmType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddAnotherType extends AbstractAddAnotherType
+class AddAnotherType extends AbstractConfirmType
 {
     public function configureOptions(OptionsResolver $resolver)
     {

@@ -1,8 +1,11 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\IndexController;
 use App\Controller\InternationalSurvey\VehicleController;
 use App\Workflow\InternationalSurvey\VehicleState as StateObject;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
@@ -17,6 +20,7 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_REQUEST_VEHICLE_DETAILS,
+                    StateObject::STATE_REQUEST_CONFIRM_DATES,
                     StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,
                     StateObject::STATE_REQUEST_VEHICLE_BODY,
                     StateObject::STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION,
@@ -32,7 +36,33 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'vehicle details entered' => [
                         'from' => StateObject::STATE_REQUEST_VEHICLE_DETAILS,
+                        'to' =>  StateObject::STATE_REQUEST_CONFIRM_DATES,
+                    ],
+                    'dates confirmed' => [
+                        'from' =>  StateObject::STATE_REQUEST_CONFIRM_DATES,
                         'to' =>  StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,
+                        'metadata' => [
+                            'transitionWhenFormData' => [
+                                'property' => 'confirm',
+                                'value' => true,
+                            ],
+                        ],
+                    ],
+                    'dates rejected' => [
+                        'from' =>  StateObject::STATE_REQUEST_CONFIRM_DATES,
+                        'to' =>  StateObject::STATE_SUMMARY,
+                        'metadata' => [
+                            'transitionWhenFormData' => [
+                                'property' => 'confirm',
+                                'value' => false,
+                            ],
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'notificationBanner' => (array) new NotificationBanner(
+                                'international.vehicle.confirm-dates.notification-banner.title',
+                                'international.vehicle.confirm-dates.notification-banner.heading',
+                                'international.vehicle.confirm-dates.notification-banner.content'
+                            ),
+                        ],
                     ],
                     'vehicle trailer entered' => [
                         'from' => StateObject::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION,

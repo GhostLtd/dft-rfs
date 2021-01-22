@@ -764,6 +764,16 @@ international:
       operation-type:
         label: How was the vehicle being operated during the survey period?
         help: ''
+    confirm-dates:
+      heading: 'Survey period confirmation'
+      help: "We’re only interested in vehicles that have made international trips that started within survey period."
+      confirm:
+        label: 'Did this vehicle start any trips that started during your survey period?'
+        help: ''
+      notification-banner:
+        title: 'Information'
+        heading: 'The vehicle is not required in this survey'
+        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
     vehicle-trailer-configuration:
       trailer-configuration:
         label: Tell us about the vehicle
@@ -845,7 +855,7 @@ international:
         label: Weight of goods unloaded
         help: ''
     add-another:
-      add-another:
+      confirm:
         label: Do you need to add another action?
         help: You must tell us about every time when you either loaded or unloaded goods
   stop:
@@ -900,7 +910,7 @@ international:
         label: Place of unloading
         help: "Select the stop where you unloaded this consignment"
     add-another:
-      add-another:
+      confirm:
         label: Do you need to add another consignment?
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
