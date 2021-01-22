@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class MissingDaysType extends AbstractType
 {
@@ -25,6 +26,7 @@ class MissingDaysType extends AbstractType
                     "common.choices.boolean.no" => false,
                 ],
                 'attr' => ['class' => 'govuk-radios--inline'],
+                'constraints' => new NotNull(['message' => 'common.choice.not-null'])
             ])
         ;
     }
