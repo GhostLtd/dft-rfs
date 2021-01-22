@@ -67,14 +67,22 @@ class CargoStateDataMapper implements DataMapperInterface
 
         if ($wasAtCapacity === false) {
             $wasEmpty = $forms['wasEmpty']->getData();
-            $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
-            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", false);
-            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", false);
+
+            if ($wasEmpty !== null) {
+                $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
+                $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", false);
+                $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", false);
+            }
         } elseif ($wasAtCapacity === true) {
             $wasLimitedBy = $forms['wasLimitedBy']->getData();
-            $accessor->setValue($viewData, "{$this->direction}WasEmpty", false);
-            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", in_array('space', $wasLimitedBy));
-            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", in_array('weight', $wasLimitedBy));
+            $wasLimitedBySpace = in_array('space', $wasLimitedBy);
+            $wasLimitedByWeight = in_array('weight', $wasLimitedBy);
+
+            if ($wasLimitedByWeight || $wasLimitedBySpace) {
+                $accessor->setValue($viewData, "{$this->direction}WasEmpty", false);
+                $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", $wasLimitedBySpace);
+                $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", $wasLimitedByWeight);
+            }
         }
     }
 }
