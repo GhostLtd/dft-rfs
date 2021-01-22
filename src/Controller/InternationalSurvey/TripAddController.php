@@ -28,7 +28,7 @@ class TripAddController extends AbstractSessionStateWorkflowController
     public const WIZARD_ROUTE = 'app_internationalsurvey_trip_add_state';
 
     protected SurveyResponse $surveyResponse;
-    protected ?Vehicle $vehicle;
+    protected ?Vehicle $vehicle = null;
 
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/add-trip/{state}", name=self::WIZARD_ROUTE)

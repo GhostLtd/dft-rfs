@@ -52,8 +52,8 @@ class ActionController extends AbstractSessionStateWorkflowController
     protected const MODE_ADD = 'add';
 
     protected SurveyResponse $surveyResponse;
-    protected ?Trip $trip;
-    protected ?Action $action;
+    protected ?Trip $trip = null;
+    protected ?Action $action = null;
     protected string $mode;
 
     protected ActionRepository $actionRepository;
