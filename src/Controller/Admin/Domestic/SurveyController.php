@@ -5,6 +5,8 @@ namespace App\Controller\Admin\Domestic;
 use App\Entity\BlameLog\BlameLog;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\Edit\InitialDetailsType;
+use App\Form\Admin\DomesticSurvey\Edit\BusinessDetailsType;
+use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\ListPage\Domestic\SurveyListPage;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -27,8 +29,9 @@ class SurveyController extends AbstractController
     public const LOGS_ROUTE = self::ROUTE_PREFIX.'logs';
     public const VIEW_ROUTE = self::ROUTE_PREFIX.'view';
 
-    public const EDIT_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_edit';
     public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX.'business_edit';
+    public const EDIT_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_edit';
+    public const EDIT_VEHICLE_ROUTE = self::ROUTE_PREFIX.'vehicle_edit';
 
     /**
      * @Route("/{type}", requirements={"type": "gb|ni"}, name=self::LIST_ROUTE)
@@ -83,6 +86,24 @@ class SurveyController extends AbstractController
         return $this->surveyEdit($survey, $request, $entityManager, InitialDetailsType::class, 'initial-details', 'tab-initial-details');
     }
 
+    /**
+     * @Route("/{surveyId}/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     */
+    public function editBusinessDetails(Survey $survey, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        return $this->surveyEdit($survey, $request, $entityManager, BusinessDetailsType::class, 'business-details', 'tab-business-details');
+    }
+
+    /**
+     * @Route("/{surveyId}/edit-vehicle-details", name=self::EDIT_VEHICLE_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     */
+    public function editVehicleDetails(Survey $survey, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        return $this->surveyEdit($survey, $request, $entityManager, VehicleDetailsType::class, 'vehicle-details', 'tab-vehicle-details');
+    }
+
     protected function surveyEdit(Survey $survey, Request $request, EntityManagerInterface $entityManager, string $formClass, string $templateName, string $redirectTab) {
         $response = $survey->getResponse();
         if (!$response) {
@@ -93,15 +114,16 @@ class SurveyController extends AbstractController
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
-
-            $isValid = $form->isValid();
-            if ($isValid) {
-                $entityManager->flush();
-            }
+            $redirectResponse = new RedirectResponse($this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . '#' . $redirectTab);
 
             $cancel = $form->get('cancel');
-            if ($isValid || ($cancel instanceof SubmitButton && $cancel->isClicked())) {
-                return new RedirectResponse($this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#'.$redirectTab);
+            if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                return $redirectResponse;
+            };
+
+            if ($form->isValid()) {
+                $entityManager->flush();
+                return $redirectResponse;
             }
         }
 

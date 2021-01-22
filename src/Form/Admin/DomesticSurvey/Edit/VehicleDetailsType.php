@@ -1,31 +1,26 @@
 <?php
 
-
 namespace App\Form\Admin\DomesticSurvey\Edit;
-
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
-use App\Form\DomesticSurvey\VehicleAndBusinessDetails\BusinessDetailsType;
 use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Valid;
 
-class VehicleAndBusinessDetailsType extends AbstractType
+class VehicleDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('business_details', BusinessDetailsType::class, [
-                'inherit_data' => true,
-                'label' => false,
-                'expanded_employees' => false,
-            ])
             ->add('weights', VehicleWeightsType::class, [
                 'inherit_data' => true,
                 'label' => false,
+                'constraints' => [new Valid()],
+                'validation_groups' => ['admin_vehicle'],
             ])
             ->add('axleConfiguration', Gds\ChoiceType::class, [
                 'label' => "Type/configuration",
@@ -47,14 +42,20 @@ class VehicleAndBusinessDetailsType extends AbstractType
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'property_path' => 'vehicle.bodyType',
             ])
-
-            ;
+            ->add('submit', Gds\ButtonType::class, [
+                'label' => 'Save changes',
+            ])
+            ->add('cancel', Gds\ButtonType::class, [
+                'label' => 'Cancel',
+                'attr' => ['class' => 'govuk-button--secondary'],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'validation_groups' => ['admin_vehicle'],
         ]);
     }
 }
