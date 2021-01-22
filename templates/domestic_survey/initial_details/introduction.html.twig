@@ -7,7 +7,7 @@
 
     <div class="govuk-grid-row govuk-!-padding-bottom-5">
         <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">The survey takes place over the course of a week and relates to the vehicle with registration mark {{ app.user.domesticSurvey.registrationMark | formatRegMark }}. Your survey week starts on {{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.long' | trans) }}.</p>
+            <p class="govuk-body">The survey takes place over the course of a week and relates to the vehicle with registration mark <strong>{{ app.user.domesticSurvey.registrationMark | formatRegMark }}</strong>. Your survey week starts on <strong>{{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.long' | trans) }}</strong>.</p>
             <p class="govuk-body">We recommend answering the initial questions as soon as possible. After that, it will probably take around 10 minutes to enter your journey information on each day of your survey week.</p>
 
             <h2 class="govuk-heading-m">Initial questions</h2>
