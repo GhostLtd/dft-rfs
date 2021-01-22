@@ -47,9 +47,15 @@ class CargoStateDataMapper implements DataMapperInterface
             $wasLimitedBy[] = 'weight';
         }
 
-        $forms['wasEmpty']->setData($wasEmpty);
-        $forms['wasLimitedBy']->setData($wasLimitedBy);
-        $forms['wasAtCapacity']->setData(is_null($limitedBySpace) && is_null($limitedByWeight) ? null : count($wasLimitedBy) > 0);
+        $isAtCapacity = is_null($limitedBySpace) && is_null($limitedByWeight) ? null : count($wasLimitedBy) > 0;
+
+        if ($isAtCapacity) {
+            $forms['wasLimitedBy']->setData($wasLimitedBy);
+        } else {
+            $forms['wasEmpty']->setData($wasEmpty);
+        }
+
+        $forms['wasAtCapacity']->setData($isAtCapacity);
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -68,21 +74,20 @@ class CargoStateDataMapper implements DataMapperInterface
         if ($wasAtCapacity === false) {
             $wasEmpty = $forms['wasEmpty']->getData();
 
-            if ($wasEmpty !== null) {
-                $accessor->setValue($viewData, "{$this->direction}WasEmpty", $wasEmpty);
-                $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", false);
-                $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", false);
-            }
+            $isValid = $wasEmpty !== null;
+
+            $accessor->setValue($viewData, "{$this->direction}WasEmpty", $isValid ? $wasEmpty : null);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", $isValid ? false : null);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", $isValid ? false : null);
         } elseif ($wasAtCapacity === true) {
             $wasLimitedBy = $forms['wasLimitedBy']->getData();
             $wasLimitedBySpace = in_array('space', $wasLimitedBy);
             $wasLimitedByWeight = in_array('weight', $wasLimitedBy);
+            $isValid = $wasLimitedBySpace || $wasLimitedByWeight;
 
-            if ($wasLimitedByWeight || $wasLimitedBySpace) {
-                $accessor->setValue($viewData, "{$this->direction}WasEmpty", false);
-                $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", $wasLimitedBySpace);
-                $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", $wasLimitedByWeight);
-            }
+            $accessor->setValue($viewData, "{$this->direction}WasEmpty", $isValid ? false : null);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedBySpace", $isValid ? $wasLimitedBySpace : null);
+            $accessor->setValue($viewData, "{$this->direction}WasLimitedByWeight", $isValid ? $wasLimitedByWeight : null);
         }
     }
 }
