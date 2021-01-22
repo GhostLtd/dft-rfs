@@ -7,6 +7,7 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
@@ -48,7 +49,13 @@ abstract class AbstractDestinationType extends AbstractType
         $this->traitConfigureOptions($resolver);
 
         $resolver->setDefaults([
-            'validation_groups' => 'destination'
+            'validation_groups' => function(FormInterface $form) {
+                /** @var StopTrait $data */
+                $data = $form->getData();
+                return $data->getGoodsUnloaded()
+                    ? ['destination', 'destination-ports']
+                    : 'destination';
+                },
         ]);
     }
 }
