@@ -11,7 +11,7 @@
     {{ govukHeader({
         serviceName: ('service.name' | trans),
         navigation: (is_granted('ROLE_SURVEY_USER')
-        ? [{href: path('app_logout'), text: 'Logout'}]
+        ? [{href: path('app_logout'), text: 'common.logout' | trans}]
         : false
         ),
     }) }}

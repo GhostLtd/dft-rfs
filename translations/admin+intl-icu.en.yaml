@@ -1,6 +1,6 @@
 menu:
   dashboard: 'Home'
-  logout: 'Logout'
+  logout: 'Sign out'
   domestic:
     root: 'CSRGT'
     surveys-gb: 'Surveys (GB)'
