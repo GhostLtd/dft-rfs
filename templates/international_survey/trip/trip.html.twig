@@ -1,15 +1,6 @@
 {% set translation_prefix = 'international.trip.summary' %}
 {% extends 'international_survey/base.html.twig' %}
 
-{% macro actionHelp() %}
-    <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">{{ 'international.trip.summary.help.action-what'|trans }}</span>
-        </summary>
-        <div class="govuk-details__text">{{ 'international.trip.summary.help.action-explanation'|trans|nl2br }}</div>
-    </details>
-{% endmacro %}
-
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
 
@@ -52,15 +43,15 @@
         {# -------------------------------------------------------------------------------- #}
         {# Loading/Unloading Actions #}
         {# -------------------------------------------------------------------------------- #}
-        {%- import _self as s -%}
+        {%- from 'international_survey/macros.html.twig' import consignmentActionHelp -%}
         {%- if trip.actions is empty -%}
             <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
-            {{ s.actionHelp() }}
+            {{ consignmentActionHelp() }}
         {%- else -%}
             {%- set showReorderLink = trip.actions | length > 1 -%}
 
             <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.action'|trans }}</a></h2>
-            {{ s.actionHelp() }}
+            {{ consignmentActionHelp() }}
             {%- with {
                 bottomMargin: showReorderLink ? '2' : '6',
                 trip: trip,

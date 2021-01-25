@@ -12,3 +12,12 @@
         </div>
     </details>
 {% endmacro %}
+
+{% macro consignmentActionHelp() %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">{{ 'international.trip.summary.help.action-what'|trans }}</span>
+        </summary>
+        <div class="govuk-details__text">{{ 'international.trip.summary.help.action-explanation'|trans|nl2br }}</div>
+    </details>
+{% endmacro %}

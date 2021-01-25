@@ -811,16 +811,19 @@ international:
         back-to-trip-summary: Back to trip details
         delete: Delete action
     place:
-      heading: Where did you stop?
-      help: Only add stops where you loaded or unloaded goods
+      heading: Add consignment action
+      help: ''
+      place:
+        label: Where did you load/unload this consignment?
+        help: ''
       name:
-        label: Place
+        label: Place name or postcode
         help: ''
       country:
         label: Country
         help: ''
       loading:
-        label: What did you do at this stop?
+        label: Did you load or unload goods?
         help: ''
         no-goods-loaded: No goods yet loaded
         all-goods-fully-loaded: All goods fully unloaded
@@ -833,7 +836,7 @@ international:
     goods-description:
       goods-description:
         label: Description of goods carried
-        help: Provide a basic description of the goods carried on this trip. For mixed loads, the main type of goods should be recorded.
+        help: Provide a basic description of the goods carried in this consignment. For mixed loads, the main type of goods should be recorded.
     hazardous-goods:
       hazardous-goods:
         label: Were these goods dangerous or hazardous?
@@ -949,7 +952,7 @@ international:
       stops: Stops
       help:
         action-what: What is a consignment action?
-        action-explanation: "A consignment action is when a consignment is either loaded or unloaded.\nPlease record these actions in the order that they occurred."
+        action-explanation: "A consignment action is when a consignment is either loaded or unloaded.\n\nPlease record these actions in the order that they occurred."
 
     dates:
       heading: Dates of Trip

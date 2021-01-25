@@ -26,25 +26,6 @@ class PlaceType extends AbstractType
     {
         $prefix = "international.action.place";
 
-        $builder
-            ->add('name', Gds\InputType::class, [
-                'label' => "{$prefix}.name.label",
-                'help' => "{$prefix}.name.help",
-                'attr' => ['class' => 'govuk-input--width-10'],
-                'label_attr' => ['class' => 'govuk-label--s'],
-            ])
-            ->add('country', Gds\ChoiceType::class, [
-                // TODO: Hook locale
-                // TODO: Sort choices: 1) prioritising those mentioned in TransittedCountries 2) TransittedCountriesOther
-                'label' => "{$prefix}.country.label",
-                'help' => "{$prefix}.country.help",
-                'choices' => array_flip(Countries::getNames($options['choice_translation_locale'])),
-                'expanded' => false,
-                'placeholder' => '',
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
-            ]);
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $prefix) {
             /** @var Action $action */
             $action = $event->getData();
@@ -97,9 +78,37 @@ class PlaceType extends AbstractType
                         "{$prefix}.loading.choices.unload" => false,
                     ],
                     'choice_options' => $choiceOptions,
-                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'label_attr' => ['class' => 'govuk-label--m'],
                 ]);
             }
+
+
+            $form
+                ->add('place', Gds\FieldsetType::class, [
+                    'inherit_data' => true,
+                    'label' => "{$prefix}.place.label",
+                    'label_attr' => ['class' => 'govuk-label--m'],
+                ])
+            ;
+            $form->get('place')
+                ->add('name', Gds\InputType::class, [
+                    'label' => "{$prefix}.name.label",
+                    'help' => "{$prefix}.name.help",
+                    'attr' => ['class' => 'govuk-input--width-10'],
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                ])
+                ->add('country', Gds\ChoiceType::class, [
+                    // TODO: Hook locale
+                    // TODO: Sort choices: 1) prioritising those mentioned in TransittedCountries 2) TransittedCountriesOther
+                    'label' => "{$prefix}.country.label",
+                    'help' => "{$prefix}.country.help",
+                    'choices' => array_flip(Countries::getNames($options['choice_translation_locale'])),
+                    'expanded' => false,
+                    'placeholder' => '',
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
+                ]);
+
         });
     }
 
