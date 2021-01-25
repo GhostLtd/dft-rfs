@@ -3,13 +3,12 @@
 namespace App\Form\DomesticSurvey\InitialDetails;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Form\WorkflowChoiceFormInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class InPossessionOfVehicleType extends AbstractType implements WorkflowChoiceFormInterface
+class InPossessionOfVehicleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

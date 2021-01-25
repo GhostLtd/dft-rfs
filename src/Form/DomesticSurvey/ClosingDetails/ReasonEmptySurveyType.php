@@ -3,13 +3,12 @@
 namespace App\Form\DomesticSurvey\ClosingDetails;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Form\WorkflowChoiceFormInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ReasonEmptySurveyType extends AbstractType implements WorkflowChoiceFormInterface
+class ReasonEmptySurveyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
