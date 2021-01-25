@@ -32,6 +32,15 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    ## for some reason the default declaration of this service is triggering a deprecation warning
+    # see https://stackoverflow.com/questions/64458501/symfony-doctrine-get-list-of-available-commands
+    doctrine.query_sql_command:
+        class: Doctrine\DBAL\Tools\Console\Command\RunSqlCommand
+        arguments:
+            - '@Doctrine\Bundle\DoctrineBundle\Dbal\ManagerRegistryAwareConnectionProvider'
+        tags:
+            - { name: console.command, command: doctrine:query:sql }
+
     App\Features:
         arguments:
             $enableFeatures: '%env(csv:default:app_features_empty:APP_FEATURES)%'
