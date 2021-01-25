@@ -814,7 +814,7 @@ international:
       heading: Add consignment action
       help: ''
       place:
-        label: Where did you load/unload this consignment?
+        label: Where did you load/unload the consignment?
         help: ''
       name:
         label: Place name or postcode
