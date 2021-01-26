@@ -22,7 +22,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         return [
-            'username' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-username'),
+            'username' => $request->headers->get('X-Goog-Authenticated-User-Id', 'no-username'),
             'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion'),
         ];
     }
@@ -41,8 +41,8 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
                 $metadata->getNumericProjectId(),
                 $metadata->getProjectId()
             );
-            list($assertionEmailAddress, $assertionGoogleId) = $this->validateAssertion($user->getPassword(), $audience);
-            return $assertionEmailAddress === $user->getUsername();
+            list($email, $id) = $this->validateAssertion($user->getPassword(), $audience);
+            return $id === $user->getUsername();
         } catch (\Exception $e) {
             return false;
         }
