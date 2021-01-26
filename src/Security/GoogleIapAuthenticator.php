@@ -14,6 +14,8 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class GoogleIapAuthenticator extends AbstractGuardAuthenticator
 {
+    const EXTRA_FIELD_USER_ID = 'IAPid';
+
     public function supports(Request $request)
     {
         return $request->headers->has('X-Goog-Iap-Jwt-Assertion');
@@ -22,20 +24,26 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         return [
-            // This email address is a concatenation of the namespace and the email address
-            // eg X-Goog-Authenticated-User-Email: accounts.google.com:johndoe@example.com
-            'username' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-username'),
+            'emailAddress' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-email'),
+            'userId' => $request->headers->get('X-Goog-Authenticated-User-Id', 'no-id'),
             'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion'),
         ];
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        return new User($credentials['username'], $credentials['assertion'], ['ROLE_ADMIN_IAP_USER']);
+        return new User(
+            $credentials['emailAddress'],
+            $credentials['assertion'],
+            ['ROLE_ADMIN_IAP_USER'],
+            true, true, true, true,
+            [self::EXTRA_FIELD_USER_ID => $credentials['userId']]
+        );
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
+        /** @var User $user */
         try {
             $metadata = new Metadata();
             $audience = sprintf(
@@ -44,9 +52,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
                 $metadata->getProjectId()
             );
             list($assertionEmailAddress, $assertionId) = $this->validateAssertion($user->getPassword(), $audience);
-
-            // match the raw email address from the assertion against the one with namespace from the header
-            return preg_match("/:$assertionEmailAddress$/", $user->getUsername());
+            return $assertionId === $user->getExtraFields()[self::EXTRA_FIELD_USER_ID];
         } catch (\Exception $e) {
             return false;
         }
