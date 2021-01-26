@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\EventSubscriber\InternationalSurvey;
+namespace App\EventListener\InternationalSurvey;
 
 
 use App\Entity\International\Vehicle;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class VehicleRegMarkChangedSubscriber implements EventSubscriber
+class VehicleRegMarkChangedListener
 {
     private $session;
     private $security;
@@ -52,12 +52,4 @@ class VehicleRegMarkChangedSubscriber implements EventSubscriber
             ));
         }
     }
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::preUpdate,
-        ];
-    }
-
 }

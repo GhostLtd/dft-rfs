@@ -70,6 +70,12 @@ services:
             tags:
                 - { name: 'doctrine.event_subscriber' }
 
+    App\EventListener\InternationalSurvey\VehicleRegMarkChangedListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'preUpdate'
+                lazy: true
+
     App\EventSubscriber\AdminMenuEventSubscriber:
         arguments:
             $hostname: '%admin_hostname%'
