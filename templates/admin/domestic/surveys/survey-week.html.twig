@@ -18,6 +18,7 @@
 }) | merge (goodsHeadings) | merge ({
     "Weight (l/u)": {numeric: true},
     "Stops (l/u/b)": {numeric: true},
+    "": {}
 }) %}
 
 {% set stopHeadings = locationHeadings | merge({
@@ -64,11 +65,10 @@
                         {{ tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) }}
 
                         {%- set editContents -%}
-                            {# TODO: Fix links #}
-                            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE') -%}
-                            <a href="{{ url(deleteRoute, {stopId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-                        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
-                            <a href="{{ url(editRoute, {stopId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
+                            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
+                            <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
+                        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE') -%}
+                            <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
                         {%- endset -%}
                         {{ tableCell(editContents, {actions: true}) }}
                     {% else %}

@@ -90,7 +90,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
             switch ($this->dataClass) {
                 case DaySummary::class :
                     $event->getForm()
-                        ->add('distance_travelled', DaySummaryForms\DistanceTravelledType::class, [
+                        ->add('distanceTravelled', DaySummaryForms\DistanceTravelledType::class, [
                             'inherit_data' => true,
                             'label' => false,
                         ]);
@@ -196,7 +196,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
             /** @var DayStop $stop */
             $stop = $form->getData();
-            $groups = ['admin-day-stop'];
+            $groups = ['admin-day-stop', 'admin-day-summary'];
 
             if ($this->isNorthernIreland($stop)) {
                 $groups[] = 'admin-day-stop-ni';
@@ -270,14 +270,18 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
             }
         }
 
-        $wasAtCapacity = $forms['wasAtCapacity']->getData();
-        $wasLimitedBy = $forms['wasLimitedBy']->getData();
+        if (isset($forms['wasAtCapacity'])) {
+            $wasAtCapacity = $forms['wasAtCapacity']->getData();
+            $wasLimitedBy = $forms['wasLimitedBy']->getData();
 
-        if ($wasAtCapacity === false) {
-            $viewData->setWasLimitedBySpace(false);
-            $viewData->setWasLimitedByWeight(false);
-        } else {
-            $viewData->setWasLimitedBy($wasLimitedBy);
+            if ($wasAtCapacity === false) {
+                $viewData->setWasLimitedBySpace(false);
+                $viewData->setWasLimitedByWeight(false);
+            } else {
+                $viewData->setWasLimitedBy($wasLimitedBy);
+            }
+
+            $viewData->setWasAtCapacity($wasAtCapacity);
         }
 
         if ($viewData->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
@@ -289,7 +293,5 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                 ->setWasLimitedByWeight(null)
                 ->setWasLimitedBySpace(null);
         }
-
-        $viewData->setWasAtCapacity($wasAtCapacity);
     }
 }
