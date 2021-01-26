@@ -57,7 +57,6 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="domestic.day.border-crossing.not-blank", groups={"border-crossing"})
      * @Assert\Length(max=255, maxMessage="domestic.day.border-crossing.max-length", groups={"border-crossing"})
      */
     private $borderCrossingLocation;

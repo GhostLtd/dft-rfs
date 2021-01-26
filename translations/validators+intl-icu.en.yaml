@@ -107,7 +107,6 @@ domestic:
     location.not-blank: Enter the location
     location.max-length: "Location must be less {limit} characters or fewer"
     border-crossing:
-      not-blank: Enter the border crossing point
       max-length: "Location must be less {limit} characters or fewer"
   day-stop:
     was-at-capacity:
