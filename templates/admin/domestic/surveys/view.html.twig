@@ -2,15 +2,15 @@
 
 {% block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
+    {%- set hasVehicle = survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {
             'Initial details': 'tab-initial-details',
         } -%}
-        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+        {%- if hasVehicle -%}
             {%- set tabs = tabs | merge({
                 'Business details': 'tab-business-details',
                 'Vehicle details': 'tab-vehicle-details',
-                'Survey period': 'tab-survey-period',
             }) -%}
         {%- endif -%}
     {%- endif -%}
@@ -29,7 +29,7 @@
     </div>
 
     {% if tabs | default(false) %}
-        <div class="govuk-tabs" data-module="govuk-tabs">
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
 
             {% if 'Initial details' in tabs | keys %}
@@ -67,15 +67,14 @@
                     </div>
                 </div>
             {% endif %}
-
-            {% if 'Survey period' in tabs | keys %}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-survey-period">
-                    {% with {showActions: false} %}
-                        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
-                    {% endwith %}
-                </div>
-            {% endif %}
         </div>
     {% endif %}
 
+    {% if hasVehicle %}
+        <h1 class="govuk-heading govuk-heading-l govuk-heading--underline">Journeys</h1>
+
+        {% with {showActions: false} %}
+            {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

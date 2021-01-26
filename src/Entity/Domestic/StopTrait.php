@@ -19,39 +19,39 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"origin"})
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin"})
+     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"origin", "admin-day-stop"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin", "admin-day-stop"})
      */
     private $originLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"destination"})
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination"})
+     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"destination", "admin-day-stop"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination", "admin-day-stop"})
      */
     private $destinationLocation;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"origin"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"origin", "admin-day-stop"})
      */
     private $goodsLoaded;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"origin-ports"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"origin-ports", "admin-day-stop-loaded"})
      */
     private $goodsTransferredFrom;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"destination"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"destination", "admin-day-stop"})
      */
     private $goodsUnloaded;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"destination-ports"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"destination-ports", "admin-day-stop-unloaded"})
      */
     private $goodsTransferredTo;
 
@@ -64,14 +64,14 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"goods-description"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"goods-description", "admin-day-stop"})
      */
     private $goodsDescription;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description"})
-     * @Assert\Length(max=255, maxMessage="common.goods-description-other.max-length", groups={"goods-description"})
+     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description", "admin-day-stop"})
+     * @Assert\Length(max=255, maxMessage="common.goods-description-other.max-length", groups={"goods-description", "admin-day-stop"})
      */
     private $goodsDescriptionOther;
 

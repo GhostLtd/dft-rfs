@@ -1,0 +1,14 @@
+
+{% macro displayHazardousGoods(code) %}
+    {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
+    {%- if code|default(false) %}<em>{{ code }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), code) | trans }}
+    {%- else %}-{% endif -%}
+{% endmacro %}
+
+{% macro displayLimitedBy(entity) %}
+    {%- set limits = entity.wasLimitedBySpace ? ['space'] : [] -%}
+    {%- set limits = limits|merge(entity.wasLimitedByWeight ? ['weight'] : []) -%}
+    {% if limits is empty %}-{% else -%}
+        By {{ limits|join(', ') }}
+    {%- endif -%}
+{% endmacro %}
