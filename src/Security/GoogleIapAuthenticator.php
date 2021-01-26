@@ -22,7 +22,9 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         return [
-            'username' => $request->headers->get('X-Goog-Authenticated-User-Id', 'no-username'),
+            // This email address is a concatenation of the namespace and the email address
+            // eg X-Goog-Authenticated-User-Email: accounts.google.com:johndoe@example.com
+            'username' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-username'),
             'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion'),
         ];
     }
@@ -41,8 +43,10 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
                 $metadata->getNumericProjectId(),
                 $metadata->getProjectId()
             );
-            list($email, $id) = $this->validateAssertion($user->getPassword(), $audience);
-            return $id === $user->getUsername();
+            list($assertionEmailAddress, $assertionId) = $this->validateAssertion($user->getPassword(), $audience);
+
+            // match the raw email address from the assertion against the one with namespace from the header
+            return preg_match("/:$assertionEmailAddress$/", $user->getUsername());
         } catch (\Exception $e) {
             return false;
         }
@@ -62,6 +66,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
             ));
         }
 
+        // The email address returned is the plain email address (without namespace)
         return [$info['email'], $info['sub']];
     }
 
