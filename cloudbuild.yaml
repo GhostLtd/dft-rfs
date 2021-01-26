@@ -33,9 +33,11 @@ steps:
       args: ["app", "deploy", "app.admin.yaml"]
       waitFor: ['node-build', 'copy-project-deploy-files']
 
-    # deploy cron jobs
-    - name: "gcr.io/cloud-builders/gcloud"
-      args: ["app", "deploy", "cron.yaml"]
-      waitFor: ['deploy-default-service', 'deploy-admin-service']
+## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
+# the cloud build service account needs iam.serviceAccountUser role to perform this - but we don't have permission to add that role!
+#    # deploy cron jobs
+#    - name: "gcr.io/cloud-builders/gcloud"
+#      args: ["app", "deploy", "cron.yaml"]
+#      waitFor: ['deploy-default-service', 'deploy-admin-service']
 
 timeout: "900s"
