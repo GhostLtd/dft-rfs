@@ -1,4 +1,4 @@
 cron:
 - description: "Messenger consumer"
   url: "/cron/messenger/consume"
-  schedule: 'every 1 minutes'
+  schedule: 'every 5 minutes'
