@@ -43,6 +43,7 @@ abstract class AbstractListPage
 
     abstract protected function getEntityClass(): string;
 
+
     protected function getExtraQueryParameters(): array
     {
         return [];
@@ -120,6 +121,11 @@ abstract class AbstractListPage
         return 20;
     }
 
+    protected function getDefaultOrder(): array
+    {
+        return [];
+    }
+
     protected function addToQueryBuilder(QueryBuilder $queryBuilder): QueryBuilder
     {
         return $queryBuilder;
@@ -154,6 +160,12 @@ abstract class AbstractListPage
         if ($this->order && $this->orderDirection) {
             $field = $this->getFieldByParameterName($this->order);
             $qb->addOrderBy($field->getPropertyPath(), $this->orderDirection);
+        } else {
+            $defaultOrder = $this->getDefaultOrder();
+            foreach ($defaultOrder as $parameterName=>$direction) {
+                $field = $this->getFieldByParameterName($parameterName);
+                $qb->addOrderBy($field->getPropertyPath(), $direction);
+            }
         }
 
         return $qb->setParameters(array_merge($this->getExtraQueryParameters(), $parameters));

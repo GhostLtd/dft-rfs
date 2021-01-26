@@ -49,4 +49,13 @@ class SurveyListPage extends AbstractListPage
     {
         return Survey::class;
     }
+
+    protected function getDefaultOrder(): array
+    {
+        return [
+            'surveyPeriodStart' => 'DESC',
+            'registrationMark' => 'ASC',
+        ];
+    }
+
 }

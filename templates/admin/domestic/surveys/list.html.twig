@@ -8,7 +8,7 @@
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
         <tr class="govuk-table__row">
-            {{ tableCell(survey.passcodeUser.username, {}) }}
+            {{ tableCell(survey.passcodeUser.username ?? '-', {}) }}
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}

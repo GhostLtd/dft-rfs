@@ -6,7 +6,10 @@ use App\Entity\International\Survey;
 use App\Entity\International\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class SurveyListPage extends AbstractListPage
 {
@@ -36,5 +39,19 @@ class SurveyListPage extends AbstractListPage
     protected function getEntityClass(): string
     {
         return Survey::class;
+    }
+
+    protected function setDefaultOrder()
+    {
+        $this->order = 'surveyPeriodStart';
+        $this->orderDirection = 'DESC';
+    }
+
+    protected function getDefaultOrder(): array
+    {
+        return [
+            'surveyPeriodStart' => 'DESC',
+            'businessName' => 'ASC',
+        ];
     }
 }

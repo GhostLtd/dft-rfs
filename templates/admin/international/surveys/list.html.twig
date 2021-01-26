@@ -8,7 +8,7 @@
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
         <tr class="govuk-table__row">
-            {{ tableCell(survey.passcodeUser.username) }}
+            {{ tableCell(survey.passcodeUser.username ?? '-') }}
             {{ tableCell(survey.referenceNumber) }}
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
