@@ -4,12 +4,11 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
-use App\Form\Admin\InternationalSurvey\TripDeleteType;
 use App\Form\Admin\InternationalSurvey\TripType;
-use App\Utility\International\DeleteHelper;
+use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -93,36 +92,18 @@ class TripController extends AbstractController
     /**
      * @Route("/trip/{tripId}/delete", name=self::DELETE_ROUTE)
      * @Entity("trip", expr="repository.find(tripId)")
+     * @Template("admin/international/trip/delete.html.twig")
      */
-    public function delete(Trip $trip, Request $request, DeleteHelper $deleteHelper): Response
+    public function delete(Trip $trip, DeleteTripConfirmAction $deleteTripConfirmAction, Request $request)
     {
-        $form = $this->createForm(TripDeleteType::class);
-
-        $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
-
-        $redirectUrl = $this->generateUrl(
+        $deleteTripConfirmAction->setSubject($trip);
+        return $deleteTripConfirmAction->controller(
+            $deleteTripConfirmAction,
+            $request,
+            function() use ($trip) { return $this->generateUrl(
                 SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            ).'#' . $trip->getId();
-
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $deleteHelper->deleteTrip($trip);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Trip successfully deleted", "The trip was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
-                return new RedirectResponse($redirectUrl);
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Trip not deleted', "The request to delete this trip was cancelled."));
-                return new RedirectResponse($redirectUrl);
-            }
-        }
-
-        return $this->render('admin/international/trip/delete.html.twig', [
-            'trip' => $trip,
-            'form' => $form->createView(),
-        ]);
+                ['surveyId' => $trip->getVehicle()->getSurveyResponse()->getSurvey()->getId()]
+            );}
+        );
     }
 }

@@ -3,16 +3,12 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Trip;
-use App\Form\Admin\InternationalSurvey\TripDeleteType;
 use App\Repository\International\TripRepository;
-use App\Utility\International\DeleteHelper;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
+use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,7 +47,21 @@ class TripController extends AbstractController
 
     /**
      * @Route("/international-survey/trips/{tripId}/delete", name=self::DELETE_ROUTE)
+     * @Template("international_survey/trip/delete.html.twig")
      */
+    public function delete(DeleteTripConfirmAction $deleteTripConfirmAction, Request $request, $tripId)
+    {
+        $trip = $this->getTrip($this->getUser(), $tripId);
+        $deleteTripConfirmAction->setSubject($trip);
+        return $deleteTripConfirmAction->controller(
+            $deleteTripConfirmAction,
+            $request,
+            function () use ($trip) {return $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]);},
+            function () use ($trip) {return $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]);},
+        );
+    }
+
+/*
     public function delete(UserInterface $user, string $tripId, Request $request, DeleteHelper $deleteHelper): Response
     {
         $trip = $this->getTrip($user, $tripId);
@@ -79,6 +89,7 @@ class TripController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+*/
 
     protected function getTrip(UserInterface $user, string $id): Trip
     {
