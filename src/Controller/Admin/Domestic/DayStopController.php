@@ -135,7 +135,6 @@ class DayStopController extends AbstractController
         return $deleteDayStopConfirmAction
             ->setSubject($stop)
             ->controller(
-                $deleteDayStopConfirmAction,
                 $request,
                 fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}"
             );
