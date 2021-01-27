@@ -702,13 +702,14 @@ international:
     title: Delete trip
     delete-multi: This will permanently delete this trip and all related consignment actions (shown above)
     delete: This will permanently delete this trip
-    notification:
-      deleted:
-        heading: Trip deleted successfully
-        content: The trip was successfully deleted
-      cancelled:
-        heading: Trip not deleted
-        content: The request to delete the trip was cancelled
+    confirm.label: Yes, delete this trip
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: 'Trip deleted successfully'
+      content: 'The trip was successfully deleted'
+    cancelled-notification:
+      heading: 'Trip not deleted'
+      content: 'The request to delete the trip was cancelled.'
 
   vehicle-delete:
     title: Delete vehicle

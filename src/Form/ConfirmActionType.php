@@ -1,26 +1,23 @@
 <?php
 
-namespace App\Form\Admin;
+namespace App\Form;
 
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractDeleteType extends AbstractType
+class ConfirmActionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        @trigger_error('The use of AbstractDeleteType form is deprecated. You should be using the ConfirmActionType form, with accompanying controller, instead.', E_USER_DEPRECATED);
-
         $translationKeyPrefix = $options['translation_key_prefix'];
 
         $builder
-            ->add('delete', Gds\ButtonType::class, [
+            ->add('confirm', Gds\ButtonType::class, array_merge($options['confirm_button_options'], [
                 'type' => 'submit',
-                'label' => "{$translationKeyPrefix}.delete.label",
-                'attr' => ['class' => 'govuk-button--warning'],
-            ])
+                'label' => "{$translationKeyPrefix}.confirm.label",
+            ]))
             ->add('cancel', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => "{$translationKeyPrefix}.cancel.label",
@@ -32,8 +29,10 @@ abstract class AbstractDeleteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'translation_domain' => 'admin',
+            'confirm_button_options' => [],
         ]);
-        $resolver->setRequired(['translation_key_prefix']);
+        $resolver->setRequired([
+            'translation_key_prefix',
+        ]);
     }
 }

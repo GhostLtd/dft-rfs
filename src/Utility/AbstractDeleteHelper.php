@@ -2,6 +2,7 @@
 
 namespace App\Utility;
 
+use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,6 +20,8 @@ abstract class AbstractDeleteHelper
 
     public function getDeletedNotification(string $prefix): NotificationBanner
     {
+        @trigger_error('The use of ' . self::class . '::getDeletedNotification is deprecated. You should be using the ' . AbstractConfirmAction::class . ' controller method instead.', E_USER_DEPRECATED);
+
         return new NotificationBanner(
             $this->translator->trans('common.notification.success'),
             $this->translator->trans("{$prefix}.deleted.heading"),
@@ -29,6 +32,8 @@ abstract class AbstractDeleteHelper
 
     public function getCancelledNotification(string $prefix): NotificationBanner
     {
+        @trigger_error('The use of ' . self::class . '::getCancelledNotification is deprecated. You should be using the ' . AbstractConfirmAction::class . ' controller method instead.', E_USER_DEPRECATED);
+
         return new NotificationBanner(
             $this->translator->trans('common.notification.important'),
             $this->translator->trans("{$prefix}.cancelled.heading"),
