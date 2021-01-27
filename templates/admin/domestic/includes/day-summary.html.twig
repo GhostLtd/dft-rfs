@@ -4,7 +4,7 @@
 {%- from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy -%}
 
 <table class="govuk-table admin-journeys-table" id="{{ day.id }}">
-    {{- dayJourneyTableHeadingAndCaption(dayNumber, survey, day, 'summary') -}}
+    {{- dayJourneyTableHeadingAndCaption(null, survey, day, 'summary') -}}
     <tbody class="govuk-table__body">
     <tr class="govuk-table__row" id="{{ day.summary.id }}">
         {%- if day.summary ?? false -%}

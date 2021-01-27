@@ -88,6 +88,7 @@ class DayStopController extends AbstractController
 
         return $this->render('admin/domestic/stop/delete.html.twig', [
             'stop' => $stop,
+            'survey' => $survey,
             'form' => $form->createView(),
             'translation_prefix' => $translationPrefix,
         ]);

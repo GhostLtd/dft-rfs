@@ -2,12 +2,12 @@
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
-    {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeading -%}
+    {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
     <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
     <table class="govuk-table admin-journeys-table">
-        {{- dayJourneyTableHeading('stop') -}}
+        {{- dayJourneyTableHeadingAndCaption(null, survey, stop.day, 'stop') -}}
         <tbody class="govuk-table__body">
         {%- with {showActions: false, marginBottom: 4} -%}
             {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
