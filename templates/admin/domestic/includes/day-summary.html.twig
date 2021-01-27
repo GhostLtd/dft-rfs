@@ -18,14 +18,16 @@
             {{- tableCell("#{day.summary.weightOfGoodsLoaded}kg / #{day.summary.weightOfGoodsUnloaded}kg", {numeric: true}) -}}
             {{- tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) -}}
 
-            {%- set buttons -%}
-                {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
-                <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
+            {%- if showActions ?? true -%}
+                {%- set buttons -%}
+                    {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
+                    <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
                 {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE') -%}
-                <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-            {%- endset -%}
+                    <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
+                {%- endset -%}
 
-            {{- tableCell(buttons, {actions: true}) -}}
+                {{- tableCell(buttons, {actions: true}) -}}
+            {%- endif -%}
         {%- else -%}
             {%- for i in 1..9 -%}
                 {{- tableCell('-') -}}

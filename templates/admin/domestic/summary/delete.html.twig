@@ -1,0 +1,16 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
+
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+
+    {%- with {showActions: false, marginBottom: 4, day: stop.day} -%}
+        {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+    {%- endwith -%}
+
+    {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+    {{- form(form) -}}
+{%- endblock -%}

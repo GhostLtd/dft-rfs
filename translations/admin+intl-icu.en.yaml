@@ -22,6 +22,10 @@ domestic:
     delete:
       delete.label: Yes, delete this day stop
       cancel.label: Cancel
+  day-summary:
+    delete:
+      delete.label: Yes, delete this day summary
+      cancel.label: Cancel
 
 international:
   action:
