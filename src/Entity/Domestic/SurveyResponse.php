@@ -133,6 +133,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
      *     "vehicle_trailer_configuration",
      *     "vehicle_weight",
      *     "vehicle_operation_type",
+     *     "admin_vehicle",
      * })
      */
     private $vehicle;

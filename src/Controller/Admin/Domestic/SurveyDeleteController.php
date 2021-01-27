@@ -3,19 +3,13 @@
 namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
-use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Form\Admin\DomesticSurvey\DeleteSurveyType;
-use App\Utility\PasscodeGenerator;
-use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -54,12 +48,12 @@ class SurveyDeleteController extends AbstractController
 
                 $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Survey successfully deleted", "The survey for {$survey->getRegistrationMark()} was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
 
-                return $this->redirectToRoute('admin_domestic_surveys', ['type' => $survey->getIsNorthernIreland() ? 'ni' : 'gb']);
+                return $this->redirectToRoute('admin_domestic_survey_list', ['type' => $survey->getIsNorthernIreland() ? 'ni' : 'gb']);
             } else {
                 $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Survey not deleted', "The request to delete this survey was cancelled."));
 
-                return $this->redirectToRoute('admin_domestic_surveydetails', [
-                    'survey' => $survey->getId()
+                return $this->redirectToRoute('admin_domestic_survey_view', [
+                    'surveyId' => $survey->getId()
                 ]);
             }
         }

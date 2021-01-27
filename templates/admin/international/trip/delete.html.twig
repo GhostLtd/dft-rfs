@@ -4,14 +4,15 @@
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
     <h1 class="govuk-heading-l" id="top">Delete Trip</h1>
 
-    {%- set showActions = trip.actions|length > 1 -%}
+    {%- set showActions = trip.actions|length > 0 -%}
 
-    {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
+    {%- with {showActions: false, trip: trip, marginBottom: showActions ? 9 : 4} -%}
         {%- include "international_survey/includes/trip.html.twig" -%}
     {%- endwith -%}
 
     {%- if showActions -%}
-        {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Actions</h2>
+        {%- with {isAdmin: true, showActions: false, trip: trip, marginBottom: 4} -%}
             {%- include "international_survey/includes/actions.html.twig" -%}
         {%- endwith -%}
 

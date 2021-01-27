@@ -279,12 +279,17 @@
 
 {% block gds_choice_widget_expanded_item %}
     {%- set conditionalFormItem = child.vars.conditional_form_name | default(false) -%}
+    {%- set conditionalHideFormItems = namesToIds(form, child.vars.conditional_hide_form_names | default(null)) -%}
+
     <div class="{{ classPrefix }}__item">
         {%- with child.vars|merge({
             'label_is_page_heading': false,
             'blockPrefix': blockPrefix,
             'classPrefix': classPrefix,
-            'attr': child.vars.attr | merge({'data-aria-controls': (conditionalFormItem ? "conditional-#{child.vars.id}" : '')}),
+            'attr': child.vars.attr | merge({
+                'data-aria-controls': (conditionalFormItem ? "conditional-#{child.vars.id}" : ''),
+                'data-aria-hide-controls': (conditionalHideFormItems is not empty ? (conditionalHideFormItems|json_encode) : '')
+            }),
         }) only -%}
             {{- block(blockPrefix ~ '_widget') -}}
             {{- block(blockPrefix ~ '_label') -}}

@@ -28,22 +28,22 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotNull(message="common.number.not-null", groups={"goods-weight"})
-     * @Assert\PositiveOrZero (message="common.number.positive", groups={"goods-weight"})
-     * @Assert\Range(groups={"goods-weight"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\NotNull(message="common.number.not-null", groups={"goods-weight", "admin-day-stop-not-empty"})
+     * @Assert\PositiveOrZero (message="common.number.positive", groups={"goods-weight", "admin-day-stop-not-empty"})
+     * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"goods-weight", "admin-day-stop-not-empty"})
      */
     private $weightOfGoodsCarried;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"at-capacity"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"at-capacity", "admin-day-stop-not-empty"})
      */
     private $wasAtCapacity;
 
     /**
      * !! unused - needed for validation attachment
      * @Assert\Expression("!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())",
-     *     groups={"at-capacity"},
+     *     groups={"at-capacity", "admin-day-stop-not-empty"},
      *     message="domestic.day-stop.was-at-capacity.invalid"
      * )
      */
@@ -61,7 +61,7 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"day-stop.distance-travelled"})
+     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"day-stop.distance-travelled", "admin-day-stop"})
      */
     private $distanceTravelled;
 

@@ -10,6 +10,29 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/blame-log";
 @import "admin/domestic-dvla-import";
 
+.admin-journeys-table {
+  .govuk-table__caption {
+    border-bottom: 4px solid govuk-colour('mid-grey');
+    @include govuk-font(24, 'bold');
+    margin-bottom: govuk-spacing(4);
+
+    .admin_journeys-table__subcaption {
+      @include govuk-font(19, 'bold');
+    }
+  }
+
+  & + .admin-journeys-table {
+    margin-top: govuk-spacing(9);
+  }
+
+  .admin-journeys-table__load-status {
+    line-height: 1.0;
+    span {
+      @include govuk-font(14);
+    }
+  }
+}
+
 .govuk-summary-list__row.access-code .govuk-summary-list__value {
   font-family: monospace;
   font-size: 140%;

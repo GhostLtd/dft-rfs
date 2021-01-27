@@ -2,75 +2,79 @@
 
 {% block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
+    {%- set hasVehicle = survey.response and survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
     {%- if survey.response | default(false) -%}
         {%- set tabs = {
             'Initial details': 'tab-initial-details',
         } -%}
-        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+        {%- if hasVehicle -%}
             {%- set tabs = tabs | merge({
                 'Business details': 'tab-business-details',
                 'Vehicle details': 'tab-vehicle-details',
-                'Survey period': 'tab-survey-period',
             }) -%}
         {%- endif -%}
     {%- endif -%}
 
     <h1 class="govuk-heading-l">Survey</h1>
 
-{#    <h2 class="govuk-heading-m">Survey details</h2>#}
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
     </dl>
 
-    {% if is_granted('ROLE_ADMIN_FORM_USER') %}
+    <div class="govuk-!-margin-bottom-9">
         <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_surveys_delete', {type: 'gb', survey: survey.id}) }}">Delete survey</a>
-    {% endif %}
+    </div>
 
     {% if tabs | default(false) %}
-        <div class="govuk-tabs" data-module="govuk-tabs">
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
             {{ tabsHead(tabs) }}
 
             {% if 'Initial details' in tabs | keys %}
                 <div class="govuk-tabs__panel" id="tab-initial-details">
-                    {% with {showActions: false, marginBottom: 4} %}
+                    {% with {showActions: false, marginBottom: 5} %}
                         {% include 'domestic_survey/includes/initial-details.html.twig' %}
                     {% endwith %}
 
                     <div>
-                        <a class="govuk-button"
-                           href="{{ path('admin_domestic_survey_initial_edit', {surveyId: survey.id}) }}">Edit<span
-                                    class="govuk-visually-hidden"> initial details</span></a>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
                     </div>
                 </div>
             {% endif %}
 
             {% if 'Business details' in tabs | keys %}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
-                    {% with {showActions: false} %}
+                    {% with {showActions: false, marginBottom: 5} %}
                         {% include 'domestic_survey/includes/business-details.html.twig' %}
                     {% endwith %}
+
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
+                    </div>
                </div>
             {% endif %}
 
             {% if 'Vehicle details' in tabs | keys %}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
-                    {% with {showActions: false} %}
+                    {% with {showActions: false, marginBottom: 5} %}
                         {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
                     {% endwith %}
-                </div>
-            {% endif %}
 
-            {% if 'Survey period' in tabs | keys %}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-survey-period">
-                    {% with {showActions: false} %}
-                        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
-                    {% endwith %}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_vehicle_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle details</span></a>
+                    </div>
                 </div>
             {% endif %}
         </div>
     {% endif %}
 
+    {% if hasVehicle %}
+        <h1 class="govuk-heading govuk-heading-l govuk-heading--underline">Journeys</h1>
+
+        {% with {showActions: false} %}
+            {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}

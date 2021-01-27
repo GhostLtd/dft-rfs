@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
-
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
@@ -25,9 +23,11 @@ class RadioTypeExtension extends AbstractTypeExtension
 
         $resolver->setDefaults([
             'conditional_form_name' => null,
+            'conditional_hide_form_names' => null,
         ]);
 
         $resolver->setAllowedTypes('conditional_form_name', ['null', 'string']);
+        $resolver->setAllowedTypes('conditional_hide_form_names', ['null', 'string[]']);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -35,5 +35,6 @@ class RadioTypeExtension extends AbstractTypeExtension
         parent::buildView($view, $form, $options);
 
         $view->vars['conditional_form_name'] = $options['conditional_form_name'] ?? false;
+        $view->vars['conditional_hide_form_names'] = $options['conditional_hide_form_names'] ?? false;
     }
 }
