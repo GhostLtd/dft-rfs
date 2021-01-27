@@ -76,15 +76,14 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
     }
 
     /**
-     * @param ConfirmActionInterface $confirmAction
      * @param Request $request
      * @param callable $confirmedActionUrlCallback
      * @param null|callable $cancelledActionUrlCallback if omitted, will use the same callback as for confirmed
      * @return array|RedirectResponse
      */
-    public function controller(ConfirmActionInterface $confirmAction, Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null)
+    public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null)
     {
-        $form = $this->formFactory->create(ConfirmActionType::class, null, $confirmAction->getFormOptions());
+        $form = $this->formFactory->create(ConfirmActionType::class, null, $this->getFormOptions());
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
@@ -92,18 +91,18 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
             $confirm = $form->get('confirm');
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
                 $redirectUrl = $confirmedActionUrlCallback();
-                $confirmAction->doConfirmedAction();
+                $this->doConfirmedAction();
 
-                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $confirmAction->getConfirmedBanner());
+                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
                 return new RedirectResponse($redirectUrl);
             } else {
-                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $confirmAction->getCancelledBanner());
+                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
                 return new RedirectResponse($cancelledActionUrlCallback ? $cancelledActionUrlCallback() : $confirmedActionUrlCallback());
             }
         }
 
         return [
-            'subject' => $confirmAction->getSubject(),
+            'subject' => $this->getSubject(),
             'form' => $form->createView(),
         ];
 
