@@ -18,6 +18,6 @@
 {%- if showActions ?? true -%}
     <div class="govuk-!-margin-bottom-9">
         {%- set addRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_ROUTE') -%}
-        <a href="{{ url(addRoute, {dayId: day.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.add'|trans }}</a>
+        <a href="{{ url(addRoute, {dayId: day.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.add-day-stop'|trans }}</a>
     </div>
 {%- endif -%}
