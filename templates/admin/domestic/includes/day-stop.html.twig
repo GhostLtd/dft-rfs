@@ -1,7 +1,7 @@
 {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
 {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
-<table class="govuk-table admin-journeys-table" id="{{ day.id }}">
+<table class="govuk-table admin-journeys-table govuk-!-margin-bottom-{{ (showActions ?? true) ? 5 : 9 }}" id="{{ day.id }}">
     {{- dayJourneyTableHeadingAndCaption(null, survey, day, 'stop') -}}
     <tbody class="govuk-table__body">
     {%- for stop in day.stops -%}
@@ -15,3 +15,9 @@
     {%- endfor -%}
     </tbody>
 </table>
+{%- if showActions ?? true -%}
+    <div class="govuk-!-margin-bottom-9">
+        {%- set addRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_ROUTE') -%}
+        <a href="{{ url(addRoute, {dayId: day.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.add'|trans }}</a>
+    </div>
+{%- endif -%}

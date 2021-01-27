@@ -23,7 +23,7 @@
         {%- set editContents -%}
             {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE') -%}
             <a href="{{ url(deleteRoute, {stopId: stop.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
+            {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
             <a href="{{ url(editRoute, {stopId: stop.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
         {%- endset -%}
         {{- tableCell(editContents, {actions: true}) -}}

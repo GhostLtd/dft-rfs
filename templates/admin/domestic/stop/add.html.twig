@@ -1,0 +1,9 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- form_theme form "admin/domestic/stop/theme.html.twig" -%}
+
+{%- block adminContent -%}
+    <h1 class="govuk-heading-l" id="top">Add Day Stop</h1>
+
+    {{ form(form) }}
+{%- endblock -%}
