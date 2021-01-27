@@ -4,8 +4,10 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\DayStopDeleteType;
 use App\Form\Admin\DomesticSurvey\Edit\DayStopType;
+use App\Repository\Domestic\DayRepository;
 use App\Utility\Domestic\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
@@ -26,20 +28,48 @@ class DayStopController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_domestic_daystop_';
     public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
+    public const ADD_DAY_AND_STOP_ROUTE = self::ROUTE_PREFIX . 'add_day_and_stop';
     public const DELETE_ROUTE = self::ROUTE_PREFIX . 'delete';
     public const EDIT_ROUTE = self::ROUTE_PREFIX . 'edit';
 
+    protected DayRepository $dayRepository;
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, DayRepository $dayRepository)
     {
+        $this->dayRepository = $dayRepository;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
     }
 
     /**
-     * @Route("/days/{dayId}/add-day-stop", name=self::ADD_ROUTE)
+     * @Route("/survey/{surveyId}/{dayNumber}/add-day-stage", name=self::ADD_DAY_AND_STOP_ROUTE, requirements={"dayNumber": "\d+"})
+     * @Entity("survey", expr="repository.find(surveyId)")
+     */
+    public function addDayAndStop(Survey $survey, int $dayNumber): Response
+    {
+        $existingDay = $this->dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
+
+        if ($existingDay || $dayNumber < 1 || $dayNumber > $survey->getSurveyPeriodInDays()) {
+            throw new BadRequestHttpException();
+        }
+
+        $stop = (new DayStop());
+        $day = (new Day())
+            ->setNumber($dayNumber)
+            ->setResponse($survey->getResponse())
+            ->setHasMoreThanFiveStops(false)
+            ->addStop($stop);
+
+        $this->entityManager->persist($day);
+        $this->entityManager->persist($stop);
+
+        return $this->handleRequest($stop, "admin/domestic/stop/add.html.twig", ['is_add_form' => true]);
+    }
+
+    /**
+     * @Route("/days/{dayId}/add-day-stage", name=self::ADD_ROUTE)
      * @Entity("day", expr="repository.find(dayId)")
      */
     public function add(Day $day): Response

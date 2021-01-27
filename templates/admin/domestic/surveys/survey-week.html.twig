@@ -21,5 +21,10 @@
                 </tr>
                 </tbody>
             </table>
+
+            <div class="govuk-!-margin-bottom-9">
+                {%- set addRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_DAY_AND_STOP_ROUTE') -%}
+                <a href="{{ url(addRoute, {surveyId: survey.id, dayNumber: dayNumber}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.add-day-and-stop'|trans }}</a>
+            </div>
         {% endif %}
 {% endfor %}
