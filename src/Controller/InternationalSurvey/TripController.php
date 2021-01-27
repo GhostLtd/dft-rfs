@@ -54,42 +54,11 @@ class TripController extends AbstractController
         $trip = $this->getTrip($this->getUser(), $tripId);
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
-            $deleteTripConfirmAction,
             $request,
             function () use ($trip) {return $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]);},
             function () use ($trip) {return $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]);},
         );
     }
-
-/*
-    public function delete(UserInterface $user, string $tripId, Request $request, DeleteHelper $deleteHelper): Response
-    {
-        $trip = $this->getTrip($user, $tripId);
-        $form = $this->createForm(TripDeleteType::class);
-
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-            $translationPrefix = 'international.trip-delete.notification';
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $vehicleId = $trip->getVehicle()->getId();
-                $deleteHelper->deleteTrip($trip);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($translationPrefix));
-                return new RedirectResponse($this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]));
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($translationPrefix));
-                return new RedirectResponse($this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]));
-            }
-        }
-
-        return $this->render('international_survey/trip/delete.html.twig', [
-            'trip' => $trip,
-            'form' => $form->createView(),
-        ]);
-    }
-*/
 
     protected function getTrip(UserInterface $user, string $id): Trip
     {
