@@ -1,0 +1,17 @@
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+{%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
+
+<table class="govuk-table admin-journeys-table" id="{{ day.id }}">
+    {{- dayJourneyTableHeadingAndCaption(dayNumber, survey, day, 'stop') -}}
+    <tbody class="govuk-table__body">
+    {%- for stop in day.stops -%}
+        {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
+    {%- else -%}
+        <tr>
+            {%- for i in 1..8 -%}
+                {{- tableCell('-') -}}
+            {%- endfor -%}
+        </tr>
+    {%- endfor -%}
+    </tbody>
+</table>

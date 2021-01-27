@@ -1,0 +1,72 @@
+{%- macro dayJourneyTableHeadingAndCaption(dayNumber, survey, day, stopOrSummary) -%}
+    {% set captionContent = _self.dayJourneyTableCaption(dayNumber, survey, day) -%}
+    {{- _self.dayJourneyTableHeading(stopOrSummary, captionContent) -}}
+{%- endmacro -%}
+
+{%- macro dayJourneyTableHeading(stopOrSummary, captionContent = '') -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex -%}
+
+    <thead class="govuk-table__head">
+        {{- captionContent|raw -}}
+
+        {%- set locationHeadings = {
+            'Origin': {},
+            'Destination': {},
+        } -%}
+
+        {%- set goodsHeadings = {
+            'Goods': {},
+            'Hazardous?': {},
+            'Cargo type': {},
+        } -%}
+
+        {%- if stopOrSummary == 'stop' -%}
+            {%- set headings = locationHeadings | merge({
+                "Distance": {numeric: true},
+            }) | merge (goodsHeadings) | merge ({
+                "Weight": {numeric: true},
+                "Capacity": {},
+                "": {}
+            }) -%}
+        {%- elseif stopOrSummary == 'summary' -%}
+            {%- set headings = locationHeadings | merge({
+                'Furthest point': {},
+                "Distance (l/u)": {numeric: true},
+            }) | merge (goodsHeadings) | merge ({
+                "Weight (l/u)": {numeric: true},
+                "Stops (l/u/b)": {numeric: true},
+                "": {}
+            }) -%}
+        {%- endif %}
+
+        {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
+    </thead>
+{%- endmacro -%}
+
+{%- macro dayJourneyTableCaption(dayNumber, survey, day) -%}
+    {%- from "domestic_survey/includes/macros.html.twig" import dayText -%}
+    <caption class="govuk-table__caption">
+        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M') }}</div>
+        {%- if day|default(false) %}
+            <div class="admin_journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
+    </caption>
+{%- endmacro -%}
+
+{%- macro locationAndStatus(location, loaded, port, isOrigin) -%}
+    {{- location -}}
+    {%- set type = _self.transfer(port) %}
+    {%- if loaded -%}
+        <br><span>{{ (isOrigin ?? true) ? 'Loaded' : 'Unloaded' }}
+        {%- if type != '' %} ({{ type }}){% endif -%}</span>
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro transfer(xfer) -%}
+    {%- if xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_AIR') -%}
+        Airport
+    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_PORT') -%}
+        Ports/docks
+    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_RAIL') -%}
+        Rail siding/terminal
+    {%- endif -%}
+{%- endmacro -%}

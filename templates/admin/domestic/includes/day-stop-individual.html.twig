@@ -1,0 +1,31 @@
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+{%- from "admin/domestic/macros.html.twig" import locationAndStatus -%}
+{%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+
+<tr class="govuk-table__row" id="{{ stop.id }}">
+    {{- tableCell(locationAndStatus(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom), {class: 'admin-journeys-table__load-status'}) -}}
+    {{- tableCell(locationAndStatus(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false), {class: 'admin-journeys-table__load-status'}) -}}
+    {{- tableCell(stop.distanceTravelled | formatValueUnit, {numeric: true}) -}}
+    {{- tableCell(stop | formatGoodsDescription(true)) -}}
+    {%- if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') -%}
+        {{- tableCell('-') -}}
+        {{- tableCell('-') -}}
+        {{- tableCell('-', {numeric: true}) -}}
+        {{- tableCell('-') -}}
+    {%- else -%}
+        {{- tableCell(stop.hazardousGoodsCode == 0 ? '-' : stop.hazardousGoodsCode) -}}
+        {{- tableCell(stop.cargoTypeCode) -}}
+        {{- tableCell("#{stop.weightOfGoodsCarried}kg", {numeric: true}) -}}
+        {{- tableCell(displayLimitedBy(stop)) -}}
+    {%- endif -%}
+
+    {%- if showActions ?? true -%}
+        {%- set editContents -%}
+            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE') -%}
+            <a href="{{ url(deleteRoute, {stopId: stop.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
+        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
+            <a href="{{ url(editRoute, {stopId: stop.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
+        {%- endset -%}
+        {{- tableCell(editContents, {actions: true}) -}}
+    {%- endif -%}
+</tr>

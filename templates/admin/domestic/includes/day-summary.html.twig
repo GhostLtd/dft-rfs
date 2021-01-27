@@ -1,0 +1,36 @@
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+
+{%- from "admin/domestic/macros.html.twig" import locationAndStatus, dayJourneyTableHeadingAndCaption -%}
+{%- from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy -%}
+
+<table class="govuk-table admin-journeys-table" id="{{ day.id }}">
+    {{- dayJourneyTableHeadingAndCaption(dayNumber, survey, day, 'summary') -}}
+    <tbody class="govuk-table__body">
+    <tr class="govuk-table__row" id="{{ day.summary.id }}">
+        {%- if day.summary ?? false -%}
+            {{- tableCell(locationAndStatus(day.summary.originLocation, day.summary.goodsLoaded, day.summary.goodsTransferredFrom), {class: 'admin-journeys-table__load-status'}) -}}
+            {{- tableCell(locationAndStatus(day.summary.destinationLocation, day.summary.goodsUnloaded, day.summary.goodsTransferredTo, false), {class: 'admin-journeys-table__load-status'}) -}}
+            {{- tableCell(day.summary.furthestStop) -}}
+            {{- tableCell("#{day.summary.distanceTravelledLoaded | formatValueUnit} / #{day.summary.distanceTravelledUnloaded | formatValueUnit}", {numeric: true}) -}}
+            {{- tableCell(day.summary | formatGoodsDescription(true)) -}}
+            {{- tableCell(displayHazardousGoods(day.summary.hazardousGoodsCode)) -}}
+            {{- tableCell(day.summary.cargoTypeCode) -}}
+            {{- tableCell("#{day.summary.weightOfGoodsLoaded}kg / #{day.summary.weightOfGoodsUnloaded}kg", {numeric: true}) -}}
+            {{- tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) -}}
+
+            {%- set buttons -%}
+                {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
+                <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
+                {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE') -%}
+                <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
+            {%- endset -%}
+
+            {{- tableCell(buttons, {actions: true}) -}}
+        {%- else -%}
+            {%- for i in 1..9 -%}
+                {{- tableCell('-') -}}
+            {%- endfor -%}
+        {%- endif -%}
+    </tr>
+    </tbody>
+</table>

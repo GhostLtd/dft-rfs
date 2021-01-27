@@ -73,8 +73,6 @@
     {% if hasVehicle %}
         <h1 class="govuk-heading govuk-heading-l govuk-heading--underline">Journeys</h1>
 
-        {% with {showActions: false} %}
-            {% include 'admin/domestic/surveys/survey-week.html.twig' %}
-        {% endwith %}
+        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
     {% endif %}
 {% endblock %}

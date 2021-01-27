@@ -1,14 +1,21 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {%- block adminContent -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeading -%}
+
     <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
-{#    {%- with {showActions: false, vehicle: vehicle, marginBottom: 4} -%}#}
-{#        {%- include "domestic_survey/includes/vehicle.html.twig" -%}#}
-{#    {%- endwith -%}#}
+    <table class="govuk-table admin-journeys-table">
+        {{- dayJourneyTableHeading('stop') -}}
+        <tbody class="govuk-table__body">
+        {%- with {showActions: false, marginBottom: 4} -%}
+            {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
+        {%- endwith -%}
+        </tbody>
+    </table>
 
-    {{ warningText("#{translation_prefix}.delete"|trans) }}
+    {{- warningText("#{translation_prefix}.delete"|trans) -}}
 
-    {{ form(form) }}
+    {{- form(form) -}}
 {%- endblock -%}

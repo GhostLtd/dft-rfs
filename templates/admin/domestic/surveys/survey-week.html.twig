@@ -1,163 +1,25 @@
-{% from 'domestic_survey/includes/macros.html.twig' import dayText %}
 {% from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy %}
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell, actionLinks %}
-
-
-{% set locationHeadings = {
-    'Origin': {},
-    'Destination': {},
-} %}
-{% set goodsHeadings = {
-    'Goods': {},
-    'Hazardous?': {},
-    'Cargo type': {},
-} %}
-{% set summaryHeadings = locationHeadings | merge({
-    'Furthest point': {},
-    "Distance (l/u)": {numeric: true},
-}) | merge (goodsHeadings) | merge ({
-    "Weight (l/u)": {numeric: true},
-    "Stops (l/u/b)": {numeric: true},
-    "": {}
-}) %}
-
-{% set stopHeadings = locationHeadings | merge({
-    "Distance": {numeric: true},
-}) | merge (goodsHeadings) | merge ({
-    "Weight": {numeric: true},
-    "Capacity": {},
-    "": {}
-}) %}
-
-{% macro tableCaption(dayNumber, survey, day) %}
-    <caption class="govuk-table__caption">
-        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M') }}</div>
-        {%- if day|default(false) %}
-            <div class="admin_journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
-    </caption>
-
-{% endmacro %}
-
-{% macro tableHeading(dayNumber, survey, headings, day) %}
-    <thead class="govuk-table__head">
-    {{ _self.tableCaption(dayNumber, survey, day) }}
-    {{ tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) }}
-    </thead>
-{% endmacro %}
+{% from "admin/domestic/macros.html.twig" import locationAndStatus, dayJourneyTableCaption, dayJourneyTableHeading %}
 
 {% for dayNumber in 1..7 -%}
     {%- set day = survey.response.dayByNumber(dayNumber) -%}
-    <table class="govuk-table admin-journeys-table"{% if day %} id="{{ day.id }}"{% endif %}>
         {% if day %}
-            {% if day.hasMoreThanFiveStops %}
-                {{ _self.tableHeading(dayNumber, survey, summaryHeadings, day) }}
+            {%- if day.hasMoreThanFiveStops -%}
+                {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+            {%- else -%}
+                {%- include "admin/domestic/includes/day-stop.html.twig" -%}
+            {%- endif -%}
+        {% else %}
+            <table class="govuk-table admin-journeys-table">
+                <thead class="govuk-table__head">
+                {{ dayJourneyTableCaption(dayNumber, survey) }}
+                </thead>
                 <tbody class="govuk-table__body">
-                <tr class="govuk-table__row" id="{{ day.summary.id }}">
-                    {% if day.summary ?? false %}
-                        {{ tableCell(_self.loadingContent(day.summary.originLocation, day.summary.goodsLoaded, day.summary.goodsTransferredFrom), {class: 'admin-journeys-table__load-status'}) }}
-                        {{ tableCell(_self.loadingContent(day.summary.destinationLocation, day.summary.goodsUnloaded, day.summary.goodsTransferredTo, false), {class: 'admin-journeys-table__load-status'}) }}
-                        {{ tableCell(day.summary.furthestStop) }}
-                        {{ tableCell("#{day.summary.distanceTravelledLoaded | formatValueUnit} / #{day.summary.distanceTravelledUnloaded | formatValueUnit}", {numeric: true}) }}
-                        {{ tableCell(day.summary | formatGoodsDescription(true)) }}
-                        {{ tableCell(displayHazardousGoods(day.summary.hazardousGoodsCode)) }}
-                        {{ tableCell(day.summary.cargoTypeCode) }}
-                        {{ tableCell("#{day.summary.weightOfGoodsLoaded}kg / #{day.summary.weightOfGoodsUnloaded}kg", {numeric: true}) }}
-                        {{ tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) }}
-
-                        {%- set editContents -%}
-                            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
-                            <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-                        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE') -%}
-                            <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-                        {%- endset -%}
-                        {{ tableCell(editContents, {actions: true}) }}
-                    {% else %}
-                        {% for i in 1..9 %}
-                            {{ tableCell('-') }}
-                        {% endfor %}
-                    {% endif %}
+                <tr>
+                    <td>-- Nothing recorded --</td>
                 </tr>
                 </tbody>
-            {% else %}
-                {{ _self.tableHeading(dayNumber, survey, stopHeadings, day) }}
-                <tbody class="govuk-table__body">
-                {% for stop in day.stops %}
-                    <tr class="govuk-table__row" id="{{ stop.id }}">
-
-                        {{ tableCell(_self.loadingContent(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom), {class: 'admin-journeys-table__load-status'}) }}
-                        {{ tableCell(_self.loadingContent(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false), {class: 'admin-journeys-table__load-status'}) }}
-                        {{ tableCell(stop.distanceTravelled | formatValueUnit, {numeric: true}) }}
-                        {{ tableCell(stop | formatGoodsDescription(true)) }}
-                        {% if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') %}
-                            {{ tableCell('-') }}
-                            {{ tableCell('-') }}
-                            {{ tableCell('-', {numeric: true}) }}
-                            {{ tableCell('-') }}
-                        {% else %}
-                            {{ tableCell(stop.hazardousGoodsCode == 0 ? '-' : stop.hazardousGoodsCode) }}
-                            {{ tableCell(stop.cargoTypeCode) }}
-                            {{ tableCell("#{stop.weightOfGoodsCarried}kg", {numeric: true}) }}
-                            {{ tableCell(displayLimitedBy(stop)) }}
-{#                            {{ tableCell((stop.wasLimitedBySpace ? 'S' : '') ~ (stop.wasLimitedByWeight ? 'W' : '')) }}#}
-                        {% endif %}
-
-                        {%- set editContents -%}
-                            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE') -%}
-                            <a href="{{ url(deleteRoute, {stopId: stop.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-                        {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
-                            <a href="{{ url(editRoute, {stopId: stop.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-                        {%- endset -%}
-                        {{ tableCell(editContents, {actions: true}) }}
-                    </tr>
-                {% else %}
-                    <tr>
-                        {% for i in 1..8 %}
-                            {{ tableCell('-') }}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            {% endif %}
-        {% else %}
-            <thead class="govuk-table__head">
-            {{ _self.tableCaption(dayNumber, survey) }}
-            </thead>
-            <tbody class="govuk-table__body">
-            <tr>
-                <td>-- Nothing recorded --</td>
-            </tr>
-            </tbody>
+            </table>
         {% endif %}
-    </table>
-
 {% endfor %}
-
-{% macro location(location, loaded, port, isOrigin) -%}
-    {{- location -}}
-    {%- if loaded %} (
-        {{- (isOrigin ?? true) ? 'L' : 'U' -}}
-        {%- if port != constant('App\\Entity\\Domestic\\Day::TRANSFERRED_NONE') -%}
-            : {{ attribute({1: 'D', 2: 'R', 4: 'A'}, port) -}}
-        {%- endif -%}
-        )
-    {%- endif -%}
-{%- endmacro %}
-
-{% macro loadingContent(location, loaded, port, isOrigin) -%}
-    {{- location -}}
-    {%- set type = _self.transfer(port) %}
-    {%- if loaded -%}
-        <br><span>{{ (isOrigin ?? true) ? 'Loaded' : 'Unloaded' }}
-        {%- if type != '' %} ({{ type }}){% endif -%}</span>
-    {%- endif -%}
-{%- endmacro %}
-
-{% macro transfer(xfer) -%}
-    {%- if xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_AIR') -%}
-        Airport
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_PORT') -%}
-        Ports/docks
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_RAIL') -%}
-        Rail siding/terminal
-    {%- endif -%}
-{% endmacro %}
