@@ -46,8 +46,8 @@
 {% endmacro %}
 
 {% for dayNumber in 1..7 -%}
-    <table class="govuk-table admin-journeys-table">
-        {%- set day = survey.response.dayByNumber(dayNumber) -%}
+    {%- set day = survey.response.dayByNumber(dayNumber) -%}
+    <table class="govuk-table admin-journeys-table"{% if day %} id="{{ day.id }}"{% endif %}>
         {% if day %}
             {% if day.hasMoreThanFiveStops %}
                 {{ _self.tableHeading(dayNumber, survey, summaryHeadings, day) }}

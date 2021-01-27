@@ -3,8 +3,11 @@
 namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\DayStop;
+use App\Form\Admin\DomesticSurvey\DayStopDeleteType;
 use App\Form\Admin\DomesticSurvey\Edit\DayStopType;
+use App\Utility\Domestic\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -53,11 +56,40 @@ class DayStopController extends AbstractController
     }
 
     /**
-     * @Route("/{stopId}", name=self::DELETE_ROUTE)
+     * @Route("/{stopId}/delete", name=self::DELETE_ROUTE)
      * @Entity("stop", expr="repository.find(stopId)")
      */
-    public function delete(DayStop $stop)
+    public function delete(DayStop $stop, Request $request, DeleteHelper $deleteHelper)
     {
+        $form = $this->createForm(DayStopDeleteType::class);
 
+        $day = $stop->getDay();
+        $survey = $day->getResponse()->getSurvey();
+
+        $redirectUrl = $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}";
+
+        $translationPrefix = 'domestic.day-stop-delete';
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+
+            $delete = $form->get('delete');
+
+            $notificationPrefix = "{$translationPrefix}.notification";
+            if ($delete instanceof SubmitButton && $delete->isClicked()) {
+                $deleteHelper->deleteDayStop($stop);
+
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($notificationPrefix));
+                return new RedirectResponse($redirectUrl);
+            } else {
+                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($notificationPrefix));
+                return new RedirectResponse($redirectUrl);
+            }
+        }
+
+        return $this->render('admin/domestic/stop/delete.html.twig', [
+            'stop' => $stop,
+            'form' => $form->createView(),
+            'translation_prefix' => $translationPrefix,
+        ]);
     }
 }

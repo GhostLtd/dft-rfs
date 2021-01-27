@@ -1,0 +1,14 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{%- block adminContent -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+
+{#    {%- with {showActions: false, vehicle: vehicle, marginBottom: 4} -%}#}
+{#        {%- include "domestic_survey/includes/vehicle.html.twig" -%}#}
+{#    {%- endwith -%}#}
+
+    {{ warningText("#{translation_prefix}.delete"|trans) }}
+
+    {{ form(form) }}
+{%- endblock -%}

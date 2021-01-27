@@ -555,6 +555,18 @@ domestic:
         label: Is this information correct?
         help: ''
 
+  day-stop-delete:
+    title: Delete day stop
+    heading-delete: Delete day stop?
+    delete: Are you sure you want to delete this day stop?
+    notification:
+      deleted:
+        heading: Day stop deleted successfully
+        content: The day stop was successfully deleted
+      cancelled:
+        heading: Day stop not deleted
+        content: The request to delete the day stop was cancelled
+
 survey:
   domestic:
     forms:
@@ -669,11 +681,11 @@ international:
     delete-unloading: Are you sure you want to delete this unloading action?
     notification:
       deleted:
-        heading: "Consignment action deleted successfully"
-        content: "The consignment action was successfully deleted"
+        heading: Consignment action deleted successfully
+        content: The consignment action was successfully deleted
       cancelled:
-        heading: "Consignment action not deleted"
-        content: "The request to delete this consignment action was cancelled"
+        heading: Consignment action not deleted
+        content: The request to delete the consignment action was cancelled
 
   trip-delete:
     title: Delete trip
@@ -681,22 +693,22 @@ international:
     delete: This will permanently delete this trip
     notification:
       deleted:
-        heading: "Trip deleted successfully"
-        content: "The trip was successfully deleted"
+        heading: Trip deleted successfully
+        content: The trip was successfully deleted
       cancelled:
-        heading: "Trip not deleted"
-        content: "The request to delete this trip was cancelled"
+        heading: Trip not deleted
+        content: The request to delete the trip was cancelled
 
   vehicle-delete:
     title: Delete vehicle
     delete: This will permanently delete this vehicle and all related trips and consignment actions
     notification:
       deleted:
-        heading: "Vehicle deleted successfully"
-        content: "The vehicle was successfully deleted"
+        heading: Vehicle deleted successfully
+        content: The vehicle was successfully deleted
       cancelled:
-        heading: "Vehicle not deleted"
-        content: "The request to delete this vehicle was cancelled"
+        heading: Vehicle not deleted
+        content: The request to delete the vehicle was cancelled
 
   thanks:
     title: Thanks

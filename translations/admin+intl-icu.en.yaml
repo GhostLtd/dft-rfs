@@ -18,6 +18,10 @@ domestic:
     delete:
       delete.label: Yes, delete this survey
       cancel.label: Cancel
+  day-stop:
+    delete:
+      delete.label: Yes, delete this day stop
+      cancel.label: Cancel
 
 international:
   action:

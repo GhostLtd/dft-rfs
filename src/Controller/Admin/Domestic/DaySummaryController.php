@@ -53,7 +53,7 @@ class DaySummaryController extends AbstractController
     }
 
     /**
-     * @Route("/{summaryId}", name=self::DELETE_ROUTE)
+     * @Route("/{summaryId}/delete", name=self::DELETE_ROUTE)
      * @Entity("summary", expr="repository.find(summaryId)")
      */
     public function delete(DaySummary $summary)
