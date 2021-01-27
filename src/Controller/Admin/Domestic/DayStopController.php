@@ -20,9 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("")
- */
 class DayStopController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_domestic_daystop_';
