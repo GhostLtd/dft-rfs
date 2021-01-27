@@ -5,13 +5,12 @@ namespace App\Controller\Admin\Domestic;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\Survey;
-use App\Form\Admin\DomesticSurvey\DayStopDeleteType;
 use App\Form\Admin\DomesticSurvey\Edit\DayStopType;
 use App\Repository\Domestic\DayRepository;
-use App\Utility\Domestic\DeleteHelper;
+use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -126,40 +125,19 @@ class DayStopController extends AbstractController
     /**
      * @Route("/csrgt/day-stops/{stopId}/delete", name=self::DELETE_ROUTE)
      * @Entity("stop", expr="repository.find(stopId)")
+     * @Template("admin/domestic/stop/delete.html.twig")
      */
-    public function delete(DayStop $stop, DeleteHelper $deleteHelper)
+    public function delete(DayStop $stop, DeleteDayStopConfirmAction $deleteDayStopConfirmAction, Request $request)
     {
-        $form = $this->createForm(DayStopDeleteType::class);
-
         $day = $stop->getDay();
         $survey = $day->getResponse()->getSurvey();
 
-        $redirectUrl = $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}";
-
-        $translationPrefix = 'domestic.day-stop-delete';
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-
-            $notificationPrefix = "{$translationPrefix}.notification";
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $deleteHelper->deleteDayStop($stop);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($notificationPrefix));
-                return new RedirectResponse($redirectUrl);
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($notificationPrefix));
-                return new RedirectResponse($redirectUrl);
-            }
-        }
-
-        return $this->render('admin/domestic/stop/delete.html.twig', [
-            'stop' => $stop,
-            'survey' => $survey,
-            'form' => $form->createView(),
-            'translation_prefix' => $translationPrefix,
-        ]);
+        return $deleteDayStopConfirmAction
+            ->setSubject($stop)
+            ->controller(
+                $deleteDayStopConfirmAction,
+                $request,
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}"
+            );
     }
 }
