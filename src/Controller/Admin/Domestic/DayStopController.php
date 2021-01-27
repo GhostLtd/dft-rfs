@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/csrgt")
+ */
 class DayStopController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_domestic_daystop_';
@@ -40,7 +43,7 @@ class DayStopController extends AbstractController
     }
 
     /**
-     * @Route("/survey/{surveyId}/{dayNumber}/add-day-stage", name=self::ADD_DAY_AND_STOP_ROUTE, requirements={"dayNumber": "\d+"})
+     * @Route("/surveys/{surveyId}/{dayNumber}/add-day-stage", name=self::ADD_DAY_AND_STOP_ROUTE, requirements={"dayNumber": "\d+"})
      * @Entity("survey", expr="repository.find(surveyId)")
      */
     public function addDayAndStop(Survey $survey, int $dayNumber): Response
@@ -83,7 +86,7 @@ class DayStopController extends AbstractController
     }
 
     /**
-     * @Route("/csrgt/day-stops/{stopId}", name=self::EDIT_ROUTE)
+     * @Route("/day-stages/{stopId}", name=self::EDIT_ROUTE)
      * @Entity("stop", expr="repository.find(stopId)")
      */
     public function edit(DayStop $stop)
@@ -120,7 +123,7 @@ class DayStopController extends AbstractController
     }
 
     /**
-     * @Route("/csrgt/day-stops/{stopId}/delete", name=self::DELETE_ROUTE)
+     * @Route("/day-stages/{stopId}/delete", name=self::DELETE_ROUTE)
      * @Entity("stop", expr="repository.find(stopId)")
      * @Template("admin/domestic/stop/delete.html.twig")
      */

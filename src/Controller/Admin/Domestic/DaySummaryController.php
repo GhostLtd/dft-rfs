@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/day-summaries")
+ * @Route("/csrgt")
  */
 class DaySummaryController extends AbstractController
 {
@@ -42,7 +42,7 @@ class DaySummaryController extends AbstractController
     }
 
     /**
-     * @Route("/survey/{surveyId}/{dayNumber}/add-day-summary", name=self::ADD_DAY_AND_SUMMARY_ROUTE, requirements={"dayNumber": "\d+"})
+     * @Route("/surveys/{surveyId}/{dayNumber}/add-day-summary", name=self::ADD_DAY_AND_SUMMARY_ROUTE, requirements={"dayNumber": "\d+"})
      * @Entity("survey", expr="repository.find(surveyId)")
      */
     public function addDayAndStop(Survey $survey, int $dayNumber): Response
@@ -67,7 +67,7 @@ class DaySummaryController extends AbstractController
     }
 
     /**
-     * @Route("/{summaryId}", name=self::EDIT_ROUTE)
+     * @Route("/day-summaries/{summaryId}", name=self::EDIT_ROUTE)
      * @Entity("summary", expr="repository.find(summaryId)")
      */
     public function edit(DaySummary $summary)
@@ -104,7 +104,7 @@ class DaySummaryController extends AbstractController
     }
 
     /**
-     * @Route("/{summaryId}/delete", name=self::DELETE_ROUTE)
+     * @Route("/day-summaries/{summaryId}/delete", name=self::DELETE_ROUTE)
      * @Entity("summary", expr="repository.find(summaryId)")
      * @Template("admin/domestic/summary/delete.html.twig")
      */
