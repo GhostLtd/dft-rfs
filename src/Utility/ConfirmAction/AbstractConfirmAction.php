@@ -59,7 +59,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
 
     protected function domainTrans($key)
     {
-        return $this->translator->trans($key, [], $this->getTranslationDomain());
+        return $this->translator->trans($key, $this->getTranslationParameters(), $this->getTranslationDomain());
     }
 
     public function getFormOptions(): array
@@ -67,12 +67,18 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         return [
             'translation_domain' => $this->getTranslationDomain(),
             'translation_key_prefix' => $this->getTranslationKeyPrefix(),
+            'label_translation_parameters' => $this->getTranslationParameters(),
         ];
     }
 
     public function getTranslationDomain(): ?string
     {
         return null;
+    }
+
+    public function getTranslationParameters(): array
+    {
+        return [];
     }
 
     /**
@@ -104,6 +110,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         return [
             'subject' => $this->getSubject(),
             'form' => $form->createView(),
+            'translation_parameters' => $this->getTranslationParameters(),
         ];
 
     }

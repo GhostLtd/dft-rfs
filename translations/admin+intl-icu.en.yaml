@@ -36,6 +36,16 @@ international:
     delete:
       delete.label: Yes, delete this survey
       cancel.label: Cancel
+    workflow-transition:
+      title: "{transitionTitleUcfirst} survey"
+      confirm.label: "{transitionTitleUcfirst} survey"
+      cancel.label: "Cancel"
+      cancelled-notification:
+        heading: '{transitionTitleUcfirst} survey transition cancelled'
+        content: 'The requested {transitionTitle} survey transition was cancelled.'
+      confirmed-notification:
+        heading: '{transitionTitleUcfirst} survey'
+        content: 'The requested {transitionTitle} survey transition was completed.'
   vehicle:
     delete:
       delete.label: Yes, delete this vehicle

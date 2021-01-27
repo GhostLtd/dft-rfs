@@ -141,4 +141,32 @@
             </div>
         {%- endfor -%}
     {%- endif -%}
+
+    {% if workflow_can(survey, 'approve') or workflow_can(survey, 'reject') or workflow_can(survey, 'complete')
+        or workflow_can(survey, 're_open') or workflow_can(survey, 'un_approve') or workflow_can(survey, 'un_reject')
+    %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <div class="govuk-!-margin-bottom-9 govuk-body">
+            <h2 class="govuk-heading--l">Survey actions</h2>
+            {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(survey, 'complete', 'Complete') }}
+            {{ _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
+            {{ _self.workflow_link(survey, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(survey, 'approve', 'Approve') }}
+            {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+        </div>
+    {% endif %}
+
 {%- endblock -%}
+
+{% macro workflow_link(survey, transitionName, transitionText, options) -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {%- with {
+        attr: (options.attr ?? {}) | merge({
+            href: path('admin_international_survey_workflow', {surveyId: survey.id, transition: transitionName}),
+            class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+        })
+    } -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+    {%- endwith -%}
+{%- endmacro %}

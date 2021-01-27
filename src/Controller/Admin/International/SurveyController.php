@@ -3,14 +3,18 @@
 namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
+use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\BusinessDetailsType;
 use App\Form\Admin\InternationalSurvey\CorrespondenceDetailsType;
 use App\Form\Admin\InternationalSurvey\SurveyDeleteType;
 use App\ListPage\International\SurveyListPage;
+use App\Utility\ConfirmAction\International\Admin\SurveyWorkflowConfirmAction;
+use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
 use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -135,5 +139,28 @@ class SurveyController extends AbstractController
             'survey' => $survey,
             'form' => $form->createView(),
         ]);
+    }
+
+
+    /**
+     * @Route("/survey/{surveyId}/workflow/{transition}", name="admin_international_survey_workflow",
+     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
+     * )
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/international/survey/workflow-complete.html.twig")
+     */
+    public function complete(SurveyWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, Survey $survey, $transition)
+    {
+        $surveyWorkflowConfirmAction
+            ->setSubject($survey)
+            ->setTransition($transition)
+        ;
+        return $surveyWorkflowConfirmAction->controller(
+            $request,
+            function() use ($survey) { return $this->generateUrl(
+                SurveyController::VIEW_ROUTE,
+                ['surveyId' => $survey->getId()]
+            );}
+        );
     }
 }
