@@ -147,7 +147,7 @@ class SurveyController extends AbstractController
      *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
      * )
      * @Entity("survey", expr="repository.find(surveyId)")
-     * @Template("admin/international/survey/workflow-complete.html.twig")
+     * @Template("admin/international/survey/workflow-action.html.twig")
      */
     public function complete(SurveyWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, Survey $survey, $transition)
     {

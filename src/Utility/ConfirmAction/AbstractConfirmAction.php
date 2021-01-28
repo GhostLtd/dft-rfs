@@ -108,9 +108,9 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         return [
             'translation_domain' => $this->getTranslationDomain(),
             'translation_prefix' => $this->getTranslationKeyPrefix(),
+            'translation_parameters' => $this->getTranslationParameters(),
             'subject' => $this->getSubject(),
             'form' => $form->createView(),
-            'translation_parameters' => $this->getTranslationParameters(),
         ];
 
     }
