@@ -4,18 +4,22 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
-    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+    {%- with {stop: subject} -%}
+        {%- set survey = stop.day.response.survey -%}
 
-    <table class="govuk-table admin-journeys-table">
-        {{- dayJourneyTableHeadingAndCaption(null, survey, stop.day, 'stop') -}}
-        <tbody class="govuk-table__body">
-        {%- with {showActions: false, marginBottom: 4} -%}
-            {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
-        {%- endwith -%}
-        </tbody>
-    </table>
+        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
-    {{- warningText("#{translation_prefix}.delete"|trans) -}}
+        <table class="govuk-table admin-journeys-table">
+            {{- dayJourneyTableHeadingAndCaption(null, survey, stop.day, 'stop') -}}
+            <tbody class="govuk-table__body">
+            {%- with {showActions: false, marginBottom: 4} -%}
+                {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
+            {%- endwith -%}
+            </tbody>
+        </table>
 
-    {{- form(form) -}}
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
 {%- endblock -%}

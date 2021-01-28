@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin\DomesticSurvey\Edit;
-
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
@@ -27,10 +25,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractStopType extends AbstractType implements DataMapperInterface
 {
-    private $translator;
-    private $hazardousGoodsHelper;
+    private TranslatorInterface $translator;
+    private HazardousGoodsHelper $hazardousGoodsHelper;
 
-    private $dataClass;
+    private string $dataClass;
 
     public function __construct(TranslatorInterface $translator, HazardousGoodsHelper $hazardousGoodsHelper)
     {
@@ -43,7 +41,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         $this->dataClass = $options['data_class'];
         $builder->setDataMapper($this);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $isNorthernIreland = $this->isNorthernIreland($event->getData());
 
             $transferChoices = array_merge(array_flip(array_map(function ($v) {
@@ -51,6 +49,10 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
             }, array_flip(Day::TRANSFER_CHOICES))), [
                 'No' => false,
             ]);
+
+            if ($options['is_add_form']) {
+                $transferChoices = ['' => null] + $transferChoices;
+            }
 
             $event->getForm()
                 ->add('originLocation', Gds\InputType::class, [
@@ -216,6 +218,8 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
 
             return $groups;
         });
+
+        $resolver->setDefault('is_add_form', false);
     }
 
     public function mapDataToForms($viewData, $forms)

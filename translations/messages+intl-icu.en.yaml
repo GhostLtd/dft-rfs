@@ -14,6 +14,9 @@ common:
   logout: Sign out
   actions:
     add: Add
+    add-day-stop: Add stage
+    add-day-and-stop: Add stage
+    add-day-and-summary: Add summary
     add-trip: Add trip
     add-vehicle: Add vehicle
     back-to-dashboard: Back to dashboard
@@ -556,27 +559,29 @@ domestic:
         help: ''
 
   day-stop-delete:
-    title: Delete day stop
-    heading-delete: Delete day stop?
-    delete: Are you sure you want to delete this day stop?
-    notification:
-      deleted:
-        heading: Day stop deleted successfully
-        content: The day stop was successfully deleted
-      cancelled:
-        heading: Day stop not deleted
-        content: The request to delete the day stop was cancelled
+    title: Delete stage
+    heading-delete: Delete stage?
+    delete: Are you sure you want to delete this stage?
+    confirm.label: Yes, delete this stage
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Stage deleted successfully
+      content: The stage was successfully deleted
+    cancelled-notification:
+      heading: Stage not deleted
+      content: The request to delete the stage was cancelled
   day-summary-delete:
     title: Delete day summary
     heading-delete: Delete day summary?
     delete: Are you sure you want to delete this day summary?
-    notification:
-      deleted:
-        heading: Day summary deleted successfully
-        content: The day summary was successfully deleted
-      cancelled:
-        heading: Day summary not deleted
-        content: The request to delete the day summary was cancelled
+    confirm.label: Yes, delete this day summary
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Day summary deleted successfully
+      content: The day summary was successfully deleted
+    cancelled-notification:
+      heading: Day summary not deleted
+      content: The request to delete the day summary was cancelled
 
 survey:
   domestic:

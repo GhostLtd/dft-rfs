@@ -4,13 +4,17 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
-    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+    {%- with {summary: subject} -%}
+        {%- set survey = summary.day.response.survey -%}
 
-    {%- with {showActions: false, marginBottom: 4, day: stop.day} -%}
-        {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+
+        {%- with {showActions: false, marginBottom: 4, day: summary.day} -%}
+            {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+        {%- endwith -%}
+
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
     {%- endwith -%}
-
-    {{- warningText("#{translation_prefix}.delete"|trans) -}}
-
-    {{- form(form) -}}
 {%- endblock -%}

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Utility\ConfirmAction;
-
 
 use App\Form\ConfirmActionType;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
@@ -108,6 +106,8 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         }
 
         return [
+            'translation_domain' => $this->getTranslationDomain(),
+            'translation_prefix' => $this->getTranslationKeyPrefix(),
             'subject' => $this->getSubject(),
             'form' => $form->createView(),
             'translation_parameters' => $this->getTranslationParameters(),
