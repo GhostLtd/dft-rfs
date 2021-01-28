@@ -38,7 +38,7 @@
                 <div class="govuk-tabs__panel" id="tab-vehicles">
                     <h2 class="govuk-heading-m">Vehicles</h2>
 
-                    {%- with {vehicles: survey.response.vehicles, survey: survey} -%}
+                    {%- with {vehicles: survey.response.vehicles, survey: survey, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/admin-vehicles.html.twig' -%}
                     {%- endwith -%}
 
@@ -52,7 +52,7 @@
 
             {%- if 'Correspondence details' in tabs | keys -%}
                 <div class="govuk-tabs__panel" id="tab-correspondence">
-                    {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
+                    {%- with {showActions: false, response: survey.response, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/contact-details.html.twig' -%}
                     {%- endwith -%}
 
@@ -66,7 +66,7 @@
 
             {%- if 'Business details' in tabs | keys -%}
                 <div class="govuk-tabs__panel" id="tab-business-details">
-                    {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
+                    {%- with {showActions: false, response: survey.response, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/business-details.html.twig' -%}
                     {%- endwith -%}
 
@@ -82,7 +82,7 @@
 
     {% if survey.response and (survey.response.vehicles is not empty) %}
         {% for vehicle in survey.response.vehicles %}
-            <div class="govuk-!-padding-bottom-4">
+            <div class="govuk-!-padding-bottom-5">
                 <h2 class="govuk-heading-l govuk-heading--underline" id="{{ vehicle.id }}">Vehicle
                     — {{ vehicle.registrationMark|formatRegMark }}
                     <a class="admin-surveys__back-to-top govuk-link--no-visited-state" href="#top">Back to top</a>
@@ -90,7 +90,7 @@
 
                 <h3 class="govuk-heading-m">Vehicle details</h3>
 
-                {% with {vehicle: vehicle, showActions: false} %}
+                {% with {vehicle: vehicle, showActions: false, marginBottom: 5} %}
                     {% include "international_survey/includes/vehicle.html.twig" %}
                 {% endwith %}
 
@@ -110,7 +110,7 @@
                 {%- for trip in vehicle.trips -%}
                     <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">Trip
                         #{{ loop.index }}</h3>
-                    {%- with {showActions: false, trip: trip, marginBottom: 4} -%}
+                    {%- with {showActions: false, trip: trip, marginBottom: 5} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}
                     {%- endwith -%}
 
@@ -127,7 +127,7 @@
                         <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Consignment actions</h4>
                         {%- set isReOrderable = trip.actions|length  > 1 -%}
                         {%- if trip.actions is not empty -%}
-                            {%- with {trip:trip, bottomMargin: 2, isAdmin: true} -%}
+                            {%- with {trip:trip, marginBottom: 5, isAdmin: true} -%}
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
                         {%- else -%}

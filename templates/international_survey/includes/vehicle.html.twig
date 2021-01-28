@@ -2,7 +2,7 @@
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 {%- set showActions = showActions ?? true -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-4">
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row(showActions, 'international.summary.registration', vehicle.registrationMark|formatRegMark, {('#'): 'common.actions.view'}) -}}
     {{- row(showActions, 'international.summary.type-and-configuration', displayAxleConfiguration(vehicle.axleConfiguration), {('#'): 'common.actions.view'}) -}}
 
