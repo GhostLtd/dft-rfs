@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait SurveyResponseTrait
 {
@@ -30,18 +31,29 @@ trait SurveyResponseTrait
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
-     * @Assert\NotBlank(message="common.telephone.not-blank", groups={"contact_details", "admin_correspondence"})
      * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
     private $contactTelephone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"contact_details", "admin_correspondence"})
      * @Assert\Email(message="common.email.invalid", groups={"contact_details", "admin_correspondence"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
     private $contactEmail;
+
+    /**
+     * @Assert\Callback(groups={"contact_details", "admin_correspondence"})
+     */
+    public function validInvitationDetails(ExecutionContextInterface $context) {
+        if (!$this->contactTelephone && !$this->contactEmail) {
+            $context
+                ->buildViolation('domestic.initial-details.contact-email-or-telephone-required')
+                ->atPath('contactTelephone')
+                ->addViolation();
+        }
+    }
+
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)

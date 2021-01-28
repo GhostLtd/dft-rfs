@@ -20,6 +20,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_REMINDED_USER,
                     StateObject::STATE_IN_PROGRESS,
                     StateObject::STATE_CLOSED,
+                    StateObject::STATE_APPROVED,
                     StateObject::STATE_REJECTED,
                     StateObject::STATE_EXPORTED,
                 ],
@@ -44,8 +45,16 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_CLOSED,
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
-                    'export' => [
+                    'approve' => [
                         'from' => StateObject::STATE_CLOSED,
+                        'to' => StateObject::STATE_APPROVED,
+                    ],
+                    'un_approve' => [
+                        'from' => StateObject::STATE_APPROVED,
+                        'to' => StateObject::STATE_CLOSED,
+                    ],
+                    'export' => [
+                        'from' => StateObject::STATE_APPROVED,
                         'to' => StateObject::STATE_EXPORTED,
                     ],
                     'reject' => [

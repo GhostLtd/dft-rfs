@@ -11,6 +11,7 @@ interface ConfirmActionInterface
     public function getSubject();
     public function getTranslationKeyPrefix(): string;
     public function getTranslationDomain(): ?string;
+    public function getTranslationParameters(): array;
     public function getFormOptions(): array;
     public function doConfirmedAction();
     public function getConfirmedBanner(): NotificationBanner;

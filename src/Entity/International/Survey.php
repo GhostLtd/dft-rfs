@@ -22,6 +22,7 @@ class Survey implements BlameLoggable
     const STATE_REMINDED_USER = 'reminded';
     const STATE_IN_PROGRESS = 'in-progress';
     const STATE_CLOSED = 'closed';
+    const STATE_APPROVED = 'approved';
     const STATE_REJECTED = 'rejected';
     const STATE_EXPORTED = 'exported';
 
@@ -31,6 +32,7 @@ class Survey implements BlameLoggable
         'admin.domestic.survey.state.reminded' => self::STATE_REMINDED_USER,
         'admin.domestic.survey.state.in-progress' => self::STATE_IN_PROGRESS,
         'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
+        'admin.domestic.survey.state.approved' => self::STATE_APPROVED,
         'admin.domestic.survey.state.rejected' => self::STATE_REJECTED,
         'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,
     ];

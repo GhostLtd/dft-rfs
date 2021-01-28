@@ -8,8 +8,10 @@ use App\Form\Admin\InternationalSurvey\BusinessDetailsType;
 use App\Form\Admin\InternationalSurvey\CorrespondenceDetailsType;
 use App\Form\Admin\InternationalSurvey\InitialDetailsType;
 use App\ListPage\International\SurveyListPage;
+use App\Utility\ConfirmAction\International\Admin\SurveyWorkflowConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -144,5 +146,28 @@ class SurveyController extends AbstractController
         }
 
         return $response;
+    }
+
+
+    /**
+     * @Route("/survey/{surveyId}/workflow/{transition}", name="admin_international_survey_workflow",
+     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
+     * )
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/international/survey/workflow-action.html.twig")
+     */
+    public function complete(SurveyWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, Survey $survey, $transition)
+    {
+        $surveyWorkflowConfirmAction
+            ->setSubject($survey)
+            ->setTransition($transition)
+        ;
+        return $surveyWorkflowConfirmAction->controller(
+            $request,
+            function() use ($survey) { return $this->generateUrl(
+                SurveyController::VIEW_ROUTE,
+                ['surveyId' => $survey->getId()]
+            );}
+        );
     }
 }

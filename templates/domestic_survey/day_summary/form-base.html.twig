@@ -1,0 +1,14 @@
+{% extends 'domestic_survey/form-base.html.twig' %}
+
+{% block oneThirdColumnContent -%}
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Day {{ subject.day.number }} ({{ subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number-1) ~ ' day') | date('F j, Y') }})</h2>
+    <h3 class="govuk-heading-s">More than 5 stages</h3>
+    {% if subject.originLocation and subject.destinationLocation %}
+        <p class="govuk-body">{{ subject.originLocation }} to {{ subject.destinationLocation }}</p>
+    {% endif %}
+
+    {%- block wizardContext %}
+    {% endblock %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    {{ parent() }}
+{% endblock %}

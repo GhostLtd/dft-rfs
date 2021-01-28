@@ -14,12 +14,17 @@ class HazardousGoodsHelper
         $this->translator = $translator;
     }
 
-    public function getFormChoicesAndOptions(bool $useGroups = false, bool $prefixLabel = true, bool $useHtml = true): array
+    public function getFormChoicesAndOptions(bool $useGroups = false, bool $prefixLabel = true, bool $useHtml = true, bool $includeNotHazardousOption = true): array
     {
         $choiceOptions = [];
         $choices = [];
 
-        foreach (HazardousGoods::CHOICES as $groupName => $group) {
+        $hazardousChoices = HazardousGoods::CHOICES;
+        if (!$includeNotHazardousOption) {
+            unset($hazardousChoices[HazardousGoods::CODE_PREFIX . HazardousGoods::CODE_0_NOT_HAZARDOUS]);
+        }
+
+        foreach ($hazardousChoices as $groupName => $group) {
             $groupLabel = $this->translator->trans($groupName);
 
             $hasChildren = is_array($group);
