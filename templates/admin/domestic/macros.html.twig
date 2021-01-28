@@ -1,9 +1,10 @@
 {%- macro dayJourneyTableHeadingAndCaption(dayNumber, survey, day, stopOrSummary) -%}
-    {% set captionContent = _self.dayJourneyTableCaption(dayNumber, survey, day) -%}
-    {{- _self.dayJourneyTableHeading(stopOrSummary, captionContent) -}}
+    {%- set isNorthernIreland = survey.isNorthernIreland -%}
+    {%- set captionContent = _self.dayJourneyTableCaption(dayNumber, survey, day) -%}
+    {{- _self.dayJourneyTableHeading(stopOrSummary, captionContent, isNorthernIreland) -}}
 {%- endmacro -%}
 
-{%- macro dayJourneyTableHeading(stopOrSummary, captionContent = '') -%}
+{%- macro dayJourneyTableHeading(stopOrSummary, captionContent = '', isNorthernIreland) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex -%}
 
     <thead class="govuk-table__head">
@@ -13,6 +14,10 @@
             'Origin': {},
             'Destination': {},
         } -%}
+
+        {%- if isNorthernIreland -%}
+            {%- set locationHeadings = locationHeadings|merge({'Border': {}}) -%}
+        {%- endif -%}
 
         {%- set goodsHeadings = {
             'Goods': {},

@@ -4,12 +4,10 @@
 
 {% for dayNumber in 1..7 -%}
     {%- set day = survey.response.dayByNumber(dayNumber) -%}
-        {% if day %}
-            {%- if day.hasMoreThanFiveStops -%}
-                {%- include "admin/domestic/includes/day-summary.html.twig" -%}
-            {%- else -%}
-                {%- include "admin/domestic/includes/day-stop.html.twig" -%}
-            {%- endif -%}
+        {%- if day and day.hasMoreThanFiveStops and day.summary -%}
+            {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+        {%- elseif day and day.stops|length > 0 -%}
+            {%- include "admin/domestic/includes/day-stop.html.twig" -%}
         {% else %}
             <table class="govuk-table admin-journeys-table">
                 <thead class="govuk-table__head">
