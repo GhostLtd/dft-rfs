@@ -1,2 +1,7 @@
 {% set translation_prefix = 'domestic.day-stop.goods-weight' %}
 {% extends 'domestic_survey/day_stop/form-base.html.twig' %}
+
+{% block wizardContext -%}
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Vehicle carrying capacity</h3>
+    <p class="govuk-body">{{ subject.day.response.vehicle.carryingCapacity }}kg</p>
+{% endblock %}

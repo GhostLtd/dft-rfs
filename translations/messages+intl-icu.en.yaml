@@ -183,7 +183,7 @@ admin:
 domestic:
   transferred-port:
     options:
-      0: None of the above
+      0: Not applicable
       1: Shipping port or docks
       2: Rail depot / terminal
       4: Airport
@@ -290,7 +290,7 @@ domestic:
     vehicle-fuel:
       fuel-quantity:
         label: Vehicle fuel
-        help: 'How much fuel in total was put into this vehicle during the survey week?'
+        help: "How much fuel in total was put into this vehicle during the survey week?\n\nEnter 0 (zero) if you didn't add fuel during the survey week."
 
     vehicle-trailer-configuration:
       trailer-configuration:
@@ -380,7 +380,7 @@ domestic:
 
     origin-ports:
       goods-transferred-from:
-        label: Were the goods transferred from another mode of transport?
+        label: Which mode of transport were the goods transferred from?
         help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     destination:
@@ -395,7 +395,7 @@ domestic:
 
     destination-ports:
       goods-transferred-to:
-        label: Were the goods transferred to another mode of transport?
+        label: Which mode of transport were the goods transferred to?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     furthest-stop:
@@ -438,7 +438,7 @@ domestic:
 
     goods-weight:
       heading: Weight of goods
-      help: The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+      help: "The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ are considered as loaded.\n\nIt is not unusual for the total weight loaded or unloaded on this day are more than the vehicle's carrying capacity."
       weight-of-goods-loaded:
         label: Total weight of goods loaded on this day
         help: ''
@@ -451,7 +451,7 @@ domestic:
       help: ''
       number-of-stops-loading:
         label: 'Goods loaded only'
-        help: 'The number of stops where goods were loaded onto the vehicle only'
+        help: 'The number of times goods were loaded onto the vehicle only. If goods were loaded at the start of your journey, it should be included in this number.'
       number-of-stops-unloading:
         label: 'Goods unloaded only'
         help: 'The number of stops where goods were unloaded from the vehicle only'
@@ -473,7 +473,7 @@ domestic:
 
     origin-ports:
       goods-transferred-from:
-        label: Were the goods transferred from another mode of transport?
+        label: Which mode of transport were the goods transferred from?
         help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     destination:
@@ -488,7 +488,7 @@ domestic:
 
     destination-ports:
       goods-transferred-to:
-        label: Were the goods transferred to another mode of transport?
+        label: Which mode of transport were the goods transferred to?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
     border-crossing:
@@ -582,42 +582,13 @@ domestic:
     cancelled-notification:
       heading: Day summary not deleted
       content: The request to delete the day summary was cancelled
+  help:
+    summary: 'How can I get help?'
+    text:
+      call: 'For help with this survey call'
+      phone-number: '0207 944 8233'
+      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
 
-survey:
-  domestic:
-    forms:
-
-
-      # Day, Multiple Wizard
-      day-multiple:
-        departed:
-          heading: How did you start this stage of the journey?
-          help:
-          location:
-            label: Please tell us where you started this stage
-            help: eg. HD1 3LE, or Sheffield
-          goods-loaded:
-            label: Were goods loaded at this location?
-        departed-ports:
-          heading: About this location
-          help:
-          transferred-from:
-            label: Please tells us which option best describes the departure location
-            help: This question is to establish if the goods being loaded are being transferred from one mode of transport to another
-        arrived:
-          heading: How did this stage of the journey end?
-          help:
-          location:
-            label: Please tell us where you finished this stage
-            help: eg. HD1 3LE, or Sheffield
-          goods-unloaded:
-            label: Were goods unloaded at this location?
-        arrived-ports:
-          heading: About this location
-          help:
-          transferred-to:
-            label: Please tells us which option best describes the arrival location
-            help: This question is to establish if the goods being unloaded are being transferred from one mode of transport to another
 
 # Pre-Enquiry
 pre-enquiry:
@@ -935,7 +906,7 @@ international:
     goods-weight:
       weight-of-goods-carried:
         label: Weight of goods
-        help: The weight of goods should include any packaging or containers. Consignments of empty ‘Packaging’ or an ‘Empty container’ are considered as loaded.
+        help: The weight of goods should include any packaging or containers. Consignments of empty ‘Packaging’ are considered as loaded.
     place:
       place-of-loading:
         label: Place of loading
@@ -1099,7 +1070,7 @@ goods:
       OFC: Other freight containers
       PL: Palletised goods
       PS: Pre slung goods
-      NP: No packaging and other mobile units
+      NP: No packaging
       RC: Roll cages and other mobile units
       OT: Other cargo types
       NS: Empty
@@ -1116,13 +1087,11 @@ goods:
       NS: ''
   description:
     options:
-      empty-container: Freight container - no contents
       packaging: Packaging
       groupage: Groupage
       empty: None - the vehicle was empty
       other-goods: Specific goods / Other
     help:
-      empty-container: consignment was an empty freight container
       packaging: consignment was empty pallets, wire cages, roll cages or other packaging
       groupage: mixed loads where there was no main type
       empty: only if the vehicle carried nothing at all

@@ -7,6 +7,9 @@
 
 {% block oneThirdColumnContent -%}
     {% include 'domestic_survey/includes/survey-summary.html.twig' %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    {% from 'domestic_survey/includes/macros.html.twig' import userAssitanceHelpBlock %}
+    {{ userAssitanceHelpBlock() }}
 {%- endblock %}
 
 {% block content -%}
