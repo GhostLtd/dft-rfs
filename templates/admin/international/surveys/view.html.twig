@@ -2,7 +2,8 @@
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
-    {%- if survey.response | default(false) -%}
+    {%- set hasInitialDetails = survey.response | default(false) -%}
+    {%- if hasInitialDetails -%}
         {%- set tabs = {} -%}
 
         {%- if survey.response.noLongerActive == false -%}
@@ -19,11 +20,15 @@
 
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
-    {%- with {marginBottom: 5} -%}
-        <div class="govuk-!-margin-bottom-9">
+    <div class="govuk-!-margin-bottom-9">
+        {%- with {marginBottom: hasInitialDetails ? 0 : 5} -%}
             {%- include "international_survey/includes/survey-basics.html.twig" -%}
-        </div>
-    {%- endwith -%}
+        {%- endwith -%}
+
+        {%- if not hasInitialDetails -%}
+            <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
+        {%- endif -%}
+    </div>
 
     {%- if tabs is defined -%}
         <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">

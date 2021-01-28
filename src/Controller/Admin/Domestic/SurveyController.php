@@ -109,7 +109,7 @@ class SurveyController extends AbstractController
      */
     public function enterInitialDetails(Survey $survey): Response
     {
-        $redirectUrl = $this->getRedirectUrl($survey, 'tab-initial-details');
+        $redirectUrl = $this->getRedirectUrl($survey);
         $response = (new SurveyResponse())
             ->setSurvey($survey);
 
