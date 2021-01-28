@@ -15,9 +15,15 @@ class BusinessDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $translationKeyPrefix = "domestic.survey-response.business-details";
+        $employeeChoices = AbstractSurveyResponse::EMPLOYEES_CHOICES;
+
+        if ($options['add_form']) {
+            $employeeChoices = ['' => null] + $employeeChoices;
+        }
+
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
-                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
+                'choices' => $employeeChoices,
                 'label' => "{$translationKeyPrefix}.number-of-employees.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.number-of-employees.help",
@@ -45,6 +51,7 @@ class BusinessDetailsType extends AbstractType
             'data_class' => SurveyResponse::class,
             'validation_groups' => ['business_details', 'vehicle_operation_type'],
             'expanded_employees' => true,
+            'add_form' => false,
         ]);
     }
 }

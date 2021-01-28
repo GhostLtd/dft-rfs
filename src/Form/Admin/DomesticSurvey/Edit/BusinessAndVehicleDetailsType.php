@@ -8,9 +8,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Valid;
 
-class BusinessDetailsType extends AbstractType
+class BusinessAndVehicleDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -19,7 +18,15 @@ class BusinessDetailsType extends AbstractType
                 'inherit_data' => true,
                 'label' => false,
                 'expanded_employees' => false,
-                'constraints' => [new Valid(['groups' => $options['validation_groups']])],
+                'add_form' => true,
+                'validation_groups' => $options['validation_groups'],
+            ])
+            ->add('vehicle_details', VehicleDetailsType::class, [
+                'inherit_data' => true,
+                'label' => false,
+                'include_buttons' => false,
+                'add_form' => true,
+                'validation_groups' => $options['validation_groups'],
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
@@ -34,8 +41,7 @@ class BusinessDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
-            'validation_groups' => ['admin_business_details'],
-
+            'validation_groups' => ['admin_vehicle', 'admin_business_details'],
         ]);
     }
 }

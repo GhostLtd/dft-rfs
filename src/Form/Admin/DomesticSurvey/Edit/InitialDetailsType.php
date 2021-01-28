@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class InitialDetailsType extends AbstractType implements DataMapperInterface
 {
@@ -34,6 +35,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN => ['conditional_form_name' => 'scrapped_details'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SOLD => ['conditional_form_name' => 'sold_details'],
                 ],
+                'constraints' => [new NotBlank(['groups' => 'admin_correspondence', 'message' => 'Please choose an option'])],
             ])
             ->add('hiree_details', HireeDetailsType::class, [
                 'label' => false,
