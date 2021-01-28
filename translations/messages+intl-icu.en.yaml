@@ -427,9 +427,11 @@ domestic:
         help: Provide a basic description of the goods carried on this day. For mixed loads, the main type of goods should be recorded.
 
     hazardous-goods:
-      hazardous-goods:
-        label: Were these goods dangerous or hazardous?
-        help: Were the goods being transported classified as dangerous or hazardous?
+      heading: Were these goods dangerous or hazardous?
+      help: Were the goods being transported classified as dangerous or hazardous?
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
 
     cargo-type:
       cargo-type-code:
@@ -510,10 +512,11 @@ domestic:
         help: Provide a basic description of the goods carried on this stage. For mixed loads, the main type of goods should be recorded.
 
     hazardous-goods:
-      hazardous-goods:
-        label: Were these goods dangerous or hazardous?
-        help: Were the goods being transported classified as dangerous or hazardous?
-
+      heading: Were these goods dangerous or hazardous?
+      help: Were the goods being transported classified as dangerous or hazardous?
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
     cargo-type:
       cargo-type-code:
         label: How were the goods carried?
@@ -839,9 +842,11 @@ international:
         label: Description of goods carried
         help: Provide a basic description of the goods carried in this consignment. For mixed loads, the main type of goods should be recorded.
     hazardous-goods:
-      hazardous-goods:
-        label: Were these goods dangerous or hazardous?
-        help: Were the goods being transported classified as dangerous or hazardous?
+      heading: Were these goods dangerous or hazardous?
+      help: Were the goods being transported classified as dangerous or hazardous?
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
     cargo-type:
       cargo-type-code:
         label: How were the goods carried?
@@ -896,9 +901,11 @@ international:
         label: Description of goods carried
         help: Provide a basic description of the goods carried on this trip. For mixed loads, the main type of goods should be recorded.
     hazardous-goods:
-      hazardous-goods:
-        label: Were these goods dangerous or hazardous?
-        help: Were the goods being transported classified as dangerous or hazardous?
+      heading: Were these goods dangerous or hazardous?
+      help: Were the goods being transported classified as dangerous or hazardous?
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
     cargo-type:
       cargo-type-code:
         label: How were the goods carried?
