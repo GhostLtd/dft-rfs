@@ -1,20 +1,62 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import startNow %}
     <h1 class="govuk-heading-xl">{{ 'service.name' | trans }}</h1>
 
-    <p class="govuk-body">This site is for user testing purposes, and is intended for people who have been invited to use it.</p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">Use this service to complete your domestic or international survey.</p>
+
+            {{ startNow(path('app_login'), 'Sign in') }}
+        </div>
+        <div class="govuk-grid-column-one-third">
+        </div>
+    </div>
+
+
+{#
+    <p class="govuk-body">The {{ 'service.name' | trans }} are run by the Department for Transport (DfT) to obtain details of domestic and international activity of UK-registered HGVs and international haulage license holders.</p>
+    <p class="govuk-body">The results help DfT build a picture of the activity of HGVs, and the data collected form part of the evidence base for making decisions on transport policy within the UK and the EU.</p>
+#}
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             <h2 class="govuk-heading-m">Domestic survey</h2>
-            <p class="govuk-body">If you have been given a code for the domestic survey, you can <a href="{{ url('app_login') }}">login here</a>.</p>
+            <p class="govuk-body">To complete the survey, you will need the following:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Gross vehicle weight and carrying capacity (i.e. gross weight minus vehicle weight)</li>
+                <li>Details of all trips the vehicle has made during the survey week, including mileage, cargo type and weight</li>
+                <li>Fuel put into vehicle during survey dates</li>
+            </ul>
+            <h3 class="govuk-heading-s">Contact us</h3>
+            <div class="govuk-inset-text">
+                <p class="govuk-body">Email <a href="mailto:csrgt.stats@dft.gov.uk">csrgt.stats@dft.gov.uk</a></p>
+                <p class="govuk-body">
+                    Public enquiries<br>
+                    <strong>020 7944 8233</strong>
+                </p>
+            </div>
         </div>
+
+
         <div class="govuk-grid-column-one-half">
             <h2 class="govuk-heading-m">International survey</h2>
-            <p class="govuk-body">If you have been given a code for the international survey, you can <a href="{{ url('app_login') }}">login here</a>.</p>
+            <p class="govuk-body">To complete the survey, you will need the following for all of your vehicles that have made international journeys during your survey period:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Gross vehicle weight and carrying capacity (i.e. gross weight minus vehicle weight)</li>
+                <li>Details of all international trips the vehicle has made during the survey period, including consignments carried</li>
+            </ul>
+            <h3 class="govuk-heading-s">Contact us</h3>
+            <div class="govuk-inset-text">
+                <p class="govuk-body">Email <a href="mailto:irhs.stats@dft.gov.uk">irhs.stats@dft.gov.uk</a></p>
+                <p class="govuk-body">
+                    Public enquiries<br>
+                    <strong>020 7944 8580</strong>
+                </p>
+            </div>
         </div>
     </div>
 {% endblock %}

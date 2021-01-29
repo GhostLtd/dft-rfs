@@ -27,12 +27,11 @@ class PasscodeLoginType extends AbstractType
         $builder
             ->add('passcode', FieldsetType::class, [
                 'label' => 'passcode.login.label',
-                'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => 'passcode.login.help',
                 'attr' => ['class' => 'govuk-fieldset__passcode'],
             ])
-            ->add('login', ButtonType::class, ['type' => 'submit'])
+            ->add('sign_in', ButtonType::class, ['type' => 'submit'])
         ;
 
 
