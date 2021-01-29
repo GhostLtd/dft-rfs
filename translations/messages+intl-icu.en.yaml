@@ -499,7 +499,8 @@ domestic:
         help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
                state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
                For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
-               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel."
+               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel.\n\n
+               If you did not cross the border, leave this empty."
 
     distance-travelled:
       distance-travelled:
