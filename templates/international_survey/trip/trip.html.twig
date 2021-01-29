@@ -53,7 +53,7 @@
             <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.action'|trans }}</a></h2>
             {{ consignmentActionHelp() }}
             {%- with {
-                bottomMargin: showReorderLink ? '2' : '6',
+                marginBottom: showReorderLink ? '2' : '6',
                 trip: trip,
             } -%}
                 {%- include "international_survey/includes/actions.html.twig" -%}

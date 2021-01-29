@@ -7,7 +7,7 @@
 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
 {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
 
-<table class="govuk-table govuk-!-margin-bottom-{{ bottomMargin }}">
+<table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- if isAdmin -%}
         {%- set headers = ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', 'Cargo Type', 'Hazardous?'] -%}
         {%- if showActions -%}{%- set headers = headers | merge(['']) -%}{%- endif -%}

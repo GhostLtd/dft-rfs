@@ -4,20 +4,19 @@ namespace App\Form\Admin\InternationalSurvey;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
+use App\Form\Admin\InternationalSurvey\DataMapper\BusinessDetailsDataMapper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BusinessDetailsType extends AbstractType implements DataMapperInterface
+class BusinessDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->setDataMapper($this)
+            ->setDataMapper(new BusinessDetailsDataMapper())
             ->add('activityStatus', Gds\ChoiceType::class, [
                 'label' => 'Does the firm still perform international road haulage activities?',
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -30,14 +29,18 @@ class BusinessDetailsType extends AbstractType implements DataMapperInterface
             ])
             ->add('conditionalFields', Gds\FieldsetType::class, [
                 'label' => false,
-            ])
-            ->add('submit', Gds\ButtonType::class, [
-                'label' => 'Save changes',
-            ])
-            ->add('cancel', Gds\ButtonType::class, [
-                'label' => 'Cancel',
-                'attr' => ['class' => 'govuk-button--secondary'],
             ]);
+
+        if ($options['include_buttons']) {
+            $builder
+                ->add('submit', Gds\ButtonType::class, [
+                    'label' => 'Save changes',
+                ])
+                ->add('cancel', Gds\ButtonType::class, [
+                    'label' => 'Cancel',
+                    'attr' => ['class' => 'govuk-button--secondary'],
+                ]);
+        }
 
         $builder->get('conditionalFields')
             ->add('businessNature', Gds\InputType::class, [
@@ -47,7 +50,7 @@ class BusinessDetailsType extends AbstractType implements DataMapperInterface
             ])
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
-                'placeholder' => '-- Please choose --',
+                'placeholder' => '',
                 'label' => "Number of employees nationally",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-select--width-15'],
@@ -71,52 +74,8 @@ class BusinessDetailsType extends AbstractType implements DataMapperInterface
 
                 return ($data && $data->getActivityStatus() === SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE) ?
                     ['admin_business_details'] : ['Default'];
-            }
+            },
+            'include_buttons' => true,
         ]);
-    }
-
-    public function mapDataToForms($viewData, $forms)
-    {
-        if (null === $viewData) {
-            return;
-        }
-
-        if (!$viewData instanceof SurveyResponse) {
-            throw new UnexpectedTypeException($viewData, SurveyResponse::class);
-        }
-
-        /** @var FormInterface[] $forms */
-        $forms = iterator_to_array($forms);
-
-        // initialize form field values
-        $forms['activityStatus']->setData($viewData->getActivityStatus());
-        $forms['numberOfEmployees']->setData($viewData->getNumberOfEmployees());
-        $forms['businessNature']->setData($viewData->getBusinessNature());
-        $forms['annualInternationalJourneyCount']->setData($viewData->getAnnualInternationalJourneyCount());
-    }
-
-    public function mapFormsToData($forms, &$viewData)
-    {
-        /** @var FormInterface[] $forms */
-        $forms = iterator_to_array($forms);
-
-        if (!$viewData instanceof SurveyResponse) {
-            throw new UnexpectedTypeException($viewData, SurveyResponse::class);
-        }
-
-        $viewData->setActivityStatus($forms['activityStatus']->getData());
-
-        $activityStatus = $viewData->getActivityStatus();
-        if (in_array($activityStatus, [SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING, SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK])) {
-            $viewData
-                ->setNumberOfEmployees(null)
-                ->setBusinessNature(null)
-                ->setAnnualInternationalJourneyCount(0);
-        } else {
-            $viewData
-                ->setNumberOfEmployees($forms['numberOfEmployees']->getData())
-                ->setBusinessNature($forms['businessNature']->getData())
-                ->setAnnualInternationalJourneyCount($forms['annualInternationalJourneyCount']->getData());
-        }
     }
 }

@@ -2,9 +2,16 @@
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus -%}
 {%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
 
+{%- set isNorthernIreland = stop.day.response.survey.isNorthernIreland -%}
+
 <tr class="govuk-table__row" id="{{ stop.id }}">
     {{- tableCell(locationAndStatus(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom), {class: 'admin-journeys-table__load-status'}) -}}
     {{- tableCell(locationAndStatus(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false), {class: 'admin-journeys-table__load-status'}) -}}
+
+    {%- if isNorthernIreland -%}
+        {{- tableCell(stop.borderCrossingLocation | default('-')) -}}
+    {%- endif -%}
+
     {{- tableCell(stop.distanceTravelled | formatValueUnit, {numeric: true}) -}}
     {{- tableCell(stop | formatGoodsDescription(true)) -}}
     {%- if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') -%}

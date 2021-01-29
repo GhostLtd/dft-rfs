@@ -49,6 +49,11 @@ class DaySummaryController extends AbstractController
     {
         $existingDay = $this->dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
 
+        if ($existingDay->getSummary() === null && $existingDay->getStops()->isEmpty()) {
+            $this->entityManager->remove($existingDay);
+            $existingDay = null;
+        }
+
         if ($existingDay || $dayNumber < 1 || $dayNumber > $survey->getSurveyPeriodInDays()) {
             throw new BadRequestHttpException();
         }

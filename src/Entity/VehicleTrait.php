@@ -44,7 +44,7 @@ trait VehicleTrait
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"vehicle_operation_type", "admin_vehicle"}, message="common.vehicle.operation-type.not-blank")
+     * @Assert\NotBlank(groups={"vehicle_operation_type", "admin_vehicle", "admin_business"}, message="common.vehicle.operation-type.not-blank")
      */
     private $operationType;
 

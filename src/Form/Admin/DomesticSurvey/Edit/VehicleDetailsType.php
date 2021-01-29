@@ -15,21 +15,30 @@ class VehicleDetailsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $axleConfigurationChoices = [
+            'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[100],
+            'Rigid with trailer' => Vehicle::AXLE_CONFIGURATION_CHOICES[200],
+            'Articulated' => Vehicle::AXLE_CONFIGURATION_CHOICES[300],
+        ];
+
+        $bodyTypeChoices = Vehicle::BODY_CONFIGURATION_CHOICES;
+
+        if ($options['add_form']) {
+            $axleConfigurationChoices = ['' => null] + $axleConfigurationChoices;
+            $bodyTypeChoices = ['' => null] + $bodyTypeChoices;
+        }
+
         $builder
             ->add('weights', VehicleWeightsType::class, [
                 'inherit_data' => true,
                 'label' => false,
                 'constraints' => [new Valid()],
-                'validation_groups' => ['admin_vehicle'],
+                'validation_groups' => $options['validation_groups'],
             ])
             ->add('axleConfiguration', Gds\ChoiceType::class, [
                 'label' => "Type/configuration",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => [
-                    'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[100],
-                    'Rigid with trailer' => Vehicle::AXLE_CONFIGURATION_CHOICES[200],
-                    'Articulated' => Vehicle::AXLE_CONFIGURATION_CHOICES[300],
-                ],
+                'choices' => $axleConfigurationChoices,
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'property_path' => 'vehicle.axleConfiguration',
@@ -37,18 +46,22 @@ class VehicleDetailsType extends AbstractType
             ->add('bodyType', Gds\ChoiceType::class, [
                 'label' => 'Vehicle/trailer body type',
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
+                'choices' => $bodyTypeChoices,
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'property_path' => 'vehicle.bodyType',
-            ])
-            ->add('submit', Gds\ButtonType::class, [
-                'label' => 'Save changes',
-            ])
-            ->add('cancel', Gds\ButtonType::class, [
-                'label' => 'Cancel',
-                'attr' => ['class' => 'govuk-button--secondary'],
             ]);
+
+        if ($options['include_buttons']) {
+            $builder
+                ->add('submit', Gds\ButtonType::class, [
+                    'label' => 'Save changes',
+                ])
+                ->add('cancel', Gds\ButtonType::class, [
+                    'label' => 'Cancel',
+                    'attr' => ['class' => 'govuk-button--secondary'],
+                ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -56,6 +69,8 @@ class VehicleDetailsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => ['admin_vehicle'],
+            'include_buttons' => true,
+            'add_form' => false,
         ]);
     }
 }

@@ -3,7 +3,7 @@
 
 {%- set showActions = showActions ?? true -%}
 
-<table class="govuk-table govuk-!-margin-bottom-2">
+<table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- tableHeadComplex(false, {
         ('international.summary.registration'): {},
         ('international.summary.status'): {},

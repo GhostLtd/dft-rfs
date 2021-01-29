@@ -1,17 +1,13 @@
 {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
 {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
+{%- set isNorthernIreland = survey.isNorthernIreland -%}
+
 <table class="govuk-table admin-journeys-table govuk-!-margin-bottom-{{ (showActions ?? true) ? 5 : 9 }}" id="{{ day.id }}">
     {{- dayJourneyTableHeadingAndCaption(null, survey, day, 'stop') -}}
     <tbody class="govuk-table__body">
     {%- for stop in day.stops -%}
         {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
-    {%- else -%}
-        <tr>
-            {%- for i in 1..8 -%}
-                {{- tableCell('-') -}}
-            {%- endfor -%}
-        </tr>
     {%- endfor -%}
     </tbody>
 </table>
