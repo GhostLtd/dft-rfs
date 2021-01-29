@@ -454,7 +454,7 @@ domestic:
 
     number-of-stops:
       heading: Number of stops
-      help: ''
+      help: 'If the vehicle made more than 99 of a particular type of stop during the journey, please enter 99 in the relevant field(s)'
       number-of-stops-loading:
         label: 'Goods loaded only'
         help: 'The number of times goods were loaded onto the vehicle only. If goods were loaded at the start of your journey, it should be included in this number.'
