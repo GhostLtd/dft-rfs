@@ -1,10 +1,10 @@
 {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
-{%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
+{%- from "admin/domestic/macros.html.twig" import dayStopTableHeadingAndCaption -%}
 
 {%- set isNorthernIreland = survey.isNorthernIreland -%}
 
-<table class="govuk-table admin-journeys-table govuk-!-margin-bottom-{{ (showActions ?? true) ? 5 : 9 }}" id="{{ day.id }}">
-    {{- dayJourneyTableHeadingAndCaption(null, survey, day, 'stop') -}}
+<table class="govuk-table journeys-table govuk-!-margin-bottom-{{ (showActions ?? true) ? 5 : 9 }}" id="{{ day.id }}">
+    {{- dayStopTableHeadingAndCaption(null, survey, day) -}}
     <tbody class="govuk-table__body">
     {%- for stop in day.stops -%}
         {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}

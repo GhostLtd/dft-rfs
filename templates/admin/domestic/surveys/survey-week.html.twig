@@ -1,6 +1,6 @@
 {% from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy %}
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell, actionLinks %}
-{% from "admin/domestic/macros.html.twig" import locationAndStatus, dayJourneyTableCaption, dayJourneyTableHeading %}
+{% from "admin/domestic/macros.html.twig" import locationAndStatus, dayJourneyTableCaption %}
 
 {% for dayNumber in 1..7 -%}
     {%- set day = survey.response.dayByNumber(dayNumber) -%}
@@ -9,7 +9,7 @@
         {%- elseif day and day.stops|length > 0 -%}
             {%- include "admin/domestic/includes/day-stop.html.twig" -%}
         {% else %}
-            <table class="govuk-table admin-journeys-table">
+            <table class="govuk-table journeys-table">
                 <thead class="govuk-table__head">
                 {{ dayJourneyTableCaption(dayNumber, survey) }}
                 </thead>

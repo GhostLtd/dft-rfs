@@ -19,10 +19,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DayController extends AbstractController
 {
+    public const ROUTE_PREFIX = 'app_domestic_day_';
+
+    public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
+    public const VIEW_ROUTE = self::ROUTE_PREFIX . 'view';
+
     /**
-     * @Route("")
+     * @Route("", name=self::VIEW_ROUTE)
      */
-    public function view(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
+    public function view(EntityManagerInterface $entityManager, $dayNumber): Response
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -39,12 +44,12 @@ class DayController extends AbstractController
             ]);
         } else {
             // no day, redirect to add
-            return $this->redirectToRoute('app_domesticsurvey_day_add', ['dayNumber' => $dayNumber]);
+            return $this->redirectToRoute(DayController::ADD_ROUTE, ['dayNumber' => $dayNumber]);
         }
     }
 
     /**
-     * @Route("/add")
+     * @Route("/add", name=self::ADD_ROUTE)
      */
     public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
     {

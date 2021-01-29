@@ -6,10 +6,14 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\PasscodeUser;
+use App\Repository\Domestic\DayRepository;
+use App\Repository\Domestic\DaySummaryRepository;
+use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\FormWizardStateInterface;
-use Exception;
+use Doctrine\ORM\NonUniqueResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,20 +26,18 @@ use Symfony\Component\Workflow\WorkflowInterface;
  */
 class DaySummaryController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_NAME = 'app_domesticsurvey_daysummary_index';
+    public const ROUTE_PREFIX = 'app_domesticsurvey_daysummary_';
 
-    protected $dayNumber;
+    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
+    public const START_ROUTE = self::ROUTE_PREFIX.'start';
+    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
+
+    protected int $dayNumber;
 
     /**
-     * @Route("/summary/start", name="app_domesticsurvey_daysummary_start")
-     * @Route("/summary/{state}", name=self::ROUTE_NAME)
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     * @param WorkflowInterface $domesticSurveyDaySummaryStateMachine
-     * @param Request $request
-     * @param $dayNumber
-     * @param null | string $state
-     * @return Response
-     * @throws Exception
+     * @Route("/summary/start", name=self::START_ROUTE)
+     * @Route("/summary/{state}", name=self::WIZARD_ROUTE)
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())") // TODO: Is this needed??
      */
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {
@@ -43,27 +45,25 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state);
     }
 
-    /**
-     * @return FormWizardStateInterface
-     */
     protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
+        $daySummary = $this->getDaySummary();
 
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $day = $this->entityManager->getRepository(Day::class)->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
-        if (!$day) throw new NotFoundHttpException();
 
-        $daySummary = $this->entityManager->getRepository(DaySummary::class)->getBySurveyAndDay($user->getDomesticSurvey(), $day);
-        if (is_null($formWizard->getSubject())) {
+        $subject = $formWizard->getSubject();
+
+        if (is_null($subject)) {
             $formWizard->setSubject($daySummary);
+            $subject = $daySummary;
         }
-        $formWizard->getSubject()->setDay($daySummary->getDay());
-        if ($formWizard->getSubject()->getId()) {
+
+        $subject->setDay($daySummary->getDay());
+
+        if ($subject->getId()) {
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-            $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
+            $formWizard->setSubject($this->entityManager->merge($subject));
         }
 
         return $formWizard;
@@ -71,11 +71,57 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::ROUTE_NAME, ['dayNumber' => $this->dayNumber, 'state' => $state]);
+        return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'state' => $state]);
     }
 
     protected function getCancelUrl(): ?Response
     {
-        return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $this->dayNumber]);
+        return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
+    }
+
+    /**
+     * @Route("/delete-summary-day", name=self::DELETE_ROUTE)
+     * @Template("domestic_survey/day_summary/delete.html.twig")
+     */
+    public function delete(string $dayNumber, DeleteDaySummaryConfirmAction $confirmAction, Request $request)
+    {
+        $this->dayNumber = intval($dayNumber);
+        $daySummary = $this->getDaySummary();
+
+        return $confirmAction
+            ->setSubject($daySummary)
+            ->controller(
+                $request,
+                fn() => $this->generateUrl('app_domesticsurvey_index'),
+                fn() => $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
+            );
+    }
+
+    protected function getDaySummary(): DaySummary
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof PasscodeUser) {
+            throw new NotFoundHttpException();
+        }
+
+        /** @var DayRepository $dayRepository */
+        $dayRepository = $this->entityManager->getRepository(Day::class);
+
+        /** @var DaySummaryRepository $daySummaryRepository */
+        $daySummaryRepository = $this->entityManager->getRepository(DaySummary::class);
+
+        try {
+            $day = $dayRepository->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
+            $daySummary = $day ? $daySummaryRepository->getBySurveyAndDay($user->getDomesticSurvey(), $day) : null;
+
+            if (!$daySummary) {
+                throw new NotFoundHttpException();
+            }
+        } catch (NonUniqueResultException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return $daySummary;
     }
 }

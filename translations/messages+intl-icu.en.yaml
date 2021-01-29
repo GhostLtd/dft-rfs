@@ -24,6 +24,7 @@ common:
     change: Change
     continue: Continue
     delete: Delete
+    delete-summary: Delete Day
     edit: Edit
     move-up: Move up
     move-down: Move down

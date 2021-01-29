@@ -1,0 +1,75 @@
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
+
+{%- set showActions = showActions ?? true -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {% set urlChange = url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}) %}
+
+    {{ row(showActions, 'domestic.day-view.start-location',
+        (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
+        {(urlChange): 'common.actions.change'
+    }) }}
+    {{ row(showActions, 'domestic.day-view.destination-location',
+        (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — ')),
+        {(urlChange): 'common.actions.change'
+    }) }}
+    {{ row(showActions, 'domestic.day-view.furthest-stop', day.summary.furthestStop | default('-'),
+        {(urlChange): 'common.actions.change'}
+    )}}
+
+    {% set urlChange = url('app_domesticsurvey_daysummary_wizard', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_DISTANCE_TRAVELLED')}) %}
+    {{ row(showActions, 'domestic.day-view.distance-travelled',
+        ("domestic.day-view.distance.loaded.#{day.summary.distanceTravelledLoaded.unit}" |
+        trans({value: day.summary.distanceTravelledLoaded.value|number_format}))
+        ~ ', ' ~
+        ("domestic.day-view.distance.unloaded.#{day.summary.distanceTravelledUnloaded.unit}" |
+        trans({value: day.summary.distanceTravelledUnloaded.value|number_format})),
+        {(urlChange): 'common.actions.change'}
+    ) }}
+
+    {% set urlChange = url('app_domesticsurvey_daysummary_wizard', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_GOODS_DESCRIPTION')}) %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
+        <dd class="govuk-summary-list__value">
+            {{- day.summary | formatGoodsDescription }}
+            {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
+            {%- if day.summary.hazardousGoodsCode %} — <em>{{ day.summary.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), day.summary.hazardousGoodsCode) | trans }}{% endif %}
+        </dd>
+        {%- if showActions -%}
+        <dd class="govuk-summary-list__actions">
+            {{ actionLinks({(urlChange): 'common.actions.change'}) }}
+        </dd>
+        {%- endif -%}
+    </div>
+    {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
+    {{ row(showActions, 'domestic.day-view.cargo-type', choiceLabel(cargoChoices, day.summary.cargoTypeCode) | trans, {(urlChange): 'common.actions.change'}) }}
+
+    {%- set weightOfGoods -%}
+        {%- set parts = [] %}
+        {%- if day.summary.weightOfGoodsLoaded -%}
+            {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.loaded' | trans({value: day.summary.weightOfGoodsLoaded|number_format})]) -%}
+        {%- endif -%}
+        {%- if day.summary.weightOfGoodsUnloaded -%}
+            {%- set parts = parts | merge(['domestic.day-view.weight-of-goods.unloaded' | trans({value: day.summary.weightOfGoodsUnloaded|number_format})]) -%}
+        {%- endif -%}
+        {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
+    {%- endset -%}
+    {% set urlChange = url('app_domesticsurvey_daysummary_wizard', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_GOODS_WEIGHT')}) %}
+    {{ row(showActions, 'domestic.day-view.weight-of-goods.label', weightOfGoods, {(urlChange): 'common.actions.change'}) }}
+
+    {%- set numberOfStops -%}
+        {%- set parts = [] %}
+        {%- if day.summary.numberOfStopsLoading -%}
+            {%- set parts = parts | merge(['domestic.day-view.number-of-stops.loading' | trans({value: day.summary.numberOfStopsLoading})]) -%}
+        {%- endif -%}
+        {%- if day.summary.numberOfStopsUnloading -%}
+            {%- set parts = parts | merge(['domestic.day-view.number-of-stops.unloading' | trans({value: day.summary.numberOfStopsUnloading})]) -%}
+        {%- endif -%}
+        {%- if day.summary.numberOfStopsLoadingAndUnloading -%}
+            {%- set parts = parts | merge(['domestic.day-view.number-of-stops.loading-and-unloading' | trans({value: day.summary.numberOfStopsLoadingAndUnloading})]) -%}
+        {%- endif -%}
+        {%- if parts is empty %}-{% else %}{{ parts|join(', ') }}{% endif -%}
+    {%- endset -%}
+    {% set urlChange = url('app_domesticsurvey_daysummary_wizard', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_NUMBER_OF_STOPS')}) %}
+    {{ row(showActions, 'domestic.day-view.number-of-stops.label', numberOfStops, {(urlChange): 'common.actions.change'}) }}
+</dl>

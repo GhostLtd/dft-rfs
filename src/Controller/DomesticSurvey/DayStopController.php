@@ -91,6 +91,6 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $this->dayNumber]);
+        return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
     }
 }
