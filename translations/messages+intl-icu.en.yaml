@@ -213,7 +213,11 @@ domestic:
         scrapped-or-stolen: 'No - it has been scrapped or stolen'
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'
-
+        short:
+          yes: 'Yes'
+          scrapped-or-stolen: 'No - scrapped/stolen'
+          sold: 'No - sold'
+          on-hire: 'No - on hire'
     reason-for-empty-survey:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'

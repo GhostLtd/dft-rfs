@@ -12,7 +12,10 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? survey.response.isInPossessionOfVehicle | formatBool | trans  : '-', {}) }}
+            {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
+                '-' :
+                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
+            }}
             {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? survey.response.businessNature : '-', {}) }}
             {{ tableCell(survey.isBusinessAndVehicleDetailsComplete ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
             {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
