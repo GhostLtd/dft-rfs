@@ -1,0 +1,19 @@
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {%- with {stop: subject} -%}
+        {%- set survey = stop.day.response.survey -%}
+
+        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+
+        {%- with {showActions: false, marginBottom: 4, day: stop.day} -%}
+            {%- include "domestic_survey/includes/day-stop.html.twig" -%}
+        {%- endwith -%}
+
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{% endblock %}

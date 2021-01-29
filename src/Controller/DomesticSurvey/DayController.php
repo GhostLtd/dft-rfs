@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DayController extends AbstractController
 {
-    public const ROUTE_PREFIX = 'app_domestic_day_';
+    public const ROUTE_PREFIX = 'app_domesticsurvey_day_';
 
     public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
     public const VIEW_ROUTE = self::ROUTE_PREFIX . 'view';
