@@ -114,8 +114,8 @@ unit:
 
 passcode:
   login:
-    label: Enter your survey passcode
-    help: This code is supplied in the letter you received
+    label: Enter your survey access codes
+    help: These codes are supplied in the letter you received
     passcode:
       0.label: First code
       1.label: Second code
