@@ -10,6 +10,7 @@ use App\Entity\PasscodeUser;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\RegistrationMarkHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -52,8 +53,11 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     {
         /** @var Survey $survey */
         $survey = $event->getSubject();
-        $personalisation =                 [
-            'invitation_link' => "http://{$this->frontendHostname}/login",
+
+        $personalisation = [
+            'registrationMark' => (new RegistrationMarkHelper($survey->getRegistrationMark()))->getFormattedRegistrationMark(),
+            'startDate' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
+            'endDate' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
             'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
