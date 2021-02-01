@@ -25,11 +25,11 @@ steps:
     - name: node
       id: 'sub-env-vars'
       entrypoint: yarn
-      args: ["run", "append-env-subs"]
+      args: ["run", "build-env-subs"]
       env:
           - 'APP_ENV=prod'
-          - 'FRONTEND_HOSTNAME=${_HOSTNAME}'
-          - 'ADMIN_HOSTNAME=admin.${_HOSTNAME}'
+          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
+          - 'ADMIN_HOSTNAME=admin.${_BASE_HOSTNAME}'
           - 'DATABASE_URL=${_DATABASE_URL}'
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
           - 'APP_SECRET=${_APP_SECRET}'
