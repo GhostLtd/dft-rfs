@@ -35,9 +35,9 @@ class MessengerCronController extends AbstractController
             $kernel,
             'messenger:consume',
             [
-                '--limit' => 10,
+//                '--limit' => 10,
                 '--memory-limit' => '128M',
-                '--time-limit' => 300,
+                '--time-limit' => 290, // die before the next scheduled run time (5 minutes less 10 seconds)
                 'receivers' => ['async'],
             ]
         );
