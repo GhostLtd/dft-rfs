@@ -21,17 +21,30 @@ steps:
       id: 'copy-project-deploy-files'
       args: ['gsutil', 'rsync', 'config/gcloud-build/$PROJECT_ID/', '.']
       waitFor: ['copy-common-deploy-files']
+    # add protected/substituted env vars
+    - name: node
+      id: 'sub-env-vars'
+      entrypoint: yarn
+      args: ["run", "append-env-subs"]
+      env:
+          - 'APP_ENV=prod'
+          - 'FRONTEND_HOSTNAME=${_HOSTNAME}'
+          - 'ADMIN_HOSTNAME=admin.${_HOSTNAME}'
+          - 'DATABASE_URL=${_DATABASE_URL}'
+          - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
+          - 'APP_SECRET=${_APP_SECRET}'
+      waitFor: ['copy-project-deploy-files']
 
     # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-default-service'
       args: ["app", "deploy", "app.default.yaml"]
-      waitFor: ['node-build', 'copy-project-deploy-files']
+      waitFor: ['node-build', 'sub-env-vars']
     # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
       args: ["app", "deploy", "app.admin.yaml"]
-      waitFor: ['node-build', 'copy-project-deploy-files']
+      waitFor: ['node-build', 'sub-env-vars']
 
 ## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
 # the cloud build service account needs iam.serviceAccountUser role to perform this - but we don't have permission to add that role!
