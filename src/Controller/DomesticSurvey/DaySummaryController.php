@@ -5,6 +5,7 @@ namespace App\Controller\DomesticSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
@@ -49,9 +50,10 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     {
         $daySummary = $this->getDaySummary();
 
+        $day = $daySummary->getDay();
+
         /** @var DaySummaryState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-
         $subject = $formWizard->getSubject();
 
         if (is_null($subject)) {
@@ -59,7 +61,18 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             $subject = $daySummary;
         }
 
-        $subject->setDay($daySummary->getDay());
+        if (!$day) {
+            $day = (new Day())
+                ->setResponse($this->getSurvey()->getResponse())
+                ->setHasMoreThanFiveStops(true)
+                ->setNumber($this->dayNumber);
+
+            $this->entityManager->persist($day);
+
+            $day->setSummary($subject);
+        }
+
+        $subject->setDay($day);
 
         if ($subject->getId()) {
             // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
@@ -99,12 +112,6 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     protected function getDaySummary(): DaySummary
     {
-        $user = $this->getUser();
-
-        if (!$user instanceof PasscodeUser) {
-            throw new NotFoundHttpException();
-        }
-
         /** @var DayRepository $dayRepository */
         $dayRepository = $this->entityManager->getRepository(Day::class);
 
@@ -112,16 +119,35 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
         $daySummaryRepository = $this->entityManager->getRepository(DaySummary::class);
 
         try {
-            $day = $dayRepository->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
-            $daySummary = $day ? $daySummaryRepository->getBySurveyAndDay($user->getDomesticSurvey(), $day) : null;
+            $survey = $this->getSurvey();
+            $day = $dayRepository->getBySurveyAndDayNumber($survey, $this->dayNumber);
 
-            if (!$daySummary) {
-                throw new NotFoundHttpException();
+            if ($day) {
+                $daySummary = $daySummaryRepository->getBySurveyAndDay($survey, $day);
             }
+
+            if (!$day || !$daySummary) {
+                $daySummary = (new DaySummary());
+
+                if ($day) {
+                    $daySummary->setDay($day);
+                }
+            }
+
+            return $daySummary;
         } catch (NonUniqueResultException $e) {
             throw new NotFoundHttpException();
         }
+    }
 
-        return $daySummary;
+    protected function getSurvey(): Survey
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof PasscodeUser) {
+            throw new NotFoundHttpException();
+        }
+
+        return $user->getDomesticSurvey();
     }
 }

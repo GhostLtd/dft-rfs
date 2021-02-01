@@ -5,6 +5,7 @@ namespace App\Controller\DomesticSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use App\Repository\Domestic\DayRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
@@ -67,6 +68,15 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $subject = $stop; // No subject, or we've changed subject
         }
 
+        if (!$day) {
+            $day = (new Day())
+                ->setResponse($this->getSurvey()->getResponse())
+                ->setHasMoreThanFiveStops(false)
+                ->setNumber($this->dayNumber);
+
+            $this->entityManager->persist($day);
+        }
+
         $subject->setDay($day);
         $formWizard->setSubject($subject);
 
@@ -120,23 +130,33 @@ class DayStopController extends AbstractSessionStateWorkflowController
         /** @var DayRepository $dayRepository */
         $dayRepository = $this->entityManager->getRepository(Day::class);
 
-        $user = $this->getUser();
+        try {
+            $day = $dayRepository->getBySurveyAndDayNumber($this->getSurvey(), $this->dayNumber);
 
-        if ($user instanceof PasscodeUser) {
-            try {
-                $day = $dayRepository->getBySurveyAndDayNumber($user->getDomesticSurvey(), $this->dayNumber);
+            if ($day) {
+                $stop = $this->stopNumber === 'add' ?
+                    (new DayStop())->setDay($day) :
+                    $day->getStopByNumber($this->stopNumber);
 
-                if ($day) {
-                    $stop = $this->stopNumber === 'add' ? (new DayStop())->setDay($day) : $day->getStopByNumber($this->stopNumber);
-
-                    if ($stop) {
-                        return $stop;
-                    }
+                if ($stop) {
+                    return $stop;
                 }
-
-            } catch (NonUniqueResultException $e) {}
-        }
+            } else {
+                return (new DayStop());
+            }
+        } catch (NonUniqueResultException $e) {}
 
         throw new NotFoundHttpException();
+    }
+
+    protected function getSurvey(): Survey
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof PasscodeUser) {
+            throw new NotFoundHttpException();
+        }
+
+        return $user->getDomesticSurvey();
     }
 }
