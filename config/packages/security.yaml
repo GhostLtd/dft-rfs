@@ -62,7 +62,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## General
-        - { path: ^/cron(/.*)?$, allow_if: "request.headers.get('X-Appengine-Cron') === 'true'" }
         - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         ## Frontend firewall

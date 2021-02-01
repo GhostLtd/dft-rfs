@@ -3,6 +3,7 @@
 namespace App\Controller\Cron;
 
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -13,11 +14,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * All /cron urls are secured by symfony's security access_control rules
- *
  * Class CronController
  * @package App\Controller
- * @Route("/cron")
+ * @Route("/cron",
+ *      condition="(request.headers.get('X-Appengine-Cron') === 'true') or (request.headers.get('X-Cloudscheduler') === 'true')"
+ * )
  */
 class MessengerCronController extends AbstractController
 {
