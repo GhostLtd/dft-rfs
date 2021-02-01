@@ -1,7 +1,5 @@
 front_end:
     resource: ../../src/Controller/
-    exclude:
-        - ../../src/Controller/Admin/
     type: annotation
     host: '%frontend_hostname%'
 
@@ -9,7 +7,10 @@ admin:
     resource: ../../src/Controller/Admin/
     type: annotation
     host: '%admin_hostname%'
-#    name_prefix: admin_
+
+cron:
+    resource: ../../src/Controller/Cron/
+    type: annotation
 
 kernel:
     resource: ../../src/Kernel.php

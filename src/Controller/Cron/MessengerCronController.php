@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Cron;
 
-use App\Features;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -21,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package App\Controller
  * @Route("/cron")
  */
-class CronController extends AbstractController
+class MessengerCronController extends AbstractController
 {
     /**
      * @Route("/messenger/consume")
