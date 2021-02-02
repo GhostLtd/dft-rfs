@@ -1172,3 +1172,32 @@ vehicle:
     car: 'Car transporter'
     tipper: 'Tipper'
     other: 'Other'
+
+errors:
+  http-not-found:
+    title: Page not found
+    heading: Page not found
+    copy: |-
+      If you typed the web address, check it is correct.
+
+      If you pasted the web address, check you copied the entire address.
+  internal-server-error:
+    title: Sorry, there is a problem with the service
+    heading: Sorry, there is a problem with the service
+    copy: |-
+      Try again later.
+  unavailable:
+    title: Sorry, the service is unavailable
+    heading: Sorry, the service is unavailable
+    copy: |-
+      Try again later.
+  forbidden:
+    title: Access denied
+    heading: Access denied
+    copy: |-
+      Sorry - you do not have permission to access this page
+  unauthorised:
+    title: Unauthorised
+    heading: Unauthorised
+    copy: |-
+      You need to be logged in to access this page
