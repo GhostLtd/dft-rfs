@@ -154,7 +154,11 @@ class DvlaImporter
         $normalizer = new ObjectNormalizer();
         /** @var Survey $survey */
         $survey = $normalizer->denormalize($surveyOptions, Survey::class);
+        $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
+        $surveyPeriodEnd->add(new \DateInterval('P6D'));
+
         return $survey
+            ->setSurveyPeriodEnd($surveyPeriodEnd)
             ->setRegistrationMark($surveyData[self::COL_REG_MARK])
             ->setInvitationAddress($this->createAddress($surveyData))
             ;
