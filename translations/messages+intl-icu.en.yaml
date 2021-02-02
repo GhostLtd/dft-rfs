@@ -114,6 +114,11 @@ common:
     cancelled-notification:
       heading: Passcode not reset
       content: The request to reset the passcode was cancelled
+  help:
+    summary: 'How can I get help?'
+    text:
+      call: 'For help with this survey, call'
+      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
 
 unit:
   distance:
@@ -604,11 +609,10 @@ domestic:
       heading: Day summary not deleted
       content: The request to delete the day summary was cancelled
   help:
-    summary: 'How can I get help?'
     text:
-      call: 'For help with this survey call'
       phone-number: '0207 944 8233'
-      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
+  general-help:
+    text.call: 'For help with a domestic survey, call'
 
 
 # Pre-Enquiry
@@ -655,6 +659,11 @@ international:
   buttons:
     add-vehicles: Add Vehicles
     submit-survey: Submit Survey
+  help:
+    text:
+      phone-number: '0207 944 8580'
+  general-help:
+    text.call: 'For help with an international survey, call'
 
   correspondence-and-business-details:
     title: Correspondence and Business Details
