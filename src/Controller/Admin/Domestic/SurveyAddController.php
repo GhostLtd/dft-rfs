@@ -4,7 +4,6 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
-use App\Repository\PasscodeUserRepository;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +20,7 @@ class SurveyAddController extends AbstractController
     /**
      * @Route("", name="survey_add")
      */
-    public function add(Request $request, PasscodeUserRepository $passcodeUserRepository, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -36,7 +35,7 @@ class SurveyAddController extends AbstractController
                 }
 
                 $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
-                $surveyPeriodEnd->add(new DateInterval('P7D'));
+                $surveyPeriodEnd->add(new DateInterval('P6D'));
 
                 $survey
                     ->setSurveyPeriodEnd($surveyPeriodEnd)
