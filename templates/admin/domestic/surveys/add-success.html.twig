@@ -10,7 +10,7 @@
     <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark|formatRegMark) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y')) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y')) }}

@@ -102,6 +102,18 @@ common:
     body-type: Vehicle/trailer body type
     gross-weight: Gross vehicle weight
     carrying-capacity: Carrying capacity
+  passcode-reset:
+    title: Reset passcode
+    heading-delete: Reset passcode?
+    confirmation: "Are you sure you want to this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
+    confirm.label: Yes, reset the passcode
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Passcode successfully reset
+      content: The passcode was successfully reset
+    cancelled-notification:
+      heading: Passcode not reset
+      content: The request to reset the passcode was cancelled
 
 unit:
   distance:

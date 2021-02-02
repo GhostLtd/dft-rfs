@@ -94,8 +94,8 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
 
             $confirm = $form->get('confirm');
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
-                $redirectUrl = $confirmedActionUrlCallback();
                 $this->doConfirmedAction();
+                $redirectUrl = $confirmedActionUrlCallback();
 
                 $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
                 return new RedirectResponse($redirectUrl);

@@ -11,14 +11,17 @@ use App\Form\Admin\DomesticSurvey\Edit\InitialDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\BusinessDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\ListPage\Domestic\SurveyListPage;
+use App\Utility\ConfirmAction\Common\Admin\ResetPasscodeConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,10 +31,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveyController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_domestic_survey_';
-    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const LIST_ROUTE = self::ROUTE_PREFIX.'list';
     public const LOGS_ROUTE = self::ROUTE_PREFIX.'logs';
     public const VIEW_ROUTE = self::ROUTE_PREFIX.'view';
+
+    public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
+    public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
 
     public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_enter';
     public const ENTER_BUSINESS_AND_VEHICLE_ROUTE = self::ROUTE_PREFIX.'business_and_vehicle_enter';
@@ -91,6 +96,45 @@ class SurveyController extends AbstractController
             'survey' => $survey,
             'log' => $blameLogRepository->getAllLogsForEntity($survey),
         ]);
+    }
+
+    /**
+     * @Route("/{surveyId}/reset-passcode", name=self::RESET_PASSCODE_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/domestic/reset_passcode/reset.html.twig")
+     */
+    public function resetPasscode(ResetPasscodeConfirmAction $confirmAction, Request $request, Survey $survey, SessionInterface $session)
+    {
+        return $confirmAction
+            ->setSubject($survey->getPasscodeUser())
+            ->controller(
+                $request,
+                function() use ($confirmAction, $survey, $session) {
+                    $session->set("reset-passcode.{$survey->getId()}", $confirmAction->getPasscode());
+                    return $this->generateUrl(self::RESET_PASSCODE_SUCCESS_ROUTE, ['surveyId' => $survey->getId()]);
+                },
+                fn() => $this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()])
+            );
+    }
+
+    /**
+     * @Route("/{surveyId}/reset-passcode/success", name=self::RESET_PASSCODE_SUCCESS_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/domestic/reset_passcode/success.html.twig")
+     */
+    public function resetPasscodeSuccess(SessionInterface $session, Survey $survey): array
+    {
+        $key = "reset-passcode.{$survey->getId()}";
+        $code = $session->remove($key);
+
+        if (!$code) {
+            throw new NotFoundHttpException();
+        }
+
+        return [
+            'survey' => $survey,
+            'code' => $code,
+        ];
     }
 
     /**
