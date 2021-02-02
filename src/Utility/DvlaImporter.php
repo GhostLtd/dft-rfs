@@ -58,7 +58,7 @@ class DvlaImporter
 
         return [
             'surveyOptions' => $this->getAggregateSurveyOptionsAndValidate($form),
-            'importData' => $this->getDataFromFile($file),
+            'importData' => $this->getDataFromUploadedFile($file),
             'filename' => $this->getOriginalFilename($file),
         ];
     }
@@ -106,9 +106,9 @@ class DvlaImporter
         if (preg_match($regex, $originalFilename, $matches)) {
             $matches = array_intersect_key($matches, array_fill_keys(['ni', 'week', 'gendate'], 0));
             $isNI = strtolower($matches['ni']) === 'ni';
-            $week = intval($matches['week']);
+            $week = intval($matches['week']) - 1;
             $fileGenDate = new \DateTime($matches['gendate']);
-            $year = ($week < $fileGenDate->format('W'))
+            $year = ($week < ($fileGenDate->format('W') - 1))
                 ? (clone $fileGenDate)->modify('+1 year')->format('Y')
                 : $fileGenDate->format('Y');
             return [
@@ -120,13 +120,17 @@ class DvlaImporter
         return [];
     }
 
-    public function getDataFromFile(?UploadedFile $file)
+    public function getDataFromUploadedFile(?UploadedFile $file)
     {
         if (!$file) {
             return null;
         }
+        return $this->getDataFromFilename($file->getRealPath());
+    }
+
+    public function getDataFromFilename($filename) {
         $surveyData = [];
-        $handle = fopen($file->getRealPath(), "r");
+        $handle = fopen($filename, "r");
         while(!feof($handle)){
             $line = fgets($handle);
             if (empty($line)) continue;

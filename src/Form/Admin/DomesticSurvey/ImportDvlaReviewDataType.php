@@ -37,7 +37,7 @@ class ImportDvlaReviewDataType extends AbstractType
                 ->add('review_data', Gds\ChoiceType::class, [
                     'data' => array_keys($options['dvla_data']),
                     'multiple' => true,
-                    'help' => "Imported from <kbd>{$options['dvla_filename']}</kbd>",
+                    'help' => count($options['dvla_data']) . " records imported from <kbd>{$options['dvla_filename']}</kbd>",
                     'help_html' => true,
                     'label' => 'Data found in DVLA file',
                     'label_attr' => ['class' => 'govuk-label--m'],
