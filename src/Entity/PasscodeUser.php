@@ -156,6 +156,9 @@ class PasscodeUser implements UserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+
+        // To make sure that entityManager tries to flush this change, so that the password-hash subscriber gets triggered.
+        $this->password = null;
         return $this;
     }
 

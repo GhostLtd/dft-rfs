@@ -2,9 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\Address;
 use App\Entity\Domestic\Survey;
-use App\Entity\LongAddress;
 use App\Repository\PasscodeUserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -65,7 +63,7 @@ class CreateDomesticSurveyCommand extends Command
 //            )
             ->setRegistrationMark($reg)
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
-            ->setSurveyPeriodEnd(new DateTime('now +14 days'))
+            ->setSurveyPeriodEnd(new DateTime('now +13 days'))
             ->setIsNorthernIreland(false)
             ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
         ;

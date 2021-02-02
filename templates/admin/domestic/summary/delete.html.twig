@@ -2,7 +2,6 @@
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
-    {%- from "admin/domestic/macros.html.twig" import dayJourneyTableHeadingAndCaption -%}
 
     {%- with {summary: subject} -%}
         {%- set survey = summary.day.response.survey -%}

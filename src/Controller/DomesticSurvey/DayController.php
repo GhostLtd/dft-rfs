@@ -19,10 +19,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DayController extends AbstractController
 {
+    public const ROUTE_PREFIX = 'app_domesticsurvey_day_';
+
+    public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
+    public const VIEW_ROUTE = self::ROUTE_PREFIX . 'view';
+
     /**
-     * @Route("")
+     * @Route("", name=self::VIEW_ROUTE)
      */
-    public function view(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
+    public function view(EntityManagerInterface $entityManager, $dayNumber): Response
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -39,33 +44,17 @@ class DayController extends AbstractController
             ]);
         } else {
             // no day, redirect to add
-            return $this->redirectToRoute('app_domesticsurvey_day_add', ['dayNumber' => $dayNumber]);
+            return $this->redirectToRoute(DayController::ADD_ROUTE, ['dayNumber' => $dayNumber]);
         }
     }
 
     /**
-     * @Route("/add")
+     * @Route("/add", name=self::ADD_ROUTE)
      */
-    public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
+    public function add(Request $request, $dayNumber): Response
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-        // load the survey
-        $survey = $user->getDomesticSurvey();
-
-        // user might have navigated back in order to change answer... lets let them change it.
-
-        // fetch day for survey/dayNumber
-        $day = $entityManager->getRepository(Day::class)->findOneBy(['number' => $dayNumber, 'response' => $survey->getResponse()]);
-
-        if (!$day) {
-            $day = (new Day())
-                ->setNumber($dayNumber)
-                ->setResponse($survey->getResponse());
-        }
-
         /** @var Form $form */
-        $form = $this->createForm(NumberOfStopsType::class, $day);
+        $form = $this->createForm(NumberOfStopsType::class, null, ['day_number' => $dayNumber]);
 
         $form->handleRequest($request);
         $clickedButton = $form->getClickedButton();
@@ -75,12 +64,12 @@ class DayController extends AbstractController
                 return $this->redirectToRoute('app_domesticsurvey_index');
             }
             if ($form->isValid()) {
-                $entityManager->persist($day);
-                $entityManager->flush();
+                $data = $form->getData();
+                $hasMoreThanFiveStops = $data['hasMoreThanFiveStops'];
 
-                if ($day->getHasMoreThanFiveStops() === true) {
+                if ($hasMoreThanFiveStops === true) {
                     return $this->redirectToRoute('app_domesticsurvey_daysummary_start', ['dayNumber' => $dayNumber]);
-                } else if ($day->getHasMoreThanFiveStops() === false) {
+                } else if ($hasMoreThanFiveStops === false) {
                     return $this->redirectToRoute('app_domesticsurvey_daystop_start', ['dayNumber' => $dayNumber]);
                 }
             }

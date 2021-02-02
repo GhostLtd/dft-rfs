@@ -7,7 +7,6 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -31,7 +30,7 @@ class DaySummaryRepository extends ServiceEntityRepository
      */
     public function getBySurveyAndDay(Survey $survey, Day $day)
     {
-        $daySummary = $this->createQueryBuilder('day_summary')
+        return $this->createQueryBuilder('day_summary')
             ->select('day_summary, day')
             ->leftJoin('day_summary.day', 'day')
             ->leftJoin('day.response', 'response')
@@ -44,11 +43,6 @@ class DaySummaryRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
-        if (is_null($daySummary)) {
-            $daySummary = new DaySummary();
-            $daySummary->setDay($day);
-        }
-        return $daySummary;
     }
 
     // /**

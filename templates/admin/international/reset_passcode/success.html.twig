@@ -1,0 +1,17 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% block adminContent %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">Passcode changed</h1>
+
+    <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {%- include "admin/international/reset_passcode/includes/survey-basics.html.twig" -%}
+
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', code, {'row_class': 'access-code'}) }}
+    </dl>
+{% endblock %}
+

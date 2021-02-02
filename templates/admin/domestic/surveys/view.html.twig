@@ -37,6 +37,7 @@
         {%- elseif not hasVehicle %}
         <a class="govuk-button" href="{{ path('admin_domestic_survey_business_and_vehicle_enter', {surveyId: survey.id}) }}">Enter business and vehicle details</a>
         {%- endif -%}
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
     </div>
 
     {%- if tabs|default(false) -%}

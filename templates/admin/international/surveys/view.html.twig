@@ -21,13 +21,15 @@
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
     <div class="govuk-!-margin-bottom-9">
-        {%- with {marginBottom: hasInitialDetails ? 0 : 5} -%}
+        {%- with {marginBottom: 5} -%}
             {%- include "international_survey/includes/survey-basics.html.twig" -%}
         {%- endwith -%}
 
         {%- if not hasInitialDetails -%}
             <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
         {%- endif -%}
+
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
     </div>
 
     {%- if tabs is defined -%}

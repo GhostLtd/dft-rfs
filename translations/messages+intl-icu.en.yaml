@@ -24,6 +24,8 @@ common:
     change: Change
     continue: Continue
     delete: Delete
+    delete-summary: Delete Day
+    delete-stop: Delete Stop
     edit: Edit
     move-up: Move up
     move-down: Move down
@@ -101,6 +103,23 @@ common:
     gross-weight: Gross vehicle weight
     carrying-capacity: Carrying capacity
   start-now: Start now
+  passcode-reset:
+    title: Reset passcode
+    heading-delete: Reset passcode?
+    confirmation: "Are you sure you want to this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
+    confirm.label: Yes, reset the passcode
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Passcode successfully reset
+      content: The passcode was successfully reset
+    cancelled-notification:
+      heading: Passcode not reset
+      content: The request to reset the passcode was cancelled
+  help:
+    summary: 'How can I get help?'
+    text:
+      call: 'For help with this survey, call'
+      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
 
 unit:
   distance:
@@ -214,7 +233,11 @@ domestic:
         scrapped-or-stolen: 'No - it has been scrapped or stolen'
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'
-
+        short:
+          yes: 'Yes'
+          scrapped-or-stolen: 'No - scrapped/stolen'
+          sold: 'No - sold'
+          on-hire: 'No - on hire'
     reason-for-empty-survey:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
@@ -451,7 +474,7 @@ domestic:
 
     number-of-stops:
       heading: Number of stops
-      help: ''
+      help: 'If the vehicle made more than 99 of a particular type of stop during the journey, please enter 99 in the relevant field(s)'
       number-of-stops-loading:
         label: 'Goods loaded only'
         help: 'The number of times goods were loaded onto the vehicle only. If goods were loaded at the start of your journey, it should be included in this number.'
@@ -588,11 +611,10 @@ domestic:
       heading: Day summary not deleted
       content: The request to delete the day summary was cancelled
   help:
-    summary: 'How can I get help?'
     text:
-      call: 'For help with this survey call'
       phone-number: '0207 944 8233'
-      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
+  general-help:
+    text.call: 'For help with a domestic survey, call'
 
 
 # Pre-Enquiry
@@ -639,6 +661,11 @@ international:
   buttons:
     add-vehicles: Add Vehicles
     submit-survey: Submit Survey
+  help:
+    text:
+      phone-number: '0207 944 8580'
+  general-help:
+    text.call: 'For help with an international survey, call'
 
   correspondence-and-business-details:
     title: Correspondence and Business Details
@@ -1156,3 +1183,32 @@ vehicle:
     car: 'Car transporter'
     tipper: 'Tipper'
     other: 'Other'
+
+errors:
+  http-not-found:
+    title: Page not found
+    heading: Page not found
+    copy: |-
+      If you typed the web address, check it is correct.
+
+      If you pasted the web address, check you copied the entire address.
+  internal-server-error:
+    title: Sorry, there is a problem with the service
+    heading: Sorry, there is a problem with the service
+    copy: |-
+      Try again later.
+  unavailable:
+    title: Sorry, the service is unavailable
+    heading: Sorry, the service is unavailable
+    copy: |-
+      Try again later.
+  forbidden:
+    title: Access denied
+    heading: Access denied
+    copy: |-
+      Sorry - you do not have permission to access this page
+  unauthorised:
+    title: Unauthorised
+    heading: Unauthorised
+    copy: |-
+      You need to be logged in to access this page
