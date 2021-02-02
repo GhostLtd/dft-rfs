@@ -17,7 +17,7 @@
         "watch": "encore dev --watch",
         "build": "encore production --progress",
         "deploy-build": "encore production",
-        "build-env-subs": "printenv | grep -E '^(APP_ENV|FRONTEND_HOSTNAME|ADMIN_HOSTNAME|DATABASE_URL|ALPHAGOV_NOTIFY_API_KEY|APP_SECRET)=' > .env.local"
+        "build-env-subs": "printenv | grep -E '^APP_|^(?:FRONTEND_HOSTNAME|ADMIN_HOSTNAME|DATABASE_URL|ALPHAGOV_NOTIFY_API_KEY)=' > .env.local"
     },
     "dependencies": {
         "renderjson": "^1.4.0"

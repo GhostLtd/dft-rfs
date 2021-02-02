@@ -33,6 +33,7 @@ steps:
           - 'DATABASE_URL=${_DATABASE_URL}'
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
           - 'APP_SECRET=${_APP_SECRET}'
+          - 'APP_FEATURES=${_APP_FEATURES}'
       waitFor: ['copy-project-deploy-files']
 
     # deploy default service
