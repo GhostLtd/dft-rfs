@@ -802,7 +802,7 @@ international:
       heading: 'Survey period confirmation'
       help: "We’re only interested in vehicles that have made international trips that started within survey period."
       confirm:
-        label: 'Did this vehicle start any trips that started during your survey period?'
+        label: 'Did this vehicle make any trips that started during the survey period?'
         help: ''
       notification-banner:
         title: 'Information'

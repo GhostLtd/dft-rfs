@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CountriesTransittedType extends AbstractType
 {
-    const COUNTRY_CHOICES = ['FR','BE','NL','DE','IE','IT','ES','CZ','LU','AT'];
+    const COUNTRY_CHOICES = ['FR','BE','NL','DE','IE','IT','ES','CH','LU','AT'];
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
