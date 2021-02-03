@@ -36,6 +36,11 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     protected int $dayNumber;
 
     /**
+     * @var DaySummary
+     */
+    private DaySummary $daySummary;
+
+    /**
      * @Route("/summary/start", name=self::START_ROUTE)
      * @Route("/summary/{state}", name=self::WIZARD_ROUTE)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())") // TODO: Is this needed??
@@ -79,6 +84,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             $formWizard->setSubject($this->entityManager->merge($subject));
         }
 
+        $this->daySummary = $formWizard->getSubject();
         return $formWizard;
     }
 
@@ -89,6 +95,10 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
+        if (!$this->daySummary->getId()) {
+            // new summary on this day - redirect to dashbaord
+            return $this->redirectToRoute('app_domesticsurvey_index');
+        }
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller\DomesticSurvey;
 
+use App\Controller\Admin\Domestic\SurveyController;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
@@ -34,6 +35,8 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected string $dayNumber;
     protected string $stopNumber;
+
+    private ?DayStop $dayStop = null;
 
     /**
      * @Route(
@@ -87,6 +90,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $day->addStop($subject); // Ultimately causes stop->number to be set
         }
 
+        $this->dayStop = $formWizard->getSubject();
         return $formWizard;
     }
 
@@ -97,6 +101,11 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
+        if ($this->stopNumber === 'add' && count($this->dayStop->getDay()->getStops()) <= 1) {
+            // first stop on this day - redirect to dashbaord
+            return $this->redirectToRoute('app_domesticsurvey_index');
+        }
+
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
     }
 
