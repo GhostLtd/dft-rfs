@@ -83,10 +83,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-//        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
-//            $survey->setNotifiedDate(new \DateTime());
-//            $this->entityManager->flush();
-//        }
+        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
+            $survey->setNotifiedDate(new \DateTime());
+        }
     }
 
     public function onInteractiveLogin(InteractiveLoginEvent $event)
