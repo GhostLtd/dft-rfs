@@ -3,6 +3,7 @@
 namespace App\Form\Admin\InternationalSurvey;
 
 use App\Entity\Distance;
+use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\DataMapper\TripDataMapper;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
 use App\Form\ValueUnitType;
@@ -31,6 +32,19 @@ class TripType extends AbstractType
     {
         $this->addDirectionalFields($builder, 'outbound');
         $this->addDirectionalFields($builder, 'return');
+
+        $builder
+            ->add('origin', Gds\InputType::class, [
+                'label' => 'Initial origin',
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-input--width-20'],
+            ])
+            ->add('destination', Gds\InputType::class, [
+                'label' => 'Final destination',
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-input--width-20'],
+            ])
+        ;
 
         $this
             ->addFieldSet($builder, 'otherDetails', 'Other Details')
@@ -104,6 +118,7 @@ class TripType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'data_class' => Trip::class,
             'validation_groups' => ['admin_trip'],
         ]);
     }

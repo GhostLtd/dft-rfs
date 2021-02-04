@@ -29,16 +29,16 @@ class Trip implements BlameLoggable
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places"})
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
      */
     private $origin;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places"})
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
      */
     private $destination;
 
@@ -52,14 +52,14 @@ class Trip implements BlameLoggable
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundUkPort;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundForeignPort;
 
@@ -87,14 +87,14 @@ class Trip implements BlameLoggable
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnUkPort;
 
@@ -155,14 +155,14 @@ class Trip implements BlameLoggable
     private $actions;
 
     /**
-     * @Assert\Callback(groups={"trip_outbound_cargo_state"})
+     * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
      */
     public function validateOutboundCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'outbound');
     }
 
     /**
-     * @Assert\Callback(groups={"trip_return_cargo_state"})
+     * @Assert\Callback(groups={"trip_return_cargo_state", "admin_trip"})
      */
     public function validateReturnCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'return');
