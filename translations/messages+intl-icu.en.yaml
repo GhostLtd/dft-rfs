@@ -967,6 +967,7 @@ international:
       action: Loading and unloading of goods
       actions:
         add-action: Add loading or unloading action
+        add-loading-action: Add loading action
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle details
@@ -996,7 +997,7 @@ international:
       from-to: From {source} to {destination}
       stops: Stops
       help:
-        actions: "Please enter every time you loaded or unloaded goods on your international trip.\nPlease record these in the order that they occurred."
+        actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
 
     dates:
       heading: Dates of Trip

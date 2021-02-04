@@ -68,12 +68,18 @@
                 </div>
             {% endif %}
         {%- endif -%}
-        <p class="govuk-body">
+        <div>
             {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
             {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
-            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button">{{ 'international.trip.summary.actions.add-action'|trans }}</a>
+            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ 'international.trip.summary.actions.add-loading-action'|trans }}</a>
+        </div>
+
+        <hr class="govuk-!-margin-bottom-9">
+        <div>
+            {%- if trip.actions.count() > 1 -%}
             <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+            {%- endif -%}
             <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
-        </p>
+        </div>
     {% endif %}
 {% endblock %}
