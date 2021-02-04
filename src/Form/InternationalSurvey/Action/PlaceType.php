@@ -8,6 +8,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,6 +18,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 class PlaceType extends AbstractType
 {
     protected string $locale;
+    protected ?string $actionType; // Passed to the template via buildView(). Used to change the page titles.
 
     public function __construct(RequestStack $requestStack)
     {
@@ -25,6 +28,7 @@ class PlaceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $prefix = "international.action.place";
+        $this->actionType = null;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $prefix) {
             /** @var Action $action */
@@ -82,11 +86,23 @@ class PlaceType extends AbstractType
                 ]);
             }
 
+            $isLoading = $action->getLoading();
+            $placeLabel = "{$prefix}.place.label";
+
+            if ($isLoading !== null) {
+                if ($isLoading) {
+                    $this->actionType = 'loading';
+                    $placeLabel .= '-load';
+                } else {
+                    $this->actionType = 'unloading';
+                    $placeLabel .= '-unload';
+                }
+            }
 
             $form
                 ->add('place', Gds\FieldsetType::class, [
                     'inherit_data' => true,
-                    'label' => "{$prefix}.place.label",
+                    'label' => $placeLabel,
                     'label_attr' => ['class' => 'govuk-label--m'],
                 ])
             ;
@@ -108,8 +124,14 @@ class PlaceType extends AbstractType
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
                 ]);
-
         });
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        parent::buildView($view, $form, $options);
+
+        $view->vars['actionType'] = $this->actionType;
     }
 
     public function configureOptions(OptionsResolver $resolver)

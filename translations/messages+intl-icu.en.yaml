@@ -843,11 +843,19 @@ international:
       actions:
         back-to-trip-summary: Back to trip details
         delete: Delete action
+    place-loading:
+      heading: Loading of goods
+      help: ''
+    place-unloading:
+      heading: Unloading of goods
+      help: ''
     place:
-      heading: Add consignment action
+      heading: Loading or unloading of goods
       help: ''
       place:
-        label: Where did you load/unload the consignment?
+        label: Where did you load/unload goods?
+        label-load: Where did you load goods?
+        label-unload: Where did you unload goods?
         help: ''
       name:
         label: Place name or postcode
@@ -895,8 +903,8 @@ international:
         help: ''
     add-another:
       confirm:
-        label: Do you need to add another action?
-        help: You must tell us about every time when you either loaded or unloaded goods
+        label: Did you load or unload any other goods?
+        help: You must tell us about every time you either loaded or unloaded goods
   stop:
     stop:
       heading: Where did you stop?
@@ -956,9 +964,9 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
-      action: Consignment actions
+      action: Loading and unloading of goods
       actions:
-        add-action: Add consignment action
+        add-action: Add loading or unloading action
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle details
@@ -988,8 +996,7 @@ international:
       from-to: From {source} to {destination}
       stops: Stops
       help:
-        action-what: What is a consignment action?
-        action-explanation: "A consignment action is when a consignment is either loaded or unloaded.\n\nPlease record these actions in the order that they occurred."
+        actions: "Please enter every time you loaded or unloaded goods on your international trip.\nPlease record these in the order that they occurred."
 
     dates:
       heading: Dates of Trip
