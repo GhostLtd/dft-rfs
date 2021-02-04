@@ -5,11 +5,11 @@
 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
 
 {%- set params = {tripId: trip.id} -%}
-{%- set urlDateChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DATES', params) -%}
-{%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_OUTBOUND_PORTS', params) -%}
-{%- set urlReturnChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_RETURN_PORTS', params) -%}
-{%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DISTANCE', params) -%}
-{%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED', params) -%}
+{%- set urlDateChange = wizardUrl('international-trip', 'STATE_DATES', params) -%}
+{%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params) -%}
+{%- set urlReturnChange = wizardUrl('international-trip', 'STATE_RETURN_PORTS', params) -%}
+{%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_DISTANCE', params) -%}
+{%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params) -%}
 {%- set change = 'common.actions.change'|trans -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">

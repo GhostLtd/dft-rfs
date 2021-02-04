@@ -8,7 +8,7 @@ use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class CargoStateDataMapper implements DataMapperInterface
+class PortsAndCargoStateDataMapper implements DataMapperInterface
 {
     protected $direction;
 
@@ -35,6 +35,9 @@ class CargoStateDataMapper implements DataMapperInterface
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
+
+        $forms["{$this->direction}UkPort"]->setData($accessor->getValue($viewData, "{$this->direction}UkPort"));
+        $forms["{$this->direction}ForeignPort"]->setData($accessor->getValue($viewData, "{$this->direction}ForeignPort"));
 
         $wasEmpty = $accessor->getValue($viewData, "{$this->direction}WasEmpty");
         $wasLimitedBy = [];
@@ -68,6 +71,9 @@ class CargoStateDataMapper implements DataMapperInterface
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
+
+        $accessor->setValue($viewData, "{$this->direction}UkPort", $forms["{$this->direction}UkPort"]->getData());
+        $accessor->setValue($viewData, "{$this->direction}ForeignPort", $forms["{$this->direction}ForeignPort"]->getData());
 
         $wasAtCapacity = $forms['wasAtCapacity']->getData();
 

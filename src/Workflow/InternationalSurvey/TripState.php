@@ -7,67 +7,37 @@ use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
 use App\Form\InternationalSurvey\Trip\DatesType;
 use App\Form\InternationalSurvey\Trip\DistanceType;
 use App\Form\InternationalSurvey\Trip\OutboundCargoStateType;
-use App\Form\InternationalSurvey\Trip\OutboundPortsType;
+use App\Form\InternationalSurvey\Trip\OutboundPortsAndCargoStateType;
 use App\Form\InternationalSurvey\Trip\ReturnCargoStateType;
-use App\Form\InternationalSurvey\Trip\ReturnPortsType;
+use App\Form\InternationalSurvey\Trip\ReturnPortsAndCargoStateType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
 
 class TripState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_REQUEST_TRIP_DATES = 'dates';
-    const STATE_REQUEST_TRIP_OUTBOUND_PORTS = 'outbound-ports';
-    const STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE = 'outbound-cargo-state';
-    const STATE_REQUEST_TRIP_RETURN_PORTS = 'return-ports';
-    const STATE_REQUEST_TRIP_RETURN_CARGO_STATE = 'return-cargo-state';
-    const STATE_REQUEST_TRIP_DISTANCE = 'distance';
-    const STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED = 'countries-transitted';
+    const STATE_DATES = 'dates';
+    const STATE_OUTBOUND_PORTS = 'outbound-ports';
+    const STATE_RETURN_PORTS = 'return-ports';
+    const STATE_DISTANCE = 'distance';
+    const STATE_COUNTRIES_TRANSITTED = 'countries-transitted';
 
     const STATE_SUMMARY = 'summary';
 
-    const STATE_CHANGE_TRIP_DATES = 'change-dates';
-    const STATE_CHANGE_TRIP_OUTBOUND_PORTS = 'change-outbound-ports';
-    const STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE = 'change-outbound-cargo-state';
-    const STATE_CHANGE_TRIP_RETURN_PORTS = 'change-return-ports';
-    const STATE_CHANGE_TRIP_RETURN_CARGO_STATE = 'change-return-cargo-state';
-    const STATE_CHANGE_TRIP_DISTANCE = 'change-distance';
-    const STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED = 'change-countries-transitted';
-
     private const FORM_MAP = [
-        self::STATE_REQUEST_TRIP_DATES => DatesType::class,
-        self::STATE_REQUEST_TRIP_OUTBOUND_PORTS => OutboundPortsType::class,
-        self::STATE_REQUEST_TRIP_RETURN_PORTS => ReturnPortsType::class,
-        self::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE => OutboundCargoStateType::class,
-        self::STATE_REQUEST_TRIP_RETURN_CARGO_STATE => ReturnCargoStateType::class,
-        self::STATE_REQUEST_TRIP_DISTANCE => DistanceType::class,
-        self::STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED => CountriesTransittedType::class,
-
-        self::STATE_CHANGE_TRIP_DATES => DatesType::class,
-        self::STATE_CHANGE_TRIP_OUTBOUND_PORTS => OutboundPortsType::class,
-        self::STATE_CHANGE_TRIP_RETURN_PORTS => ReturnPortsType::class,
-        self::STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE => OutboundCargoStateType::class,
-        self::STATE_CHANGE_TRIP_RETURN_CARGO_STATE => ReturnCargoStateType::class,
-        self::STATE_CHANGE_TRIP_DISTANCE => DistanceType::class,
-        self::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED => CountriesTransittedType::class,
+        self::STATE_DATES => DatesType::class,
+        self::STATE_OUTBOUND_PORTS => OutboundPortsAndCargoStateType::class,
+        self::STATE_RETURN_PORTS => ReturnPortsAndCargoStateType::class,
+        self::STATE_DISTANCE => DistanceType::class,
+        self::STATE_COUNTRIES_TRANSITTED => CountriesTransittedType::class,
     ];
 
     private const TEMPLATE_MAP = [
-        self::STATE_REQUEST_TRIP_DATES => 'international_survey/trip/form-dates.html.twig',
-        self::STATE_REQUEST_TRIP_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
-        self::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE => 'international_survey/trip/form-outbound-cargo-state.html.twig',
-        self::STATE_REQUEST_TRIP_RETURN_PORTS => 'international_survey/trip/form-return-ports.html.twig',
-        self::STATE_REQUEST_TRIP_RETURN_CARGO_STATE => 'international_survey/trip/form-return-cargo-state.html.twig',
-        self::STATE_REQUEST_TRIP_DISTANCE => 'international_survey/trip/form-distance.html.twig',
-        self::STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED => 'international_survey/trip/form-countries-transitted.html.twig',
-
-        self::STATE_CHANGE_TRIP_DATES => 'international_survey/trip/form-dates.html.twig',
-        self::STATE_CHANGE_TRIP_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
-        self::STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE => 'international_survey/trip/form-outbound-cargo-state.html.twig',
-        self::STATE_CHANGE_TRIP_RETURN_PORTS => 'international_survey/trip/form-return-ports.html.twig',
-        self::STATE_CHANGE_TRIP_RETURN_CARGO_STATE => 'international_survey/trip/form-return-cargo-state.html.twig',
-        self::STATE_CHANGE_TRIP_DISTANCE => 'international_survey/trip/form-distance.html.twig',
-        self::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED => 'international_survey/trip/form-countries-transitted.html.twig',
+        self::STATE_DATES => 'international_survey/trip/form-dates.html.twig',
+        self::STATE_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
+        self::STATE_RETURN_PORTS => 'international_survey/trip/form-return-ports.html.twig',
+        self::STATE_DISTANCE => 'international_survey/trip/form-distance.html.twig',
+        self::STATE_COUNTRIES_TRANSITTED => 'international_survey/trip/form-countries-transitted.html.twig',
     ];
 
     /** @var Trip */
@@ -109,11 +79,11 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
         }
 
         $alternativeStartStates = [
-            self::STATE_CHANGE_TRIP_DATES,
-            self::STATE_CHANGE_TRIP_OUTBOUND_PORTS,
-            self::STATE_CHANGE_TRIP_RETURN_PORTS,
-            self::STATE_CHANGE_TRIP_DISTANCE,
-            self::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED,
+            self::STATE_DATES,
+            self::STATE_OUTBOUND_PORTS,
+            self::STATE_RETURN_PORTS,
+            self::STATE_DISTANCE,
+            self::STATE_COUNTRIES_TRANSITTED,
         ];
 
         return $this->subject->getId() ?
