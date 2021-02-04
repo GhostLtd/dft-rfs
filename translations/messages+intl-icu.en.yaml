@@ -105,7 +105,7 @@ common:
   passcode-reset:
     title: Reset passcode
     heading-delete: Reset passcode?
-    confirmation: "Are you sure you want to this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
+    confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
     confirm.label: Yes, reset the passcode
     cancel.label: Cancel
     confirmed-notification:
@@ -391,6 +391,11 @@ domestic:
 
   ## summary day
   day-summary:
+    sidebar-summary:
+      day: "Day {dayNumber} ({date})"
+      more-than-five: More than 5 stages
+      place-to-place: "{origin} to {destination}"
+
     origin:
       heading: Where did the vehicle start the day?
       help: ''
@@ -463,7 +468,7 @@ domestic:
 
     goods-weight:
       heading: Weight of goods
-      help: "The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ are considered as loaded.\n\nIt is not unusual for the total weight loaded or unloaded on this day are more than the vehicle's carrying capacity."
+      help: "The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ are considered as loaded.\n\nIt is not unusual for the total weight loaded or unloaded on this day to be more than the vehicle's carrying capacity."
       weight-of-goods-loaded:
         label: Total weight of goods loaded on this day
         help: ''
@@ -486,6 +491,13 @@ domestic:
 
   ## detailed day stop
   day-stop:
+    sidebar-summary:
+      adding: "Adding a stage on day {dayNumber} ({date})"
+      editing: "Editing stage {stageNumber} on day {dayNumber} ({date})"
+      place-to-place: "{origin} to {destination}"
+      previous-stages: Previous stage on this day
+      first-stage: This is the first stage of the day
+
     origin:
       heading: Where did the vehicle begin this stage of the journey?
       help: ''
