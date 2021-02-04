@@ -12,7 +12,7 @@ class ReturnPortsAndCargoStateType extends AbstractPortsAndCargoStateType
 
         $resolver->setDefaults([
             'direction' => 'return',
-            'validation_groups' => ['trip_return_ports'],
+            'validation_groups' => ['trip_return_ports', 'trip_return_cargo_state'],
         ]);
     }
 }

@@ -28,6 +28,8 @@ class Trip implements BlameLoggable
      */
     private $id;
 
+
+
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="common.date.not-null")

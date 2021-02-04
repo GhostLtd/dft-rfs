@@ -12,7 +12,7 @@ class OutboundPortsAndCargoStateType extends AbstractPortsAndCargoStateType
 
         $resolver->setDefaults([
             'direction' => 'outbound',
-            'validation_groups' => ['trip_outbound_ports'],
+            'validation_groups' => ['trip_outbound_ports', 'trip_outbound_cargo_state'],
         ]);
     }
 }

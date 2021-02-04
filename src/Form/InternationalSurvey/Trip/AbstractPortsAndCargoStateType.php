@@ -8,8 +8,12 @@ use App\Form\LimitedByType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractPortsAndCargoStateType extends AbstractType
 {
@@ -98,6 +102,28 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         $resolver->setAllowedValues('direction', ['outbound', 'return']);
         $resolver->setDefaults([
             'data_class' => Trip::class,
+            'constraints' => [
+                new Callback([
+                    'callback' => [$this, 'validateCapacity'],
+                    'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
+                ])
+            ],
         ]);
+    }
+
+    public function validateCapacity(Trip $trip, ExecutionContextInterface $context) {
+        $form = $context->getRoot();
+        if ($form instanceof FormInterface) {
+            $accessor = PropertyAccess::createPropertyAccessor();
+            $direction = $form->getConfig()->getOption('direction');
+
+            $atCapacity = $form->get('wasAtCapacity');
+            $wasLimitedBySpace = $accessor->getValue($trip, "{$direction}WasLimitedBySpace");
+            $wasLimitedByWeight = $accessor->getValue($trip, "{$direction}WasLimitedByWeight");
+
+            if ($atCapacity->getData() === true && !$wasLimitedBySpace && !$wasLimitedByWeight) {
+                $context->buildViolation('international.trip.cargo-state-how-at-capacity')->atPath('wasLimitedBy')->addViolation();
+            }
+        }
     }
 }
