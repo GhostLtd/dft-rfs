@@ -4,6 +4,7 @@ namespace App\Utility\Domestic;
 
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Domestic\Survey;
 use App\Utility\AbstractDeleteHelper;
 
 class DeleteHelper extends AbstractDeleteHelper
@@ -27,6 +28,33 @@ class DeleteHelper extends AbstractDeleteHelper
 
         $this->entityManager->remove($summary);
         $this->entityManager->remove($day);
+
+        $flush && $this->entityManager->flush();
+    }
+
+    public function deleteSurvey(Survey $survey, bool $flush=true)
+    {
+        $response = $survey->getResponse();
+
+        if ($response) {
+            foreach ($response->getDays() as $day) {
+                if ($day->getHasMoreThanFiveStops()) {
+                    foreach ($day->getStops() as $stop) {
+                        $this->deleteDayStop($stop, false);
+                    }
+                } else {
+                    $daySummary = $day->getSummary();
+                    if ($daySummary) {
+                        $this->deleteDaySummary($daySummary, false);
+                    }
+                }
+            }
+
+            $this->entityManager->remove($response->getVehicle());
+            $this->entityManager->remove($response);
+        }
+
+        $this->entityManager->remove($survey);
 
         $flush && $this->entityManager->flush();
     }

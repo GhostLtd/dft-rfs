@@ -2,23 +2,36 @@
 
 {% block oneThirdColumnContent -%}
     <h2 class="govuk-heading-m">
+    {%- set params = {
+        stageNumber: subject.number,
+        dayNumber: subject.day.number,
+        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('F j, Y')
+    }  -%}
     {%- if subject.id is null -%}
-        Adding a stage
+        {{ 'domestic.day-stop.sidebar-summary.adding' | trans(params) }}
     {%- else -%}
-        Editing stage {{ subject.number }}
+        {{ 'domestic.day-stop.sidebar-summary.editing' | trans(params) }}
     {%- endif -%}
-    on day {{ subject.day.number }} ({{ subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number-1) ~ ' day') | date('F j, Y') }})</h2>
+    </h2>
 
-    {% if subject.originLocation and subject.destinationLocation %}
-        <p class="govuk-body">{{ subject.originLocation }} to {{ subject.destinationLocation }}</p>
-    {% else %}
-        {% set stops = subject.day.stops.values %}{# .values gives a 0-indexed array #}
-        {% if stops | length > 1 %}
-            {% set previousStage = stops[stops | length - 2] %}
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Previous stage on this day</h3>
-            <p class="govuk-body">{{ previousStage.originLocation }} to {{ previousStage.destinationLocation }}</p>
+    {%- if subject.originLocation and subject.destinationLocation -%}
+        <p class="govuk-body">
+            {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                origin: subject.originLocation,
+                destination: subject.destinationLocation
+            }) -}}
+    {%- else -%}
+        {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
+        {%- if stops | length > 1 -%}
+            {%- set previousStage = stops[stops | length - 2] -%}
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+            <p class="govuk-body">
+                {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                    origin: previousStage.originLocation,
+                    destination: previousStage.destinationLocation
+                }) -}}
         {% else %}
-            <p class="govuk-body">This is the first stage of the day</p>
+            <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
         {% endif %}
     {% endif %}
 
