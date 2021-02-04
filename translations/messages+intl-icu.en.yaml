@@ -694,21 +694,21 @@ international:
     view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
 
   action-delete:
-    title: Delete consignment action
+    title: Delete action
     heading-delete: Delete action {number}?
     delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
     delete-unloading: Are you sure you want to delete this unloading action?
     notification:
       deleted:
-        heading: Consignment action deleted successfully
-        content: The consignment action was successfully deleted
+        heading: Action deleted successfully
+        content: The action was successfully deleted
       cancelled:
-        heading: Consignment action not deleted
-        content: The request to delete the consignment action was cancelled
+        heading: Action not deleted
+        content: The request to delete the action was cancelled
 
   trip-delete:
     title: Delete trip
-    delete-multi: This will permanently delete this trip and all related consignment actions (shown above)
+    delete-multi: This will permanently delete this trip and all related actions (shown above)
     delete: This will permanently delete this trip
     confirm.label: Yes, delete this trip
     cancel.label: Cancel
@@ -721,7 +721,7 @@ international:
 
   vehicle-delete:
     title: Delete vehicle
-    delete: This will permanently delete this vehicle and all related trips and consignment actions
+    delete: This will permanently delete this vehicle and all related trips and actions
     notification:
       deleted:
         heading: Vehicle deleted successfully
@@ -838,8 +838,8 @@ international:
       delete.label: Yes, delete this action
       cancel.label: Cancel
     summary:
-      heading-loading: Loading — action {number}
-      heading-unloading: Unloading — action {number}
+      heading-loading: Action {number} — loading
+      heading-unloading: Action {number} — unloading
       actions:
         back-to-trip-summary: Back to trip details
         delete: Delete action
