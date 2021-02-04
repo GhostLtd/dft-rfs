@@ -967,7 +967,7 @@ international:
       trip-summary: Trip details
       consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
-      date-until-date: "{from} – {until}"
+      date-until-date: "{from} to {until}"
       cargo-state:
         empty: Empty
         limited-by-space: At capacity by space

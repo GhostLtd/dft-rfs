@@ -1,4 +1,5 @@
 {% set translation_prefix = 'international.action.summary' %}
+{% set containerClasses = '' %}
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
@@ -18,7 +19,7 @@
     {%- set change = 'common.actions.change'|trans -%}
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full">
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
                 {%- set loadingAction = action.loadingAction -%}
@@ -27,8 +28,10 @@
                 {%- if action.loading -%}
                     {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), {(urlChange): change}) }}
                 {%- else -%}
-                    {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action.country|country_name, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
-                    {{ summaryListRow('common.action.goods', goodsCopy, {(urlChange): change}) }}
+                    {% with {action: action.loadingAction} %}
+                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action.country|country_name, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
+                        {{ summaryListRow('common.action.goods', goodsCopy, {(urlChange): change}) }}
+                    {% endwith %}
                 {%- endif -%}
 
                 {%- if action.loading or not action.weightUnloadedAll -%}
@@ -55,8 +58,12 @@
             <a href="{{ url(dashboardRoute, {id: action.trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.action.summary.actions.back-to-trip-summary'|trans }}</a>
             <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning">{{ 'international.action.summary.actions.delete'|trans }}</a>
         </div>
+{#
         <div class="govuk-grid-column-one-third">
-{#            {% include "international_survey/includes/trip-summary.html.twig" %}#}
+            {% with {trip: action.trip} %}
+                {% include "international_survey/includes/trip-summary.html.twig" %}
+            {% endwith %}
         </div>
+#}
     </div>
 {% endblock %}
