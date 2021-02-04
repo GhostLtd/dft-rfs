@@ -838,8 +838,8 @@ international:
       delete.label: Yes, delete this action
       cancel.label: Cancel
     summary:
-      heading-loading: Action {number} — loading
-      heading-unloading: Action {number} — unloading
+      heading-loading: Action {number} — goods loaded
+      heading-unloading: Action {number} — goods unloaded
       actions:
         back-to-trip-summary: Back to trip details
         delete: Delete action
