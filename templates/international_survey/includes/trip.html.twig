@@ -5,6 +5,7 @@
 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
 
 {%- set params = {tripId: trip.id} -%}
+{%- set urlPlacesChange = wizardUrl('international-trip', 'STATE_ORIGIN_AND_DESTINATION', params) -%}
 {%- set urlDateChange = wizardUrl('international-trip', 'STATE_DATES', params) -%}
 {%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params) -%}
 {%- set urlReturnChange = wizardUrl('international-trip', 'STATE_RETURN_PORTS', params) -%}
@@ -13,12 +14,20 @@
 {%- set change = 'common.actions.change'|trans -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
-    {{ row(showActions, 'international.trip.summary.dates',
+    {{ row(showActions, 'international.trip.summary.places',
+        'international.trip.summary.origin-to-destination'|trans({
+            'origin': trip.origin|capitalize,
+            'destination': trip.destination|capitalize,
+        }),
+        {(urlPlacesChange): change}
+    ) }}
+    {{ row(showActions, 'international.trip.summary.dates' | trans,
         ('international.trip.summary.date-until-date'|trans({
             'from': trip.outboundDate|date('d/m/Y'),
             'until': trip.returnDate|date('d/m/Y'),
         })),
-    {(urlDateChange): change}) }}
+        {(urlDateChange): change}
+    ) }}
     {{ row(showActions, 'international.trip.summary.outbound-journey',
         'international.trip.summary.origin-to-destination'|trans({
             'origin': trip.outboundUkPort|capitalize,

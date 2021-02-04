@@ -22,13 +22,14 @@ return static function (ContainerConfigurator $container) {
         'workflows' => [
             'international_survey_trip' => [
                 'type' => 'state_machine',
-                'initial_marking' => StateObject::STATE_DATES,
+                'initial_marking' => StateObject::STATE_ORIGIN_AND_DESTINATION,
                 'marking_store' => [
                     'type' => 'method',
                     'property' => 'state',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
+                    StateObject::STATE_ORIGIN_AND_DESTINATION,
                     StateObject::STATE_DATES,
                     StateObject::STATE_OUTBOUND_PORTS,
                     StateObject::STATE_RETURN_PORTS,
@@ -38,6 +39,11 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_SUMMARY,
                 ],
                 'transitions' => [
+                    'places entered' => [
+                        'from' =>  StateObject::STATE_ORIGIN_AND_DESTINATION,
+                        'to' => StateObject::STATE_DATES,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
+                    ],
                     'dates entered' => [
                         'from' => StateObject::STATE_DATES,
                         'to' =>  StateObject::STATE_OUTBOUND_PORTS,
@@ -73,6 +79,9 @@ return static function (ContainerConfigurator $container) {
 
                     // Editing
 
+                    'places changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_ORIGIN_AND_DESTINATION,
+                    ]),
                     'dates changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_DATES,
                     ]),

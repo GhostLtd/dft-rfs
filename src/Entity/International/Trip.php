@@ -28,6 +28,19 @@ class Trip implements BlameLoggable
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places"})
+     */
+    private $origin;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places"})
+     */
+    private $destination;
 
 
     /**
@@ -460,6 +473,28 @@ class Trip implements BlameLoggable
     public function removeAction(Action $action): self
     {
         $this->actions->removeElement($action);
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+        return $this;
+    }
+
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
         return $this;
     }
 

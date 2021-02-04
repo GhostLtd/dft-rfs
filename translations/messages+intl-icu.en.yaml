@@ -983,6 +983,7 @@ international:
         limited-by-weight: At capacity by weight
         limited-by-space-and-weight: At capacity by space and weight
         not-limited: Not at capacity
+      places: Start / end
       dates: Dates
       outbound-journey: Outbound journey
       outbound: Outbound trip - from the UK
@@ -999,6 +1000,15 @@ international:
       help:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
 
+    places:
+      heading: Where did trip start/end?
+      help: ''
+      origin:
+        label: Where did the trip start?
+        help: 'The postcode or place name, within the UK, where this trip first started.'
+      destination:
+        label: Where did the trip end?
+        help: "The postcode or place name, within the UK, where this trip finally ended. This might be the same place as where the trip first started."
     dates:
       heading: Dates of Trip
       help: ''

@@ -6,9 +6,8 @@ use App\Entity\International\Trip;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
 use App\Form\InternationalSurvey\Trip\DatesType;
 use App\Form\InternationalSurvey\Trip\DistanceType;
-use App\Form\InternationalSurvey\Trip\OutboundCargoStateType;
+use App\Form\InternationalSurvey\Trip\OriginAndDestinationType;
 use App\Form\InternationalSurvey\Trip\OutboundPortsAndCargoStateType;
-use App\Form\InternationalSurvey\Trip\ReturnCargoStateType;
 use App\Form\InternationalSurvey\Trip\ReturnPortsAndCargoStateType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
@@ -16,6 +15,7 @@ use InvalidArgumentException;
 
 class TripState extends AbstractFormWizardState implements FormWizardStateInterface
 {
+    const STATE_ORIGIN_AND_DESTINATION = 'origin-and-destination';
     const STATE_DATES = 'dates';
     const STATE_OUTBOUND_PORTS = 'outbound-ports';
     const STATE_RETURN_PORTS = 'return-ports';
@@ -25,6 +25,7 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
     const STATE_SUMMARY = 'summary';
 
     private const FORM_MAP = [
+        self::STATE_ORIGIN_AND_DESTINATION => OriginAndDestinationType::class,
         self::STATE_DATES => DatesType::class,
         self::STATE_OUTBOUND_PORTS => OutboundPortsAndCargoStateType::class,
         self::STATE_RETURN_PORTS => ReturnPortsAndCargoStateType::class,
@@ -33,6 +34,7 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_ORIGIN_AND_DESTINATION => 'international_survey/trip/form-origin-and-destination.html.twig',
         self::STATE_DATES => 'international_survey/trip/form-dates.html.twig',
         self::STATE_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
         self::STATE_RETURN_PORTS => 'international_survey/trip/form-return-ports.html.twig',

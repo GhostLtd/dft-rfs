@@ -16,6 +16,7 @@ common:
   place:
     place: Enter a place
     country: Enter a country
+
   value-unit:
     unit:
       not-blank: Choose a unit
