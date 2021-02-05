@@ -19,7 +19,7 @@ abstract class AbstractVehicleBodyType extends AbstractType
                 'choices' => Vehicle::BODY_CONFIGURATION_CHOICES,
                 'label' => "{$translationKeyPrefix}.body-type.label",
                 'help' => "{$translationKeyPrefix}.body-type.help",
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
         ;
     }

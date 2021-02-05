@@ -317,19 +317,25 @@ domestic:
         help: "How much fuel in total was put into this vehicle during the survey week?\n\nEnter 0 (zero) if you didn't add fuel during the survey week."
 
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: Select the option that best describes the vehicle
+        help: ''
 
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: Select the option that best shows the axle configuration of the vehicle
+        help: ''
 
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: Indicate the main type of body for the vehicle
+        help: ''
 
   day-view:
     headings:
@@ -809,17 +815,23 @@ international:
         heading: 'The vehicle is not required in this survey'
         content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help:
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: 'Select the option that best describes the vehicle'
+        help: ''
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: 'Select the option that best shows the axle configuration of the vehicle'
+        help: ''
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: 'Indicate the main type of body for the vehicle'
+        help: ''
     vehicle-weight:
       heading: Vehicle weight and capacity
       help: ''
