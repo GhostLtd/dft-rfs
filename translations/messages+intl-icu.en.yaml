@@ -1097,7 +1097,7 @@ international:
         help: ''
       countries-transitted-other:
         label: Enter any other countries separated by commas
-        help: e.g. Switzerland, Italy
+        help: e.g. Sweden, Denmark
     start-date:
       help:
         summary: 'What date do you use to decide if a trip is relevant to the survey?'
