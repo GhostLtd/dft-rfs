@@ -1012,6 +1012,7 @@ international:
       help:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
       swapped-trailer: 'Trailer axle configuration changed?'
+      changed-body-type: 'Body type changed?'
 
     places:
       heading: Where did trip start/end?
@@ -1105,6 +1106,16 @@ international:
         help: ''
       axle-configuration:
         label: 'Select the new configuration'
+        help: ''
+    changed-body-type:
+      original-body-type: "Vehicle's original body type"
+      heading: 'Body type'
+      help: ''
+      is-changed-body-type:
+        label: Did the trailer's body type change for this trip?
+        help: ''
+      body-type:
+        label: 'Select the new body type'
         help: ''
 
 goods:

@@ -49,10 +49,24 @@
             {{- "common.choices.boolean.#{trip.isSwappedTrailer ? 'yes' : 'no'}" | trans -}}
             {%- if trip.isSwappedTrailer -%}<br>{{- displayAxleConfiguration(trip.axleConfiguration) -}}{%- endif -%}
         </dd>
-        {% if not (hideActions ?? false) %}
+        {% if showActions %}
             <dd class="govuk-summary-list__actions">{{ actionLinks({(urlTrailerChange): change}) }}</dd>
         {% endif %}
     </div>
+
+    {% if trip.canChangeBodyType %}
+        {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ 'international.trip.summary.changed-body-type' | trans }}</dt>
+            <dd class="govuk-summary-list__value">
+                {{- "common.choices.boolean.#{trip.isChangedBodyType ? 'yes' : 'no'}" | trans -}}
+                {%- if trip.isChangedBodyType %} &mdash; {{ choiceLabel(bodyChoices, trip.bodyType) | trans -}}{%- endif -%}
+            </dd>
+            {% if showActions %}
+                <dd class="govuk-summary-list__actions">{{ actionLinks({(urlTrailerChange): change}) }}</dd>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {{ row(showActions, 'international.trip.summary.distance',
         ("common.distance.#{trip.roundTripDistance.unit}" |

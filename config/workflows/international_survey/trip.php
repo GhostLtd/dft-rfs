@@ -34,6 +34,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_OUTBOUND_PORTS,
                     StateObject::STATE_RETURN_PORTS,
                     StateObject::STATE_SWAPPED_TRAILER,
+                    StateObject::STATE_CHANGED_BODY_TYPE,
                     StateObject::STATE_DISTANCE,
                     StateObject::STATE_COUNTRIES_TRANSITTED,
 
@@ -60,11 +61,23 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'guard' => "is_empty(subject.getSubject().getId())",
                     ],
-                    'swapped trailer entered' => [
+                    'swapped trailer entered not articulated' => [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_DISTANCE,
-                        'guard' => 'is_empty(subject.getSubject().getId())',
+                        'guard' => 'is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeBodyType()',
                     ],
+                    'swapped trailer entered articulated' => [
+                        'from' => StateObject::STATE_SWAPPED_TRAILER,
+                        'to' =>  StateObject::STATE_CHANGED_BODY_TYPE,
+                        'guard' => "subject.getSubject().canChangeBodyType()",
+                    ],
+                    'changed body type entered' => [
+                        'from' => StateObject::STATE_CHANGED_BODY_TYPE,
+                        'to' =>  StateObject::STATE_DISTANCE,
+                        'guard' => "is_empty(subject.getSubject().getId())",
+                    ],
+
                     'distance entered' => [
                         'from' => StateObject::STATE_DISTANCE,
                         'to' =>  StateObject::STATE_COUNTRIES_TRANSITTED,
@@ -97,9 +110,18 @@ return static function (ContainerConfigurator $container) {
                     'return ports changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_RETURN_PORTS,
                     ]),
-                    'trailer changed' => array_merge($commonEditConfig, [
+                    'trailer or body changed not articulated' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'guard' => '!is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeBodyType()',
                     ]),
+
+                    'body type changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_CHANGED_BODY_TYPE,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                    ]),
+
+
                     'distance changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_DISTANCE,
                     ]),

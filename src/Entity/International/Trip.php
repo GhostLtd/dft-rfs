@@ -165,15 +165,30 @@ class Trip implements BlameLoggable
     private $isSwappedTrailer;
 
     /**
+     * Redefined here for Validation purposes
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Expression(
      *     expression="(this.getIsSwappedTrailer() === false) || !is_empty(value)",
-     *     groups={"trip_swapped_trailer", "admin_vehicle"},
+     *     groups={"trip_swapped_trailer"},
      *     message="common.vehicle.axle-configuration.not-blank"
      * )
      */
     private $axleConfiguration;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isChangedBodyType;
+
+    /**
+     * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\Expression(
+     *     expression="(this.getIsChangedBodyType() === false) || !is_empty(value)",
+     *     groups={"trip_changed_body_type"},
+     *     message="common.vehicle.body-type.not-blank"
+     * )
+     */
+    private $bodyType;
 
     /**
      * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
@@ -657,6 +672,19 @@ class Trip implements BlameLoggable
         return $this;
     }
 
+    public function getChangeBodyTypeChoices()
+    {
+        $choices = VehicleLookup::BODY_CONFIGURATION_CHOICES;
+        $vehicleBodyType = $this->getVehicle()->getBodyType();
+
+        // filter original choice
+        $choices = array_filter($choices, function($value) use ($vehicleBodyType){
+            return $value !== $vehicleBodyType;
+        });
+
+        return $choices;
+    }
+
     public function getTrailerSwapChoices()
     {
         $choices = [];
@@ -694,5 +722,23 @@ class Trip implements BlameLoggable
         });
 
         return $choices;
+    }
+
+    public function getIsChangedBodyType(): ?bool
+    {
+        return $this->isChangedBodyType;
+    }
+
+    public function setIsChangedBodyType(bool $isChangedBodyType): self
+    {
+        $this->isChangedBodyType = $isChangedBodyType;
+
+        return $this;
+    }
+
+    public function canChangeBodyType()
+    {
+        if (!$this->getVehicle()) return false;
+        return $this->getVehicle()->getTrailerConfiguration() === VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED;
     }
 }

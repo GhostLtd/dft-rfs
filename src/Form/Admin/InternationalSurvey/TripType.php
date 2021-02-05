@@ -43,6 +43,9 @@ class TripType extends AbstractType
         $this->addDirectionalFields($builder, 'return');
 
         $builder
+            ->setDataMapper(new TripDataMapper())
+
+
             ->add('origin', Gds\InputType::class, [
                 'label' => 'Initial origin',
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -82,13 +85,21 @@ class TripType extends AbstractType
                     'expanded' => false,
                     'label' => "New trailer axle configuration",
                     'label_attr' => ['class' => 'govuk-label--s'],
-                ])
-            ;
+                ]);
+            if ($trip->canChangeBodyType()) {
+                $event->getForm()->get('otherDetails')
+                    ->add('body_type', Gds\ChoiceType::class, [
+                        'choices' => array_merge(['Unchanged' => false], $trip->getChangeBodyTypeChoices()),
+                        'expanded' => false,
+                        'label' => "New trailer body type",
+                        'label_attr' => ['class' => 'govuk-label--s'],
+                    ]);
+            }
+
         });
 
 
         $builder
-            ->setDataMapper(new TripDataMapper())
             ->add('countries', CountriesTransittedType::class, [
                 'inherit_data' => true,
                 'label' => 'Which countries were travelled through?',
