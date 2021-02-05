@@ -91,7 +91,7 @@
 
     <hr class="govuk-!-margin-bottom-9">
     <div>
-        {%- if vehicle.trips.count() > 1 -%}
+        {%- if vehicle.trips.count() > 0 -%}
         <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete'|trans }}</a>
         {%- endif -%}
         <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
