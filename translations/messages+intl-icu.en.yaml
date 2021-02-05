@@ -325,19 +325,25 @@ domestic:
         help: "How much fuel in total was put into this vehicle during the survey week?\n\nEnter 0 (zero) if you didn't add fuel during the survey week."
 
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: Select the option that best describes the vehicle
+        help: ''
 
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: Select the option that best shows the axle configuration of the vehicle
+        help: ''
 
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: Indicate the main type of body for the vehicle
+        help: ''
 
   day-view:
     headings:
@@ -817,17 +823,23 @@ international:
         heading: 'The vehicle is not required in this survey'
         content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help:
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: 'Select the option that best describes the vehicle'
+        help: ''
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: 'Select the option that best shows the axle configuration of the vehicle'
+        help: ''
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: 'Indicate the main type of body for the vehicle'
+        help: ''
     vehicle-weight:
       heading: Vehicle weight and capacity
       help: ''
@@ -1007,6 +1019,8 @@ international:
       stops: Stops
       help:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
+      swapped-trailer: 'Trailer axle configuration changed?'
+      changed-body-type: 'Body type changed?'
 
     places:
       heading: Where did trip start/end?
@@ -1091,6 +1105,26 @@ international:
           1: "If a vehicle left empty, use the date it left."
           2: "If a vehicle left loaded, use the date it was loaded."
         note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
+    swapped-trailer:
+      heading: "Axle configuration"
+      help: ''
+      original-axle-config: "Vehicle's original configuration"
+      is-swapped-trailer:
+        label: "Did the trailer's axle configuration change for this trip?"
+        help: ''
+      axle-configuration:
+        label: 'Select the new configuration'
+        help: ''
+    changed-body-type:
+      original-body-type: "Vehicle's original body type"
+      heading: 'Body type'
+      help: ''
+      is-changed-body-type:
+        label: Did the trailer's body type change for this trip?
+        help: ''
+      body-type:
+        label: 'Select the new body type'
+        help: ''
 
 goods:
   hazardous:

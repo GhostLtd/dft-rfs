@@ -21,8 +21,8 @@ class TripDataMapper implements DataMapperInterface
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
@@ -53,6 +53,13 @@ class TripDataMapper implements DataMapperInterface
         $forms['countriesTransitted']->setData($viewData->getCountriesTransitted());
         $forms['countriesTransittedOther']->setData($viewData->getCountriesTransittedOther());
         $forms['roundTripDistance']->setData($viewData->getRoundTripDistance());
+        $forms['origin']->setData($viewData->getOrigin());
+        $forms['destination']->setData($viewData->getDestination());
+
+        $forms['axle_config']->setData($viewData->getIsSwappedTrailer() ? $viewData->getAxleConfiguration() : false);
+        if ($forms['body_type'] ?? false) {
+            $forms['body_type']->setData($viewData->getIsChangedBodyType() ? $viewData->getBodyType() : false);
+        }
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -82,5 +89,15 @@ class TripDataMapper implements DataMapperInterface
         $viewData->setCountriesTransitted($forms['countriesTransitted']->getData());
         $viewData->setCountriesTransittedOther($forms['countriesTransittedOther']->getData());
         $viewData->setRoundTripDistance($forms['roundTripDistance']->getData());
+        $viewData->setOrigin($forms['origin']->getData());
+        $viewData->setDestination($forms['destination']->getData());
+
+        $viewData->setIsSwappedTrailer($forms['axle_config']->getData() !== false);
+        $viewData->setAxleConfiguration($forms['axle_config']->getData() ?? null);
+
+        if ($forms['body_type'] ?? false) {
+            $viewData->setIsChangedBodyType($forms['body_type']->getData() !== false);
+            $viewData->setBodyType($forms['body_type']->getData() ?? null);
+        }
     }
 }

@@ -1,0 +1,10 @@
+{% set translation_prefix = 'international.trip.changed-body-type' %}
+{% extends 'international_survey/trip/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <h3 class="govuk-heading-s">{{ "#{translation_prefix}.original-body-type"|trans }}</h3>
+    <p class="govuk-body govuk-!-margin-bottom-8">
+        {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
+        {{- choiceLabel(bodyChoices, subject.vehicle.bodyType) | trans -}}
+    </p>
+{% endset %}
