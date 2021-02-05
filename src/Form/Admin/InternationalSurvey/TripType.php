@@ -10,6 +10,8 @@ use App\Form\ValueUnitType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TripType extends AbstractType
@@ -26,6 +28,13 @@ class TripType extends AbstractType
         'At capacity by space' => self::CARGO_STATE_CAPACITY_SPACE,
         'At capacity by weight' => self::CARGO_STATE_CAPACITY_WEIGHT,
         'At capacity by space and weight' => self::CARGO_STATE_CAPACITY_BOTH,
+    ];
+
+    const CHOICE_YES = 'common.choices.boolean.yes';
+    const CHOICE_NO = 'common.choices.boolean.no';
+    const CHOICES = [
+        self::CHOICE_YES => true,
+        self::CHOICE_NO => false,
     ];
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -61,7 +70,22 @@ class TripType extends AbstractType
                     'choices' => Distance::UNIT_CHOICES,
                 ],
                 'data_class' => Distance::class,
-            ]);
+            ])
+        ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var Trip $trip */
+            $trip = $event->getData();
+            $event->getForm()->get('otherDetails')
+                ->add('axle_config', Gds\ChoiceType::class, [
+                    'choices' => array_merge(['Unchanged' => false], $trip->getTrailerSwapChoices()),
+                    'expanded' => false,
+                    'label' => "New trailer axle configuration",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                ])
+            ;
+        });
+
 
         $builder
             ->setDataMapper(new TripDataMapper())

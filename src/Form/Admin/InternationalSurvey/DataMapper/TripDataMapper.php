@@ -55,6 +55,8 @@ class TripDataMapper implements DataMapperInterface
         $forms['roundTripDistance']->setData($viewData->getRoundTripDistance());
         $forms['origin']->setData($viewData->getOrigin());
         $forms['destination']->setData($viewData->getDestination());
+
+        $forms['axle_config']->setData($viewData->getIsSwappedTrailer() ? $viewData->getAxleConfiguration() : false);
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -86,5 +88,9 @@ class TripDataMapper implements DataMapperInterface
         $viewData->setRoundTripDistance($forms['roundTripDistance']->getData());
         $viewData->setOrigin($forms['origin']->getData());
         $viewData->setDestination($forms['destination']->getData());
+
+        $viewData->setIsSwappedTrailer($forms['axle_config']->getData() !== false);
+        $viewData->setAxleConfiguration($forms['axle_config']->getData() ?? null);
+
     }
 }
