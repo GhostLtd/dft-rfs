@@ -4,11 +4,11 @@ namespace App\Form\Admin\InternationalSurvey;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
+use App\Form\CountryType;
 use App\Utility\HazardousGoodsHelper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ActionLoadType extends AbstractType
@@ -20,7 +20,7 @@ class ActionLoadType extends AbstractType
         self::CHOICE_NO => false,
     ];
 
-    protected $hazardousGoodsHelper;
+    protected HazardousGoodsHelper $hazardousGoodsHelper;
 
     public function __construct(HazardousGoodsHelper $hazardousGoodsHelper)
     {
@@ -46,14 +46,7 @@ class ActionLoadType extends AbstractType
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('country', Gds\ChoiceType::class, [
-                'label' => "Country",
-                'choices' => array_flip(Countries::getNames()),
-                'expanded' => false,
-                'placeholder' => '',
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
-            ])
+            ->add('country', CountryType::class)
             ->add('goodsDescription', Gds\ChoiceType::class, [
                 'choices' => $goodsChoices,
                 'choice_options' => $goodsChoiceOptions,

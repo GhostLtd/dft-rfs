@@ -24,12 +24,12 @@
                 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
                 {%- set loadingAction = action.loadingAction -%}
 
-                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action.country|country_name}), {(urlChange): change}) }}
+                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action|formatCountry}), {(urlChange): change}) }}
                 {%- if action.loading -%}
                     {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), {(urlChange): change}) }}
                 {%- else -%}
                     {% with {action: action.loadingAction} %}
-                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action.country|country_name, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
+                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action|formatCountry, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
                         {{ summaryListRow('common.action.goods', goodsCopy, {(urlChange): change}) }}
                     {% endwith %}
                 {%- endif -%}

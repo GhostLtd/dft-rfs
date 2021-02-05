@@ -5,21 +5,19 @@ namespace App\Utility;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\International\Action;
 use App\Repository\International\ActionRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Intl\Countries;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoadingPlaceHelper
 {
     protected ActionRepository $actionRepository;
+    protected CountryHelper $countryHelper;
     protected TranslatorInterface $translator;
-    protected RequestStack $requestStack;
 
-    public function __construct(ActionRepository $actionRepository, TranslatorInterface $translator, RequestStack $requestStack)
+    public function __construct(ActionRepository $actionRepository, CountryHelper $countryHelper, TranslatorInterface $translator)
     {
         $this->actionRepository = $actionRepository;
+        $this->countryHelper = $countryHelper;
         $this->translator = $translator;
-        $this->requestStack = $requestStack;
     }
 
     public function getChoicesAndOptionsForPlace(Action $action, bool $extendedHints=false): array
@@ -96,7 +94,7 @@ class LoadingPlaceHelper
 
     public function getLabelForLoadingAction(Action $action): string
     {
-        $country = Countries::getName(strtoupper($action->getCountry()), $this->requestStack->getCurrentRequest()->getLocale());
+        $country = $this->countryHelper->getCountryLabel($action);
 
         $goods = $action->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER ?
             $action->getGoodsDescriptionOther() :

@@ -9,6 +9,7 @@ use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Address;
+use App\Entity\CountryInterface;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
@@ -30,6 +31,7 @@ use Doctrine\Common\Collections\Collection;
 use Exception;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Error\SyntaxError;
@@ -66,36 +68,36 @@ class AppExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
-            new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
-            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
             new TwigFilter('formatAddress', [$this, 'formatAddress']),
             new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
-            new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
+            new TwigFilter('formatCountry', [$this, 'formatCountry']),
             new TwigFilter('formatGoodsDescription', function($stop, $short = false){
                 return $stop instanceof GoodsDescriptionInterface ?
                     $this->formatGoodsDescription($stop->getGoodsDescription(), $stop->getGoodsDescriptionOther(), $short) :
                     '';
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
+            new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatStops', [$this, 'formatStops']),
+            new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
+            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
         ];
     }
 
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
-            new TwigFunction('wizardState', [$this, 'wizardState']),
-            new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
-            new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
-            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
             new TwigFunction('flatten', [$this, 'flatten']),
-            new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
+            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
+            new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
+            new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
+            new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
+            new TwigFunction('wizardState', [$this, 'wizardState']),
+            new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
         ];
     }
 
@@ -134,6 +136,15 @@ class AppExtension extends AbstractExtension
             method_exists($address, 'getLine6') ? $address->getLine6() : null,
             $address->getPostcode(),
         ]));
+    }
+
+    function formatCountry(CountryInterface $entity): ?string
+    {
+        $country = $entity->getCountry();
+        
+        return $country ?
+            Countries::getName($country) :
+            $entity->getCountryOther();
     }
 
     function formatGoodsTransferDetails($stop, $loadingOrUnloading, $nonBlankPrefix = ''): string {
