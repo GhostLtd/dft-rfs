@@ -4,6 +4,8 @@ namespace App\Entity\International;
 
 use App\Entity\BlameLoggable;
 use App\Entity\Distance;
+use App\Entity\SimpleVehicleTrait;
+use App\Entity\Vehicle as VehicleLookup;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\TripRepository;
 use DateTimeInterface;
@@ -21,6 +23,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class Trip implements BlameLoggable
 {
+    use SimpleVehicleTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="UUID")
@@ -153,6 +157,23 @@ class Trip implements BlameLoggable
      * @ORM\OrderBy({"number" = "ASC"})
      */
     private $actions;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"trip_swapped_trailer"})
+     */
+    private $isSwappedTrailer;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Expression(
+     *     expression="(this.getIsSwappedTrailer() === false) || !is_empty(value)",
+     *     groups={"trip_swapped_trailer", "admin_vehicle"},
+     *     message="common.vehicle.axle-configuration.not-blank"
+     * )
+     */
+    private $axleConfiguration;
+
 
     /**
      * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
@@ -622,5 +643,56 @@ class Trip implements BlameLoggable
     public function getAssociatedEntityId()
     {
         return $this->getVehicle()->getId();
+    }
+
+    public function getIsSwappedTrailer(): ?bool
+    {
+        return $this->isSwappedTrailer;
+    }
+
+    public function setIsSwappedTrailer(bool $isSwappedTrailer): self
+    {
+        $this->isSwappedTrailer = $isSwappedTrailer;
+
+        return $this;
+    }
+
+    public function getTrailerSwapChoices()
+    {
+        $choices = [];
+        $vehicleTrailerConfig = $this->getVehicle()->getTrailerConfiguration();
+
+        switch ($vehicleTrailerConfig) {
+            case VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED :
+                $choices = VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED];
+                break;
+            case VehicleLookup::TRAILER_CONFIGURATION_RIGID_TRAILER :
+            case VehicleLookup::TRAILER_CONFIGURATION_RIGID :
+                $choices = array_merge(
+                    VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_RIGID],
+                    VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_RIGID_TRAILER]
+                );
+                break;
+        }
+
+        $vehicleAxleConfig = $this->getVehicle()->getAxleConfiguration();
+
+        // filter original choice
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return $value !== $vehicleAxleConfig;
+        });
+
+        // Remove Rigid other (unless original was rigid other + trailer) as we can never swap to that!
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return $value !== 199 || $vehicleAxleConfig === 299;
+        });
+
+        // filter the choices so only the middle digit matches (or other in same category)
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1)
+                || substr($value, 1, 2) === '99';
+        });
+
+        return $choices;
     }
 }

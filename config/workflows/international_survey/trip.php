@@ -33,6 +33,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_DATES,
                     StateObject::STATE_OUTBOUND_PORTS,
                     StateObject::STATE_RETURN_PORTS,
+                    StateObject::STATE_SWAPPED_TRAILER,
                     StateObject::STATE_DISTANCE,
                     StateObject::STATE_COUNTRIES_TRANSITTED,
 
@@ -56,6 +57,11 @@ return static function (ContainerConfigurator $container) {
                     ],
                     'return ports entered' => [
                         'from' => StateObject::STATE_RETURN_PORTS,
+                        'to' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'guard' => "is_empty(subject.getSubject().getId())",
+                    ],
+                    'swapped trailer entered' => [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_DISTANCE,
                         'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
@@ -90,6 +96,9 @@ return static function (ContainerConfigurator $container) {
                     ]),
                     'return ports changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_RETURN_PORTS,
+                    ]),
+                    'trailer changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                     ]),
                     'distance changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_DISTANCE,

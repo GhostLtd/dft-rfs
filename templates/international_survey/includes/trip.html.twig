@@ -1,4 +1,4 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, actionLinks -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
@@ -9,6 +9,7 @@
 {%- set urlDateChange = wizardUrl('international-trip', 'STATE_DATES', params) -%}
 {%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params) -%}
 {%- set urlReturnChange = wizardUrl('international-trip', 'STATE_RETURN_PORTS', params) -%}
+{%- set urlTrailerChange = wizardUrl('international-trip', 'STATE_SWAPPED_TRAILER', params) -%}
 {%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_DISTANCE', params) -%}
 {%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params) -%}
 {%- set change = 'common.actions.change'|trans -%}
@@ -40,6 +41,19 @@
             'destination': trip.returnUkPort|capitalize,
         }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
     {(urlReturnChange): change}) }}
+
+    {%- from 'macros.html.twig' import displayAxleConfiguration -%}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ 'international.trip.summary.swapped-trailer' | trans }}</dt>
+        <dd class="govuk-summary-list__value">
+            {{- "common.choices.boolean.#{trip.isSwappedTrailer ? 'yes' : 'no'}" | trans -}}
+            {%- if trip.isSwappedTrailer -%}<br>{{- displayAxleConfiguration(trip.axleConfiguration) -}}{%- endif -%}
+        </dd>
+        {% if not (hideActions ?? false) %}
+            <dd class="govuk-summary-list__actions">{{ actionLinks({(urlTrailerChange): change}) }}</dd>
+        {% endif %}
+    </div>
+
     {{ row(showActions, 'international.trip.summary.distance',
         ("common.distance.#{trip.roundTripDistance.unit}" |
         trans({value: trip.roundTripDistance.value|number_format})

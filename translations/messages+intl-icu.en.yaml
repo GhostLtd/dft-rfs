@@ -1011,6 +1011,7 @@ international:
       stops: Stops
       help:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
+      swapped-trailer: 'Trailer axle configuration changed?'
 
     places:
       heading: Where did trip start/end?
@@ -1095,6 +1096,16 @@ international:
           1: "If a vehicle left empty, use the date it left."
           2: "If a vehicle left loaded, use the date it was loaded."
         note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
+    swapped-trailer:
+      heading: "Axle configuration"
+      help: ''
+      original-axle-config: "Vehicle's original configuration"
+      is-swapped-trailer:
+        label: "Did the trailer's axle configuration change for this trip?"
+        help: ''
+      axle-configuration:
+        label: 'Select the new configuration'
+        help: ''
 
 goods:
   hazardous:
