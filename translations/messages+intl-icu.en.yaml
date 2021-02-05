@@ -744,6 +744,11 @@ international:
         heading: Vehicle not deleted
         content: The request to delete the vehicle was cancelled
 
+  vehicle-cant-edit-trailer-configs:
+    title: Edit cancelled
+    heading: Vehicle trailer configuration can't be changed
+    content: The trailer, axle and body configuration can't be changed for this vehicle because trips have been added.
+
   thanks:
     title: Thanks
 
