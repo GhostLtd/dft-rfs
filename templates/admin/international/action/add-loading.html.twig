@@ -3,6 +3,7 @@
 {%- block adminContent -%}
     <h1 class="govuk-heading-l" id="top">Add Loading Action</h1>
 
-    {%- form_theme form "admin/international/action/theme.html.twig" -%}
+    {%- form_theme form "admin/international/action/theme-loading.html.twig" -%}
+    {%- form_theme form.country "themes/country.html.twig" -%}
     {{ form(form) }}
 {%- endblock -%}

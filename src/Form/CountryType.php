@@ -56,7 +56,7 @@ class CountryType extends AbstractType
 
             'country_label' => 'common.country.country.label',
             'country_help' => 'common.country.country.help',
-            'country_label_attr' => ['class' => 'govuk-label--m'],
+            'country_label_attr' => ['class' => 'govuk-label--s'],
             'country_attr' => [],
 
             'other_label' => 'common.country.other.label',

@@ -4,12 +4,10 @@
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
             {{ form_row(form.name) }}
             {{ form_row(form.country) }}
-            {{ form_row(form.goodsDescription) }}
         </div>
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
-            {{ form_row(form.hazardousGoodsCode) }}
-            {{ form_row(form.cargoTypeCode) }}
-            {{ form_row(form.weightOfGoods) }}
+            {{ form_row(form.loadingAction) }}
+            {{ form_row(form.weightUnloadedAll) }}
         </div>
     </div>
     {{ form_rest(form) }}
