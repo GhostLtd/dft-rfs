@@ -4,8 +4,10 @@ namespace App\Entity\International;
 
 use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
+use App\Entity\CountryInterface;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsTrait;
+use App\Form\CountryType;
 use App\Repository\International\ActionRepository;
 use App\Form\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,8 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @AppAssert\CanBeUnloaded(groups={"action-place"})
  * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight", "admin_action_unload"})
+ * @AppAssert\Country(groups={"action-place", "admin_action_unload", "admin_action_load"})
  */
-class Action implements BlameLoggable, GoodsDescriptionInterface
+class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterface
 {
     /**
      * @ORM\Id
@@ -42,11 +45,16 @@ class Action implements BlameLoggable, GoodsDescriptionInterface
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place", "admin_action_unload", "admin_action_load"}, message="common.place.country")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
+     * @ORM\Column(type="string", length=2, nullable=true)
+     * @Assert\Length(max=2, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
      */
     private $country;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
+     */
+    private $countryOther;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -145,6 +153,22 @@ class Action implements BlameLoggable, GoodsDescriptionInterface
     public function setCountry(?string $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function getCountryOther(): ?string
+    {
+        return $this->countryOther;
+    }
+
+    public function setCountryOther(?string $countryOther): self
+    {
+        if ($this->country === CountryType::OTHER) {
+            $this->countryOther = $countryOther;
+        } else {
+            $this->countryOther = null;
+        }
 
         return $this;
     }
@@ -273,6 +297,7 @@ class Action implements BlameLoggable, GoodsDescriptionInterface
     {
         $this->setName($action->getName());
         $this->setCountry($action->getCountry());
+        $this->setCountryOther($action->getCountryOther());
         $this->setGoodsDescription($action->getGoodsDescription());
         $this->setGoodsDescriptionOther($action->getGoodsDescriptionOther());
         $this->setWeightOfGoods($action->getWeightOfGoods());

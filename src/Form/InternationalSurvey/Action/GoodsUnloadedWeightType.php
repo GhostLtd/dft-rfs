@@ -6,21 +6,20 @@ use App\Entity\AbstractGoodsDescription;
 use App\Entity\International\Action;
 use App\Form\InternationalSurvey\Action\DataMapper\GoodsUnloadedWeightDataMapper;
 use App\Repository\International\ActionRepository;
+use App\Utility\CountryHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GoodsUnloadedWeightType extends AbstractType
 {
-    protected $actionRepository;
-    protected $requestStack;
-    protected $translator;
+    protected ActionRepository $actionRepository;
+    protected CountryHelper $countryHelper;
+    protected TranslatorInterface $translator;
 
     const CHOICE_YES = 'common.choices.boolean.yes';
     const CHOICE_NO = 'common.choices.boolean.no';
@@ -29,10 +28,10 @@ class GoodsUnloadedWeightType extends AbstractType
         self::CHOICE_NO => false,
     ];
 
-    public function __construct(RequestStack $requestStack, TranslatorInterface $translator, ActionRepository $actionRepository)
+    public function __construct(ActionRepository $actionRepository, CountryHelper $countryHelper, TranslatorInterface $translator)
     {
         $this->actionRepository = $actionRepository;
-        $this->requestStack = $requestStack;
+        $this->countryHelper = $countryHelper;
         $this->translator = $translator;
     }
 
@@ -46,7 +45,7 @@ class GoodsUnloadedWeightType extends AbstractType
             // Fetching the loadingAction like this means its unloadingActions will be correctly populated...
             $loadingAction = $this->actionRepository->findOneByIdAndSurveyResponse($action->getLoadingAction()->getId(), $action->getTrip()->getVehicle()->getSurveyResponse());
 
-            $country = Countries::getName(strtoupper($loadingAction->getCountry()), $this->requestStack->getCurrentRequest()->getLocale());
+            $country = $this->countryHelper->getCountryLabel($loadingAction);
 
             $goods = $loadingAction->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER ?
                 $loadingAction->getGoodsDescriptionOther() :

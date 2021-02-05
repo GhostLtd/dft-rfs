@@ -1,0 +1,33 @@
+{% block gds_choice_widget %}
+    {%- set blockPrefix = 'gds_radio' -%}
+    {%- set classPrefix = 'govuk-radios' -%}
+    {%- set attr = attr|merge({
+        class: (classPrefix ~ ' ' ~
+        attr.class|default(''))|trim
+    }) -%}
+    <div {{ block('widget_container_attributes') }}>
+        <div class="govuk-grid-row govuk-!-margin-bottom-2">
+            {%- set columns = 2 -%}
+            {%- set columnMappings = {2: 'half', 3: 'third', 4: 'quarter'} -%}
+            {%- set columnClass = columnMappings[columns] -%}
+            {%- set other = constant('App\\Form\\CountryType::OTHER') -%}
+
+            {% for i in range(0, columns-1) %}
+                <div class="govuk-grid-column-one-{{ columnClass }}">
+                    {%- for child in form|filter(c => c.vars.value != other) %}
+                        {% if loop.index0 % columns == i %}
+                            {{ block('gds_choice_widget_expanded_item') }}
+                        {% endif %}
+                    {%- endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                {%- for child in form|filter(c => c.vars.value == other) %}
+                    {{ block('gds_choice_widget_expanded_item') }}
+                {%- endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -215,14 +215,19 @@ class ActionController extends AbstractSessionStateWorkflowController
 
         switch($this->mode) {
             case self::MODE_EDIT:
-                $action = $formWizard->getSubject() ?? $this->action;
-                $this->action->mergeActionChanges($action);
+                $action = $formWizard->getSubject();
+
+                if ($action !== null) {
+                    $this->action->mergeActionChanges($action);
+                }
+
                 $formWizard->setSubject($this->action);
                 break;
             case self::MODE_ADD:
                 $action = $formWizard->getSubject() ?? new Action();
                 $action->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
                 $action->setTrip($this->trip);
+
                 $formWizard->setSubject($action);
                 break;
         }

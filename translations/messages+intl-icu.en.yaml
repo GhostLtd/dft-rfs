@@ -39,6 +39,7 @@ common:
     boolean:
       yes: Yes
       no: No
+    other: 'Other'
   consignment:
     cargo-type: Cargo type
     goods: Goods
