@@ -539,6 +539,8 @@ class Trip implements BlameLoggable
 
     public function mergeTripChanges(Trip $trip)
     {
+        $this->setOrigin($trip->getOrigin());
+        $this->setDestination($trip->getDestination());
         $this->setOutboundDate($trip->getOutboundDate());
         $this->setReturnDate($trip->getReturnDate());
         $this->setOutboundUkPort($trip->getOutboundUkPort());
