@@ -54,13 +54,13 @@ class CountryType extends AbstractType
             'choice_translation_locale' => $this->locale,
             'label' => false,
 
-            'country_label' => 'Country',
-            'country_help' => '',
+            'country_label' => 'common.country.country.label',
+            'country_help' => 'common.country.country.help',
             'country_label_attr' => ['class' => 'govuk-label--m'],
             'country_attr' => [],
 
-            'other_label' => 'Other country',
-            'other_help' => '',
+            'other_label' => 'common.country.other.label',
+            'other_help' => 'common.country.other.help',
             'other_label_attr' => ['class' => 'govuk-label--s'],
             'other_attr' => [],
 

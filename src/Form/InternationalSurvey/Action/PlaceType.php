@@ -105,10 +105,7 @@ class PlaceType extends AbstractType
                         'attr' => ['class' => 'govuk-input--width-10'],
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ])
-                    ->add('country', CountryType::class, [
-                        'country_label' => "{$prefix}.country.label",
-                        'country_help' => "{$prefix}.country.help",
-                    ]);
+                    ->add('country', CountryType::class);
             });
     }
 

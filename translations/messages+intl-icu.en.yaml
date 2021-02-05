@@ -47,6 +47,13 @@ common:
     place-of-loading: Loaded at
     place-of-unloading: Unloaded at
     weight: Weight
+  country:
+    country:
+      label: Country
+      help: ''
+    other:
+      label: Specify country
+      help: ''
   notification:
     important: Important
     success: Success
