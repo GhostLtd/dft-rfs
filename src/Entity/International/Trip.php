@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
  * @ORM\Table(name="international_trip")
+ * @AppAssert\TripRoute(groups={"trip_outbound_ports", "admin_trip"}, direction="outbound")
+ * @AppAssert\TripRoute(groups={"trip_return_ports", "admin_trip"}, direction="return")
  */
 class Trip implements BlameLoggable
 {
@@ -55,14 +57,12 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundUkPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundForeignPort;
@@ -90,14 +90,12 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnUkPort;

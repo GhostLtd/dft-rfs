@@ -2,6 +2,7 @@
 
 namespace App\Form\InternationalSurvey\Trip\DataMapper;
 
+use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception;
@@ -10,11 +11,13 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class PortsAndCargoStateDataMapper implements DataMapperInterface
 {
-    protected $direction;
+    protected string $direction;
+    protected array $ports;
 
-    public function __construct(string $direction)
+    public function __construct(string $direction, array $ports)
     {
         $this->direction = $direction;
+        $this->ports = $ports;
     }
 
     public function mapDataToForms($viewData, $forms)
@@ -36,8 +39,14 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $forms["{$this->direction}UkPort"]->setData($accessor->getValue($viewData, "{$this->direction}UkPort"));
-        $forms["{$this->direction}ForeignPort"]->setData($accessor->getValue($viewData, "{$this->direction}ForeignPort"));
+        $ukPort = $accessor->getValue($viewData, "{$this->direction}UkPort");
+        $foreignPort = $accessor->getValue($viewData, "{$this->direction}ForeignPort");
+
+        $matchingPair = array_filter($this->ports, fn(CrossingRoute $route) => $route->getUkPort() === $ukPort && $route->getForeignPort() === $foreignPort);
+
+        if (count($matchingPair) === 1) {
+            $forms['ports']->setData(array_shift($matchingPair)->getId());
+        }
 
         $wasEmpty = $accessor->getValue($viewData, "{$this->direction}WasEmpty");
         $wasLimitedBy = [];
@@ -72,8 +81,22 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $accessor->setValue($viewData, "{$this->direction}UkPort", $forms["{$this->direction}UkPort"]->getData());
-        $accessor->setValue($viewData, "{$this->direction}ForeignPort", $forms["{$this->direction}ForeignPort"]->getData());
+        $ports = $forms['ports']->getData();
+        $ukPort = null;
+        $foreignPort = null;
+
+        if ($ports) {
+            $matchingPair = array_filter($this->ports, fn(CrossingRoute $r) => $r->getId() === $ports);
+
+            if (count($matchingPair) === 1) {
+                $matchingPair = array_shift($matchingPair);
+                $ukPort = $matchingPair->getUkPort();
+                $foreignPort = $matchingPair->getForeignPort();
+            }
+        }
+
+        $accessor->setValue($viewData, "{$this->direction}UkPort", $ukPort);
+        $accessor->setValue($viewData, "{$this->direction}ForeignPort", $foreignPort);
 
         $wasAtCapacity = $forms['wasAtCapacity']->getData();
 

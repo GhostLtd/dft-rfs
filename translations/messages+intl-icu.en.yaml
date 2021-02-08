@@ -1048,12 +1048,10 @@ international:
     outbound-ports:
       heading: Outbound trip - from the UK
       help: ''
-      uk-port:
-        label: UK port of departure
+      ports:
+        label: UK port of departure and foreign port of arrival
         help: ''
-      foreign-port:
-        label: Foreign port of arrival
-        help: ''
+        choice-placeholder: ""
     outbound-cargo-state:
       was-at-capacity:
         label: On leaving the UK, was the vehicle at full capacity ?
