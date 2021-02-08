@@ -52,6 +52,7 @@
 
             <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.action'|trans }}</a></h2>
             {{ consignmentActionHelp() }}
+
             {%- with {
                 marginBottom: showReorderLink ? '2' : '6',
                 trip: trip,
@@ -67,12 +68,19 @@
                 </div>
             {% endif %}
         {%- endif -%}
-        <p class="govuk-body">
+        <div>
             {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
             {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
-            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button">{{ 'international.trip.summary.actions.add-action'|trans }}</a>
+            {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
+            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
+        </div>
+
+        <hr class="govuk-!-margin-bottom-9">
+        <div>
+            {%- if trip.actions.count() > 0 -%}
             <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+            {%- endif -%}
             <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
-        </p>
+        </div>
     {% endif %}
 {% endblock %}

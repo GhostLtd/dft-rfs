@@ -1,10 +1,6 @@
-{% set translation_prefix = 'international.action.place' %}
-{% extends 'international_survey/action/form-base.html.twig' %}
+{%- set actionType = form.vars.actionType -%}
+{%- set translation_prefix = 'international.action.place' ~ (actionType ? "-#{actionType}" : '') -%}
+{%- extends 'international_survey/action/form-base.html.twig' -%}
 
-{% form_theme form _self %}
+{%- form_theme form.place.country "themes/country.html.twig" -%}
 
-{% block _place_widget %}
-    {%- from 'international_survey/macros.html.twig' import consignmentActionHelp -%}
-    {{ consignmentActionHelp() }}
-    {{ block('form_widget') }}
-{% endblock %}

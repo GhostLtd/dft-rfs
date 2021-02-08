@@ -5,59 +5,83 @@ use App\Controller\InternationalSurvey\TripController;
 use App\Workflow\InternationalSurvey\TripState as StateObject;
 
 return static function (ContainerConfigurator $container) {
+    $commonEditConfig = [
+        'to' =>  StateObject::STATE_SUMMARY,
+        'name' => 'finish_editing',
+        'guard' => '!is_empty(subject.getSubject().getId())',
+        'metadata' => [
+            'persist' => true,
+            'redirectRoute' => [
+                'routeName' => TripController::TRIP_ROUTE,
+                'parameterMappings' => ['id' => 'id'],
+            ],
+        ],
+    ];
+
     $container->extension('framework', [
         'workflows' => [
             'international_survey_trip' => [
                 'type' => 'state_machine',
-                'initial_marking' => StateObject::STATE_REQUEST_TRIP_DATES,
+                'initial_marking' => StateObject::STATE_ORIGIN_AND_DESTINATION,
                 'marking_store' => [
                     'type' => 'method',
                     'property' => 'state',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_REQUEST_TRIP_DATES,
-                    StateObject::STATE_REQUEST_TRIP_OUTBOUND_PORTS,
-                    StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
-                    StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
-                    StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
-                    StateObject::STATE_REQUEST_TRIP_DISTANCE,
-                    StateObject::STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED,
+                    StateObject::STATE_ORIGIN_AND_DESTINATION,
+                    StateObject::STATE_DATES,
+                    StateObject::STATE_OUTBOUND_PORTS,
+                    StateObject::STATE_RETURN_PORTS,
+                    StateObject::STATE_SWAPPED_TRAILER,
+                    StateObject::STATE_CHANGED_BODY_TYPE,
+                    StateObject::STATE_DISTANCE,
+                    StateObject::STATE_COUNTRIES_TRANSITTED,
 
                     StateObject::STATE_SUMMARY,
-
-                    StateObject::STATE_CHANGE_TRIP_DATES,
-                    StateObject::STATE_CHANGE_TRIP_OUTBOUND_PORTS,
-                    StateObject::STATE_CHANGE_TRIP_RETURN_PORTS,
-                    StateObject::STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE,
-                    StateObject::STATE_CHANGE_TRIP_RETURN_CARGO_STATE,
-                    StateObject::STATE_CHANGE_TRIP_DISTANCE,
-                    StateObject::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED,
                 ],
                 'transitions' => [
+                    'places entered' => [
+                        'from' =>  StateObject::STATE_ORIGIN_AND_DESTINATION,
+                        'to' => StateObject::STATE_DATES,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
+                    ],
                     'dates entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_DATES,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_OUTBOUND_PORTS,
+                        'from' => StateObject::STATE_DATES,
+                        'to' =>  StateObject::STATE_OUTBOUND_PORTS,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
                     'outbound ports entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_OUTBOUND_PORTS,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
-                    ],
-                    'outbound cargo entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_OUTBOUND_CARGO_STATE,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
+                        'from' => StateObject::STATE_OUTBOUND_PORTS,
+                        'to' =>  StateObject::STATE_RETURN_PORTS,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
                     'return ports entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_RETURN_PORTS,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
+                        'from' => StateObject::STATE_RETURN_PORTS,
+                        'to' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'guard' => "is_empty(subject.getSubject().getId())",
                     ],
-                    'return cargo entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_RETURN_CARGO_STATE,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_DISTANCE,
+                    'swapped trailer entered not articulated' => [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'to' =>  StateObject::STATE_DISTANCE,
+                        'guard' => 'is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeBodyType()',
                     ],
+                    'swapped trailer entered articulated' => [
+                        'from' => StateObject::STATE_SWAPPED_TRAILER,
+                        'to' =>  StateObject::STATE_CHANGED_BODY_TYPE,
+                        'guard' => "subject.getSubject().canChangeBodyType()",
+                    ],
+                    'changed body type entered' => [
+                        'from' => StateObject::STATE_CHANGED_BODY_TYPE,
+                        'to' =>  StateObject::STATE_DISTANCE,
+                        'guard' => "is_empty(subject.getSubject().getId())",
+                    ],
+
                     'distance entered' => [
-                        'from' => StateObject::STATE_REQUEST_TRIP_DISTANCE,
-                        'to' =>  StateObject::STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED,
+                        'from' => StateObject::STATE_DISTANCE,
+                        'to' =>  StateObject::STATE_COUNTRIES_TRANSITTED,
+                        'guard' => 'is_empty(subject.getSubject().getId())',
                     ],
                     'finish' => [
                         'metadata' => [
@@ -67,97 +91,40 @@ return static function (ContainerConfigurator $container) {
                                 'parameterMappings' => ['id' => 'id'],
                             ],
                         ],
-                        'from' => StateObject::STATE_REQUEST_TRIP_COUNTRIES_TRANSITTED,
+                        'from' => StateObject::STATE_COUNTRIES_TRANSITTED,
                         'to' =>  StateObject::STATE_SUMMARY,
                     ],
-                    'dates change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_DATES,
-                    ],
-                    'dates changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
-                            ],
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_DATES,
-                        'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-                    'outbound change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_OUTBOUND_PORTS,
-                    ],
-                    'outbound ports changed' => [
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_OUTBOUND_PORTS,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE,
-                    ],
-                    'outbound cargo state changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
-                            ],
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_OUTBOUND_CARGO_STATE,
-                        'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-                    'return change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_RETURN_PORTS,
-                    ],
-                    'return ports changed' => [
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_RETURN_PORTS,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_RETURN_CARGO_STATE,
-                    ],
-                    'return cargo state changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
-                            ],
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_RETURN_CARGO_STATE,
-                        'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-                    'distance change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_DISTANCE,
-                    ],
-                    'distance changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
-                            ],
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_DISTANCE,
-                        'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-                    'countries transitted change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED,
-                    ],
-                    'countries transitted changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => ['id' => 'id'],
-                            ],
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED,
-                        'to' =>  StateObject::STATE_SUMMARY,
-                    ],
+
+
+                    // Editing
+
+                    'places changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_ORIGIN_AND_DESTINATION,
+                    ]),
+                    'dates changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_DATES,
+                    ]),
+                    'outbound ports changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_OUTBOUND_PORTS,
+                    ]),
+                    'return ports changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_RETURN_PORTS,
+                    ]),
+                    'trailer or body changed not articulated' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'guard' => '!is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeBodyType()',
+                    ]),
+
+                    'body type changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_CHANGED_BODY_TYPE,
+                        'guard' => '!is_empty(subject.getSubject().getId())',
+                    ]),
+
+
+                    'distance changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_DISTANCE,
+                    ]),
                 ]
             ],
         ],

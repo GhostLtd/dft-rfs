@@ -2,9 +2,12 @@
 
 namespace App\Form\InternationalSurvey\Trip;
 
+use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
-use App\Form\InternationalSurvey\Trip\DataMapper\CargoStateDataMapper;
+use App\Form\InternationalSurvey\Trip\DataMapper\PortsAndCargoStateDataMapper;
 use App\Form\LimitedByType;
+use App\Utility\PortsDataSet;
+use App\Utility\PortsDataFactory;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-abstract class AbstractCargoStateType extends AbstractType
+abstract class AbstractPortsAndCargoStateType extends AbstractType
 {
     const CHOICE_YES = 'common.choices.boolean.yes';
     const CHOICE_NO = 'common.choices.boolean.no';
@@ -24,9 +27,43 @@ abstract class AbstractCargoStateType extends AbstractType
         self::CHOICE_NO => false,
     ];
 
+    const DIRECTION_OUTBOUND = 'outbound';
+    const DIRECTION_RETURN = 'return';
+
+    protected PortsDataFactory $portsHelper;
+    protected PortsDataSet $portsData;
+
+    /** @var CrossingRoute[] $ports */
+    protected array $ports;
+
+    public function __construct(PortsDataFactory $portsHelper)
+    {
+        $this->portsHelper = $portsHelper;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $direction = $options['direction'];
+        $this->portsData = $this->portsHelper->getData($direction);
+
+        $prefix = "international.trip.{$direction}-ports";
+
+        $builder
+            ->setDataMapper(new PortsAndCargoStateDataMapper($direction, $this->portsData->getPorts()))
+            ->add('ports', Gds\ChoiceType::class, [
+                'expanded' => false,
+                'label' => "{$prefix}.ports.label",
+                'help' => "{$prefix}.ports.help",
+                'attr' => ['class' => 'govuk-input--width-10'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'choices' => $this->portsData->getPortChoices(),
+            ]);
+
+        $this->addCargoStateFields($builder, $direction);
+    }
+
+    protected function addCargoStateFields(FormBuilderInterface $builder, $direction)
+    {
         $prefix = "international.trip.{$direction}-cargo-state";
 
         $emptyPrefix = "{$prefix}.was-empty";
@@ -35,7 +72,6 @@ abstract class AbstractCargoStateType extends AbstractType
         $atCapacityPrefix = "{$prefix}.was-at-capacity";
 
         $builder
-            ->setDataMapper(new CargoStateDataMapper($direction))
             ->add("wasAtCapacity", Gds\ChoiceType::class, [
                 'label' => "{$atCapacityPrefix}.label",
                 'help' => "{$atCapacityPrefix}.help",
@@ -73,9 +109,9 @@ abstract class AbstractCargoStateType extends AbstractType
             'direction',
         ]);
 
-        $resolver->setAllowedValues('direction', ['outbound', 'return']);
-
+        $resolver->setAllowedValues('direction', [self::DIRECTION_OUTBOUND, self::DIRECTION_RETURN]);
         $resolver->setDefaults([
+            'data_class' => Trip::class,
             'constraints' => [
                 new Callback([
                     'callback' => [$this, 'validateCapacity'],
@@ -85,7 +121,8 @@ abstract class AbstractCargoStateType extends AbstractType
         ]);
     }
 
-    public function validateCapacity(Trip $trip, ExecutionContextInterface $context) {
+    public function validateCapacity(Trip $trip, ExecutionContextInterface $context)
+    {
         $form = $context->getRoot();
         if ($form instanceof FormInterface) {
             $accessor = PropertyAccess::createPropertyAccessor();

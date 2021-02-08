@@ -76,17 +76,27 @@ class ActionController extends AbstractSessionStateWorkflowController
     {
         $this->loadSurveyAndTrip($user, $tripId);
         $this->mode = self::MODE_ADD;
-        return $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
+
+        if (in_array($state, [ActionState::STATE_WEIGHT_UNLOADED, ActionState::STATE_CARGO_TYPE])
+            && !$this->session->has($this->getSessionKey())
+        ) {
+            // final state of unloading or loading... but nothing in the session. Assume user navigated back from "add another"
+            return $this->getCancelUrl();
+        }
+
+        $result = $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
+        if ($state === ActionState::STATE_ADD_ANOTHER) {
+            $this->cleanUp();
+        }
+        return $result;
     }
 
     /**
      * @Route("/trips/{tripId}/add-another-action", name=self::ADD_ANOTHER_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      */
-    public function addAnother(UserInterface  $user, string $tripId): Response
+    public function addAnother(UserInterface $user, string $tripId): Response
     {
-        $this->loadSurveyAndTrip($user, $tripId);
-        $this->cleanUp();
-        return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $this->trip->getId()]);
+        return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $tripId]);
     }
 
     /**
@@ -215,14 +225,19 @@ class ActionController extends AbstractSessionStateWorkflowController
 
         switch($this->mode) {
             case self::MODE_EDIT:
-                $action = $formWizard->getSubject() ?? $this->action;
-                $this->action->mergeActionChanges($action);
+                $action = $formWizard->getSubject();
+
+                if ($action !== null) {
+                    $this->action->mergeActionChanges($action);
+                }
+
                 $formWizard->setSubject($this->action);
                 break;
             case self::MODE_ADD:
                 $action = $formWizard->getSubject() ?? new Action();
                 $action->setNumber($this->actionRepository->getNextNumber($this->trip->getId()));
                 $action->setTrip($this->trip);
+
                 $formWizard->setSubject($action);
                 break;
         }

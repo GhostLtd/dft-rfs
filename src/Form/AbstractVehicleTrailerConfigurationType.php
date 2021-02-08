@@ -19,8 +19,7 @@ abstract class AbstractVehicleTrailerConfigurationType extends AbstractType
                 'choices' => Vehicle::TRAILER_CONFIGURATION_CHOICES,
                 'label' => "{$translationKeyPrefix}.trailer-configuration.label",
                 'help' => "{$translationKeyPrefix}.trailer-configuration.help",
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'label_is_page_heading' => true,
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
         ;
     }

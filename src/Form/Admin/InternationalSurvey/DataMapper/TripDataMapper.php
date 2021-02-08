@@ -2,8 +2,10 @@
 
 namespace App\Form\Admin\InternationalSurvey\DataMapper;
 
+use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\TripType;
+use App\Utility\PortsDataSet;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormInterface;
@@ -11,6 +13,14 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TripDataMapper implements DataMapperInterface
 {
+    /** @var PortsDataSet[] $portDataSets */
+    protected array $portsDataSets;
+
+    public function __construct(array $portsDataSets)
+    {
+        $this->portsDataSets = $portsDataSets;
+    }
+
     public function mapDataToForms($viewData, $forms)
     {
         if (null === $viewData) {
@@ -21,9 +31,9 @@ class TripDataMapper implements DataMapperInterface
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         $accessor = PropertyAccess::createPropertyAccessor();
 
         foreach(['outbound', 'return'] as $direction) {
@@ -45,21 +55,37 @@ class TripDataMapper implements DataMapperInterface
 
             $forms["{$direction}CargoState"]->setData($cargoState);
 
-            foreach(['Date', 'UkPort', 'ForeignPort'] as $field) {
-                $forms["{$direction}{$field}"]->setData($accessor->getValue($viewData, "{$direction}{$field}"));
+            $forms["{$direction}Date"]->setData($accessor->getValue($viewData, "{$direction}Date"));
+
+            $ukPort = $accessor->getValue($viewData, "{$direction}UkPort");
+            $foreignPort = $accessor->getValue($viewData, "{$direction}ForeignPort");
+
+            $ports = $this->portsDataSets[$direction]->getPorts();
+
+            $matchingPair = array_filter($ports, fn(CrossingRoute $route) => $route->getUkPort() === $ukPort && $route->getForeignPort() === $foreignPort);
+
+            if (count($matchingPair) === 1) {
+                $forms["{$direction}Ports"]->setData(array_shift($matchingPair)->getId());
             }
         }
 
         $forms['countriesTransitted']->setData($viewData->getCountriesTransitted());
         $forms['countriesTransittedOther']->setData($viewData->getCountriesTransittedOther());
         $forms['roundTripDistance']->setData($viewData->getRoundTripDistance());
+        $forms['origin']->setData($viewData->getOrigin());
+        $forms['destination']->setData($viewData->getDestination());
+
+        $forms['axle_config']->setData($viewData->getIsSwappedTrailer() ? $viewData->getAxleConfiguration() : false);
+        if ($forms['body_type'] ?? false) {
+            $forms['body_type']->setData($viewData->getIsChangedBodyType() ? $viewData->getBodyType() : false);
+        }
     }
 
     public function mapFormsToData($forms, &$viewData)
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!$viewData instanceof Trip) {
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
@@ -73,14 +99,38 @@ class TripDataMapper implements DataMapperInterface
             $accessor->setValue($viewData, "{$direction}WasEmpty", $cargoState === TripType::CARGO_STATE_EMPTY);
             $accessor->setValue($viewData, "{$direction}WasLimitedBySpace", $limitedByBoth || $cargoState === TripType::CARGO_STATE_CAPACITY_SPACE);
             $accessor->setValue($viewData, "{$direction}WasLimitedByWeight", $limitedByBoth || $cargoState === TripType::CARGO_STATE_CAPACITY_WEIGHT);
+            $accessor->setValue($viewData, "{$direction}Date", $forms["{$direction}Date"]->getData());
 
-            foreach(['Date', 'UkPort', 'ForeignPort'] as $field) {
-                $accessor->setValue($viewData, "{$direction}{$field}", $forms["{$direction}{$field}"]->getData());
+            $ports = $forms["{$direction}Ports"]->getData();
+            $ukPort = null;
+            $foreignPort = null;
+
+            if ($ports) {
+                $matchingPair = array_filter($this->portsDataSets[$direction]->getPorts(), fn(CrossingRoute $r) => $r->getId() === $ports);
+
+                if (count($matchingPair) === 1) {
+                    $matchingPair = array_shift($matchingPair);
+                    $ukPort = $matchingPair->getUkPort();
+                    $foreignPort = $matchingPair->getForeignPort();
+                }
             }
+
+            $accessor->setValue($viewData, "{$direction}UkPort", $ukPort);
+            $accessor->setValue($viewData, "{$direction}ForeignPort", $foreignPort);
         }
 
         $viewData->setCountriesTransitted($forms['countriesTransitted']->getData());
         $viewData->setCountriesTransittedOther($forms['countriesTransittedOther']->getData());
         $viewData->setRoundTripDistance($forms['roundTripDistance']->getData());
+        $viewData->setOrigin($forms['origin']->getData());
+        $viewData->setDestination($forms['destination']->getData());
+
+        $viewData->setIsSwappedTrailer($forms['axle_config']->getData() !== false);
+        $viewData->setAxleConfiguration($forms['axle_config']->getData() ?? null);
+
+        if ($forms['body_type'] ?? false) {
+            $viewData->setIsChangedBodyType($forms['body_type']->getData() !== false);
+            $viewData->setBodyType($forms['body_type']->getData() ?? null);
+        }
     }
 }

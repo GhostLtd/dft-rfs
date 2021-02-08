@@ -4,7 +4,7 @@ namespace App\Form\InternationalSurvey\Trip;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OutboundCargoStateType extends AbstractCargoStateType
+class OutboundPortsAndCargoStateType extends AbstractPortsAndCargoStateType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -12,7 +12,7 @@ class OutboundCargoStateType extends AbstractCargoStateType
 
         $resolver->setDefaults([
             'direction' => 'outbound',
-            'validation_groups' => ['trip_outbound_cargo_state'],
+            'validation_groups' => ['trip_outbound_ports', 'trip_outbound_cargo_state'],
         ]);
     }
 }

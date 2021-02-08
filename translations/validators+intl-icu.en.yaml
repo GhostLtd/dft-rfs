@@ -2,6 +2,9 @@ common:
   choice:
     invalid: Choose a valid option
     not-null: Choose an option
+  country:
+    country: Choose a country
+    other: Specify the country
   date:
     not-null: Enter a date
     greater-than: Enter a date after {compared_value}
@@ -16,6 +19,8 @@ common:
   place:
     place: Enter a place
     country: Enter a country
+  trip-route:
+    not-blank: Choose a route
   value-unit:
     unit:
       not-blank: Choose a unit

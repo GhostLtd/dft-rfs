@@ -4,6 +4,8 @@ namespace App\Entity\International;
 
 use App\Entity\BlameLoggable;
 use App\Entity\Distance;
+use App\Entity\SimpleVehicleTrait;
+use App\Entity\Vehicle as VehicleLookup;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\TripRepository;
 use DateTimeInterface;
@@ -18,15 +20,36 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
  * @ORM\Table(name="international_trip")
+ * @AppAssert\TripRoute(groups={"trip_outbound_ports"}, direction="outbound")
+ * @AppAssert\TripRoute(groups={"trip_return_ports"}, direction="return")
+ * @AppAssert\TripRoute(groups={"admin_trip"}, direction="outbound", formField="outboundPorts")
+ * @AppAssert\TripRoute(groups={"admin_trip"}, direction="return", formField="returnPorts")
  */
 class Trip implements BlameLoggable
 {
+    use SimpleVehicleTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="UUID")
      * @ORM\Column(type="guid", unique=true)
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
+     */
+    private $origin;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
+     */
+    private $destination;
+
 
     /**
      * @ORM\Column(type="date")
@@ -36,15 +59,13 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundUkPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_outbound_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
      */
     private $outboundForeignPort;
 
@@ -71,15 +92,13 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnForeignPort;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"trip_return_ports", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
      */
     private $returnUkPort;
 
@@ -140,14 +159,46 @@ class Trip implements BlameLoggable
     private $actions;
 
     /**
-     * @Assert\Callback(groups={"trip_outbound_cargo_state"})
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"trip_swapped_trailer"})
+     */
+    private $isSwappedTrailer;
+
+    /**
+     * Redefined here for Validation purposes
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Expression(
+     *     expression="(this.getIsSwappedTrailer() === false) || !is_empty(value)",
+     *     groups={"trip_swapped_trailer"},
+     *     message="common.vehicle.axle-configuration.not-blank"
+     * )
+     */
+    private $axleConfiguration;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isChangedBodyType;
+
+    /**
+     * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\Expression(
+     *     expression="(this.getIsChangedBodyType() === false) || !is_empty(value)",
+     *     groups={"trip_changed_body_type"},
+     *     message="common.vehicle.body-type.not-blank"
+     * )
+     */
+    private $bodyType;
+
+    /**
+     * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
      */
     public function validateOutboundCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'outbound');
     }
 
     /**
-     * @Assert\Callback(groups={"trip_return_cargo_state"})
+     * @Assert\Callback(groups={"trip_return_cargo_state", "admin_trip"})
      */
     public function validateReturnCargoState(ExecutionContextInterface $context) {
         $this->validateCargoState($context, 'return');
@@ -461,6 +512,28 @@ class Trip implements BlameLoggable
         return $this;
     }
 
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+        return $this;
+    }
+
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
+        return $this;
+    }
+
     // -----
 
     public function getOutboundCargoState(): string {
@@ -502,6 +575,8 @@ class Trip implements BlameLoggable
 
     public function mergeTripChanges(Trip $trip)
     {
+        $this->setOrigin($trip->getOrigin());
+        $this->setDestination($trip->getDestination());
         $this->setOutboundDate($trip->getOutboundDate());
         $this->setReturnDate($trip->getReturnDate());
         $this->setOutboundUkPort($trip->getOutboundUkPort());
@@ -583,5 +658,87 @@ class Trip implements BlameLoggable
     public function getAssociatedEntityId()
     {
         return $this->getVehicle()->getId();
+    }
+
+    public function getIsSwappedTrailer(): ?bool
+    {
+        return $this->isSwappedTrailer;
+    }
+
+    public function setIsSwappedTrailer(bool $isSwappedTrailer): self
+    {
+        $this->isSwappedTrailer = $isSwappedTrailer;
+
+        return $this;
+    }
+
+    public function getChangeBodyTypeChoices()
+    {
+        $choices = VehicleLookup::BODY_CONFIGURATION_CHOICES;
+        $vehicleBodyType = $this->getVehicle()->getBodyType();
+
+        // filter original choice
+        $choices = array_filter($choices, function($value) use ($vehicleBodyType){
+            return $value !== $vehicleBodyType;
+        });
+
+        return $choices;
+    }
+
+    public function getTrailerSwapChoices()
+    {
+        $choices = [];
+        $vehicleTrailerConfig = $this->getVehicle()->getTrailerConfiguration();
+
+        switch ($vehicleTrailerConfig) {
+            case VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED :
+                $choices = VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED];
+                break;
+            case VehicleLookup::TRAILER_CONFIGURATION_RIGID_TRAILER :
+            case VehicleLookup::TRAILER_CONFIGURATION_RIGID :
+                $choices = array_merge(
+                    VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_RIGID],
+                    VehicleLookup::AXLE_CONFIGURATION_CHOICES[VehicleLookup::TRAILER_CONFIGURATION_RIGID_TRAILER]
+                );
+                break;
+        }
+
+        $vehicleAxleConfig = $this->getVehicle()->getAxleConfiguration();
+
+        // filter original choice
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return $value !== $vehicleAxleConfig;
+        });
+
+        // Remove Rigid other (unless original was rigid other + trailer) as we can never swap to that!
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return $value !== 199 || $vehicleAxleConfig === 299;
+        });
+
+        // filter the choices so only the middle digit matches (or other in same category)
+        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+            return substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1)
+                || substr($value, 1, 2) === '99';
+        });
+
+        return $choices;
+    }
+
+    public function getIsChangedBodyType(): ?bool
+    {
+        return $this->isChangedBodyType;
+    }
+
+    public function setIsChangedBodyType(bool $isChangedBodyType): self
+    {
+        $this->isChangedBodyType = $isChangedBodyType;
+
+        return $this;
+    }
+
+    public function canChangeBodyType()
+    {
+        if (!$this->getVehicle()) return false;
+        return $this->getVehicle()->getTrailerConfiguration() === VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED;
     }
 }

@@ -13,20 +13,24 @@ abstract class Vehicle
         self::OPERATION_TYPE_TRANSLATION_PREFIX . self::OPERATION_TYPE_ON_OWN_ACCOUNT => self::OPERATION_TYPE_ON_OWN_ACCOUNT,
     ];
 
+    const TRAILER_CONFIGURATION_RIGID = 100;
+    const TRAILER_CONFIGURATION_RIGID_TRAILER = 200;
+    const TRAILER_CONFIGURATION_ARTICULATED = 300;
+
     const TRAILER_CONFIGURATION_CHOICES = [
-        'vehicle.axle.rigid.label' => 100,
-        'vehicle.axle.rigid-and-trailer.label' => 200,
-        'vehicle.axle.articulated.label' => 300,
+        'vehicle.axle.rigid.label' => self::TRAILER_CONFIGURATION_RIGID,
+        'vehicle.axle.rigid-and-trailer.label' => self::TRAILER_CONFIGURATION_RIGID_TRAILER,
+        'vehicle.axle.articulated.label' => self::TRAILER_CONFIGURATION_ARTICULATED,
     ];
 
     const AXLE_CONFIGURATION_CHOICES = [
-        100 => [
+        self::TRAILER_CONFIGURATION_RIGID => [
             'vehicle.axle.rigid.2.0' => 120,
             'vehicle.axle.rigid.3.0' => 130,
             'vehicle.axle.rigid.4.0' => 140,
             'vehicle.axle.rigid.other' => 199,
         ],
-        200 => [
+        self::TRAILER_CONFIGURATION_RIGID_TRAILER => [
             'vehicle.axle.rigid-and-trailer.2.1' => 221,
             'vehicle.axle.rigid-and-trailer.2.2' => 222,
             'vehicle.axle.rigid-and-trailer.2.3' => 223,
@@ -34,7 +38,7 @@ abstract class Vehicle
             'vehicle.axle.rigid-and-trailer.3.3' => 233,
             'vehicle.axle.rigid-and-trailer.other' => 299,
         ],
-        300 => [
+        self::TRAILER_CONFIGURATION_ARTICULATED => [
             'vehicle.axle.articulated.2.1' => 321,
             'vehicle.axle.articulated.2.2' => 322,
             'vehicle.axle.articulated.2.3' => 323,

@@ -28,7 +28,7 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
                         'choices' => Vehicle::AXLE_CONFIGURATION_CHOICES[$vehicle->getTrailerConfiguration()],
                         'label' => "{$translationKeyPrefix}.axle-configuration.label",
                         'help' => "{$translationKeyPrefix}.axle-configuration.help",
-                        'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ])
                 ;
             }

@@ -1,26 +1,34 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, actionLinks -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
 
 {%- set params = {tripId: trip.id} -%}
-{%- set urlDateChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DATES', params) -%}
-{%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_OUTBOUND_PORTS', params) -%}
-{%- set urlReturnChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_RETURN_PORTS', params) -%}
-{%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_DISTANCE', params) -%}
-{%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_CHANGE_TRIP_COUNTRIES_TRANSITTED', params) -%}
+{%- set urlPlacesChange = wizardUrl('international-trip', 'STATE_ORIGIN_AND_DESTINATION', params) -%}
+{%- set urlDateChange = wizardUrl('international-trip', 'STATE_DATES', params) -%}
+{%- set urlOutboundChange = wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params) -%}
+{%- set urlReturnChange = wizardUrl('international-trip', 'STATE_RETURN_PORTS', params) -%}
+{%- set urlTrailerChange = wizardUrl('international-trip', 'STATE_SWAPPED_TRAILER', params) -%}
+{%- set urlDistanceChange = wizardUrl('international-trip', 'STATE_DISTANCE', params) -%}
+{%- set urlCountriesTransittedChange = wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params) -%}
 {%- set change = 'common.actions.change'|trans -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
-    {{ row(showActions, 'international.trip.summary.dates',
-        trip.outboundDate == trip.returnDate ?
-        trip.outboundDate|date('d/m/Y') :
+    {{ row(showActions, 'international.trip.summary.places',
+        'international.trip.summary.origin-to-destination'|trans({
+            'origin': trip.origin|capitalize,
+            'destination': trip.destination|capitalize,
+        }),
+        {(urlPlacesChange): change}
+    ) }}
+    {{ row(showActions, 'international.trip.summary.dates' | trans,
         ('international.trip.summary.date-until-date'|trans({
             'from': trip.outboundDate|date('d/m/Y'),
             'until': trip.returnDate|date('d/m/Y'),
         })),
-    {(urlDateChange): change}) }}
+        {(urlDateChange): change}
+    ) }}
     {{ row(showActions, 'international.trip.summary.outbound-journey',
         'international.trip.summary.origin-to-destination'|trans({
             'origin': trip.outboundUkPort|capitalize,
@@ -33,6 +41,33 @@
             'destination': trip.returnUkPort|capitalize,
         }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
     {(urlReturnChange): change}) }}
+
+    {%- from 'macros.html.twig' import displayAxleConfiguration -%}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ 'international.trip.summary.swapped-trailer' | trans }}</dt>
+        <dd class="govuk-summary-list__value">
+            {{- "common.choices.boolean.#{trip.isSwappedTrailer ? 'yes' : 'no'}" | trans -}}
+            {%- if trip.isSwappedTrailer -%}<br>{{- displayAxleConfiguration(trip.axleConfiguration) -}}{%- endif -%}
+        </dd>
+        {% if showActions %}
+            <dd class="govuk-summary-list__actions">{{ actionLinks({(urlTrailerChange): change}) }}</dd>
+        {% endif %}
+    </div>
+
+    {% if trip.canChangeBodyType %}
+        {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ 'international.trip.summary.changed-body-type' | trans }}</dt>
+            <dd class="govuk-summary-list__value">
+                {{- "common.choices.boolean.#{trip.isChangedBodyType ? 'yes' : 'no'}" | trans -}}
+                {%- if trip.isChangedBodyType %} &mdash; {{ choiceLabel(bodyChoices, trip.bodyType) | trans -}}{%- endif -%}
+            </dd>
+            {% if showActions %}
+                <dd class="govuk-summary-list__actions">{{ actionLinks({(urlTrailerChange): change}) }}</dd>
+            {% endif %}
+        </div>
+    {% endif %}
+
     {{ row(showActions, 'international.trip.summary.distance',
         ("common.distance.#{trip.roundTripDistance.unit}" |
         trans({value: trip.roundTripDistance.value|number_format})

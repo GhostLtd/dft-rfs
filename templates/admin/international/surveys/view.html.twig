@@ -126,14 +126,14 @@
                     {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
                         {# Not implemented #}
                     {% else %}
-                        <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Consignment actions</h4>
+                        <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Places where goods were loaded or unloaded</h4>
                         {%- set isReOrderable = trip.actions|length  > 1 -%}
                         {%- if trip.actions is not empty -%}
                             {%- with {trip:trip, marginBottom: 5, isAdmin: true} -%}
                                 {%- include "international_survey/includes/actions.html.twig" -%}
                             {%- endwith -%}
                         {%- else -%}
-                            <div class="govuk-body govuk-!-margin-bottom-5">No consignment actions</div>
+                            <div class="govuk-body govuk-!-margin-bottom-5">No loading or unloading places</div>
                         {%- endif -%}
 
                         <div class="govuk-!-margin-bottom-9 govuk-body">

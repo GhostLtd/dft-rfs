@@ -40,8 +40,10 @@ class VehicleRegMarkChangedListener
             return;
         }
 
-        if (($newValue = $eventArgs->getNewValue('registrationMark')) !== ($oldValue = $eventArgs->getOldValue('registrationMark')))
-        {
+        ;
+        if ($eventArgs->hasChangedField('registrationMark')
+             && ($newValue = $eventArgs->getNewValue('registrationMark')) !== ($oldValue = $eventArgs->getOldValue('registrationMark'))
+        ) {
             $this->session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                 'Check vehicle details',
                 'Vehicle registration mark has changed',

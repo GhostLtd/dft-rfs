@@ -31,9 +31,9 @@
             {%- else -%}
                 {%- set loadingAction = action.loadingAction -%}
                 {%- set goods = formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther) -%}
-                {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: loadingAction.name, country: loadingAction.country|country_name, goods: goods, number: loadingAction.number}) %}
+                {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: loadingAction.name, country: loadingAction|formatCountry, goods: goods, number: loadingAction.number}) %}
             {%- endif -%}
-            <strong>{{ action.number }}.</strong>{{ translationString|trans({name: action.name, country: action.country|country_name}) }}<br>
+            <strong>{{ action.number }}.</strong>{{ translationString|trans({name: action.name, country: action|formatCountry}) }}<br>
             <div class="goods">{{ goodsCopy }}</div>
         {%- endset -%}
 

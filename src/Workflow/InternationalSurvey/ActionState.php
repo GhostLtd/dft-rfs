@@ -91,11 +91,17 @@ class ActionState extends AbstractFormWizardState implements FormWizardStateInte
             return false;
         }
 
-        $alternativeStartStates = [
-        ];
+        $alternativeStartStates = $this->getSubject()->getLoading()
+            ? [
+                self::STATE_GOODS_DESCRIPTION,
+                self::STATE_HAZARDOUS_GOODS,
+            ] : [
+                self::STATE_CONSIGNMENT_UNLOADED,
+            ];
 
         return $this->subject->getId() ?
             in_array($state, $alternativeStartStates) :
-            false;
+            // Add another needs to be a jump in state, because we clear the session while rendering the add another page
+            $state === self::STATE_ADD_ANOTHER;
     }
 }

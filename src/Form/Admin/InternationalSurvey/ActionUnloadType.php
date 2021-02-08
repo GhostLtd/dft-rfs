@@ -3,6 +3,7 @@
 namespace App\Form\Admin\InternationalSurvey;
 
 use App\Entity\International\Action;
+use App\Form\CountryType;
 use App\Utility\LoadingPlaceHelper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -12,7 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -48,14 +48,7 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
                         'attr' => ['class' => 'govuk-input--width-10'],
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ])
-                    ->add('country', Gds\ChoiceType::class, [
-                        'label' => "Country",
-                        'choices' => array_flip(Countries::getNames()),
-                        'expanded' => false,
-                        'placeholder' => '',
-                        'label_attr' => ['class' => 'govuk-label--s'],
-                        'attr' => ['class' => 'accessible-autocomplete govuk-input--width-10'],
-                    ])
+                    ->add('country', CountryType::class)
                     ->add('loadingAction', Gds\ChoiceType::class, [
                         'label' => "Which goods were unloaded?",
                         'label_attr' => ['class' => 'govuk-label--s'],
@@ -105,28 +98,28 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
             throw new UnexpectedTypeException($viewData, Action::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        foreach(['name', 'country', 'loadingAction', 'weightOfGoods', 'weightUnloadedAll'] as $field) {
+        foreach(['name', 'country', 'country_other', 'loadingAction', 'weightOfGoods', 'weightUnloadedAll'] as $field) {
             $forms[$field]->setData($accessor->getValue($viewData, $field));
         }
     }
 
     public function mapFormsToData($forms, &$viewData)
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!$viewData instanceof Action) {
             throw new UnexpectedTypeException($viewData, Action::class);
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        foreach(['name', 'country', 'loadingAction', 'weightOfGoods', 'weightUnloadedAll'] as $field) {
+        foreach(['name', 'country', 'country_other', 'loadingAction', 'weightOfGoods', 'weightUnloadedAll'] as $field) {
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
         }
 

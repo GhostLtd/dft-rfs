@@ -39,6 +39,7 @@ common:
     boolean:
       yes: Yes
       no: No
+    other: 'Other'
   consignment:
     cargo-type: Cargo type
     goods: Goods
@@ -46,6 +47,13 @@ common:
     place-of-loading: Loaded at
     place-of-unloading: Unloaded at
     weight: Weight
+  country:
+    country:
+      label: Country
+      help: ''
+    other:
+      label: Specify country
+      help: ''
   notification:
     important: Important
     success: Success
@@ -317,19 +325,25 @@ domestic:
         help: "How much fuel in total was put into this vehicle during the survey week?\n\nEnter 0 (zero) if you didn't add fuel during the survey week."
 
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: Select the option that best describes the vehicle
+        help: ''
 
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: Select the option that best shows the axle configuration of the vehicle
+        help: ''
 
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: Indicate the main type of body for the vehicle
+        help: ''
 
   day-view:
     headings:
@@ -706,21 +720,21 @@ international:
     view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
 
   action-delete:
-    title: Delete consignment action
+    title: Delete action
     heading-delete: Delete action {number}?
     delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
     delete-unloading: Are you sure you want to delete this unloading action?
     notification:
       deleted:
-        heading: Consignment action deleted successfully
-        content: The consignment action was successfully deleted
+        heading: Action deleted successfully
+        content: The action was successfully deleted
       cancelled:
-        heading: Consignment action not deleted
-        content: The request to delete the consignment action was cancelled
+        heading: Action not deleted
+        content: The request to delete the action was cancelled
 
   trip-delete:
     title: Delete trip
-    delete-multi: This will permanently delete this trip and all related consignment actions (shown above)
+    delete-multi: This will permanently delete this trip and all related actions (shown above)
     delete: This will permanently delete this trip
     confirm.label: Yes, delete this trip
     cancel.label: Cancel
@@ -733,7 +747,7 @@ international:
 
   vehicle-delete:
     title: Delete vehicle
-    delete: This will permanently delete this vehicle and all related trips and consignment actions
+    delete: This will permanently delete this vehicle and all related trips and actions
     notification:
       deleted:
         heading: Vehicle deleted successfully
@@ -741,6 +755,11 @@ international:
       cancelled:
         heading: Vehicle not deleted
         content: The request to delete the vehicle was cancelled
+
+  vehicle-cant-edit-trailer-configs:
+    title: Edit cancelled
+    heading: Vehicle trailer configuration can't be changed
+    content: The trailer, axle and body configuration can't be changed for this vehicle because trips have been added.
 
   thanks:
     title: Thanks
@@ -821,17 +840,23 @@ international:
         heading: 'The vehicle is not required in this survey'
         content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
     vehicle-trailer-configuration:
+      heading: Tell us about the vehicle
+      help:
       trailer-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best describes the vehicle
+        label: 'Select the option that best describes the vehicle'
+        help: ''
     vehicle-axle-configuration:
+      heading: Tell us about the vehicle
+      help: ''
       axle-configuration:
-        label: Tell us about the vehicle
-        help: Select the option that best shows the axle configuration of the vehicle
+        label: 'Select the option that best shows the axle configuration of the vehicle'
+        help: ''
     vehicle-body:
+      heading: Tell us about the vehicle
+      help: ''
       body-type:
-        label: Tell us about the vehicle
-        help: Indicate the main type of body for the vehicle
+        label: 'Indicate the main type of body for the vehicle'
+        help: ''
     vehicle-weight:
       heading: Vehicle weight and capacity
       help: ''
@@ -850,16 +875,24 @@ international:
       delete.label: Yes, delete this action
       cancel.label: Cancel
     summary:
-      heading-loading: Loading — action {number}
-      heading-unloading: Unloading — action {number}
+      heading-loading: Action {number} — goods loaded
+      heading-unloading: Action {number} — goods unloaded
       actions:
         back-to-trip-summary: Back to trip details
         delete: Delete action
+    place-loading:
+      heading: Loading of goods
+      help: ''
+    place-unloading:
+      heading: Unloading of goods
+      help: ''
     place:
-      heading: Add consignment action
+      heading: Loading or unloading of goods
       help: ''
       place:
-        label: Where did you load/unload the consignment?
+        label: Where did you load/unload goods?
+        label-load: Where did you load goods?
+        label-unload: Where did you unload goods?
         help: ''
       name:
         label: Place name or postcode
@@ -907,8 +940,8 @@ international:
         help: ''
     add-another:
       confirm:
-        label: Do you need to add another action?
-        help: You must tell us about every time when you either loaded or unloaded goods
+        label: Did you load or unload any other goods?
+        help: You must tell us about every time you either loaded or unloaded goods
   stop:
     stop:
       heading: Where did you stop?
@@ -968,9 +1001,10 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
-      action: Consignment actions
+      action: Loading and unloading of goods
       actions:
-        add-action: Add consignment action
+        add-action: Add loading or unloading action
+        add-loading-action: Add loading action
         add-stops: Add stops
         add-consignment: Add consignment
         back-to-vehicle-summary: Back to vehicle details
@@ -979,13 +1013,14 @@ international:
       trip-summary: Trip details
       consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
-      date-until-date: "{from} – {until}"
+      date-until-date: "{from} to {until}"
       cargo-state:
         empty: Empty
         limited-by-space: At capacity by space
         limited-by-weight: At capacity by weight
         limited-by-space-and-weight: At capacity by space and weight
         not-limited: Not at capacity
+      places: Start / end
       dates: Dates
       outbound-journey: Outbound journey
       outbound: Outbound trip - from the UK
@@ -1000,9 +1035,19 @@ international:
       from-to: From {source} to {destination}
       stops: Stops
       help:
-        action-what: What is a consignment action?
-        action-explanation: "A consignment action is when a consignment is either loaded or unloaded.\n\nPlease record these actions in the order that they occurred."
+        actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
+      swapped-trailer: 'Trailer axle configuration changed?'
+      changed-body-type: 'Body type changed?'
 
+    places:
+      heading: Where did trip start/end?
+      help: ''
+      origin:
+        label: Where did the trip start?
+        help: 'The postcode or place name, within the UK, where this trip first started.'
+      destination:
+        label: Where did the trip end?
+        help: "The postcode or place name, within the UK, where this trip finally ended. This might be the same place as where the trip first started."
     dates:
       heading: Dates of Trip
       help: ''
@@ -1020,44 +1065,35 @@ international:
     outbound-ports:
       heading: Outbound trip - from the UK
       help: ''
-      uk-port:
-        label: UK port of departure
+      ports:
+        label: UK port of departure and foreign port of arrival
         help: ''
-      foreign-port:
-        label: Foreign port of arrival
-        help: ''
+        choice-placeholder: ""
     outbound-cargo-state:
-      heading: Outbound trip - from the UK
-      help: ''
       was-at-capacity:
-        label: Was your vehicle at full capacity?
+        label: On leaving the UK, was the vehicle at full capacity ?
         help: ''
       was-empty:
-        label: Was your vehicle empty?
+        label: Was the vehicle empty?
         help: ''
       was-limited:
-        label: Was your vehicle at capacity by space, by weight or by both?
+        label: Was the vehicle at capacity by space, by weight or both?
         help: Select the answers which best describe the load
     return-ports:
       heading: Return trip - to the UK
       help: ''
-      foreign-port:
-        label: Foreign port of departure
-        help: ''
-      uk-port:
-        label: UK port of arrival
+      ports:
+        label: Foreign port of departure and UK port of arrival
         help: ''
     return-cargo-state:
-      heading: Return trip - to the UK
-      help: ''
       was-at-capacity:
-        label: Was your vehicle at full capacity?
+        label: On return to the UK, was the vehicle at full capacity?
         help: ''
       was-empty:
-        label: Was your vehicle empty?
+        label: Was the vehicle empty?
         help: ''
       was-limited:
-        label: Was your vehicle at full capacity?
+        label: Was the vehicle at capacity by space, by weight or both?
         help: Select the answers which best describe the load
     distance:
       heading: Trip distance
@@ -1073,7 +1109,7 @@ international:
         help: ''
       countries-transitted-other:
         label: Enter any other countries separated by commas
-        help: e.g. Switzerland, Italy
+        help: e.g. Sweden, Denmark
     start-date:
       help:
         summary: 'What date do you use to decide if a trip is relevant to the survey?'
@@ -1081,6 +1117,26 @@ international:
           1: "If a vehicle left empty, use the date it left."
           2: "If a vehicle left loaded, use the date it was loaded."
         note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
+    swapped-trailer:
+      heading: "Axle configuration"
+      help: ''
+      original-axle-config: "Vehicle's original configuration"
+      is-swapped-trailer:
+        label: "Did the trailer's axle configuration change for this trip?"
+        help: ''
+      axle-configuration:
+        label: 'Select the new configuration'
+        help: ''
+    changed-body-type:
+      original-body-type: "Vehicle's original body type"
+      heading: 'Body type'
+      help: ''
+      is-changed-body-type:
+        label: Did the trailer's body type change for this trip?
+        help: ''
+      body-type:
+        label: 'Select the new body type'
+        help: ''
 
 goods:
   hazardous:

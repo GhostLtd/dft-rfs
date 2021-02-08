@@ -13,9 +13,9 @@ class VehicleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $typeAndConfigurationChoices = [
-            'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[100],
-            'Rigid with trailer' => Vehicle::AXLE_CONFIGURATION_CHOICES[200],
-            'Articulated' => Vehicle::AXLE_CONFIGURATION_CHOICES[300],
+            'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID],
+            'Rigid with trailer' => Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID_TRAILER],
+            'Articulated' => Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_ARTICULATED],
         ];
 
         $addPlaceholder = function(array $choices) use ($options):array {
