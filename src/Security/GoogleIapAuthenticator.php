@@ -26,7 +26,7 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
         return [
             'emailAddress' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-email'),
             'userId' => $request->headers->get('X-Goog-Authenticated-User-Id', 'no-id'),
-            'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion'),
+            'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion', false),
         ];
     }
 
@@ -43,6 +43,10 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
+        if ($user->getPassword() === false) {
+            return false;
+        }
+
         /** @var User $user */
         try {
             $metadata = new Metadata();
@@ -66,10 +70,18 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
             'throwException' => true,
         ]);
 
+        if ($info === false) {
+            throw new \Exception('Google token verification failed');
+        }
+
         if ($audience != $info['aud'] ?? '') {
             throw new \Exception(sprintf(
                 'Audience %s did not match expected %s', $info['aud'], $audience
             ));
+        }
+
+        if (empty($info['email']) || empty($info['sub'])) {
+            throw new \Exception('Google token verification does not contain email/sub.');
         }
 
         // The email address returned is the plain email address (without namespace)
