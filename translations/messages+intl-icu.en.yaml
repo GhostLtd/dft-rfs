@@ -1070,11 +1070,8 @@ international:
     return-ports:
       heading: Return trip - to the UK
       help: ''
-      foreign-port:
-        label: Foreign port of departure
-        help: ''
-      uk-port:
-        label: UK port of arrival
+      ports:
+        label: Foreign port of departure and UK port of arrival
         help: ''
     return-cargo-state:
       was-at-capacity:
