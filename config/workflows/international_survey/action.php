@@ -14,9 +14,9 @@ return static function (ContainerConfigurator $container) {
         'guard' => $expressionEditing,
         'metadata' => [
             'redirectRoute' => [
-                'routeName' => TripController::TRIP_ROUTE,
+                'routeName' => ActionController::VIEW_ROUTE,
                 'parameterMappings' => [
-                    'id' => 'trip.id',
+                    'actionId' => 'id',
                 ],
             ],
             'persist' => true,
