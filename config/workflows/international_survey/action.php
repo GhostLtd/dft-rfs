@@ -9,6 +9,20 @@ return static function (ContainerConfigurator $container) {
     $expressionEditing = 'subject.getSubject().getId()';
     $expressionCreating = '!subject.getSubject().getId()';
 
+    $defaultEditingConfig = [
+        'to' => StateObject::STATE_END,
+        'guard' => $expressionEditing,
+        'metadata' => [
+            'redirectRoute' => [
+                'routeName' => TripController::TRIP_ROUTE,
+                'parameterMappings' => [
+                    'id' => 'trip.id',
+                ],
+            ],
+            'persist' => true,
+        ],
+    ];
+
     $container->extension('framework', [
         'workflows' => [
             'international_survey_action' => [
@@ -31,14 +45,20 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
+        // Loading
                     'goods_loaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_GOODS_DESCRIPTION,
-                        'guard' => 'subject.getSubject().getLoading()',
+                        'guard' => "{$expressionCreating} && subject.getSubject().getLoading()",
                     ],
                     'goods_description_entered' => [
                         'from' => StateObject::STATE_GOODS_DESCRIPTION,
+                        'to' => StateObject::STATE_WEIGHT_LOADED,
+                    ],
+                    'weight_of_goods_entered' => [
+                        'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'guard' => $expressionCreating,
                     ],
                     'hazardous_goods_entered' => [
                         'from' => StateObject::STATE_HAZARDOUS_GOODS,
@@ -46,10 +66,6 @@ return static function (ContainerConfigurator $container) {
                     ],
                     'cargo_type_entered' => [
                         'from' => StateObject::STATE_CARGO_TYPE,
-                        'to' => StateObject::STATE_WEIGHT_LOADED,
-                    ],
-                    'weight_of_goods_entered' => [
-                        'from' => StateObject::STATE_WEIGHT_LOADED,
                         'to' => StateObject::STATE_ADD_ANOTHER,
                         'guard' => $expressionCreating,
                         'metadata' => [
@@ -57,25 +73,25 @@ return static function (ContainerConfigurator $container) {
                         ],
                     ],
 
-                    'finish_edit_loaded' => [
+        // Edit loaded
+                    'finish_edit_goods_loaded' => array_merge($defaultEditingConfig, [
+                        'from' => StateObject::STATE_PLACE,
+                        'guard' => "{$expressionEditing} && subject.getSubject().getLoading()",
+                    ]),
+                    'finish_edit_weight_loaded' => array_merge($defaultEditingConfig, [
                         'from' => StateObject::STATE_WEIGHT_LOADED,
-                        'to' => StateObject::STATE_END,
                         'guard' => $expressionEditing,
-                        'metadata' => [
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => [
-                                    'id' => 'trip.id',
-                                ],
-                            ],
-                            'persist' => true,
-                        ],
-                    ],
+                    ]),
+                    'finish_edit_loaded' => array_merge($defaultEditingConfig, [
+                        'from' => StateObject::STATE_CARGO_TYPE,
+                    ]),
 
+
+        // Unloading
                     'goods_unloaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_CONSIGNMENT_UNLOADED,
-                        'guard' => '!subject.getSubject().getLoading()',
+                        'guard' => "{$expressionCreating} && !subject.getSubject().getLoading()",
                     ],
                     'unloaded_consignment_selected' => [
                         'from' => StateObject::STATE_CONSIGNMENT_UNLOADED,
@@ -90,21 +106,18 @@ return static function (ContainerConfigurator $container) {
                         ],
                     ],
 
-                    'finish_edit_unloaded' => [
-                        'from' => StateObject::STATE_WEIGHT_UNLOADED,
-                        'to' => StateObject::STATE_END,
-                        'guard' => $expressionEditing,
-                        'metadata' => [
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => [
-                                    'id' => 'trip.id',
-                                ],
-                            ],
-                            'persist' => true,
-                        ],
-                    ],
 
+        // Edit unload
+                    'finish_edit_goods_unloaded' => array_merge($defaultEditingConfig, [
+                        'from' => StateObject::STATE_PLACE,
+                        'guard' => "{$expressionEditing} && !subject.getSubject().getLoading()",
+                    ]),
+                    'finish_edit_unloaded' => array_merge($defaultEditingConfig, [
+                        'from' => StateObject::STATE_WEIGHT_UNLOADED,
+                    ]),
+
+
+        // Add another
                     'finish_dont_add_another' => [
                         'from' => StateObject::STATE_ADD_ANOTHER,
                         'to' => StateObject::STATE_END,

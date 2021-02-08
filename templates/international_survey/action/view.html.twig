@@ -26,21 +26,13 @@
 
                 {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action|formatCountry}), {(urlChange): change}) }}
                 {%- if action.loading -%}
-                    {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), {(urlChange): change}) }}
-                {%- else -%}
-                    {% with {action: action.loadingAction} %}
-                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action|formatCountry, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
-                        {{ summaryListRow('common.action.goods', goodsCopy, {(urlChange): change}) }}
-                    {% endwith %}
-                {%- endif -%}
+            {# Loading #}
+                    {%- set urlLoadGoodsChange = wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params) -%}
+                    {%- set urlLoadHazardousChange = wizardUrl('international-action', 'STATE_HAZARDOUS_GOODS', params) -%}
 
-                {%- if action.loading or not action.weightUnloadedAll -%}
-                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlChange): change}) }}
-                {%- else -%}
-                    {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), {(urlChange): change}) }}
-                {%- endif -%}
+                    {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), {(urlLoadGoodsChange): change}) }}
+                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlLoadGoodsChange): change}) }}
 
-                {%- if action.loading -%}
                     {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
                     {%- set hazardousGoodsCopy -%}
                         {%- if action.hazardousGoodsCode -%}
@@ -49,8 +41,20 @@
                             {{ 'common.action.not-hazardous'|trans }}
                         {%- endif -%}
                     {%- endset %}
-                    {{ summaryListRow('common.action.is-hazardous', hazardousGoodsCopy, {(urlChange): change}) }}
-                    {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, {(urlChange): change}) }}
+                    {{ summaryListRow('common.action.is-hazardous', hazardousGoodsCopy, {(urlLoadHazardousChange): change}) }}
+                    {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, {(urlLoadHazardousChange): change}) }}
+                {%- else -%}
+            {# Unloading #}
+                    {%- set urlUnloadConsignmentChange = wizardUrl('international-action', 'STATE_CONSIGNMENT_UNLOADED', params) -%}
+                    {% with {action: action.loadingAction} %}
+                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action|formatCountry, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
+                        {{ summaryListRow('common.action.goods', goodsCopy, {(urlUnloadConsignmentChange): change}) }}
+                    {% endwith %}
+                    {% if action.weightUnloadedAll %}
+                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), {(urlUnloadConsignmentChange): change}) }}
+                    {% else %}
+                        {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlUnloadConsignmentChange): change}) }}
+                    {% endif %}
                 {%- endif -%}
             </dl>
             {%- set deleteRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::DELETE_ROUTE') -%}

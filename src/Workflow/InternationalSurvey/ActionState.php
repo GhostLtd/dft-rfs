@@ -91,8 +91,13 @@ class ActionState extends AbstractFormWizardState implements FormWizardStateInte
             return false;
         }
 
-        $alternativeStartStates = [
-        ];
+        $alternativeStartStates = $this->getSubject()->getLoading()
+            ? [
+                self::STATE_GOODS_DESCRIPTION,
+                self::STATE_HAZARDOUS_GOODS,
+            ] : [
+                self::STATE_CONSIGNMENT_UNLOADED,
+            ];
 
         return $this->subject->getId() ?
             in_array($state, $alternativeStartStates) :
