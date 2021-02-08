@@ -36,7 +36,7 @@ class TripRouteValidator extends ConstraintValidator
         $foreignPort = $accessor->getValue($value, "{$constraint->direction}ForeignPort");
 
         if ($ukPort === null || $foreignPort === null) {
-            $this->context->buildViolation($constraint->message)->atPath("ports")->addViolation();
+            $this->context->buildViolation($constraint->message)->atPath($constraint->formField)->addViolation();
         }
     }
 }

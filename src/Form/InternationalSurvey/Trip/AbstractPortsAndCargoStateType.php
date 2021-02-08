@@ -6,7 +6,8 @@ use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
 use App\Form\InternationalSurvey\Trip\DataMapper\PortsAndCargoStateDataMapper;
 use App\Form\LimitedByType;
-use App\Repository\International\CrossingRouteRepository;
+use App\Utility\PortsDataSet;
+use App\Utility\PortsDataFactory;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,68 +30,36 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
     const DIRECTION_OUTBOUND = 'outbound';
     const DIRECTION_RETURN = 'return';
 
-    protected CrossingRouteRepository $crossingRouteRepository;
-
-    protected string $direction;
-    protected bool $isOutbound;
+    protected PortsDataFactory $portsHelper;
+    protected PortsDataSet $portsData;
 
     /** @var CrossingRoute[] $ports */
     protected array $ports;
 
-    public function __construct(CrossingRouteRepository $crossingRouteRepository)
+    public function __construct(PortsDataFactory $portsHelper)
     {
-        $this->crossingRouteRepository = $crossingRouteRepository;
+        $this->portsHelper = $portsHelper;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->setDirectionAndLoadPorts($options['direction']);
-        $prefix = "international.trip.{$this->direction}-ports";
+        $direction = $options['direction'];
+        $this->portsData = $this->portsHelper->getData($direction);
 
-        $builder->setDataMapper(new PortsAndCargoStateDataMapper($this->direction, $this->ports));
+        $prefix = "international.trip.{$direction}-ports";
 
-        $this->addPortField($builder, $prefix);
+        $builder
+            ->setDataMapper(new PortsAndCargoStateDataMapper($direction, $this->portsData->getPorts()))
+            ->add('ports', Gds\ChoiceType::class, [
+                'expanded' => false,
+                'label' => "{$prefix}.ports.label",
+                'help' => "{$prefix}.ports.help",
+                'attr' => ['class' => 'govuk-input--width-10'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'choices' => $this->portsData->getPortChoices(),
+            ]);
 
-        $this->addCargoStateFields($builder, $this->direction);
-    }
-
-    protected function addPortField(FormBuilderInterface $builder, string $prefix)
-    {
-        $builder->add('ports', Gds\ChoiceType::class, [
-            'expanded' => false,
-            'label' => "{$prefix}.ports.label",
-            'help' => "{$prefix}.ports.help",
-            'attr' => ['class' => 'govuk-input--width-10'],
-            'label_attr' => ['class' => 'govuk-label--s'],
-            'choices' => $this->getPortChoices($prefix),
-        ]);
-    }
-
-    public function setDirectionAndLoadPorts(string $direction):void
-    {
-        $this->direction = $direction;
-        $this->isOutbound = $this->direction === AbstractPortsAndCargoStateType::DIRECTION_OUTBOUND;
-
-        $this->ports = $this->crossingRouteRepository
-            ->createQueryBuilder('c')
-            ->orderBy('c.' . ($this->isOutbound ? 'ukPort' : 'foreignPort'), 'ASC')
-            ->getQuery()
-            ->execute();
-    }
-
-    protected function getPortChoices(string $prefix): array
-    {
-        $choices = array_combine(
-            array_map(
-                fn(CrossingRoute $c) => $this->isOutbound ?
-                    "{$c->getUkPort()} – {$c->getForeignPort()}" :
-                    "{$c->getForeignPort()} – {$c->getUkPort()}",
-                $this->ports
-            ),
-            array_map(fn(CrossingRoute $c) => $c->getId(), $this->ports)
-        );
-
-        return ["{$prefix}.ports.choice-placeholder" => null] + $choices;
+        $this->addCargoStateFields($builder, $direction);
     }
 
     protected function addCargoStateFields(FormBuilderInterface $builder, $direction)
@@ -152,7 +121,8 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         ]);
     }
 
-    public function validateCapacity(Trip $trip, ExecutionContextInterface $context) {
+    public function validateCapacity(Trip $trip, ExecutionContextInterface $context)
+    {
         $form = $context->getRoot();
         if ($form instanceof FormInterface) {
             $accessor = PropertyAccess::createPropertyAccessor();

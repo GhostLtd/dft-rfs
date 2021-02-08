@@ -6,16 +6,14 @@
             <h3 class="govuk-heading-m govuk-heading--underline">Outbound journey</h3>
             {{ form_row(form.origin) }}
             {{ form_row(form.outboundDate) }}
-            {{ form_row(form.outboundUkPort) }}
-            {{ form_row(form.outboundForeignPort) }}
+            {{ form_row(form.outboundPorts) }}
             {{ form_row(form.outboundCargoState) }}
         </div>
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
             <h3 class="govuk-heading-m govuk-heading--underline">Return journey</h3>
             {{ form_row(form.destination) }}
             {{ form_row(form.returnDate) }}
-            {{ form_row(form.returnForeignPort) }}
-            {{ form_row(form.returnUkPort) }}
+            {{ form_row(form.returnPorts) }}
             {{ form_row(form.returnCargoState) }}
         </div>
     </div>

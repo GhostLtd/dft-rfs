@@ -7,6 +7,8 @@ use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\DataMapper\TripDataMapper;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
 use App\Form\ValueUnitType;
+use App\Utility\PortsDataFactory;
+use App\Utility\PortsDataSet;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,13 +39,28 @@ class TripType extends AbstractType
         self::CHOICE_NO => false,
     ];
 
+    protected PortsDataFactory $portsDataFactory;
+
+    /** @var PortsDataSet[] $portsDataSets */
+    protected array $portsDataSets;
+
+    public function __construct(PortsDataFactory $portsDataFactory)
+    {
+        $this->portsDataFactory = $portsDataFactory;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->portsDataSets = [
+            'outbound' => $this->portsDataFactory->getData('outbound'),
+            'return' => $this->portsDataFactory->getData('return')
+        ];
+
         $this->addDirectionalFields($builder, 'outbound');
         $this->addDirectionalFields($builder, 'return');
 
         $builder
-            ->setDataMapper(new TripDataMapper())
+            ->setDataMapper(new TripDataMapper($this->portsDataSets))
 
 
             ->add('origin', Gds\InputType::class, [
@@ -117,19 +134,21 @@ class TripType extends AbstractType
 
     protected function addDirectionalFields(FormBuilderInterface $builder, string $direction)
     {
+        $portsData = $this->portsDataSets[$direction];
+
         $builder
             ->add("${direction}Date", Gds\DateType::class, [
                 'label' => "Date",
                 'label_attr' => ['class' => 'govuk-label--s'],
-            ]);
-
-        foreach (['UkPort' => 'UK Port', 'ForeignPort' => 'Foreign Port'] as $portField => $label) {
-            $builder->add("${direction}${portField}", Gds\InputType::class, [
-                'label' => $label,
+            ])
+            ->add("${direction}Ports", Gds\ChoiceType::class, [
+                'label' => 'Ports',
+                'choices' => $portsData->getPortChoices(),
+                'expanded' => false,
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
-            ]);
-        }
+            ])
+        ;
 
         $builder->add("{$direction}CargoState", Gds\ChoiceType::class, [
             'choices' => self::CARGO_STATE_CHOICES,

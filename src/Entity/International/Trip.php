@@ -20,8 +20,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
  * @ORM\Table(name="international_trip")
- * @AppAssert\TripRoute(groups={"trip_outbound_ports", "admin_trip"}, direction="outbound")
- * @AppAssert\TripRoute(groups={"trip_return_ports", "admin_trip"}, direction="return")
+ * @AppAssert\TripRoute(groups={"trip_outbound_ports"}, direction="outbound")
+ * @AppAssert\TripRoute(groups={"trip_return_ports"}, direction="return")
+ * @AppAssert\TripRoute(groups={"admin_trip"}, direction="outbound", formField="outboundPorts")
+ * @AppAssert\TripRoute(groups={"admin_trip"}, direction="return", formField="returnPorts")
  */
 class Trip implements BlameLoggable
 {
