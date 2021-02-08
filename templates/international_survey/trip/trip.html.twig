@@ -71,7 +71,7 @@
         <div>
             {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
             {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
-            {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 1 ? 'action' : 'loading-action') -%}
+            {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
             <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
         </div>
 
