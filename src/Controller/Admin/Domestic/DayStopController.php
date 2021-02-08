@@ -50,7 +50,7 @@ class DayStopController extends AbstractController
     {
         $existingDay = $this->dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
 
-        if ($existingDay->getSummary() === null && $existingDay->getStops()->isEmpty()) {
+        if ($existingDay && $existingDay->getSummary() === null && $existingDay->getStops()->isEmpty()) {
             $this->entityManager->remove($existingDay);
             $existingDay = null;
         }
