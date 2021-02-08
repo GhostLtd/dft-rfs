@@ -12,14 +12,12 @@ class VehicleChangeTrailerConfigVoter extends Voter
 
     protected function supports($attribute, $subject)
     {
-        dump($attribute, $subject);
         return in_array($attribute, [self::EDIT_TRAILER_CONFIGS])
             && $subject instanceof Vehicle;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        dump($attribute, $subject);
         /** @var Vehicle $subject */
         switch ($attribute) {
             case self::EDIT_TRAILER_CONFIGS:
