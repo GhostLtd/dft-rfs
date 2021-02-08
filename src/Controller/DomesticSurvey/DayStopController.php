@@ -2,7 +2,6 @@
 
 namespace App\Controller\DomesticSurvey;
 
-use App\Controller\Admin\Domestic\SurveyController;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
@@ -126,7 +125,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
             ->controller(
                 $request,
                 function() use ($day) {
-                    return ($day->getStops()->count() > 1) ?
+                    return ($day->getStops()->count() > 0) ?
                         $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]) :
                         $this->generateUrl('app_domesticsurvey_index');
                 },
