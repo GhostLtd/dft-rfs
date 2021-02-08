@@ -5,8 +5,10 @@ namespace App\Controller\InternationalSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
+use App\Security\Voter\International\VehicleChangeTrailerConfigVoter;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Security("is_granted('EDIT', user.getInternationalSurvey())")
@@ -36,6 +39,7 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
                           Request $request,
                           VehicleRepository $vehicleRepository,
                           UserInterface $user,
+                          TranslatorInterface $translator,
                           string $vehicleId,
                           string $state): Response
     {
@@ -44,6 +48,17 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
 
         if (!$this->vehicle) {
             throw new NotFoundHttpException();
+        }
+
+        // check we can edit trailer/body config
+        if (in_array($state, [VehicleState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION, VehicleState::STATE_CHANGE_VEHICLE_BODY, VehicleState::STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION])
+            && !$this->isGranted(VehicleChangeTrailerConfigVoter::EDIT_TRAILER_CONFIGS, $this->vehicle)) {
+            $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+                $translator->trans('international.vehicle-cant-edit-trailer-configs.title'),
+                $translator->trans('international.vehicle-cant-edit-trailer-configs.heading'),
+                $translator->trans('international.vehicle-cant-edit-trailer-configs.content')
+            ));
+            return $this->getCancelUrl();
         }
 
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
