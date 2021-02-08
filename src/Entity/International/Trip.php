@@ -586,6 +586,11 @@ class Trip implements BlameLoggable
         $this->setRoundTripDistance($trip->getRoundTripDistance());
         $this->setCountriesTransitted($trip->getCountriesTransitted());
         $this->setCountriesTransittedOther($trip->getCountriesTransittedOther());
+
+        $this->setIsSwappedTrailer($trip->getIsSwappedTrailer());
+        $this->setAxleConfiguration($trip->getAxleConfiguration());
+        $this->setIsChangedBodyType($trip->getIsChangedBodyType());
+        $this->setBodyType($trip->getBodyType());
     }
 
     /**
