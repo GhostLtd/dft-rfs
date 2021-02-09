@@ -38,7 +38,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [
-                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_INVITED_USER],
                         'to' => StateObject::STATE_CLOSED,
                     ],
                     're_open' => [
