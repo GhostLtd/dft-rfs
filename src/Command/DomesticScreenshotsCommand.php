@@ -62,8 +62,7 @@ class DomesticScreenshotsCommand extends Command
             ->setSurveyPeriodStart($end)
             ->setInvitationEmail('test@example.com')
             ->setPasscodeUser($user)
-            ->setInvitationAddress(new LongAddress())
-            ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED);
+            ->setInvitationAddress(new LongAddress());
 
         $this->entityManager->persist($survey);
         $this->entityManager->persist($user);

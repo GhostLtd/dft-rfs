@@ -40,9 +40,6 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
         if (!$entity->getPasscodeUser()) {
             $entity->setPasscodeUser($this->passcodeUserRepository->createNewPasscodeUser());
         }
-        if (!$entity->getReminderState()) {
-            $entity->setReminderState(Survey::REMINDER_STATE_INITIAL);
-        }
     }
 
     public function postPersist(LifecycleEventArgs $args)

@@ -42,11 +42,6 @@ class Survey implements BlameLoggable
         'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,
     ];
 
-    const REMINDER_STATE_INITIAL = "initial";
-    const REMINDER_STATE_NOT_WANTED = "not-wanted";
-    const REMINDER_STATE_WANTED = "wanted";
-    const REMINDER_STATE_SENT = "sent";
-
     /**
      * @ORM\Column(type="boolean")
      */
@@ -62,11 +57,6 @@ class Survey implements BlameLoggable
      * @Assert\NotBlank(groups={"add_survey"}, message="common.vehicle.vehicle-registration.not-blank")
      */
     private $registrationMark;
-
-    /**
-     * @ORM\Column(type="string", length=12)
-     */
-    private $reminderState;
 
     /**
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
@@ -156,18 +146,6 @@ class Survey implements BlameLoggable
     {
         $helper = new RegistrationMarkHelper($registrationMark);
         $this->registrationMark = $helper->getRegistrationMark();
-
-        return $this;
-    }
-
-    public function getReminderState(): ?string
-    {
-        return $this->reminderState;
-    }
-
-    public function setReminderState(string $reminderState): self
-    {
-        $this->reminderState = $reminderState;
 
         return $this;
     }

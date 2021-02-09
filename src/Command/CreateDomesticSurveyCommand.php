@@ -65,7 +65,6 @@ class CreateDomesticSurveyCommand extends Command
             ->setSurveyPeriodStart(new DateTime('now +7 days'))
             ->setSurveyPeriodEnd(new DateTime('now +13 days'))
             ->setIsNorthernIreland(false)
-            ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED)
         ;
 
         $this->entityManager->persist($survey);
