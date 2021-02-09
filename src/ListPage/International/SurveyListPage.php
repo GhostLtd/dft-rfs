@@ -3,13 +3,9 @@
 namespace App\ListPage\International;
 
 use App\Entity\International\Survey;
-use App\Entity\International\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class SurveyListPage extends AbstractListPage
 {
@@ -22,8 +18,6 @@ class SurveyListPage extends AbstractListPage
             (new Field('Start date', 'x.surveyPeriodStart'))->sortable(),
             (new Field('Business name', 'c.businessName'))->textFilterable()->sortable(),
             (new Field('Status', 'x.state'))->sortable()->selectFilterable($stateChoices),
-            (new Field('Business nature', 'r.businessNature'))->sortable()->textFilterable(),
-            (new Field('Employees', 'r.numberOfEmployees'))->sortable()->selectFilterable(SurveyResponse::EMPLOYEES_CHOICES),
         ];
     }
 

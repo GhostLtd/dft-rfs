@@ -13,8 +13,6 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{ tableCell(survey.response ? survey.response.businessNature : '-', {}) }}
-            {{ tableCell((survey.response and survey.response.numberOfEmployees) ? "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans : '-', {}) }}
             {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
         </tr>
     {% else %}

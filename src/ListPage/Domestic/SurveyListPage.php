@@ -3,7 +3,6 @@
 namespace App\ListPage\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\Domestic\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field;
 use Doctrine\ORM\QueryBuilder;
@@ -27,8 +26,6 @@ class SurveyListPage extends AbstractListPage
             (new Field('Reg mark', 'x.registrationMark'))->sortable()->textFilterable(),
             (new Field('Status', 'x.state'))->sortable()->selectFilterable($stateChoices),
             (new Field('In possession', 'r.isInPossessionOfVehicle'))->sortable(),
-            (new Field('Business nature', 'r.businessNature'))->sortable()->textFilterable(),
-            (new Field('Employees', 'r.numberOfEmployees'))->sortable()->selectFilterable(SurveyResponse::EMPLOYEES_CHOICES),
         ];
     }
 
