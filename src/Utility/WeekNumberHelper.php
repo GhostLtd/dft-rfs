@@ -38,6 +38,26 @@ class WeekNumberHelper
         return $dateTime;
     }
 
+    public static function getDateForWeekNumberAndGenDate(int $weekNumber, DateTimeInterface $genDate)
+    {
+        $year = self::getYearForWeekNumberAndGenDate($weekNumber, $genDate);
+        return self::getDate($year, $weekNumber);
+    }
+
+    public static function getYearForWeekNumberAndGenDate(int $weekNumber, DateTimeInterface $genDate)
+    {
+        [$genWeekNumber, $genYear] = self::getWeekNumberAndYear($genDate);
+
+        // Example:
+        //  gendate 2020-11-19 is week 47 of 2020
+        //
+        //  If we're asked for week 1, then that's in the past, so actually we must be generating
+        //  week 1 of 2021. If we're asked for week 47, then that is for this week of 2020. If we're
+        //  asked for week 48, then that's next week in 2020.
+
+        return $weekNumber < $genWeekNumber ? $genYear + 1 : $genYear;
+    }
+
     protected static function getFirstDayOfYearForDate(DateTimeInterface $dateTime)
     {
         $thisYear = intval($dateTime->format('Y'));

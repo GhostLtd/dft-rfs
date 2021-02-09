@@ -6,6 +6,8 @@ namespace App\Utility;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\LongAddress;
+use DateInterval;
+use DateTime;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -106,14 +108,13 @@ class DvlaImporter
         if (preg_match($regex, $originalFilename, $matches)) {
             $matches = array_intersect_key($matches, array_fill_keys(['ni', 'week', 'gendate'], 0));
             $isNI = strtolower($matches['ni']) === 'ni';
-            $week = intval($matches['week']) - 1;
-            $fileGenDate = new \DateTime($matches['gendate']);
-            $year = ($week < ($fileGenDate->format('W') - 1))
-                ? (clone $fileGenDate)->modify('+1 year')->format('Y')
-                : $fileGenDate->format('Y');
+            $startDate = WeekNumberHelper::getDateForWeekNumberAndGenDate(
+                intval($matches['week']),
+                new DateTime($matches['gendate'])
+            );
             return [
                 'isNorthernIreland' => $isNI,
-                'surveyPeriodStart' => (new \DateTime('midnight'))->setISODate($year, $week),
+                'surveyPeriodStart' => $startDate
             ];
         }
 
@@ -155,7 +156,7 @@ class DvlaImporter
         /** @var Survey $survey */
         $survey = $normalizer->denormalize($surveyOptions, Survey::class);
         $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
-        $surveyPeriodEnd->add(new \DateInterval('P6D'));
+        $surveyPeriodEnd->add(new DateInterval('P6D'));
 
         return $survey
             ->setSurveyPeriodEnd($surveyPeriodEnd)

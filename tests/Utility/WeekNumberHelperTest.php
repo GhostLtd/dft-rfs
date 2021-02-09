@@ -77,4 +77,23 @@ class WeekNumberHelperTest extends TestCase
             $this->assertEquals(new DateTime($expectedDate), $date);
         }
     }
+
+    public function providerYearForWeekNumberAndGenDate()
+    {
+        return [
+            [1, '202011191435', 2021],
+            [10, '202011191435', 2021],
+            [47, '202011191435', 2020],
+            [48, '202011191435', 2020],
+        ];
+    }
+
+    /**
+     * @dataProvider providerYearForWeekNumberAndGenDate
+     */
+    public function testYearForWeekNumberAndGenDate(int $weekNumber, string $genDate, int $expectedYear)
+    {
+        $genYear = WeekNumberHelper::getYearForWeekNumberAndGenDate($weekNumber, new DateTime($genDate));
+        $this->assertEquals($expectedYear, $genYear);
+    }
 }
