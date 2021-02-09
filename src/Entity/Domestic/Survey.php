@@ -2,7 +2,6 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\Address;
 use App\Entity\BlameLoggable;
 use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
@@ -10,6 +9,7 @@ use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
 use App\Utility\RegistrationMarkHelper;
+use App\Utility\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -228,5 +228,10 @@ class Survey implements BlameLoggable
     public function getAssociatedEntityId()
     {
         return null;
+    }
+
+    public function getWeekNumberAndYear(): array
+    {
+        return WeekNumberHelper::getWeekNumberAndYear($this->getSurveyPeriodStart());
     }
 }

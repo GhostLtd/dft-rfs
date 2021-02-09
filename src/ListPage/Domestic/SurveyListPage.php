@@ -22,6 +22,7 @@ class SurveyListPage extends AbstractListPage
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
             (new Field('User', 'u.username'))->sortable(),
+            (new Field('Week', null)),
             (new Field('Start date', 'x.surveyPeriodStart'))->sortable(),
             (new Field('Reg mark', 'x.registrationMark'))->sortable()->textFilterable(),
             (new Field('Status', 'x.state'))->sortable()->selectFilterable($stateChoices),

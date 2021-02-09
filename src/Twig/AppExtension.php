@@ -20,6 +20,7 @@ use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
 use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
+use App\Utility\WeekNumberHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
@@ -27,6 +28,7 @@ use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
 use Closure;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use RuntimeException;
@@ -81,6 +83,9 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatStops', [$this, 'formatStops']),
             new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
+            new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
+                return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
+            }),
         ];
     }
 
