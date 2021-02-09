@@ -55,7 +55,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 
     public function getTranslationKeyPrefix(): string
     {
-        return "international.survey.workflow-transition";
+        return "common.survey.workflow-transition";
     }
 
     public function doConfirmedAction()

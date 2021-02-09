@@ -12,22 +12,8 @@ menu:
     surveys: 'Surveys'
     survey-add: 'Add Survey'
 
-
-domestic:
+common:
   survey:
-    delete:
-      delete.label: Yes, delete this survey
-      cancel.label: Cancel
-
-international:
-  action:
-    delete:
-      delete.label: Yes, delete this action
-      cancel.label: Cancel
-  survey:
-    delete:
-      delete.label: Yes, delete this survey
-      cancel.label: Cancel
     workflow-transition:
       title: "{transitionTitleUcfirst} survey"
       confirm.label: "{transitionTitleUcfirst} survey"
@@ -38,6 +24,12 @@ international:
       confirmed-notification:
         heading: '{transitionTitleUcfirst} survey'
         content: 'The requested {transitionTitle} survey transition was completed.'
+
+international:
+  action:
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel
   vehicle:
     delete:
       delete.label: Yes, delete this vehicle

@@ -38,8 +38,7 @@ class SurveyAddController extends AbstractController
                 $surveyPeriodEnd->add(new DateInterval('P6D'));
 
                 $survey
-                    ->setSurveyPeriodEnd($surveyPeriodEnd)
-                    ->setReminderState(Survey::REMINDER_STATE_NOT_WANTED);
+                    ->setSurveyPeriodEnd($surveyPeriodEnd);
 
                 $entityManager->persist($survey);
                 $entityManager->flush();

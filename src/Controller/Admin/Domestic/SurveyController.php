@@ -12,6 +12,7 @@ use App\Form\Admin\DomesticSurvey\Edit\BusinessDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\ListPage\Domestic\SurveyListPage;
 use App\Utility\ConfirmAction\Common\Admin\ResetPasscodeConfirmAction;
+use App\Utility\ConfirmAction\Domestic\Admin\SurveyWorkflowConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -44,6 +45,8 @@ class SurveyController extends AbstractController
     public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX.'business_edit';
     public const EDIT_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_edit';
     public const EDIT_VEHICLE_ROUTE = self::ROUTE_PREFIX.'vehicle_edit';
+
+    public const WORKFLOW_ROUTE = self::ROUTE_PREFIX.'workflow';
 
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;
@@ -165,6 +168,30 @@ class SurveyController extends AbstractController
         $this->entityManager->persist($vehicle);
 
         return $this->handleRequest($response, InitialDetailsType::class, 'admin/domestic/surveys/enter-initial-details.html.twig', $redirectUrl);
+    }
+
+    /**
+     * @Route("/survey/{surveyId}/workflow/{transition}", name=self::WORKFLOW_ROUTE,
+     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
+     * )
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/domestic/surveys/workflow-action.html.twig")
+     */
+    public function complete(SurveyWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, Survey $survey, $transition)
+    {
+        $surveyWorkflowConfirmAction
+            ->setSubject($survey)
+            ->setTransition($transition)
+        ;
+        return $surveyWorkflowConfirmAction->controller(
+            $request,
+            function() use ($survey) {
+                return $this->generateUrl(
+                    SurveyController::VIEW_ROUTE,
+                    ['surveyId' => $survey->getId()]
+                );
+            }
+        );
     }
 
     /**
