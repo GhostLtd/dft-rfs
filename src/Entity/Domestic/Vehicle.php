@@ -8,6 +8,7 @@ use App\Entity\Volume;
 use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert; // N.B. Used by trait
 
 /**
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
