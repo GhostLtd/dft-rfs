@@ -1197,6 +1197,10 @@ goods:
       groupage: Groupage
       empty: None - the vehicle was empty
       other-goods: Specific goods / Other
+    short-options:
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
     help:
       packaging: consignment was empty pallets, wire cages, roll cages or other packaging
       groupage: mixed loads where there was no main type

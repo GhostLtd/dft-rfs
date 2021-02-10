@@ -110,7 +110,9 @@ class AppExtension extends AbstractExtension
     {
         return $goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER
             ? $goodsDescriptionOther
-            : ($short ? $goodsDescription : $this->translator->trans("goods.description.options.{$goodsDescription}"));
+            : ($short ?
+                $this->translator->trans("goods.description.short-options.{$goodsDescription}") :
+                $this->translator->trans("goods.description.options.{$goodsDescription}"));
     }
 
     public function isFeatureEnabled($str): bool {
