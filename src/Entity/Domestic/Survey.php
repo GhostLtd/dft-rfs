@@ -74,21 +74,6 @@ class Survey implements BlameLoggable
     private $passcodeUser;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Email(groups={"add_survey"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey"})
-     */
-    private $invitationEmail;
-
-    /**
-     * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"add_survey"}, validatePostcode=true, allowBlank=true)
-     *
-     * @var LongAddress|null
-     */
-    private $invitationAddress;
-
-    /**
      * @Assert\Callback(groups={"add_survey"})
      */
     public function validInvitationDetails(ExecutionContextInterface $context) {
@@ -186,30 +171,6 @@ class Survey implements BlameLoggable
         if ($passcodeUser->getDomesticSurvey() !== $newDomesticSurvey) {
             $passcodeUser->setDomesticSurvey($newDomesticSurvey);
         }
-
-        return $this;
-    }
-
-    public function getInvitationEmail(): ?string
-    {
-        return $this->invitationEmail;
-    }
-
-    public function setInvitationEmail(?string $invitationEmail): self
-    {
-        $this->invitationEmail = $invitationEmail;
-
-        return $this;
-    }
-
-    public function getInvitationAddress(): ?LongAddress
-    {
-        return $this->invitationAddress;
-    }
-
-    public function setInvitationAddress(?LongAddress $invitationAddress): self
-    {
-        $this->invitationAddress = $invitationAddress;
 
         return $this;
     }

@@ -45,7 +45,7 @@ class Survey implements BlameLoggable
     private $referenceNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys")
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"add_survey"})
      */

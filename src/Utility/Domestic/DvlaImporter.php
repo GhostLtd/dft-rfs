@@ -1,17 +1,18 @@
 <?php
 
 
-namespace App\Utility;
+namespace App\Utility\Domestic;
 
 
 use App\Entity\Domestic\Survey;
 use App\Entity\LongAddress;
+use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class DvlaImporter
+class DvlaImporter extends AbstractBulkSurveyImporter
 {
     const COL_REG_MARK = 'reg_mark';
     const COL_ADDRESS_1 = 'address_1';
@@ -63,13 +64,6 @@ class DvlaImporter
         ];
     }
 
-    protected function getOriginalFilename(?UploadedFile $file) {
-        if (!$file) {
-            return null;
-        }
-        return pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-    }
-
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)
     {
         $autoDetectedSurveyOptions = $this->getAutoDetectedSurveyOptions($form);
@@ -102,7 +96,7 @@ class DvlaImporter
     {
         $originalFilename = $this->getOriginalFilename($form->get('file')->getData());
 
-        $regex = '/^csrgt_output(_(?<ni>ni))?_surveyweek_(?<week>\d{1,2})_(?<gendate>\d{12})\d{2}$/';
+        $regex = '/^csrgt_output(_(?<ni>ni))?_surveyweek_(?<week>\d{1,2})_(?<gendate>\d{12})\d{2}/';
         if (preg_match($regex, $originalFilename, $matches)) {
             $matches = array_intersect_key($matches, array_fill_keys(['ni', 'week', 'gendate'], 0));
             $isNI = strtolower($matches['ni']) === 'ni';
@@ -120,25 +114,6 @@ class DvlaImporter
         return [];
     }
 
-    public function getDataFromUploadedFile(?UploadedFile $file)
-    {
-        if (!$file) {
-            return null;
-        }
-        return $this->getDataFromFilename($file->getRealPath());
-    }
-
-    public function getDataFromFilename($filename) {
-        $surveyData = [];
-        $handle = fopen($filename, "r");
-        while(!feof($handle)){
-            $line = fgets($handle);
-            if (empty($line)) continue;
-            if ($lineData = $this->parseLine($line)) $surveyData[] = $lineData;
-        }
-        return $surveyData;
-    }
-
     protected function parseLine($line)
     {
         if (preg_match($this->regex, $line, $matches)) {
@@ -149,7 +124,7 @@ class DvlaImporter
         return null;
     }
 
-    public function createSurvey($surveyOptions, $surveyData)
+    public function createSurvey($surveyData, $surveyOptions = null)
     {
         $normalizer = new ObjectNormalizer();
         /** @var Survey $survey */

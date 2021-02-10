@@ -6,6 +6,7 @@ use App\Form\Validator as AppAssert;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\LongAddress;
 
 trait SurveyTrait {
     /**
@@ -47,6 +48,21 @@ trait SurveyTrait {
      * @ORM\Column(type="string", length=20, nullable=false)
      */
     private $state;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Email(groups={"add_survey"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey"})
+     */
+    private $invitationEmail;
+
+    /**
+     * @ORM\Embedded(class=LongAddress::class)
+     * @AppAssert\ValidAddress(groups={"add_survey"}, validatePostcode=true, allowBlank=true)
+     *
+     * @var LongAddress|null
+     */
+    private $invitationAddress;
 
     public function getId(): ?string
     {
@@ -136,6 +152,30 @@ trait SurveyTrait {
     public function setState($state): self
     {
         $this->state = $state;
+        return $this;
+    }
+
+    public function getInvitationEmail(): ?string
+    {
+        return $this->invitationEmail;
+    }
+
+    public function setInvitationEmail(?string $invitationEmail): self
+    {
+        $this->invitationEmail = $invitationEmail;
+
+        return $this;
+    }
+
+    public function getInvitationAddress(): ?LongAddress
+    {
+        return $this->invitationAddress;
+    }
+
+    public function setInvitationAddress(?LongAddress $invitationAddress): self
+    {
+        $this->invitationAddress = $invitationAddress;
+
         return $this;
     }
 }

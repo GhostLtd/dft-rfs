@@ -4,8 +4,12 @@
 namespace App\EventSubscriber\InternationalSurvey;
 
 
-use App\Entity\Domestic\Survey;
+use App\Entity\International\Survey;
 use App\Entity\PasscodeUser;
+use App\Messenger\AlphagovNotify\Email;
+use App\Messenger\AlphagovNotify\Letter;
+use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\RegistrationMarkHelper;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -48,7 +52,40 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
     public function transitionInviteUser(Event $event)
     {
-        // TODO
+        /** @var Survey $survey */
+        $survey = $event->getSubject();
+
+        $personalisation = [
+            'startDate' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
+            'endDate' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
+            'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
+            'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
+        ];
+
+        if ($survey->getInvitationAddress()->isFilled())
+        {
+            $this->messageBus->dispatch(new Letter(
+                Survey::class,
+                $survey->getId(),
+                $survey->getInvitationAddress(),
+                TemplateReference::LETTER_INTERNATIONAL_SURVEY_INVITE,
+                $personalisation,
+            ));
+        }
+
+        if ($survey->getInvitationEmail()) {
+            $this->messageBus->dispatch(new Email(
+                Survey::class,
+                $survey->getId(),
+                $survey->getInvitationEmail(),
+                TemplateReference::EMAIL_INTERNATIONAL_SURVEY_INVITE,
+                $personalisation,
+            ));
+        }
+
+        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
+            $survey->setNotifiedDate(new \DateTime());
+        }
     }
 
     public function transitionComplete(Event $event)
