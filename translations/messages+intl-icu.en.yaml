@@ -320,9 +320,11 @@ domestic:
         help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
 
     vehicle-fuel:
+      heading: Vehicle fuel
+      help: ''
       fuel-quantity:
-        label: Vehicle fuel
-        help: "How much fuel in total was put into this vehicle during the survey week?\n\nEnter 0 (zero) if you didn't add fuel during the survey week."
+        label: How much fuel in total was put into this vehicle during the survey week?
+        help: Enter 0 (zero) if you didn't add fuel during the survey week
 
     vehicle-trailer-configuration:
       heading: Tell us about the vehicle

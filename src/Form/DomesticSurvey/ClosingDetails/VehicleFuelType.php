@@ -8,7 +8,6 @@ use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class VehicleFuelType extends AbstractType
 {
@@ -20,8 +19,7 @@ class VehicleFuelType extends AbstractType
                 'label' => "{$translationKeyPrefix}.fuel-quantity.label",
                 'help' => "{$translationKeyPrefix}.fuel-quantity.help",
                 'property_path' => 'vehicle.fuelQuantity',
-                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
-                'label_is_page_heading' => true,
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'value_options' => [
                     'label' => 'Quantity',
                     'is_decimal' => true,

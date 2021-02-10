@@ -8,7 +8,6 @@ use App\Entity\Volume;
 use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
@@ -20,7 +19,7 @@ class Vehicle implements BlameLoggable
 
     /**
      * @ORM\Embedded(class=Volume::class)
-     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"vehicle_fuel_quantity"})
+     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"vehicle_fuel_quantity", "admin_vehicle_fuel_quantity"})
      */
     private $fuelQuantity;
 

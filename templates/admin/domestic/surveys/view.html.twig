@@ -20,6 +20,11 @@
                 'Vehicle details': 'tab-vehicle-details',
             }) -%}
         {%- endif -%}
+        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+            {%- set tabs = tabs | merge({
+                'Final details': 'tab-final-details',
+            }) -%}
+        {%- endif -%}
     {%- endif -%}
 
     <h1 class="govuk-heading-l">Survey</h1>
@@ -73,9 +78,20 @@
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/vehicle-details.html.twig' -%}
                     {%- endwith -%}
-
                     <div>
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_vehicle_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle details</span></a>
+                    </div>
+                </div>
+            {%- endif -%}
+
+            {%- if 'Final details' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'domestic_survey/includes/final-details.html.twig' -%}
+                    {%- endwith -%}
+
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_final_details_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> final details</span></a>
                     </div>
                 </div>
             {%- endif -%}
@@ -108,7 +124,7 @@
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
-        href: path('admin_domestic_survey_workflow', {surveyId: survey.id, transition: transitionName}),
+        href: path('admin_domestic_survey_transition', {surveyId: survey.id, transition: transitionName}),
         class: ('govuk-button ' ~ (options.class | default('')) ) | trim
     })
         } -%}

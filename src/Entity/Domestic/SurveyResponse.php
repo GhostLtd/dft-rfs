@@ -114,7 +114,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"reason_for_empty_survey"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
      */
     private $reasonForEmptySurvey;
 
@@ -134,6 +134,7 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
      *     "vehicle_weight",
      *     "vehicle_operation_type",
      *     "admin_vehicle",
+     *     "admin_vehicle_fuel_quantity",
      * })
      */
     private $vehicle;

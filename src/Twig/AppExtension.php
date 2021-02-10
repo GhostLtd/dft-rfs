@@ -81,7 +81,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatStops', [$this, 'formatStops']),
-            new TwigFilter('formatValueUnit', function (ValueUnitInterface $a){return "{$a->getValue()} {$a->getUnit()}";}),
+            new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
                 return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
