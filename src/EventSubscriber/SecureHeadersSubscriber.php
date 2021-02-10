@@ -17,6 +17,7 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
             'X-Content-Type-Options' => 'nosniff',
             'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains',
             'Content-Security-Policy' => "default-src 'self' 'unsafe-inline' *.getwisdom.io wss://producer.getwisdom.io;",
+            'X-Permitted-Cross-Domain-Policies' => 'none',
             'Referrer-Policy' => 'strict-origin-when-cross-origin',
         ]);
     }
