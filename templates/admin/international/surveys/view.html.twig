@@ -19,6 +19,12 @@
             'Correspondence details': 'tab-correspondence',
             'Business details': 'tab-business-details',
         }) -%}
+
+        {%- if not survey.response.isFilledOut() -%}
+            {%- set tabs = tabs | merge({
+                'Final details': 'tab-final-details',
+            }) -%}
+        {%- endif -%}
     {%- endif -%}
 
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
@@ -80,6 +86,19 @@
                     <div>
                         <a class="govuk-button" href="{{ path('admin_international_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
                     </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            {%- if 'Final details' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'international_survey/includes/final-details.html.twig' -%}
+                    {%- endwith -%}
+                    {%- if canEdit -%}
+                        <div>
+                            <a class="govuk-button" href="{{ path('admin_international_survey_final_details_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> final details</span></a>
+                        </div>
                     {%- endif -%}
                 </div>
             {%- endif -%}

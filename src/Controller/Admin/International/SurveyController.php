@@ -6,6 +6,7 @@ use App\Entity\International\Survey;
 use App\Entity\International\SurveyResponse;
 use App\Form\Admin\InternationalSurvey\BusinessDetailsType;
 use App\Form\Admin\InternationalSurvey\CorrespondenceDetailsType;
+use App\Form\Admin\InternationalSurvey\FinalDetailsType;
 use App\Form\Admin\InternationalSurvey\InitialDetailsType;
 use App\Security\Voter\International\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,9 +39,9 @@ class SurveyController extends AbstractController
     public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
 
     public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_enter';
-
     public const EDIT_CORRESPONDENCE_ROUTE = self::ROUTE_PREFIX.'correspondence_edit';
     public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX.'business_edit';
+    public const EDIT_FINAL_DETAILS_ROUTE = self::ROUTE_PREFIX.'final_details_edit';
 
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;
@@ -81,6 +82,15 @@ class SurveyController extends AbstractController
     {
         $redirectUrl = $this->getRedirectUrl($survey, "tab-business-details");
         return $this->handleRequest($this->getResponse($survey), BusinessDetailsType::class, "admin/international/surveys/edit-business-details.html.twig", $redirectUrl);
+    }
+
+    /**
+     * @Route("/edit-final-details", name=self::EDIT_FINAL_DETAILS_ROUTE)
+     */
+    public function editFinalDetails(Survey $survey): Response
+    {
+        $redirectUrl = $this->getRedirectUrl($survey, 'tab-final-details');
+        return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/international/surveys/edit-final-details.html.twig', $redirectUrl);
     }
 
     protected function handleRequest(SurveyResponse $response, string $formClass, string $template, string $redirectUrl) {
