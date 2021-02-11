@@ -29,6 +29,7 @@ class Survey implements BlameLoggable
     const STATE_REMINDED_USER = 'reminded';
     const STATE_IN_PROGRESS = 'in-progress';
     const STATE_CLOSED = 'closed';
+    const STATE_APPROVED = 'approved';
     const STATE_REJECTED = 'rejected';
     const STATE_EXPORTED = 'exported';
 

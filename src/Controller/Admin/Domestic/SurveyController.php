@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin\Domestic;
 
-use App\Entity\BlameLog\BlameLog;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
@@ -11,11 +10,10 @@ use App\Form\Admin\DomesticSurvey\Edit\InitialDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\BusinessDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
-use App\ListPage\Domestic\SurveyListPage;
-use App\Utility\ConfirmAction\Common\Admin\ResetPasscodeConfirmAction;
-use App\Utility\ConfirmAction\Domestic\Admin\SurveyWorkflowConfirmAction;
+use App\Security\Voter\Domestic\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -28,11 +26,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/csrgt/surveys")
+ * @Route("/csrgt/surveys/{surveyId}")
+ * @Entity("survey", expr="repository.find(surveyId)")
+ * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
  */
 class SurveyController extends AbstractController
 {
     private const ROUTE_PREFIX = 'admin_domestic_survey_';
+    public const ADD_ROUTE = self::ROUTE_PREFIX.'add';
     public const LIST_ROUTE = self::ROUTE_PREFIX.'list';
     public const LOGS_ROUTE = self::ROUTE_PREFIX.'logs';
     public const VIEW_ROUTE = self::ROUTE_PREFIX.'view';
@@ -61,71 +62,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{type}", requirements={"type": "gb|ni"}, name=self::LIST_ROUTE)
-     */
-    public function list(SurveyListPage $listPage, string $type): Response
-    {
-        $listPage
-            ->setType($type)
-            ->handleRequest($this->requestStack->getCurrentRequest());
-
-        if ($listPage->isClearClicked()) {
-            return new RedirectResponse($listPage->getClearUrl());
-        }
-
-        return $this->render('admin/domestic/surveys/list.html.twig', [
-            'type' => $type,
-            'data' => $listPage->getData(),
-            'form' => $listPage->getFiltersForm()->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{surveyId}", name=self::VIEW_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
-     */
-    public function viewDetails(Survey $survey): Response
-    {
-        return $this->render('admin/domestic/surveys/view.html.twig', [
-            'survey' => $survey,
-        ]);
-    }
-
-    /**
-     * @Route("/{surveyId}/audit-log", name=self::LOGS_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
-     */
-    public function viewLog(EntityManagerInterface $blameLogEntityManager, Survey $survey): Response
-    {
-        $blameLogRepository = $blameLogEntityManager->getRepository(BlameLog::class);
-        return $this->render('admin/domestic/surveys/log.html.twig', [
-            'survey' => $survey,
-            'log' => $blameLogRepository->getAllLogsForEntity($survey),
-        ]);
-    }
-
-    /**
-     * @Route("/{surveyId}/reset-passcode", name=self::RESET_PASSCODE_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @Template("admin/domestic/reset_passcode/reset.html.twig")
-     */
-    public function resetPasscode(ResetPasscodeConfirmAction $confirmAction, Request $request, Survey $survey, SessionInterface $session)
-    {
-        return $confirmAction
-            ->setSubject($survey->getPasscodeUser())
-            ->controller(
-                $request,
-                function() use ($confirmAction, $survey, $session) {
-                    $session->set("reset-passcode.{$survey->getId()}", $confirmAction->getPasscode());
-                    return $this->generateUrl(self::RESET_PASSCODE_SUCCESS_ROUTE, ['surveyId' => $survey->getId()]);
-                },
-                fn() => $this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()])
-            );
-    }
-
-    /**
-     * @Route("/{surveyId}/reset-passcode/success", name=self::RESET_PASSCODE_SUCCESS_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/reset-passcode/success", name=self::RESET_PASSCODE_SUCCESS_ROUTE)
      * @Template("admin/domestic/reset_passcode/success.html.twig")
      */
     public function resetPasscodeSuccess(SessionInterface $session, Survey $survey): array
@@ -144,8 +81,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{surveyId}/enter-business-and-vehicle-details", name=self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/enter-business-and-vehicle-details", name=self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)
      */
     public function enterBusinessAndVehicle(Survey $survey): Response
     {
@@ -154,8 +90,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{surveyId}/edit-final-details", name=self::EDIT_FINAL_DETAILS_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/edit-final-details", name=self::EDIT_FINAL_DETAILS_ROUTE)
      */
     public function editFinalDetails(Survey $survey): Response
     {
@@ -164,8 +99,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{surveyId}/enter-initial-details", name=self::ENTER_INITIAL_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/enter-initial-details", name=self::ENTER_INITIAL_ROUTE)
      */
     public function enterInitialDetails(Survey $survey): Response
     {
@@ -184,33 +118,8 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/survey/{surveyId}/workflow/{transition}", name=self::TRANSITION_ROUTE,
-     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
-     * )
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @Template("admin/domestic/surveys/workflow-action.html.twig")
-     */
-    public function transition(SurveyWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, Survey $survey, $transition)
-    {
-        $surveyWorkflowConfirmAction
-            ->setSubject($survey)
-            ->setTransition($transition);
-
-        return $surveyWorkflowConfirmAction->controller(
-            $request,
-            function() use ($survey) {
-                return $this->generateUrl(
-                    SurveyController::VIEW_ROUTE,
-                    ['surveyId' => $survey->getId()]
-                );
-            }
-        );
-    }
-
-
-    /**
-     * @Route("/{surveyId}/edit-initial-details", name=self::EDIT_INITIAL_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/edit-initial-details", name=self::EDIT_INITIAL_ROUTE)
+     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
      */
     public function editInitialDetails(Survey $survey): Response
     {
@@ -219,8 +128,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{surveyId}/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
      */
     public function editBusinessDetails(Survey $survey): Response
     {
@@ -229,8 +137,7 @@ class SurveyController extends AbstractController
     }
 
     /**
-     * @Route("/{surveyId}/edit-vehicle-details", name=self::EDIT_VEHICLE_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Route("/edit-vehicle-details", name=self::EDIT_VEHICLE_ROUTE)
      */
     public function editVehicleDetails(Survey $survey): Response
     {

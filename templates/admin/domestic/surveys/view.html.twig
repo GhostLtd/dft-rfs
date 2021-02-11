@@ -3,6 +3,8 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
+    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
 
     {#- "vehicle" gets created when the initial-details wizard is complete, although at that stage it only contains regMark -#}
     {%- set hasVehicle = hasInitialDetails and
@@ -37,12 +39,16 @@
     </dl>
 
     <div class="govuk-!-margin-bottom-9">
-        {%- if not hasInitialDetails -%}
-        <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
-        {%- elseif not hasVehicle %}
-        <a class="govuk-button" href="{{ path('admin_domestic_survey_business_and_vehicle_enter', {surveyId: survey.id}) }}">Enter business and vehicle details</a>
+        {%- if canEdit -%}
+            {%- if not hasInitialDetails -%}
+            <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
+            {%- elseif not hasVehicle %}
+            <a class="govuk-button" href="{{ path('admin_domestic_survey_business_and_vehicle_enter', {surveyId: survey.id}) }}">Enter business and vehicle details</a>
+            {%- endif -%}
         {%- endif -%}
+        {%- if canResetPasscode -%}
         <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+        {%- endif -%}
     </div>
 
     {%- if tabs|default(false) -%}
@@ -54,10 +60,11 @@
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/initial-details.html.twig' -%}
                     {%- endwith -%}
-
+                    {%- if canEdit -%}
                     <div>
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
                     </div>
+                    {%- endif -%}
                 </div>
             {%- endif -%}
 
@@ -67,9 +74,11 @@
                         {%- include 'domestic_survey/includes/business-details.html.twig' -%}
                     {%- endwith -%}
 
+                    {%- if canEdit -%}
                     <div>
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
                     </div>
+                    {%- endif -%}
                </div>
             {%- endif -%}
 
@@ -78,9 +87,11 @@
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/vehicle-details.html.twig' -%}
                     {%- endwith -%}
+                    {%- if canEdit -%}
                     <div>
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_vehicle_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle details</span></a>
                     </div>
+                    {%- endif -%}
                 </div>
             {%- endif -%}
 
@@ -89,10 +100,11 @@
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/final-details.html.twig' -%}
                     {%- endwith -%}
-
+                    {%- if canEdit -%}
                     <div>
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_final_details_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> final details</span></a>
                     </div>
+                    {%- endif -%}
                 </div>
             {%- endif -%}
         </div>
@@ -101,7 +113,9 @@
     {%- if hasVehicle -%}
         <h1 class="govuk-heading govuk-heading-l govuk-heading--underline">Journeys</h1>
 
-        {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+        {%- with {showActions: canEdit} -%}
+            {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+        {%- endwith -%}
     {%- endif -%}
 
     {% if workflow_can(survey, 'approve') or workflow_can(survey, 'reject') or workflow_can(survey, 'complete')

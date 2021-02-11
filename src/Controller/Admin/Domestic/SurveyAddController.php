@@ -12,13 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/csrgt/survey/add", name="admin_domestic_")
- */
 class SurveyAddController extends AbstractController
 {
     /**
-     * @Route("", name="survey_add")
+     * @Route("/csrgt/survey-add/", name=SurveyController::ADD_ROUTE)
      */
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {

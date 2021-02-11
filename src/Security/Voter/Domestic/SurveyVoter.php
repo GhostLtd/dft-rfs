@@ -6,7 +6,6 @@ use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SurveyVoter extends Voter
 {
@@ -23,7 +22,7 @@ class SurveyVoter extends Voter
         /** @var PasscodeUser $user */
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof PasscodeUser) {
             return false;
         }
 

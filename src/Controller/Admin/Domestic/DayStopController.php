@@ -7,9 +7,11 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\Edit\DayStopType;
 use App\Repository\Domestic\DayRepository;
+use App\Security\Voter\Domestic\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -45,6 +47,7 @@ class DayStopController extends AbstractController
     /**
      * @Route("/surveys/{surveyId}/{dayNumber}/add-day-stage", name=self::ADD_DAY_AND_STOP_ROUTE, requirements={"dayNumber": "\d+"})
      * @Entity("survey", expr="repository.find(surveyId)")
+     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
      */
     public function addDayAndStop(Survey $survey, int $dayNumber): Response
     {
@@ -102,6 +105,7 @@ class DayStopController extends AbstractController
     protected function handleRequest(DayStop $stop, string $template, array $formOptions = [])
     {
         $survey = $stop->getDay()->getResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
         $form = $this->createForm(DayStopType::class, $stop, $formOptions);
         $request = $this->requestStack->getCurrentRequest();
@@ -136,6 +140,7 @@ class DayStopController extends AbstractController
     {
         $day = $stop->getDay();
         $survey = $day->getResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
         return $deleteDayStopConfirmAction
             ->setSubject($stop)

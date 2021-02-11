@@ -7,9 +7,11 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\Edit\DaySummaryType;
 use App\Repository\Domestic\DayRepository;
+use App\Security\Voter\Domestic\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -44,6 +46,7 @@ class DaySummaryController extends AbstractController
     /**
      * @Route("/surveys/{surveyId}/{dayNumber}/add-day-summary", name=self::ADD_DAY_AND_SUMMARY_ROUTE, requirements={"dayNumber": "\d+"})
      * @Entity("survey", expr="repository.find(surveyId)")
+     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
      */
     public function addDayAndStop(Survey $survey, int $dayNumber): Response
     {
@@ -83,6 +86,7 @@ class DaySummaryController extends AbstractController
     protected function handleRequest(DaySummary $summary, string $template, array $formOptions = [])
     {
         $survey = $summary->getDay()->getResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
         $form = $this->createForm(DaySummaryType::class, $summary, $formOptions);
 
@@ -117,6 +121,7 @@ class DaySummaryController extends AbstractController
     {
         $day = $summary->getDay();
         $survey = $day->getResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
         return $confirmAction
             ->setSubject($summary)
