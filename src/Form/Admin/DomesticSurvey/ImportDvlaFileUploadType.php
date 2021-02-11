@@ -4,12 +4,10 @@
 namespace App\Form\Admin\DomesticSurvey;
 
 
-use App\Entity\Domestic\Survey;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 class ImportDvlaFileUploadType extends AbstractType

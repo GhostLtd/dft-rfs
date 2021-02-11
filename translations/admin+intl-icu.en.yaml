@@ -11,6 +11,7 @@ menu:
     root: 'IRHS'
     surveys: 'Surveys'
     survey-add: 'Add Survey'
+    sample-import: 'Bulk sample import'
 
 common:
   survey:

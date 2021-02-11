@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Utility\DvlaImporter;
+use App\Utility\Domestic\DvlaImporter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
