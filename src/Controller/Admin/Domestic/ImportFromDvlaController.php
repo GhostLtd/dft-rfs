@@ -32,14 +32,9 @@ class ImportFromDvlaController extends AbstractController
 
         if ($form->isSubmitted())
         {
-            $importDataAndOptions = $dvlaImporter->getDataAndOptions($form);
+            $importDataAndOptions = $dvlaImporter->getSurveys($form);
 
             if ($form->isValid()) {
-                $importDataAndOptions['surveys'] = array_map(
-                    fn($data) => $dvlaImporter->createSurvey($data, $importDataAndOptions['surveyOptions']),
-                    $importDataAndOptions['importData']
-                );
-                unset($importDataAndOptions['importData']);
                 $session->set(self::SESSION_KEY, $importDataAndOptions);
                 return $this->redirectToRoute('admin_domestic_importdvla_review');
             }

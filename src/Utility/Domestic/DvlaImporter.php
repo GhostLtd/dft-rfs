@@ -9,8 +9,8 @@ use App\Entity\LongAddress;
 use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DvlaImporter extends AbstractBulkSurveyImporter
 {
@@ -44,24 +44,15 @@ class DvlaImporter extends AbstractBulkSurveyImporter
 
     private $regex;
 
-    public function __construct()
+    public function __construct(ValidatorInterface $validator)
     {
+        parent::__construct($validator);
+
         $this->regex = "/^";
         foreach (self::COLUMN_WIDTHS as $name => $length) {
             $this->regex .= "(?<$name>.{{$length}})";
         }
         $this->regex .= "/";
-    }
-
-    public function getDataAndOptions(FormInterface $form) {
-        /** @var UploadedFile $file */
-        $file = $form->get('file')->getData();
-
-        return [
-            'surveyOptions' => $this->getAggregateSurveyOptionsAndValidate($form),
-            'importData' => $this->getDataFromUploadedFile($file),
-            'filename' => $this->getOriginalFilename($file),
-        ];
     }
 
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)

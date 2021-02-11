@@ -38,14 +38,9 @@ class SampleImportController extends AbstractController
 
         if ($form->isSubmitted())
         {
-            $importDataAndOptions = $sampleImporter->getDataAndOptions($form);
+            $importDataAndOptions = $sampleImporter->getSurveys($form);
 
             if ($form->isValid()) {
-                $importDataAndOptions['surveys'] = array_map(
-                    fn($data) => $sampleImporter->createSurvey($data),
-                    $importDataAndOptions['importData']
-                );
-                unset($importDataAndOptions['importData']);
                 $session->set(self::SESSION_KEY, $importDataAndOptions);
                 return $this->redirectToRoute('admin_international_sampleimport_review');
             }

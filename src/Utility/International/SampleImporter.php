@@ -9,7 +9,6 @@ use App\Entity\International\Survey;
 use App\Entity\LongAddress;
 use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SampleImporter extends AbstractBulkSurveyImporter
 {
@@ -25,36 +24,39 @@ class SampleImporter extends AbstractBulkSurveyImporter
     const COL_ADDRESS_5 = 9;
     const COL_POSTCODE = 10;
 
-    public function getDataAndOptions(FormInterface $form) {
-        /** @var UploadedFile $file */
-        $file = $form->get('file')->getData();
-
-        return [
-            'importData' => $this->getDataFromUploadedFile($file),
-            'filename' => $this->getOriginalFilename($file),
-        ];
+    protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)
+    {
+        return [];
     }
 
     protected function parseLine($line)
     {
-        if (preg_match_all('/(?:^|,)(?=[^"]|(")?)"?(?<field>(?(1)[^"]*|[^,"]*))"?(?=,|$)/', $line, $matches)) {
-            if (count($matches['field']) !== 11) {
+        if ($fields = str_getcsv($line))
+//        if (preg_match_all('/(?:^|,)(?=[^"]|(")?)"?(?<field>(?(1)[^"]*|[^,"]*))"?(?=,|$)/', $line, $matches)) {
+        {
+//            if (count($matches['field']) !== 11) {
+            if (count($fields) !== 11) {
                 return null;
             }
-            return $matches['field'];
+//            return $matches['field'];
+            return $fields;
         }
         return null;
     }
 
     public function createSurvey($surveyData, $surveyOptions = null)
     {
-        return (new Survey())
-            ->setSurveyPeriodStart(new \DateTime($surveyData[self::COL_START_DATE]))
-            ->setSurveyPeriodEnd(new \DateTime($surveyData[self::COL_END_DATE]))
-            ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
-            ->setReferenceNumber("{$surveyData[self::COL_DISPATCH_WEEK]}-{$surveyData[self::COL_FIRM_REF]}")
-            ->setInvitationAddress($this->createAddress($surveyData))
-            ;
+        try {
+            return (new Survey())
+                ->setSurveyPeriodStart(new \DateTime($surveyData[self::COL_START_DATE]))
+                ->setSurveyPeriodEnd(new \DateTime($surveyData[self::COL_END_DATE]))
+                ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
+                ->setReferenceNumber("{$surveyData[self::COL_DISPATCH_WEEK]}-{$surveyData[self::COL_FIRM_REF]}")
+                ->setInvitationAddress($this->createAddress($surveyData))
+                ;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     protected function createAddress($surveyData)
