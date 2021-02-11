@@ -266,4 +266,14 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     {
         return $this->getSurvey()->getId();
     }
+
+    public function getNumberOfVehicles(): int
+    {
+        return $this->vehicles->count();
+    }
+
+    public function getTotalNumberOfTrips(): int
+    {
+        return array_sum(array_map(fn(Vehicle $v) => $v->getTrips()->count(), $this->vehicles->toArray()));
+    }
 }

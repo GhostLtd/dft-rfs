@@ -18,6 +18,8 @@ class SurveyListPage extends AbstractListPage
             (new Field('Start date', 'x.surveyPeriodStart'))->sortable(),
             (new Field('Business name', 'c.businessName'))->textFilterable()->sortable(),
             (new Field('Status', 'x.state'))->sortable()->selectFilterable($stateChoices),
+            (new Field('# Vehicles', null)),
+            (new Field('# Trips', null)),
         ];
     }
 

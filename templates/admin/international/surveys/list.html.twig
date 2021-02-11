@@ -13,6 +13,8 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{- _self.countField(survey, 'numberOfVehicles') -}}
+            {{- _self.countField(survey, 'totalNumberOfTrips') -}}
             {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
         </tr>
     {% else %}
@@ -20,3 +22,10 @@
     {% endfor %}
     {{ listTableEnd(data, form) }}
 {% endblock %}
+
+{%- macro countField(survey, fieldName) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
+    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
+    {%- set value = (field == null or field == 0) ? '-' : field -%}
+    {{- tableCell(value) -}}
+{%- endmacro -%}

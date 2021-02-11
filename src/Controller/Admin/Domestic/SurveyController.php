@@ -14,14 +14,12 @@ use App\Security\Voter\Domestic\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -59,25 +57,6 @@ class SurveyController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @Route("/reset-passcode/success", name=self::RESET_PASSCODE_SUCCESS_ROUTE)
-     * @Template("admin/domestic/reset_passcode/success.html.twig")
-     */
-    public function resetPasscodeSuccess(SessionInterface $session, Survey $survey): array
-    {
-        $key = "reset-passcode.{$survey->getId()}";
-        $code = $session->remove($key);
-
-        if (!$code) {
-            throw new NotFoundHttpException();
-        }
-
-        return [
-            'survey' => $survey,
-            'code' => $code,
-        ];
     }
 
     /**

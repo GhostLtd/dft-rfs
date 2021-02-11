@@ -7,6 +7,7 @@ use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\ActionDeleteType;
 use App\Form\Admin\InternationalSurvey\ActionLoadType;
 use App\Form\Admin\InternationalSurvey\ActionUnloadType;
+use App\Security\Voter\International\AdminSurveyVoter;
 use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
@@ -82,6 +83,9 @@ class ActionController extends AbstractController
 
     protected function handleRequest(Action $action, string $template, array $formOptions = []): Response
     {
+        $survey = $action->getTrip()->getVehicle()->getSurveyResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
+
         $formClass = $action->getLoading() ? ActionLoadType::class : ActionUnloadType::class;
         $form = $this->createForm($formClass, $action, $formOptions);
         $request = $this->requestStack->getCurrentRequest();
@@ -90,7 +94,7 @@ class ActionController extends AbstractController
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
-            $surveyId = $action->getTrip()->getVehicle()->getSurveyResponse()->getSurvey()->getId();
+            $surveyId = $survey->getId();
             $redirectResponse = new RedirectResponse(
                 $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $surveyId]) .
                 "#actions-{$action->getTrip()->getId()}"
@@ -123,6 +127,7 @@ class ActionController extends AbstractController
 
         $trip = $action->getTrip();
         $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
         $redirectUrl = $this->generateUrl(
                 SurveyController::VIEW_ROUTE,

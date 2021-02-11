@@ -12,13 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/irhs/surveys/add", name="admin_international_survey_")
- */
-class AddController extends AbstractController
+class SurveyAddController extends AbstractController
 {
     /**
-     * @Route(name="add")
+     * @Route("/irhs/survey-add/", name=SurveyController::ADD_ROUTE)
      */
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {

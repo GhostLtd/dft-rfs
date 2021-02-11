@@ -5,6 +5,7 @@ namespace App\Controller\Admin\International;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Form\Admin\InternationalSurvey\TripType;
+use App\Security\Voter\International\AdminSurveyVoter;
 use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -24,9 +25,9 @@ class TripController extends AbstractController
 {
     private const ROUTE_PREFIX = "admin_international_trip_";
 
-    public const ADD_ROUTE = self::ROUTE_PREFIX."add";
+    public const ADD_ROUTE = self::ROUTE_PREFIX . "add";
     public const DELETE_ROUTE = self::ROUTE_PREFIX . "delete";
-    public const EDIT_ROUTE = self::ROUTE_PREFIX."edit";
+    public const EDIT_ROUTE = self::ROUTE_PREFIX . "edit";
 
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;
@@ -43,6 +44,8 @@ class TripController extends AbstractController
      */
     public function add(Vehicle $vehicle): Response
     {
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
+
         $trip = (new Trip())->setVehicle($vehicle);
         $this->entityManager->persist($trip);
 
@@ -55,6 +58,7 @@ class TripController extends AbstractController
      */
     public function edit(Trip $trip): Response
     {
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $trip->getVehicle()->getSurveyResponse()->getSurvey());
         return $this->handleRequest($trip, 'admin/international/trip/edit.html.twig');
     }
 
@@ -96,13 +100,18 @@ class TripController extends AbstractController
      */
     public function delete(Trip $trip, DeleteTripConfirmAction $deleteTripConfirmAction, Request $request)
     {
+        $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
+
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
             $request,
-            function() use ($trip) { return $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $trip->getVehicle()->getSurveyResponse()->getSurvey()->getId()]
-            );}
+            function() use ($survey) {
+                return $this->generateUrl(
+                    SurveyController::VIEW_ROUTE,
+                    ['surveyId' => $survey->getId()]
+                );
+            }
         );
     }
 }

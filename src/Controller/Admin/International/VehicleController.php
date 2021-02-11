@@ -6,10 +6,12 @@ use App\Entity\International\Survey;
 use App\Entity\International\Vehicle;
 use App\Form\Admin\InternationalSurvey\VehicleDeleteType;
 use App\Form\Admin\InternationalSurvey\VehicleType;
+use App\Security\Voter\International\AdminSurveyVoter;
 use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,6 +44,7 @@ class VehicleController extends AbstractController
     /**
      * @Route("/survey/{surveyId}/add-vehicle", name=self::ADD_ROUTE)
      * @Entity("survey", expr="repository.find(surveyId)")
+     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
      */
     public function add(Survey $survey): Response
     {
@@ -63,6 +66,7 @@ class VehicleController extends AbstractController
      */
     public function edit(Vehicle $vehicle): Response
     {
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
         return $this->handleRequest($vehicle, 'admin/international/vehicle/edit.html.twig');
     }
 
@@ -103,6 +107,7 @@ class VehicleController extends AbstractController
      */
     public function delete(Vehicle $vehicle, Request $request, DeleteHelper $deleteHelper): Response
     {
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
         $form = $this->createForm(VehicleDeleteType::class);
 
         $survey = $vehicle->getSurveyResponse()->getSurvey();

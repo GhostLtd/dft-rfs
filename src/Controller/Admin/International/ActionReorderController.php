@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Controller\AbstractActionReorderController;
 use App\Entity\International\Trip;
+use App\Security\Voter\International\AdminSurveyVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,7 @@ class ActionReorderController extends AbstractActionReorderController
      */
     public function reorderAction(Trip $trip, Request $request): Response
     {
+        $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $trip->getVehicle()->getSurveyResponse()->getSurvey());
         return parent::reorder($request, $trip);
     }
 }
