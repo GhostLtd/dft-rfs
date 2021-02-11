@@ -399,4 +399,14 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
         return $this;
     }
+
+    public function getSummaryDayCount(): int
+    {
+        return $this->days->filter(fn(Day $day) => $day->getSummary() !== null)->count();
+    }
+
+    public function getStopDayCount(): int
+    {
+        return $this->days->filter(fn(Day $day) => $day->getStops()->count() !== 0)->count();
+    }
 }

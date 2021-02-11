@@ -30,7 +30,7 @@
             {%- set contents = '<div>' ~
                 (form[field.parameterName] is defined ?
                     form_widget(form[field.parameterName]) :
-                    field.label|e) ~
+                    field.label|e|nl2br) ~
                 sortFragment ~ '</div>'
             -%}
             {{- tableCell(contents, field.getCellOptions|merge({element: 'th', html: true})) -}}

@@ -19,6 +19,8 @@
                 '-' :
                 (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
             }}
+            {{- _self.dayCountField(survey, 'summaryDayCount') -}}
+            {{- _self.dayCountField(survey, 'stopDayCount') -}}
             {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
         </tr>
     {% else %}
@@ -26,3 +28,10 @@
     {% endfor %}
     {{ listTableEnd(data, form) }}
 {% endblock %}
+
+{%- macro dayCountField(survey, fieldName) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
+    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
+    {%- set value = (field == null or field == 0) ? '-' : field -%}
+    {{- tableCell(value) -}}
+{%- endmacro -%}
