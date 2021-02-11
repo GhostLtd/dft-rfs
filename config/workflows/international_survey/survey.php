@@ -17,7 +17,6 @@ return static function (ContainerConfigurator $container) {
                 'places' => [
                     StateObject::STATE_NEW,
                     StateObject::STATE_INVITED_USER,
-                    StateObject::STATE_REMINDED_USER,
                     StateObject::STATE_IN_PROGRESS,
                     StateObject::STATE_CLOSED,
                     StateObject::STATE_APPROVED,
@@ -29,12 +28,8 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_NEW,
                         'to' => StateObject::STATE_INVITED_USER,
                     ],
-                    'remind_user' => [
-                        'from' => StateObject::STATE_INVITED_USER,
-                        'to' => StateObject::STATE_REMINDED_USER,
-                    ],
                     'started' => [
-                        'from' => [StateObject::STATE_INVITED_USER, StateObject::STATE_REMINDED_USER, StateObject::STATE_NEW],
+                        'from' => [StateObject::STATE_INVITED_USER, StateObject::STATE_NEW],
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [

@@ -19,7 +19,6 @@ class Survey implements BlameLoggable
 
     const STATE_NEW = 'new';
     const STATE_INVITED_USER = 'invited';
-    const STATE_REMINDED_USER = 'reminded';
     const STATE_IN_PROGRESS = 'in-progress';
     const STATE_CLOSED = 'closed';
     const STATE_APPROVED = 'approved';
@@ -29,7 +28,6 @@ class Survey implements BlameLoggable
     const STATE_CHOICES = [
         'admin.domestic.survey.state.new' => self::STATE_NEW,
         'admin.domestic.survey.state.invited' => self::STATE_INVITED_USER,
-        'admin.domestic.survey.state.reminded' => self::STATE_REMINDED_USER,
         'admin.domestic.survey.state.in-progress' => self::STATE_IN_PROGRESS,
         'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
         'admin.domestic.survey.state.approved' => self::STATE_APPROVED,
