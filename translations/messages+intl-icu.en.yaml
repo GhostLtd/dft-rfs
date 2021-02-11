@@ -158,8 +158,13 @@ admin:
       title-ni: CSRGT (NI) Surveys
       title-gb: CSRGT (GB) Surveys
       state:
+        in-progress: govuk-tag--yellow
+        new: govuk-tag--grey
         invited: govuk-tag--grey
-        closed: govuk-tag--green
+        closed: govuk-tag--blue
+        approved: govuk-tag--green
+        rejected: govuk-tag--red
+        exported: govuk-tag--green
     add-survey:
       registration-mark:
         label: Registration mark
@@ -192,8 +197,13 @@ admin:
     survey:
       title: IRHS Surveys
       state:
+        in-progress: govuk-tag--yellow
+        new: govuk-tag--grey
         invited: govuk-tag--grey
-        closed: govuk-tag--green
+        closed: govuk-tag--blue
+        approved: govuk-tag--green
+        rejected: govuk-tag--red
+        exported: govuk-tag--green
       reference-number:
         label: 'Reference number'
         help: ''
