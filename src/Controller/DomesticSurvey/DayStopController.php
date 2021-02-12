@@ -118,14 +118,14 @@ class DayStopController extends AbstractSessionStateWorkflowController
         $this->stopNumber = intval($stopNumber);
 
         $dayStop = $this->getDayStop();
-        $day = $dayStop->getDay();
+        $numStops = $dayStop->getDay()->getStops()->count();
 
         return $confirmAction
             ->setSubject($dayStop)
             ->controller(
                 $request,
-                function() use ($day) {
-                    return ($day->getStops()->count() > 0) ?
+                function() use ($numStops) {
+                    return ($numStops > 1) ?
                         $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]) :
                         $this->generateUrl('app_domesticsurvey_index');
                 },
