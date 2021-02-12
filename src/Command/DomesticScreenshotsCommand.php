@@ -59,8 +59,7 @@ class DomesticScreenshotsCommand extends Command
             ->setRegistrationMark('TE01 STT')
             ->setIsNorthernIreland(true)
             ->setSurveyPeriodStart($start)
-            ->setSurveyPeriodStart($end)
-            ->setInvitationEmail('test@example.com')
+            ->setSurveyPeriodEnd($end)
             ->setPasscodeUser($user)
             ->setInvitationAddress(new LongAddress());
 
