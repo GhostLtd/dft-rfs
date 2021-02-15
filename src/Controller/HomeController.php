@@ -19,4 +19,12 @@ class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig');
     }
+
+    /**
+     * @Route("/sitemap.txt")
+     */
+    public function sitemap()
+    {
+        return $this->render('home/sitemap.txt.twig');
+    }
 }
