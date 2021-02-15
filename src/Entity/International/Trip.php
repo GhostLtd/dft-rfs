@@ -670,7 +670,7 @@ class Trip implements BlameLoggable
         return $this->isSwappedTrailer;
     }
 
-    public function setIsSwappedTrailer(bool $isSwappedTrailer): self
+    public function setIsSwappedTrailer(?bool $isSwappedTrailer): self
     {
         $this->isSwappedTrailer = $isSwappedTrailer;
 
@@ -734,7 +734,7 @@ class Trip implements BlameLoggable
         return $this->isChangedBodyType;
     }
 
-    public function setIsChangedBodyType(bool $isChangedBodyType): self
+    public function setIsChangedBodyType(?bool $isChangedBodyType): self
     {
         $this->isChangedBodyType = $isChangedBodyType;
 
