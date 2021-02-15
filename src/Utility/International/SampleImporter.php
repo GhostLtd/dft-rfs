@@ -32,13 +32,10 @@ class SampleImporter extends AbstractBulkSurveyImporter
     protected function parseLine($line)
     {
         if ($fields = str_getcsv($line))
-//        if (preg_match_all('/(?:^|,)(?=[^"]|(")?)"?(?<field>(?(1)[^"]*|[^,"]*))"?(?=,|$)/', $line, $matches)) {
         {
-//            if (count($matches['field']) !== 11) {
             if (count($fields) !== 11) {
                 return null;
             }
-//            return $matches['field'];
             return $fields;
         }
         return null;
@@ -51,7 +48,7 @@ class SampleImporter extends AbstractBulkSurveyImporter
                 ->setSurveyPeriodStart(new \DateTime($surveyData[self::COL_START_DATE]))
                 ->setSurveyPeriodEnd(new \DateTime($surveyData[self::COL_END_DATE]))
                 ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
-                ->setReferenceNumber("{$surveyData[self::COL_DISPATCH_WEEK]}-{$surveyData[self::COL_FIRM_REF]}")
+                ->setReferenceNumber("{$surveyData[self::COL_FIRM_REF]}-{$surveyData[self::COL_DISPATCH_WEEK]}")
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
         } catch (\Throwable $e) {

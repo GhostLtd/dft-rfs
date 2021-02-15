@@ -28,7 +28,7 @@ class LoadingPlaceType extends AbstractType
 
             $prefix = 'international.action.unloading';
 
-            [$choices, $choiceOptions] = $this->loadingPlaceHelper->getChoicesAndOptionsForPlace($action);
+            [$choices, $choiceOptions] = $this->loadingPlaceHelper->getChoicesAndOptionsForPlace($action, true);
 
             $event->getForm()
                 ->add('loadingAction', Gds\ChoiceType::class, [
