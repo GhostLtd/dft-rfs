@@ -848,14 +848,14 @@ international:
         help: ''
     confirm-dates:
       heading: 'Survey period confirmation'
-      help: "We’re only interested in vehicles that have made international trips that started within survey period."
+      help: "We’re only interested in vehicles that made international trips where the date of departure from the UK was within survey period."
       confirm:
-        label: 'Did this vehicle make any trips that started during the survey period?'
+        label: 'Did this vehicle depart from the UK during the survey period?'
         help: ''
       notification-banner:
         title: 'Information'
         heading: 'The vehicle is not required in this survey'
-        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
+        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips where the date of departure from the UK was during the survey period'
     vehicle-trailer-configuration:
       heading: Tell us about the vehicle
       help:
