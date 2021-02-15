@@ -912,7 +912,7 @@ international:
         label-unload: Where did you unload goods?
         help: ''
       name:
-        label: Place name or postcode
+        label: Place name
         help: ''
       country:
         label: Country
