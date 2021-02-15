@@ -19,6 +19,7 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
 
     public function kernelResponseEvent(ResponseEvent $event)
     {
+        return;
         // the profiler needs 'unsafe-eval' when using dump feature (dev only)
         $cspAdditional = $this->appEnvironment === 'dev' ? "'unsafe-eval'" : '';
 

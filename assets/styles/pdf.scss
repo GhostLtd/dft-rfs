@@ -1,0 +1,8 @@
+@import "pdf/reset";
+
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+@import "~govuk-frontend/govuk/base";
+@import "~govuk-frontend/govuk/core/_typography.scss";
+
+@import "pdf/base";
+

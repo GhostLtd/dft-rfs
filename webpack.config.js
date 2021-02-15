@@ -30,6 +30,7 @@ Encore
      */
     .addEntry('app', './assets/js/app.js')
     .addEntry('admin', './assets/js/admin.js')
+    .addEntry('pdf', './assets/styles/pdf.scss')
     // .addEntry('govuk-frontend-bundle', './bundles/Ghost/GovUkFrontendBundle/Resources/assets/js/bundle.js')
     //.addEntry('page1', './assets/page1.js')
     //.addEntry('page2', './assets/page2.js')
