@@ -55,8 +55,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $survey = $event->getSubject();
 
         $personalisation = [
-            'startDate' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
-            'endDate' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
+            'surveyReference' => $survey->getReferenceNumber(),
+            'surveyPeriodStart' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
+            'surveyPeriodEnd' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
             'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];

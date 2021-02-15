@@ -14,6 +14,6 @@ class TemplateReference
     // Todo: Change development email template
     const EMAIL_INTERNATIONAL_SURVEY_INVITE = '';
 
-    // TODO: change development letter template
-    const LETTER_INTERNATIONAL_SURVEY_INVITE = '';
+    // TODO: change private beta letter template
+    const LETTER_INTERNATIONAL_SURVEY_INVITE = '8353aa84-0922-4eab-a1fd-1240a6cabbcc';
 }
