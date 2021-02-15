@@ -9,7 +9,6 @@ use App\Entity\PasscodeUser;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\TemplateReference;
-use App\Utility\RegistrationMarkHelper;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -62,12 +61,14 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
 
-        if ($survey->getInvitationAddress()->isFilled())
+        $address = $survey->getInvitationAddress();
+        $addressIsFilled = $address && $address->isFilled();
+        if ($addressIsFilled)
         {
             $this->messageBus->dispatch(new Letter(
                 Survey::class,
                 $survey->getId(),
-                $survey->getInvitationAddress(),
+                $address,
                 TemplateReference::LETTER_INTERNATIONAL_SURVEY_INVITE,
                 $personalisation,
             ));
@@ -83,8 +84,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
-            $survey->setNotifiedDate(new \DateTime());
+        if ($survey->getInvitationEmail() || $addressIsFilled) {
+            $survey->setNotifiedDate(new DateTime());
         }
     }
 
