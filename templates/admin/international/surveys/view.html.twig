@@ -6,9 +6,8 @@
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
 
+    {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
-        {%- set tabs = {} -%}
-
         {%- if survey.response.noLongerActive == false -%}
             {%- set tabs = tabs|merge({
                 'Vehicles': 'tab-vehicles',
@@ -26,12 +25,15 @@
             }) -%}
         {%- endif -%}
     {%- endif -%}
+    {%- set tabs = tabs | merge({
+        'Invitation details': 'tab-invitation-details',
+    }) -%}
 
     <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
-            {%- include "international_survey/includes/survey-basics.html.twig" -%}
+            {%- include "admin/international/includes/survey-basics.html.twig" -%}
         {%- endwith -%}
 
         {%- if canEdit and not hasInitialDetails -%}
@@ -102,6 +104,12 @@
                     {%- endif -%}
                 </div>
             {%- endif -%}
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+                {%- with {marginBottom: 5} -%}
+                    {%- include "admin/includes/invitation-details.html.twig" -%}
+                {%- endwith -%}
+            </div>
         </div>
     {%- endif -%}
 

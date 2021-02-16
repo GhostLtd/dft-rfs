@@ -12,10 +12,11 @@
         survey.response.vehicle.trailerConfiguration != null
     -%}
 
+    {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
-        {%- set tabs = {
+        {%- set tabs = tabs | merge({
             'Initial details': 'tab-initial-details',
-        } -%}
+        }) -%}
         {%- if hasVehicle -%}
             {%- set tabs = tabs | merge({
                 'Business details': 'tab-business-details',
@@ -28,7 +29,9 @@
             }) -%}
         {%- endif -%}
     {%- endif -%}
-
+    {%- set tabs = tabs | merge({
+        'Invitation details': 'tab-invitation-details',
+    }) -%}
     <h1 class="govuk-heading-l">Survey</h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
@@ -107,6 +110,12 @@
                     {%- endif -%}
                 </div>
             {%- endif -%}
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/invitation-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
         </div>
     {%- endif -%}
 

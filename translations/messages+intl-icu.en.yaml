@@ -89,6 +89,10 @@ common:
     kilometers: "{value} kilometers"
   headings:
     next-steps: Next steps
+  survey-period:
+    label: "Survey period"
+    one-day: "{start, date, medium} (1 day)"
+    many-days: "{start, date, medium}–{end, date, medium} ({days} days)"
   limited-by:
     choices:
       space: At capacity by space
@@ -192,7 +196,7 @@ admin:
   international:
     company:
       business-name:
-        label: Company/Business name
+        label: Business name
         help: ''
     survey:
       title: IRHS Surveys

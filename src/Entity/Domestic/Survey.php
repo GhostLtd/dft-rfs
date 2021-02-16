@@ -3,8 +3,8 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\BlameLoggable;
-use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
+use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
-class Survey implements BlameLoggable
+class Survey implements BlameLoggable, SurveyInterface
 {
     use SurveyTrait;
 
