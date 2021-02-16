@@ -53,7 +53,7 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         $filteredSourceData = $this->getFilteredSourceData($filterData, $sourceData);
         file_put_contents(pathinfo($filterFile, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . "output_data.txt", implode(PHP_EOL, $filteredSourceData));
 
-        dump(memory_get_peak_usage()/1024/1024);
+//        dump(memory_get_peak_usage()/1024/1024);
 
         $this->io->success('You have a new command! Now make it your own! Pass --help to see your options.');
         return 0;
@@ -106,16 +106,16 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         $this->io->block($initialSummary, null, "fg=green");
     }
 
-    private function rubbish() {
-        $sourceData = [];
-        foreach ($sourceFiles as $sourceFile) {
-            $sourceData = array_merge($sourceData, $this->dvlaImporter->getDataFromFilename($sourceFile));
-        }
-//        dump(count($sourceData));
-        $indexedSourceData = [];
-        foreach ($sourceData as $k=>$v) {
-            $indexedSourceData[$v['reg_mark']] = $v;
-            unset($sourceData[$k]);
-        }
-    }
+//    private function rubbish() {
+//        $sourceData = [];
+//        foreach ($sourceFiles as $sourceFile) {
+//            $sourceData = array_merge($sourceData, $this->dvlaImporter->getDataFromFilename($sourceFile));
+//        }
+////        dump(count($sourceData));
+//        $indexedSourceData = [];
+//        foreach ($sourceData as $k=>$v) {
+//            $indexedSourceData[$v['reg_mark']] = $v;
+//            unset($sourceData[$k]);
+//        }
+//    }
 }
