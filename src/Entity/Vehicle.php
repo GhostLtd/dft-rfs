@@ -48,18 +48,29 @@ abstract class Vehicle
         ],
     ];
 
+    const BODY_TYPE_FLAT_DROP = 'flat-drop';
+    const BODY_TYPE_BOX = 'box';
+    const BODY_TYPE_TEMPERATURE_CONTROLLED = 'temperature-controlled';
+    const BODY_TYPE_CURTAIN_SIDED = 'curtain-sided';
+    const BODY_TYPE_LIQUID = 'liquid';
+    const BODY_TYPE_SOLID_BULK = 'solid-bulk';
+    const BODY_TYPE_LIVESTOCK = 'livestock';
+    const BODY_TYPE_CAR = 'car';
+    const BODY_TYPE_TIPPER = 'tipper';
+    const BODY_TYPE_OTHER = 'other';
+
     const BODY_CONFIGURATION_TRANSLATION_PREFIX = 'vehicle.body.';
     const BODY_CONFIGURATION_CHOICES = [
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'flat-drop' => 'flat-drop',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'box' => 'box',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'temperature-controlled' => 'temperature-controlled',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'curtain-sided' => 'curtain-sided',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'liquid' => 'liquid',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'solid-bulk' => 'solid-bulk',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'livestock' => 'livestock',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'car' => 'car',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'tipper' => 'tipper',
-        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . 'other' => 'other',
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_FLAT_DROP => self::BODY_TYPE_FLAT_DROP,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_BOX => self::BODY_TYPE_BOX,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_TEMPERATURE_CONTROLLED => self::BODY_TYPE_TEMPERATURE_CONTROLLED,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_CURTAIN_SIDED => self::BODY_TYPE_CURTAIN_SIDED,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_LIQUID => self::BODY_TYPE_LIQUID,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_SOLID_BULK => self::BODY_TYPE_SOLID_BULK,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_LIVESTOCK => self::BODY_TYPE_LIVESTOCK,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_CAR => self::BODY_TYPE_CAR,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_TIPPER => self::BODY_TYPE_TIPPER,
+        self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_OTHER => self::BODY_TYPE_OTHER,
     ];
 
     static function getAxleConfigurationTranslationKey($axleConfigCode)
