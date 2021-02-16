@@ -9,6 +9,7 @@ use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -59,6 +60,18 @@ class Survey implements BlameLoggable, SurveyInterface
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"})
      */
     private $passcodeUser;
+
+    /**
+     * @Assert\Callback(groups={"add_survey"})
+     */
+    public function validInvitationDetails(ExecutionContextInterface $context) {
+        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
+            $context
+                ->buildViolation('international.add.invitation-email-or-address')
+                ->atPath('invitationEmail')
+                ->addViolation();
+        }
+    }
 
     public function getReferenceNumber(): ?string
     {

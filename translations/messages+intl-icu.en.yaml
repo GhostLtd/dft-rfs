@@ -219,6 +219,12 @@ admin:
       period-days:
         label: 'Survey period (days)'
         help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: There is no need to add the business name to the invitation address
       submit:
         label: Add survey
     survey-created:
