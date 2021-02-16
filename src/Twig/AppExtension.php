@@ -95,6 +95,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
+            new TwigFunction('conditionalArray', [$this, 'conditionalArray']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
             new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
             new TwigFunction('flatten', [$this, 'flatten']),
@@ -262,6 +263,16 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function conditionalArray(array $mappings): array {
+        $array = [];
+        foreach($mappings as $field => $include) {
+            if ($include) {
+                $array[] = $field;
+            }
+        }
+        return $array;
     }
 
     public function flatten(array $choices): array {

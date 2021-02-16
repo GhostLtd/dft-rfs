@@ -4,4 +4,17 @@
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
     {{- row('Address', address|default('-')|nl2br) -}}
     {{- row('Email', survey.invitationEmail|default('-')) -}}
+
+    {% if survey.notifiedDate %}
+        {% set notificationMethods = conditionalArray({
+            email: survey.invitationEmail,
+            letter: survey.invitationAddress and survey.invitationAddress.filled,
+        }) %}
+
+        {% set notified = survey.notifiedDate|date('d/m/Y') ~ ' ' ~ (notificationMethods is empty ? '' : ('via ' ~ notificationMethods|join(', '))) %}
+    {% else %}
+        {% set notified = '-' %}
+    {% endif %}
+
+    {{- row('Notified', notified) }}
 </dl>
