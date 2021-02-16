@@ -49,8 +49,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
-        if ($addressIsFilled)
-        {
+        if ($addressIsFilled) {
             $this->messageBus->dispatch(new Letter(
                 Survey::class,
                 $survey->getId(),

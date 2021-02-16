@@ -46,12 +46,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
 
-        if ($survey->getInvitationAddress()->isFilled())
-        {
+        $address = $survey->getInvitationAddress();
+        $addressIsFilled = $address && $address->isFilled();
+        if ($addressIsFilled) {
             $this->messageBus->dispatch(new Letter(
                 Survey::class,
                 $survey->getId(),
-                $survey->getInvitationAddress(),
+                $address,
                 TemplateReference::LETTER_DOMESTIC_SURVEY_INVITE,
                 $personalisation,
             ));
@@ -67,8 +68,19 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
+        if ($survey->getInvitationEmail() || $addressIsFilled) {
             $survey->setNotifiedDate(new DateTime());
+        }
+    }
+
+    public function transitionComplete(Event $event)
+    {
+        /** @var Survey $survey */
+        $survey = $event->getSubject();
+
+        if (!$survey->getSubmissionDate()) {
+            $survey->setSubmissionDate(new DateTime('now'));
+            $this->entityManager->flush();
         }
     }
 
@@ -76,6 +88,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
+            'workflow.domestic_survey.transition.complete' => 'transitionComplete',
         ];
     }
 }
