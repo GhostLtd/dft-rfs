@@ -14,7 +14,7 @@ class ButtonType extends ExtendedButtonType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'prevent_double_click' => false,
+            'prevent_double_click' => true,
             'type' => null,
             'label_html' => false,
         ]);

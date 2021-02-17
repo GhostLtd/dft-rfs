@@ -1,41 +1,25 @@
 <?php
 
-
 namespace App\EventSubscriber\DomesticSurvey;
 
-
-use Alphagov\Notifications\Client;
 use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\TemplateReference;
 use App\Utility\RegistrationMarkHelper;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var WorkflowInterface
-     */
-    private $domesticSurveyStateMachine;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    private $frontendHostname;
-
-    /**
-     * @var MessageBusInterface
-     */
-    private $messageBus;
+    private WorkflowInterface $domesticSurveyStateMachine;
+    private EntityManagerInterface $entityManager;
+    private MessageBusInterface $messageBus;
+    private string $frontendHostname;
 
     public function __construct(
         WorkflowInterface $domesticSurveyStateMachine,
@@ -62,12 +46,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
 
-        if ($survey->getInvitationAddress()->isFilled())
-        {
+        $address = $survey->getInvitationAddress();
+        $addressIsFilled = $address && $address->isFilled();
+        if ($addressIsFilled) {
             $this->messageBus->dispatch(new Letter(
                 Survey::class,
                 $survey->getId(),
-                $survey->getInvitationAddress(),
+                $address,
                 TemplateReference::LETTER_DOMESTIC_SURVEY_INVITE,
                 $personalisation,
             ));
@@ -83,20 +68,18 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail() || $survey->getInvitationAddress()->isFilled()) {
-            $survey->setNotifiedDate(new \DateTime());
+        if ($survey->getInvitationEmail() || $addressIsFilled) {
+            $survey->setNotifiedDate(new DateTime());
         }
     }
 
-    public function onInteractiveLogin(InteractiveLoginEvent $event)
+    public function transitionComplete(Event $event)
     {
-        $user = $event->getAuthenticationToken()->getUser();
-        if (!$user instanceof PasscodeUser || !$user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER)) {
-            return;
-        }
+        /** @var Survey $survey */
+        $survey = $event->getSubject();
 
-        if ($this->domesticSurveyStateMachine->can($user->getDomesticSurvey(), 'started')) {
-            $this->domesticSurveyStateMachine->apply($user->getDomesticSurvey(), 'started');
+        if (!$survey->getSubmissionDate()) {
+            $survey->setSubmissionDate(new DateTime('now'));
             $this->entityManager->flush();
         }
     }
@@ -105,7 +88,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
-            'security.interactive_login' => 'onInteractiveLogin',
+            'workflow.domestic_survey.transition.complete' => 'transitionComplete',
         ];
     }
 }

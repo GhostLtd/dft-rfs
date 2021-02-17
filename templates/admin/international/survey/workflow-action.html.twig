@@ -5,7 +5,7 @@
     <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title" | trans(translation_parameters, translation_domain) }}</h1>
 
         {%- with {showActions: false, survey: subject, response: subject.response, marginBottom: 4} -%}
-            {%- include "international_survey/includes/survey-basics.html.twig" -%}
+            {%- include "admin/international/includes/survey-basics.html.twig" -%}
         {%- endwith -%}
 
     {{ form(form) }}

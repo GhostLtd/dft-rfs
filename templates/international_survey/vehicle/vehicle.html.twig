@@ -14,7 +14,23 @@
     {%- set urlChangeVehicleWeight = wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params) -%}
     {%- set change = 'common.actions.change'|trans -%}
 
+    {%- set survey = vehicle.surveyResponse.survey -%}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Company</dt>
+            <dd class="govuk-summary-list__value">{{ survey.company.businessName }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ 'international.sidebar-summary.period'|trans }}</dt>
+            <dd class="govuk-summary-list__value">
+                <span class="nowrap">{{- survey.surveyPeriodStart | date('M j Y') -}}</span>
+                {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('M j Y') -}}</span>{% endif -%}
+            </dd>
+        </div>
+    </dl>
+
     <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.basic-details'|trans }}</h2>
+
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
         {{ summaryListRow('common.vehicle.registration-mark',
@@ -45,13 +61,16 @@
     </dl>
 
     <div class="govuk-!-margin-bottom-9">
-        <a class="govuk-button govuk-button--warning" href="{{ path('app_internationalsurvey_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle</a>
+        <a class="govuk-button govuk-button--warning"
+           href="{{ path('app_internationalsurvey_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete
+            vehicle</a>
     </div>
+
 
     <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips'|trans }}</h2>
 
     <table class="govuk-table">
-        {{ tableHead(false, ['Dates', 'Outward journey', 'Return journey', '']) }}{#'Status'#}
+        {{ tableHead(false, ['Dates', 'Outward journey', 'Return journey', '']) }}{# 'Status' #}
         <tbody class="govuk-table__body">
         {%- for trip in vehicle.trips %}
             <tr class="govuk-table__row">
@@ -59,9 +78,9 @@
                 {%- set viewContents = actionLinks({(url(tripRoute, {id: trip.id})): 'common.actions.view'|trans}) -%}
 
                 {{ tableCell('international.trip.summary.date-until-date'|trans({
-                        'from': trip.outboundDate|date('d/m/Y'),
-                        'until': trip.returnDate|date('d/m/Y'),
-                    })
+                    'from': trip.outboundDate|date('d/m/Y'),
+                    'until': trip.returnDate|date('d/m/Y'),
+                })
                 ) }}
 
                 {{ tableCell('international.trip.summary.origin-to-destination'|trans({
@@ -72,7 +91,7 @@
                     'origin': trip.returnForeignPort|capitalize,
                     'destination': trip.returnUkPort|capitalize,
                 })) }}
-{#                {{ tableCell('-') }}#}
+                {# {{ tableCell('-') }} #}
                 {{ tableCell(viewContents, {actions: true}) }}
             </tr>
         {% else %}
@@ -86,15 +105,18 @@
     <div>
         {%- set dashboardUrl = url(constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE')) -%}
         {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
-        <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ 'common.actions.add-trip'|trans }}</a>
+        <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}"
+           class="govuk-button govuk-!-margin-bottom-9">{{ 'common.actions.add-trip'|trans }}</a>
     </div>
 
     <hr class="govuk-!-margin-bottom-9">
     <div>
         {%- if vehicle.trips.count() > 0 -%}
-        <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete'|trans }}</a>
+            <a href="{{ dashboardUrl }}"
+               class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete'|trans }}</a>
         {%- endif -%}
-        <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
+        <a href="{{ dashboardUrl }}"
+           class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
     </div>
 
 {% endblock %}
