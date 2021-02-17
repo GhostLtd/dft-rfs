@@ -4,6 +4,7 @@
     {% if form is defined %}
         <h1 class="govuk-heading-l">Add IRHS survey</h1>
 
+        {%- form_theme form "admin/international/surveys/theme-add.html.twig" -%}
         {{ form(form) }}
     {% else %}
         {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}

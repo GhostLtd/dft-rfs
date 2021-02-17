@@ -70,6 +70,8 @@ common:
       not-exists: You have already added this registration mark to your survey response
 
 international:
+  add:
+    invitation-email-or-address: Enter at least one of an invitation email or an invitation address
   survey-response:
     annual-international-journey-count:
       not-null: Enter a number

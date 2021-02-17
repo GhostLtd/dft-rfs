@@ -89,6 +89,10 @@ common:
     kilometers: "{value} kilometers"
   headings:
     next-steps: Next steps
+  survey-period:
+    label: "Survey period"
+    one-day: "{start, date, medium} (1 day)"
+    many-days: "{start, date, medium}–{end, date, medium} ({days} days)"
   limited-by:
     choices:
       space: At capacity by space
@@ -192,7 +196,7 @@ admin:
   international:
     company:
       business-name:
-        label: Company/Business name
+        label: Business name
         help: ''
     survey:
       title: IRHS Surveys
@@ -215,6 +219,12 @@ admin:
       period-days:
         label: 'Survey period (days)'
         help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: There is no need to add the business name to the invitation address
       submit:
         label: Add survey
     survey-created:
@@ -848,14 +858,14 @@ international:
         help: ''
     confirm-dates:
       heading: 'Survey period confirmation'
-      help: "We’re only interested in vehicles that have made international trips that started within survey period."
+      help: "We’re only interested in vehicles that made international trips where the date of departure from the UK was within survey period."
       confirm:
-        label: 'Did this vehicle make any trips that started during the survey period?'
+        label: 'Did this vehicle depart from the UK during the survey period?'
         help: ''
       notification-banner:
         title: 'Information'
         heading: 'The vehicle is not required in this survey'
-        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips that started during the survey period'
+        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips where the date of departure from the UK was during the survey period'
     vehicle-trailer-configuration:
       heading: Tell us about the vehicle
       help:
@@ -912,7 +922,7 @@ international:
         label-unload: Where did you unload goods?
         help: ''
       name:
-        label: Place name or postcode
+        label: Place name
         help: ''
       country:
         label: Country

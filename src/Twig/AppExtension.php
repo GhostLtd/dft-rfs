@@ -14,6 +14,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\International\Stop;
+use App\Entity\SurveyInterface;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
@@ -81,6 +82,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatStops', [$this, 'formatStops']),
+            new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
             new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
@@ -93,6 +95,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
+            new TwigFunction('conditionalArray', [$this, 'conditionalArray']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
             new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
             new TwigFunction('flatten', [$this, 'flatten']),
@@ -196,6 +199,23 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
+    public function formatSurveyPeriod(SurveyInterface $survey)
+    {
+        $numDays = $survey->getSurveyPeriodInDays();
+        $translationId = 'common.survey-period.' . ($numDays === 1 ? 'one-day' : 'many-days');
+
+        $params = [
+            'days' => $numDays,
+            'start' => $survey->getSurveyPeriodStart(),
+        ];
+
+        if ($numDays > 1) {
+            $params['end'] = $survey->getSurveyPeriodEnd();
+        }
+
+        return $this->translator->trans($translationId, $params);
+    }
+
     public function svgIcon(string $icon): string
     {
         if (basename($icon) !== $icon) {
@@ -243,6 +263,16 @@ class AppExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function conditionalArray(array $mappings): array {
+        $array = [];
+        foreach($mappings as $field => $include) {
+            if ($include) {
+                $array[] = $field;
+            }
+        }
+        return $array;
     }
 
     public function flatten(array $choices): array {

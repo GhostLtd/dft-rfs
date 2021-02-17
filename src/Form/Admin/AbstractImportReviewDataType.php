@@ -1,11 +1,7 @@
 <?php
 
-
 namespace App\Form\Admin;
 
-
-use App\Utility\International\SampleImporter;
-use App\Utility\RegistrationMarkHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -56,6 +52,12 @@ abstract class AbstractImportReviewDataType extends AbstractType
         $resolver->setRequired([
             'surveys',
             'uploaded_filename',
+        ]);
+
+        $resolver->setDefaults([
+            'attr' => [
+                'data-prevent-double-click' => 'true',
+            ],
         ]);
     }
 }

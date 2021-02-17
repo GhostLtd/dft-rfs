@@ -29,8 +29,11 @@ class IndexController extends AbstractController
      * @Route("/international-survey/completed", name=self::COMPLETED_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
-    public function completed(): Response {
-        return $this->render('international_survey/thanks.html.twig');
+    public function completed(UserInterface $user): Response {
+        $survey = $this->getSurvey($user);
+        return $this->render('international_survey/thanks.html.twig', [
+            'survey' => $survey,
+        ]);
     }
 
     /**

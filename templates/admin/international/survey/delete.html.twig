@@ -6,7 +6,7 @@
 
 
         {%- with {showActions: false, response: survey.response, marginBottom: 4} -%}
-            {%- include "international_survey/includes/survey-basics.html.twig" -%}
+            {%- include "admin/international/includes/survey-basics.html.twig" -%}
             {%- if survey.response -%}
                 {%- include "international_survey/includes/contact-details.html.twig" -%}
                 {%- include "international_survey/includes/business-details.html.twig" -%}

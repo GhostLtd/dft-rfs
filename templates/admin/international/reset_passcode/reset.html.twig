@@ -6,11 +6,9 @@
     {%- with {user: subject} -%}
         <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {%- with {survey: subject.internationalSurvey} -%}
-                {%- include "admin/international/reset_passcode/includes/survey-basics.html.twig" -%}
-            {%- endwith -%}
-        </dl>
+        {%- with {survey: subject.internationalSurvey, showUsername: false, showStatus: false} -%}
+            {%- include "admin/international/includes/survey-basics.html.twig" -%}
+        {%- endwith -%}
 
         {{- warningText("#{translation_prefix}.confirmation"|trans) -}}
 
