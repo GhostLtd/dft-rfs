@@ -105,3 +105,7 @@ services:
             - { name: 'router.expression_language_provider' }
             - { name: 'workflow.expression_language_provider' }
             - { name: 'validator.expression_language_provider' }
+
+    App\Serializer\Encoder\SqlServerInsertEncoder:
+        calls:
+            - setTwig: ['@twig']

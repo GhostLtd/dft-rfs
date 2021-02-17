@@ -91,7 +91,8 @@ class SurveyRepository extends ServiceEntityRepository
     {
         $true = 1;
         $false = 0;
-//        $const = fn($constant) => $constant;
+        $c = fn($constant) => $constant;
+        $chr = 'chr';
 
         $expandConstBitMap = function($field, $map, $addCommaToLastItem = false) use ($true, $false) {
             $sql = "";
@@ -113,7 +114,7 @@ class SurveyRepository extends ServiceEntityRepository
 //            ->leftJoin('days.stops', 'stops')
 //            ->leftJoin('days.summary', 'summary')
             ->select("
-vehicle.registrationMark as RegMark,
+survey.registrationMark as RegMark,
 vehicle.carryingCapacity as CarryingCapacity,
 0 as CarryingCapacityNotEntered,
 {$expandConstBitMap('vehicle.operationType', [
@@ -160,15 +161,16 @@ survey.invitationAddress.line5 as SurveyAddressLine4,
 survey.invitationAddress.line6 as SurveyAddressLine5,
 survey.invitationAddress.postcode as SurveyPostcode,
 response.contactTelephone as ContactTelNo
-
-
-
-
             ")
             ->getQuery()
 //            ->getDQL()
             ->execute()
             ;
+
+// crazy test chars
+//'wobble,test
+//	newwline{$chr(8)}{$chr(17)}' as TestField
+
 
 // ** extra fields needed from DVLA import **
 // FuelTypePropulsionCode
