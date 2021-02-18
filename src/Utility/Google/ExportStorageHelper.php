@@ -84,7 +84,7 @@ class ExportStorageHelper
         $currentYear = intval($currentDate->format('Y'));
         $lastYear = $currentYear - 1;
 
-        for($quarter=$currentQuarter; $quarter>=1; $quarter--) {
+        for($quarter=($currentQuarter - 1); $quarter>=1; $quarter--) {
             $possibilities[$currentYear.'-'.$quarter] = new ExportObject(null, $currentYear, $quarter);
         }
 

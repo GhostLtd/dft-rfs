@@ -17,9 +17,9 @@
 
             {%- set actions -%}
                 {%- if export.storageObject -%}
-                    <a href="{{ url('admin_domestic_export_download', {year: export.year, quarter: export.quarter}) }}" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0">Download</a>
+                    <a href="{{ url('admin_domestic_export_download', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Download</a>
                 {%- else -%}
-                    <a href="{{ url('admin_domestic_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-button govuk-!-margin-bottom-0">Export</a>
+                    <a href="{{ url('admin_domestic_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Export</a>
                 {%- endif -%}
             {%- endset -%}
 

@@ -3,6 +3,7 @@
 namespace App\Controller\Admin\Domestic;
 
 use App\Form\ConfirmationType;
+use App\Utility\Domestic\DataExporter;
 use App\Utility\Google\ExportStorageHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -42,7 +43,7 @@ class ExportController extends AbstractController
     /**
      * @Route("/{year}/{quarter}", name=self::EXPORT_QUARTER_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function exportQuarter(Request $request, string $year, string $quarter)
+    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter)
     {
         if ($this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
@@ -61,9 +62,7 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                // TODO: Generate SQL
-                $sql = 'SELECT @@version';
-
+                $sql = $exporter->getDataForExport($year, $quarter);
                 $this->storageHelper->upload($sql, $year, $quarter);
 
                 return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
