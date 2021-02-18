@@ -9,6 +9,8 @@ parameters:
     frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
+    google_application_credentials: '%env(string:GOOGLE_APPLICATION_CREDENTIALS)%'
+    google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     container.dumper.inline_factories: true
     app_features_empty: none
 
@@ -109,3 +111,14 @@ services:
     App\Serializer\Encoder\SqlServerInsertEncoder:
         calls:
             - setTwig: ['@twig']
+
+    Google\Cloud\Storage\StorageClient:
+        arguments:
+            $config: {
+                keyFilePath: '%google_application_credentials%'
+            }
+
+    Google\Cloud\Storage\Bucket $exportBucket:
+        class: 'Google\Cloud\Storage\Bucket'
+        factory: ['@Google\Cloud\Storage\StorageClient', 'bucket']
+        arguments: ['%google_bucket_export%']

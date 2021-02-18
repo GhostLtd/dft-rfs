@@ -70,8 +70,6 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'label' => "common.actions.cancel",
                 'attr' => ['class' => 'govuk-button--secondary'],
             ]);
-
-            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
