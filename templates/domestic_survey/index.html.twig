@@ -28,9 +28,9 @@
                 {% for dayNumber in 1..7 %}
                     {% set day = survey.response.dayByNumber(dayNumber) %}
                     {{ summaryListRow(
-                        'domestic.summary.day-x'|trans({dayNumber: dayNumber, date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('l, jS M')) }),
+                        'domestic.summary.day-x-date'|trans({dayNumber: dayNumber, date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('l, jS M')) }),
                         dayText(day),
-                        {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): 'common.actions.change'}
+                        {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): {label: 'common.actions.change', srHiddenSuffix: 'domestic.summary.day-x', srHiddenSuffixParams: {dayNumber: dayNumber}} }
                     ) }}
                 {% endfor %}
             </dl>

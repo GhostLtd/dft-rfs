@@ -250,7 +250,8 @@ domestic:
     complete-vehicle-and-business-details: Complete vehicle and business details
     change-contact-details: View/change the contact, business and vehicle details you have already entered
     your-week: Your survey week
-    day-x: 'Day {dayNumber} ({date})'
+    day-x-date: 'Day {dayNumber} ({date})'
+    day-x: 'Day {dayNumber}'
 
   survey-response:
     introduction:
@@ -284,6 +285,7 @@ domestic:
           scrapped-or-stolen: 'No - scrapped/stolen'
           sold: 'No - sold'
           on-hire: 'No - on hire'
+      change-link-sr-suffix: vehicle posession details
     reason-for-empty-survey:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
@@ -370,6 +372,7 @@ domestic:
       trailer-configuration:
         label: Select the option that best describes the vehicle
         help: ''
+      change-link-sr-suffix: trailer/body details
 
     vehicle-axle-configuration:
       heading: Tell us about the vehicle
@@ -390,6 +393,12 @@ domestic:
     headings:
       more-than-five-stops: Summary day (more than 5 stops)
       five-stops-or-fewer: Detailed day (5 stops or fewer)
+    change-link-sr-suffix:
+      locations: locations
+      distance-travelled: distance travelled
+      goods-description: goods description and cargo type
+      goods-weight: goods weight
+      number-of-stops: number of stops
     actions:
       add-a-stage-for-this-journey: Add a stage for this journey
       enter-information-for-this-journey: Enter information for this journey
