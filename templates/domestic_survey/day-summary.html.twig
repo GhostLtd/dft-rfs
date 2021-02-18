@@ -6,11 +6,6 @@
     date: day.response.survey.surveyPeriodStartModifiedBy('+' ~ (day.number-1) ~ ' days')
 } %}
 
-{% block pageTitle -%}
-    {%- include 'includes/form-page-title.html.twig' -%}
-    {{- parent() -}}
-{%- endblock %}
-
 {% block content %}
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.heading' | trans(headingParams) }}</h1>
 

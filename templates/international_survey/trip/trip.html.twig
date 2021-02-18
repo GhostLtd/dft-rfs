@@ -4,7 +4,7 @@
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.trip-summary'|trans }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.heading'|trans }}</h1>
 
     {%- with {marginBottom: 5} -%}
         {%- include "international_survey/includes/trip.html.twig" -%}

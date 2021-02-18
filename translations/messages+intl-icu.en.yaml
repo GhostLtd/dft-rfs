@@ -254,6 +254,9 @@ domestic:
     day-x: 'Day {dayNumber}'
 
   survey-response:
+    contact-and-business-details:
+      heading: Contact, business and vehicle details
+
     introduction:
       heading: Introduction
 
@@ -742,6 +745,17 @@ pre-enquiry:
 
 # International
 international:
+  introduction:
+    heading: Introduction
+
+  closing-details:
+    confirm-submission:
+      heading: Submit your survey
+
+  completed:
+    heading: Survey complete
+    reference-number: Your reference number
+
   buttons:
     add-vehicles: Add Vehicles
     submit-survey: Submit Survey
@@ -768,7 +782,7 @@ international:
     reference-number: Reference number
     vehicle: Vehicle registration mark
   summary:
-    title: International Survey details
+    heading: Survey dashboard
     correspondence-and-business-details: Correspondence and Business Details
     no-vehicles: No vehicles
     registration: Registration
@@ -873,6 +887,7 @@ international:
 
   vehicle:
     summary:
+      heading: Vehicle details
       basic-details: Basic details
       no-trips: No trips
       trips: Trips
@@ -924,6 +939,10 @@ international:
       carrying-capacity:
         label: Carrying capacity
         help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
+
+  actions:
+    re-order:
+      heading: Re-order actions
 
   action:
     re-order:
@@ -1017,6 +1036,7 @@ international:
         label: Do you need to add another stop?
         help: ''
     re-order:
+      heading: Re-order actions
       save: Save order
     remove:
       heading: Remove stop?
@@ -1059,6 +1079,7 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
+      heading: Trip details
       action: Loading and unloading of goods
       actions:
         add-action: Add loading or unloading action
@@ -1068,7 +1089,6 @@ international:
         back-to-vehicle-summary: Back to vehicle details
         trip-complete: Trip complete
         vehicle-complete: Vehicle complete
-      trip-summary: Trip details
       consignments: Consignments
       origin-to-destination: "{origin} to {destination}"
       date-until-date: "{from} to {until}"
