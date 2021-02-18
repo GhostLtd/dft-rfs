@@ -13,6 +13,7 @@ format:
 common:
   logout: Sign out
   actions:
+    table-heading: Action links
     add: Add
     add-day-stop: Add stage
     add-day-and-stop: Add stage
@@ -790,6 +791,7 @@ international:
     status: Status
     vehicles: Vehicles
     view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
+    view-vehicle-sr-suffix: details and trips for vehicle {regMark}
 
   action-delete:
     title: Delete action
@@ -872,6 +874,7 @@ international:
       activity-status:
         label: Does your firm still perform international road haulage activities?
         help: ''
+      change-link-sr-suffix: activity status
     business-details:
       heading: Business details
       help: ''
@@ -892,6 +895,13 @@ international:
       no-trips: No trips
       trips: Trips
       vehicle-summary: Vehicle details
+      change-link-sr-suffix:
+        vehicle-details: 'vehicle details'
+        trailer-configuration: trailer/axle configuration
+        body: body type
+        weights: vehicle weights
+      view-trip-sr-link-suffix: '{tripDate, date, short} trip details'
+
     vehicle-details:
       heading: 'Vehicle Details'
       help: ''
