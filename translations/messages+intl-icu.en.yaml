@@ -643,19 +643,28 @@ domestic:
         fewer-than-5: 5 stops or fewer
         5-or-more: More than 5 stops
 
-
+  completed:
+    heading: Survey complete
+    reference-number: Your reference number
 
   closing-details:
+    start:
+      heading: Final questions
     missing-days:
       heading: Missing days
       help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
+      day-x: 'Day {dayNumber} ({date})'
       missing-days:
         label: Is this information correct?
         help: ''
+    confirm-submission:
+      heading: Submit your survey
+      contact-details: Contact details
+      contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
+      confirm-and-submit: Confirm and submit
 
   day-stop-delete:
-    title: Delete stage
-    heading-delete: Delete stage?
+    heading: Delete stage
     delete: Are you sure you want to delete this stage?
     confirm.label: Yes, delete this stage
     cancel.label: Cancel
@@ -666,8 +675,7 @@ domestic:
       heading: Stage not deleted
       content: The request to delete the stage was cancelled
   day-summary-delete:
-    title: Delete day summary
-    heading-delete: Delete day summary?
+    heading: Delete day summary
     delete: Are you sure you want to delete this day summary?
     confirm.label: Yes, delete this day summary
     cancel.label: Cancel

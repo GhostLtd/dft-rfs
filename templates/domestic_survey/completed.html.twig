@@ -1,12 +1,20 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
+{% set translation_prefix = 'domestic.completed' %}
+
+{% block pageTitle -%}
+    {%- include 'includes/form-page-title.html.twig' -%}
+    {{- parent() -}}
+{%- endblock %}
+
 {% block content %}
     <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">
-            Survey complete
+        <h1 class="govuk-panel__title">{{ (translation_prefix ~ '.heading')|trans }}
+
         </h1>
         <div class="govuk-panel__body">
-            Your reference number<br><strong>{{ survey.surveyPeriodStart | date('Y') }}-{{ survey.registrationMark }}</strong>
+            {{ (translation_prefix ~ '.reference-number')|trans }}<br>
+            <strong>{{ survey.surveyPeriodStart | date('Y') }}-{{ survey.registrationMark }}</strong>
         </div>
     </div>
 {% endblock %}
