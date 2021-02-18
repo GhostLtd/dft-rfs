@@ -41,10 +41,6 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
             return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
         }
 
-        if ($survey->getSubmissionDate()) {
-            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
-        }
-
         $response = $survey->getResponse();
         $detailsComplete = $response->isInitialDetailsSignedOff();
 
