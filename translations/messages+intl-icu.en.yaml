@@ -88,6 +88,7 @@ common:
     miles: "{value} miles"
     kilometers: "{value} kilometers"
   headings:
+    next-step: Next step
     next-steps: Next steps
   survey-period:
     label: "Survey period"
@@ -241,7 +242,19 @@ domestic:
       2: Rail depot / terminal
       4: Airport
 
+  summary:
+    heading: Survey dashboard
+    vehicle: Vehicle
+    start-date: Start date
+    complete-week: Complete survey week
+    complete-vehicle-and-business-details: Complete vehicle and business details
+    change-contact-details: View/change the contact, business and vehicle details you have already entered
+    your-week: Your survey week
+    day-x: 'Day {dayNumber} ({date})'
+
   survey-response:
+    introduction:
+      heading: Introduction
 
     ## initial details wizard
     contact-details:
@@ -373,8 +386,8 @@ domestic:
         help: ''
 
   day-view:
+    heading: Day record ({date, date, long})
     headings:
-      page: Day record ({date})
       more-than-five-stops: Summary day (more than 5 stops)
       five-stops-or-fewer: Detailed day (5 stops or fewer)
     actions:
@@ -601,8 +614,9 @@ domestic:
         help: Mixed loads should be recorded as "Other cargo type"
 
     goods-weight:
-      heading: Goods
+      heading: Goods weight and vehicle capacity
       help: ''
+      carrying-capacity: Vehicle carrying capacity
       weight-of-goods-carried:
         label: Weight of goods
         help: Total weight of goods carried on this stage
