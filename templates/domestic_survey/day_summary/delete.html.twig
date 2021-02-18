@@ -1,10 +1,5 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
-{% block pageTitle -%}
-    {%- include 'includes/form-page-title.html.twig' -%}
-    {{- parent() -}}
-{%- endblock %}
-
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
 

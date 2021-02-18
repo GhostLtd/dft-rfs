@@ -1,4 +1,4 @@
-{% set translation_prefix = 'international.vehicles' %}
+{% set translation_prefix = 'international.summary' %}
 {% extends 'international_survey/base.html.twig' %}
 
 {% block beforeContent %}{% endblock %}
@@ -7,7 +7,7 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, tableCell, tableHead -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.summary.title'|trans }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.summary.heading'|trans }}</h1>
 
     {%- if response.isInitialDetailsSignedOff() | default(false) -%}
         <h2 class="page-heading__heading govuk-heading-l">{{ 'international.summary.correspondence-and-business-details'|trans }}</h2>

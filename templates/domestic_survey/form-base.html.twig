@@ -2,7 +2,6 @@
 
 {% block pageTitle -%}
     {%- if not (form.vars.valid ?? true) %}Error: {% endif -%}
-    {%- include 'includes/form-page-title.html.twig' -%}
     {{- parent() -}}
 {%- endblock %}
 

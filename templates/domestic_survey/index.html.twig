@@ -4,11 +4,6 @@
 
 {% set translation_prefix = 'domestic.summary' %}
 
-{% block pageTitle -%}
-    {%- include 'includes/form-page-title.html.twig' -%}
-    {{- parent() -}}
-{%- endblock %}
-
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.summary.heading'|trans }}</h1>
