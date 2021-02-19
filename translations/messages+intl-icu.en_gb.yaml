@@ -538,10 +538,10 @@ domestic:
       help: "The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ are considered as loaded.\n\nIt is not unusual for the total weight loaded or unloaded on this day to be more than the vehicle's carrying capacity."
       weight-of-goods-loaded:
         label: Total weight of goods loaded on this day
-        help: ''
+        help: Enter the weight in kg
       weight-of-goods-unloaded:
         label: Total weight of goods unloaded on this day
-        help: ''
+        help: Enter the weight in kg
 
     number-of-stops:
       heading: Number of stops
@@ -631,7 +631,7 @@ domestic:
       carrying-capacity: Vehicle carrying capacity
       weight-of-goods-carried:
         label: Weight of goods
-        help: Total weight of goods carried on this stage
+        help: Total weight of goods carried on this stage in kg
       was-at-capacity:
         label: Was your vehicle at full capacity?
         help: ''
