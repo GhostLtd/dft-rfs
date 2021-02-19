@@ -11,7 +11,7 @@
     <div class="govuk-!-padding-bottom-5">
         <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.contact-details')|trans }}</h2>
         <p class="govuk-body">{{ (translation_prefix ~ '.contact-details-copy')|trans }}</p>
-        {% with {survey: subject.survey, showActions: false} %}
+        {% with {survey: subject.survey, showActions: false, marginBottom: 5} %}
             {% include 'domestic_survey/includes/contact-details.html.twig' %}
         {% endwith %}
     </div>

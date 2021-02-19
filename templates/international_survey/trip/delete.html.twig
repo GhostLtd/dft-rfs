@@ -1,9 +1,13 @@
 {% set translation_prefix = 'international.trip-delete' %}
 {% extends 'international_survey/base.html.twig' %}
 
+{% set headingParams = {
+    date: subject.outboundDate,
+} %}
+
 {%- block content -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
-    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
 
     {%- set showActions = subject.actions|length > 0 -%}
 

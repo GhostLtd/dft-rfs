@@ -1,7 +1,7 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
 {% set showActions = showActions ?? true %}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-1">
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 1 }}">
     {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.contact-details.heading'}
     } %}

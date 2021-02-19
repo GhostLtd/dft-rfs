@@ -118,8 +118,7 @@ common:
     carrying-capacity: Carrying capacity
   start-now: Start now
   passcode-reset:
-    title: Reset passcode
-    heading-delete: Reset passcode?
+    heading: Reset passcode ({identifier})
     confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
     confirm.label: Yes, reset the passcode
     cancel.label: Cancel
@@ -677,7 +676,7 @@ domestic:
       confirm-and-submit: Confirm and submit
 
   day-stop-delete:
-    heading: Delete stage
+    heading: "Delete stage {stageNumber} (day {dayNumber})"
     delete: Are you sure you want to delete this stage?
     confirm.label: Yes, delete this stage
     cancel.label: Cancel
@@ -688,7 +687,7 @@ domestic:
       heading: Stage not deleted
       content: The request to delete the stage was cancelled
   day-summary-delete:
-    heading: Delete day summary
+    heading: Delete day summary (day {dayNumber})
     delete: Are you sure you want to delete this day summary?
     confirm.label: Yes, delete this day summary
     cancel.label: Cancel
@@ -794,8 +793,7 @@ international:
     view-vehicle-sr-suffix: details and trips for vehicle {regMark}
 
   action-delete:
-    title: Delete action
-    heading-delete: Delete action {number}?
+    heading: Delete action {actionNumber}
     delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
     delete-unloading: Are you sure you want to delete this unloading action?
     notification:
@@ -807,7 +805,7 @@ international:
         content: The request to delete the action was cancelled
 
   trip-delete:
-    title: Delete trip
+    heading: "Delete trip — {date, date, short}"
     delete-multi: This will permanently delete this trip and all related actions (shown above)
     delete: This will permanently delete this trip
     confirm.label: Yes, delete this trip
@@ -820,7 +818,7 @@ international:
       content: 'The request to delete the trip was cancelled.'
 
   vehicle-delete:
-    title: Delete vehicle
+    heading: "Delete vehicle ({regMark})"
     delete: This will permanently delete this vehicle and all related trips and actions
     notification:
       deleted:
