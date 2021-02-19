@@ -1,10 +1,6 @@
 {% extends 'international_survey/base.html.twig' %}
 
-{% block pageTitle -%}
-    {%- if not (form.vars.valid ?? true) %}Error: {% endif -%}
-    {{- parent() -}}
-{%- endblock %}
-
 {% block content -%}
     {%- include 'includes/form-page-content.html.twig' -%}
 {%- endblock %}
+
