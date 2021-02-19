@@ -839,7 +839,7 @@ international:
   survey-response:
     reason-for-empty-survey:
       reason-for-empty-survey:
-        label: 'If no vehicles in your fleet were used during the survey period please state why'
+        label: 'Why were no vehicles in your fleet  used during the survey period?'
         help: ''
       choices:
         no-international-work: No international work during this period
