@@ -357,10 +357,10 @@ domestic:
       help: ''
       gross-weight:
         label: Gross vehicle weight
-        help: Total weight of vehicle including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
+        help: Total weight of the vehicle in kg including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
       carrying-capacity:
         label: Carrying capacity
-        help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
+        help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
 
     vehicle-fuel:
       heading: Vehicle fuel
@@ -942,10 +942,10 @@ international:
       help: ''
       gross-weight:
         label: Gross vehicle weight
-        help: Total weight of vehicle including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
+        help: Total weight of the vehicle in kg including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
       carrying-capacity:
         label: Carrying capacity
-        help: Maximum weight of the cargo that the vehicle is permitted to carry on public roads
+        help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
 
   actions:
     re-order:
@@ -1011,9 +1011,10 @@ international:
         label: How were the goods carried?
         help: Mixed loads should be recorded as "Other cargo type"
     goods-weight-loaded:
+      heading: Weight of goods loaded
       weight-of-goods:
-        label: Weight of goods loaded
-        help: The weight of goods should include any packaging or containers
+        label: What was the weight of goods loaded in kg?
+        help: This should include any packaging or containers
     goods-weight-unloaded:
       heading: 'Weight unloaded'
       help: ''
@@ -1022,7 +1023,7 @@ international:
         help: ''
       weight-of-goods:
         label: Weight of goods unloaded
-        help: ''
+        help: Enter the weight in kg
     add-another:
       confirm:
         label: Did you load or unload any other goods?
