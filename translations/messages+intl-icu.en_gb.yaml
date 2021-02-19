@@ -370,7 +370,7 @@ domestic:
         help: Enter 0 (zero) if you didn't add fuel during the survey week
 
     vehicle-trailer-configuration:
-      heading: Tell us about the vehicle
+      heading: Vehicle type
       help: ''
       trailer-configuration:
         label: Select the option that best describes the vehicle
@@ -378,14 +378,14 @@ domestic:
       change-link-sr-suffix: trailer/body details
 
     vehicle-axle-configuration:
-      heading: Tell us about the vehicle
+      heading: Vehicle axle configuration
       help: ''
       axle-configuration:
         label: Select the option that best shows the axle configuration of the vehicle
         help: ''
 
     vehicle-body:
-      heading: Tell us about the vehicle
+      heading: Vehicle body type
       help: ''
       body-type:
         label: Indicate the main type of body for the vehicle
@@ -818,7 +818,7 @@ international:
       content: 'The request to delete the trip was cancelled.'
 
   vehicle-delete:
-    heading: "Delete vehicle ({regMark})"
+    heading: "Delete vehicle — {regMark}"
     delete: This will permanently delete this vehicle and all related trips and actions
     notification:
       deleted:
@@ -888,11 +888,10 @@ international:
 
   vehicle:
     summary:
-      heading: Vehicle details
+      heading: "Vehicle details — {regMark}"
       basic-details: Basic details
       no-trips: No trips
       trips: Trips
-      vehicle-summary: Vehicle details
       change-link-sr-suffix:
         vehicle-details: 'vehicle details'
         trailer-configuration: trailer/axle configuration
@@ -921,19 +920,19 @@ international:
         heading: 'The vehicle is not required in this survey'
         content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips where the date of departure from the UK was during the survey period'
     vehicle-trailer-configuration:
-      heading: Tell us about the vehicle
+      heading: Vehicle type
       help:
       trailer-configuration:
         label: 'Select the option that best describes the vehicle'
         help: ''
     vehicle-axle-configuration:
-      heading: Tell us about the vehicle
+      heading: Vehicle axle configuration
       help: ''
       axle-configuration:
         label: 'Select the option that best shows the axle configuration of the vehicle'
         help: ''
     vehicle-body:
-      heading: Tell us about the vehicle
+      heading: Vehicle body type
       help: ''
       body-type:
         label: 'Indicate the main type of body for the vehicle'
@@ -1089,7 +1088,7 @@ international:
         help: 'You must tell us about all of the consignments carried on this trip.'
   trip:
     summary:
-      heading: Trip details
+      heading: Trip details — {date, date, short}
       action: Loading and unloading of goods
       actions:
         add-action: Add loading or unloading action
@@ -1210,7 +1209,7 @@ international:
           2: "If a vehicle left loaded, use the date it was loaded."
         note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
     swapped-trailer:
-      heading: "Axle configuration"
+      heading: Vehicle axle configuration
       help: ''
       original-axle-config: "Vehicle's original configuration"
       is-swapped-trailer:
@@ -1221,7 +1220,7 @@ international:
         help: ''
     changed-body-type:
       original-body-type: "Vehicle's original body type"
-      heading: 'Body type'
+      heading: Vehicle body type
       help: ''
       is-changed-body-type:
         label: Did the trailer's body type change for this trip?

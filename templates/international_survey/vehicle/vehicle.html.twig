@@ -1,11 +1,15 @@
 {% set translation_prefix = 'international.vehicle.summary' %}
 {% extends 'international_survey/base.html.twig' %}
 
+{% set headingParams = {
+    regMark: vehicle.registrationMark|formatRegMark
+} %}
+
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHeadComplex, tableCell -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.vehicle.summary.vehicle-summary'|trans }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.vehicle.summary.heading'|trans(headingParams) }}</h1>
 
     {%- set survey = vehicle.surveyResponse.survey -%}
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">

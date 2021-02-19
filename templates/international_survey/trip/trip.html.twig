@@ -1,10 +1,14 @@
 {% set translation_prefix = 'international.trip.summary' %}
 {% extends 'international_survey/base.html.twig' %}
 
+{% set headingParams = {
+    date: trip.outboundDate
+} %}
+
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.heading'|trans }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.heading'|trans(headingParams) }}</h1>
 
     {%- with {marginBottom: 5} -%}
         {%- include "international_survey/includes/trip.html.twig" -%}
