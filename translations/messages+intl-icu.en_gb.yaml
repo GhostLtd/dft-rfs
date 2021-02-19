@@ -953,6 +953,7 @@ international:
   actions:
     re-order:
       heading: Re-order actions
+    view-link-sr-suffix: 'loading/unloading action #{actionNumber}'
 
   action:
     re-order:
@@ -1029,6 +1030,7 @@ international:
       confirm:
         label: Did you load or unload any other goods?
         help: You must tell us about every time you either loaded or unloaded goods
+
   stop:
     stop:
       heading: Where did you stop?
@@ -1126,6 +1128,10 @@ international:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
       swapped-trailer: 'Trailer axle configuration changed?'
       changed-body-type: 'Body type changed?'
+      change-link-sr-suffix:
+        swapped-trailer: 'trailer/body configurations'
+
+
 
     places:
       heading: Where did trip start/end?

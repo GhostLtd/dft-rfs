@@ -1,4 +1,4 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHeadComplex, actionLinks -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
@@ -9,11 +9,11 @@
 
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- if isAdmin -%}
-        {%- set headers = ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', 'Cargo Type', 'Hazardous?'] -%}
-        {%- if showActions -%}{%- set headers = headers | merge(['']) -%}{%- endif -%}
-        {{- tableHead(false, headers) -}}
+        {%- set headers = {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, 'Cargo Type': {}, 'Hazardous?': {}} -%}
+        {%- if showActions -%}{%- set headers = headers | merge({("<span class=\"govuk-visually-hidden\">#{'common.actions.table-heading' | trans}</span>"): {html: true}}) -%}{%- endif -%}
+        {{- tableHeadComplex(false, headers) -}}
     {%- else -%}
-        {{- tableHead(false, ['#', 'common.action.place', 'common.action.type', 'common.action.weight', 'common.action.goods', 'common.action.from', '']) -}}
+        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, ("<span class=\"govuk-visually-hidden\">#{'common.actions.table-heading' | trans}</span>"): {html: true}}) -}}
     {%- endif -%}
     <tbody class="govuk-table__body">
     {%- for action in trip.actions %}
@@ -53,16 +53,25 @@
 
             {%- if showActions -%}
                 {%- if isAdmin -%}
+{#
                     {%- set editContents -%}
                         {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE') -%}
                         <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
                         {%- set editRoute = constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE') -%}
                         <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
                     {%- endset -%}
+#}
+                    {%- set editContents = actionLinks({
+                        (url(constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE'), {actionId: action.id})): {label: 'common.actions.delete'},
+                        (url(constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE'), {actionId: action.id})): {label: 'common.actions.edit'}
+                    }) -%}
                     {{ tableCell(editContents, {actions: true}) }}
                 {%- else -%}
                     {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
-                    {%- set viewContents = actionLinks({(url(viewRoute, {actionId: action.id})): 'common.actions.view'|trans}) -%}
+                    {%- set viewContents = actionLinks({
+                        (url(viewRoute, {actionId: action.id})):
+                        {label: 'common.actions.view', srHiddenSuffix: 'international.actions.view-link-sr-suffix', srHiddenSuffixParams: {actionNumber: action.number}}
+                    }) -%}
                     {{ tableCell(viewContents, {actions: true}) }}
                 {%- endif -%}
             {%- endif -%}

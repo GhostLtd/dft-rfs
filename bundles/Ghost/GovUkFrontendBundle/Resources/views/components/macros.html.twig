@@ -110,7 +110,9 @@
         } -%}
             <a {{- _self.attributes(attributes) -}}>
                 {{- action | trans -}}
-                {%- if options.srHiddenSuffix | default(false) %}<span class="govuk-visually-hidden"> {{ options.srHiddenSuffix | trans(options.srHiddenSuffixParams ?? {}) }}</span>{% endif -%}
+                {%- if options.srHiddenSuffix | default(false) -%}
+                    <span class="govuk-visually-hidden">{{ (options.srHiddenSuffixSplitContext ?? true) ? ':' : '' }} {{ options.srHiddenSuffix | trans(options.srHiddenSuffixParams ?? {}) }}</span>
+                {%- endif -%}
             </a>
         {%- endwith -%}
     {%- endif -%}
