@@ -8,8 +8,6 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
 
     {%- with {user: subject} -%}
-        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
-
         {%- with {survey: subject.internationalSurvey, showUsername: false, showStatus: false} -%}
             {%- include "admin/international/includes/survey-basics.html.twig" -%}
         {%- endwith -%}

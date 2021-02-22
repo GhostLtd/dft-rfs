@@ -1,9 +1,10 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.domestic.surveys.type-#{type}" %}
+
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    <h1 class="govuk-heading-l">{{ "admin.domestic.survey.title-#{type}"|trans }}</h1>
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}

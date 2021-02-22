@@ -1,11 +1,10 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {%- set bodyClasses = 'page__admin-survey-add-success' -%}
+{% set translation_prefix = "admin.domestic.survey-add-success" %}
 
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
-
-    <h1 class="page-heading__heading govuk-heading-xl">Survey created</h1>
 
     <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
 

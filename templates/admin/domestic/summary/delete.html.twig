@@ -1,12 +1,12 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set headingParams = translation_parameters %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
 
     {%- with {summary: subject} -%}
         {%- set survey = summary.day.response.survey -%}
-
-        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
 
         {%- with {showActions: false, marginBottom: 4, day: summary.day} -%}
             {%- include "admin/domestic/includes/day-summary.html.twig" -%}

@@ -1,9 +1,12 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{%- set translation_prefix = "admin.international.delete-vehicle" -%}
+{%- set headingParams = {
+    registrationMark: vehicle.registrationMark|formatRegMark
+} -%}
+
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Delete Vehicle</h1>
-
     {%- with {showActions: false, vehicle: vehicle, marginBottom: 4} -%}
         {%- include "international_survey/includes/vehicle.html.twig" -%}
     {%- endwith -%}

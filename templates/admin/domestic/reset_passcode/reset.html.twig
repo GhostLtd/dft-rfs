@@ -1,15 +1,13 @@
 {% extends 'admin/base-with-nav.twig' %}
 
 {% set headingParams = {
-    identifier: subject.domesticSurvey.registrationMark
+    identifier: subject.domesticSurvey.registrationMark|formatRegMark
 } %}
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
 
     {%- with {user: subject} -%}
-        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
-
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
             {%- with {survey: subject.domesticSurvey} -%}
                 {%- include "admin/domestic/reset_passcode/includes/survey-basics.html.twig" -%}

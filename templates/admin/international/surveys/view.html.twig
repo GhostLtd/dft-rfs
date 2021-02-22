@@ -1,5 +1,10 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.survey" %}
+{% set headingParams = {
+    referenceNumber: survey.referenceNumber
+} %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
@@ -28,8 +33,6 @@
     {%- set tabs = tabs | merge({
         'Invitation details': 'tab-invitation-details',
     }) -%}
-
-    <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}

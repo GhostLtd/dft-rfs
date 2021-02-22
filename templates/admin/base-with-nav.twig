@@ -1,5 +1,9 @@
 {% extends 'admin/base.html.twig' %}
 
+{% block pageTitle -%}
+    {{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }} - {{ parent() -}}
+{%- endblock %}
+
 {% block content -%}
     {% apply spaceless %}
     <div class="govuk-grid-row">
@@ -17,6 +21,7 @@
             {% from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners %}
             {{ flashNotificationBanners() }}
 
+            <h1 class="govuk-heading-l" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}</h1>
             {% block adminContent %}
                 <p class="govuk-body">Content</p>
             {% endblock %}

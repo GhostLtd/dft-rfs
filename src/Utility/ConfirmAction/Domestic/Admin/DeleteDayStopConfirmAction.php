@@ -30,6 +30,14 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    public function getTranslationParameters(): array
+    {
+        return [
+            'dayNumber' => $this->subject->getDay()->getNumber(),
+            'stageNumber' => $this->subject->getNumber(),
+        ];
+    }
+
     public function getTranslationKeyPrefix(): string
     {
         return 'domestic.day-stop-delete';

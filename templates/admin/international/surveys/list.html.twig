@@ -1,9 +1,10 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.surveys" %}
+
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    <h1 class="govuk-heading-l">{{ "admin.international.survey.title"|trans }}</h1>
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
@@ -12,7 +13,7 @@
             {{ tableCell(survey.referenceNumber) }}
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
-            {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(tag({text: survey.state, classes: "#{translation_prefix}.state.#{survey.state}" | trans}), {html: true}) }}
             {{- _self.countField(survey, 'numberOfVehicles') -}}
             {{- _self.countField(survey, 'totalNumberOfTrips') -}}
             {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey ref #{survey.referenceNumber}"}}), {}) }}

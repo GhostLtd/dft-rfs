@@ -158,10 +158,56 @@ admin:
     help: ''
     username.label: Username
     password.label: Password
+  dashboard:
+    heading: Dashboard
   domestic:
+    passcode-reset-success:
+      heading: Passcode changed
+    log:
+      heading: Log
+    survey-delete:
+      heading: Delete survey
+      warning: This will permanently delete the survey and all associated vehicle and journey data.
+    edit-business-details:
+      heading: Edit Business details
+    add-day-summary:
+      heading: Add Day summary
+    edit-day-summary:
+      heading: Edit Day summary
+    add-day-stop:
+      heading: Add Day stage
+    edit-day-stop:
+      heading: Edit Day stage
+    edit-initial-details:
+      heading: Edit Initial details
+    enter-initial-details:
+      heading: Enter Initial details
+    edit-final-details:
+      heading: Edit Final details
+    edit-business-and-vehicle-details:
+      heading: Edit Business and Vehicle details
+    edit-vehicle-details:
+      heading: Edit Vehicle details
+    survey-add:
+      heading: Add CSRGT survey
+    survey-add-success:
+      heading: Survey created
+    import:
+      heading: CSRGT DVLA bulk import
+    import-review:
+      heading: CSRGT DVLA bulk import — Review data
+    import-summary:
+      heading: CSRGT DVLA bulk import — Summary
+    surveys:
+      type-ni:
+        heading: CSRGT (NI) Surveys
+      type-gb:
+        heading: CSRGT (GB) Surveys
     survey:
-      title-ni: CSRGT (NI) Surveys
-      title-gb: CSRGT (GB) Surveys
+      type-ni:
+        heading: "CSRGT (NI) Survey — {registrationMark}"
+      type-gb:
+        heading: "CSRGT (GB) Survey — {registrationMark}"
       state:
         in-progress: govuk-tag--yellow
         new: govuk-tag--grey
@@ -195,12 +241,59 @@ admin:
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
   international:
+    add-loading-action:
+      heading: Add loading action
+    add-unloading-action:
+      heading: Add unloading action
+    edit-loading-action:
+      heading: Edit loading action
+    edit-unloading-action:
+      heading: Edit unloading action
+    re-order-actions:
+      heading: Re-order actions
+    add-trip:
+      heading: Add trip
+    edit-trip:
+      heading: "Edit trip — {date, date, short} from {origin} to {destination}"
+    delete-trip:
+      heading: "Delete trip — {date, date, short} from {origin} to {destination}"
+    add-vehicle:
+      heading: Add vehicle
+    edit-vehicle:
+      heading: "Edit vehicle — {registrationMark}"
+    delete-vehicle:
+      heading: "Delete vehicle — {registrationMark}"
+    passcode-reset-success:
+      heading: Passcode changed
+    survey-delete:
+      heading: Delete survey
+      warning: This will permanently delete this survey and all related vehicles, trips and consignment actions.
+    sample-import:
+      heading: IRHS Bulk sample import
+    sample-import-review:
+      heading: IRHS Bulk sample import — Review Data
+    sample-import-summary:
+      heading: IRHS Bulk sample import — Summary
+    edit-initial-details:
+      heading: Edit Initial details
+    edit-final-details:
+      heading: Edit Final details
+    edit-business-details:
+      heading: Edit Business Details
+    edit-correspondence-details:
+      heading: Edit Correspondence Details
+    survey-add:
+      heading: Add IRHS survey
+    survey-add-success:
+      heading: Survey created
     company:
       business-name:
         label: Business name
         help: ''
+    surveys:
+      heading: IRHS Surveys
     survey:
-      title: IRHS Surveys
+      heading: "IRHS Survey — {referenceNumber}"
       state:
         in-progress: govuk-tag--yellow
         new: govuk-tag--grey
