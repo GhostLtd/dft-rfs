@@ -1,6 +1,7 @@
 {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus -%}
 {%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+{%- from "macros.html.twig" import displayHazardousGoods -%}
 
 {%- set isNorthernIreland = stop.day.response.survey.isNorthernIreland -%}
 
@@ -20,7 +21,7 @@
         {{- tableCell('0kg', {numeric: true}) -}}
         {{- tableCell('-') -}}
     {%- else -%}
-        {{- tableCell(stop.hazardousGoodsCode == 0 ? '-' : stop.hazardousGoodsCode) -}}
+        {{- tableCell(displayHazardousGoods(stop.hazardousGoodsCode)) -}}
         {{- tableCell(stop.cargoTypeCode) -}}
         {{- tableCell("#{stop.weightOfGoodsCarried}kg", {numeric: true}) -}}
         {{- tableCell(displayLimitedBy(stop)) -}}

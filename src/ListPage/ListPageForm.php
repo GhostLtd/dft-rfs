@@ -42,7 +42,8 @@ class ListPageForm extends AbstractType
             }
 
             $builder->add($parameterName, $type, array_merge($fieldOptions, [
-                'label' => false,
+                'label' => "{$field->getLabel()} (filter)",
+                'label_attr' => ['class' => 'govuk-visually-hidden'],
                 'attr' => [
                     'placeholder' => $field->getLabel(),
                     'class' => 'filter',

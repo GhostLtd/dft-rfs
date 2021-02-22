@@ -1,5 +1,5 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
-
+{% from 'macros.html.twig' import displayHazardousGoods %}
 {%- set showActions = showActions ?? true -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
@@ -40,8 +40,7 @@
         <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
         <dd class="govuk-summary-list__value">
             {{- stop | formatGoodsDescription }}
-            {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-            {%- if stop.hazardousGoodsCode %} — <em>{{ stop.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), stop.hazardousGoodsCode) | trans }}{% endif %}
+            {%- if stop.hazardousGoodsCode %} — {{ displayHazardousGoods(stop.hazardousGoodsCode) }}{% endif %}
         </dd>
         {% if showActions %}
         <dd class="govuk-summary-list__actions">

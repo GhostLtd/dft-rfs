@@ -1,6 +1,7 @@
 {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus, daySummaryTableHeadingAndCaption -%}
-{%- from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy -%}
+{%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+{% from 'macros.html.twig' import displayHazardousGoods %}
 
 {%- set isNorthernIreland = survey.isNorthernIreland -%}
 

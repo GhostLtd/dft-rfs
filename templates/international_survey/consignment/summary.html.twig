@@ -3,6 +3,7 @@
 
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+    {% from 'macros.html.twig' import displayHazardousGoods %}
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.consignment.summary.heading'|trans }}</h1>
 
@@ -32,7 +33,7 @@
                 {%- set goodsCopy -%}
                     {{ consignment | formatGoodsDescription }}
                     {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-                    {%- if consignment.hazardousGoodsCode %} — <em>{{ consignment.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), consignment.hazardousGoodsCode) | trans }}{% endif %}
+                    {%- if consignment.hazardousGoodsCode %} — {{ displayHazardousGoods(consignment.hazardousGoodsCode) }}{% endif %}
                 {%- endset -%}
                 {{ summaryListRow('common.consignment.goods', goodsCopy | raw, {(urlGoodsChange): change}) }}
                 {{ summaryListRow('common.consignment.cargo-type', choiceLabel(cargoChoices, consignment.cargoTypeCode) | trans, {(urlCargoTypeChange): change}) }}
