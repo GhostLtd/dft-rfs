@@ -57,7 +57,7 @@
                         {{ summaryListRow('common.action.goods', goodsCopy, unloadConsignmentChangeLink) }}
                     {% endwith %}
                     {% if action.weightUnloadedAll %}
-                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), {(urlUnloadConsignmentChange): change}) }}
+                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), unloadConsignmentChangeLink) }}
                     {% else %}
                         {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', unloadConsignmentChangeLink) }}
                     {% endif %}
