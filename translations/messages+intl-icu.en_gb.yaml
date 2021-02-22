@@ -13,7 +13,7 @@ format:
 common:
   logout: Sign out
   actions:
-    table-heading: Action links
+    table-heading: '<span class="govuk-visually-hidden">Action links</span>'
     add: Add
     add-day-stop: Add stage
     add-day-and-stop: Add stage

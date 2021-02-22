@@ -29,12 +29,12 @@
                     {%- if field.getSortable -%}
                         {%- set upActive = (data.order == field.parameterName) and (data.orderDirection == 'ASC') -%}
                         <a href="{{ data.callOrderUrlGenerator(field.parameterName, 'ASC') }}" class="list-table__order--up{{ upActive ? ' list-table__order--active' : '' }}">
-                            <span class="govuk-visually-hidden">Order {{ field.label }} by ascending order{{ upActive ? ' (currently active)' : '' }}</span>
+                            <span class="govuk-visually-hidden">Order by {{ field.label }}, ascending{{ upActive ? ' (currently active)' : '' }}</span>
                         </a>
 
                         {%- set downActive = (data.order == field.parameterName) and (data.orderDirection == 'DESC') -%}
                         <a href="{{ data.callorderUrlGenerator(field.parameterName, 'DESC') }}" class="list-table__order--down{{ downActive ? ' list-table__order--active' : '' }}">
-                            <span class="govuk-visually-hidden">Order {{ field.label }} by descending order{{ downActive ? ' (currently active)' : '' }}</span>
+                            <span class="govuk-visually-hidden">Order by {{ field.label }}, descending{{ downActive ? ' (currently active)' : '' }}</span>
                         </a>
                     {% endif %}
                 </div>

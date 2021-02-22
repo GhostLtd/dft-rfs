@@ -9,10 +9,10 @@
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- if isAdmin -%}
         {%- set headers = {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, 'Cargo Type': {}, 'Hazardous?': {}} -%}
-        {%- if showActions -%}{%- set headers = headers | merge({("<span class=\"govuk-visually-hidden\">#{'common.actions.table-heading' | trans}</span>"): {html: true}}) -%}{%- endif -%}
+        {%- if showActions -%}{%- set headers = headers | merge({('common.actions.table-heading' | trans): {html: true}}) -%}{%- endif -%}
         {{- tableHeadComplex(false, headers) -}}
     {%- else -%}
-        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, ("<span class=\"govuk-visually-hidden\">#{'common.actions.table-heading' | trans}</span>"): {html: true}}) -}}
+        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}
     {%- endif -%}
     <tbody class="govuk-table__body">
     {%- for action in trip.actions %}

@@ -29,7 +29,7 @@
         'Cargo type': {},
         "Weight (l/u)": {numeric: true},
         "Stops (l/u/b)": {numeric: true},
-        "": {}
+        ('common.actions.table-heading' | trans): {html: true}
     }) -%}
 
     {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
@@ -54,7 +54,7 @@
             'Cargo type': {},
             "Weight": {numeric: true},
             "Capacity": {},
-            "": {}
+            ('common.actions.table-heading' | trans): {html: true}
         }) -%}
 
         {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}

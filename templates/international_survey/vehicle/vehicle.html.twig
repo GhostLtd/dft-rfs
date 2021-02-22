@@ -92,7 +92,7 @@
     <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips'|trans }}</h2>
 
     <table class="govuk-table">
-        {{ tableHeadComplex(false, {'Dates': {}, 'Outward journey': {}, 'Return journey': {}, ("<span class=\"govuk-visually-hidden\">#{'common.actions.table-heading' | trans}</span>"): {html: true}}) }}{# 'Status' #}
+        {{ tableHeadComplex(false, {'Dates': {}, 'Outward journey': {}, 'Return journey': {}, ('common.actions.table-heading' | trans): {html: true}}) }}{# 'Status' #}
         <tbody class="govuk-table__body">
         {%- for trip in vehicle.trips %}
             <tr class="govuk-table__row">

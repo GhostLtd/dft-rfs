@@ -15,7 +15,7 @@
             {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{- _self.countField(survey, 'numberOfVehicles') -}}
             {{- _self.countField(survey, 'totalNumberOfTrips') -}}
-            {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
+            {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey ref #{survey.referenceNumber}"}}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
