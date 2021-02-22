@@ -21,7 +21,7 @@
             }}
             {{- _self.dayCountField(survey, 'summaryDayCount') -}}
             {{- _self.dayCountField(survey, 'stopDayCount') -}}
-            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
+            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('d/m/Y') }"} }), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
