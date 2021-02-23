@@ -54,8 +54,8 @@
                     {%- endset -%}
 #}
                     {%- set editContents = actionLinks({
-                        (url(constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE'), {actionId: action.id})): {label: 'common.actions.delete'},
-                        (url(constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE'), {actionId: action.id})): {label: 'common.actions.edit'}
+                        (url(constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE'), {actionId: action.id})): {label: 'common.actions.delete', srHiddenSuffix: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}"},
+                        (url(constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE'), {actionId: action.id})): {label: 'common.actions.edit', srHiddenSuffix: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}"},
                     }) -%}
                     {{ tableCell(editContents, {actions: true}) }}
                 {%- else -%}
