@@ -4,7 +4,7 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Form\ConfirmationType;
 use App\Utility\Domestic\DataExporter;
-use App\Utility\Google\ExportStorageHelper;
+use App\Utility\Google\DomesticExportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,9 +23,9 @@ class ExportController extends AbstractController
     public const EXPORT_QUARTER_ROUTE = self::ROUTE_PREFIX . 'quarter';
     public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
 
-    protected ExportStorageHelper $storageHelper;
+    protected DomesticExportHelper $storageHelper;
 
-    public function __construct(ExportStorageHelper $storageHelper)
+    public function __construct(DomesticExportHelper $storageHelper)
     {
         $this->storageHelper = $storageHelper;
     }

@@ -4,7 +4,7 @@ namespace App\Utility\Google;
 
 use Google\Cloud\Storage\StorageObject;
 
-class ExportObject
+class DomesticExportObject
 {
     protected int $year;
     protected int $quarter;
