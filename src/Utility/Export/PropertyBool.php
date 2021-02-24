@@ -15,7 +15,7 @@ class PropertyBool implements Mapper
         $this->trueIfEquals = $trueIfEquals;
     }
 
-    public function getData(array $sourceData)
+    public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         $value = $accessor->getValue($sourceData, $this->propertyPath);

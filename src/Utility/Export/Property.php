@@ -13,7 +13,7 @@ class Property implements Mapper
         $this->propertyPath = $propertyPath;
     }
 
-    public function getData(array $sourceData)
+    public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         return $accessor->getValue($sourceData, $this->propertyPath);

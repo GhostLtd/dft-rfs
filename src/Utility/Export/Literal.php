@@ -4,14 +4,14 @@ namespace App\Utility\Export;
 
 class Literal implements Mapper
 {
-    protected bool $data;
+    protected $data;
 
-    public function __construct(bool $data)
+    public function __construct($data)
     {
         $this->data = $data;
     }
 
-    public function getData(array $sourceData)
+    public function getData($sourceData)
     {
         return $this->data;
     }
