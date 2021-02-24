@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Form\ConfirmationType;
 use App\Utility\Google\InternationalExportHelper;
+use App\Utility\International\DataExporter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,7 +43,7 @@ class ExportController extends AbstractController
     /**
      * @Route("/{week}", name=self::EXPORT_WEEK_ROUTE, requirements={"week": "\d+"})
      */
-    public function exportWeek(Request $request, string $week) // DataExporter $dataExporter
+    public function exportWeek(Request $request, string $week, DataExporter $dataExporter)
     {
         if ($this->objectExists($week)) {
             throw new NotFoundHttpException();
@@ -61,13 +62,12 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                // TODO: Generate data
-                // $sql = $exporter->getDataForExport($week);
-                $sql = 'SELECT @@version';
+                $sql = $dataExporter->getDataForExport($week);
+                dump($sql);
 
-                $this->exportHelper->upload($sql, $week);
+//                $this->exportHelper->upload($sql, $week);
 
-                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
             }
         }
 

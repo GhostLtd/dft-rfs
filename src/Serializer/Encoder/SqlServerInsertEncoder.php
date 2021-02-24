@@ -1,28 +1,11 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace App\Serializer\Encoder;
 
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
-use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Twig\Environment;
 use Twig\Extension\EscaperExtension;
 
-/**
- * Encodes CSV data.
- *
- * @author Kévin Dunglas <dunglas@gmail.com>
- * @author Oliver Hoff <oliver@hofff.com>
- */
 class SqlServerInsertEncoder implements EncoderInterface
 {
     const FORMAT = 'sql-server-insert';
