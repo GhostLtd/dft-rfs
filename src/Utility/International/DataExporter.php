@@ -11,12 +11,18 @@ class DataExporter
 {
     protected TripRepository $tripRepository;
     protected SqlServerInsertEncoder $sqlServerInsertEncoder;
+    protected TripNormalizer $tripNormalizer;
     protected WeekNumberHelper $weekNumberHelper;
 
-    public function __construct(TripRepository $tripRepository, SqlServerInsertEncoder $sqlServerInsertEncoder, WeekNumberHelper $weekNumberHelper)
+    public function __construct(TripRepository $tripRepository,
+                                SqlServerInsertEncoder $sqlServerInsertEncoder,
+                                TripNormalizer $tripNormalizer,
+                                WeekNumberHelper $weekNumberHelper
+    )
     {
         $this->tripRepository = $tripRepository;
         $this->sqlServerInsertEncoder = $sqlServerInsertEncoder;
+        $this->tripNormalizer = $tripNormalizer;
         $this->weekNumberHelper = $weekNumberHelper;
     }
 
@@ -27,9 +33,13 @@ class DataExporter
 
         $serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
+            $this->tripNormalizer,
         ], [
             $this->sqlServerInsertEncoder,
         ]);
+
+        dump($serializer->normalize($trips)); // TODO: Remove
+
         return $serializer->serialize($trips, 'sql-server-insert');
     }
 }

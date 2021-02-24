@@ -77,6 +77,7 @@ class TripRepository extends ServiceEntityRepository
     public function getTripsForExport(DateTime $weekStart, DateTime $weekEnd): array
     {
         return $this->createQueryBuilder('t')
+            ->select('t,v,r,s')
             ->leftJoin('t.vehicle', 'v')
             ->leftJoin('v.surveyResponse', 'r')
             ->leftJoin('r.survey', 's')
