@@ -3,7 +3,7 @@
 namespace App\Controller\Admin\International;
 
 use App\Form\ConfirmationType;
-use App\Utility\Google\InternationalExportHelper;
+use App\Utility\International\ExportHelper;
 use App\Utility\International\DataExporter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -23,9 +23,9 @@ class ExportController extends AbstractController
     public const EXPORT_WEEK_ROUTE = self::ROUTE_PREFIX . 'week';
     public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
 
-    protected InternationalExportHelper $exportHelper;
+    protected ExportHelper $exportHelper;
 
-    public function __construct(InternationalExportHelper $storageHelper)
+    public function __construct(ExportHelper $storageHelper)
     {
         $this->exportHelper = $storageHelper;
     }
@@ -62,12 +62,12 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                $sql = $dataExporter->getDataForExport($week);
-                dump($sql);
+//                $sql = $dataExporter->getDataForExport($week);
+                $sql = "SELECT @@version;";
 
-//                $this->exportHelper->upload($sql, $week);
+                $this->exportHelper->upload($sql, $week);
 
-//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
             }
         }
 

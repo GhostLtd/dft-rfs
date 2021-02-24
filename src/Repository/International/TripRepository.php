@@ -4,7 +4,9 @@ namespace App\Repository\International;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -67,5 +69,24 @@ class TripRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    /**
+     * @return Trip[]|Collection
+     */
+    public function getTripsForExport(DateTime $weekStart, DateTime $weekEnd): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.vehicle', 'v')
+            ->leftJoin('v.surveyResponse', 'r')
+            ->leftJoin('r.survey', 's')
+            ->where('s.surveyPeriodStart >= :weekStart')
+            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->getQuery()
+            ->setParameters([
+                'weekStart' => $weekStart,
+                'weekEnd' => $weekEnd,
+            ])
+            ->execute();
     }
 }

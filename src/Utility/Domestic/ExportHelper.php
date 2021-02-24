@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Utility\Google;
+namespace App\Utility\Domestic;
 
 use DateTime;
 use Google\Cloud\Storage\Bucket;
 use Google\Cloud\Storage\StorageObject;
 
-class DomesticExportHelper
+class ExportHelper
 {
     protected Bucket $bucket;
     protected string $prefix;
@@ -40,7 +40,7 @@ class DomesticExportHelper
     }
 
     /**
-     * @return DomesticExportObject[]
+     * @return ExportObject[]
      */
     public function getExistingExports(): array
     {
@@ -51,7 +51,7 @@ class DomesticExportHelper
         $exports = [];
         foreach(iterator_to_array($iterator) as $obj) {
             [$year, $quarter] = $this->getYearAndQuarter($obj->name());
-            $exportObject = new DomesticExportObject($obj, $year, $quarter);
+            $exportObject = new ExportObject($obj, $year, $quarter);
             $exports[$exportObject->getComparator()] = $exportObject;
         }
 
@@ -85,11 +85,11 @@ class DomesticExportHelper
         $lastYear = $currentYear - 1;
 
         for($quarter=($currentQuarter - 1); $quarter>=1; $quarter--) {
-            $possibilities[$currentYear.'-'.$quarter] = new DomesticExportObject(null, $currentYear, $quarter);
+            $possibilities[$currentYear.'-'.$quarter] = new ExportObject(null, $currentYear, $quarter);
         }
 
         for($quarter=4; $quarter>=1; $quarter--) {
-            $possibilities[$lastYear.'-'.$quarter] = new DomesticExportObject(null, $lastYear, $quarter);
+            $possibilities[$lastYear.'-'.$quarter] = new ExportObject(null, $lastYear, $quarter);
         }
 
         return $possibilities;

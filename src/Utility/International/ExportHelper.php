@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Utility\Google;
+namespace App\Utility\International;
 
 use DateTime;
 use Google\Cloud\Storage\Bucket;
 use Google\Cloud\Storage\StorageObject;
 
-class InternationalExportHelper
+class ExportHelper
 {
     protected Bucket $bucket;
     protected string $prefix;
-    protected DateTime $weekOne;
+    protected WeekNumberHelper $weekNumberHelper;
 
-    public function __construct(Bucket $exportBucket)
+    public function __construct(Bucket $exportBucket, WeekNumberHelper $weekNumberHelper)
     {
         $this->bucket = $exportBucket;
         $this->prefix = 'irhs';
-        $this->weekOne = new DateTime('1991-09-23');
+        $this->weekNumberHelper = $weekNumberHelper;
     }
 
     public function getBucket(): Bucket
@@ -39,7 +39,7 @@ class InternationalExportHelper
     }
 
     /**
-     * @return InternationalExportObject[]
+     * @return ExportObject[]
      */
     public function getExistingExports(): array
     {
@@ -50,7 +50,7 @@ class InternationalExportHelper
         $exports = [];
         foreach(iterator_to_array($iterator) as $obj) {
             $week = $this->getWeek($obj->name());
-            $exportObject = new InternationalExportObject($obj, $week);
+            $exportObject = new ExportObject($obj, $week, $this->weekNumberHelper->getDate($week), $this->weekNumberHelper->getDate($week + 1));
             $exports[$exportObject->getComparator()] = $exportObject;
         }
 
@@ -59,20 +59,15 @@ class InternationalExportHelper
         return $exports;
     }
 
-    protected function determineWeek(DateTime $date)
-    {
-        return intval(floor($date->diff($this->weekOne)->days / 7));
-    }
-
     protected function getPossibleWeeks(): array
     {
         $possibilities = [];
 
-        $currentWeek = $this->determineWeek(new DateTime());
+        $currentWeek = $this->weekNumberHelper->getWeekNumber(new DateTime());
         $earliestWeek = $currentWeek - 26;
 
         for($week=$currentWeek-1; $week>=$earliestWeek; $week--) {
-            $possibilities['W'.$week] = new InternationalExportObject(null, $week);
+            $possibilities['W'.$week] = new ExportObject(null, $week, $this->weekNumberHelper->getDate($week), $this->weekNumberHelper->getDate($week + 1));
         }
 
         return $possibilities;

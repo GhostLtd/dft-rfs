@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Utility\Google;
+namespace App\Utility\Domestic;
 
 use Google\Cloud\Storage\StorageObject;
 
-class DomesticExportObject
+class ExportObject
 {
     protected int $year;
     protected int $quarter;
