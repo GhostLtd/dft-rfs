@@ -185,21 +185,22 @@ response.contactTelephone as ContactTelNo
 
 
 // ** Excluded fields **
-// DateInput - unsure
-// DateCompleted - unsure
-// QuestionaireType - unsure
-// SurveyType - unsure
-// TripDataLoaded - unsure
-// RecordLastUpdatedBy - unsure
-// Comments - contains on hire, etc.
-// CaryingCapacityAdjusted - will all be null, not required
-// SurveyID - unsure
-// VehicleOwnerID - unsure
-// DateReminder1 - not sending
-// DateReminder2 - not sending
-// SurveyDiscardedReasonID - unsure
-// SurveyEmail - unsure (invitation or contact)
-// FuelTypePropulsionCode - unsure
+// DateInput - team logged in to system (form returned)
+// DateCompleted - team did data input (MS access)
+        // also need a date approved
+// QuestionaireType - 1 post? 0 email? (not needed)
+// SurveyType - 1 = GB, 2 = NI, 3 = IRHS
+// TripDataLoaded - don't know, not needed
+// RecordLastUpdatedBy - approved by
+// Comments - contains on hire, etc. - not use in export table
+// CaryingCapacityAdjusted - will all be null, not required - lucy doesn't know
+// SurveyID - current == 941 => 2020, week x (each week has a survey ID, like irhs)
+// VehicleOwnerID - not needed
+// DateReminder1 - not currently sending, handy to have
+// DateReminder2 - not currently sending, handy to have
+// SurveyDiscardedReasonID - lookup table
+// SurveyEmail - invitation email - not needed for our export
+
 
     }
 }

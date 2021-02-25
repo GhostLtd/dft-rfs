@@ -52,7 +52,7 @@ class SqlServerInsertEncoder implements EncoderInterface
             'fields' => array_keys($data[0]),
             'data' => $data,
             'table_name' => $context[self::TABLE_NAME_KEY] ?? $this->defaultContext[self::TABLE_NAME_KEY],
-        ]);
+        ]) . "\n";
     }
 
     /**
