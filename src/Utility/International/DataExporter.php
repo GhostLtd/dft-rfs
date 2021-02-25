@@ -4,6 +4,7 @@ namespace App\Utility\International;
 
 use App\Repository\International\TripRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
+use App\Serializer\Normalizer\International\TripNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 

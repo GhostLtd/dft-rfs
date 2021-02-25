@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utility\International;
+namespace App\Serializer\Normalizer\International;
 
 use App\Entity\Distance;
 use App\Entity\International\Trip;
