@@ -2,9 +2,10 @@
 
 namespace App\Serializer\Normalizer\Mapper;
 
+use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class PropertyBool implements Mapper
+class BooleanProperty implements Mapper
 {
     protected string $propertyPath;
     protected $trueIfEquals;
@@ -20,6 +21,6 @@ class PropertyBool implements Mapper
         $accessor = PropertyAccess::createPropertyAccessor();
         $value = $accessor->getValue($sourceData, $this->propertyPath);
 
-        return ($value === $this->trueIfEquals) ? IntBooleanLiteral::TRUE : IntBooleanLiteral::FALSE;
+        return ($value === $this->trueIfEquals) ? BooleanLiteral::TRUE : BooleanLiteral::FALSE;
     }
 }

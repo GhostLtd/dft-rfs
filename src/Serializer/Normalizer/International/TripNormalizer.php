@@ -6,11 +6,11 @@ use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
-use App\Serializer\Normalizer\Mapper\IntBooleanLiteral;
+use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
 use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Literal;
 use App\Serializer\Normalizer\Mapper\Property;
-use App\Serializer\Normalizer\Mapper\PropertyBool;
+use App\Serializer\Normalizer\Mapper\BooleanProperty;
 
 class TripNormalizer extends AbstractExportNormalizer
 {
@@ -31,43 +31,43 @@ class TripNormalizer extends AbstractExportNormalizer
             // FirstDate                        - ??
             // SecondDate                       - ??
             'GrossVehicleWeight' => new Property('vehicle.gross_weight'),
-            'GrossVehicleWeightNotEntered' => new IntBooleanLiteral(false),
+            'GrossVehicleWeightNotEntered' => new BooleanLiteral(false),
             'CarryingCapacity' => new Property('vehicle.carrying_capacity'),
-            'CarryingCapacityNotEntered' => new IntBooleanLiteral(false),
-            'OnOwnAccount' => new PropertyBool('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
-            'ForHireReward' => new PropertyBool('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
-            'MainlyOperatedNotEntered' => new IntBooleanLiteral(false),
+            'CarryingCapacityNotEntered' => new BooleanLiteral(false),
+            'OnOwnAccount' => new BooleanProperty('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
+            'ForHireReward' => new BooleanProperty('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
+            'MainlyOperatedNotEntered' => new BooleanLiteral(false),
             // DateInput                        - ??
             // DateCompleted                    - ??
-            'FlatDropSided' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_FLAT_DROP),
-            'BoxNonSpecialised' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_BOX),
-            'TemperatureControlled' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
-            'CurtainSided' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
-            'LiquidTanker' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_LIQUID),
-            'SolidBulkTanker' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_SOLID_BULK),
-            'LiveStockCarrier' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_LIVESTOCK),
-            'CarTansporter' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR),
-            'Tipper' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_TIPPER),
-            'Other' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_OTHER),
-            'TrailerTypeNotEntered' => new IntBooleanLiteral(false),
+            'FlatDropSided' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_FLAT_DROP),
+            'BoxNonSpecialised' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_BOX),
+            'TemperatureControlled' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
+            'CurtainSided' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
+            'LiquidTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIQUID),
+            'SolidBulkTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_SOLID_BULK),
+            'LiveStockCarrier' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIVESTOCK),
+            'CarTansporter' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR),
+            'Tipper' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_TIPPER),
+            'Other' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_OTHER),
+            'TrailerTypeNotEntered' => new BooleanLiteral(false),
             // QuestionaireType                 - ??
             // LastAddressLineDesc              - ??
             'SurveyType' => new Literal(3),
             // TripDataLoaded                   - ??
             'UKPortOfDeparture' => new Property('outbound_uk_port'),
             'ForeignPortOfArrival' => new Property('outbound_foreign_port'),
-            'OutwardVehicleEmpty' => new PropertyBool('outbound_was_empty'),
+            'OutwardVehicleEmpty' => new BooleanProperty('outbound_was_empty'),
             'UKPortOfArrival' => new Property('return_uk_port'),
             'ForeignPortOfDeparture' => new Property('return_foreign_port'),
-            'ReturnVehicleEmpty' => new PropertyBool('return_was_empty'),
+            'ReturnVehicleEmpty' => new BooleanProperty('return_was_empty'),
             // CountriesTransitted              - ?? (+ Other)
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
-            'KMsYN' => new PropertyBool('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
-            'MilesYN' => new PropertyBool('round_trip_distance.unit', Distance::UNIT_MILES),
-            'DatesNotEntered' => new IntBooleanLiteral(false),
-            'OutwardJourneyNotEntered' => new IntBooleanLiteral(false),
-            'ReturnJouneyNotEntered' => new IntBooleanLiteral(false), // N.B. Typo as per target
-            'TripInfoNotEntered' => new IntBooleanLiteral(false),
+            'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
+            'MilesYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_MILES),
+            'DatesNotEntered' => new BooleanLiteral(false),
+            'OutwardJourneyNotEntered' => new BooleanLiteral(false),
+            'ReturnJouneyNotEntered' => new BooleanLiteral(false), // N.B. Typo as per target
+            'TripInfoNotEntered' => new BooleanLiteral(false),
             // SurveyStartDate                  - ??
             // RecordLastUpdatedBy              - ??
             // AdjustedGrossVehicleWeight       - ??

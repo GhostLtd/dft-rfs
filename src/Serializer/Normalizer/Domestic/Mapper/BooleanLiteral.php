@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Serializer\Normalizer\Mapper;
+namespace App\Serializer\Normalizer\Domestic\Mapper;
 
-class DomBooleanLiteral extends Literal
+use App\Serializer\Normalizer\Mapper\Literal;
+
+class BooleanLiteral extends Literal
 {
     const TRUE = 1;
     const FALSE = 0;
