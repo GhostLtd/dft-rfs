@@ -38,8 +38,11 @@ class DataExporter
             $this->sqlServerInsertEncoder,
         ]);
 
-        dump($serializer->normalize($trips)); // TODO: Remove
+        $output = '';
 
-        return $serializer->serialize($trips, 'sql-server-insert');
+        $tablePrefix = "irhs-week-{$weekNumber}";
+        $output .= $serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-trips"]);
+
+        return $output;
     }
 }
