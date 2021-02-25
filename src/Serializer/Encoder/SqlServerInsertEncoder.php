@@ -44,6 +44,10 @@ class SqlServerInsertEncoder implements EncoderInterface
      */
     public function encode($data, $format, array $context = [])
     {
+        if (count($data) === 0) {
+            return '';
+        }
+
         return $this->twig->render('serializer/encoder/sql-server-encode.sql.twig', [
             'fields' => array_keys($data[0]),
             'data' => $data,

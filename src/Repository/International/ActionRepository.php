@@ -4,8 +4,10 @@ namespace App\Repository\International;
 
 use App\Entity\International\Action;
 use App\Entity\International\SurveyResponse;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -96,5 +98,29 @@ class ActionRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    /**
+     * @return Action[]|Collection
+     */
+    public function getActionsForExport(DateTime $weekStart, DateTime $weekEnd): array
+    {
+        return $this->createQueryBuilder('a')
+            ->select('a,t,v,r,s')
+            ->leftJoin('a.loadingAction', 'la')
+            ->leftJoin('a.trip', 't')
+            ->leftJoin('t.vehicle', 'v')
+            ->leftJoin('v.surveyResponse', 'r')
+            ->leftJoin('r.survey', 's')
+            ->where('a.loading = :isLoading')
+            ->andWhere('s.surveyPeriodStart >= :weekStart')
+            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->getQuery()
+            ->setParameters([
+                'isLoading' => false,
+                'weekStart' => $weekStart,
+                'weekEnd' => $weekEnd,
+            ])
+            ->execute();
     }
 }

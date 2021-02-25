@@ -112,6 +112,9 @@ services:
         calls:
             - setTwig: ['@twig']
 
+    App\Utility\International\DataExporter:
+        lazy: true
+
     Google\Cloud\Storage\StorageClient:
         arguments:
             $config: {
