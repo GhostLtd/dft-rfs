@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utility\Export;
+namespace App\Serializer\Normalizer\Mapper;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 

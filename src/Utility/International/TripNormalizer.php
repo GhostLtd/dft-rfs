@@ -5,12 +5,12 @@ namespace App\Utility\International;
 use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
-use App\Utility\Export\AbstractExportNormalizer;
-use App\Utility\Export\IntBooleanLiteral;
-use App\Utility\Export\Mapper;
-use App\Utility\Export\Literal;
-use App\Utility\Export\Property;
-use App\Utility\Export\PropertyBool;
+use App\Serializer\Normalizer\AbstractExportNormalizer;
+use App\Serializer\Normalizer\Mapper\IntBooleanLiteral;
+use App\Serializer\Normalizer\Mapper\Mapper;
+use App\Serializer\Normalizer\Mapper\Literal;
+use App\Serializer\Normalizer\Mapper\Property;
+use App\Serializer\Normalizer\Mapper\PropertyBool;
 
 class TripNormalizer extends AbstractExportNormalizer
 {
