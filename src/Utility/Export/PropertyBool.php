@@ -20,6 +20,6 @@ class PropertyBool implements Mapper
         $accessor = PropertyAccess::createPropertyAccessor();
         $value = $accessor->getValue($sourceData, $this->propertyPath);
 
-        return ($value === $this->trueIfEquals) ? BooleanLiteral::TRUE : BooleanLiteral::FALSE;
+        return ($value === $this->trueIfEquals) ? IntBooleanLiteral::TRUE : IntBooleanLiteral::FALSE;
     }
 }

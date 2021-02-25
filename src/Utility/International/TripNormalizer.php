@@ -5,49 +5,38 @@ namespace App\Utility\International;
 use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
-use App\Utility\Export\BooleanLiteral;
+use App\Utility\Export\AbstractExportNormalizer;
+use App\Utility\Export\IntBooleanLiteral;
 use App\Utility\Export\Mapper;
 use App\Utility\Export\Literal;
 use App\Utility\Export\Property;
 use App\Utility\Export\PropertyBool;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
-class TripNormalizer implements ContextAwareNormalizerInterface
+class TripNormalizer extends AbstractExportNormalizer
 {
-    protected SerializerInterface $serializer;
-
-    public function __construct()
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
-        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter(), null, null, null, null, [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function($object, $format, $context) {
-                return get_class($object).':'.$object->getId();
-            },
-        ]);
-
-        $this->serializer = new Serializer([new DateTimeNormalizer(), $normalizer]);
+        return $data instanceof Trip;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    /**
+     * @return Mapper[]|array
+     */
+    protected function getMapping(): array
     {
-        $mapping = [
+        return [
             'IRHVehicleDetailsID' => new Property('id'),
             'RegMark' => new Property('vehicle.registration_mark'),
             'RefNumber' => new Property('vehicle.survey_response.survey.reference_number'),
             // FirstDate                        - ??
             // SecondDate                       - ??
             'GrossVehicleWeight' => new Property('vehicle.gross_weight'),
-            'GrossVehicleWeightNotEntered' => new BooleanLiteral(false),
+            'GrossVehicleWeightNotEntered' => new IntBooleanLiteral(false),
             'CarryingCapacity' => new Property('vehicle.carrying_capacity'),
-            'CarryingCapacityNotEntered' => new BooleanLiteral(false),
+            'CarryingCapacityNotEntered' => new IntBooleanLiteral(false),
             'OnOwnAccount' => new PropertyBool('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
             'ForHireReward' => new PropertyBool('vehicle.operation_type', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
-            'MainlyOperatedNotEntered' => new BooleanLiteral(false),
+            'MainlyOperatedNotEntered' => new IntBooleanLiteral(false),
             // DateInput                        - ??
             // DateCompleted                    - ??
             'FlatDropSided' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_FLAT_DROP),
@@ -60,7 +49,7 @@ class TripNormalizer implements ContextAwareNormalizerInterface
             'CarTansporter' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR),
             'Tipper' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_TIPPER),
             'Other' => new PropertyBool('vehicle.body_type', BaseVehicle::BODY_TYPE_OTHER),
-            'TrailerTypeNotEntered' => new BooleanLiteral(false),
+            'TrailerTypeNotEntered' => new IntBooleanLiteral(false),
             // QuestionaireType                 - ??
             // LastAddressLineDesc              - ??
             'SurveyType' => new Literal(3),
@@ -75,22 +64,15 @@ class TripNormalizer implements ContextAwareNormalizerInterface
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
             'KMsYN' => new PropertyBool('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
             'MilesYN' => new PropertyBool('round_trip_distance.unit', Distance::UNIT_MILES),
-            'DatesNotEntered' => new BooleanLiteral(false),
-            'OutwardJourneyNotEntered' => new BooleanLiteral(false),
-            'ReturnJouneyNotEntered' => new BooleanLiteral(false), // N.B. Typo as per target
-            'TripInfoNotEntered' => new BooleanLiteral(false),
+            'DatesNotEntered' => new IntBooleanLiteral(false),
+            'OutwardJourneyNotEntered' => new IntBooleanLiteral(false),
+            'ReturnJouneyNotEntered' => new IntBooleanLiteral(false), // N.B. Typo as per target
+            'TripInfoNotEntered' => new IntBooleanLiteral(false),
             // SurveyStartDate                  - ??
             // RecordLastUpdatedBy              - ??
             // AdjustedGrossVehicleWeight       - ??
             // AdjustedCarryingCapacity         - ??
             'BusinessNature' => new Property('vehicle.survey_response.business_nature'),
         ];
-
-        return array_map(fn(Mapper $mapper) => $mapper->getData($object), $mapping);
-    }
-
-    public function supportsNormalization($data, $format = null, array $context = [])
-    {
-        return $data instanceof Trip;
     }
 }

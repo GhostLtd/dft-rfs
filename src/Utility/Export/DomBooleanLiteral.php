@@ -2,9 +2,9 @@
 
 namespace App\Utility\Export;
 
-class BooleanLiteral extends Literal
+class DomBooleanLiteral extends Literal
 {
-    const TRUE = -1;
+    const TRUE = 1;
     const FALSE = 0;
 
     public function __construct(bool $state)
