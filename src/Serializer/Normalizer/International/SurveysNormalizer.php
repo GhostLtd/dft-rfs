@@ -4,10 +4,17 @@ namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Action;
 use App\Entity\International\Survey;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SurveysNormalizer
 {
     protected array $normalized;
+    protected EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     public function normalize(array $surveys): array
     {
@@ -91,7 +98,7 @@ class SurveysNormalizer
         $trip = $firstAction->getTrip();
 
         return [
-            'IRHConsignmentDetailsID' => $trip->getId().'-initial', // TODO: Fix IDs
+            'IRHConsignmentDetailsID' => $this->getGuid(),
             'IRHVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
@@ -112,7 +119,7 @@ class SurveysNormalizer
         $trip = $lastAction->getTrip();
 
         return [
-            'IRHConsignmentDetailsID' => $trip->getId().'-return', // TODO: Fix IDs
+            'IRHConsignmentDetailsID' => $this->getGuid(),
             'IRHVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
@@ -126,5 +133,12 @@ class SurveysNormalizer
             // DateInput - ??
             // MOACode - ??
         ];
+    }
+
+    protected function getGuid(): string
+    {
+        $connection = $this->entityManager->getConnection();
+        $expression = $connection->getDriver()->getDatabasePlatform()->getGuidExpression();
+        return $connection->executeQuery("SELECT {$expression} as guid")->fetchOne();
     }
 }
