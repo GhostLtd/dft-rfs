@@ -41,6 +41,21 @@ class Distance implements ValueUnitInterface
         return $this->value;
     }
 
+    public function getValueNormalized($unit)
+    {
+        if ($this->unit === $unit) {
+            return $this->value;
+        }
+        switch ($unit) {
+            case self::UNIT_KILOMETERS :
+                return $this->value * self::UNIT_CONVERSION_FACTOR;
+            case self::UNIT_MILES :
+                return $this->value / self::UNIT_CONVERSION_FACTOR;
+            default:
+                throw new \InvalidArgumentException('Unexpected unit type');
+        }
+    }
+
     public function setValue($value): self
     {
         $this->value = $value;

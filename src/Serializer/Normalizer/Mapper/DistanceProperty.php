@@ -22,22 +22,11 @@ class DistanceProperty implements Mapper
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         try {
-            $unit = $accessor->getValue($sourceData, "{$this->propertyPath}.unit");
-            $value = $accessor->getValue($sourceData, "{$this->propertyPath}.value");
+            /* @var Distance $distance */
+            $distance = $accessor->getValue($sourceData, "{$this->propertyPath}");
+            return $distance->getValueNormalized($this->inUnits);
         } catch (\Throwable $e) {
             return $this->defaultValue;
-        }
-
-        if (is_null($this->inUnits) || $unit === $this->inUnits) {
-            return $value;
-        }
-        switch ($this->inUnits) {
-            case Distance::UNIT_KILOMETERS :
-                return $value * Distance::UNIT_CONVERSION_FACTOR;
-            case Distance::UNIT_MILES :
-                return $value / Distance::UNIT_CONVERSION_FACTOR;
-            default:
-                throw new \InvalidArgumentException('Unexpected unit type');
         }
     }
 }
