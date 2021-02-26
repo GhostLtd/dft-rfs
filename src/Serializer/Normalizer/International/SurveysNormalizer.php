@@ -4,7 +4,9 @@ namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Action;
 use App\Entity\International\Survey;
+use App\Form\CountryType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Intl\Countries;
 
 class SurveysNormalizer
 {
@@ -43,7 +45,7 @@ class SurveysNormalizer
                 $firstAction = $actions->first();
                 $lastAction = $actions->last();
 
-                if ($trip->getOrigin() !== $firstAction->getName()) {
+                if (strtoupper($trip->getOrigin()) !== strtoupper($firstAction->getName())) {
                     $this->normalized[] = $this->getOutboundEmptyData($firstAction);
                     $numberOffset = 2;
                 } else {
@@ -62,7 +64,7 @@ class SurveysNormalizer
                     $this->normalized[] = $this->getActionData($action, $numberOffset);
                 }
 
-                if ($trip->getDestination() !== $lastAction->getName()) {
+                if (strtoupper($trip->getDestination()) !== strtoupper($lastAction->getName())) {
                     $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset);
                 }
             }
@@ -83,14 +85,34 @@ class SurveysNormalizer
             'TypeOfGoods' => $loadingAction->getGoodsDescriptionNormalized(),
             'DangerousGoods' => $hazardousGoodsCode === '0' ? null : $hazardousGoodsCode,
             'WeightOfGoodsCarriedKG' => $action->getWeightUnloadedAll() ? $loadingAction->getWeightOfGoods() : $action->getWeightOfGoods(),
-            'Origin' => $loadingAction->getName(), // TODO: Integrate country
+            'Origin' => $this->getPlaceName($loadingAction),
             'LoadedOrder' => $loadingAction->getNumber() + $numberOffset,
-            'Destination' => $action->getName(), // TODO: Integrate country
+            'Destination' => $this->getPlaceName($action),
             'UnloadedOrder' => $action->getNumber() + $numberOffset,
             // RowNumber ??
             // DateInput - ??
             // MOACode - ??
         ];
+    }
+
+    protected function getPlaceName(Action $action)
+    {
+        $name = $action->getName();
+        $country = $action->getCountry();
+        $countryOther = $action->getCountryOther();
+
+        if ($countryOther !== null) {
+            // Resolve countryOther to a code, if possible
+            $countryOtherCode = array_search($countryOther, Countries::getNames());
+
+            if ($countryOtherCode !== false) {
+                $countryOther = $countryOtherCode;
+            }
+        }
+
+        return $country === CountryType::OTHER ?
+            "{$name}, {$countryOther}" :
+            "{$name}, {$country}";
     }
 
     protected function getOutboundEmptyData(Action $firstAction): array
@@ -104,9 +126,9 @@ class SurveysNormalizer
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
             'WeightOfGoodsCarriedKG' => 0,
-            'Origin' => $trip->getOrigin(),
+            'Origin' => $trip->getOrigin().", GB",
             'LoadedOrder' => 1,
-            'Destination' => $firstAction->getName(),
+            'Destination' => $this->getPlaceName($firstAction),
             'UnloadedOrder' => 2,
             // RowNumber ??
             // DateInput - ??
@@ -125,9 +147,9 @@ class SurveysNormalizer
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
             'WeightOfGoodsCarriedKG' => 0,
-            'Origin' => $lastAction->getName(),
+            'Origin' => $this->getPlaceName($lastAction),
             'LoadedOrder' => $lastAction->getNumber() + $numberOffset + 1,
-            'Destination' => $trip->getDestination(),
+            'Destination' => $trip->getDestination().", GB",
             'UnloadedOrder' => $lastAction->getNumber() + $numberOffset + 2,
             // RowNumber ??
             // DateInput - ??
