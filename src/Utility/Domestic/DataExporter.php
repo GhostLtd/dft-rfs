@@ -45,27 +45,28 @@ class DataExporter
     }
 
     public function getDataForExport(int $year, int $quarter) {
-        return $this->getVehiclesSql($year, $quarter)
-            . $this->getDetailedDaysSql($year, $quarter)
-            . $this->getSummaryDaysSql($year, $quarter)
+        $surveys = $this->surveyRepository->findForExport($year, $quarter);
+        return $this->getVehiclesSql($surveys, "A_Vehicles_{$year}Q{$quarter}")
+            . $this->getDetailedDaysSql($surveys, "A_FourJourneys_{$year}Q{$quarter}")
+            . $this->getSummaryDaysSql($surveys, "A_FiveJourneys_{$year}Q{$quarter}")
             ;
     }
 
-    protected function getDetailedDaysSql(int $year, int $quarter)
+    protected function getDetailedDaysSql($surveys, $filename)
     {
-        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findAll());;
-        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "A_FourJourneys_{$year}Q{$quarter}"]);
+        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveys));
+        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
     }
 
-    protected function getSummaryDaysSql(int $year, int $quarter)
+    protected function getSummaryDaysSql($surveys, $filename)
     {
-        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findAll());
-        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "A_FiveJourneys_{$year}Q{$quarter}"]);
+        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveys));
+        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
     }
 
-    protected function getVehiclesSql(int $year, int $quarter)
+    protected function getVehiclesSql($surveys, $filename)
     {
-        $surveyArrayData = $this->surveySerializer->normalize($this->surveyRepository->findByTypeWithResponseAndVehicle(true));
-        return $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "A_Vehicles_{$year}Q{$quarter}"]);
+        $surveyArrayData = $this->surveySerializer->normalize($surveys);
+        return $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
     }
 }

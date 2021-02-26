@@ -5,6 +5,7 @@ namespace App\Repository\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Entity\Vehicle;
 use App\Entity\Volume;
+use App\Utility\WeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -54,6 +55,36 @@ class SurveyRepository extends ServiceEntityRepository
             ->leftJoin('response.vehicle', 'vehicle')
             ->where('survey.isNorthernIreland = :isNI')
             ->setParameter('isNI', $isNorthernIreland)
+            ->getQuery()
+            ->execute();
+    }
+
+
+    /**
+     * @return Survey[]
+     */
+    public function findForExport($year, $quarter, $isNorthernIreland = false)
+    {
+        $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+
+        return $this->createQueryBuilder('survey')
+            ->select('survey, passcode_user, response, vehicle, days, stops, summary')
+            ->leftJoin('survey.passcodeUser', 'passcode_user')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.vehicle', 'vehicle')
+            ->leftJoin('response.days', 'days')
+            ->leftJoin('days.stops', 'stops')
+            ->leftJoin('days.summary', 'summary')
+            ->where('survey.isNorthernIreland = :isNI')
+            ->andWhere('survey.surveyPeriodStart >= :quarterStart')
+            ->andWhere('survey.surveyPeriodStart < :quarterEnd')
+            ->andWhere('survey.state = :state')
+            ->setParameters([
+                'isNI' => $isNorthernIreland,
+                'quarterStart' => $dateRange[0],
+                'quarterEnd' => $dateRange[1],
+                'state' => Survey::STATE_APPROVED,
+            ])
             ->getQuery()
             ->execute();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Utility\Domestic;
 
+use App\Utility\WeekNumberHelper;
 use DateTime;
 use Google\Cloud\Storage\Bucket;
 use Google\Cloud\Storage\StorageObject;
@@ -60,31 +61,14 @@ class ExportHelper
         return $exports;
     }
 
-    protected function determineQuarter(DateTime $date)
-    {
-        $month = intval($date->format('n'));
-
-        if ($month <= 3) {
-            return 1;
-        } else if ($month <= 6) {
-            return 2;
-        } else if ($month <= 9) {
-            return 3;
-        } else {
-            return 4;
-        }
-    }
-
     protected function getPossibleYearsAndQuarters(): array
     {
         $possibilities = [];
 
-        $currentDate = new Datetime();
-        $currentQuarter = $this->determineQuarter(new DateTime());
-        $currentYear = intval($currentDate->format('Y'));
+        [$currentQuarter, $currentYear] = WeekNumberHelper::getQuarterAndYear(new DateTime());
         $lastYear = $currentYear - 1;
 
-        for($quarter=($currentQuarter - 1); $quarter>=1; $quarter--) {
+        for($quarter=($currentQuarter /* TODO: uncomment "- 1" */); $quarter>=1; $quarter--) {
             $possibilities[$currentYear.'-'.$quarter] = new ExportObject(null, $currentYear, $quarter);
         }
 

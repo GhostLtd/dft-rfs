@@ -27,14 +27,4 @@ class HomeController extends AbstractController
     {
         return $this->render('home/sitemap.txt.twig');
     }
-
-    /**
-     * @Route("/testing")
-     */
-    public function test(DataExporter $dataExporter)
-    {
-        dump($dataExporter->getDataForExport(2020, 4));
-
-        return $this->render('home/index.html.twig');
-    }
 }

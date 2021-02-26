@@ -10,7 +10,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
-use App\Serializer\Normalizer\Mapper\CallbackProperty;
+use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\Property;
 
 class DetailedDayNormalizer extends AbstractExportNormalizer
@@ -29,13 +29,13 @@ class DetailedDayNormalizer extends AbstractExportNormalizer
             'Origin' => new Property('originLocation'),
             'Destination' => new Property('destinationLocation'),
             'TypeOfGoods' => new Property('goodsDescriptionNormalized'),
-            'Loaded' => new CallbackProperty(function(DayStop $stop){
+            'Loaded' => new Callback(function(DayStop $stop){
                 if ($stop->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
                     return null;
                 }
                 return $stop->getDistanceTravelled()->getValueNormalized(Distance::UNIT_MILES);
             }),
-            'Empty' => new CallbackProperty(function(DayStop $stop){
+            'Empty' => new Callback(function(DayStop $stop){
                 if ($stop->getGoodsDescription() !== AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
                     return null;
                 }

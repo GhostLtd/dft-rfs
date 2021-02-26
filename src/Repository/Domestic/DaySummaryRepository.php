@@ -45,6 +45,16 @@ class DaySummaryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findForExport($surveys) {
+        return $this->createQueryBuilder('day_summary')
+            ->select('day_summary, day, response')
+            ->leftJoin('day_summary.day', 'day')
+            ->leftJoin('day.response', 'response')
+            ->where('response.survey in (:surveys)')
+            ->setParameter('surveys', $surveys)
+            ->getQuery()
+            ->execute();
+    }
     // /**
     //  * @return DaySummary[] Returns an array of DaySummary objects
     //  */
