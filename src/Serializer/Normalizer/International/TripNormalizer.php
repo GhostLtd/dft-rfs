@@ -7,10 +7,12 @@ use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
+use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Literal;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Mapper\BooleanProperty;
+use Symfony\Component\Intl\Countries;
 
 class TripNormalizer extends AbstractExportNormalizer
 {
@@ -60,7 +62,28 @@ class TripNormalizer extends AbstractExportNormalizer
             'UKPortOfArrival' => new Property('return_uk_port'),
             'ForeignPortOfDeparture' => new Property('return_foreign_port'),
             'ReturnVehicleEmpty' => new BooleanProperty('return_was_empty'),
-            // CountriesTransitted              - ?? (+ Other)
+            'CountriesTransitted' => new Callback(function(Trip $sourceData) {
+                $countries = $sourceData->getCountriesTransitted();
+
+                $countriesOther = $sourceData->getCountriesTransittedOther();
+
+                if ($countriesOther !== null) {
+                    $countryNames = Countries::getNames();
+                    foreach(array_map('trim', explode(',', $countriesOther)) as $country) {
+                        $countryCode = array_search($country, $countryNames);
+
+                        if ($countryCode !== false) {
+                            if (array_search($countryCode, $countries) === false) {
+                                $countries[] = $countryCode;
+                            }
+                        } else {
+                            $countries[] = $country;
+                        }
+                    }
+                }
+
+                return join(', ', $countries);
+            }),
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
             'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
             'MilesYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_MILES),

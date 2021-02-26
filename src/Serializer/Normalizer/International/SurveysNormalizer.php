@@ -35,6 +35,7 @@ class SurveysNormalizer
 
         foreach($response->getVehicles() as $vehicle)
         {
+            $rowNumber = 1;
             foreach($vehicle->getTrips() as $trip) {
                 $actions = $trip->getActions();
 
@@ -46,8 +47,9 @@ class SurveysNormalizer
                 $lastAction = $actions->last();
 
                 if (strtoupper($trip->getOrigin()) !== strtoupper($firstAction->getName())) {
-                    $this->normalized[] = $this->getOutboundEmptyData($firstAction);
+                    $this->normalized[] = $this->getOutboundEmptyData($firstAction, $rowNumber);
                     $numberOffset = 2;
+                    $rowNumber++;
                 } else {
                     $numberOffset = 0;
                 }
@@ -61,17 +63,18 @@ class SurveysNormalizer
                         continue;
                     }
 
-                    $this->normalized[] = $this->getActionData($action, $numberOffset);
+                    $this->normalized[] = $this->getActionData($action, $numberOffset, $rowNumber);
+                    $rowNumber++;
                 }
 
                 if (strtoupper($trip->getDestination()) !== strtoupper($lastAction->getName())) {
-                    $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset);
+                    $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset, $rowNumber);
                 }
             }
         }
     }
 
-    protected function getActionData(Action $action, int $numberOffset): array
+    protected function getActionData(Action $action, int $numberOffset, int $rowNumber): array
     {
         $trip = $action->getTrip();
         $loadingAction = $action->getLoadingAction();
@@ -89,7 +92,7 @@ class SurveysNormalizer
             'LoadedOrder' => $loadingAction->getNumber() + $numberOffset,
             'Destination' => $this->getPlaceName($action),
             'UnloadedOrder' => $action->getNumber() + $numberOffset,
-            // RowNumber ??
+            'RowNumber' => $rowNumber,
             // DateInput - ??
             // MOACode - ??
         ];
@@ -115,7 +118,7 @@ class SurveysNormalizer
             "{$name}, {$country}";
     }
 
-    protected function getOutboundEmptyData(Action $firstAction): array
+    protected function getOutboundEmptyData(Action $firstAction, int $rowNumber): array
     {
         $trip = $firstAction->getTrip();
 
@@ -130,13 +133,13 @@ class SurveysNormalizer
             'LoadedOrder' => 1,
             'Destination' => $this->getPlaceName($firstAction),
             'UnloadedOrder' => 2,
-            // RowNumber ??
+            'RowNumber' => $rowNumber,
             // DateInput - ??
             // MOACode - ??
         ];
     }
 
-    protected function getReturnEmptyData(Action $lastAction, int $numberOffset): array
+    protected function getReturnEmptyData(Action $lastAction, int $numberOffset, int $rowNumber): array
     {
         $trip = $lastAction->getTrip();
 
@@ -151,7 +154,7 @@ class SurveysNormalizer
             'LoadedOrder' => $lastAction->getNumber() + $numberOffset + 1,
             'Destination' => $trip->getDestination().", GB",
             'UnloadedOrder' => $lastAction->getNumber() + $numberOffset + 2,
-            // RowNumber ??
+            'RowNumber' => $rowNumber,
             // DateInput - ??
             // MOACode - ??
         ];
