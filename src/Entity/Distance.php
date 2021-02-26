@@ -12,6 +12,8 @@ class Distance implements ValueUnitInterface
     const UNIT_KILOMETERS = 'kilometers';
     const UNIT_MILES = 'miles';
 
+    const UNIT_CONVERSION_FACTOR = 1.609344;
+
     const UNIT_TRANSLATION_PREFIX = 'unit.distance.';
 
     const UNIT_CHOICES = [

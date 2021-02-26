@@ -4,8 +4,10 @@
 namespace App\Utility\Domestic;
 
 
+use App\Repository\Domestic\DaySummaryRepository;
 use App\Repository\Domestic\SurveyRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
+use App\Serializer\Normalizer\Domestic\SummaryDayNormalizer;
 use App\Serializer\Normalizer\Domestic\SurveyNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -20,15 +22,33 @@ class DataExporter
 
     protected SerializerInterface $serializer;
 
-    public function __construct(SurveyRepository $surveyRepository, SurveyNormalizer $surveyNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder)
+    /**
+     * @var Serializer
+     */
+    private $surveySerializer;
+
+    /**
+     * @var Serializer
+     */
+    private $summaryDaySerializer;
+    /**
+     * @var DaySummaryRepository
+     */
+    private $daySummaryRepository;
+
+    public function __construct(SurveyRepository $surveyRepository, DaySummaryRepository $daySummaryRepository, SurveyNormalizer $surveyNormalizer, SummaryDayNormalizer $summaryDayNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder)
     {
         $this->surveyRepository = $surveyRepository;
-        $this->surveySerializer = new Serializer([$surveyNormalizer], []);
+        $this->daySummaryRepository = $daySummaryRepository;
+
         $this->serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
         ], [
             $sqlServerInsertEncoder
         ]);
+
+        $this->surveySerializer = new Serializer([$surveyNormalizer], []);
+        $this->summaryDaySerializer = new Serializer([$summaryDayNormalizer], []);
     }
 
     public function getDataForExport(int $year, int $quarter) {
@@ -46,11 +66,7 @@ class DataExporter
 
     protected function getSummaryDaysSql(int $year, int $quarter)
     {
-        $dayArrayData = [
-            [
-                'test' => 'wobble',
-            ]
-        ];
+        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findAll());
         return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "A_FiveJourneys_{$year}Q{$quarter}"]);
     }
 
