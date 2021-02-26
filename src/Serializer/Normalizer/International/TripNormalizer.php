@@ -46,11 +46,11 @@ class TripNormalizer extends AbstractExportNormalizer
             'LiquidTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIQUID),
             'SolidBulkTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_SOLID_BULK),
             'LiveStockCarrier' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIVESTOCK),
-            'CarTansporter' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR),
+            'CarTansporter' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR), // N.B. Typo as per target
             'Tipper' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_TIPPER),
             'Other' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_OTHER),
             'TrailerTypeNotEntered' => new BooleanLiteral(false),
-            // QuestionaireType                 - ??
+            // QuestionaireType                 - ?? // N.B. Typo as per target
             // LastAddressLineDesc              - ??
             'SurveyType' => new Literal(3),
             // TripDataLoaded                   - ??

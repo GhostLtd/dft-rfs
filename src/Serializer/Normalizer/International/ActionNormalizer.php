@@ -4,7 +4,7 @@ namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Action;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
-use App\Serializer\Normalizer\Mapper\CallbackProperty;
+use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Property;
 
@@ -26,11 +26,18 @@ class ActionNormalizer extends AbstractExportNormalizer
 //            'MOA' => '', // ??
             'TypeOfGoods' => new Property('loadingAction.goodsDescription'),
             // 'DangerousGoods' => 8?
-            'WeightOfGoodsCarriedKG' => new CallbackProperty(function(Action $sourceData) {
+            'WeightOfGoodsCarriedKG' => new Callback(function(Action $sourceData) {
                 return $sourceData->getWeightUnloadedAll() ?
                     $sourceData->getLoadingAction()->getWeightOfGoods() :
                     $sourceData->getWeightOfGoods();
-            })
+            }),
+            'Origin' => new Property('loadingAction.name'),
+            // LoadedOrder
+            'Destination' => new Property('name'),
+            // UnloadedOrder
+            // RowNumber ??
+            // DateInput - ??
+            // MOACode - ??
         ];
     }
 }

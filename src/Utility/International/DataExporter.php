@@ -3,9 +3,10 @@
 namespace App\Utility\International;
 
 use App\Repository\International\ActionRepository;
+use App\Repository\International\SurveyRepository;
 use App\Repository\International\TripRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
-use App\Serializer\Normalizer\International\ActionNormalizer;
+use App\Serializer\Normalizer\International\SurveysNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
 use DateTime;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -15,23 +16,27 @@ use Symfony\Component\Serializer\SerializerInterface;
 class DataExporter
 {
     protected ActionRepository $actionRepository;
-    protected TripRepository $tripRepository;
     protected SerializerInterface $serializer;
+    protected SurveyRepository $surveyRepository;
+    protected SurveysNormalizer $surveysNormalizer;
+    protected TripRepository $tripRepository;
 
     public function __construct(
-        ActionNormalizer $actionNormalizer,
         ActionRepository $actionRepository,
         SqlServerInsertEncoder $sqlServerInsertEncoder,
+        SurveysNormalizer $surveysNormalizer,
+        SurveyRepository $surveyRepository,
         TripNormalizer $tripNormalizer,
         TripRepository $tripRepository
     )
     {
         $this->actionRepository = $actionRepository;
+        $this->surveyRepository = $surveyRepository;
         $this->tripRepository = $tripRepository;
+        $this->surveysNormalizer = $surveysNormalizer;
 
         $this->serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
-            $actionNormalizer,
             $tripNormalizer,
         ], [
             $sqlServerInsertEncoder
@@ -57,8 +62,11 @@ class DataExporter
 
     protected function getActionsSQL(string $tablePrefix, DateTime $weekStart, DateTime $weekEnd): string
     {
-        $actions = $this->actionRepository->getActionsForExport($weekStart, $weekEnd);
-        dump($actions);
-        return $this->serializer->serialize($actions, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-consignment"]);
+        $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
+        $normalized = $this->surveysNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
+
+        dump($normalized);
+
+        return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-consignment"]);
     }
 }

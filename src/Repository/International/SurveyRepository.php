@@ -4,7 +4,9 @@ namespace App\Repository\International;
 
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -43,5 +45,33 @@ class SurveyRepository extends ServiceEntityRepository
             ])
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return Survey[]|Collection
+     */
+    public function getSurveysForExport(DateTime $weekStart, DateTime $weekEnd): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s,r,v,t,a')
+            ->leftJoin('s.response', 'r')
+            ->leftJoin('r.vehicles', 'v')
+            ->leftJoin('v.trips', 't')
+            ->leftJoin('t.actions', 'a')
+            ->leftJoin('a.loadingAction', 'la')
+            ->where('s.state = :state')
+// TODO: Replace these constraints
+//            ->andWhere('s.surveyPeriodStart >= :weekStart')
+//            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->orderBy('s.surveyPeriodStart', 'ASC')
+            ->addOrderBy('v.registrationMark', 'ASC')
+            ->addOrderBy('a.number', 'ASC')
+            ->getQuery()
+            ->setParameters([
+                'state' => Survey::STATE_APPROVED,
+//                'weekStart' => $weekStart,
+//                'weekEnd' => $weekEnd,
+            ])
+            ->execute();
     }
 }

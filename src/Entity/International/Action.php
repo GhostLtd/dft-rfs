@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
 use App\Entity\CountryInterface;
@@ -195,6 +196,14 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
         $this->goodsDescriptionOther = $goodsDescriptionOther;
 
         return $this;
+    }
+
+    public function getGoodsDescriptionNormalized(): ?string
+    {
+        if ($this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER) {
+            return $this->getGoodsDescriptionOther();
+        }
+        return $this->getGoodsDescription();
     }
 
     public function getWeightOfGoods(): ?int
