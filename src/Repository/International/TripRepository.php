@@ -2,6 +2,7 @@
 
 namespace App\Repository\International;
 
+use App\Entity\International\Survey;
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use DateTime;
@@ -81,12 +82,15 @@ class TripRepository extends ServiceEntityRepository
             ->leftJoin('t.vehicle', 'v')
             ->leftJoin('v.surveyResponse', 'r')
             ->leftJoin('r.survey', 's')
-            ->where('s.surveyPeriodStart >= :weekStart')
-            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->where('s.state = :state')
+// TODO: Replace these constraints
+//            ->andWhere('s.surveyPeriodStart >= :weekStart')
+//            ->andWhere('s.surveyPeriodStart < :weekEnd')
             ->getQuery()
             ->setParameters([
-                'weekStart' => $weekStart,
-                'weekEnd' => $weekEnd,
+                'state' => Survey::STATE_APPROVED,
+//                'weekStart' => $weekStart,
+//                'weekEnd' => $weekEnd,
             ])
             ->execute();
     }
