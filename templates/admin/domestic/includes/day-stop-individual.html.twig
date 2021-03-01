@@ -16,7 +16,7 @@
     {{- tableCell(stop | formatGoodsDescription(true)) -}}
     {%- if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') -%}
         {{- tableCell('-') -}}
-        {{- tableCell('EM') -}}
+        {{- tableCell(constant('App\\Entity\\CargoType::CODE_NS_EMPTY')) -}}
         {{- tableCell('0kg', {numeric: true}) -}}
         {{- tableCell('-') -}}
     {%- else -%}
