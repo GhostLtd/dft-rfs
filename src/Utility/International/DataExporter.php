@@ -65,8 +65,6 @@ class DataExporter
         $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
         $normalized = $this->surveysNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
 
-        dump($normalized);
-
         return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-consignment"]);
     }
 }
