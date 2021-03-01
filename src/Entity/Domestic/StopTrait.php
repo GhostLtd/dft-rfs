@@ -194,8 +194,7 @@ trait StopTrait
         if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
             $this
                 ->setHazardousGoodsCode(null)
-                ->setCargoTypeCode(null)
-            ;
+                ->setCargoTypeCode(null);
         }
 
         return $this;
@@ -217,5 +216,13 @@ trait StopTrait
     public function isGoodsDescriptionEmptyOption()
     {
         return $this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY;
+    }
+
+    public function getGoodsDescriptionNormalized()
+    {
+        if ($this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER) {
+            return $this->getGoodsDescriptionOther();
+        }
+        return $this->getGoodsDescription();
     }
 }

@@ -21,6 +21,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_CLOSED,
                     StateObject::STATE_APPROVED,
                     StateObject::STATE_REJECTED,
+                    StateObject::STATE_EXPORTING,
                     StateObject::STATE_EXPORTED,
                 ],
                 'transitions' => [
@@ -50,6 +51,10 @@ return static function (ContainerConfigurator $container) {
                     ],
                     'export' => [
                         'from' => StateObject::STATE_APPROVED,
+                        'to' => StateObject::STATE_EXPORTING,
+                    ],
+                    'confirm_export' => [
+                        'from' => StateObject::STATE_EXPORTING,
                         'to' => StateObject::STATE_EXPORTED,
                     ],
                     'reject' => [

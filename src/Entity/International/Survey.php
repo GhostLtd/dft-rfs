@@ -25,6 +25,7 @@ class Survey implements BlameLoggable, SurveyInterface
     const STATE_CLOSED = 'closed';
     const STATE_APPROVED = 'approved';
     const STATE_REJECTED = 'rejected';
+    const STATE_EXPORTING = 'exporting';
     const STATE_EXPORTED = 'exported';
 
     const STATE_CHOICES = [
@@ -34,6 +35,7 @@ class Survey implements BlameLoggable, SurveyInterface
         'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
         'admin.domestic.survey.state.approved' => self::STATE_APPROVED,
         'admin.domestic.survey.state.rejected' => self::STATE_REJECTED,
+        'admin.domestic.survey.state.exporting' => self::STATE_EXPORTING,
         'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,
     ];
 

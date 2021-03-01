@@ -1,17 +1,19 @@
 menu:
-  dashboard: 'Home'
-  logout: 'Sign out'
+  dashboard: Home
+  logout: Sign out
   domestic:
-    root: 'CSRGT'
-    surveys-gb: 'Surveys (GB)'
-    surveys-ni: 'Surveys (NI)'
-    survey-add: 'Add Survey'
-    dvla-import: 'DVLA bulk import'
+    root: CSRGT
+    surveys-gb: Surveys (GB)
+    surveys-ni: Surveys (NI)
+    survey-add: Add Survey
+    export: Export
+    dvla-import: DVLA bulk import
   international:
-    root: 'IRHS'
-    surveys: 'Surveys'
-    survey-add: 'Add Survey'
-    sample-import: 'Bulk sample import'
+    root: IRHS
+    surveys: Surveys
+    survey-add: Add Survey
+    export: Export
+    sample-import: Bulk sample import
 
 common:
   survey:

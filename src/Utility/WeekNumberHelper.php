@@ -7,6 +7,40 @@ use DateTimeInterface;
 
 class WeekNumberHelper
 {
+    const QUARTERS = [
+        1 => 1,
+        2 => 14,
+        3 => 27,
+        4 => 40,
+    ];
+
+    /**
+     * Returns the start of the quarter and the start of the next quarter
+     */
+    public static function getDateRangeForYearAndQuarter(int $year, int $quarter)
+    {
+        $startDate = self::getDate($year, self::QUARTERS[$quarter]);
+
+        if ($quarter === 4) {
+            $endDate = self::getDate($year + 1, self::QUARTERS[1]);
+        } else {
+            $endDate = self::getDate($year, self::QUARTERS[$quarter + 1]);
+        }
+
+        return [$startDate, $endDate];
+    }
+
+    public static function getQuarterAndYear(DateTimeInterface $dateTime)
+    {
+        [$week, $year] = self::getWeekNumberAndYear($dateTime);
+        foreach (self::QUARTERS as $quarter => $quarterStartWeek) {
+            if ($quarterStartWeek <= $week) {
+                return [$quarter, $year];
+            }
+        }
+        throw new \InvalidArgumentException();
+    }
+
     public static function getWeekNumberAndYear(DateTimeInterface $dateTime): array
     {
         $firstDay = self::getFirstDayOfYearForDate($dateTime);
@@ -18,7 +52,7 @@ class WeekNumberHelper
         return [$weekNumber, $year];
     }
 
-    public static function getDate(int $year, int $weekNumber): ?DateTimeInterface
+    public static function getDate(int $year, int $weekNumber): ?DateTime
     {
         $firstDayOfThisYear = self::getFirstDayOfYear($year);
         $firstDayOfNextYear = self::getFirstDayOfYear($year + 1);
