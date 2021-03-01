@@ -2,19 +2,20 @@
 <h2 class="govuk-heading-m">Invitation details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
-    {{- row('Address', address|default('-')|nl2br) -}}
+    {{- row('Address', (address ?? '-') | raw | nl2br) -}}
     {{- row('Email', survey.invitationEmail|default('-')) -}}
 
-    {% if survey.notifiedDate %}
-        {% set notificationMethods = conditionalArray({
-            email: survey.invitationEmail,
-            letter: survey.invitationAddress and survey.invitationAddress.filled,
-        }) %}
-
-        {% set notified = survey.notifiedDate|date('d/m/Y') ~ ' ' ~ (notificationMethods is empty ? '' : ('via ' ~ notificationMethods|join(', '))) %}
-    {% else %}
-        {% set notified = '-' %}
-    {% endif %}
+    {% set notified %}
+        {% if survey.notifiedDate %}
+            {%- set notificationMethods = {
+                email: survey.invitationEmail,
+                letter: survey.invitationAddress and survey.invitationAddress.filled,
+            } | filter(v => v) | keys -%}
+            {{- survey.notifiedDate|date('d/m/Y') }} {{ notificationMethods is empty ? '' : ('via ' ~ notificationMethods|join(', ')) -}}
+        {%- else -%}
+            -
+        {%- endif %}
+    {% endset %}
 
     {{- row('Notified', notified) }}
 </dl>

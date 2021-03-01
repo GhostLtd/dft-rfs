@@ -1,6 +1,7 @@
-{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell, actionLinks -%}
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus -%}
 {%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+{%- from "macros.html.twig" import displayHazardousGoods -%}
 
 {%- set isNorthernIreland = stop.day.response.survey.isNorthernIreland -%}
 
@@ -20,19 +21,17 @@
         {{- tableCell('0kg', {numeric: true}) -}}
         {{- tableCell('-') -}}
     {%- else -%}
-        {{- tableCell(stop.hazardousGoodsCode == 0 ? '-' : stop.hazardousGoodsCode) -}}
+        {{- tableCell(displayHazardousGoods(stop.hazardousGoodsCode)) -}}
         {{- tableCell(stop.cargoTypeCode) -}}
         {{- tableCell("#{stop.weightOfGoodsCarried}kg", {numeric: true}) -}}
         {{- tableCell(displayLimitedBy(stop)) -}}
     {%- endif -%}
 
     {%- if showActions ?? true -%}
-        {%- set editContents -%}
-            {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE') -%}
-            <a href="{{ url(deleteRoute, {stopId: stop.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-            {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE') -%}
-            <a href="{{ url(editRoute, {stopId: stop.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-        {%- endset -%}
-        {{- tableCell(editContents, {actions: true}) -}}
+        {%- set editLinks = actionLinks({
+            (url(constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE'), {stopId: stop.id})): {label: 'common.actions.delete', srHiddenSuffix: "Day #{stop.day.number}, stop #{stop.number}"},
+            (url(constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE'), {stopId: stop.id})): {label: 'common.actions.edit', srHiddenSuffix: "Day #{stop.day.number}, stop #{stop.number}"},
+        }) -%}
+        {{- tableCell(editLinks, {actions: true}) -}}
     {%- endif -%}
 </tr>

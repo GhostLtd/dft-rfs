@@ -10,13 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PasscodeSecurityController extends AbstractController
 {
     /**
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, Session $session): Response
+    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator): Response
     {
         $form = $this->createForm(PasscodeLoginType::class);
 
@@ -24,7 +25,7 @@ class PasscodeSecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
 
         if ($error) {
-            $form->get('passcode')->addError(new FormError($error->getMessageKey()));
+            $form->get('passcode')->addError(new FormError($translator->trans($error->getMessageKey(), [], 'security')));
         }
 
         return $this->render('security/login.html.twig', [

@@ -20,7 +20,6 @@ class SurveyAddController extends AbstractController
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AddSurveyType::class);
-        $template = "admin/international/surveys/add.html.twig";
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
@@ -42,13 +41,13 @@ class SurveyAddController extends AbstractController
                 $entityManager->persist($survey);
                 $entityManager->flush();
 
-                return $this->render($template, [
+                return $this->render("admin/international/surveys/add-success.html.twig", [
                     'survey' => $survey,
                 ]);
             }
         }
 
-        return $this->render($template, [
+        return $this->render("admin/international/surveys/add.html.twig", [
             'form' => $form->createView(),
         ]);
     }

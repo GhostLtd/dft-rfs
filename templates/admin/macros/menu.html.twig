@@ -28,16 +28,19 @@
     {% elseif menuItem.hasChildren() %}
         <li class="dropdown{% if subMenu %}-submenu{% endif %} {% if menuSelected %}active{% endif %}"{{ m.renderDataAttributes(menuItem) }}>
             <a href="{{ menuItem.url | default('javascript:null;') }}" class="govuk-link govuk-menu-link dropdown-toggle" data-target="#{{ menuItem.id }}-submenu" data-toggle="{{ menuStyle }}" role="button" aria-expanded="false">
-                {{ m.displayMenuItemCopy(menuItem) }}<span class="caret"></span></a>
+                {{ m.displayMenuItemCopy(menuItem, options) }}<span class="caret"></span></a>
             <ul class="govuk-admin-menu {{ menuStyle }}-menu collapse {% if (menuItem.id == menuSelected | first) and stickyOpen %}show{% endif %}" role="menu" id="{{ menuItem.id }}-submenu">
                 {% for subMenuItem in menuItem.children %}
-                    {{ m.displayAdminMenuItem(subMenuItem, {subMenu: true, menuStyle: menuStyle, stickyOpen: stickyOpen}) }}
+                    {{ m.displayAdminMenuItem(subMenuItem, {subMenu: true, menuStyle: menuStyle, stickyOpen: stickyOpen, srHiddenPrefix: (options.srHiddenPrefix ?? '') ~ menuItem.title}) }}
                 {% endfor %}
             </ul>
         </li>
     {% else %}
         <li{% if menuSelected %} class="active"{% endif %}{{ m.renderDataAttributes(menuItem) }}>
-            <a class="govuk-link govuk-menu-link" href="{{ menuItem.url }}">{{ m.displayMenuItemCopy(menuItem) }}</a>
+            <a class="govuk-link govuk-menu-link" href="{{ menuItem.url }}">
+                {% if menuSelected %}<span class="govuk-visually-hidden">Current page:</span>{% endif %}
+                {{ m.displayMenuItemCopy(menuItem, options) }}
+            </a>
         </li>
     {% endif %}
 {% endmacro %}
@@ -46,10 +49,12 @@
     Helper functions
    ------------------------------------------------------------------------------------------------------------------ #}
 
-{% macro displayMenuItemCopy(menuItem) -%}
-    {%- set options = menuItem.options -%}
+{% macro displayMenuItemCopy(menuItem, extraOptions) -%}
+    {%- set options = extraOptions | default({}) | merge(menuItem.options) -%}
     {%- set icon = options['icon'] | default(null) -%}
-    {%- if icon %}<i class="icon ion-md-{{ icon }}"></i>{% endif %} <span class="title">{{ menuItem.title | trans({username: app.user.username}, 'admin') }}</span>
+    {%- if icon %}<i class="icon ion-md-{{ icon }}"></i>{% endif -%}
+    {%- if options.srHiddenPrefix ?? false -%}<span class="govuk-visually-hidden">{{- options.srHiddenPrefix | trans([], 'admin') }} - </span>{%- endif -%}
+    <span class="title">{{- menuItem.title | trans({username: app.user.username}, 'admin') -}}</span>
 {%- endmacro -%}
 
 {%- macro renderDataAttributes(menuItem) -%}

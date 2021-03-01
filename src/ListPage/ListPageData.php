@@ -80,6 +80,11 @@ class ListPageData
         return $this->orderUrlGenerator;
     }
 
+    public function callOrderUrlGenerator(...$args): string
+    {
+        return ($this->orderUrlGenerator)(...$args);
+    }
+
     public function getOrder(): ?string
     {
         return $this->order;

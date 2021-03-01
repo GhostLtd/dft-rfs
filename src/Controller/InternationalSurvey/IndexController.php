@@ -42,6 +42,7 @@ class IndexController extends AbstractController
     public function index(UserInterface $user): Response {
         $survey = $this->getSurvey($user);
 
+        // ToDo: replace this with a security voter / is_granted call
         if ($survey->getState() === Survey::STATE_CLOSED) {
             return $this->redirectToRoute(self::COMPLETED_ROUTE);
         }

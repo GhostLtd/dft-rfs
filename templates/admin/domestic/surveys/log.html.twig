@@ -1,5 +1,7 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.domestic.log" %}
+
 {% block adminContent %}
     {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHead, tableCell, actionLinks %}
     <table class="govuk-table govuk-table__blamelog">

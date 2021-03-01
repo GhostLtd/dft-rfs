@@ -3,8 +3,8 @@
 {% extends 'international_survey/trip/form-base.html.twig' %}
 
 {% set preFormContent %}
-    <h3 class="govuk-heading-s">{{ "#{translation_prefix}.original-axle-config"|trans }}</h3>
-    <p class="govuk-body govuk-!-margin-bottom-8">
+    <h2 class="govuk-heading-s">{{ "#{translation_prefix}.original-axle-config"|trans }}</h2>
+    <p class="govuk-body govuk-!-margin-bottom-9">
         {%- from 'macros.html.twig' import displayAxleConfiguration -%}
         {{ displayAxleConfiguration(subject.vehicle.axleConfiguration) }}
     </p>

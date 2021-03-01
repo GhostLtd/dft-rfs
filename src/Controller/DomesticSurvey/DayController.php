@@ -78,6 +78,7 @@ class DayController extends AbstractController
         // show the form/template
         return $this->render('domestic_survey/create-day.html.twig', [
             'form' => $form->createView(),
+            'dayNumber' => $dayNumber,
         ]);
     }
 }

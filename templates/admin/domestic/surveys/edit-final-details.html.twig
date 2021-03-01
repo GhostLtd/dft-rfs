@@ -1,8 +1,8 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{%- block adminContent -%}
-    <h1 class="govuk-heading-l" id="top">Edit Final Details</h1>
+{% set translation_prefix = "admin.domestic.edit-final-details" %}
 
+{%- block adminContent -%}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half-from-desktop">
             {{ form(form) }}

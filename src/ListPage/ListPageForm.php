@@ -42,7 +42,8 @@ class ListPageForm extends AbstractType
             }
 
             $builder->add($parameterName, $type, array_merge($fieldOptions, [
-                'label' => false,
+                'label' => "{$field->getLabel()} (filter)",
+                'label_attr' => ['class' => 'govuk-visually-hidden'],
                 'attr' => [
                     'placeholder' => $field->getLabel(),
                     'class' => 'filter',
@@ -52,10 +53,12 @@ class ListPageForm extends AbstractType
 
         $builder
             ->add('submit', Gds\ButtonType::class, [
-                'label' => 'Apply',
+                'label' => 'Apply<span class="govuk-visually-hidden"> filters</span>',
+                'label_html' => true,
             ])
             ->add('clear', Gds\ButtonType::class, [
-                'label' => 'Clear',
+                'label' => 'Clear<span class="govuk-visually-hidden"> filters</span>',
+                'label_html' => true,
                 'attr' => [
                     'class' => 'govuk-button--warning',
                 ]

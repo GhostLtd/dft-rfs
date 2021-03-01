@@ -1,6 +1,7 @@
-{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell, actionLinks -%}
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus, daySummaryTableHeadingAndCaption -%}
-{%- from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy -%}
+{%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+{% from 'macros.html.twig' import displayHazardousGoods %}
 
 {%- set isNorthernIreland = survey.isNorthernIreland -%}
 
@@ -24,14 +25,11 @@
         {{- tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) -}}
 
         {%- if showActions ?? true -%}
-            {%- set buttons -%}
-                {%- set deleteRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE') -%}
-                <a href="{{ url(deleteRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-            {%- set editRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE') -%}
-                <a href="{{ url(editRoute, {summaryId: day.summary.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-            {%- endset -%}
-
-            {{- tableCell(buttons, {actions: true}) -}}
+            {%- set links = actionLinks({
+                (url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE'), {summaryId: day.summary.id})): {label: 'common.actions.delete', srHiddenSuffix: "Day #{day.number}"},
+                (url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE'), {summaryId: day.summary.id})): {label: 'common.actions.edit', srHiddenSuffix: "Day #{day.number}"},
+            }) -%}
+            {{- tableCell(links, {actions: true}) -}}
         {%- endif -%}
     </tr>
     </tbody>

@@ -95,10 +95,8 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
-            new TwigFunction('conditionalArray', [$this, 'conditionalArray']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
-            new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
-            new TwigFunction('flatten', [$this, 'flatten']),
+            new TwigFunction('flattenChoices', [$this, 'flattenChoices']),
             new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
@@ -265,21 +263,11 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
-    public function conditionalArray(array $mappings): array {
-        $array = [];
-        foreach($mappings as $field => $include) {
-            if ($include) {
-                $array[] = $field;
-            }
-        }
-        return $array;
-    }
-
-    public function flatten(array $choices): array {
+    public function flattenChoices(array $choices): array {
         $output = [];
         foreach($choices as $label => $choice) {
             if (is_array($choice)) {
-                $output = array_merge($output, $this->flatten($choice));
+                $output = array_merge($output, $this->flattenChoices($choice));
             } else {
                 $output[$label] = $choice;
             }

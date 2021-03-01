@@ -1,5 +1,10 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.survey" %}
+{% set headingParams = {
+    referenceNumber: survey.referenceNumber
+} %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
@@ -28,8 +33,6 @@
     {%- set tabs = tabs | merge({
         'Invitation details': 'tab-invitation-details',
     }) -%}
-
-    <h1 class="govuk-heading-l" id="top">IRHS Survey {{ survey.referenceNumber }}</h1>
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -129,25 +132,27 @@
 
                 {%- if canEdit -%}
                 <div class="govuk-!-margin-bottom-5">
-                    <a class="govuk-button" href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
-                    <a class="govuk-button" href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip</a>
-                    <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle</a>
+                    <a class="govuk-button" href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit vehicle<span class="govuk-visually-hidden">:{{ vehicle.registrationMark|formatRegMark }}</span></a>
+                    <a class="govuk-button" href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip<span class="govuk-visually-hidden">: for vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
+                    <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle<span class="govuk-visually-hidden">:{{ vehicle.registrationMark|formatRegMark }}</span></a>
                 </div>
                 {%- endif -%}
 
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}
-                    <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">Trip
-                        #{{ loop.index }}</h3>
+                    {% set srTripIdentifier = trip.outboundDate | date('d/m/Y') %}
+                    <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">
+                        Trip #{{ loop.index }}&mdash;{{ trip.outboundDate | date('d/m/Y') }}
+                    </h3>
                     {%- with {showActions: false, trip: trip, marginBottom: canEdit ? 5 : 9} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}
                     {%- endwith -%}
 
                     {%- if canEdit -%}
                     <div class="govuk-!-margin-bottom-5">
-                        <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit<span class="govuk-visually-hidden"> trip #{{ loop.index }}</span></a>
-                        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_trip_delete', {tripId: trip.id}) }}">Delete Trip</a>
+                        <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit trip<span class="govuk-visually-hidden">: {{ srTripIdentifier }}</span></a>
+                        <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_trip_delete', {tripId: trip.id}) }}">Delete trip<span class="govuk-visually-hidden">: {{ srTripIdentifier }}</span></a>
                     </div>
                     {%- endif -%}
 
@@ -166,10 +171,10 @@
 
                         {%- if canEdit -%}
                         <div class="govuk-!-margin-bottom-9 govuk-body">
-                            <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action</a>
-                            <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action</a>
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
+                            <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
                             {%- if isReOrderable -%}
-                            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions</a>
+                            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
                             {%- endif -%}
                         </div>
                         {%- endif -%}

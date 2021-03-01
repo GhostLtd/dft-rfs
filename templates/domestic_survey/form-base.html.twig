@@ -1,10 +1,5 @@
 {% extends 'domestic_survey/base.html.twig' %}
 
-{% block pageTitle -%}
-    {%- include 'includes/form-page-title.html.twig' -%}
-    {{- parent() -}}
-{%- endblock %}
-
 {% block oneThirdColumnContent -%}
     {% include 'domestic_survey/includes/survey-summary.html.twig' %}
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">

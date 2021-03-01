@@ -31,7 +31,8 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
         $builder
             ->setDataMapper($this)
             ->add('isHazardousGoods', Gds\ChoiceType::class, [
-                'label' => false,
+                'label' => "{$translationKeyPrefix}.is-hazardous-goods.label",
+                'help' => "{$translationKeyPrefix}.is-hazardous-goods.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => [
                     "common.choices.boolean.yes" => true,

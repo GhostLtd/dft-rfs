@@ -1,6 +1,5 @@
-{% extends 'domestic_survey/base.html.twig' %}
-
-{% block pageTitle %}Introduction - {{ parent() }}{% endblock %}
+{% set translation_prefix = 'domestic.survey-response.introduction' %}
+{% extends 'domestic_survey/form-base.html.twig' %}
 
 {% block content %}
     <h1 class="page-heading__heading govuk-heading-xl">Welcome to your {{ 'service.domestic.name' | trans }}</h1>
