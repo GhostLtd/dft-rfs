@@ -7,11 +7,13 @@ use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
+use App\Serializer\Normalizer\Mapper\BooleanPropertyList;
 use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Literal;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Mapper\BooleanProperty;
+use App\Serializer\Normalizer\Mapper\PropertyList;
 use Symfony\Component\Intl\Countries;
 
 class TripNormalizer extends AbstractExportNormalizer
@@ -41,16 +43,16 @@ class TripNormalizer extends AbstractExportNormalizer
             'MainlyOperatedNotEntered' => new BooleanLiteral(false),
             // DateInput                        - ??
             // DateCompleted                    - ??
-            'FlatDropSided' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_FLAT_DROP),
-            'BoxNonSpecialised' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_BOX),
-            'TemperatureControlled' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
-            'CurtainSided' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
-            'LiquidTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIQUID),
-            'SolidBulkTanker' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_SOLID_BULK),
-            'LiveStockCarrier' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_LIVESTOCK),
-            'CarTansporter' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_CAR), // N.B. Typo as per target
-            'Tipper' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_TIPPER),
-            'Other' => new BooleanProperty('vehicle.body_type', BaseVehicle::BODY_TYPE_OTHER),
+            'FlatDropSided' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_FLAT_DROP),
+            'BoxNonSpecialised' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_BOX),
+            'TemperatureControlled' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
+            'CurtainSided' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
+            'LiquidTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIQUID),
+            'SolidBulkTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_SOLID_BULK),
+            'LiveStockCarrier' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIVESTOCK),
+            'CarTansporter' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CAR), // N.B. Typo as per target
+            'Tipper' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TIPPER),
+            'Other' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_OTHER),
             'TrailerTypeNotEntered' => new BooleanLiteral(false),
             // QuestionaireType                 - ?? // N.B. Typo as per target
             // LastAddressLineDesc              - ??
@@ -95,7 +97,13 @@ class TripNormalizer extends AbstractExportNormalizer
             // RecordLastUpdatedBy              - ??
             // AdjustedGrossVehicleWeight       - ??
             // AdjustedCarryingCapacity         - ??
-            'BusinessNature' => new Property('vehicle.survey_response.business_nature'),
+            'BusinessType' => new Property('vehicle.survey_response.business_nature'),
+            // Comments                         - ??
+            'Outward90PercentLtd' => new BooleanProperty('outbound_was_limited_by_space'),
+            'OutwardLtdByWeight' => new BooleanProperty('outbound_was_limited_by_weight'),
+            'Return90PercentLtd' => new BooleanProperty('return_was_limited_by_space'),
+            'ReturnLtdByWeight' => new BooleanProperty('return_was_limited_by_weight'),
+            'AxleConfig' => new PropertyList(['axle_configuration', 'vehicle.axle_configuration']),
         ];
     }
 }
