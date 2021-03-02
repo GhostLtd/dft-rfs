@@ -241,6 +241,12 @@ admin:
       invitation-address: Invitation address
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
+    export:
+      heading: CSRGT export
+    export-confirm:
+      heading: CSRGT export - {year} Q{quarter}
+    export-success:
+      heading: CSRGT export - {year} Q{quarter} - Success
   international:
     add-loading-action:
       heading: Add loading action

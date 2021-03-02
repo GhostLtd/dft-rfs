@@ -1,8 +1,9 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.domestic.export" %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
-    <h1 class="govuk-heading-l" id="top">Survey exports</h1>
 
     {%- set headers = ['Year', 'Quarter', 'State', ''] -%}
 

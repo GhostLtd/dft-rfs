@@ -1,8 +1,12 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{%- block adminContent -%}
-    <h1 class="govuk-heading-l" id="top">Success</h1>
+{% set translation_prefix = "admin.domestic.export-success" %}
+{% set headingParams = {
+    year: year,
+    quarter: quarter
+} %}
 
+{%- block adminContent -%}
     <p class="govuk-body">Export successfully generated for {{ year }} Q{{ quarter }}</p>
 
     <a href="{{ url('admin_domestic_export_download', {year: year, quarter: quarter}) }}" class="govuk-button govuk-!-margin-bottom-0">Download</a>

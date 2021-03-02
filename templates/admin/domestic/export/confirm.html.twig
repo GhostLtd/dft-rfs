@@ -1,8 +1,13 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.domestic.export-confirm" %}
+{% set headingParams = {
+    year: year,
+    quarter: quarter
+} %}
+
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Export {{ year }} Q{{ quarter }}?</h1>
 
     {{ warningText("Are you sure you want to export this quarter?") }}
 

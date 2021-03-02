@@ -46,9 +46,9 @@ class DataExporter
 
     public function getDataForExport(int $year, int $quarter) {
         $surveys = $this->surveyRepository->findForExport($year, $quarter);
-        return $this->getVehiclesSql($surveys, "A_Vehicles_{$year}Q{$quarter}")
-            . $this->getDetailedDaysSql($surveys, "A_FourJourneys_{$year}Q{$quarter}")
-            . $this->getSummaryDaysSql($surveys, "A_FiveJourneys_{$year}Q{$quarter}")
+        return $this->getVehiclesSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")
+            . $this->getDetailedDaysSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")
+            . $this->getSummaryDaysSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys")
             ;
     }
 

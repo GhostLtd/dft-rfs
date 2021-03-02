@@ -12,6 +12,7 @@ use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanEquivalencyProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanLiteral;
 use App\Serializer\Normalizer\Domestic\Mapper\EpochWeekNumberProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
@@ -36,10 +37,10 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'OnOwnAccount' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
             'ForHireReward' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
             'MainlyOperatedNotEntered' => $false,
-            'KMsLoadedYN' => $false,
-            'MilesLoadedYN' => $true,
-            'KMsEmptyYN' => $false,
-            'MilesEmptyYN' => $true,
+            'KMsLoadedYN' => $true,
+            'MilesLoadedYN' => $false,
+            'KMsEmptyYN' => $true,
+            'MilesEmptyYN' => $false,
             'DateInput' => new Property('responseStartDate'), // team logged in to system (form returned)
             'DateCompleted' => new Property('submissionDate'), // team did data input (MS access)
             'FlatDropSided' => new BooleanProperty('response.vehicle.bodyType', BaseVehicle::BODY_TYPE_FLAT_DROP),
@@ -60,7 +61,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
 //            'QuestionaireType' => '', // 1 post? 0 email? (not needed)
 //            'LastAddressLineDesc' => '', // literal '' ?
             'SurveyType' => new SurveyTypeProperty('isNorthernIreland'),
-//            'TripDataLoaded' => '', // don't know, not needed
+            'TripDataLoaded' => $false, // don't know, needed, but all false
             'SurveyStartDate' => new Property('surveyPeriodStart'),
 //            'RecordLastUpdatedBy' => '', // approved by (email)
             'LitresOfFuelPurchased' => new Property('response.vehicle.fuelQuantity.value'),
@@ -83,7 +84,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyAddressLine5' => new Property('survey.invitationAddress.line6'),
             'SurveyPostcode' => new Property('survey.invitationAddress.postcode'),
 //            'SurveyEmail' => '', // invitation email - not needed for our export
-            'ContactTelNo' => new Property('response.contactTelephone'),
+            'ContactTelNo' => new IntegerProperty('response.contactTelephone'),
 // DVLA import data --->
 //            'FuelTypePropulsionCode' => '',
 //            'WheelPlanCode' => '',
@@ -104,14 +105,14 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'WithTrips' => new BooleanProperty('response.hasJourneys'),
             'Sold' => new BooleanProperty('response.isInPossessionOfVehicle', SurveyResponse::IN_POSSESSION_SOLD),
             'ScrappedStolen' => new BooleanProperty('response.isInPossessionOfVehicle', SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN),
-            'HireCompany' => new Property('response.hireeeName'),
+            'HireCompany' => new Property('response.hireeeName', ''),
             'ScrappedStolenDate' => new Property('response.unableToCompleteDate'),
-//            'Discard' => '',
-//            'NotUsed' => '',
-//            'DisableReminders' => '',
-//            'TickBoxForSortingRecords' => '',
+            'Discard' => $false,
+            'NotUsed' => new BooleanProperty('response.hasJourneys', false),
+            'DisableReminders' => $false,
+            'TickBoxForSortingRecords' => $false,
             'ContactName' => new Property('response.contactName'),
-//            'SendEMail' => '',
+            'SendEMail' => $false,
 //            'ReturnCodeID' => '',
 //            'ArticOrRigidID' => '',
 //            'AxleConfigurationID' => '',

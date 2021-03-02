@@ -7,8 +7,11 @@ use App\Utility\Domestic\DataExporter;
 use App\Utility\Domestic\ExportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -64,9 +67,17 @@ class ExportController extends AbstractController
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $exporter->getDataForExport($year, $quarter);
                 dump($sql);
-//                $this->storageHelper->upload($sql, $year, $quarter);
+                $response = new Response($sql);
+                $response->headers->set(
+                    'content-disposition', $response->headers->makeDisposition(
+                        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                        "csrgt-export-{$year}-Q{$quarter}.sql"
+                    )
+                );
+                return $response;
+                $this->storageHelper->upload($sql, $year, $quarter);
 
-//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
             }
         }
 
