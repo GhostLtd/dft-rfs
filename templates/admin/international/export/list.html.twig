@@ -1,9 +1,9 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.export" %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
-    <h1 class="govuk-heading-l" id="top">IRHS Survey exports</h1>
-
     {%- set headers = ['Week', 'Start Date', 'State', ''] -%}
 
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">

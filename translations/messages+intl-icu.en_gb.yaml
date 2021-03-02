@@ -248,6 +248,14 @@ admin:
     export-success:
       heading: CSRGT export - {year} Q{quarter} - Success
   international:
+    export:
+      heading: IRHS export
+    export-confirm:
+      heading: IRHS export - week {week}
+      warning: Are you sure you want to export this week?
+    export-success:
+      heading: IRHS export - week {week} - Success
+      message: Export successfully generated for week {week}
     add-loading-action:
       heading: Add loading action
     add-unloading-action:

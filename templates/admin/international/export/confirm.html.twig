@@ -1,10 +1,12 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.export-confirm" %}
+{% set headingParams = {week: week} %}
+
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Export week {{ week }}?</h1>
 
-    {{ warningText("Are you sure you want to export this week?") }}
+    {{ warningText((translation_prefix ~ '.warning')|trans) }}
 
     {{ form(form) }}
 {%- endblock -%}
