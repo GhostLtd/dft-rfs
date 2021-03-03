@@ -6,6 +6,6 @@
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.contact-details.heading'}
     } %}
     {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', survey.response.contactName, contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone, contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail, contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone|default('-'), contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail|default('-'), contactDetailsActionLinks) }}
 </dl>
