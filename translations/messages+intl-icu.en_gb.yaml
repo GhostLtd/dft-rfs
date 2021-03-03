@@ -433,6 +433,13 @@ domestic:
         label: "What is the new owner's postal address?"
         help: ''
 
+    sold-details-display:
+      heading: Sale details
+      date: Sale date
+      name: New owner name
+      email: New owner email
+      address: New owner address
+
     hiree-details:
       heading: "Hiree details"
       help: "Provide details of the person or company who will be in possession of the vehicle during the survey week"
