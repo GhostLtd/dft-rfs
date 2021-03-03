@@ -4,6 +4,7 @@ namespace App\Entity\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoTypeTrait;
+use App\Entity\HazardousGoods;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -193,7 +194,7 @@ trait StopTrait
 
         if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
             $this
-                ->setHazardousGoodsCode(null)
+                ->setHazardousGoodsCode(HazardousGoods::CODE_0_NOT_HAZARDOUS)
                 ->setCargoTypeCode(null);
         }
 
