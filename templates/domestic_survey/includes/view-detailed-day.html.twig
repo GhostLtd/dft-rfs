@@ -2,13 +2,13 @@
 
 <h2 class="govuk-heading-l">{{ 'domestic.day-view.headings.five-stops-or-fewer' | trans }}</h2>
 {% for stop in day.stops %}
-    <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: loop.index}) }}</h2>
+    <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
             {% include "/domestic_survey/includes/day-stop.html.twig" %}
         {%- endwith -%}
-        {{ buttonLink(path('app_domesticsurvey_daystop_delete', {dayNumber: day.number, stopNumber: stop.number}), 'common.actions.delete-stop'|trans, {class: 'govuk-button--warning'}) }}
+        {{ buttonLink(path('app_domesticsurvey_daystop_delete', {dayNumber: day.number, stopNumber: stop.number}), 'common.actions.delete-stop'|trans({stopNumber: stop.number}), {class: 'govuk-button--warning'}) }}
     </div>
 {% else %}
     <p class="govuk-body">
