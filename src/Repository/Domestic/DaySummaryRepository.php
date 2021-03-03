@@ -50,8 +50,12 @@ class DaySummaryRepository extends ServiceEntityRepository
             ->select('day_summary, day, response')
             ->leftJoin('day_summary.day', 'day')
             ->leftJoin('day.response', 'response')
-            ->where('response.survey in (:surveys)')
+            ->leftJoin('response.survey', 'survey')
+            ->where('survey in (:surveys)')
             ->setParameter('surveys', $surveys)
+            ->orderBy('survey.surveyPeriodStart', 'ASC')
+            ->addOrderBy('survey.id', 'ASC')
+            ->addOrderBy('day.number', 'ASC')
             ->getQuery()
             ->execute();
     }

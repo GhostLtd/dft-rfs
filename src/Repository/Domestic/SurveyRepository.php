@@ -63,7 +63,7 @@ class SurveyRepository extends ServiceEntityRepository
     /**
      * @return Survey[]
      */
-    public function findForExport($year, $quarter, $isNorthernIreland = false)
+    public function findForExport($year, $quarter)
     {
         $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
@@ -75,12 +75,11 @@ class SurveyRepository extends ServiceEntityRepository
             ->leftJoin('response.days', 'days')
             ->leftJoin('days.stops', 'stops')
             ->leftJoin('days.summary', 'summary')
-            ->where('survey.isNorthernIreland = :isNI')
-            ->andWhere('survey.surveyPeriodStart >= :quarterStart')
+            ->where('survey.surveyPeriodStart >= :quarterStart')
             ->andWhere('survey.surveyPeriodStart < :quarterEnd')
             ->andWhere('survey.state = :state')
+            ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->setParameters([
-                'isNI' => $isNorthernIreland,
                 'quarterStart' => $dateRange[0],
                 'quarterEnd' => $dateRange[1],
                 'state' => Survey::STATE_APPROVED,

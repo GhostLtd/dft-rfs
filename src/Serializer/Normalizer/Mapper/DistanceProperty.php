@@ -24,7 +24,7 @@ class DistanceProperty implements Mapper
         try {
             /* @var Distance $distance */
             $distance = $accessor->getValue($sourceData, "{$this->propertyPath}");
-            return $distance->getValueNormalized($this->inUnits);
+            return $distance->getValueNormalized($this->inUnits) ?? 0;
         } catch (\Throwable $e) {
             return $this->defaultValue;
         }

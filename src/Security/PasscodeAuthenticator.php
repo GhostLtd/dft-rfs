@@ -51,7 +51,8 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
     public function supports(Request $request)
     {
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST');
+            && $request->isMethod('POST')
+            && $request->request->has('passcode_login');
     }
 
     public function getCredentials(Request $request)

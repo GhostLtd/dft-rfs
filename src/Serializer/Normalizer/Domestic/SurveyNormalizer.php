@@ -54,10 +54,10 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'Tipper' => new BooleanProperty('response.vehicle.bodyType', BaseVehicle::BODY_TYPE_TIPPER),
             'Other' => new BooleanProperty('response.vehicle.bodyType', BaseVehicle::BODY_TYPE_OTHER),
             'TrailerTypeNotEntered' => new BooleanEquivalencyProperty('response.vehicle.bodyType', false, true),
-            'KMsLoadedYN5Plus' => $false,
-            'MilesLoadedYN5Plus' => $true,
-            'KMsEmptyYN5Plus' => $false,
-            'MilesEmptyYN5Plus' => $true,
+            'KMsLoadedYN5Plus' => $true,
+            'MilesLoadedYN5Plus' => $false,
+            'KMsEmptyYN5Plus' => $true,
+            'MilesEmptyYN5Plus' => $false,
 //            'QuestionaireType' => '', // 1 post? 0 email? (not needed)
 //            'LastAddressLineDesc' => '', // literal '' ?
             'SurveyType' => new SurveyTypeProperty('isNorthernIreland'),
