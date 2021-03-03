@@ -24,13 +24,17 @@
 
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_DISTANCE_TRAVELLED')}) -%}
-    {% set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
+    {%- set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.distance-travelled'}
-    } %}
-    {{ row(showActions, 'domestic.day-view.distance-travelled',
-        ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format})),
+    } -%}
+    {%- set distanceValue = stop.distanceTravelled.isBlank ?
+        '-' :
+        ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format}))
+    -%}
+    {{- row(showActions, 'domestic.day-view.distance-travelled',
+        distanceValue,
         distanceChangeLink
-    ) }}
+    ) -}}
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_DESCRIPTION')}) -%}
     {% set goodsChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
