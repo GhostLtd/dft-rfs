@@ -43,4 +43,9 @@
             </dd>
         {%- endif %}
     </div>
+    {{ row(showActions,
+        'common.vehicle.body-type',
+        (constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_TRANSLATION_PREFIX') ~ survey.response.vehicle.bodyType) | trans,
+        vehicleConfigActionLinks
+    ) }}
 </dl>
