@@ -55,6 +55,17 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
     ];
 
+    const EMPTY_SURVEY_REASON_EXPORT_IDS = [
+        self::REASON_NOT_TAXED => 7,
+        self::REASON_NO_WORK => 4,
+        self::REASON_REPAIR => 1,
+        self::REASON_SITE_WORK_ONLY => 5,
+        self::REASON_HOLIDAY => 2,
+        self::REASON_MAINTENANCE => 6,
+        self::REASON_NO_DRIVER => 3,
+        self::REASON_OTHER => 7,
+    ];
+
     use SurveyResponseTrait;
 
     /**
@@ -352,6 +363,11 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     {
         $this->reasonForEmptySurvey = $reasonForEmptySurvey;
         return $this;
+    }
+
+    public function getReasonForEmptySurveyExportId()
+    {
+        return self::EMPTY_SURVEY_REASON_EXPORT_IDS[$this->reasonForEmptySurvey] ?? null;
     }
 
     public function hasJourneys()

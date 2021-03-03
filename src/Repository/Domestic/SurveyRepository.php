@@ -3,6 +3,7 @@
 namespace App\Repository\Domestic;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
 use App\Entity\Volume;
 use App\Utility\WeekNumberHelper;
@@ -78,11 +79,14 @@ class SurveyRepository extends ServiceEntityRepository
             ->where('survey.surveyPeriodStart >= :quarterStart')
             ->andWhere('survey.surveyPeriodStart < :quarterEnd')
             ->andWhere('survey.state = :state')
+            ->andWhere('response.isInPossessionOfVehicle IN (:inPossessionCodes)')
             ->orderBy('survey.surveyPeriodStart', 'ASC')
+            ->addOrderBy('survey.id', 'ASC')
             ->setParameters([
                 'quarterStart' => $dateRange[0],
                 'quarterEnd' => $dateRange[1],
                 'state' => Survey::STATE_APPROVED,
+                'inPossessionCodes' => [SurveyResponse::IN_POSSESSION_YES, SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN]
             ])
             ->getQuery()
             ->execute();

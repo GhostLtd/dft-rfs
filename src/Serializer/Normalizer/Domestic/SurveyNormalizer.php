@@ -6,6 +6,7 @@ namespace App\Serializer\Normalizer\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Vehicle;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Entity\Volume;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
@@ -13,6 +14,7 @@ use App\Serializer\Normalizer\Domestic\Mapper\BooleanEquivalencyProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanLiteral;
 use App\Serializer\Normalizer\Domestic\Mapper\EpochWeekNumberProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\ReturnCodeIdProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
@@ -96,7 +98,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
 //            'GrossTrainWeight' => '',
 //            'BodyTypeDescription' => '',
 // <--- DVLA import data
-//            'NotUsedReasonID' => '', // ??
+            'NotUsedReasonID' => new Property('survey.response.reasonForEmptySurveyExportId'),
 //            'LastUpdatedDate' => '', // date approved
             'RegisteredKeeper' => new Property('survey.invitationAddress.line1'),
 //            'DateHireCompanyRequestSent' => '', // ??
@@ -113,9 +115,9 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'TickBoxForSortingRecords' => $false,
             'ContactName' => new Property('response.contactName'),
             'SendEMail' => $false,
-//            'ReturnCodeID' => '',
-//            'ArticOrRigidID' => '',
-//            'AxleConfigurationID' => '',
+            'ReturnCodeID' => new ReturnCodeIdProperty(),
+            'ArticOrRigidID' => new BooleanProperty('response.vehicle.trailerConfiguration', Vehicle::TRAILER_CONFIGURATION_ARTICULATED),
+            'AxleConfigurationID' => new Property('response.vehicle.axleConfiguration'),
 
         ];
     }
