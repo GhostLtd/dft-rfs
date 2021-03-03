@@ -28,11 +28,6 @@
     {% set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.distance-travelled', srHiddenSuffixParams: suffixParams}
     } %}
-    {{ row(showActions, 'domestic.day-view.distance-travelled',
-        ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format})),
-    {%- set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.distance-travelled'}
-    } -%}
     {%- set distanceValue = stop.distanceTravelled.isBlank ?
         '-' :
         ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format}))
