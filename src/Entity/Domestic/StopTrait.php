@@ -194,7 +194,7 @@ trait StopTrait
 
         if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
             $this
-                ->setHazardousGoodsCode(HazardousGoods::CODE_0_NOT_HAZARDOUS)
+                ->setHazardousGoodsCode(null)
                 ->setCargoTypeCode(null);
         }
 
