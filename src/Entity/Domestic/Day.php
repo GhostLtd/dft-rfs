@@ -146,16 +146,26 @@ class Day implements BlameLoggable
         return $this;
     }
 
-    public function removeStop(DayStop $stop): self
+    public function removeStop(DayStop $stop, $clearOwningSide = true): self
     {
         if ($this->stops->removeElement($stop)) {
             // set the owning side to null (unless already changed)
-            if ($stop->getDay() === $this) {
+            if ($stop->getDay() === $this && $clearOwningSide) {
                 $stop->setDay(null);
             }
+
+            $this->renumberStops();
         }
 
         return $this;
+    }
+
+    protected function renumberStops(): void
+    {
+        $count = 1;
+        foreach($this->stops as $stop) {
+            $stop->setNumber($count++);
+        }
     }
 
     public function getSummary(): ?DaySummary

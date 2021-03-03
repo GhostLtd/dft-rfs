@@ -4,8 +4,9 @@
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- set params = {dayNumber: day.number, stopNumber: stop.number} -%}
+    {%- set suffixParams = {stopNumber: stop.number} -%}
     {% set locationsChangeLink = {(url('app_domesticsurvey_daystop_start', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.locations'}
+        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.locations', srHiddenSuffixParams: suffixParams}
     } %}
     {{ row(showActions, 'domestic.day-view.start-location',
         (stop.originLocation | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
@@ -24,6 +25,11 @@
 
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_DISTANCE_TRAVELLED')}) -%}
+    {% set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
+        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.distance-travelled', srHiddenSuffixParams: suffixParams}
+    } %}
+    {{ row(showActions, 'domestic.day-view.distance-travelled',
+        ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format})),
     {%- set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.distance-travelled'}
     } -%}
@@ -38,7 +44,7 @@
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_DESCRIPTION')}) -%}
     {% set goodsChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.goods-description'}
+        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.goods-description', srHiddenSuffixParams: suffixParams}
     } %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
@@ -63,7 +69,7 @@
 
         {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')}) -%}
         {% set weightChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-            {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.change-link-sr-suffix.goods-weight'}
+            {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.goods-weight', srHiddenSuffixParams: suffixParams}
         } %}
         {{ row(showActions, 'domestic.day-view.weight-of-goods.label',
             ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy,

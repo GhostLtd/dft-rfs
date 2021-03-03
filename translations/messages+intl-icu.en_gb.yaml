@@ -26,7 +26,7 @@ common:
     continue: Continue
     delete: Delete
     delete-summary: Delete Day
-    delete-stop: Delete Stop
+    delete-stop: Delete Stage {stopNumber}
     edit: Edit
     move-up: Move up
     move-down: Move down
@@ -512,7 +512,13 @@ domestic:
     headings:
       more-than-five-stops: Summary day (more than 5 stops)
       five-stops-or-fewer: Detailed day (5 stops or fewer)
-    change-link-sr-suffix:
+    detailed-change-link-sr-suffix:
+      locations: 'stage {stopNumber} - locations'
+      distance-travelled: 'stage {stopNumber} - distance travelled'
+      goods-description: 'stage {stopNumber} - goods description and cargo type'
+      goods-weight: 'stage {stopNumber} - goods weight'
+      number-of-stops: 'stage {stopNumber} - number of stops'
+    summary-change-link-sr-suffix:
       locations: locations
       distance-travelled: distance travelled
       goods-description: goods description and cargo type

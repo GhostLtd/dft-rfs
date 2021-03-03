@@ -43,6 +43,9 @@ class Distance implements ValueUnitInterface
 
     public function getValueNormalized($unit)
     {
+        if ($this->value === null) {
+            return null;
+        }
         if ($this->unit === $unit) {
             return $this->value;
         }

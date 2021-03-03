@@ -8,7 +8,6 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class IntegerProperty implements Mapper
 {
     protected string $propertyPath;
-    protected $trueIfEquals;
     private bool $defaultValue;
 
     public function __construct(string $propertyPath, $defaultValue = false)

@@ -17,6 +17,8 @@ class DeleteHelper extends AbstractDeleteHelper
         if ($day->getStops()->count() === 1) {
             // i.e. only this stop...
             $this->entityManager->remove($day);
+        } else {
+            $day->removeStop($stop, false);
         }
 
         $flush && $this->entityManager->flush();
