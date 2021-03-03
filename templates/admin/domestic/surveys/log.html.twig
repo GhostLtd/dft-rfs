@@ -5,13 +5,12 @@
 {% block adminContent %}
     {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHead, tableCell, actionLinks %}
     <table class="govuk-table govuk-table__blamelog">
-        {{ tableHead('caption', ['class', 'description', 'action', 'user', 'date', 'properties', 'associated']) }}
+        {{ tableHead(false, ['class', 'description', 'action', 'user', 'date', 'properties', 'associated']) }}
         <tbody class="govuk-table__body">
             {% for item in log %}
                 <tr class="govuk-table__row">
                     {{ tableCell(item.class | replace({'App\\Entity\\Domestic\\': ''})) }}
                     {{ tableCell(item.description) }}
-                    {{ tableCell(item.associatedentity) }}
                     {{ tableCell(item.type) }}
                     {{ tableCell(item.userId) }}
                     {{ tableCell(item.date | date('Y-m-d H:i')) }}
