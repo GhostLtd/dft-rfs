@@ -16,6 +16,9 @@ security:
                 property: username
         passwd_file:
             id: App\Security\FileUserProvider
+        null_provider:
+            memory:
+                users: ~
 
     firewalls:
         dev:
@@ -27,8 +30,7 @@ security:
             anonymous: lazy
             provider: passcode
             guard:
-                authenticators:
-                    - App\Security\PasscodeAuthenticator
+                authenticator: App\Security\PasscodeAuthenticator
             logout:
                 path: app_logout
                 target: app_login
@@ -36,12 +38,7 @@ security:
         admin:
             host: '^%admin_hostname%$'
             anonymous: lazy
-            provider: passwd_file
-            guard:
-                authenticators:
-                    - App\Security\GoogleIapAuthenticator
-                    - App\Security\AdminFormAuthenticator
-            entry_point: App\Security\AdminFormAuthenticator
+            provider: null_provider
             logout:
                 path: admin_logout
                 target: admin_login

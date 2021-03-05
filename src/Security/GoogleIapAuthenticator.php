@@ -4,6 +4,7 @@ namespace App\Security;
 
 use Google\Auth\AccessToken;
 use Google\Cloud\Core\Compute\Metadata;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -15,6 +16,12 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class GoogleIapAuthenticator extends AbstractGuardAuthenticator
 {
     const EXTRA_FIELD_USER_ID = 'IAPid';
+    private $appEnvironment;
+
+    public function __construct($appEnvironment)
+    {
+        $this->appEnvironment = $appEnvironment;
+    }
 
     public function supports(Request $request)
     {
