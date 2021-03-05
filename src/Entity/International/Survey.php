@@ -63,18 +63,6 @@ class Survey implements BlameLoggable, SurveyInterface
      */
     private $passcodeUser;
 
-    /**
-     * @Assert\Callback(groups={"add_survey"})
-     */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
-        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
-            $context
-                ->buildViolation('international.add.invitation-email-or-address')
-                ->atPath('invitationEmail')
-                ->addViolation();
-        }
-    }
-
     public function getReferenceNumber(): ?string
     {
         return $this->referenceNumber;

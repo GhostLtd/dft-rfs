@@ -45,6 +45,7 @@ class Survey implements BlameLoggable, SurveyInterface
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey"})
      */
     private $isNorthernIreland;
 
@@ -63,18 +64,6 @@ class Survey implements BlameLoggable, SurveyInterface
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
      */
     private $passcodeUser;
-
-    /**
-     * @Assert\Callback(groups={"add_survey"})
-     */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
-        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
-            $context
-                ->buildViolation('domestic.add.invitation-email-or-address')
-                ->atPath('invitationEmail')
-                ->addViolation();
-        }
-    }
 
     public function isInitialDetailsComplete()
     {

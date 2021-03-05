@@ -51,6 +51,10 @@ trait SurveyResponseTrait
                 ->buildViolation('domestic.initial-details.contact-email-or-telephone-required')
                 ->atPath('contactTelephone')
                 ->addViolation();
+            $context
+                ->buildViolation('domestic.initial-details.contact-email-or-telephone-required')
+                ->atPath('contactEmail')
+                ->addViolation();
         }
     }
 

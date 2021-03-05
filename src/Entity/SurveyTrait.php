@@ -7,6 +7,7 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\LongAddress;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait SurveyTrait {
     /**
@@ -63,6 +64,23 @@ trait SurveyTrait {
      * @var LongAddress|null
      */
     private $invitationAddress;
+
+    /**
+     * @Assert\Callback(groups={"add_survey.not-enabled"})
+     */
+    public function validInvitationDetails(ExecutionContextInterface $context) {
+        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
+            $context
+                ->buildViolation('international.add.invitation-email-or-address')
+                ->atPath('invitationEmail')
+                ->addViolation();
+            // need to add the context to both, because email address is disabled (and therefore won't trip the form->isValid check)
+            $context
+                ->buildViolation('international.add.invitation-email-or-address')
+                ->atPath('invitationAddress')
+                ->addViolation();
+        }
+    }
 
     public function getId(): ?string
     {
