@@ -1,18 +1,15 @@
 {% set translation_prefix = 'international.action.summary' %}
+{% set headingOverride = action.loading ? 'heading-loading' : 'heading-unloading' %}
+{% set headingParams = {number: action.number} %}
 {% set containerClasses = '' %}
+
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
     {% from 'macros.html.twig' import displayHazardousGoods %}
 
-    <h1 class="page-heading__heading govuk-heading-xl">
-        {%- if action.loading -%}
-            {{ 'international.action.summary.heading-loading'|trans({number: action.number}) }}
-        {%- else -%}
-            {{ 'international.action.summary.heading-unloading'|trans({number: action.number}) }}
-        {%- endif -%}
-    </h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ (translation_prefix ~ '.' ~ headingOverride)|trans(headingParams) }}</h1>
 
     {%- set params = {actionId: action.id} -%}
 

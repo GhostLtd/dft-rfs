@@ -31,7 +31,7 @@ abstract class AbstractConfirmType extends AbstractType
         $resolver->setDefaults([
             'mapped' => false,
             'field_options' => [
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ],
         ]);
         $resolver->setRequired([

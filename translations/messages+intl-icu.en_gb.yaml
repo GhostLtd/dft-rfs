@@ -1156,8 +1156,9 @@ international:
         label: Weight of goods unloaded
         help: Enter the weight in kg
     add-another:
+      heading: Further loading or unloading of goods
       confirm:
-        label: Did you load or unload any other goods?
+        label: Did you make any more stops on this trip to load or unload goods?
         help: You must tell us about every time you either loaded or unloaded goods
 
   stop:
