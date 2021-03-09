@@ -46,7 +46,7 @@ class SurveysNormalizer
                 $firstAction = $actions->first();
                 $lastAction = $actions->last();
 
-                if (strtoupper($trip->getOrigin()) !== strtoupper($firstAction->getName())) {
+                if ($this->normalizeName($trip->getOrigin()) !== $this->normalizeName($firstAction->getName())) {
                     $this->normalized[] = $this->getOutboundEmptyData($firstAction, $rowNumber);
                     $numberOffset = 2;
                     $rowNumber++;
@@ -67,7 +67,7 @@ class SurveysNormalizer
                     $rowNumber++;
                 }
 
-                if (strtoupper($trip->getDestination()) !== strtoupper($lastAction->getName())) {
+                if ($this->normalizeName($trip->getDestination()) !== $this->normalizeName($lastAction->getName())) {
                     $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset, $rowNumber);
                 }
             }
@@ -82,8 +82,8 @@ class SurveysNormalizer
         $hazardousGoodsCode = $loadingAction->getHazardousGoodsCode();
 
         return [
-            'IRHConsignmentDetailsID' => $action->getId(),
-            'IRHVehicleDetailsID' => $trip->getId(),
+            'IHRConsignmentDetailsID' => $action->getId(),
+            'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => $loadingAction->getCargoTypeCode(),
             'TypeOfGoods' => $loadingAction->getGoodsDescriptionNormalized(),
             'DangerousGoods' => $hazardousGoodsCode === '0' ? null : $hazardousGoodsCode,
@@ -123,8 +123,8 @@ class SurveysNormalizer
         $trip = $firstAction->getTrip();
 
         return [
-            'IRHConsignmentDetailsID' => $this->getGuid(),
-            'IRHVehicleDetailsID' => $trip->getId(),
+            'IHRConsignmentDetailsID' => $this->getGuid(),
+            'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
@@ -144,8 +144,8 @@ class SurveysNormalizer
         $trip = $lastAction->getTrip();
 
         return [
-            'IRHConsignmentDetailsID' => $this->getGuid(),
-            'IRHVehicleDetailsID' => $trip->getId(),
+            'IHRConsignmentDetailsID' => $this->getGuid(),
+            'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
@@ -165,5 +165,10 @@ class SurveysNormalizer
         $connection = $this->entityManager->getConnection();
         $expression = $connection->getDriver()->getDatabasePlatform()->getGuidExpression();
         return $connection->executeQuery("SELECT {$expression} as guid")->fetchOne();
+    }
+
+    protected function normalizeName(string $name)
+    {
+        return str_replace(' ', '', strtoupper($name));
     }
 }

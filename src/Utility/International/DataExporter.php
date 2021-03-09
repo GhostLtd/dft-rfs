@@ -57,7 +57,7 @@ class DataExporter
     protected function getTripsSQL(string $tablePrefix, DateTime $weekStart, DateTime $weekEnd): string
     {
         $trips = $this->tripRepository->getTripsForExport($weekStart, $weekEnd);
-        return $this->serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-vehicle"]);
+        return $this->serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]);
     }
 
     protected function getActionsSQL(string $tablePrefix, DateTime $weekStart, DateTime $weekEnd): string
@@ -65,6 +65,6 @@ class DataExporter
         $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
         $normalized = $this->surveysNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
 
-        return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "{$tablePrefix}-consignment"]);
+        return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]);
     }
 }

@@ -17,6 +17,16 @@ class BooleanPropertyList extends PropertyList
     public function getData($sourceData)
     {
         $value = parent::getData($sourceData);
-        return ($value === $this->trueIfEquals) ? BooleanLiteral::TRUE : BooleanLiteral::FALSE;
+
+        if (is_array($this->trueIfEquals)) {
+            foreach($this->trueIfEquals as $trueIfEquals) {
+                if ($value === $trueIfEquals) {
+                    return BooleanLiteral::TRUE;
+                }
+            }
+            return BooleanLiteral::FALSE;
+        } else {
+            return ($value === $this->trueIfEquals) ? BooleanLiteral::TRUE : BooleanLiteral::FALSE;
+        }
     }
 }

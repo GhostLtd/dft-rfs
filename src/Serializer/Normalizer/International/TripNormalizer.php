@@ -29,7 +29,7 @@ class TripNormalizer extends AbstractExportNormalizer
     protected function getMapping(): array
     {
         return [
-            'IRHVehicleDetailsID' => new Property('id'),
+            'IHRVehicleDetailsID' => new Property('id'),
             'RegMark' => new Property('vehicle.registration_mark'),
             'RefNumber' => new Property('vehicle.survey_response.survey.reference_number'),
             // FirstDate                        - ??
@@ -47,8 +47,10 @@ class TripNormalizer extends AbstractExportNormalizer
             'BoxNonSpecialised' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_BOX),
             'TemperatureControlled' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
             'CurtainSided' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
-            'LiquidTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIQUID),
-            'SolidBulkTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_SOLID_BULK),
+            'Tanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], [
+                BaseVehicle::BODY_TYPE_LIQUID,
+                BaseVehicle::BODY_TYPE_SOLID_BULK
+            ]),
             'LiveStockCarrier' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIVESTOCK),
             'CarTansporter' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CAR), // N.B. Typo as per target
             'Tipper' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TIPPER),

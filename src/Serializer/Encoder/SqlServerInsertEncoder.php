@@ -84,6 +84,7 @@ class SqlServerInsertEncoder implements EncoderInterface
             "\n" => '\\n',
             "\r" => '\\r',
             "\t" => '\\t',
+            "'" => "''",
         ];
         $data = str_replace(array_keys($simpleReplacements), array_values($simpleReplacements), $data);
 

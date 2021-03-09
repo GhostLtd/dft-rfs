@@ -63,7 +63,10 @@ class ExportController extends AbstractController
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $dataExporter->getDataForExport($week);
-                dump($sql);
+
+                header('content-type: text/plain');
+                echo $sql;
+                exit;
 //                $sql = "SELECT @@version;";
 //
 //                $this->exportHelper->upload($sql, $week);
