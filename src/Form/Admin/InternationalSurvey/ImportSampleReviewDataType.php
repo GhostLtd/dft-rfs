@@ -27,6 +27,10 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
         $diff = $data->getSurveyPeriodEnd()->diff($data->getSurveyPeriodStart());
         $diff = $diff->days + 1;
         $address1 = ucwords(strtolower($data->getCompany()->getBusinessName()));
-        return "<b>{$startDate} ({$diff}d)</b> {$address1}, {$data->getInvitationAddress()->getPostcode()}";
+
+        $safeLabel = htmlspecialchars(
+            "{$address1}, {$data->getInvitationAddress()->getPostcode()}",
+            ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}";
     }
 }
