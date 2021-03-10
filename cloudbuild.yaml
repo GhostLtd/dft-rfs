@@ -34,6 +34,7 @@ steps:
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
           - 'APP_SECRET=${_APP_SECRET}'
           - 'APP_FEATURES=${_APP_FEATURES}'
+          - 'GOOGLE_BUCKET_EXPORT=${_GOOGLE_BUCKET_EXPORT}'
       waitFor: ['copy-project-deploy-files']
 
     # deploy default service
