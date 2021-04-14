@@ -100,6 +100,7 @@ class ScreenshotsCommand extends Command
 
         $protocol = $input->getOption('protocol');
         $process = new Process([$input->getArgument('path'), $mode, "{$protocol}:/{$this->frontendHostname}/", "--username={$this->userId}", "--password={$this->userPassword}"]);
+        $process->setTimeout(3600);
 
         try {
             $process->mustRun();
