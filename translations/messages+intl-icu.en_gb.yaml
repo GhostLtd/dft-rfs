@@ -247,6 +247,8 @@ admin:
       heading: CSRGT export - {year} Q{quarter}
     export-success:
       heading: CSRGT export - {year} Q{quarter} - Success
+    re-order-day-stops:
+      heading: Re-order stages
   international:
     export:
       heading: IRHS export
@@ -683,6 +685,14 @@ domestic:
 
   ## detailed day stop
   day-stop:
+    re-order:
+      save: Save order
+      heading: Re-order stages
+      button: Re-order stages
+      start: Start
+      destination: Destination
+      journey: "{origin} to {destination}"
+
     sidebar-summary:
       adding: "Adding a stage on day {dayNumber} ({date})"
       editing: "Editing stage {stageNumber} on day {dayNumber} ({date})"

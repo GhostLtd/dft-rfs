@@ -18,5 +18,8 @@
             {{- 'common.actions.add-day-stop'|trans -}}
             <span class="govuk-visually-hidden">(Day {{ day.number }})</span>
         </a>
+        {%- if day.stops | length > 1 -%}
+            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_domestic_daystop_reorder', {surveyId: survey.id, dayNumber: day.number}) }}">Re-order stages<span class="govuk-visually-hidden">: for day {{ day.number }}</span></a>
+        {%- endif -%}
     </div>
 {%- endif -%}

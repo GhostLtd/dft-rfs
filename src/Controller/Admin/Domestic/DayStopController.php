@@ -32,6 +32,7 @@ class DayStopController extends AbstractController
     public const ADD_DAY_AND_STOP_ROUTE = self::ROUTE_PREFIX . 'add_day_and_stop';
     public const DELETE_ROUTE = self::ROUTE_PREFIX . 'delete';
     public const EDIT_ROUTE = self::ROUTE_PREFIX . 'edit';
+    public const REORDER_ROUTE = self::ROUTE_PREFIX . 'reorder';
 
     protected DayRepository $dayRepository;
     protected EntityManagerInterface $entityManager;

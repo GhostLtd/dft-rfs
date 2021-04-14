@@ -1,0 +1,15 @@
+{% set translation_prefix = 'domestic.day-stop.re-order' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-stop.re-order.heading'|trans }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {%- include "domestic_survey/includes/form-day-stop-reorder.html.twig" -%}
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% include "domestic_survey/includes/survey-summary.html.twig" %}
+        </div>
+    </div>
+{% endblock %}
