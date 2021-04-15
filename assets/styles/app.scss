@@ -20,3 +20,9 @@ body {
 .nowrap {
     white-space: nowrap;
 }
+
+#international_vehicle_weights_reminder {
+    dt, dd {
+        width: 50%;
+    }
+}
