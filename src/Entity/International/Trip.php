@@ -746,4 +746,13 @@ class Trip implements BlameLoggable
         if (!$this->getVehicle()) return false;
         return $this->getVehicle()->getTrailerConfiguration() === VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED;
     }
+
+    /**
+     * This logic should exactly mirror that in
+     * javascript GOVUK.rfsIrhsTrip.canChangeWeights()
+     */
+    public function canChangeWeights()
+    {
+        return ($this->isSwappedTrailer || $this->isChangedBodyType);
+    }
 }

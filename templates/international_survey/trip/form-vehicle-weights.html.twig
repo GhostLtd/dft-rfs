@@ -1,0 +1,10 @@
+{% set translation_prefix = 'international.trip.vehicle-weights' %}
+{% extends 'international_survey/trip/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <h3 class="govuk-heading-s">{{ "#{translation_prefix}.original-vehicle-weight"|trans }}</h3>
+    <p class="govuk-body govuk-!-margin-bottom-8">
+        {{ subject.vehicle.grossWeight }}<br>
+        {{ subject.vehicle.carryingCapacity }}
+    </p>
+{% endset %}

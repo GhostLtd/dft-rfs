@@ -13,5 +13,7 @@ import './common';
 
 import '../styles/admin.scss';
 import './admin/blame-log';
+import './admin/irhs-trip';
 
 GOVUK.rfsBlameLog.initAll();
+GOVUK.rfsIrhsTrip.init();
