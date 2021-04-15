@@ -2,9 +2,14 @@
 {% extends 'international_survey/trip/form-base.html.twig' %}
 
 {% set preFormContent %}
-    <h3 class="govuk-heading-s">{{ "#{translation_prefix}.original-vehicle-weight"|trans }}</h3>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-        {{ subject.vehicle.grossWeight }}<br>
-        {{ subject.vehicle.carryingCapacity }}
-    </p>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-8" id="international_vehicle_weights_reminder">
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key">{{ "#{translation_prefix}.gross-weight"|trans }}</dt>
+            <dd class="govuk-summary-list__value">{{ subject.vehicle.grossWeight|number_format }}kg</dd>
+        </div>
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key">{{ "#{translation_prefix}.carrying-capacity"|trans }}</dt>
+            <dd class="govuk-summary-list__value">{{ subject.vehicle.carryingCapacity|number_format }}kg</dd>
+        </div>
+    </dl>
 {% endset %}

@@ -1262,8 +1262,10 @@ international:
       carrying-capacity: 'Carrying capacity'
       change-link-sr-suffix:
         swapped-trailer: 'trailer/body configurations'
-
-
+    vehicle-weights:
+      original-vehicle-weight: Original vehicle weight/capacity
+      gross-weight: Original gross vehicle weight
+      carrying-capacity: Original vehicle carrying capacity
 
     places:
       heading: Where did trip start/end?
