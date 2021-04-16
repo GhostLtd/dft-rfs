@@ -232,6 +232,28 @@ class Trip implements BlameLoggable
         }
     }
 
+    /**
+     * @Assert\Callback(groups={"admin_trip"})
+     * @param ExecutionContextInterface $context
+     */
+    public function validateWeightsAdminOnly(ExecutionContextInterface $context) {
+        if (!$this->canChangeWeights()) {
+            return;
+        }
+
+        if (empty($this->carryingCapacity)) {
+            $context->buildViolation('international.trip.dates.outside-period')
+                ->atPath('carrying_capacity')
+                ->addViolation();
+        }
+
+        if (empty($this->grossWeight)) {
+            $context->buildViolation('international.trip.dates.outside-period')
+                ->atPath('gross_weight')
+                ->addViolation();
+        }
+    }
+
     protected function validateCargoState(ExecutionContextInterface $context, string $direction) {
         $accessor = PropertyAccess::createPropertyAccessor();
 
