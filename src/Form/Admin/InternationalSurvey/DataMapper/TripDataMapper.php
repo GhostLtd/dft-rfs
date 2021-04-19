@@ -79,6 +79,8 @@ class TripDataMapper implements DataMapperInterface
         if ($forms['body_type'] ?? false) {
             $forms['body_type']->setData($viewData->getIsChangedBodyType() ? $viewData->getBodyType() : false);
         }
+        $forms['gross_weight']->setData($viewData->getGrossWeight());
+        $forms['carrying_capacity']->setData($viewData->getCarryingCapacity());
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -132,5 +134,7 @@ class TripDataMapper implements DataMapperInterface
             $viewData->setIsChangedBodyType($forms['body_type']->getData() !== false);
             $viewData->setBodyType($forms['body_type']->getData() ?? null);
         }
+        $viewData->setGrossWeight($forms['gross_weight']->getData() ?? null);
+        $viewData->setCarryingCapacity($forms['carrying_capacity']->getData() ?? null);
     }
 }

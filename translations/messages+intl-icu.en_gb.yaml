@@ -1268,10 +1268,14 @@ international:
         actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
       swapped-trailer: 'Trailer axle configuration changed?'
       changed-body-type: 'Body type changed?'
+      gross-weight: 'Gross weight'
+      carrying-capacity: 'Carrying capacity'
       change-link-sr-suffix:
         swapped-trailer: 'trailer/body configurations'
-
-
+    vehicle-weights:
+      original-vehicle-weight: Original vehicle weight/capacity
+      gross-weight: Original gross vehicle weight
+      carrying-capacity: Original vehicle carrying capacity
 
     places:
       heading: Where did trip start/end?
