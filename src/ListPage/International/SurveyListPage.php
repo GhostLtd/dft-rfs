@@ -49,12 +49,6 @@ class SurveyListPage extends AbstractListPage
             ->leftJoin('vehicle.trips', 'trip');
     }
 
-    protected function setDefaultOrder()
-    {
-        $this->order = 'surveyPeriodStart';
-        $this->orderDirection = 'DESC';
-    }
-
     protected function getDefaultOrder(): array
     {
         return [

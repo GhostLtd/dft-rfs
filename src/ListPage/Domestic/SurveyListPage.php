@@ -13,7 +13,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SurveyListPage extends AbstractListPage
 {
-    protected string $type;
+    protected bool $isNorthernIreland;
+
     /**
      * @var SurveyRepository
      */
@@ -25,8 +26,12 @@ class SurveyListPage extends AbstractListPage
         $this->repository = $repository;
     }
 
-    public function setType(string $type): self {
-        $this->type = $type;
+    /**
+     * @param bool $isNorthernIreland
+     */
+    public function setIsNorthernIreland(bool $isNorthernIreland): self
+    {
+        $this->isNorthernIreland = $isNorthernIreland;
         return $this;
     }
 
@@ -55,12 +60,8 @@ class SurveyListPage extends AbstractListPage
             ->leftJoin('response.days', 'day')
             ->leftJoin('day.stops', 'stop')
             ->leftJoin('day.summary', 'summary')
-            ->andWhere('survey.isNorthernIreland = :isNorthernIreland');
-    }
-
-    protected function getExtraQueryParameters(): array
-    {
-        return ['isNorthernIreland' => $this->type === 'ni'];
+            ->andWhere('survey.isNorthernIreland = :isNorthernIreland')
+            ->setParameter('isNorthernIreland', $this->isNorthernIreland);
     }
 
     protected function getDefaultOrder(): array

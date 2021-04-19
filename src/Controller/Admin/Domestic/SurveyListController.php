@@ -17,7 +17,7 @@ class SurveyListController extends AbstractController
     public function list(SurveyListPage $listPage, Request $request, string $type): Response
     {
         $listPage
-            ->setType($type)
+            ->setIsNorthernIreland($type === 'ni')
             ->handleRequest($request);
 
         if ($listPage->isClearClicked()) {

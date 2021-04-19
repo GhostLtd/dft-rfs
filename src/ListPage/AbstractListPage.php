@@ -40,11 +40,6 @@ abstract class AbstractListPage
     abstract protected function getFieldsDefinition(): array;
     abstract protected function getQueryBuilder(): QueryBuilder;
 
-    protected function getExtraQueryParameters(): array
-    {
-        return [];
-    }
-
     public function getClearUrl(): string
     {
         return $this->getPageUrl(1, true, true);
@@ -156,7 +151,12 @@ abstract class AbstractListPage
             }
         }
 
-        return $qb->setParameters(array_merge($this->getExtraQueryParameters(), $parameters));
+        // This needs to be foreach, and not setParameters, as the querybuilder might already have parameters
+        // that might get overwritten by using setParameters
+        foreach ($parameters as $parameterName => $parameterValue) {
+            $qb->setParameter($parameterName, $parameterValue);
+        }
+        return $qb;
     }
 
     protected function getFieldByParameterName(string $parameterName): ?Field
