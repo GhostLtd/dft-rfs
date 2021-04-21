@@ -15,7 +15,6 @@ use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractListPage
 {
-    protected EntityManagerInterface $entityManager;
     protected FormFactoryInterface $formFactory;
     protected RouterInterface $router;
 
@@ -29,9 +28,8 @@ abstract class AbstractListPage
     protected ?string $order;
     protected ?string $orderDirection;
 
-    public function __construct(EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(FormFactoryInterface $formFactory, RouterInterface $router)
     {
-        $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
         $this->router = $router;
     }
@@ -40,14 +38,7 @@ abstract class AbstractListPage
      * @return Field[]
      */
     abstract protected function getFieldsDefinition(): array;
-
-    abstract protected function getEntityClass(): string;
-
-
-    protected function getExtraQueryParameters(): array
-    {
-        return [];
-    }
+    abstract protected function getQueryBuilder(): QueryBuilder;
 
     public function getClearUrl(): string
     {
@@ -126,17 +117,9 @@ abstract class AbstractListPage
         return [];
     }
 
-    protected function addToQueryBuilder(QueryBuilder $queryBuilder): QueryBuilder
+    protected function getQueryBuilderWithFiltersAndOrdering(): QueryBuilder
     {
-        return $queryBuilder;
-    }
-
-    protected function getQueryBuilder(): QueryBuilder
-    {
-        /** @var EntityRepository $repo */
-        $repo = $this->entityManager->getRepository($this->getEntityClass());
-
-        $qb = $this->addToQueryBuilder($repo->createQueryBuilder('x'));
+        $qb = $this->getQueryBuilder();
         $parameters = [];
 
         foreach($this->getFields() as $field) {
@@ -168,7 +151,12 @@ abstract class AbstractListPage
             }
         }
 
-        return $qb->setParameters(array_merge($this->getExtraQueryParameters(), $parameters));
+        // This needs to be foreach, and not setParameters, as the querybuilder might already have parameters
+        // that might get overwritten by using setParameters
+        foreach ($parameters as $parameterName => $parameterValue) {
+            $qb->setParameter($parameterName, $parameterValue);
+        }
+        return $qb;
     }
 
     protected function getFieldByParameterName(string $parameterName): ?Field
@@ -195,7 +183,7 @@ abstract class AbstractListPage
         $itemsPerPage = $this->getItemsPerPage();
         $page = $this->page;
 
-        $queryBuilder = $this->getQueryBuilder()
+        $queryBuilder = $this->getQueryBuilderWithFiltersAndOrdering()
             ->setFirstResult(($page - 1) * $itemsPerPage)
             ->setMaxResults($itemsPerPage);
 
@@ -225,7 +213,7 @@ abstract class AbstractListPage
             $page,
             $numPages,
             $numRecords,
-            $paginator->getQuery()->execute(),
+            $paginator->getIterator(),
             $nextUrl,
             $previousUrl,
             $paginationUrls,
