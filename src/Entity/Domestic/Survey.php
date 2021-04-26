@@ -12,7 +12,6 @@ use App\Utility\RegistrationMarkHelper;
 use App\Utility\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -38,6 +37,7 @@ class Survey implements BlameLoggable, SurveyInterface
         'admin.domestic.survey.state.invited' => self::STATE_INVITED_USER,
         'admin.domestic.survey.state.in-progress' => self::STATE_IN_PROGRESS,
         'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
+        'admin.domestic.survey.state.approved' => self::STATE_APPROVED,
         'admin.domestic.survey.state.rejected' => self::STATE_REJECTED,
         'admin.domestic.survey.state.exporting' => self::STATE_EXPORTING,
         'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,

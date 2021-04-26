@@ -18,4 +18,9 @@
 <p class="govuk-body">
     {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
     {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}
+
+    {%- if day.stops | length > 1 %}
+        {%- set reorderRoute = constant('App\\Controller\\DomesticSurvey\\DayStopController::REORDER_ROUTE') -%}
+        <a href="{{ url(reorderRoute, {dayNumber: day.number}) }}" class="govuk-button govuk-button--secondary">{{ 'domestic.day-stop.re-order.button'|trans }}</a>
+    {% endif %}
 </p>

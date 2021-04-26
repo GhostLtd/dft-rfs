@@ -35,8 +35,12 @@ class SampleImporterTest extends WebTestCase
 
     public function validSurveyFixtureProvider()
     {
+        $startDate = new \DateTime();
+        $startDate->modify('+7 days');
+        $endDate = new \DateTime();
+        $endDate->modify('+13 days');
         return [
-            ['"3770","1537","2021-03-07","2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
+            ['"3770","1537","' . $startDate->format('Y-m-d') . '","' . $endDate->format('Y-m-d') . '","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
         ];
     }
 
@@ -106,9 +110,20 @@ class SampleImporterTest extends WebTestCase
 
     public function invalidSurveyFixtureProvider()
     {
+        $validStartDate = new \DateTime();
+        $validStartDate->modify('+7 days');
+        $validEndDate = new \DateTime();
+        $validEndDate->modify('+13 days');
+
+        $invalidStartDate = new \DateTime();
+        $invalidStartDate->modify('-14 days');
+        $invalidEndDate = new \DateTime();
+        $invalidEndDate->modify('-8 days');
+
         return [
-            ['"3770","1537","2021-03-07","2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","postcode"'],
-            ['"3770","1537","2021-03-07","2021-03-13","Test Company (Diss) LTD.","","","","","","NR31 0NN"'],
+            ['"3770","1537","' . $validStartDate->format('Y-m-d') .'","' . $validEndDate->format('Y-m-d') . '","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","postcode"'],
+            ['"3770","1537","' . $validStartDate->format('Y-m-d') .'","' . $validEndDate->format('Y-m-d') . '","Test Company (Diss) LTD.","","","","","","NR31 0NN"'],
+            ['"3770","1537","' . $invalidStartDate->format('Y-m-d') . '","' . $invalidEndDate->format('Y-m-d') . '","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
         ];
     }
 

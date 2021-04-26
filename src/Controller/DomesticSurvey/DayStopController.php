@@ -30,6 +30,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const START_ROUTE = self::ROUTE_PREFIX.'start';
+    public const REORDER_ROUTE = self::ROUTE_PREFIX.'reorder';
     public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
 
     protected string $dayNumber;

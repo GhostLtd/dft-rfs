@@ -113,6 +113,21 @@ class TripType extends AbstractType
                     ]);
             }
 
+            // Vehicle weights are in this event listener so that we maintain a sensible order
+            $event->getForm()->get('otherDetails')
+                ->add('gross_weight', Gds\NumberType::class, [
+                    'label' => "Gross vehicle weight (kg)",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'attr' => ['class' => 'govuk-input--width-10'],
+                    'suffix' => 'kg',
+                ])
+                ->add('carrying_capacity', Gds\NumberType::class, [
+                    'label' => "Carrying capacity (kg)",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'attr' => ['class' => 'govuk-input--width-10'],
+                    'suffix' => 'kg',
+                ])
+                ;
         });
 
 
