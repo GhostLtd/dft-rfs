@@ -9,7 +9,6 @@ use App\Entity\SurveyTrait;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -62,6 +61,12 @@ class Survey implements BlameLoggable, SurveyInterface
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"})
      */
     private $passcodeUser;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $notes;
 
     public function getReferenceNumber(): ?string
     {
@@ -141,5 +146,20 @@ class Survey implements BlameLoggable, SurveyInterface
     public function getAssociatedEntityId()
     {
         return null;
+    }
+
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    public function addNote(SurveyNote $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $note->setSurvey($this);
+            $this->notes[] = $note;
+        }
+
+        return $this;
     }
 }

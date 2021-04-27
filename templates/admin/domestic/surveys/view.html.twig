@@ -35,6 +35,7 @@
         {%- endif -%}
     {%- endif -%}
     {%- set tabs = tabs | merge({
+        'Notes': 'tab-notes',
         'Invitation details': 'tab-invitation-details',
     }) -%}
 
@@ -118,6 +119,12 @@
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
                 {%- with {marginBottom: 5} -%}
                     {%- include 'admin/includes/invitation-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
         </div>

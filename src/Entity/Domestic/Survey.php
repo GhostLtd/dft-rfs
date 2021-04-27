@@ -65,6 +65,12 @@ class Survey implements BlameLoggable, SurveyInterface
      */
     private $passcodeUser;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $notes;
+
     public function isInitialDetailsComplete()
     {
         return (
@@ -162,5 +168,20 @@ class Survey implements BlameLoggable, SurveyInterface
     public function getWeekNumberAndYear(): array
     {
         return WeekNumberHelper::getWeekNumberAndYear($this->getSurveyPeriodStart());
+    }
+
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    public function addNote(SurveyNote $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $note->setSurvey($this);
+            $this->notes[] = $note;
+        }
+
+        return $this;
     }
 }
