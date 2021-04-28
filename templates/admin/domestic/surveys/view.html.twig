@@ -35,7 +35,7 @@
         {%- endif -%}
     {%- endif -%}
     {%- set tabs = tabs | merge({
-        'Notes': 'tab-notes',
+        ("Notes (#{ survey.notes | length })"): 'tab-notes',
         'Invitation details': 'tab-invitation-details',
     }) -%}
 

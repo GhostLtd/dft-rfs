@@ -35,6 +35,7 @@ class SurveyController extends AbstractController
     public const LIST_ROUTE = self::ROUTE_PREFIX.'list';
     public const LOGS_ROUTE = self::ROUTE_PREFIX.'logs';
     public const VIEW_ROUTE = self::ROUTE_PREFIX.'view';
+    public const ADD_NOTE_ROUTE = self::ROUTE_PREFIX.'addnote';
 
     public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
     public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';

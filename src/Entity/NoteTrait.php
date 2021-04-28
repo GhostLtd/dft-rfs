@@ -61,7 +61,7 @@ trait NoteTrait
      * @param \DateTime|null $createdAt
      * @return NoteTrait
      */
-    public function setCreatedAt(?\DateTime $createdAt): NoteTrait
+    public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;

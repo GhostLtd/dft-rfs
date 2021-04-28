@@ -13,3 +13,10 @@
         No notes
     {%- endfor -%}
 </dl>
+{% if addNoteForm is defined %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters-from-desktop govuk-grid-column-one-half-from-wide">
+        {{ form(addNoteForm) }}
+    </div>
+</div>
+{% endif %}

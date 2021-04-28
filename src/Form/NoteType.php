@@ -20,6 +20,10 @@ class NoteType extends AbstractType
                 'label' => false,
                 'constraints' => [new NotBlank()],
             ])
+            ->add('submit', Gds\ButtonType::class, [
+                'type' => 'submit',
+                'label' => 'Add note',
+            ])
         ;
     }
 }
