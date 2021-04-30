@@ -12,7 +12,6 @@ use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\TemplateReference;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class RemindersHelper
@@ -43,13 +42,6 @@ class RemindersHelper
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
         if ($addressIsFilled) {
-            $this->messageBus->dispatch(new Letter(
-                get_class($survey),
-                $survey->getId(),
-                $address,
-                $templateReference,
-                PersonalisationHelper::getForEntity($survey),
-            ));
             switch ($reminder) {
                 case 1:
                     $survey->setFirstReminderSentDate(new \DateTime());
@@ -60,6 +52,13 @@ class RemindersHelper
                 default:
                     throw new \LogicException("unhandled reminder number: {$reminder}");
             }
+            $this->messageBus->dispatch(new Letter(
+                get_class($survey),
+                $survey->getId(),
+                $address,
+                $templateReference,
+                PersonalisationHelper::getForEntity($survey),
+            ));
         }
     }
 
@@ -80,11 +79,10 @@ class RemindersHelper
     protected function getSurveysForReminder1(string $surveyClass)
     {
         $qb = $this->getSurveyQueryBuilder($surveyClass);
-        $qb->where($qb->expr()->andX(
-            $this->getFirstReminderExpression($qb), // past survey period end and reminder not yet sent
-            $this->getSurveyStateExpression($qb) // survey not submitted
-        ));
-        return $qb->getQuery()->execute();
+        return $qb
+            ->andWhere($this->getFirstReminderExpression($qb))
+            ->getQuery()
+            ->execute();
     }
 
     protected function getSurveysForReminder2(string $surveyClass)
@@ -101,7 +99,7 @@ class RemindersHelper
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->from($surveyClass, 'survey')
             ->select('survey');
-        return $queryBuilder->where($this->getSurveyStateExpression($queryBuilder));
+        return $queryBuilder->andWhere($this->getSurveyStateExpression($queryBuilder));
     }
 
     protected function getSurveyStateExpression(QueryBuilder $queryBuilder)
@@ -112,19 +110,19 @@ class RemindersHelper
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->sub(new \DateInterval('P7D')));
+        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->sub(new \DateInterval('P6D23H')));
         return $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->isNull('survey.firstReminderSentDate'),
-            $queryBuilder->expr()->lt('survey.surveyPeriodEnd', ':surveyEndDate')
+            'survey.firstReminderSentDate IS NULL',
+            'survey.surveyPeriodEnd <= :surveyEndDate'
         );
     }
 
     protected function getSecondReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->sub(new \DateInterval('P7D')));
+        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->sub(new \DateInterval('P6D23H')));
         return $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->isNull('survey.secondReminderSentDate'),
-            $queryBuilder->expr()->lt('survey.firstReminderSentDate', ':firstReminderDate')
+            'survey.secondReminderSentDate IS NULL',
+            'survey.firstReminderSentDate <= :firstReminderDate'
         );
     }
 }
