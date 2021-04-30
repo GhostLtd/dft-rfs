@@ -36,6 +36,14 @@ common:
     save-and-continue: Save and continue
     submit-survey: Submit survey
     view: View
+  address:
+    line1: Building and street
+    line1-hidden: line 1 of 2
+    line2:
+    line2-hidden: Building and street line 2 of 2
+    line3: Town or city
+    line4: County
+    line5: Postcode
   choices:
     boolean:
       yes: Yes
