@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use DateTimeInterface;
+use DateTime;
 
 interface SurveyInterface
 {
@@ -27,14 +27,21 @@ interface SurveyInterface
     ];
 
     public function getId(): ?string;
-    public function getNotifiedDate(): ?DateTimeInterface;
-    public function getSurveyPeriodStart(): ?DateTimeInterface;
+    public function getNotifiedDate(): ?DateTime;
+    public function setNotifiedDate(?DateTime $notifiedDate): self;
+    public function getSurveyPeriodStart(): ?DateTime;
     public function getSurveyPeriodStartModifiedBy($modifier);
-    public function getSurveyPeriodEnd(): ?DateTimeInterface;
+    public function getSurveyPeriodEnd(): ?DateTime;
     public function getSurveyPeriodInDays(): ?int;
-    public function getResponseStartDate(): ?DateTimeInterface;
-    public function getSubmissionDate(): ?DateTimeInterface;
+    public function getResponseStartDate(): ?DateTime;
+    public function getSubmissionDate(): ?DateTime;
+    public function setSubmissionDate(?DateTime $submissionDate): self;
     public function getState(): string;
     public function getInvitationEmail(): ?string;
     public function getInvitationAddress(): ?LongAddress;
+
+    public function getFirstReminderSentDate(): ?\DateTime;
+    public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self;
+    public function getSecondReminderSentDate(): ?\DateTime;
+    public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self;
 }
