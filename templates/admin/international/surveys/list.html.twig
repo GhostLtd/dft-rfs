@@ -5,6 +5,7 @@
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
@@ -14,8 +15,9 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{- _self.countField(survey, 'numberOfVehicles') -}}
-            {{- _self.countField(survey, 'totalNumberOfTrips') -}}
+            {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
+            {{- countField(survey, 'numberOfVehicles') -}}
+            {{- countField(survey, 'totalNumberOfTrips') -}}
             {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey ref #{survey.referenceNumber}"}}), {}) }}
         </tr>
     {% else %}
@@ -24,9 +26,3 @@
     {{ listTableEnd(data, form) }}
 {% endblock %}
 
-{%- macro countField(survey, fieldName) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
-    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
-    {%- set value = (field == null or field == 0) ? '-' : field -%}
-    {{- tableCell(value) -}}
-{%- endmacro -%}

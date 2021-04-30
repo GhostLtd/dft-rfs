@@ -45,6 +45,7 @@ class SurveyListPage extends AbstractListPage
             (new Field('Reg mark', 'survey.registrationMark'))->sortable()->textFilterable(),
             (new Field('Status', 'survey.state'))->sortable()->selectFilterable($stateChoices),
             (new Field('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
+            (new Field('Reminders', null)),
             (new Field("Summ.\nDays", null)),
             (new Field("Stop\nDays", null)),
         ];
