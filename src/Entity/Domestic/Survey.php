@@ -6,6 +6,7 @@ use App\Entity\BlameLoggable;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
 use App\Utility\RegistrationMarkHelper;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
-class Survey implements BlameLoggable, SurveyInterface
+class Survey implements BlameLoggable, SurveyInterface, ApiResponseInterface
 {
     use SurveyTrait;
 

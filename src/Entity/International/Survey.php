@@ -6,6 +6,7 @@ use App\Entity\BlameLoggable;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey implements BlameLoggable, SurveyInterface
+class Survey implements BlameLoggable, SurveyInterface, ApiResponseInterface
 {
     use SurveyTrait;
 

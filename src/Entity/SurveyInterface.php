@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use DateTime;
 
 interface SurveyInterface

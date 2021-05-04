@@ -33,6 +33,11 @@ trait SurveyTrait {
     private ?\DateTime $secondReminderSentDate;
 
     /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $notifyApiResponses;
+
+    /**
      * @ORM\Column(type="date", nullable=true)
      * add_survey group is used by both international and domestic
      * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
@@ -227,5 +232,17 @@ trait SurveyTrait {
     public function getSecondReminderSentDate(): ?\DateTime
     {
         return $this->secondReminderSentDate;
+    }
+
+    public function getNotifyApiResponses(): ?array
+    {
+        return $this->notifyApiResponses;
+    }
+
+    public function setNotifyApiResponse(string $key, array $notifyApiResponse): self
+    {
+        if (!is_array($this->notifyApiResponses)) $this->notifyApiResponses = [];
+        $this->notifyApiResponses[$key] = $notifyApiResponse;
+        return $this;
     }
 }
