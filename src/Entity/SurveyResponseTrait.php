@@ -48,11 +48,11 @@ trait SurveyResponseTrait
     public function validInvitationDetails(ExecutionContextInterface $context) {
         if (!$this->contactTelephone && !$this->contactEmail) {
             $context
-                ->buildViolation('domestic.initial-details.contact-email-or-telephone-required')
+                ->buildViolation('domestic.survey-response.initial-details.contact-email-or-telephone-required')
                 ->atPath('contactTelephone')
                 ->addViolation();
             $context
-                ->buildViolation('domestic.initial-details.contact-email-or-telephone-required')
+                ->buildViolation('domestic.survey-response.initial-details.contact-email-or-telephone-required')
                 ->atPath('contactEmail')
                 ->addViolation();
         }
@@ -61,7 +61,7 @@ trait SurveyResponseTrait
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"business_details", "admin_business_details"})
+     * @Assert\NotNull(message="domestic.survey-response.number-of-employees.choice", groups={"business_details", "admin_business_details"})
      * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details", "admin_business_details"})
      */
     private $numberOfEmployees;

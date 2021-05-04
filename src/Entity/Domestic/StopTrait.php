@@ -4,7 +4,6 @@ namespace App\Entity\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoTypeTrait;
-use App\Entity\HazardousGoods;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,39 +19,42 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"origin", "admin-day-stop"})
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin", "admin-day-stop"})
+     * @Assert\NotBlank(message="domestic.day.origin.not-blank", groups={"origin-day", "admin-day-stop"})
+     * @Assert\NotBlank(message="domestic.day-stop.origin.not-blank", groups={"origin-day-stop"})
+     *
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin-day", "origin-day-stop", "admin-day-stop"})
      */
     private $originLocation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"destination", "admin-day-stop"})
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination", "admin-day-stop"})
+     * @Assert\NotBlank(message="domestic.day.destination.not-blank", groups={"destination-day", "admin-day-stop"})
+     * @Assert\NotBlank(message="domestic.day-stop.destination.not-blank", groups={"destination-day-stop"})
+     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination-day", "destination-day-stop", "admin-day-stop"})
      */
     private $destinationLocation;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"origin", "admin-day-stop"})
+     * @Assert\NotNull(message="domestic.day.origin.goods-loaded", groups={"origin-day", "origin-day-stop", "admin-day-stop"})
      */
     private $goodsLoaded;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"origin-ports", "admin-day-stop-loaded"})
+     * @Assert\NotNull(message="domestic.day.origin.goods-from", groups={"origin-ports", "admin-day-stop-loaded"})
      */
     private $goodsTransferredFrom;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"destination", "admin-day-stop"})
+     * @Assert\NotNull(message="domestic.day.destination.goods-unloaded", groups={"destination-day", "destination-day-stop", "admin-day-stop"})
      */
     private $goodsUnloaded;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"destination-ports", "admin-day-stop-unloaded"})
+     * @Assert\NotNull(message="domestic.day.destination.goods-to", groups={"destination-ports", "admin-day-stop-unloaded"})
      */
     private $goodsTransferredTo;
 
@@ -64,7 +66,7 @@ trait StopTrait
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"goods-description", "admin-day-stop"})
+     * @Assert\NotNull(message="domestic.goods-carried.not-blank", groups={"goods-description", "admin-day-stop"})
      */
     private $goodsDescription;
 

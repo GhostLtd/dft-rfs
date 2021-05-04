@@ -20,14 +20,14 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.location.not-blank", groups={"day-summary.furthest-stop", "admin-day-summary"})
+     * @Assert\NotBlank(message="domestic.day.furthest-point.not-blank", groups={"day-summary.furthest-stop", "admin-day-summary"})
      * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"day-summary.furthest-stop", "admin-day-summary"})
      */
     private $furthestStop;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight", "admin-day-summary"})
+     * @Assert\NotNull(message="domestic.day.weight-loaded.not-null", groups={"day-summary.goods-weight", "admin-day-summary"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.goods-weight", "admin-day-summary"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"day-summary.goods-weight", "admin-day-summary"})
      */
@@ -35,7 +35,7 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.goods-weight", "admin-day-summary"})
+     * @Assert\NotNull(message="domestic.day.weight-unloaded.not-null", groups={"day-summary.goods-weight", "admin-day-summary"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.goods-weight", "admin-day-summary"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"day-summary.goods-weight", "admin-day-summary"})
      */
@@ -43,7 +43,7 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
+     * @Assert\NotNull(message="domestic.day.number-of-stops.loading.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"day-summary.number-of-stops", "admin-day-summary"})
      */
@@ -51,7 +51,7 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
+     * @Assert\NotNull(message="domestic.day.number-of-stops.unloading.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"day-summary.number-of-stops", "admin-day-summary"})
      */
@@ -59,7 +59,7 @@ class DaySummary implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotNull(message="common.number.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
+     * @Assert\NotNull(message="domestic.day.number-of-stops.loading-and-unloading.not-null", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"day-summary.number-of-stops", "admin-day-summary"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"day-summary.number-of-stops", "admin-day-summary"})
      */

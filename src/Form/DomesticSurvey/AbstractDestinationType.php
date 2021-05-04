@@ -3,6 +3,7 @@
 namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
+use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
@@ -52,10 +53,20 @@ abstract class AbstractDestinationType extends AbstractType
             'validation_groups' => function(FormInterface $form) {
                 /** @var StopTrait $data */
                 $data = $form->getData();
-                return $data->getGoodsUnloaded()
-                    ? ['destination', 'destination-ports']
-                    : 'destination';
-                },
+                $groups = [];
+
+                if ($data instanceof DayStop) {
+                    $groups[] = 'destination-day-stop';
+                } else if ($data instanceof DaySummary) {
+                    $groups[] = 'destination-day';
+                }
+
+                if ($data->getGoodsUnloaded()) {
+                    $groups[] = 'destination-ports';
+                }
+
+                return $groups;
+            }
         ]);
     }
 }

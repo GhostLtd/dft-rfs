@@ -1,4 +1,13 @@
 common:
+  address:
+    gov-notify-requires-3-lines: Enter at least 3 lines of the address
+    line-1:
+      not-blank: Enter a building and street name
+    postcode:
+      not-blank: Enter a postcode
+      invalid: Enter a valid postcode
+  cargo-type:
+    not-null: Choose how the goods were carried
   choice:
     invalid: Choose a valid option
     not-null: Choose an option
@@ -10,6 +19,9 @@ common:
     greater-than: Enter a date after {compared_value}
     greater-than-or-equal: Enter a date on or after {compared_value}
     invalid: Enter a valid date
+  hazardous-goods:
+    not-null: Choose whether the goods being transported were classifed as dangerous or hazardous
+    type-not-null: Choose the code for the hazardous goods that were carried
   number:
     invalid: Enter a number
     not-null: Enter a number
@@ -27,13 +39,6 @@ common:
     value:
       not-blank: Enter a value
       positive-or-zero: Enter a positive number or zero
-  address:
-    gov-notify-requires-3-lines: Enter at least 3 lines of the address
-    line-1:
-      not-blank: Enter a value
-    postcode:
-      not-blank: Enter a postcode
-      invalid: Enter a valid postcode
   email:
     invalid: Enter a valid email address
     not-blank: Enter an email address
@@ -110,15 +115,56 @@ pre-enquiry:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
 
 domestic:
-  initial-details:
-    contact-email-or-telephone-required: 'Provide a contact telephone number or an email address'
-  day:
-    location.not-blank: Enter the location
-    location.max-length: "Location must be less {limit} characters or fewer"
-    border-crossing:
-      max-length: "Location must be less {limit} characters or fewer"
-  day-stop:
-    was-at-capacity:
-      invalid: "Was your vehicle at capacity by weight, space, or both?"
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  closing-details:
+    missing-days:
+      not-null: Choose whether the information listed on this page is correct or not
+  day:
+    border-crossing:
+      max-length: "Location must be less {limit} characters or fewer"
+    destination:
+      not-blank: Enter the location where the vehicle ended its journey
+      goods-unloaded: Choose whether goods were unloaded or not
+      goods-to: Choose which mode of transport the goods were transferred to, if any
+    furthest-point:
+      not-blank: Enter the furthest place that the vehicle reached on this day
+    location:
+      max-length: "Location must be less {limit} characters or fewer"
+    number-of-stops:
+      loading.not-null: Enter the number of stops where goods were only loaded onto the vehicle
+      unloading.not-null: Enter the number of stops where goods were only unloaded onto the vehicle
+      loading-and-unloading.not-null: Enter the number of stops where goods were both loaded and unloaded
+    origin:
+      not-blank: Enter the location where the vehicle started the day
+      goods-loaded: Choose whether goods were loaded or not
+      goods-from: Choose which mode of transport the goods were transferred from, if any
+    weight-loaded:
+      not-null: Enter the total weight of goods loaded in kilograms on this day
+    weight-unloaded:
+      not-null: Enter the total weight of goods unloaded in kilograms on this day
+  day-stop:
+    origin:
+      not-blank: Enter the location where the vehicle began this stage of its journey
+    destination:
+      not-blank: Enter the location where the vehicle finished this stage of its journey
+    goods-weight:
+      not-null: Enter the total weight of goods carried on this stage in kilograms
+    was-at-capacity:
+      invalid: Was your vehicle at capacity by weight, space, or both?
+      not-null: Choose whether your vehicle was at capacity
+  goods-carried:
+    not-blank: Choose the type of goods carried
+  number-of-stops:
+    choice: Choose how many times you stopped on the day
+  survey-response:
+    in-possession-of-vehicle:
+      choice: Choose whether you will be in possession of the vehicle during your survey week
+    initial-details:
+      contact-email-or-telephone-required: 'Provide a contact telephone number or an email address'
+    number-of-employees:
+      choice: Choose the number of people your firm employees nationally
+    scrapped-details:
+      date: Enter the date when the vehicle was scrapped or stolen
+    sold-details:
+      date: Enter the date when the vehicle was sold
