@@ -22,6 +22,10 @@ final class Version20210504100855 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE domestic_survey ADD first_reminder_sent_date DATETIME DEFAULT NULL, ADD second_reminder_sent_date DATETIME DEFAULT NULL, ADD notify_api_responses LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:json)\'');
         $this->addSql('ALTER TABLE international_survey ADD first_reminder_sent_date DATETIME DEFAULT NULL, ADD second_reminder_sent_date DATETIME DEFAULT NULL, ADD notify_api_responses LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:json)\'');
+
+        // set reminder dates (used for reminder status) to not null.
+        $this->addSql("UPDATE domestic_survey SET first_reminder_sent_date = '1970-01-01', second_reminder_sent_date = '1970-01-01'");
+        $this->addSql("UPDATE international_survey SET first_reminder_sent_date = '1970-01-01', second_reminder_sent_date = '1970-01-01'");
     }
 
     public function down(Schema $schema) : void

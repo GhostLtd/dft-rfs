@@ -110,7 +110,7 @@ class RemindersHelper
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->sub(new \DateInterval('P6D23H')));
+        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->sub(new \DateInterval('P6DT12H')));
         return $queryBuilder->expr()->andX(
             'survey.firstReminderSentDate IS NULL',
             'survey.surveyPeriodEnd <= :surveyEndDate'
@@ -119,7 +119,7 @@ class RemindersHelper
 
     protected function getSecondReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->sub(new \DateInterval('P6D23H')));
+        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->sub(new \DateInterval('P6DT12H')));
         return $queryBuilder->expr()->andX(
             'survey.secondReminderSentDate IS NULL',
             'survey.firstReminderSentDate <= :firstReminderDate'
