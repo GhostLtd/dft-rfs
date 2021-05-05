@@ -9,7 +9,9 @@
 
 {% block headerBar %}
     {{ govukHeader({
+        homepageUrl: 'https://www.gov.uk/',
         serviceName: ('service.name' | trans),
+        serviceUrl: '/',
         navigation: (is_granted('ROLE_SURVEY_USER')
         ? [{href: path('app_logout'), text: 'common.logout' | trans}]
         : false
