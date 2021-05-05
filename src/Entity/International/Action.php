@@ -40,7 +40,7 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"action-place", "admin_action_unload", "admin_action_load"}, message="common.place.place")
+     * @Assert\NotBlank(groups={"action-place", "admin_action_unload", "admin_action_load"}, message="international.action.place.not-blank")
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"action-place", "admin_action_unload", "admin_action_load"})
      */
     private $name;
@@ -59,7 +59,7 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(groups={"goods-description", "admin_action_load"}, message="common.choice.invalid")
+     * @Assert\NotNull(groups={"goods-description", "admin_action_load"}, message="international.action.goods-type.invalid")
      */
     private $goodsDescription;
 
@@ -72,7 +72,7 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(groups={"action-unloaded-weight", "admin_action_unload"}, message="common.choice.invalid")
+     * @Assert\NotNull(groups={"action-unloaded-weight", "admin_action_unload"}, message="international.action.unloaded.all-not-null")
      */
     private $weightUnloadedAll;
 
@@ -80,7 +80,7 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
      * @ORM\Column(type="integer", nullable=true)
      *
      * N.B. action-unloaded-weight validation is performed by UnloadedWeight class validator
-     * @Assert\NotBlank(message="common.number.not-null", groups={"action-loaded-weight", "admin_action_load"})
+     * @Assert\NotBlank(message="international.action.goods-weight.not-blank", groups={"action-loaded-weight", "admin_action_load"})
      * @Assert\PositiveOrZero(message="common.number.positive", groups={"action-loaded-weight", "admin_action_load"})
      * @Assert\Range(groups={"action-loaded-weight", "admin_action_load"}, max=2000000000, maxMessage="common.number.max")
      */
@@ -91,13 +91,13 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(groups={"action-place"}, message="common.choice.not-null")
+     * @Assert\NotNull(groups={"action-place"}, message="international.action.load-or-unload.not-null")
      */
     private $loading;
 
     /**
      * @ORM\ManyToOne(targetEntity=Action::class, inversedBy="unloadingActions")
-     * @Assert\NotNull(groups={"action-loading-place", "admin_action_unload"}, message="common.choice.not-null")
+     * @Assert\NotNull(groups={"action-loading-place", "admin_action_unload"}, message="international.action.loading-place.not-null")
      */
     private $loadingAction;
 

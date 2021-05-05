@@ -75,32 +75,64 @@ common:
       not-exists: You have already added this registration mark to your survey response
 
 international:
-  add:
-    invitation-email-or-address: Enter at least one of an invitation email or an invitation address
-  survey-response:
-    annual-international-journey-count:
-      not-null: Enter a number
-      not-negative: Enter a positive number
-    fewer-than-ten-employees:
-      not-null: Choose an option
-  trip:
-    dates:
-      not-return-before-departure: Return date must be the same as or after date of leaving
-      outside-period: Date must be within the survey period
-    outbound-was-empty:
-      not-null: Choose an option
-      cannot-be-both: Vehicle cannot be both empty and full
-    return-was-empty:
-      not-null: Choose an option
-      cannot-be-both: Vehicle cannot be both empty and full
-    cargo-state-how-at-capacity: How was the vehicle at capacity?
   action:
+    add-another:
+      not-null: Choose whether you made any more stops on this trip
+    goods-type:
+      invalid: Choose the type of goods carried in this consignment
+    goods-weight:
+      not-blank: Enter the weight of the goods loaded in kilograms
+    loading-place:
+      not-null: Choose which goods you unloaded
+    load-or-unload:
+      not-null: Choose whether you loaded or unloaded goods
+    place:
+      not-blank: Enter where you loaded or unloaded goods
     re-order:
       invalid-order: >-
         {number, plural,
           one {Goods were unloaded at stop {list} before they were loaded}
           other {Goods were unloaded at stops {list} before they were loaded}
         }
+    unloaded:
+      all-not-null: Choose whether you unloaded all of the goods
+      cannot-unload-partial: Cannot unload all goods as some have already been unloaded
+      weight-not-blank: Enter the weight of goods unloaded in kilograms
+      weight-too-large: Enter a weight of goods unloaded in kilograms. This value must be less than the weight loaded
+      weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
+  add:
+    invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  survey-response:
+    annual-international-journey-count:
+      not-null: Estimate the number of trips
+      not-negative: Enter a positive number
+    fewer-than-ten-employees:
+      not-null: Choose an option
+  trip:
+    cargo-state-how-at-capacity: Select how the vehicle was at capacity
+    dates:
+      not-return-before-departure: Return date must be the same as or after date of leaving
+      outside-period: Date must be within the survey period
+    destination:
+      not-blank: Enter where the trip ended
+    origin:
+      not-blank: Enter where the trip started
+    outbound:
+      at-capacity-not-null: Choose whether your vehicle was at capacity upon leaving the UK
+      date-not-null: Enter the date the vehicle left the UK
+      ports-not-null: Choose the ports that were used on your outbound trip
+      was-empty:
+        not-null: Choose whether the vehicle was empty
+        cannot-be-both: Vehicle cannot be both empty and full
+    return:
+      at-capacity-not-null: Choose whether your vehicle was at capacity upon returning to the UK
+      date-not-null: Enter the date the vehicle returned to the UK
+      ports-not-null: Choose the ports that were used on your return trip
+      was-empty:
+        not-null: Choose whether the vehicle was empty
+        cannot-be-both: Vehicle cannot be both empty and full
+    trailer-swap:
+      not-null: Choose whether the trailer's axle configuration changed for this trip
     unloading:
       cannot-unload: Cannot fully unload - goods already partially unloaded
       bad-trip: Action must be linked to a persisted Trip
@@ -108,6 +140,9 @@ international:
       weight-not-null: Enter a weight
       weight-more-than-one: Enter a real weight
       weight-of-goods: Enter a weight less than or equal to the loaded weight
+  vehicle:
+    confirm-dates:
+      not-null: Choose whether this vehicle departed from the UK during the survey period
 
 pre-enquiry:
   pre-enquiry-response:

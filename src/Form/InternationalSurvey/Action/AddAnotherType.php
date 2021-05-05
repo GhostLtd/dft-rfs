@@ -12,6 +12,7 @@ class AddAnotherType extends AbstractConfirmType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'translation_key_prefix' => 'international.action.add-another',
+            'null_message' => 'international.action.add-another.not-null'
         ]);
     }
 }
