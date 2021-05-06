@@ -20,8 +20,8 @@ class LimitedByType extends ChoiceType
             'label' => "{$prefix}.label",
             'help' => "{$prefix}.help",
             'choices' => [
-                "{$choicesPrefix}.weight" => "weight",
                 "{$choicesPrefix}.space" => "space",
+                "{$choicesPrefix}.weight" => "weight",
             ],
         ]);
     }
