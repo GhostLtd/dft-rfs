@@ -4,7 +4,9 @@ namespace App\ListPage\International;
 
 use App\Entity\International\Survey;
 use App\ListPage\AbstractListPage;
-use App\ListPage\Field;
+use App\ListPage\Field\ChoiceFilterable;
+use App\ListPage\Field\Simple;
+use App\ListPage\Field\TextFilterable;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -27,13 +29,13 @@ class SurveyListPage extends AbstractListPage
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
-            (new Field('Ref. no.', 'survey.referenceNumber'))->textFilterable()->sortable(),
-            (new Field('Start date', 'survey.surveyPeriodStart'))->sortable(),
-            (new Field('End date', 'survey.surveyPeriodEnd'))->sortable(),
-            (new Field('Business name', 'company.businessName'))->textFilterable()->sortable(),
-            (new Field('Status', 'survey.state'))->sortable()->selectFilterable($stateChoices),
-            (new Field('# Vehicles', null)),
-            (new Field('# Trips', null)),
+            (new TextFilterable('Ref. no.', 'survey.referenceNumber'))->sortable(),
+            (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
+            (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
+            (new TextFilterable('Business name', 'company.businessName'))->sortable(),
+            (new ChoiceFilterable('Status', 'survey.state', $stateChoices))->sortable(),
+            (new Simple('# Vehicles')),
+            (new Simple('# Trips')),
         ];
     }
 
@@ -52,8 +54,8 @@ class SurveyListPage extends AbstractListPage
     protected function getDefaultOrder(): array
     {
         return [
-            Field::generateId('Start date') => 'DESC',
-            Field::generateId('Business name') => 'ASC',
+            Simple::generateId('Start date') => 'DESC',
+            Simple::generateId('Business name') => 'ASC',
         ];
     }
 }

@@ -4,9 +4,10 @@ namespace App\ListPage\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\ListPage\AbstractListPage;
-use App\ListPage\Field;
+use App\ListPage\Field\ChoiceFilterable;
+use App\ListPage\Field\Simple;
+use App\ListPage\Field\TextFilterable;
 use App\Repository\Domestic\SurveyRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -39,14 +40,14 @@ class SurveyListPage extends AbstractListPage
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
-            (new Field('User', 'user.username'))->sortable(),
-            (new Field('Week', null)),
-            (new Field('Start date', 'survey.surveyPeriodStart'))->sortable(),
-            (new Field('Reg mark', 'survey.registrationMark'))->sortable()->textFilterable(),
-            (new Field('Status', 'survey.state'))->sortable()->selectFilterable($stateChoices),
-            (new Field('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
-            (new Field("Summ.\nDays", null)),
-            (new Field("Stop\nDays", null)),
+            (new Simple('User', 'user.username'))->sortable(),
+            (new Simple('Week')),
+            (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
+            (new TextFilterable('Reg mark', 'survey.registrationMark'))->sortable(),
+            (new ChoiceFilterable('Status', 'survey.state', $stateChoices))->sortable(),
+            (new Simple('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
+            (new Simple("Summ.\nDays")),
+            (new Simple("Stop\nDays")),
         ];
     }
 
@@ -67,8 +68,8 @@ class SurveyListPage extends AbstractListPage
     protected function getDefaultOrder(): array
     {
         return [
-            Field::generateId('Start date') => 'DESC',
-            Field::generateId('Reg mark') => 'ASC',
+            Simple::generateId('Start date') => 'DESC',
+            Simple::generateId('Reg mark') => 'ASC',
         ];
     }
 

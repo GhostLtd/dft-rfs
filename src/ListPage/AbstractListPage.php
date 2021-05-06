@@ -2,8 +2,8 @@
 
 namespace App\ListPage;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\ListPage\Field\FilterableInterface;
+use App\ListPage\Field\Simple;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -35,7 +35,7 @@ abstract class AbstractListPage
     }
 
     /**
-     * @return Field[]
+     * @return Simple[]
      */
     abstract protected function getFieldsDefinition(): array;
     abstract protected function getQueryBuilder(): QueryBuilder;
@@ -120,23 +120,13 @@ abstract class AbstractListPage
     protected function getQueryBuilderWithFiltersAndOrdering(): QueryBuilder
     {
         $qb = $this->getQueryBuilder();
-        $parameters = [];
 
         foreach($this->getFields() as $field) {
             $id = $field->getId();
             $fieldData = $this->formData[$id] ?? null;
 
-            if ($fieldData !== null) {
-                switch($field->getType()) {
-                    case Field::TYPE_TEXT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} LIKE :{$id}");
-                        $parameters[$id] = '%'.$fieldData.'%';
-                        break;
-                    case Field::TYPE_SELECT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} = :{$id}");
-                        $parameters[$id] = $fieldData;
-                        break;
-                }
+            if ($field instanceof FilterableInterface && $fieldData !== null) {
+                $field->addFilterCondition($qb, $fieldData);
             }
         }
 
@@ -150,17 +140,12 @@ abstract class AbstractListPage
             }
         }
 
-        // This needs to be foreach, and not setParameters, as the querybuilder might already have parameters
-        // that might get overwritten by using setParameters
-        foreach ($parameters as $parameterName => $parameterValue) {
-            $qb->setParameter($parameterName, $parameterValue);
-        }
         return $qb;
     }
 
-    protected function getFieldById(string $id): ?Field
+    protected function getFieldById(string $id): ?Simple
     {
-        $matchingFields = array_filter($this->getFields(), fn(Field $field) => $field->getId() === $id);
+        $matchingFields = array_filter($this->getFields(), fn(Simple $field) => $field->getId() === $id);
         return count($matchingFields) > 0 ? current($matchingFields) : null;
     }
 
