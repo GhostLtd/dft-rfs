@@ -67,8 +67,8 @@ class SurveyListPage extends AbstractListPage
     protected function getDefaultOrder(): array
     {
         return [
-            'surveyPeriodStart' => 'DESC',
-            'registrationMark' => 'ASC',
+            Field::generateId('Start date') => 'DESC',
+            Field::generateId('Reg mark') => 'ASC',
         ];
     }
 

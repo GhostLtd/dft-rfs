@@ -7,6 +7,7 @@ class Field
     const TYPE_TEXT = 'text';
     const TYPE_SELECT = 'select';
 
+    protected string $id;
     protected ?string $type;
     protected ?array $choices;
     protected string $label;
@@ -16,6 +17,8 @@ class Field
 
     public function __construct(string $label, ?string $propertyPath, array $cellOptions = [])
     {
+        $this->id = self::generateId($label);
+
         $this->label = $label;
         $this->propertyPath = $propertyPath;
         $this->cellOptions = $cellOptions;
@@ -51,6 +54,18 @@ class Field
     public function getChoices(): ?array
     {
         return $this->choices;
+    }
+
+    public static function generateId(string $label): string
+    {
+        $tmp = preg_replace('/[^a-zA-Z0-9\s]/', '', $label);
+        $tmp = preg_replace('/\s+/', '_', $tmp);
+        return strtolower($tmp);
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getLabel(): string

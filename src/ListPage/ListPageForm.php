@@ -17,7 +17,7 @@ class ListPageForm extends AbstractType
          * @var $field Field
          */
         foreach($options['fields'] as $field) {
-            $parameterName = $field->getParameterName();
+            $fieldName = $field->getId();
             $fieldType = $field->getType();
 
             if ($fieldType === null) {
@@ -41,7 +41,7 @@ class ListPageForm extends AbstractType
                     throw new InvalidArgumentException('Invalid field type');
             }
 
-            $builder->add($parameterName, $type, array_merge($fieldOptions, [
+            $builder->add($fieldName, $type, array_merge($fieldOptions, [
                 'label' => "{$field->getLabel()} (filter)",
                 'label_attr' => ['class' => 'govuk-visually-hidden'],
                 'attr' => [

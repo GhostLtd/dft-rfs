@@ -85,7 +85,7 @@ abstract class AbstractListPage
 
         if ($order &&
             $orderDirection &&
-            ($field = $this->getFieldByParameterName($order)) !== null &&
+            ($field = $this->getFieldById($order)) !== null &&
             $field->getSortable() &&
             in_array($orderDirection, ['ASC', 'DESC']))
         {
@@ -123,31 +123,30 @@ abstract class AbstractListPage
         $parameters = [];
 
         foreach($this->getFields() as $field) {
-            $parameter = $field->getParameterName();
-            $fieldData = $this->formData[$parameter] ?? null;
+            $id = $field->getId();
+            $fieldData = $this->formData[$id] ?? null;
 
             if ($fieldData !== null) {
                 switch($field->getType()) {
                     case Field::TYPE_TEXT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} LIKE :{$parameter}");
-                        $parameters[$parameter] = '%'.$fieldData.'%';
+                        $qb = $qb->andWhere("{$field->getPropertyPath()} LIKE :{$id}");
+                        $parameters[$id] = '%'.$fieldData.'%';
                         break;
                     case Field::TYPE_SELECT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} = :{$parameter}");
-                        $parameters[$parameter] = $fieldData;
+                        $qb = $qb->andWhere("{$field->getPropertyPath()} = :{$id}");
+                        $parameters[$id] = $fieldData;
                         break;
                 }
             }
         }
 
         if ($this->order && $this->orderDirection) {
-            $field = $this->getFieldByParameterName($this->order);
+            $field = $this->getFieldById($this->order);
             $qb->addOrderBy($field->getPropertyPath(), $this->orderDirection);
         } else {
             $defaultOrder = $this->getDefaultOrder();
-            foreach ($defaultOrder as $parameterName=>$direction) {
-                $field = $this->getFieldByParameterName($parameterName);
-                $qb->addOrderBy($field->getPropertyPath(), $direction);
+            foreach ($defaultOrder as $id=>$direction) {
+                $qb->addOrderBy($this->getFieldById($id)->getPropertyPath(), $direction);
             }
         }
 
@@ -159,10 +158,10 @@ abstract class AbstractListPage
         return $qb;
     }
 
-    protected function getFieldByParameterName(string $parameterName): ?Field
+    protected function getFieldById(string $id): ?Field
     {
-        $matchingFields = array_filter($this->getFields(), fn(Field $field) => $field->getParameterName() === $parameterName);
-        return count($matchingFields) === 1 ? current($matchingFields) : null;
+        $matchingFields = array_filter($this->getFields(), fn(Field $field) => $field->getId() === $id);
+        return count($matchingFields) > 0 ? current($matchingFields) : null;
     }
 
     public function getFiltersForm(): FormInterface

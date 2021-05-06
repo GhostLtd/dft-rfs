@@ -52,8 +52,8 @@ class SurveyListPage extends AbstractListPage
     protected function getDefaultOrder(): array
     {
         return [
-            'surveyPeriodStart' => 'DESC',
-            'businessName' => 'ASC',
+            Field::generateId('Start date') => 'DESC',
+            Field::generateId('Business name') => 'ASC',
         ];
     }
 }
