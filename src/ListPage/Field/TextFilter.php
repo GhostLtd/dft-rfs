@@ -5,7 +5,7 @@ namespace App\ListPage\Field;
 use Doctrine\ORM\QueryBuilder;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class TextFilterable extends Simple implements FilterableInterface
+class TextFilter extends Simple implements FilterableInterface
 {
     protected array $formOptions;
 
@@ -29,8 +29,8 @@ class TextFilterable extends Simple implements FilterableInterface
 
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
-        $queryBuilder->andWhere("{$this->getPropertyPath()} LIKE :{$this->getId()}");
-        $queryBuilder->setParameter($this->getId(), "%{$formData}%");
-        return $queryBuilder;
+        return $queryBuilder
+            ->andWhere("{$this->getPropertyPath()} LIKE :{$this->getId()}")
+            ->setParameter($this->getId(), "%{$formData}%");
     }
 }

@@ -103,7 +103,7 @@ class WeekNumberHelper
         return ($firstDayNextYear <= $dateTime) ? $firstDayNextYear : $firstDayThisYear;
     }
 
-    protected static function getFirstDayOfYear(int $year): DateTime
+    public static function getFirstDayOfYear(int $year): DateTime
     {
         $dateTime = new DateTime("{$year}/1/1");
         return $dateTime->format('D') === 'Mon' ?

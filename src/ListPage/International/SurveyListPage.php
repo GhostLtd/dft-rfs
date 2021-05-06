@@ -4,9 +4,9 @@ namespace App\ListPage\International;
 
 use App\Entity\International\Survey;
 use App\ListPage\AbstractListPage;
-use App\ListPage\Field\ChoiceFilterable;
+use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilterable;
+use App\ListPage\Field\TextFilter;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -29,11 +29,11 @@ class SurveyListPage extends AbstractListPage
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
-            (new TextFilterable('Ref. no.', 'survey.referenceNumber'))->sortable(),
+            (new TextFilter('Ref. no.', 'survey.referenceNumber'))->sortable(),
             (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
             (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
-            (new TextFilterable('Business name', 'company.businessName'))->sortable(),
-            (new ChoiceFilterable('Status', 'survey.state', $stateChoices))->sortable(),
+            (new TextFilter('Business name', 'company.businessName'))->sortable(),
+            (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new Simple('# Vehicles')),
             (new Simple('# Trips')),
         ];

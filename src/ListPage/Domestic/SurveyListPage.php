@@ -4,9 +4,10 @@ namespace App\ListPage\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\ListPage\AbstractListPage;
-use App\ListPage\Field\ChoiceFilterable;
+use App\ListPage\Domestic\Field\WeekYearFilter;
+use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilterable;
+use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -40,11 +41,11 @@ class SurveyListPage extends AbstractListPage
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
-            (new Simple('User', 'user.username'))->sortable(),
-            (new Simple('Week')),
+            (new WeekYearFilter('Week', 'survey.surveyPeriodStart')),
             (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
-            (new TextFilterable('Reg mark', 'survey.registrationMark'))->sortable(),
-            (new ChoiceFilterable('Status', 'survey.state', $stateChoices))->sortable(),
+            (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
+            (new TextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
+            (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new Simple('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
             (new Simple("Summ.\nDays")),
             (new Simple("Stop\nDays")),
