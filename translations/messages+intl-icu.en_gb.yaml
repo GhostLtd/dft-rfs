@@ -63,6 +63,8 @@ common:
     other:
       label: Specify country
       help: ''
+  error-summary:
+    problem: There is a problem
   notification:
     important: Important
     success: Success

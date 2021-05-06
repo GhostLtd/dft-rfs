@@ -37,6 +37,8 @@
             {%- from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners -%}
             {{ flashNotificationBanners() }}
 
+            {{ _self.errorSummary(_context) }}
+
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -45,3 +47,25 @@
 {% block bodyEnd %}
     {{ encore_entry_script_tags('app') }}
 {% endblock %}
+
+{% macro errorSummary(context) %}
+    {%- set erroringForms = context | filter(item => item.vars.errors.form.getErrors(true) ?? null) -%}
+    {%- if not erroringForms is empty -%}
+        <div class="govuk-error-summary govuk-visually-hidden-when-larger-than-mobile" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                {{ 'common.error-summary.problem'|trans }}
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% for form in erroringForms %}
+                        {% for error in form.vars.errors.form.getErrors(true) %}
+                            <li>
+                                <a href="#{{ namesToIds(form, [error.origin.name])|first }}">{{ error.message }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
