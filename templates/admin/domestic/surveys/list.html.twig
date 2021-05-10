@@ -5,6 +5,7 @@
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
@@ -14,13 +15,14 @@
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
-            {{ tableCell(tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
                 '-' :
                 (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
             }}
-            {{- _self.dayCountField(survey, 'summaryDayCount') -}}
-            {{- _self.dayCountField(survey, 'stopDayCount') -}}
+            {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
+            {{- countField(survey, 'summaryDayCount') -}}
+            {{- countField(survey, 'stopDayCount') -}}
             {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('d/m/Y') }"} }), {}) }}
         </tr>
     {% else %}
@@ -28,10 +30,3 @@
     {% endfor %}
     {{ listTableEnd(data, form) }}
 {% endblock %}
-
-{%- macro dayCountField(survey, fieldName) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
-    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
-    {%- set value = (field == null or field == 0) ? '-' : field -%}
-    {{- tableCell(value) -}}
-{%- endmacro -%}

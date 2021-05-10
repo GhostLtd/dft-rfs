@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Form\Validator as AppAssert;
-use DateTimeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\LongAddress;
@@ -20,7 +20,22 @@ trait SurveyTrait {
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $notifiedDate;
+    private ?\DateTime $notifiedDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $firstReminderSentDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $secondReminderSentDate;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $notifyApiResponses;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -87,24 +102,24 @@ trait SurveyTrait {
         return $this->id;
     }
 
-    public function getNotifiedDate(): ?DateTimeInterface
+    public function getNotifiedDate(): ?DateTime
     {
         return $this->notifiedDate;
     }
 
-    public function setNotifiedDate(?DateTimeInterface $notifiedDate): self
+    public function setNotifiedDate(?DateTime $notifiedDate): self
     {
         $this->notifiedDate = $notifiedDate;
 
         return $this;
     }
 
-    public function getSurveyPeriodStart(): ?DateTimeInterface
+    public function getSurveyPeriodStart(): ?DateTime
     {
         return $this->surveyPeriodStart;
     }
 
-    public function setSurveyPeriodStart(?DateTimeInterface $surveyPeriodStart): self
+    public function setSurveyPeriodStart(?DateTime $surveyPeriodStart): self
     {
         $this->surveyPeriodStart = $surveyPeriodStart;
 
@@ -117,12 +132,12 @@ trait SurveyTrait {
         return (clone $this->surveyPeriodStart)->modify($modifier);
     }
 
-    public function getSurveyPeriodEnd(): ?DateTimeInterface
+    public function getSurveyPeriodEnd(): ?DateTime
     {
         return $this->surveyPeriodEnd;
     }
 
-    public function setSurveyPeriodEnd(?DateTimeInterface $surveyPeriodEnd): self
+    public function setSurveyPeriodEnd(?DateTime $surveyPeriodEnd): self
     {
         $this->surveyPeriodEnd = $surveyPeriodEnd;
 
@@ -138,24 +153,24 @@ trait SurveyTrait {
         return $this->getSurveyPeriodEnd()->diff($this->surveyPeriodStart)->days + 1;
     }
 
-    public function getResponseStartDate(): ?DateTimeInterface
+    public function getResponseStartDate(): ?DateTime
     {
         return $this->responseStartDate;
     }
 
-    public function setResponseStartDate(?DateTimeInterface $responseStartDate): self
+    public function setResponseStartDate(?DateTime $responseStartDate): self
     {
         $this->responseStartDate = $responseStartDate;
 
         return $this;
     }
 
-    public function getSubmissionDate(): ?DateTimeInterface
+    public function getSubmissionDate(): ?DateTime
     {
         return $this->submissionDate;
     }
 
-    public function setSubmissionDate(?DateTimeInterface $submissionDate): self
+    public function setSubmissionDate(?DateTime $submissionDate): self
     {
         $this->submissionDate = $submissionDate;
 
@@ -194,6 +209,40 @@ trait SurveyTrait {
     {
         $this->invitationAddress = $invitationAddress;
 
+        return $this;
+    }
+
+    public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self
+    {
+        $this->firstReminderSentDate = $firstReminderSentDate;
+        return $this;
+    }
+
+    public function getFirstReminderSentDate(): ?\DateTime
+    {
+        return $this->firstReminderSentDate;
+    }
+
+    public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self
+    {
+        $this->secondReminderSentDate = $secondReminderSentDate;
+        return $this;
+    }
+
+    public function getSecondReminderSentDate(): ?\DateTime
+    {
+        return $this->secondReminderSentDate;
+    }
+
+    public function getNotifyApiResponses(): ?array
+    {
+        return $this->notifyApiResponses;
+    }
+
+    public function setNotifyApiResponse(string $key, array $notifyApiResponse): self
+    {
+        if (!is_array($this->notifyApiResponses)) $this->notifyApiResponses = [];
+        $this->notifyApiResponses[$key] = $notifyApiResponse;
         return $this;
     }
 }

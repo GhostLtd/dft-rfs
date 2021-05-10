@@ -6,7 +6,7 @@
     {{- actionlessSummaryListRow('common.survey-period.label', survey|formatSurveyPeriod) }}
 
     {%- if showStatus ?? true -%}
-        {{- actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {{- actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username) }}

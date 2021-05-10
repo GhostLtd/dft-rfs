@@ -1,12 +1,16 @@
 <?php
 
-namespace App\EventSubscriber\DomesticSurvey;
+namespace App\EventSubscriber;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\SurveyInterface;
+use App\Entity\SurveyTrait;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
+use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\TemplateReference;
-use App\Utility\RegistrationMarkHelper;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,6 +24,19 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
     private string $frontendHostname;
+
+    private const TYPE_LETTER = 'letter';
+    private const TYPE_EMAIL = 'email';
+    private const TEMPLATE_MAP = [
+        DomesticSurvey::class => [
+            self::TYPE_LETTER => TemplateReference::LETTER_DOMESTIC_SURVEY_INVITE,
+            self::TYPE_EMAIL => TemplateReference::EMAIL_DOMESTIC_SURVEY_INVITE,
+        ],
+        InternationalSurvey::class => [
+            self::TYPE_LETTER => TemplateReference::LETTER_INTERNATIONAL_SURVEY_INVITE,
+            self::TYPE_EMAIL => TemplateReference::EMAIL_INTERNATIONAL_SURVEY_INVITE,
+        ],
+    ];
 
     public function __construct(
         WorkflowInterface $domesticSurveyStateMachine,
@@ -35,35 +52,27 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
     public function transitionInviteUser(Event $event)
     {
-        /** @var Survey $survey */
-        $survey = $event->getSubject();
-
-        $personalisation = [
-            'registrationMark' => (new RegistrationMarkHelper($survey->getRegistrationMark()))->getFormattedRegistrationMark(),
-            'startDate' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
-            'endDate' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
-            'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
-            'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
-        ];
+        $survey = $this->getSurvey($event);
+        $personalisation = PersonalisationHelper::getForEntity($survey);
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
         if ($addressIsFilled) {
             $this->messageBus->dispatch(new Letter(
-                Survey::class,
+                get_class($survey),
                 $survey->getId(),
                 $address,
-                TemplateReference::LETTER_DOMESTIC_SURVEY_INVITE,
+                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER],
                 $personalisation,
             ));
         }
 
         if ($survey->getInvitationEmail()) {
             $this->messageBus->dispatch(new Email(
-                Survey::class,
+                get_class($survey),
                 $survey->getId(),
                 $survey->getInvitationEmail(),
-                TemplateReference::EMAIL_DOMESTIC_SURVEY_INVITE,
+                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
                 $personalisation,
             ));
         }
@@ -75,8 +84,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
     public function transitionComplete(Event $event)
     {
-        /** @var Survey $survey */
-        $survey = $event->getSubject();
+        $survey = $this->getSurvey($event);
 
         if (!$survey->getSubmissionDate()) {
             $survey->setSubmissionDate(new DateTime('now'));
@@ -84,11 +92,23 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
+    protected function getSurvey(Event $event): SurveyInterface
+    {
+        /** @var SurveyInterface $survey */
+        $survey = $event->getSubject();
+        if (!in_array(get_class($survey), [DomesticSurvey::class, InternationalSurvey::class])) {
+            throw new \LogicException("unhandled survey class: ". get_class($survey));
+        }
+        return $survey;
+    }
+
     public static function getSubscribedEvents()
     {
         return [
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
+            'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
+            'workflow.international_survey.transition.complete' => 'transitionComplete',
         ];
     }
 }
