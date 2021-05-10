@@ -98,6 +98,7 @@ class RemindersHelper
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->from($surveyClass, 'survey')
+            ->leftJoin('survey.response', 'response')
             ->select('survey');
         return $queryBuilder->andWhere($this->getSurveyStateExpression($queryBuilder));
     }
@@ -105,21 +106,25 @@ class RemindersHelper
     protected function getSurveyStateExpression(QueryBuilder $queryBuilder)
     {
         // $queryBuilder->expr()->isNull('survey.submissionDate'),
-        return $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITED_USER, SurveyInterface::STATE_IN_PROGRESS]);
+        return $queryBuilder->expr()->andX(
+            $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITED_USER, SurveyInterface::STATE_IN_PROGRESS]),
+            $queryBuilder->expr()->andX('response.contactTelephone IS NULL', 'response.contactEmail IS NULL')
+        );
     }
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->sub(new \DateInterval('P6DT12H')));
+        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->modify('-7 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(
             'survey.firstReminderSentDate IS NULL',
+            'survey.secondReminderSentDate IS NULL',
             'survey.surveyPeriodEnd <= :surveyEndDate'
         );
     }
 
     protected function getSecondReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->sub(new \DateInterval('P6DT12H')));
+        $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->modify('-14 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(
             'survey.secondReminderSentDate IS NULL',
             'survey.firstReminderSentDate <= :firstReminderDate'
