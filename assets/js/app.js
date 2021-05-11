@@ -10,5 +10,8 @@
 'use strict'
 
 import './common';
+import './session-reminder';
 
 import '../styles/app.scss';
+
+GOVUK.sessionReminder.init();

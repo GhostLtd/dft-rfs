@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Controller\InternationalSurvey\IndexController as IntIndexController;
 use App\Entity\PasscodeUser;
+use App\Utility\SessionTimeoutHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -12,7 +15,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/")
      */
-    public function index()
+    public function index(): Response
     {
         $user = $this->getUser();
         if ($user && $user instanceof PasscodeUser) {
@@ -29,8 +32,19 @@ class HomeController extends AbstractController
     /**
      * @Route("/sitemap.txt")
      */
-    public function sitemap()
+    public function sitemap(): Response
     {
         return $this->render('home/sitemap.txt.twig');
+    }
+
+    /**
+     * @Route("/refresh-session")
+     */
+    public function refreshSession(SessionTimeoutHelper $timeoutHelper): JsonResponse
+    {
+        return new JsonResponse([
+            'warning' => $timeoutHelper->getWarningTime(),
+            'expiry' => $timeoutHelper->getExpiryTime(),
+        ]);
     }
 }

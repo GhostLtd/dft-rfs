@@ -48,7 +48,7 @@ class UnloadedWeightValidator extends ConstraintValidator
 
             $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
                 new Positive([
-                    'message' => 'common.number.positive',
+                    'message' => $constraint->minMessage,
                 ]),
                 new Range([
                     'max' => 2000000000,
@@ -59,7 +59,7 @@ class UnloadedWeightValidator extends ConstraintValidator
             if ($validator->getViolations()->count() === 0) {
                 if (!$value->getWeightUnloadedAll()) {
                     $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
-                        new NotBlank(['message' => 'common.string.not-blank'])
+                        new NotBlank(['message' => 'international.action.unloaded.weight-not-blank'])
                     ], ['Default']);
 
                     if ($loadingAction) {
@@ -77,7 +77,7 @@ class UnloadedWeightValidator extends ConstraintValidator
                         $loadingCountExcludingThisOne = $loadingAction->getUnloadingActionCountExcluding($value);
 
                         if ($loadingCountExcludingThisOne !== 0) {
-                            $this->context->buildViolation('international.action.unloading.cannot-unload')->atPath('weightUnloadedAll')->addViolation();
+                            $this->context->buildViolation('international.action.unloaded.cannot-unload-partial')->atPath('weightUnloadedAll')->addViolation();
                         }
                     }
                 }

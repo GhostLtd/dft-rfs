@@ -21,7 +21,7 @@ abstract class AbstractConfirmType extends AbstractType
                     'common.choices.boolean.yes' => true,
                     'common.choices.boolean.no' => false,
                 ],
-                'constraints' => new NotNull(['message' => 'common.choice.not-null']),
+                'constraints' => new NotNull(['message' => $options['null_message']]),
             ]))
         ;
     }
@@ -33,6 +33,7 @@ abstract class AbstractConfirmType extends AbstractType
             'field_options' => [
                 'label_attr' => ['class' => 'govuk-label--s'],
             ],
+            'null_message' => 'common.choice.not-null',
         ]);
         $resolver->setRequired([
             'translation_key_prefix',

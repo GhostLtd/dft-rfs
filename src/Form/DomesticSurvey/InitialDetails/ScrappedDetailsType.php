@@ -19,8 +19,8 @@ class ScrappedDetailsType extends AbstractType
                 'label_attr' => ['class' => ($options['is_child_form'] ? 'govuk-fieldset__legend--s' : 'govuk-fieldset__legend--xl')],
                 'constraints' => [
                     new NotNull([
-                        'message' => "common.date.not-null",
-                        'groups' => ['admin_scrapped'],
+                        'message' => "domestic.survey-response.scrapped-details.date",
+                        'groups' => ['admin_scrapped', 'scrapped_details'],
                     ])
                 ],
                 'property_path' => $options['date_property_path'],

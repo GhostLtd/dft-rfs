@@ -12,6 +12,7 @@ class ConfirmDatesType extends AbstractConfirmType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'translation_key_prefix' => 'international.vehicle.confirm-dates',
+            'null_message' => 'international.vehicle.confirm-dates.not-null',
         ]);
     }
 }

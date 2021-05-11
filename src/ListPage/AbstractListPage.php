@@ -2,8 +2,8 @@
 
 namespace App\ListPage;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\ListPage\Field\FilterableInterface;
+use App\ListPage\Field\Simple;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -35,7 +35,7 @@ abstract class AbstractListPage
     }
 
     /**
-     * @return Field[]
+     * @return Simple[]
      */
     abstract protected function getFieldsDefinition(): array;
     abstract protected function getQueryBuilder(): QueryBuilder;
@@ -85,7 +85,7 @@ abstract class AbstractListPage
 
         if ($order &&
             $orderDirection &&
-            ($field = $this->getFieldByParameterName($order)) !== null &&
+            ($field = $this->getFieldById($order)) !== null &&
             $field->getSortable() &&
             in_array($orderDirection, ['ASC', 'DESC']))
         {
@@ -120,49 +120,33 @@ abstract class AbstractListPage
     protected function getQueryBuilderWithFiltersAndOrdering(): QueryBuilder
     {
         $qb = $this->getQueryBuilder();
-        $parameters = [];
 
         foreach($this->getFields() as $field) {
-            $parameter = $field->getParameterName();
-            $fieldData = $this->formData[$parameter] ?? null;
+            $id = $field->getId();
+            $fieldData = $this->formData[$id] ?? null;
 
-            if ($fieldData !== null) {
-                switch($field->getType()) {
-                    case Field::TYPE_TEXT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} LIKE :{$parameter}");
-                        $parameters[$parameter] = '%'.$fieldData.'%';
-                        break;
-                    case Field::TYPE_SELECT:
-                        $qb = $qb->andWhere("{$field->getPropertyPath()} = :{$parameter}");
-                        $parameters[$parameter] = $fieldData;
-                        break;
-                }
+            if ($field instanceof FilterableInterface && $fieldData !== null) {
+                $field->addFilterCondition($qb, $fieldData);
             }
         }
 
         if ($this->order && $this->orderDirection) {
-            $field = $this->getFieldByParameterName($this->order);
+            $field = $this->getFieldById($this->order);
             $qb->addOrderBy($field->getPropertyPath(), $this->orderDirection);
         } else {
             $defaultOrder = $this->getDefaultOrder();
-            foreach ($defaultOrder as $parameterName=>$direction) {
-                $field = $this->getFieldByParameterName($parameterName);
-                $qb->addOrderBy($field->getPropertyPath(), $direction);
+            foreach ($defaultOrder as $id=>$direction) {
+                $qb->addOrderBy($this->getFieldById($id)->getPropertyPath(), $direction);
             }
         }
 
-        // This needs to be foreach, and not setParameters, as the querybuilder might already have parameters
-        // that might get overwritten by using setParameters
-        foreach ($parameters as $parameterName => $parameterValue) {
-            $qb->setParameter($parameterName, $parameterValue);
-        }
         return $qb;
     }
 
-    protected function getFieldByParameterName(string $parameterName): ?Field
+    protected function getFieldById(string $id): ?Simple
     {
-        $matchingFields = array_filter($this->getFields(), fn(Field $field) => $field->getParameterName() === $parameterName);
-        return count($matchingFields) === 1 ? current($matchingFields) : null;
+        $matchingFields = array_filter($this->getFields(), fn(Simple $field) => $field->getId() === $id);
+        return count($matchingFields) > 0 ? current($matchingFields) : null;
     }
 
     public function getFiltersForm(): FormInterface

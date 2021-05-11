@@ -35,11 +35,12 @@
         {%- endif -%}
     {%- endif -%}
     {%- set tabs = tabs | merge({
-        'Invitation details': 'tab-invitation-details',
+        ("Notes (#{ survey.notes | length })"): 'tab-notes',
+        'Invitation/reminders': 'tab-invitation-details',
     }) -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
@@ -118,6 +119,12 @@
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
                 {%- with {marginBottom: 5} -%}
                     {%- include 'admin/includes/invitation-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
         </div>

@@ -9,9 +9,9 @@ use Symfony\Component\Validator\Constraint;
  */
 class UnloadedWeight extends Constraint
 {
-    public $message = "international.action.unloading.weight-of-goods";
-    public $minMessage = "international.action.unloading.weight-more-than-one";
-    public $maxMessage = 'common.number.max';
+    public $message = "international.action.unloaded.weight-too-large";
+    public $minMessage = "international.action.unloaded.weight-more-than-one";
+    public $maxMessage = 'international.action.unloaded.weight-positive';
 
     public function validatedBy() {
         return static::class.'Validator';

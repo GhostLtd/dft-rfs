@@ -20,20 +20,20 @@
             {%- set contents -%}
             {%- autoescape false -%}
                 <div>
-                    {%- if form[field.parameterName] is defined -%}
-                        {{- form_label(form[field.parameterName]) -}}
-                        {{- form_widget(form[field.parameterName]) -}}
+                    {%- if form[field.id] is defined -%}
+                        {{- form_label(form[field.id]) -}}
+                        {{- form_widget(form[field.id]) -}}
                     {%- else -%}
                         {{- field.label|e|nl2br -}}
                     {%- endif -%}
                     {%- if field.getSortable -%}
-                        {%- set upActive = (data.order == field.parameterName) and (data.orderDirection == 'ASC') -%}
-                        <a href="{{ data.callOrderUrlGenerator(field.parameterName, 'ASC') }}" class="list-table__order--up{{ upActive ? ' list-table__order--active' : '' }}">
+                        {%- set upActive = (data.order == field.id) and (data.orderDirection == 'ASC') -%}
+                        <a href="{{ data.callOrderUrlGenerator(field.id, 'ASC') }}" class="list-table__order--up{{ upActive ? ' list-table__order--active' : '' }}">
                             <span class="govuk-visually-hidden">Order by {{ field.label }}, ascending{{ upActive ? ' (currently active)' : '' }}</span>
                         </a>
 
-                        {%- set downActive = (data.order == field.parameterName) and (data.orderDirection == 'DESC') -%}
-                        <a href="{{ data.callorderUrlGenerator(field.parameterName, 'DESC') }}" class="list-table__order--down{{ downActive ? ' list-table__order--active' : '' }}">
+                        {%- set downActive = (data.order == field.id) and (data.orderDirection == 'DESC') -%}
+                        <a href="{{ data.callorderUrlGenerator(field.id, 'DESC') }}" class="list-table__order--down{{ downActive ? ' list-table__order--active' : '' }}">
                             <span class="govuk-visually-hidden">Order by {{ field.label }}, descending{{ downActive ? ' (currently active)' : '' }}</span>
                         </a>
                     {% endif %}
