@@ -25,7 +25,6 @@ class SurveyAuditController extends AbstractController
     public function viewLog(EntityManagerInterface $blameLogEntityManager, Survey $survey): Response
     {
         $blameLogRepository = $blameLogEntityManager->getRepository(BlameLog::class);
-        dump($blameLogRepository->getApprovingUsername($survey));
         return $this->render('admin/domestic/surveys/log.html.twig', [
             'survey' => $survey,
             'log' => $blameLogRepository->getAllLogsForEntity($survey),
