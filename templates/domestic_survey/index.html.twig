@@ -15,7 +15,7 @@
     {% if survey.initialDetailsComplete %}
         {% if survey.businessAndVehicleDetailsComplete %}
             <p class="govuk-body govuk-!-margin-bottom-7">
-                <a href="{{ url('app_domesticsurvey_contactdetails') }}">{{ 'domestic.summary.change-contact-details'|trans }}</a>
+                <a class="govuk-link" href="{{ url('app_domesticsurvey_contactdetails') }}">{{ 'domestic.summary.change-contact-details'|trans }}</a>
             </p>
 
             <h2 class="govuk-heading-m">{{ 'domestic.summary.your-week'|trans }}</h2>
