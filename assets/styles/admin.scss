@@ -9,6 +9,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/surveys";
 @import "admin/blame-log";
 @import "admin/bulk-import";
+@import "admin/notes";
 
 .govuk-summary-list__row.access-code .govuk-summary-list__value {
   font-family: monospace;

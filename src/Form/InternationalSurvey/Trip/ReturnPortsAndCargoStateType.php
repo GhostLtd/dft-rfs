@@ -13,6 +13,7 @@ class ReturnPortsAndCargoStateType extends AbstractPortsAndCargoStateType
         $resolver->setDefaults([
             'direction' => 'return',
             'validation_groups' => ['trip_return_ports', 'trip_return_cargo_state'],
+            'at_capacity_null_message' => 'international.trip.return.at-capacity-not-null',
         ]);
     }
 }

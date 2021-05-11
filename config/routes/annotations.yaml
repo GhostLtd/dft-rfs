@@ -11,6 +11,9 @@ admin:
 cron:
     resource: ../../src/Controller/Cron/
     type: annotation
+    prefix: /cron
+    name_prefix: 'cron_'
+    condition: "(request.headers.get('X-Appengine-Cron') === 'true') or (request.headers.get('X-Cloudscheduler') === 'true')"
 
 kernel:
     resource: ../../src/Kernel.php

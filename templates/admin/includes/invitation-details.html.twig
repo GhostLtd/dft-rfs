@@ -1,21 +1,11 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
-<h2 class="govuk-heading-m">Invitation details</h2>
+<h2 class="govuk-heading-m">Invitation/Reminder details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
     {{- row('Address', (address ?? '-') | raw | nl2br) -}}
     {{- row('Email', survey.invitationEmail|default('-')) -}}
 
-    {% set notified %}
-        {% if survey.notifiedDate %}
-            {%- set notificationMethods = {
-                email: survey.invitationEmail,
-                letter: survey.invitationAddress and survey.invitationAddress.filled,
-            } | filter(v => v) | keys -%}
-            {{- survey.notifiedDate|date('d/m/Y') }} {{ notificationMethods is empty ? '' : ('via ' ~ notificationMethods|join(', ')) -}}
-        {%- else -%}
-            -
-        {%- endif %}
-    {% endset %}
-
-    {{- row('Notified', notified) }}
+    {{- row('Initial invitation', survey.notifiedDate ? survey.notifiedDate | date('d/m/Y') : '-') }}
+    {{- row('Reminder 1', survey.firstReminderSentDate ? survey.firstReminderSentDate | date('d/m/Y') : '-') }}
+    {{- row('Reminder 2', survey.secondReminderSentDate ? survey.secondReminderSentDate | date('d/m/Y') : '-') }}
 </dl>
