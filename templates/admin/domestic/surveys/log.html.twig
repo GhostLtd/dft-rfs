@@ -12,7 +12,7 @@
                     {{ tableCell(item.class | replace({'App\\Entity\\Domestic\\': ''})) }}
                     {{ tableCell(item.description) }}
                     {{ tableCell(item.type) }}
-                    {{ tableCell(item.userId) }}
+                    {{ tableCell(item.userId | removeEmailNamespacePrefix) }}
                     {{ tableCell(item.date | date('Y-m-d H:i')) }}
                     {{ tableCell(
                         actionLinks({'javascript:': {

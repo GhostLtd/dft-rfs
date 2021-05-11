@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/csrgt/surveys/{surveyId}")
  * @Entity("survey", expr="repository.find(surveyId)")
- * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
  */
 class SurveyAuditController extends AbstractController
 {
