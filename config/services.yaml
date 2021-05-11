@@ -48,7 +48,7 @@ services:
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
-            - '%env(DATABASE_URL)%'
+            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
             # If you get transaction issues (e.g. after login) uncomment the line below
             - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_ADVISORY }
 
