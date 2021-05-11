@@ -39,8 +39,13 @@ steps:
 
     # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
-      id: 'deploy-services'
-      args: ["app", "deploy", "app.default.yaml", "app.admin.yaml"]
+      id: 'deploy-default-service'
+      args: ["app", "deploy", "app.default.yaml"]
+      waitFor: ['node-build', 'sub-env-vars']
+    # deploy admin service
+    - name: "gcr.io/cloud-builders/gcloud"
+      id: 'deploy-admin-service'
+      args: ["app", "deploy", "app.admin.yaml"]
       waitFor: ['node-build', 'sub-env-vars']
 
 ## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
