@@ -20,12 +20,14 @@
 {% endblock %}
 
 {% block beforeMain %}
+    {% block sessionWarning %}
     {%- if app.user -%}
     <div data-warning="{{ sessionWarningTime() }}" data-expiry="{{ sessionExpiryTime() }}" class="{{ params.containerClasses | default('govuk-width-container') }}" id="session-reminder" style="display: none;">
-        <span class="extend">Your session will time out soon. <a href="#">Click here to extend your session.</a></span>
-        <span class="expired">Your session has expired. Any unsaved data will be lost. <a href="{{ path('app_login') }}">Click here to login.</a></span>
+        <span class="extend">Your session will time out soon. <a href="#" class="govuk-link">Click here to extend your session.</a></span>
+        <span class="expired">Your session has expired. Any unsaved data will be lost. <a href="{{ path('app_login') }}" class="govuk-link">Click here to login.</a></span>
     </div>
     {%- endif -%}
+    {% endblock %}
 {% endblock %}
 
 {% block main %}
