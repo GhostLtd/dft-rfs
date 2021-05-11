@@ -707,7 +707,7 @@ domestic:
       help: ''
       origin-location:
         label: Postcode or place-name
-        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -722,7 +722,7 @@ domestic:
       help: ''
       destination-location:
         label: Postcode or place-name
-        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
       goods-unloaded:
         label: Were goods unloaded?
         help: ''
