@@ -91,6 +91,10 @@ class AppExtension extends AbstractExtension
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
                 return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
             }),
+            new TwigFilter('removeEmailNamespacePrefix', function($username) {
+                preg_match('/^(?:[^:"]+\:)?(?<email>.*)$/', $username, $matches);
+                return $matches['email'] ?? 'unknown';
+            }),
         ];
     }
 

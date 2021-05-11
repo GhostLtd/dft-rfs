@@ -189,7 +189,7 @@ class BlameLogger
                 ? ($user instanceof PasscodeUser)
                     ? 'survey-user'
                     : $user->getUsername()
-                : 'unknown'
+                : '-'
             ;
 
             foreach ($logs as $log) {
