@@ -1,0 +1,5 @@
+services:
+  App\Tests\DataFixtures\:
+    resource: '%kernel.project_dir%/tests/DataFixtures'
+    tags: ['doctrine.fixture.orm']
+    autowire: true
