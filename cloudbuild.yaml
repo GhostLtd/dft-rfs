@@ -1,11 +1,11 @@
 steps:
     # Install dependencies
-    - name: node
+    - name: node:14
       id: 'node-install'
       entrypoint: yarn
       args: ['install', '--frozen-lockfile']
     # Run custom commands
-    - name: node
+    - name: node:14
       id: 'node-build'
       entrypoint: yarn
       args: ['run', 'deploy-build']
@@ -22,7 +22,7 @@ steps:
       args: ['gsutil', 'rsync', 'config/gcloud-build/$PROJECT_ID/', '.']
       waitFor: ['copy-common-deploy-files']
     # add protected/substituted env vars
-    - name: node
+    - name: node:14
       id: 'sub-env-vars'
       entrypoint: yarn
       args: ["run", "build-env-subs"]
