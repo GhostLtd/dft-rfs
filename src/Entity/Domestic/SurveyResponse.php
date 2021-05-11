@@ -113,13 +113,13 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Assert\NotNull(message="common.date.not-null", groups={"sold_details", "scrapped_details"})
+     * N.B. Validation in individual form types due to message varying depending upon context.
      */
     private $unableToCompleteDate;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"domestic.in-possession"})
+     * @Assert\NotNull(message="domestic.survey-response.in-possession-of-vehicle.choice", groups={"domestic.in-possession"})
      */
     private $isInPossessionOfVehicle;
 

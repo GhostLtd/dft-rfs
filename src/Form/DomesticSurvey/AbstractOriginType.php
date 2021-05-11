@@ -3,6 +3,8 @@
 namespace App\Form\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
+use App\Entity\Domestic\DayStop;
+use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -53,9 +55,19 @@ abstract class AbstractOriginType extends AbstractType
             'validation_groups' => function(FormInterface $form) {
                 /** @var StopTrait $data */
                 $data = $form->getData();
-                return $data->getGoodsLoaded()
-                    ? ['origin', 'origin-ports']
-                    : 'origin';
+                $groups = [];
+
+                if ($data instanceof DayStop) {
+                    $groups[] = 'origin-day-stop';
+                } else if ($data instanceof DaySummary) {
+                    $groups[] = 'origin-day';
+                }
+
+                if ($data->getGoodsLoaded()) {
+                    $groups[] = 'origin-ports';
+                }
+
+                return $groups;
             },
         ]);
     }

@@ -26,7 +26,7 @@ class NumberOfStopsType extends AbstractType
                 'label_translation_parameters' => ['dayNumber' => $options['day_number']],
                 'help_html' => true,
                 'help' => "{$translationKeyPrefix}.number-of-stops.help",
-                'constraints' => new NotNull(['message' => 'common.choice.not-null'])
+                'constraints' => new NotNull(['message' => 'domestic.number-of-stops.choice'])
             ])
             ->add('continue', ButtonType::class, [
                 'type' => 'submit',

@@ -21,6 +21,7 @@ use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
 use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
+use App\Utility\SessionTimeoutHelper;
 use App\Utility\WeekNumberHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
@@ -28,7 +29,6 @@ use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
-use Closure;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Exception;
@@ -52,13 +52,15 @@ class AppExtension extends AbstractExtension
     protected TranslatorInterface $translator;
     protected Features $features;
     protected LoadingPlaceHelper $loadingPlaceHelper;
+    protected SessionTimeoutHelper $sessionTimeoutHelper;
 
     public function __construct(
         KernelInterface $kernel,
         RouterInterface $router,
         TranslatorInterface $translator,
         Features $features,
-        LoadingPlaceHelper $loadingPlaceHelper
+        LoadingPlaceHelper $loadingPlaceHelper,
+        SessionTimeoutHelper $sessionTimeoutHelper
     ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
@@ -66,6 +68,7 @@ class AppExtension extends AbstractExtension
         $this->translator = $translator;
         $this->features = $features;
         $this->loadingPlaceHelper = $loadingPlaceHelper;
+        $this->sessionTimeoutHelper = $sessionTimeoutHelper;
     }
 
     public function getFilters(): array
@@ -99,6 +102,8 @@ class AppExtension extends AbstractExtension
             new TwigFunction('flattenChoices', [$this, 'flattenChoices']),
             new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
+            new TwigFunction('sessionExpiryTime', [$this->sessionTimeoutHelper, 'getExpiryTime']),
+            new TwigFunction('sessionWarningTime', [$this->sessionTimeoutHelper, 'getWarningTime']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
             new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
             new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
