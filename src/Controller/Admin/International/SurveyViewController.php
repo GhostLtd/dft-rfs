@@ -3,6 +3,7 @@
 namespace App\Controller\Admin\International;
 
 use App\Controller\Admin\SurveyAddNoteController;
+use App\Entity\BlameLog\BlameLog;
 use App\Entity\International\SurveyNote;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
@@ -23,13 +24,21 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function view(Survey $survey): Response
+    public function view(Survey $survey, EntityManagerInterface $entityManager): Response
     {
         $addNoteForm = $this->getAddNoteForm($survey);
+        $blameLogRepository = $entityManager->getRepository(BlameLog::class);
 
         return $this->render('admin/international/surveys/view.html.twig', [
             'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
+            'approvedBy' => in_array($survey->getState(), [
+                SurveyInterface::STATE_INVITED_USER,
+                SurveyInterface::STATE_NEW,
+                SurveyInterface::STATE_IN_PROGRESS,
+                SurveyInterface::STATE_REJECTED,
+                SurveyInterface::STATE_CLOSED,
+            ]) ? false : $blameLogRepository->getApprovingUsername($survey),
         ]);
     }
 

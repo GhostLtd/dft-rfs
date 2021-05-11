@@ -5,12 +5,30 @@ namespace App\Repository;
 use App\Entity\BlameLog\BlameLog;
 use App\Entity\BlameLoggable;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 
 class BlameLogRepository extends EntityRepository
 {
     public const INITIAL_ENTRY_COUNT = 5;
+
+    public function getApprovingUsername(BlameLoggable $entity)
+    {
+        return $this->createQueryBuilder('blame_log')
+            ->select('blame_log.userId as user, blame_log.date')
+            ->where('blame_log.entityId = :id')
+            ->andWhere('blame_log.class = :class')
+            ->andWhere('blame_log.properties LIKE :props')
+            ->setParameters([
+                'id' => $entity->getId(),
+                'class' => get_class($entity),
+                'props' => '%"state":["closed","approved"]%',
+            ])
+            ->orderBy('blame_log.date', 'desc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 
     public function getAllLogsForEntity(BlameLoggable $entity, $maxDepth = 3)
     {

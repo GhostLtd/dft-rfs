@@ -41,6 +41,7 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {% if approvedBy %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['user'] | removeEmailNamespacePrefix} (#{approvedBy['date'] | date('Y-m-d')})") }}{% endif %}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}

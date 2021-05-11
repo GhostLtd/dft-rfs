@@ -7,6 +7,7 @@
 
     {%- if showStatus ?? true -%}
         {{- actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {% if approvedBy %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['user'] | removeEmailNamespacePrefix} (#{approvedBy['date'] | date('Y-m-d')})") }}{% endif %}
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
