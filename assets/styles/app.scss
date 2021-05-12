@@ -5,6 +5,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "app/passcode-fieldset";
 @import "app/session-reminder";
 @import "app/vehicle-icons";
+@import "app/prose-scope";
 
 body {
     background-color: lightgray;

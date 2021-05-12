@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\InternationalSurvey\IndexController as IntIndexController;
 use App\Entity\PasscodeUser;
 use App\Utility\SessionTimeoutHelper;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,5 +47,14 @@ class HomeController extends AbstractController
             'warning' => $timeoutHelper->getWarningTime(),
             'expiry' => $timeoutHelper->getExpiryTime(),
         ]);
+    }
+
+    /**
+     * @Route("/accessibility-statement")
+     * @Template("home/accessibility-statement.html.twig")
+     */
+    public function accessibilityStatement()
+    {
+        return [];
     }
 }

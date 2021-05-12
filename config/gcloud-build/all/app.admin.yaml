@@ -1,7 +1,7 @@
 ## GCP AppEngine config
 runtime: php74
 entrypoint: serve public/index.php
-instance_class: B1
+instance_class: B2
 service: admin
 
 manual_scaling:
