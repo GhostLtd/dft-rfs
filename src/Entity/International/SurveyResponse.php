@@ -2,7 +2,6 @@
 
 namespace App\Entity\International;
 
-use App\Entity\BlameLoggable;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
 use App\Repository\International\SurveyResponseRepository;
@@ -15,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
  * @ORM\Table(name="international_survey_response")
  */
-class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
+class SurveyResponse extends AbstractSurveyResponse
 {
     const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
     const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
@@ -250,21 +249,6 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
     {
         // TODO: More extensive checks
         return !$this->vehicles->isEmpty();
-    }
-
-    public function getBlameLogLabel()
-    {
-        return $this->getContactName();
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return Survey::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getSurvey()->getId();
     }
 
     public function getNumberOfVehicles(): int

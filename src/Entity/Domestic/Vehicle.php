@@ -2,7 +2,6 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\BlameLoggable;
 use App\Entity\VehicleTrait;
 use App\Entity\Volume;
 use App\Form\Validator as AppAssert;
@@ -14,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert; // N.B. Used by trait
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
  * @ORM\Table("domestic_vehicle")
  */
-class Vehicle implements BlameLoggable
+class Vehicle
 {
     use VehicleTrait;
 
@@ -57,20 +56,5 @@ class Vehicle implements BlameLoggable
         }
 
         return $this;
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "{$this->getRegistrationMark()}";
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return SurveyResponse::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getResponse()->getId();
     }
 }

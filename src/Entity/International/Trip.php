@@ -2,7 +2,6 @@
 
 namespace App\Entity\International;
 
-use App\Entity\BlameLoggable;
 use App\Entity\Distance;
 use App\Entity\SimpleVehicleTrait;
 use App\Entity\Vehicle as VehicleLookup;
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @AppAssert\TripRoute(groups={"admin_trip"}, direction="outbound", formField="outboundPorts")
  * @AppAssert\TripRoute(groups={"admin_trip"}, direction="return", formField="returnPorts")
  */
-class Trip implements BlameLoggable
+class Trip
 {
     use SimpleVehicleTrait;
 
@@ -669,22 +668,6 @@ class Trip implements BlameLoggable
         foreach($this->actions as $action) {
             $action->setNumber($count++);
         }
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "{$this->getOutboundUkPort()} -> {$this->getOutboundForeignPort()} on "
-            . (!is_null($this->getOutboundDate()) ? $this->getOutboundDate()->format('Y-m-d') : '[unknown]');
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return Vehicle::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getVehicle()->getId();
     }
 
     public function getIsSwappedTrailer(): ?bool

@@ -3,7 +3,6 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\Address;
-use App\Entity\BlameLoggable;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
 use App\Repository\Domestic\SurveyResponseRepository;
@@ -18,7 +17,7 @@ use App\Form\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
  * @ORM\Table("domestic_survey_response")
  */
-class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
+class SurveyResponse extends AbstractSurveyResponse
 {
     const IN_POSSESSION_YES = 'yes';
     const IN_POSSESSION_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
@@ -378,21 +377,6 @@ class SurveyResponse extends AbstractSurveyResponse implements BlameLoggable
             if (!empty($summaryOrStops)) return true;
         }
         return false;
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "{$this->getContactName()}";
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return Survey::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getSurvey()->getId();
     }
 
     public function mergeInitialDetails(SurveyResponse $response)

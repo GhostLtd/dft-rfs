@@ -2,7 +2,6 @@
 
 namespace App\Entity\International;
 
-use App\Entity\BlameLoggable;
 use App\Repository\International\StopRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -11,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=StopRepository::class)
  * @ORM\Table(name="international_stop")
  */
-class Stop implements BlameLoggable
+class Stop
 {
     /**
      * @ORM\Id
@@ -96,20 +95,5 @@ class Stop implements BlameLoggable
         $this->number = $number;
 
         return $this;
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "{$this->getName()} {$this->getCountry()}";
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return Trip::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getTrip()->getId();
     }
 }

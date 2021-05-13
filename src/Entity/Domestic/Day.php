@@ -2,7 +2,6 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\BlameLoggable;
 use App\Repository\Domestic\DayRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=DayRepository::class)
  * @ORM\Table("domestic_day")
  */
-class Day implements BlameLoggable
+class Day
 {
     const TRANSFERRED_NONE = 0;
     const TRANSFERRED_PORT = 1;
@@ -191,20 +190,5 @@ class Day implements BlameLoggable
             ? (bool) $this->getSummary()
             : count($this->getStops()) > 0
             ;
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "#{$this->getNumber()}";
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return SurveyResponse::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getResponse()->getId();
     }
 }
