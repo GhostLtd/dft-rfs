@@ -9,10 +9,9 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyInterface;
 use App\Form\NoteType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AuditLog\AuditLogRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,19 +24,21 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function viewDetails(Survey $survey): Response
+    public function viewDetails(Survey $survey, AuditLogRepository $logRepository): Response
     {
         $addNoteForm = $this->getAddNoteForm($survey);
+
         return $this->render('admin/domestic/surveys/view.html.twig', [
             'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
+            'auditLogs' => $logRepository->getLogs($survey->getId(), Survey::class),
         ]);
     }
 
     /**
      * @Route("/add-note", name=SurveyController::ADD_NOTE_ROUTE)
      */
-    public function addNote(Request $request, EntityManagerInterface $entityManager, Survey $survey)
+    public function addNote(Survey $survey)
     {
         $addNoteForm = $this->getAddNoteForm($survey);
         return $this->forward(SurveyAddNoteController::class . '::addNotePostAction', [

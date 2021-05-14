@@ -10,6 +10,7 @@
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {#- "vehicle" gets created when the initial-details wizard is complete, although at that stage it only contains regMark -#}
     {%- set hasVehicle = hasInitialDetails and
@@ -38,6 +39,11 @@
         ("Notes (#{ survey.notes | length })"): 'tab-notes',
         'Invitation/reminders': 'tab-invitation-details',
     }) -%}
+    {%- if hasAuditLogs -%}
+        {%- set tabs = tabs | merge({
+            'Audit logs': 'tab-audit-logs',
+        }) -%}
+    {%- endif -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
@@ -127,6 +133,14 @@
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
+            
+            {%- if hasAuditLogs -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                    {%- with {marginBottom: 5} -%}
+                        {%- include 'admin/includes/audit-log.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
         </div>
     {%- endif -%}
 

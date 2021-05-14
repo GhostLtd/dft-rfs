@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\DependencyInjection\AuditLogPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -32,6 +33,13 @@ class Kernel extends BaseKernel implements CompilerPassInterface
     public function getProjectDir(): string
     {
         return \dirname(__DIR__);
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new AuditLogPass());
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
