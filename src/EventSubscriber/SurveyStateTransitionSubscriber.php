@@ -2,11 +2,9 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
-use App\Entity\SurveyTrait;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
@@ -16,14 +14,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
-    private WorkflowInterface $domesticSurveyStateMachine;
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
-    private string $frontendHostname;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -38,15 +33,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(
-        WorkflowInterface $domesticSurveyStateMachine,
-        EntityManagerInterface $entityManager,
-        MessageBusInterface $messageBus,
-        $frontendHostname
-    ) {
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    {
         $this->entityManager = $entityManager;
-        $this->frontendHostname = $frontendHostname;
         $this->messageBus = $messageBus;
     }
 
