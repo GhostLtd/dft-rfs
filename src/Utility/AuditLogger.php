@@ -96,7 +96,7 @@ class AuditLogger
     {
         foreach($entities as $entity) {
             $className = get_class($entity);
-            $changeSet = null;
+            $changeSet = [];
 
             if ($type !== ChangeSet::TYPE_DELETE) {
                 $changeSet = $this->removeNonChanges($unitOfWork->getEntityChangeSet($entity));
