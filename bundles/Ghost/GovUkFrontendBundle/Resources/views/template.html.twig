@@ -3,7 +3,7 @@
 <html lang="{{ htmlLang | default('en') }}" class="govuk-template {{ htmlClasses | default('') }}" {{ govuk.attributes(html_attributes | default({})) }}>
 <head>
     <meta charset="utf-8" />
-    <title{% if pageTitleLang | default(false) %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <title{% if pageTitleLang | default(false) %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitlePrefix %}{% endblock %}{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="{{ themeColor | default('#0b0c0c') }}" />
     {% if block('metaDescription') is defined %}<meta name="description" content="{{ block('metaDescription') }}">{% endif %}
@@ -56,6 +56,8 @@
         html: phaseBannerHtml
     }) }}
 {% endblock %}
+
+{% block beforeMain %}{% endblock %}
 
 {% block main %}
     <div class="govuk-width-container {{ containerClasses | default('') }}">

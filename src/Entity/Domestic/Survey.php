@@ -3,16 +3,16 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\BlameLoggable;
-use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
+use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -20,29 +20,13 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
-class Survey implements BlameLoggable
+class Survey implements BlameLoggable, SurveyInterface, ApiResponseInterface
 {
     use SurveyTrait;
 
-    const STATE_NEW = 'new';
-    const STATE_INVITED_USER = 'invited';
-    const STATE_IN_PROGRESS = 'in-progress';
-    const STATE_CLOSED = 'closed';
-    const STATE_APPROVED = 'approved';
-    const STATE_REJECTED = 'rejected';
-    const STATE_EXPORTED = 'exported';
-
-    const STATE_CHOICES = [
-        'admin.domestic.survey.state.new' => self::STATE_NEW,
-        'admin.domestic.survey.state.invited' => self::STATE_INVITED_USER,
-        'admin.domestic.survey.state.in-progress' => self::STATE_IN_PROGRESS,
-        'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
-        'admin.domestic.survey.state.rejected' => self::STATE_REJECTED,
-        'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,
-    ];
-
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey"})
      */
     private $isNorthernIreland;
 
@@ -63,16 +47,10 @@ class Survey implements BlameLoggable
     private $passcodeUser;
 
     /**
-     * @Assert\Callback(groups={"add_survey"})
+     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
      */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
-        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
-            $context
-                ->buildViolation('domestic.add.invitation-email-or-address')
-                ->atPath('invitationEmail')
-                ->addViolation();
-        }
-    }
+    private $notes;
 
     public function isInitialDetailsComplete()
     {
@@ -171,5 +149,20 @@ class Survey implements BlameLoggable
     public function getWeekNumberAndYear(): array
     {
         return WeekNumberHelper::getWeekNumberAndYear($this->getSurveyPeriodStart());
+    }
+
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    public function addNote(SurveyNote $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $note->setSurvey($this);
+            $this->notes[] = $note;
+        }
+
+        return $this;
     }
 }

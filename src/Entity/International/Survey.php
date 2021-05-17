@@ -4,7 +4,9 @@ namespace App\Entity\International;
 
 use App\Entity\BlameLoggable;
 use App\Entity\PasscodeUser;
+use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,27 +15,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey implements BlameLoggable
+class Survey implements BlameLoggable, SurveyInterface, ApiResponseInterface
 {
     use SurveyTrait;
-
-    const STATE_NEW = 'new';
-    const STATE_INVITED_USER = 'invited';
-    const STATE_IN_PROGRESS = 'in-progress';
-    const STATE_CLOSED = 'closed';
-    const STATE_APPROVED = 'approved';
-    const STATE_REJECTED = 'rejected';
-    const STATE_EXPORTED = 'exported';
-
-    const STATE_CHOICES = [
-        'admin.domestic.survey.state.new' => self::STATE_NEW,
-        'admin.domestic.survey.state.invited' => self::STATE_INVITED_USER,
-        'admin.domestic.survey.state.in-progress' => self::STATE_IN_PROGRESS,
-        'admin.domestic.survey.state.closed' => self::STATE_CLOSED,
-        'admin.domestic.survey.state.approved' => self::STATE_APPROVED,
-        'admin.domestic.survey.state.rejected' => self::STATE_REJECTED,
-        'admin.domestic.survey.state.exported' => self::STATE_EXPORTED,
-    ];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -58,6 +42,12 @@ class Survey implements BlameLoggable
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"})
      */
     private $passcodeUser;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $notes;
 
     public function getReferenceNumber(): ?string
     {
@@ -137,5 +127,20 @@ class Survey implements BlameLoggable
     public function getAssociatedEntityId()
     {
         return null;
+    }
+
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    public function addNote(SurveyNote $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $note->setSurvey($this);
+            $this->notes[] = $note;
+        }
+
+        return $this;
     }
 }

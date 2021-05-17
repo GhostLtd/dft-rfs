@@ -1,0 +1,43 @@
+menu:
+  dashboard: Home
+  logout: Sign out
+  domestic:
+    root: CSRGT
+    surveys-gb: Surveys (GB)
+    surveys-ni: Surveys (NI)
+    survey-add: Add Survey
+    export: Export
+    dvla-import: DVLA bulk import
+  international:
+    root: IRHS
+    surveys: Surveys
+    survey-add: Add Survey
+    export: Export
+    sample-import: Bulk sample import
+
+format:
+  date:
+    date-time: Y-m-d H:i
+
+common:
+  survey:
+    workflow-transition:
+      heading: "{transitionTitleUcfirst} survey"
+      confirm.label: "{transitionTitleUcfirst} survey"
+      cancel.label: "Cancel"
+      cancelled-notification:
+        heading: '{transitionTitleUcfirst} survey transition cancelled'
+        content: 'The requested {transitionTitle} survey transition was cancelled.'
+      confirmed-notification:
+        heading: '{transitionTitleUcfirst} survey'
+        content: 'The requested {transitionTitle} survey transition was completed.'
+
+international:
+  action:
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel
+  vehicle:
+    delete:
+      delete.label: Yes, delete this vehicle
+      cancel.label: Cancel

@@ -12,7 +12,7 @@
         ('common.vehicle.body-type'): {},
         ('common.vehicle.gross-weight'): {numeric: true},
         ('common.vehicle.carrying-capacity'): {numeric: true},
-        (''): {},
+        ('common.actions.table-heading' | trans): {html: true},
     }) -}}
     {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
     {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
@@ -28,7 +28,7 @@
             {{- tableCell("#{vehicle.carryingCapacity|number_format}kg", {numeric: true}) -}}
             {%- if showActions -%}
                 {%- set viewContents = actionLinks({
-                    ('#' ~ vehicle.id): {label: 'View', class: 'govuk-link--no-visited-state'},
+                    ('#' ~ vehicle.id): {label: 'View', class: 'govuk-link--no-visited-state', srHiddenSuffix: "Vehicle #{vehicle.registrationMark}"},
                 }) -%}
                 {{- tableCell(viewContents, {actions: true}) -}}
             {%- endif -%}

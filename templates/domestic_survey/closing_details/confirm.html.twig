@@ -1,5 +1,4 @@
-{% set translation_prefix = 'domestic.survey-response.confirm-submission' %}
-{#{% set useThirdsColumns = false %}#}
+{% set translation_prefix = 'domestic.closing-details.confirm-submission' %}
 {% extends 'domestic_survey/form-base.html.twig' %}
 
 {% block content %}
@@ -9,16 +8,14 @@
 {% endblock %}
 
 {% block preFormContent %}
-    <h1 class="govuk-heading-xl">Submit your survey</h1>
-
     <div class="govuk-!-padding-bottom-5">
-        <h2 class="govuk-heading-m">Contact details</h2>
-        <p class="govuk-body">We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey</p>
-        {% with {survey: subject.survey, showActions: false} %}
+        <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.contact-details')|trans }}</h2>
+        <p class="govuk-body">{{ (translation_prefix ~ '.contact-details-copy')|trans }}</p>
+        {% with {survey: subject.survey, showActions: false, marginBottom: 5} %}
             {% include 'domestic_survey/includes/contact-details.html.twig' %}
         {% endwith %}
     </div>
 
-    <h2 class="govuk-heading-m">Confirm and submit</h2>
-    <p class="govuk-body">Please confirm that all the information you have entered in the survey is correct and complete before submitting it. You can <a href="{{ url('app_domesticsurvey_index') }}">go back</a> and check if you're unsure.</p>
+    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.confirm-and-submit')|trans }}</h2>
+    <p class="govuk-body">Please confirm that all the information you have entered in the survey is correct and complete before submitting it. You can <a href="{{ url('app_domesticsurvey_index') }}" class="govuk-link">go back to the dashboard</a> and check if you're unsure.</p>
 {% endblock %}

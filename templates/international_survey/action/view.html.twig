@@ -1,22 +1,17 @@
 {% set translation_prefix = 'international.action.summary' %}
+{% set headingOverride = action.loading ? 'heading-loading' : 'heading-unloading' %}
+{% set headingParams = {number: action.number} %}
 {% set containerClasses = '' %}
+
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
+    {% from 'macros.html.twig' import displayHazardousGoods %}
 
-    <h1 class="page-heading__heading govuk-heading-xl">
-        {%- if action.loading -%}
-            {{ 'international.action.summary.heading-loading'|trans({number: action.number}) }}
-        {%- else -%}
-            {{ 'international.action.summary.heading-unloading'|trans({number: action.number}) }}
-        {%- endif -%}
-    </h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ (translation_prefix ~ '.' ~ headingOverride)|trans(headingParams) }}</h1>
 
     {%- set params = {actionId: action.id} -%}
-    {%- set urlChange = wizardUrl('international-action', 'STATE_PLACE', params) -%}
-
-    {%- set change = 'common.actions.change'|trans -%}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -24,36 +19,37 @@
                 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
                 {%- set loadingAction = action.loadingAction -%}
 
-                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action|formatCountry}), {(urlChange): change}) }}
+                {%- set changeLink = {(wizardUrl('international-action', 'STATE_PLACE', params)):
+                    {label: 'common.actions.change', srHiddenSuffix: 'common.action.place'}
+                } -%}
+                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action|formatCountry}), changeLink) }}
                 {%- if action.loading -%}
             {# Loading #}
-                    {%- set urlLoadGoodsChange = wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params) -%}
-                    {%- set urlLoadHazardousChange = wizardUrl('international-action', 'STATE_HAZARDOUS_GOODS', params) -%}
+                    {%- set loadGoodsChangeLink = {(wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params)):
+                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.goods'}
+                    } -%}
+                    {%- set loadHazardousChangeLink = {(wizardUrl('international-action', 'STATE_HAZARDOUS_GOODS', params)):
+                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.cargo-type'}
+                    } -%}
 
-                    {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), {(urlLoadGoodsChange): change}) }}
-                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlLoadGoodsChange): change}) }}
+                    {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), loadGoodsChangeLink) }}
+                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', loadGoodsChangeLink) }}
 
-                    {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
-                    {%- set hazardousGoodsCopy -%}
-                        {%- if action.hazardousGoodsCode -%}
-                            <em>{{ action.hazardousGoodsCode }}</em> - {{ choiceLabel(flatten(hazardousGoodsChoices), action.hazardousGoodsCode)|trans }}
-                        {%- else -%}
-                            {{ 'common.action.not-hazardous'|trans }}
-                        {%- endif -%}
-                    {%- endset %}
-                    {{ summaryListRow('common.action.is-hazardous', hazardousGoodsCopy, {(urlLoadHazardousChange): change}) }}
-                    {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, {(urlLoadHazardousChange): change}) }}
+                    {{ summaryListRow('common.action.is-hazardous', displayHazardousGoods(action.hazardousGoodsCode, 'common.action.not-hazardous'), loadHazardousChangeLink) }}
+                    {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, loadHazardousChangeLink) }}
                 {%- else -%}
             {# Unloading #}
-                    {%- set urlUnloadConsignmentChange = wizardUrl('international-action', 'STATE_CONSIGNMENT_UNLOADED', params) -%}
+                    {%- set unloadConsignmentChangeLink = {(wizardUrl('international-action', 'STATE_CONSIGNMENT_UNLOADED', params)):
+                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.goods'}
+                    } -%}
                     {% with {action: action.loadingAction} %}
                         {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action|formatCountry, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
-                        {{ summaryListRow('common.action.goods', goodsCopy, {(urlUnloadConsignmentChange): change}) }}
+                        {{ summaryListRow('common.action.goods', goodsCopy, unloadConsignmentChangeLink) }}
                     {% endwith %}
                     {% if action.weightUnloadedAll %}
-                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), {(urlUnloadConsignmentChange): change}) }}
+                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), unloadConsignmentChangeLink) }}
                     {% else %}
-                        {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', {(urlUnloadConsignmentChange): change}) }}
+                        {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', unloadConsignmentChangeLink) }}
                     {% endif %}
                 {%- endif -%}
             </dl>

@@ -1,0 +1,16 @@
+{% block form %}
+    {{ form_start(form) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.registrationMark) }}
+            {{ form_row(form.isNorthernIreland) }}
+            {{ form_row(form.surveyPeriodStart) }}
+            {{ form_row(form.invitationEmail) }}
+        </div>
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.invitationAddress) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}

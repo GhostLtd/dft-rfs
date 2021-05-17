@@ -1,9 +1,14 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{%- set translation_prefix = "admin.international.delete-trip" -%}
+{%- set headingParams = {
+    date: subject.outboundDate,
+    origin: subject.origin,
+    destination: subject.destination
+} %}
+
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Delete Trip</h1>
-
     {%- set showActions = subject.actions|length > 0 -%}
 
     {%- with {showActions: false, trip: subject, marginBottom: showActions ? 9 : 4} -%}

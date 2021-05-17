@@ -1,11 +1,7 @@
 <?php
 
-
 namespace App\Form\Admin;
 
-
-use App\Utility\International\SampleImporter;
-use App\Utility\RegistrationMarkHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -29,11 +25,14 @@ abstract class AbstractImportReviewDataType extends AbstractType
                 ];
             }
 
+            $safeFilename = htmlspecialchars(
+                $options['uploaded_filename'],
+                ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $event->getForm()
                 ->add('review_data', Gds\ChoiceType::class, [
                     'data' => array_keys($options['surveys']),
                     'multiple' => true,
-                    'help' => count($options['surveys']) . " records imported from <kbd>{$options['uploaded_filename']}</kbd>",
+                    'help' => count($options['surveys']) . " records imported from <kbd>{$safeFilename}</kbd>",
                     'help_html' => true,
                     'label' => 'Data found in file',
                     'label_attr' => ['class' => 'govuk-label--m'],
@@ -56,6 +55,12 @@ abstract class AbstractImportReviewDataType extends AbstractType
         $resolver->setRequired([
             'surveys',
             'uploaded_filename',
+        ]);
+
+        $resolver->setDefaults([
+            'attr' => [
+                'data-prevent-double-click' => 'true',
+            ],
         ]);
     }
 }

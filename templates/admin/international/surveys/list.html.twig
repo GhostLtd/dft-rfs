@@ -1,21 +1,24 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = "admin.international.surveys" %}
+
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableRowComplex, actionLinks, tag %}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    <h1 class="govuk-heading-l">{{ "admin.international.survey.title"|trans }}</h1>
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
         <tr class="govuk-table__row">
-            {{ tableCell(survey.passcodeUser.username ?? '-') }}
             {{ tableCell(survey.referenceNumber) }}
             {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
+            {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
-            {{ tableCell(tag({text: survey.state, classes: "admin.international.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{- _self.countField(survey, 'numberOfVehicles') -}}
-            {{- _self.countField(survey, 'totalNumberOfTrips') -}}
-            {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): 'details'}), {}) }}
+            {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
+            {{- countField(survey, 'numberOfVehicles') -}}
+            {{- countField(survey, 'totalNumberOfTrips') -}}
+            {{ tableCell(actionLinks({(url('admin_international_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey ref #{survey.referenceNumber}"}}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
@@ -23,9 +26,3 @@
     {{ listTableEnd(data, form) }}
 {% endblock %}
 
-{%- macro countField(survey, fieldName) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
-    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
-    {%- set value = (field == null or field == 0) ? '-' : field -%}
-    {{- tableCell(value) -}}
-{%- endmacro -%}

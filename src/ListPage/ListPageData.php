@@ -11,7 +11,7 @@ class ListPageData
     protected int $page;
     protected int $numPages;
     protected int $numRecords;
-    protected array $entities;
+    protected iterable $entities;
     protected ?string $nextUrl;
     protected ?string $previousUrl;
     protected array $paginationUrls;
@@ -20,7 +20,7 @@ class ListPageData
     protected ?string $order;
     protected ?string $orderDirection;
 
-    public function __construct(int $page, int $numPages, int $numRecords, array $entities, ?string $nextUrl, ?string $previousUrl, array $paginationUrls, array $fields, Closure $orderUrlGenerator, ?string $order, ?string $orderDirection)
+    public function __construct(int $page, int $numPages, int $numRecords, iterable $entities, ?string $nextUrl, ?string $previousUrl, array $paginationUrls, array $fields, Closure $orderUrlGenerator, ?string $order, ?string $orderDirection)
     {
         $this->page = $page;
         $this->numPages = $numPages;
@@ -50,7 +50,7 @@ class ListPageData
         return $this->numRecords;
     }
 
-    public function getEntities(): array
+    public function getEntities(): iterable
     {
         return $this->entities;
     }
@@ -78,6 +78,11 @@ class ListPageData
     public function getOrderUrlGenerator(): Closure
     {
         return $this->orderUrlGenerator;
+    }
+
+    public function callOrderUrlGenerator(...$args): string
+    {
+        return ($this->orderUrlGenerator)(...$args);
     }
 
     public function getOrder(): ?string

@@ -15,6 +15,13 @@ class ImportDvlaReviewDataType extends AbstractImportReviewDataType
         /** @var Survey $data */
         $regMark = new RegistrationMarkHelper($data->getRegistrationMark());
         $address1 = ucwords(strtolower($data->getInvitationAddress()->getLine1()));
-        return "<b>{$regMark->getFormattedRegistrationMark()}</b> {$address1}, {$data->getInvitationAddress()->getPostcode()}";
+
+        $safeLabel = htmlspecialchars(
+            "{$address1}, {$data->getInvitationAddress()->getPostcode()}",
+            ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $safeRegMark = htmlspecialchars(
+            $regMark->getFormattedRegistrationMark(),
+            ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return "<b>{$safeRegMark}</b> {$safeLabel}";
     }
 }

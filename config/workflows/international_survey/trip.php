@@ -35,6 +35,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_RETURN_PORTS,
                     StateObject::STATE_SWAPPED_TRAILER,
                     StateObject::STATE_CHANGED_BODY_TYPE,
+                    StateObject::STATE_NEW_VEHICLE_WEIGHTS,
                     StateObject::STATE_DISTANCE,
                     StateObject::STATE_COUNTRIES_TRANSITTED,
 
@@ -61,22 +62,43 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'guard' => "is_empty(subject.getSubject().getId())",
                     ],
-                    'swapped trailer entered not articulated' => [
+                    'didnt swap trailer entered cant change body type' => [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_DISTANCE,
                         'guard' => 'is_empty(subject.getSubject().getId())
-                                && !subject.getSubject().canChangeBodyType()',
+                                && !subject.getSubject().canChangeBodyType()
+                                && !subject.getSubject().getIsSwappedTrailer()',
                     ],
-                    'swapped trailer entered articulated' => [
+                    'swapped trailer entered cant change body type' => [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'to' =>  StateObject::STATE_NEW_VEHICLE_WEIGHTS,
+                        'guard' => '!subject.getSubject().canChangeBodyType()
+                                && subject.getSubject().getIsSwappedTrailer()',
+                    ],
+                    'swapped trailer entered can change body type' => [
                         'from' => StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_CHANGED_BODY_TYPE,
                         'guard' => "subject.getSubject().canChangeBodyType()",
                     ],
-                    'changed body type entered' => [
+                    'can change body type but not changed trailer or body' => [
                         'from' => StateObject::STATE_CHANGED_BODY_TYPE,
+                        'to' =>  StateObject::STATE_DISTANCE,
+                        'guard' => "is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeWeights()",
+                    ],
+
+                    'can change body and changed trailer or body' => [
+                        'from' => StateObject::STATE_CHANGED_BODY_TYPE,
+                        'to' =>  StateObject::STATE_NEW_VEHICLE_WEIGHTS,
+                        'guard' => "subject.getSubject().canChangeWeights()",
+                    ],
+
+                    'new vehicle weights entered can change body type' => [
+                        'from' => StateObject::STATE_NEW_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_DISTANCE,
                         'guard' => "is_empty(subject.getSubject().getId())",
                     ],
+
 
                     'distance entered' => [
                         'from' => StateObject::STATE_DISTANCE,
@@ -98,31 +120,41 @@ return static function (ContainerConfigurator $container) {
 
                     // Editing
 
-                    'places changed' => array_merge($commonEditConfig, [
+                    'editing places' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_ORIGIN_AND_DESTINATION,
                     ]),
-                    'dates changed' => array_merge($commonEditConfig, [
+                    'editing dates' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_DATES,
                     ]),
-                    'outbound ports changed' => array_merge($commonEditConfig, [
+                    'editing outbound ports' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_OUTBOUND_PORTS,
                     ]),
-                    'return ports changed' => array_merge($commonEditConfig, [
+                    'editing return ports' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_RETURN_PORTS,
                     ]),
-                    'trailer or body changed not articulated' => array_merge($commonEditConfig, [
+                    'editing trailer cant change body type' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'guard' => '!is_empty(subject.getSubject().getId())
-                                && !subject.getSubject().canChangeBodyType()',
+                                && !subject.getSubject().canChangeBodyType()
+                                && !subject.getSubject().getIsSwappedTrailer()',
+                        'metadata' => array_merge($commonEditConfig['metadata'], [
+                            'submitLabel' => 'common.actions.continue',
+                        ]),
                     ]),
 
-                    'body type changed' => array_merge($commonEditConfig, [
+                    'editing body type not changed' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_CHANGED_BODY_TYPE,
-                        'guard' => '!is_empty(subject.getSubject().getId())',
+                        'guard' => "!is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeWeights()",
+                    ]),
+                    'editing vehicle weights changed' => array_merge($commonEditConfig, [
+                        'from' =>  StateObject::STATE_NEW_VEHICLE_WEIGHTS,
+                        'guard' => "!is_empty(subject.getSubject().getId())
+                                && subject.getSubject().canChangeWeights()",
                     ]),
 
 
-                    'distance changed' => array_merge($commonEditConfig, [
+                    'editing distance' => array_merge($commonEditConfig, [
                         'from' =>  StateObject::STATE_DISTANCE,
                     ]),
                 ]

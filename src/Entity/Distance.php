@@ -12,6 +12,8 @@ class Distance implements ValueUnitInterface
     const UNIT_KILOMETERS = 'kilometers';
     const UNIT_MILES = 'miles';
 
+    const UNIT_CONVERSION_FACTOR = 1.609344;
+
     const UNIT_TRANSLATION_PREFIX = 'unit.distance.';
 
     const UNIT_CHOICES = [
@@ -37,6 +39,24 @@ class Distance implements ValueUnitInterface
     public function getValue(): ?string
     {
         return $this->value;
+    }
+
+    public function getValueNormalized($unit)
+    {
+        if ($this->value === null) {
+            return null;
+        }
+        if ($this->unit === $unit) {
+            return $this->value;
+        }
+        switch ($unit) {
+            case self::UNIT_KILOMETERS :
+                return $this->value * self::UNIT_CONVERSION_FACTOR;
+            case self::UNIT_MILES :
+                return $this->value / self::UNIT_CONVERSION_FACTOR;
+            default:
+                throw new \InvalidArgumentException('Unexpected unit type');
+        }
     }
 
     public function setValue($value): self

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\InternationalSurvey\Vehicle;
-
 
 use App\Form\AbstractConfirmType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,9 +12,7 @@ class ConfirmDatesType extends AbstractConfirmType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'translation_key_prefix' => 'international.vehicle.confirm-dates',
-            'field_options' => [
-                'label_attr' => ['class' => 'govuk-label--s'],
-            ],
+            'null_message' => 'international.vehicle.confirm-dates.not-null',
         ]);
     }
 }

@@ -7,6 +7,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "govuk-header";
 @import "govuk-time-input";
 @import "govuk-money-input";
+@import "govuk-grid";
 
 @include govuk-media-query($from: tablet) {
     .govuk-button + .govuk-button {

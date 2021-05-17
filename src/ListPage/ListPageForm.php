@@ -2,9 +2,10 @@
 
 namespace App\ListPage;
 
+use App\ListPage\Field\FilterableInterface;
+use App\ListPage\Field\Simple;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,48 +15,33 @@ class ListPageForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /**
-         * @var $field Field
+         * @var $field Simple
          */
         foreach($options['fields'] as $field) {
-            $parameterName = $field->getParameterName();
-            $fieldType = $field->getType();
+            $fieldName = $field->getId();
 
-            if ($fieldType === null) {
+            if (!$field instanceof FilterableInterface) {
                 continue;
             }
 
-            switch($fieldType) {
-                case Field::TYPE_TEXT:
-                    $type = Gds\InputType::class;
-                    $fieldOptions = [];
-                    break;
-                case Field::TYPE_SELECT:
-                    $type = Gds\ChoiceType::class;
-                    $fieldOptions = [
-                        'placeholder' => $field->getLabel(),
-                        'choices' => $field->getChoices(),
-                        'expanded' => false,
-                    ];
-                    break;
-                default:
-                    throw new InvalidArgumentException('Invalid field type');
-            }
-
-            $builder->add($parameterName, $type, array_merge($fieldOptions, [
-                'label' => false,
+            $builder->add($fieldName, $field->getFormClass(), array_merge([
+                'label' => "{$field->getLabel()} (filter)",
+                'label_attr' => ['class' => 'govuk-visually-hidden'],
                 'attr' => [
                     'placeholder' => $field->getLabel(),
                     'class' => 'filter',
                 ],
-            ]));
+            ], $field->getFormOptions()));
         }
 
         $builder
             ->add('submit', Gds\ButtonType::class, [
-                'label' => 'Apply',
+                'label' => 'Apply<span class="govuk-visually-hidden"> filters</span>',
+                'label_html' => true,
             ])
             ->add('clear', Gds\ButtonType::class, [
-                'label' => 'Clear',
+                'label' => 'Clear<span class="govuk-visually-hidden"> filters</span>',
+                'label_html' => true,
                 'attr' => [
                     'class' => 'govuk-button--warning',
                 ]
@@ -73,7 +59,7 @@ class ListPageForm extends AbstractType
         ]);
 
         $resolver->setRequired('fields');
-        $resolver->setAllowedTypes('fields', Field::class.'[]');
+        $resolver->setAllowedTypes('fields', Simple::class.'[]');
     }
 
     public function getBlockPrefix()

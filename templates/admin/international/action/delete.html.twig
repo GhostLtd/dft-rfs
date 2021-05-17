@@ -1,9 +1,12 @@
 {% extends 'admin/base-with-nav.twig' %}
 
+{% set translation_prefix = 'international.action-delete' %}
+{% set headingParams = {
+    actionNumber: action.number
+} %}
+
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
-    <h1 class="govuk-heading-l" id="top">Delete Action</h1>
-
     {%- if action.loading -%}
         {%- set filter = [action.id]|merge(action.unloadingActions|map(a => a.id)) -%}
     {%- else -%}

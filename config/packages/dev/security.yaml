@@ -1,0 +1,6 @@
+security:
+    firewalls:
+        admin:
+            provider: passwd_file
+            guard:
+                authenticator: App\Security\AdminFormAuthenticator

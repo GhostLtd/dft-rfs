@@ -20,8 +20,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity(repositoryClass=TripRepository::class)
  * @ORM\Table(name="international_trip")
- * @AppAssert\TripRoute(groups={"trip_outbound_ports"}, direction="outbound")
- * @AppAssert\TripRoute(groups={"trip_return_ports"}, direction="return")
+ * @AppAssert\TripRoute(message="international.trip.outbound.ports-not-null", groups={"trip_outbound_ports"}, direction="outbound")
+ * @AppAssert\TripRoute(message="international.trip.return.ports-not-null", groups={"trip_return_ports"}, direction="return")
  * @AppAssert\TripRoute(groups={"admin_trip"}, direction="outbound", formField="outboundPorts")
  * @AppAssert\TripRoute(groups={"admin_trip"}, direction="return", formField="returnPorts")
  */
@@ -38,14 +38,14 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\NotBlank(message="international.trip.origin.not-blank", groups={"trip_places", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
      */
     private $origin;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"trip_places", "admin_trip"})
+     * @Assert\NotBlank(message="international.trip.destination.not-blank", groups={"trip_places", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
      */
     private $destination;
@@ -53,7 +53,7 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="common.date.not-null")
+     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="international.trip.outbound.date-not-null")
      */
     private $outboundDate;
 
@@ -86,7 +86,7 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="common.date.not-null")
+     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="international.trip.return.date-not-null")
      */
     private $returnDate;
 
@@ -160,7 +160,7 @@ class Trip implements BlameLoggable
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"trip_swapped_trailer"})
+     * @Assert\NotNull(message="international.trip.trailer-swap.not-null", groups={"trip_swapped_trailer"})
      */
     private $isSwappedTrailer;
 
@@ -232,6 +232,28 @@ class Trip implements BlameLoggable
         }
     }
 
+    /**
+     * @Assert\Callback(groups={"admin_trip"})
+     * @param ExecutionContextInterface $context
+     */
+    public function validateWeightsAdminOnly(ExecutionContextInterface $context) {
+        if (!$this->canChangeWeights()) {
+            return;
+        }
+
+        if (empty($this->carryingCapacity)) {
+            $context->buildViolation('international.trip.dates.outside-period')
+                ->atPath('carrying_capacity')
+                ->addViolation();
+        }
+
+        if (empty($this->grossWeight)) {
+            $context->buildViolation('international.trip.dates.outside-period')
+                ->atPath('gross_weight')
+                ->addViolation();
+        }
+    }
+
     protected function validateCargoState(ExecutionContextInterface $context, string $direction) {
         $accessor = PropertyAccess::createPropertyAccessor();
 
@@ -240,11 +262,11 @@ class Trip implements BlameLoggable
         $wasLimitedByWeight = $accessor->getValue($this, "{$direction}WasLimitedByWeight");
 
         if ($wasEmpty === null) {
-            $context->buildViolation("international.trip.{$direction}-was-empty.not-null")
+            $context->buildViolation("international.trip.{$direction}.was-empty.not-null")
                 ->atPath('wasEmpty')
                 ->addViolation();
         } else if ($wasEmpty && ($wasLimitedByWeight || $wasLimitedBySpace)) {
-            $context->buildViolation("international.trip.{$direction}-was-empty.cannot-be-both")
+            $context->buildViolation("international.trip.{$direction}.was-empty.cannot-be-both")
                 ->atPath('wasEmpty')
                 ->addViolation();
         }
@@ -745,5 +767,14 @@ class Trip implements BlameLoggable
     {
         if (!$this->getVehicle()) return false;
         return $this->getVehicle()->getTrailerConfiguration() === VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED;
+    }
+
+    /**
+     * This logic should exactly mirror that in
+     * javascript GOVUK.rfsIrhsTrip.canChangeWeights()
+     */
+    public function canChangeWeights()
+    {
+        return ($this->isSwappedTrailer || $this->isChangedBodyType);
     }
 }

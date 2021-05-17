@@ -1,5 +1,10 @@
 {%- extends 'admin/base-with-nav.twig' -%}
 
+{%- set translation_prefix = 'admin.domestic.survey.type-' ~ (survey.isNorthernIreland ? 'ni' : 'gb') -%}
+{%- set headingParams = {
+    registrationMark: survey.registrationMark|formatRegMark
+} %}
+
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
@@ -12,10 +17,11 @@
         survey.response.vehicle.trailerConfiguration != null
     -%}
 
+    {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
-        {%- set tabs = {
+        {%- set tabs = tabs | merge({
             'Initial details': 'tab-initial-details',
-        } -%}
+        }) -%}
         {%- if hasVehicle -%}
             {%- set tabs = tabs | merge({
                 'Business details': 'tab-business-details',
@@ -28,11 +34,13 @@
             }) -%}
         {%- endif -%}
     {%- endif -%}
-
-    <h1 class="govuk-heading-l">Survey</h1>
+    {%- set tabs = tabs | merge({
+        ("Notes (#{ survey.notes | length })"): 'tab-notes',
+        'Invitation/reminders': 'tab-invitation-details',
+    }) -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.domestic.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
@@ -107,6 +115,18 @@
                     {%- endif -%}
                 </div>
             {%- endif -%}
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/invitation-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/notes.html.twig' -%}
+                {%- endwith -%}
+            </div>
         </div>
     {%- endif -%}
 

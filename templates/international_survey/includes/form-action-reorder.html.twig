@@ -33,14 +33,18 @@
                 {%- set goods = formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther) -%}
                 {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: loadingAction.name, country: loadingAction|formatCountry, goods: goods, number: loadingAction.number}) %}
             {%- endif -%}
-            <strong>{{ action.number }}.</strong>{{ translationString|trans({name: action.name, country: action|formatCountry}) }}<br>
+            {%- set actionLocationCopy = translationString|trans({name: action.name, country: action|formatCountry}) -%}
+            <strong>{{ action.number }}.</strong>{{ actionLocationCopy }}<br>
             <div class="goods">{{ goodsCopy }}</div>
         {%- endset -%}
 
         {%- set links = [] -%}
-        {%- if not loop.first %}{% set links = links|merge({(moveUpLink): 'common.actions.move-up'}) %}{% endif -%}
-        {%- if not loop.last %}
-            {% set links = links|merge({(moveDownLink): 'common.actions.move-down'}) %}
+        {%- if not loop.first %}{% set links = links|merge({
+            (moveUpLink): {label: 'common.actions.move-up', srHiddenSuffix: "action ##{action.number} - #{actionLocationCopy}"}
+        }) %}{% endif -%}
+        {%- if not loop.last %}{% set links = links|merge({
+            (moveDownLink): {label: 'common.actions.move-down', srHiddenSuffix: "action ##{action.number} - #{actionLocationCopy}"}
+        }) %}
         {% endif -%}
 
         {{ row(key, links, {noEscape: true}) }}

@@ -7,8 +7,8 @@ use App\Messenger\AbstractAsyncMessage;
 
 abstract class AbstractMessage extends AbstractAsyncMessage
 {
-    protected $originatingEntityClass;
-    protected $originatingEntityId;
+    protected ?string $originatingEntityClass;
+    protected ?string $originatingEntityId;
 
     /**
      * @var string
@@ -31,7 +31,11 @@ abstract class AbstractMessage extends AbstractAsyncMessage
         $this->originatingEntityId = $originatingEntityId;
         $this->templateId = $templateId;
         $this->personalisation = $personalisation;
-        $this->reference = $reference;
+        if (empty($reference)) {
+            $this->reference = "{$originatingEntityClass}::{$originatingEntityId}";
+        } else {
+            $this->reference = $reference;
+        }
     }
 
     abstract public function getSendMethodParameters(): array;
@@ -85,5 +89,15 @@ abstract class AbstractMessage extends AbstractAsyncMessage
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
+    }
+
+    public function getOriginatingEntityClass(): ?string
+    {
+        return $this->originatingEntityClass;
+    }
+
+    public function getOriginatingEntityId(): ?string
+    {
+        return $this->originatingEntityId;
     }
 }

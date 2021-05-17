@@ -28,7 +28,7 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotNull(message="common.number.not-null", groups={"goods-weight", "admin-day-stop-not-empty"})
+     * @Assert\NotNull(message="domestic.day-stop.goods-weight.not-null", groups={"goods-weight", "admin-day-stop-not-empty"})
      * @Assert\PositiveOrZero (message="common.number.positive", groups={"goods-weight", "admin-day-stop-not-empty"})
      * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"goods-weight", "admin-day-stop-not-empty"})
      */
@@ -36,7 +36,7 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"at-capacity", "admin-day-stop-not-empty"})
+     * @Assert\NotNull(message="domestic.day-stop.was-at-capacity.not-null", groups={"at-capacity", "admin-day-stop-not-empty"})
      */
     private $wasAtCapacity;
 

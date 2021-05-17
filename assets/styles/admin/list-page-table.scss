@@ -51,4 +51,14 @@
       }
     }
   }
+
+  #week .govuk-form-group {
+    width: calc(50% - 2.5px);
+    display: inline-block;
+    margin-bottom: 0;
+
+    + .govuk-form-group {
+      margin-left: 5px;
+    }
+  }
 }

@@ -14,12 +14,14 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\International\Stop;
+use App\Entity\SurveyInterface;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
 use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
+use App\Utility\SessionTimeoutHelper;
 use App\Utility\WeekNumberHelper;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
@@ -27,7 +29,6 @@ use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
-use Closure;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Exception;
@@ -51,13 +52,15 @@ class AppExtension extends AbstractExtension
     protected TranslatorInterface $translator;
     protected Features $features;
     protected LoadingPlaceHelper $loadingPlaceHelper;
+    protected SessionTimeoutHelper $sessionTimeoutHelper;
 
     public function __construct(
         KernelInterface $kernel,
         RouterInterface $router,
         TranslatorInterface $translator,
         Features $features,
-        LoadingPlaceHelper $loadingPlaceHelper
+        LoadingPlaceHelper $loadingPlaceHelper,
+        SessionTimeoutHelper $sessionTimeoutHelper
     ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
@@ -65,6 +68,7 @@ class AppExtension extends AbstractExtension
         $this->translator = $translator;
         $this->features = $features;
         $this->loadingPlaceHelper = $loadingPlaceHelper;
+        $this->sessionTimeoutHelper = $sessionTimeoutHelper;
     }
 
     public function getFilters(): array
@@ -81,10 +85,15 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatStops', [$this, 'formatStops']),
+            new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
             new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
                 return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
+            }),
+            new TwigFilter('removeEmailNamespacePrefix', function($username) {
+                preg_match('/^(?:[^:"]+\:)?(?<email>.*)$/', $username, $matches);
+                return $matches['email'] ?? 'unknown';
             }),
         ];
     }
@@ -94,10 +103,11 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
             new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
-            new TwigFunction('execute', fn(Closure $closure, $args) => $closure(...$args)),
-            new TwigFunction('flatten', [$this, 'flatten']),
+            new TwigFunction('flattenChoices', [$this, 'flattenChoices']),
             new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
             new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
+            new TwigFunction('sessionExpiryTime', [$this->sessionTimeoutHelper, 'getExpiryTime']),
+            new TwigFunction('sessionWarningTime', [$this->sessionTimeoutHelper, 'getWarningTime']),
             new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
             new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
             new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
@@ -196,6 +206,23 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
+    public function formatSurveyPeriod(SurveyInterface $survey)
+    {
+        $numDays = $survey->getSurveyPeriodInDays();
+        $translationId = 'common.survey-period.' . ($numDays === 1 ? 'one-day' : 'many-days');
+
+        $params = [
+            'days' => $numDays,
+            'start' => $survey->getSurveyPeriodStart(),
+        ];
+
+        if ($numDays > 1) {
+            $params['end'] = $survey->getSurveyPeriodEnd();
+        }
+
+        return $this->translator->trans($translationId, $params);
+    }
+
     public function svgIcon(string $icon): string
     {
         if (basename($icon) !== $icon) {
@@ -245,11 +272,11 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
-    public function flatten(array $choices): array {
+    public function flattenChoices(array $choices): array {
         $output = [];
         foreach($choices as $label => $choice) {
             if (is_array($choice)) {
-                $output = array_merge($output, $this->flatten($choice));
+                $output = array_merge($output, $this->flattenChoices($choice));
             } else {
                 $output[$label] = $choice;
             }

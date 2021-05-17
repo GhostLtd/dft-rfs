@@ -2,8 +2,9 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 
 @import "app/choice-label-icons";
 @import "app/choice-label-bring-to-attention";
-@import "app/vehicle-icons";
 @import "app/passcode-fieldset";
+@import "app/session-reminder";
+@import "app/vehicle-icons";
 
 body {
     background-color: lightgray;
@@ -19,4 +20,10 @@ body {
 
 .nowrap {
     white-space: nowrap;
+}
+
+#international_vehicle_weights_reminder {
+    dt, dd {
+        width: 50%;
+    }
 }

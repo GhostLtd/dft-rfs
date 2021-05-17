@@ -59,10 +59,10 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                 'choices' => $this->portsData->getPortChoices(),
             ]);
 
-        $this->addCargoStateFields($builder, $direction);
+        $this->addCargoStateFields($builder, $direction, $options['at_capacity_null_message']);
     }
 
-    protected function addCargoStateFields(FormBuilderInterface $builder, $direction)
+    protected function addCargoStateFields(FormBuilderInterface $builder, $direction, $atCapacityNullMessage)
     {
         $prefix = "international.trip.{$direction}-cargo-state";
 
@@ -86,7 +86,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                     ],
                 ],
                 'constraints' => new NotNull([
-                    'message' => 'common.choice.not-null',
+                    'message' => $atCapacityNullMessage,
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ]),
             ])
@@ -118,6 +118,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ])
             ],
+            'at_capacity_null_message' => 'common.choice.not-null',
         ]);
     }
 

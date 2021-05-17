@@ -110,7 +110,9 @@
         } -%}
             <a {{- _self.attributes(attributes) -}}>
                 {{- action | trans -}}
-                {%- if options.srHiddenSuffix | default(false) %}<span class="govuk-visually-hidden"> {{ options.srHiddenSuffix | trans }}</span>{% endif -%}
+                {%- if options.srHiddenSuffix | default(false) -%}
+                    <span class="govuk-visually-hidden">{{ (options.srHiddenSuffixSplitContext ?? true) ? ':' : '' }} {{ options.srHiddenSuffix | trans(options.srHiddenSuffixParams ?? {}) }}</span>
+                {%- endif -%}
             </a>
         {%- endwith -%}
     {%- endif -%}
@@ -162,12 +164,11 @@
             rowspan: options.rowSpan | default(false),
         }),
     } -%}
-
     <{{ element }} {{ _self.attributes(attributes) }}>
-            {%- if options.translate | default(false) -%}
-                {{ options.content | default(value) | trans | nl2br }}
-            {%- elseif options.html | default(false) -%}
+            {%- if options.html ?? false -%}
                 {{ options.content | default(value) | raw }}
+            {%- elseif options.translate | default(false) -%}
+                {{ options.content | default(value) | trans | nl2br }}
             {%- else -%}
                 {{ options.content | default(value) | nl2br }}
             {%- endif -%}</{{ element }}>

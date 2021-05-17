@@ -50,3 +50,15 @@
     </details>
 #}
 {% endmacro %}
+
+{% macro displayHazardousGoods(code, notHazardousText) %}
+    {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
+    {%- if code|default(false) %}<em>{{ code }}</em> - {{ choiceLabel(flattenChoices(hazardousGoodsChoices), code) | trans }}
+    {%- else -%}
+        {%- if notHazardousText ?? false -%}
+            {{- notHazardousText | trans -}}
+        {%- else -%}
+            -
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}

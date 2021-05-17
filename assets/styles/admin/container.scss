@@ -18,8 +18,9 @@ body .govuk-header{
   border-color: govuk-colour('bright-purple');
 }
 
-.govuk-main-wrapper {
-  padding-top: $gutter;
+body .govuk-header {
+  margin-bottom: $gutter;
+
 }
 
 .govuk-grid-row {
