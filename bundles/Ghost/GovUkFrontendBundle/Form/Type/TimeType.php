@@ -13,6 +13,11 @@ class TimeType extends AbstractType
     const AM = 'am';
     const PM = 'pm';
 
+    public function getBlockPrefix()
+    {
+        return 'gds_time';
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $subFieldOptions = [
@@ -33,6 +38,7 @@ class TimeType extends AbstractType
                     'am' => self::AM,
                     'pm' => self::PM,
                 ],
+                'expanded' => false,
             ]))
             ->addModelTransformer(new TimeStringTransformer())
         ;
