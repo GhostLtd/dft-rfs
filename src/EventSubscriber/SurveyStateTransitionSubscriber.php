@@ -2,11 +2,9 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
-use App\Entity\SurveyTrait;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
@@ -94,9 +92,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
     protected function getSurvey(Event $event): SurveyInterface
     {
-        /** @var SurveyInterface $survey */
         $survey = $event->getSubject();
-        if (!in_array(get_class($survey), [DomesticSurvey::class, InternationalSurvey::class])) {
+        if (!$survey instanceof SurveyInterface) {
             throw new \LogicException("unhandled survey class: ". get_class($survey));
         }
         return $survey;
