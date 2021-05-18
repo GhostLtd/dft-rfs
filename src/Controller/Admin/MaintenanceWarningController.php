@@ -2,11 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\Domestic\SurveyController;
 use App\Entity\Utility\MaintenanceWarning;
 use App\Form\Admin\MaintenanceWarningType;
 use App\ListPage\MaintenanceWarningListPage;
-use App\Security\Voter\Domestic\AdminSurveyVoter;
 use App\Utility\ConfirmAction\DeleteMaintenanceWarningConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
@@ -42,7 +40,7 @@ class MaintenanceWarningController extends AbstractController
     }
 
     /**
-     * @Route("{id}/edit", name="edit")
+     * @Route("/{id}/edit", name="edit")
      */
     public function edit(Request $request, EntityManagerInterface $entityManager, Session $session, MaintenanceWarning $maintenanceWarning): Response
     {

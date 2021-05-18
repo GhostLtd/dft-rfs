@@ -9,6 +9,8 @@ format:
   date:
     long: 'l, jS F Y'
     short: 'jS M'
+  time:
+    short: 'g:i a'
 
 common:
   logout: Sign out
@@ -1548,3 +1550,9 @@ errors:
     heading: Scheduled maintenance - Service unavailable
     copy: |-
       The service is undergoing scheduled maintenance, and is not availble. Check back in 15 minutes.
+
+maintenance-warning:
+    banner:
+      title: Important
+      heading: Scheduled maintenance
+      content: This service will be unavailable between {startTime} and {endTime} on {date}

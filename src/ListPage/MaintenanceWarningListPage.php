@@ -2,14 +2,8 @@
 
 namespace App\ListPage;
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Utility\MaintenanceWarning;
-use App\ListPage\AbstractListPage;
-use App\ListPage\Domestic\Field\WeekYearFilter;
-use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilter;
-use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
@@ -29,8 +23,9 @@ class MaintenanceWarningListPage extends AbstractListPage
     protected function getFieldsDefinition(): array
     {
         return [
-            (new Simple('Start', 'maintenance_warning.start'))->sortable(),
-            (new Simple('End', 'maintenance_warning.end'))->sortable(),
+            (new Simple('Date', 'maintenance_warning.start'))->sortable(),
+            (new Simple('Start', 'maintenance_warning.start')),
+            (new Simple('End', 'maintenance_warning.endTime')),
         ];
     }
 
@@ -39,14 +34,14 @@ class MaintenanceWarningListPage extends AbstractListPage
         $queryBuilder = $this->repository->createQueryBuilder('maintenance_warning');
         return $queryBuilder
             ->select('maintenance_warning')
-            ->andWhere('maintenance_warning.end > :now')
+            ->andWhere('maintenance_warning.start >= :now')
             ->setParameter('now', new \DateTime());
     }
 
     protected function getDefaultOrder(): array
     {
         return [
-            Simple::generateId('Start') => 'ASC',
+            Simple::generateId('Date') => 'ASC',
         ];
     }
 }

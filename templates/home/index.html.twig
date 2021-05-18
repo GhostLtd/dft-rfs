@@ -6,7 +6,11 @@ DfT - GOV.UK
 {%- endblock %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import startNow %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import startNow, notificationBanner %}
+    {%- if maintenanceWarningBanner -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
     <h1 class="govuk-heading-xl">{{ 'service.name' | trans }}</h1>
 
     <div class="govuk-grid-row">
@@ -18,6 +22,7 @@ DfT - GOV.UK
         <div class="govuk-grid-column-one-third">
         </div>
     </div>
+
 
 
 {#

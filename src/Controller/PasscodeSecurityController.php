@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 use App\Form\PasscodeLoginType;
+use App\Repository\MaintenanceWarningRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -17,7 +16,7 @@ class PasscodeSecurityController extends AbstractController
     /**
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator): Response
+    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator, MaintenanceWarningRepository $maintenanceWarningRepository): Response
     {
         $form = $this->createForm(PasscodeLoginType::class);
 
@@ -30,7 +29,8 @@ class PasscodeSecurityController extends AbstractController
 
         return $this->render('security/login.html.twig', [
             'form' => $form->createView(),
-            'error' => $error
+            'error' => $error,
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBannerForFrontend(),
         ]);
     }
 

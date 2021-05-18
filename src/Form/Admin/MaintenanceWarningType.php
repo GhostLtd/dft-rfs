@@ -10,16 +10,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class MaintenanceWarningType extends AbstractType
 {
-    public function getBlockPrefix()
-    {
-        return 'gds_datetime';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('start', Gds\DateTimeType::class)
-            ->add('end', Gds\DateTimeType::class)
+            ->add('start', Gds\DateTimeType::class,[
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => null,
+            ])
+            ->add('end', Gds\TimeType::class, [
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => null,
+            ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

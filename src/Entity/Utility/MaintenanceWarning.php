@@ -3,11 +3,12 @@
 namespace App\Entity\Utility;
 
 use App\Entity\IdTrait;
+use App\Repository\MaintenanceWarningRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass=MaintenanceWarningRepository::class)
  */
 class MaintenanceWarning
 {
@@ -15,16 +16,17 @@ class MaintenanceWarning
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message="Provide a date and time")
+     * @Assert\NotBlank(message="Provide a date/time")
+     * @Assert\GreaterThan ("now", message="Provide a date/time in the future")
      */
-    private ?\DateTime $start = null;
+    private ?\DateTime $start;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message="Provide a date and time")
-     * @Assert\Expression("is_empty(value) || value > this.getStart()", message="The end must be after the start")
+     * @ORM\Column(type="time")
+     * @Assert\NotBlank(message="Provide a time")
+     * @Assert\GreaterThan(propertyPath="startTime", message="The end must be after the start")
      */
-    private ?\DateTime $end = null;
+    private ?\DateTime $end;
 
     public function getStart(): ?\DateTime
     {
@@ -36,6 +38,12 @@ class MaintenanceWarning
         $this->start = $start;
 
         return $this;
+    }
+
+    public function getStartTime(): ?\DateTime
+    {
+        if (!$this->getStart()) return null;
+        return new \DateTime($this->getStart()->format('H:i:s'));
     }
 
     public function getEnd(): ?\DateTime

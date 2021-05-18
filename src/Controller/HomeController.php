@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\InternationalSurvey\IndexController as IntIndexController;
 use App\Entity\PasscodeUser;
+use App\Repository\MaintenanceWarningRepository;
 use App\Utility\SessionTimeoutHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/")
      */
-    public function index(): Response
+    public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response
     {
         $user = $this->getUser();
         if ($user && $user instanceof PasscodeUser) {
@@ -27,7 +28,9 @@ class HomeController extends AbstractController
             }
         }
 
-        return $this->render('home/index.html.twig');
+        return $this->render('home/index.html.twig', [
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBannerForFrontend(),
+        ]);
     }
 
     /**
