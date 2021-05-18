@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,18 +45,25 @@ class MaintenanceWarningController extends AbstractController
      */
     public function edit(Request $request, EntityManagerInterface $entityManager, Session $session, MaintenanceWarning $maintenanceWarning): Response
     {
+        /** @var Form $form */
         $form = $this->createForm(MaintenanceWarningType::class, $maintenanceWarning);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$form->getData()->getId()) {
-                $entityManager->persist($form->getData());
-                $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', 'Maintenance warning added', 'The new maintenance warning has been added', ['style' => NotificationBanner::STYLE_SUCCESS]));
-            } else {
-                $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', 'Maintenance warning updated', 'The maintenance warning has been updated', ['style' => NotificationBanner::STYLE_SUCCESS]));
+        if ($form->isSubmitted()) {
+            if ($form->getClickedButton()->getName() === 'cancel') {
+                return $this->redirectToRoute('admin_maintenance_warning_list');
             }
-            $entityManager->flush();
-            return $this->redirectToRoute('admin_maintenance_warning_list');
+
+            if ($form->isValid()) {
+                if (!$form->getData()->getId()) {
+                    $entityManager->persist($form->getData());
+                    $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', 'Maintenance warning added', 'The new maintenance warning has been added', ['style' => NotificationBanner::STYLE_SUCCESS]));
+                } else {
+                    $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', 'Maintenance warning updated', 'The maintenance warning has been updated', ['style' => NotificationBanner::STYLE_SUCCESS]));
+                }
+                $entityManager->flush();
+                return $this->redirectToRoute('admin_maintenance_warning_list');
+            }
         }
 
         return $this->render('admin/maintenance_warning/edit.html.twig', [
