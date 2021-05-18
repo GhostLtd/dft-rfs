@@ -5,15 +5,11 @@ namespace App\Controller\DomesticSurvey;
 use App\Entity\PasscodeUser;
 use App\Security\Voter\Domestic\SurveyVoter;
 use Dompdf\Dompdf;
-use Dompdf\Options;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Environment;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class IndexController
@@ -94,47 +90,40 @@ class IndexController extends AbstractController
     /**
      * @Route("/view-whole-survey")
      */
-    public function wholeSurvey($frontendHostname, ?Profiler $profiler, $appEnvironment)
+    public function wholeSurvey()
     {
-        if(!in_array($appEnvironment, array('prod', 'staging'))) {
-//            $profiler->disable();
-        }
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
+        $survey = $user->getDomesticSurvey();
 
-//        /** @var PasscodeUser $user */
-//        $user = $this->getUser();
-//        $domesticSurvey = $user->getDomesticSurvey();
-
-//        return new BinaryFileResponse($dompdf->stream());
-        return new Response(dump(trim($this->renderView('domestic_survey/view-whole-survey.html.twig', []))));
+        return new Response($this->getSurveyPdfHtml($survey));
     }
 
     /**
      * @Route("/view-whole-survey-pdf")
      */
-    public function wholeSurveyPdf($appEnvironment)
+    public function wholeSurveyPdf(UserInterface $user)
     {
-        // instantiate and use the dompdf class
-        $dompdf = new Dompdf();
-        $options = $dompdf->getOptions();
-        $options->setIsHtml5ParserEnabled(true);
-        $options->setIsRemoteEnabled(true);
+        assert($user instanceof PasscodeUser);
+        $survey = $user->getDomesticSurvey();
 
-        $url = $this->generateUrl('app_domesticsurvey_index_wholesurvey', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        if ($appEnvironment === 'dev') {
-            $response = file_get_contents($url, false, stream_context_create([
-                "ssl" => [
-                    "verify_peer" => false,
-                    "verify_peer_name" => false,
-                ]
-            ]));
-            $dompdf->loadHtml($response);
-        } else {
-            $dompdf->loadHtmlFile($url);
-        }
+        $dompdf = new Dompdf();
+        $dompdf->getOptions()
+            ->setIsHtml5ParserEnabled(true)
+            ->setIsRemoteEnabled(true)
+            ->setIsJavascriptEnabled(false);
+
+        $dompdf->loadHtml($this->getSurveyPdfHtml($survey));
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $dompdf->stream();
         exit;
     }
 
+    protected function getSurveyPdfHtml(?\App\Entity\Domestic\Survey $survey): string
+    {
+        return trim($this->renderView('domestic_survey/view-whole-survey.html.twig', [
+            'survey' => $survey,
+        ]));
+    }
 }

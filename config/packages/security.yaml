@@ -60,7 +60,6 @@ security:
     access_control:
         ## General
         - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: '^/domestic-survey/view-whole-survey$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         ## Frontend firewall
         - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER }
