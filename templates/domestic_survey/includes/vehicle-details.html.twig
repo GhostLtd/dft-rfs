@@ -9,9 +9,13 @@
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-weights.heading'}
     } %}
     {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
+        {%- set fuelValue = vehicle.fuelQuantity.value and vehicle.fueldQuantity.unit ?
+            "#{survey.response.vehicle.fuelQuantity.value} #{survey.response.vehicle.fuelQuantity.unit}" :
+            '-'
+        -%}
         {{ row(showActions,
             'domestic.survey-response.vehicle-fuel.fuel-quantity.label',
-            "#{survey.response.vehicle.fuelQuantity.value} #{survey.response.vehicle.fuelQuantity.unit}",
+            fuelValue,
             vehicleWeightsActionLinks
         ) }}
     {% endif %}
@@ -48,4 +52,11 @@
         (constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_TRANSLATION_PREFIX') ~ survey.response.vehicle.bodyType) | trans,
         vehicleConfigActionLinks
     ) }}
+    {%- if (showReasonForEmptySurvey ?? false) and survey.response.isInPossessionOfVehicle and not survey.response.hasJourneys -%}
+        {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
+        {{- row(false,
+            'Reason for empty survey',
+            reason ? reason|trans : '-'
+        ) -}}
+    {%- endif -%}
 </dl>
