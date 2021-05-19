@@ -5,50 +5,40 @@ namespace App\Messenger\AlphagovNotify;
 
 
 use Alphagov\Notifications\Client;
-use App\Utility\AlphagovNotify\TemplateReference;
-use Doctrine\ORM\EntityManagerInterface;
+use Alphagov\Notifications\Exception\ApiException;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class MessageHandler implements MessageHandlerInterface
 {
     private Client $alphagovNotify;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(Client $alphagovNotify, EntityManagerInterface $entityManager)
+    public function __construct(Client $alphagovNotify)
     {
         $this->alphagovNotify = $alphagovNotify;
-        $this->entityManager = $entityManager;
     }
 
     public function __invoke(AbstractMessage $message)
     {
-        switch(get_class($message)) {
-            case Email::class :
-                $response = $this->alphagovNotify->sendEmail(...$message->getSendMethodParameters());
-                break;
+        try {
+            switch(get_class($message)) {
+                case Email::class :
+                    return $this->alphagovNotify->sendEmail(...$message->getSendMethodParameters());
 
-            case Sms::class :
-                $response = $this->alphagovNotify->sendSms(...$message->getSendMethodParameters());
-                break;
+                case Sms::class :
+                    return $this->alphagovNotify->sendSms(...$message->getSendMethodParameters());
 
-            case Letter::class :
-                $response = $this->alphagovNotify->sendLetter(...$message->getSendMethodParameters());
-                break;
+                case Letter::class :
+                    return $this->alphagovNotify->sendLetter(...$message->getSendMethodParameters());
 
-            default :
-                throw new \UnexpectedValueException(get_class($message));
-        }
-
-        if ($response) {
-            $response['timestamp'] = (new \DateTime())->format('c');
-
-            /** @var ApiResponseInterface $entity */
-            $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
-            $templateReferenceReflection = new \ReflectionClass(TemplateReference::class);
-            $templateReferenceConstant = array_search($message->getTemplateId(), $templateReferenceReflection->getConstants());
-
-            $entity->setNotifyApiResponse($templateReferenceConstant, $response);
-            $this->entityManager->flush();
+                default :
+                    throw new \UnexpectedValueException(get_class($message));
+            }
+        } catch (ApiException $apiException) {
+            if (in_array($apiException->getCode(), [400, 403])) {
+                throw new UnrecoverableMessageHandlingException(null, null, $apiException);
+            }
+            throw $apiException;
         }
     }
 }

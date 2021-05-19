@@ -1,0 +1,10 @@
+framework:
+    messenger:
+        routing:
+#            'App\Messenger\AbstractAsyncMessage': sync_notify
+        transports:
+            async_notify:
+#                dsn: 'sync://?queue_name=sync_notify'
+                retry_strategy:
+                    max_retries: 1
+                    delay: 1

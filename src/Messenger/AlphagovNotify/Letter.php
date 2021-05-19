@@ -25,9 +25,9 @@ class Letter extends AbstractMessage
      * @param array $personalisation
      * @param null $reference
      */
-    public function __construct($originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null)
+    public function __construct($eventName, $originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null)
     {
-        parent::__construct($originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
+        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
         $this->address = $address;
     }
 
@@ -40,7 +40,7 @@ class Letter extends AbstractMessage
         ];
     }
 
-    public function getPersonalisation()
+    public function getPersonalisation(): ?array
     {
         return array_merge(parent::getPersonalisation(), $this->getAddressForPersonalisation());
     }

@@ -7,6 +7,15 @@ framework:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             async: 'doctrine://default'
+            async_notify:
+                dsn: 'doctrine://default?queue_name=govuk-notify'
+                retry_strategy:
+                    # 30 min delay first time
+                    delay: 1800000
+                    # double the delay for each retry
+                    multiplier: 2
+                    # max delay 2 hours
+                    max_delay: 7200000
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
@@ -14,5 +23,5 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
 
-            'App\Messenger\AbstractAsyncMessage': async
+            'App\Messenger\AlphagovNotify\AbstractMessage': async_notify
 

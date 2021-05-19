@@ -6,8 +6,9 @@ use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\LongAddress;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+// PHPstorm indicates this isn't needed, but it is
+use App\Entity\LongAddress;
 
 trait SurveyTrait {
     /**
@@ -35,7 +36,7 @@ trait SurveyTrait {
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    private ?array $notifyApiResponses;
+    private ?array $notifyApiResponses = [];
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -234,15 +235,35 @@ trait SurveyTrait {
         return $this->secondReminderSentDate;
     }
 
+    /**
+     * @return array|null
+     */
     public function getNotifyApiResponses(): ?array
     {
         return $this->notifyApiResponses;
     }
 
-    public function setNotifyApiResponse(string $key, array $notifyApiResponse): self
+    public function getNotifyApiResponse(string $eventName, string $notificationClass): ?array
+    {
+        return $this->notifyApiResponses["{$eventName}::{$notificationClass}"] ?? null;
+    }
+
+    public function setNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self
     {
         if (!is_array($this->notifyApiResponses)) $this->notifyApiResponses = [];
-        $this->notifyApiResponses[$key] = $notifyApiResponse;
+        $this->notifyApiResponses["{$eventName}::{$notificationClass}"] = $notifyApiResponse;
         return $this;
+    }
+
+    protected function getNotifyLetterStatus(string $constSuffix): ?string
+    {
+//        $surveyType = preg_split('/', get_class($this));
+//        $surveyType = strtoupper($surveyType[count($surveyType) - 2]);
+//        $response = $this->getNotifyApiResponse("LETTER_{$surveyType}_SURVEY_INVITE");
+//        dump($response); exit;
+
+        // check if it has 'code' or 'errors' (indicating an error)
+        // check if the error was recoverable
+        return 'something';
     }
 }

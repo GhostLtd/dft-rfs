@@ -33,7 +33,7 @@ class SurveyViewController extends AbstractController
             'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
             'approvedBy' => in_array($survey->getState(), [
-                SurveyInterface::STATE_INVITED_USER,
+                SurveyInterface::STATE_INVITATION_SENT,
                 SurveyInterface::STATE_NEW,
                 SurveyInterface::STATE_IN_PROGRESS,
                 SurveyInterface::STATE_REJECTED,
