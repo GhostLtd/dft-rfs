@@ -4,7 +4,7 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Entity\PasscodeUser;
 use App\Security\Voter\Domestic\SurveyVoter;
-use Dompdf\Dompdf;
+use App\Utility\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,40 +90,18 @@ class IndexController extends AbstractController
     /**
      * @Route("/view-whole-survey")
      */
-    public function wholeSurvey()
+    public function wholeSurvey(UserInterface $user, PdfHelper $pdfHelper): Response
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-        $survey = $user->getDomesticSurvey();
-
-        return new Response($this->getSurveyPdfHtml($survey));
+        assert($user instanceof PasscodeUser);
+        return new Response($pdfHelper->getSurveyPdfHtml($user->getDomesticSurvey()));
     }
 
     /**
      * @Route("/view-whole-survey-pdf")
      */
-    public function wholeSurveyPdf(UserInterface $user)
+    public function wholeSurveyPdf(UserInterface $user, PdfHelper $pdfHelper): void
     {
         assert($user instanceof PasscodeUser);
-        $survey = $user->getDomesticSurvey();
-
-        $dompdf = new Dompdf();
-        $dompdf->getOptions()
-            ->setIsHtml5ParserEnabled(true)
-            ->setIsRemoteEnabled(true)
-            ->setIsJavascriptEnabled(false);
-
-        $dompdf->loadHtml($this->getSurveyPdfHtml($survey));
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        $dompdf->stream();
-        exit;
-    }
-
-    protected function getSurveyPdfHtml(?\App\Entity\Domestic\Survey $survey): string
-    {
-        return trim($this->renderView('domestic_survey/view-whole-survey.html.twig', [
-            'survey' => $survey,
-        ]));
+        $pdfHelper->outputPDF($user->getDomesticSurvey());
     }
 }

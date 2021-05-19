@@ -46,7 +46,7 @@ class PasscodeUser implements UserInterface
     private $domesticSurvey;
 
     /**
-     * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
     private $internationalSurvey;
 

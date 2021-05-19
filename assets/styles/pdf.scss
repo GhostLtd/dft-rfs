@@ -4,6 +4,8 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/base";
 @import "~govuk-frontend/govuk/core/_typography.scss";
 @import "~govuk-frontend/govuk/components/summary-list/_summary-list.scss";
+@import "~govuk-frontend/govuk/components/table/_table.scss";
+@import "~govuk-frontend/govuk/helpers/_colour.scss";
 
 @import "pdf/base";
 
@@ -12,7 +14,7 @@ html {
 }
 
 // The usual govuk-!-margin-bottom-9 etc are responsive based upon screen size
-// and just don't work well in the PDF, so manual overrides for specifc elements
+// and just don't work well in the PDF, so manual overrides for specific elements
 // are instead used here
 
 .govuk-heading-xl {
@@ -21,6 +23,7 @@ html {
 
 .govuk-heading-l {
   margin-bottom: 0.8rem;
+  font-size: 1.7rem; // No idea why this ends up being too large (without this)
 }
 
 .govuk-summary-list,
@@ -49,4 +52,20 @@ html {
 
 .domestic-day > h2 {
   margin-bottom: 0.75rem;
+}
+
+.international-vehicle-details {
+  margin-bottom: 5rem;
+
+  .international-loading-unloading-places {
+    margin-left: 2rem;
+  }
+}
+
+.international-section-break {
+  margin-bottom: 1.5rem;
+}
+
+.govuk-section-break {
+  border-color: govuk-colour('purple');
 }

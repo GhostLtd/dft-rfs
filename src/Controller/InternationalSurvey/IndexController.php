@@ -3,7 +3,9 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Survey;
+use App\Entity\PasscodeUser;
 use App\Repository\International\SurveyRepository;
+use App\Utility\PdfHelper;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @Route("/international-survey")
+ */
 class IndexController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -26,7 +31,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey/completed", name=self::COMPLETED_ROUTE)
+     * @Route("/completed", name=self::COMPLETED_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
     public function completed(UserInterface $user): Response {
@@ -37,7 +42,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey", name=self::SUMMARY_ROUTE)
+     * @Route("", name=self::SUMMARY_ROUTE)
      */
     public function index(UserInterface $user): Response {
         $survey = $this->getSurvey($user);
@@ -63,5 +68,23 @@ class IndexController extends AbstractController
             'response' => $response,
             'vehicles' => $vehicles,
         ]);
+    }
+
+    /**
+     * @Route("/view-whole-survey")
+     */
+    public function wholeSurvey(UserInterface $user, PdfHelper $pdfHelper): Response
+    {
+        assert($user instanceof PasscodeUser);
+        return new Response($pdfHelper->getSurveyPdfHtml($user->getInternationalSurvey()));
+    }
+
+    /**
+     * @Route("/view-whole-survey-pdf")
+     */
+    public function wholeSurveyPdf(UserInterface $user, PdfHelper $pdfHelper): void
+    {
+        assert($user instanceof PasscodeUser);
+        $pdfHelper->outputPDF($user->getInternationalSurvey());
     }
 }
