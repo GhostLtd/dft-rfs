@@ -61,7 +61,7 @@ class DayStop implements GoodsDescriptionInterface, BlameLoggable
 
     /**
      * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"day-stop.distance-travelled", "admin-day-stop"})
+     * @AppAssert\ValidValueUnit(groups={"day-stop.distance-travelled", "admin-day-stop"})
      */
     private $distanceTravelled;
 

@@ -28,21 +28,25 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
-                    'business-details-to-weights' => [
+                    'business-details-to-trailer-config' => [
                         'from' => StateObject::STATE_BUSINESS_DETAILS,
-                        'to' =>  StateObject::STATE_VEHICLE_WEIGHTS,
-                    ],
-                    'weights-to-trailer-config' => [
-                        'from' => StateObject::STATE_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_VEHICLE_TRAILER_CONFIGURATION,
                     ],
+//                    'weights-to-trailer-config' => [
+//                        'from' => StateObject::STATE_VEHICLE_WEIGHTS,
+//                        'to' =>  StateObject::STATE_VEHICLE_TRAILER_CONFIGURATION,
+//                    ],
                     'trailer-config-to-axle-config' => [
                         'from' => StateObject::STATE_VEHICLE_TRAILER_CONFIGURATION,
                         'to' =>  StateObject::STATE_VEHICLE_AXLE_CONFIGURATION,
                     ],
-                    'config-to-body-type' => [
+                    'axle-config-to-body-type' => [
                         'from' => StateObject::STATE_VEHICLE_AXLE_CONFIGURATION,
                         'to' =>  StateObject::STATE_VEHICLE_BODY,
+                    ],
+                    'body-type-to-weights' => [
+                        'from' => StateObject::STATE_VEHICLE_BODY,
+                        'to' =>  StateObject::STATE_VEHICLE_WEIGHTS,
                     ],
 
                     'finish' => [
@@ -50,7 +54,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             'redirectRoute' => 'app_domesticsurvey_index',
                         ],
-                        'from' => StateObject::STATE_VEHICLE_BODY,
+                        'from' => StateObject::STATE_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_END,
                     ],
 
