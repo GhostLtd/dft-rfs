@@ -6,7 +6,6 @@ namespace App\Messenger\AlphagovNotify;
 
 use Alphagov\Notifications\Client;
 use Alphagov\Notifications\Exception\ApiException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 

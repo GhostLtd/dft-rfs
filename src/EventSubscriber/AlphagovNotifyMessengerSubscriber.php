@@ -87,7 +87,6 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 
         /** @var ApiResponseInterface|SurveyInterface $entity */
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
-        $templateReferenceConstant = $message->getTemplateReferenceConstantName();
 
         if ($entity) {
             $workflow = $this->workflowRegistry->get($entity);
