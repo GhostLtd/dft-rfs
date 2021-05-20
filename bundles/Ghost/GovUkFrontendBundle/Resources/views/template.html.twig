@@ -39,13 +39,14 @@
         <br><br><br><br>
         ----<br>
         Helpful feedback information<br><br>
+        Page loaded: {{ date().format('c') }}<br>
         Username: {{ app.user ? app.user.username : 'not logged in' }}<br>
-        Current URL: {{ app.request.server.get('REQUEST_URI') }}<br>
+        URL: {{ app.request.server.get('REQUEST_URI') }}<br>
         User-Agent: {{ app.request.headers.get('user-agent', 'unkown') }}<br>
         {%- endset %}
     {% set phaseBannerHtml %}
         This is a new service – your
-        <a class="govuk-link" href="mailto:feedback@ghostlimited.com?subject=DfT RTS Beta: user testing feedback&body={{ feedbackMailtoBody | replace({'<br>' : '%0A'}) }}">feedback</a>
+        <a class="govuk-link" href="mailto:csrgt.stats@dft.gov.uk?subject=DfT Road Haulage Surveys: user feedback&body={{ feedbackMailtoBody | replace({'<br>' : '%0A'}) }}">feedback</a>
         will help us to improve it.
     {% endset %}
     {{ govuk.phaseBanner({
