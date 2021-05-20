@@ -63,7 +63,7 @@ class UnloadedWeightValidator extends ConstraintValidator
                     ], ['Default']);
 
                     if ($loadingAction) {
-                        if ($value->getWeightOfGoods() > $loadingAction->getWeightOfGoods()) {
+                        if ($value->getWeightOfGoods() >= $loadingAction->getWeightOfGoods()) {
                             $this->context->buildViolation($constraint->message)->atPath('weightOfGoods')->addViolation();
                         }
                     }

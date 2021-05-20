@@ -1341,7 +1341,7 @@ international:
       help: ''
       distance:
         label: Enter the total round trip distance
-        help: ''
+        help: 'Enter distance driven only (do not include ferry mileage).'
     countries-transitted:
       heading: Which countries did you travel through?
       help: ''
