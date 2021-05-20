@@ -9,7 +9,7 @@
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-weights.heading'}
     } %}
     {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
-        {%- set fuelValue = vehicle.fuelQuantity.value and vehicle.fueldQuantity.unit ?
+        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
             "#{survey.response.vehicle.fuelQuantity.value} #{survey.response.vehicle.fuelQuantity.unit}" :
             '-'
         -%}
