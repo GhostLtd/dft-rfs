@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class StageOrderTest extends AbstractFrontendFunctionalTest
 {
-    public function testWibble()
+    public function testStageReordering()
     {
         $bognor = 'Bognor Regis — loaded';
         $worthing = 'Worthing — loaded';
