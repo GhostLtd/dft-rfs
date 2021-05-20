@@ -5,6 +5,7 @@ namespace App\Serializer\Normalizer\International;
 use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
+use App\Form\CountryType;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
 use App\Serializer\Normalizer\Mapper\BooleanPropertyList;
@@ -18,6 +19,8 @@ use Symfony\Component\Intl\Countries;
 
 class TripNormalizer extends AbstractExportNormalizer
 {
+    private array $countryNames;
+
     public function supportsNormalization($data, $format = null, array $context = [])
     {
         return $data instanceof Trip;
@@ -28,6 +31,7 @@ class TripNormalizer extends AbstractExportNormalizer
      */
     protected function getMapping(): array
     {
+        $this->countryNames = Countries::getNames();
         return [
             'IHRVehicleDetailsID' => new Property('id'),
             'RegMark' => new Property('vehicle.registration_mark'),
@@ -67,26 +71,25 @@ class TripNormalizer extends AbstractExportNormalizer
             'ForeignPortOfDeparture' => new Property('return_foreign_port'),
             'ReturnVehicleEmpty' => new BooleanProperty('return_was_empty'),
             'CountriesTransitted' => new Callback(function(Trip $sourceData) {
+                // The trip countries
                 $countries = $sourceData->getCountriesTransitted();
-
                 $countriesOther = $sourceData->getCountriesTransittedOther();
-
                 if ($countriesOther !== null) {
-                    $countryNames = Countries::getNames();
                     foreach(array_map('trim', explode(',', $countriesOther)) as $country) {
-                        $countryCode = array_search($country, $countryNames);
-
-                        if ($countryCode !== false) {
-                            if (array_search($countryCode, $countries) === false) {
-                                $countries[] = $countryCode;
-                            }
-                        } else {
-                            $countries[] = $country;
-                        }
+                        $countries[] = $this->resolveOtherCountryToCode($country);
                     }
                 }
 
-                return join(', ', $countries);
+                // Add countries from actions
+                foreach ($sourceData->getActions() as $action) {
+                    $country = $action->getCountry();
+                    if ($country === CountryType::OTHER) {
+                        $country = $this->resolveOtherCountryToCode(trim($action->getCountryOther()));
+                    }
+                    $countries[] =  $country;
+                }
+
+                return join(', ', array_unique($countries));
             }),
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
             'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
@@ -107,5 +110,11 @@ class TripNormalizer extends AbstractExportNormalizer
             'ReturnLtdByWeight' => new BooleanProperty('return_was_limited_by_weight'),
             'AxleConfig' => new PropertyList(['axle_configuration', 'vehicle.axle_configuration']),
         ];
+    }
+
+    protected function resolveOtherCountryToCode($country)
+    {
+        $countryCode = array_search($country, $this->countryNames);
+        return $countryCode !== false ? $countryCode : $country;
     }
 }
