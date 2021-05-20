@@ -1275,6 +1275,7 @@ international:
       change-link-sr-suffix:
         swapped-trailer: 'trailer/body configurations'
     vehicle-weights:
+      heading: Vehicle weights
       original-vehicle-weight: Original vehicle weight/capacity
       gross-weight: Original gross vehicle weight
       carrying-capacity: Original vehicle carrying capacity
