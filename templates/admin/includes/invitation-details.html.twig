@@ -35,7 +35,7 @@
             {{ apiResponse['timestamp'] | date('Y-m-d H:i') -}}
             {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
                 {%- for error in apiResponse.errors -%}
-                    <br>{{- error.error }}: {{ error.message -}}
+                    <br>{{- error.error }}: {{ error.message | nl2br -}}
                 {%- endfor -%}
             {%- endif -%}
         </span>

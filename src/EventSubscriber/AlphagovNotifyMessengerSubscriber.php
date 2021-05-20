@@ -50,12 +50,20 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
                     ? Reference::STATUS_WAITING_FOR_RETRY
                     : Reference::STATUS_FAILED,
             ];
-
-            $this->logResponse($originalMessage, $notifyApiResponse);
         } else {
-            echo "unexpected event!!!!";
-            dump($notifyApiEvent); exit;
+            // We've got some other exception ?!
+            $notifyApiResponse = [
+                'code' => $notifyApiEvent->getCode(),
+                'errors' => [
+                    [
+                        'error' => $notifyApiEvent->getMessage(),
+                        'message' => $notifyApiEvent->getTraceAsString(),
+                    ],
+                ],
+                self::STATUS_KEY => Reference::STATUS_FAILED,
+            ];
         }
+        $this->logResponse($originalMessage, $notifyApiResponse);
     }
 
     public function onMessageHandled(WorkerMessageHandledEvent $event)
