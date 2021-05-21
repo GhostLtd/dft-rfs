@@ -2,7 +2,6 @@
 
 namespace App\Entity\International;
 
-use App\Entity\BlameLoggable;
 use App\Entity\VehicleTrait;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\VehicleRepository;
@@ -17,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @AppAssert\ValidRegistration(groups={"vehicle_registration", "admin_vehicle"})
  */
-class Vehicle implements BlameLoggable
+class Vehicle
 {
     use VehicleTrait;
 
@@ -89,20 +88,5 @@ class Vehicle implements BlameLoggable
         $this->setBodyType($vehicle->getBodyType());
         $this->setCarryingCapacity($vehicle->getCarryingCapacity());
         $this->setGrossWeight($vehicle->getGrossWeight());
-    }
-
-    public function getBlameLogLabel()
-    {
-        return "{$this->getRegistrationMark()}";
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return SurveyResponse::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        return $this->getSurveyResponse()->getId();
     }
 }

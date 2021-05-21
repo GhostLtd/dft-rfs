@@ -1,26 +1,24 @@
 <?php
 
-
 namespace App\EventSubscriber;
 
-
-use App\Utility\BlameLogger;
+use App\Utility\AuditLogger;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
-class BlameLogEventSubscriber implements EventSubscriber
+class AuditLogEventSubscriber implements EventSubscriber
 {
-    private $blameLogger;
+    private AuditLogger $auditLogger;
 
-    public function __construct(BlameLogger $blameLogger)
+    public function __construct(AuditLogger $auditLogger)
     {
-        $this->blameLogger = $blameLogger;
+        $this->auditLogger = $auditLogger;
     }
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $this->blameLogger->log($eventArgs->getEntityManager());
+        $this->auditLogger->log($eventArgs->getEntityManager());
     }
 
     public function getSubscribedEvents()
@@ -29,5 +27,4 @@ class BlameLogEventSubscriber implements EventSubscriber
             Events::onFlush,
         ];
     }
-
 }

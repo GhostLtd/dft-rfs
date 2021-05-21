@@ -10,6 +10,7 @@
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
@@ -34,6 +35,11 @@
         ("Notes (#{ survey.notes | length })"): 'tab-notes',
         'Invitation/reminders': 'tab-invitation-details',
     }) -%}
+    {%- if hasAuditLogs -%}
+        {%- set tabs = tabs | merge({
+            'Audit logs': 'tab-audit-logs',
+        }) -%}
+    {%- endif -%}
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -120,6 +126,14 @@
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
+
+            {%- if hasAuditLogs -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                    {%- with {marginBottom: 5} -%}
+                        {%- include 'admin/includes/audit-log.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
         </div>
     {%- endif -%}
 

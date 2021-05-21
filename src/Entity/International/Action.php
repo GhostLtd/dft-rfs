@@ -3,7 +3,6 @@
 namespace App\Entity\International;
 
 use App\Entity\AbstractGoodsDescription;
-use App\Entity\BlameLoggable;
 use App\Entity\CargoTypeTrait;
 use App\Entity\CountryInterface;
 use App\Entity\GoodsDescriptionInterface;
@@ -24,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @AppAssert\UnloadedWeight(groups={"action-unloaded-weight", "admin_action_unload"})
  * @AppAssert\Country(groups={"action-place", "admin_action_unload", "admin_action_load"})
  */
-class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterface
+class Action implements GoodsDescriptionInterface, CountryInterface
 {
     /**
      * @ORM\Id
@@ -322,26 +321,5 @@ class Action implements BlameLoggable, GoodsDescriptionInterface, CountryInterfa
         return $this->unloadingActions->filter(function(Action $action) use ($excludedId) {
             return $action->getId() !== $excludedId;
         })->count();
-    }
-
-    public function getBlameLogLabel()
-    {
-        return $this->getLoading()
-            ? ("Loading: {$this->weightOfGoods}kg {$this->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
-            : ($this->getWeightUnloadedAll()
-                ? "Unloading: All {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}"
-                : "Unloading: {$this->weightOfGoods}kg {$this->getLoadingAction()->getGoodsDescription()}, {$this->getName()} {$this->getCountry()}")
-        ;
-    }
-
-    public function getAssociatedEntityClass()
-    {
-        return Trip::class;
-    }
-
-    public function getAssociatedEntityId()
-    {
-        $trip = $this->getTrip();
-        return $trip ? $trip->getId() : null;
     }
 }
