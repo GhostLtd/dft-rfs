@@ -30,6 +30,13 @@ class SurveyViewController extends AbstractController
             'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
             'auditLogs' => $logRepository->getLogs($survey->getId(), Survey::class),
+            'approvedBy' => in_array($survey->getState(), [
+                SurveyInterface::STATE_INVITED_USER,
+                SurveyInterface::STATE_NEW,
+                SurveyInterface::STATE_IN_PROGRESS,
+                SurveyInterface::STATE_REJECTED,
+                SurveyInterface::STATE_CLOSED,
+            ]) ? false : $logRepository->getApprovedBy($survey),
         ]);
     }
 
