@@ -1378,7 +1378,7 @@ international:
         help: 'Enter distance driven only (do not include ferry mileage).'
     countries-transitted:
       heading: Which countries did you travel through?
-      help: ''
+      help: 'List all of countries the vehicle travelled through during this trip. Include countries in which the vehicle did work and also transited countries used to access another country'
       countries-transitted:
         label: Choose from commonly travelled countries
         help: ''
