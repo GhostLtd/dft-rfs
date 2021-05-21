@@ -5,7 +5,7 @@ namespace App\Tests\Functional;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 
-class AbstractFrontendFunctionalTest extends AbstractFunctionalTest
+abstract class AbstractFrontendFunctionalTest extends AbstractFunctionalTest
 {
     protected function login(KernelBrowser $client): Crawler
     {

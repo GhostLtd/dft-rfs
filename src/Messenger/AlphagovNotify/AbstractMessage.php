@@ -4,28 +4,18 @@
 namespace App\Messenger\AlphagovNotify;
 
 use App\Messenger\AbstractAsyncMessage;
+use App\Utility\AlphagovNotify\Reference;
 
 abstract class AbstractMessage extends AbstractAsyncMessage
 {
     protected ?string $originatingEntityClass;
     protected ?string $originatingEntityId;
+    private ?string $templateId;
+    private ?array $personalisation;
+    private ?string $reference;
+    private ?string $eventName;
 
-    /**
-     * @var string
-     */
-    private $templateId;
-
-    /**
-     * @var array
-     */
-    private $personalisation;
-
-    /**
-     * @var string
-     */
-    private $reference;
-
-    public function __construct($originatingEntityClass, $originatingEntityId, $templateId, $personalisation = [], $reference = null)
+    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $templateId, $personalisation = [], ?string $reference = null)
     {
         $this->originatingEntityClass = $originatingEntityClass;
         $this->originatingEntityId = $originatingEntityId;
@@ -36,6 +26,7 @@ abstract class AbstractMessage extends AbstractAsyncMessage
         } else {
             $this->reference = $reference;
         }
+        $this->eventName = $eventName;
     }
 
     abstract public function getSendMethodParameters(): array;
@@ -49,7 +40,7 @@ abstract class AbstractMessage extends AbstractAsyncMessage
     }
 
     /**
-     * @param string $templateId
+     * @param ?string $templateId
      * @return self
      */
     public function setTemplateId(?string $templateId): self
@@ -60,35 +51,37 @@ abstract class AbstractMessage extends AbstractAsyncMessage
     /**
      * @return array
      */
-    public function getPersonalisation()
+    public function getPersonalisation(): ?array
     {
         return $this->personalisation;
     }
 
     /**
-     * @param array $personalisation
+     * @param ?array $personalisation
      * @return self
      */
     public function setPersonalisation(?array $personalisation): self
     {
         $this->personalisation = $personalisation;
+        return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getReference()
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
     /**
-     * @param string|null $reference
+     * @param ?string $reference
      * @return self
      */
     public function setReference(?string $reference): self
     {
         $this->reference = $reference;
+        return $this;
     }
 
     public function getOriginatingEntityClass(): ?string
@@ -99,5 +92,23 @@ abstract class AbstractMessage extends AbstractAsyncMessage
     public function getOriginatingEntityId(): ?string
     {
         return $this->originatingEntityId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEventName(): ?string
+    {
+        return $this->eventName;
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getTemplateReferenceConstantName()
+    {
+        $templateReferenceReflection = new \ReflectionClass(Reference::class);
+        return array_search($this->getTemplateId(), $templateReferenceReflection->getConstants());
+
     }
 }

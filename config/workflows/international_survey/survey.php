@@ -16,7 +16,9 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_NEW,
-                    StateObject::STATE_INVITED_USER,
+                    StateObject::STATE_INVITATION_PENDING,
+                    StateObject::STATE_INVITATION_SENT,
+                    StateObject::STATE_INVITATION_FAILED,
                     StateObject::STATE_IN_PROGRESS,
                     StateObject::STATE_CLOSED,
                     StateObject::STATE_APPROVED,
@@ -27,14 +29,22 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'invite_user' => [
                         'from' => StateObject::STATE_NEW,
-                        'to' => StateObject::STATE_INVITED_USER,
+                        'to' => StateObject::STATE_INVITATION_PENDING,
+                    ],
+                    'invitation_sent' => [
+                        'from' => StateObject::STATE_INVITATION_PENDING,
+                        'to' => StateObject::STATE_INVITATION_SENT,
+                    ],
+                    'invitation_failed' => [
+                        'from' => StateObject::STATE_INVITATION_PENDING,
+                        'to' => StateObject::STATE_INVITATION_FAILED,
                     ],
                     'started' => [
-                        'from' => [StateObject::STATE_INVITED_USER, StateObject::STATE_NEW],
+                        'from' => [StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_PENDING, StateObject::STATE_NEW],
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [
-                        'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_INVITED_USER],
+                        'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_INVITATION_SENT],
                         'to' => StateObject::STATE_CLOSED,
                     ],
                     're_open' => [

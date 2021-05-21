@@ -9,7 +9,7 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
-use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\AlphagovNotify\Reference;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -42,17 +42,8 @@ class RemindersHelper
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
         if ($addressIsFilled) {
-            switch ($reminder) {
-                case 1:
-                    $survey->setFirstReminderSentDate(new \DateTime());
-                    break;
-                case 2:
-                    $survey->setSecondReminderSentDate(new \DateTime());
-                    break;
-                default:
-                    throw new \LogicException("unhandled reminder number: {$reminder}");
-            }
             $this->messageBus->dispatch(new Letter(
+                ([1 => Reference::EVENT_REMINDER_1, 2 => Reference::EVENT_REMINDER_2])[$reminder],
                 get_class($survey),
                 $survey->getId(),
                 $address,
@@ -66,12 +57,12 @@ class RemindersHelper
     {
         return [
             1 => [
-                TemplateReference::LETTER_DOMESTIC_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(DomesticSurvey::class),
-                TemplateReference::LETTER_INTERNATIONAL_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(InternationalSurvey::class),
+                Reference::LETTER_DOMESTIC_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(DomesticSurvey::class),
+                Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(InternationalSurvey::class),
             ],
             2 => [
-                TemplateReference::LETTER_DOMESTIC_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(DomesticSurvey::class),
-                TemplateReference::LETTER_INTERNATIONAL_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(InternationalSurvey::class),
+                Reference::LETTER_DOMESTIC_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(DomesticSurvey::class),
+                Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(InternationalSurvey::class),
             ],
         ];
     }
@@ -107,7 +98,7 @@ class RemindersHelper
     {
         // $queryBuilder->expr()->isNull('survey.submissionDate'),
         return $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITED_USER, SurveyInterface::STATE_IN_PROGRESS]),
+            $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT, SurveyInterface::STATE_IN_PROGRESS]),
             $queryBuilder->expr()->andX('response.contactTelephone IS NULL', 'response.contactEmail IS NULL')
         );
     }

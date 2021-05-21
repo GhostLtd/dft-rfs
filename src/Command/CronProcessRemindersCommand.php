@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\SurveyInterface;
-use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\AlphagovNotify\Reference;
 use App\Utility\RemindersHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;

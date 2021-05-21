@@ -12,13 +12,18 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\DomCrawler\Crawler;
 
-class AbstractFunctionalTest extends WebTestCase
+abstract class AbstractFunctionalTest extends WebTestCase
 {
     use FixturesTrait {
         loadFixtures as _loadFixtures;
     }
 
     protected ReferenceRepository $fixtureReferenceRepository;
+
+    protected function getFixtureByReference($reference)
+    {
+        return $this->fixtureReferenceRepository->getReference($reference);
+    }
 
     protected function getBrowserAndLoadFixtures(array $fixtures): KernelBrowser
     {

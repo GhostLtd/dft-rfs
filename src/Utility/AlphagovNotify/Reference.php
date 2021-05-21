@@ -3,8 +3,16 @@
 
 namespace App\Utility\AlphagovNotify;
 
-class TemplateReference
+class Reference
 {
+    const STATUS_ACCEPTED = 'accepted';
+    const STATUS_FAILED = 'failed';
+    const STATUS_WAITING_FOR_RETRY = 'waiting-for-retry';
+
+    const EVENT_INVITE = 'invite';
+    const EVENT_REMINDER_1 = 'reminder-1';
+    const EVENT_REMINDER_2 = 'reminder-2';
+
     // TODO: change development email template
     const EMAIL_DOMESTIC_SURVEY_INVITE = '';
 

@@ -8,7 +8,7 @@ use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
-use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\AlphagovNotify\Reference;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,12 +24,12 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     private const TYPE_EMAIL = 'email';
     private const TEMPLATE_MAP = [
         DomesticSurvey::class => [
-            self::TYPE_LETTER => TemplateReference::LETTER_DOMESTIC_SURVEY_INVITE,
-            self::TYPE_EMAIL => TemplateReference::EMAIL_DOMESTIC_SURVEY_INVITE,
+            self::TYPE_LETTER => Reference::LETTER_DOMESTIC_SURVEY_INVITE,
+            self::TYPE_EMAIL => Reference::EMAIL_DOMESTIC_SURVEY_INVITE,
         ],
         InternationalSurvey::class => [
-            self::TYPE_LETTER => TemplateReference::LETTER_INTERNATIONAL_SURVEY_INVITE,
-            self::TYPE_EMAIL => TemplateReference::EMAIL_INTERNATIONAL_SURVEY_INVITE,
+            self::TYPE_LETTER => Reference::LETTER_INTERNATIONAL_SURVEY_INVITE,
+            self::TYPE_EMAIL => Reference::EMAIL_INTERNATIONAL_SURVEY_INVITE,
         ],
     ];
 
@@ -46,8 +46,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
-        if ($addressIsFilled) {
+        if ($addressIsFilled && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER]) {
             $this->messageBus->dispatch(new Letter(
+                Reference::EVENT_INVITE,
                 get_class($survey),
                 $survey->getId(),
                 $address,
@@ -56,18 +57,15 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail()) {
+        if ($survey->getInvitationEmail() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
             $this->messageBus->dispatch(new Email(
+                Reference::EVENT_INVITE,
                 get_class($survey),
                 $survey->getId(),
                 $survey->getInvitationEmail(),
                 self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
                 $personalisation,
             ));
-        }
-
-        if ($survey->getInvitationEmail() || $addressIsFilled) {
-            $survey->setNotifiedDate(new DateTime());
         }
     }
 

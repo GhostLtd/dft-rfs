@@ -8,7 +8,9 @@ use DateTime;
 interface SurveyInterface
 {
     const STATE_NEW = 'new';
-    const STATE_INVITED_USER = 'invited';
+    const STATE_INVITATION_PENDING = 'invitation pending';
+    const STATE_INVITATION_SENT = 'invited';
+    const STATE_INVITATION_FAILED = 'invitation failed';
     const STATE_IN_PROGRESS = 'in-progress';
     const STATE_CLOSED = 'closed';
     const STATE_APPROVED = 'approved';
@@ -18,7 +20,9 @@ interface SurveyInterface
 
     const STATE_CHOICES = [
         'admin.survey.state.new' => self::STATE_NEW,
-        'admin.survey.state.invited' => self::STATE_INVITED_USER,
+        'admin.survey.state.invitation pending' => self::STATE_INVITATION_PENDING,
+        'admin.survey.state.invited' => self::STATE_INVITATION_SENT,
+        'admin.survey.state.invitation failed' => self::STATE_INVITATION_FAILED,
         'admin.survey.state.in-progress' => self::STATE_IN_PROGRESS,
         'admin.survey.state.closed' => self::STATE_CLOSED,
         'admin.survey.state.approved' => self::STATE_APPROVED,

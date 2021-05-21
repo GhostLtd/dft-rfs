@@ -26,9 +26,9 @@ class Sms extends AbstractMessage
      * @param null $reference
      * @param null $senderId
      */
-    public function __construct($originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null, $senderId = null)
+    public function __construct($eventName, $originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null, $senderId = null)
     {
-        parent::__construct($originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
+        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
         $this->phoneNumber = $address;
         $this->senderId = $senderId;
     }

@@ -183,12 +183,19 @@ admin:
     state:
       in-progress: govuk-tag--yellow
       new: govuk-tag--grey
+      'invitation pending': govuk-tag--yellow
+      'invitation failed': govuk-tag--red
       invited: govuk-tag--grey
       closed: govuk-tag--blue
       approved: govuk-tag--green
       rejected: govuk-tag--red
       exporting: govuk-tag--green
       exported: govuk-tag--green
+  notify:
+    status:
+      accepted: govuk-tag--green
+      failed: govuk-tag--red
+      waiting-for-retry: govuk-tag--yellow
   domestic:
     passcode-reset-success:
       heading: Passcode changed

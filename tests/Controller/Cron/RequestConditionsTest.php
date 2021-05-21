@@ -12,17 +12,9 @@ class RequestConditionsTest extends WebTestCase
 {
     public function cronUrlsProvider()
     {
-        self::bootKernel();
-        $container = self::$kernel->getContainer()->get('test.service_container');
-        /** @var Router $router */
-        $router = $container->get('router');
-
-        $routes = $router->getRouteCollection()->all();
-        $routes = array_filter($routes, function ($key){return (stripos($key, 'cron_') === 0);}, ARRAY_FILTER_USE_KEY);
-
-        self::ensureKernelShutdown();
-
-        return array_map(function(Route $route){return [$route->getPath()];}, $routes);
+        return [
+            ['/cron/test'],
+        ];
     }
 
     /**
