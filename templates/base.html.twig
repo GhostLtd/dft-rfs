@@ -1,6 +1,6 @@
 {% extends "base-common.html.twig" %}
 
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader, footer as govukFooter -%}
 
 {% block head -%}
     {{ encore_entry_link_tags('app') }}
@@ -71,3 +71,11 @@
         </div>
     {% endif %}
 {% endmacro %}
+
+{% block footer %}
+    {{ govukFooter({
+        meta: {items: [
+            {href: path('app_home_accessibilitystatement'), text: 'Accessibility'}
+        ]}
+    }) }}
+{% endblock %}
