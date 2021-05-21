@@ -18,7 +18,7 @@ class TimeStringTransformer implements DataTransformerInterface
             ];
         }
 
-        if (!$value instanceof Time) {
+        if (!$value instanceof \DateTimeInterface) {
             throw new TransformationFailedException('Invalid value');
         }
 
