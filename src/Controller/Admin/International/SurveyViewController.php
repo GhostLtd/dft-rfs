@@ -7,10 +7,9 @@ use App\Entity\International\SurveyNote;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
 use App\Form\NoteType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Utility\International\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,12 +22,13 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function view(Survey $survey): Response
+    public function view(Survey $survey, PdfHelper $pdfHelper): Response
     {
         $addNoteForm = $this->getAddNoteForm($survey);
 
         return $this->render('admin/international/surveys/view.html.twig', [
             'survey' => $survey,
+            'pdfs' => $pdfHelper->getExistingSurveyPDFs($survey),
             'addNoteForm' => $addNoteForm->createView(),
         ]);
     }
@@ -36,7 +36,7 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("/add-note", name=SurveyController::ADD_NOTE_ROUTE)
      */
-    public function addNote(Request $request, EntityManagerInterface $entityManager, Survey $survey)
+    public function addNote(Survey $survey)
     {
         $addNoteForm = $this->getAddNoteForm($survey);
         return $this->forward(SurveyAddNoteController::class . '::addNotePostAction', [

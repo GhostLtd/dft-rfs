@@ -44,6 +44,19 @@
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
+        {%- if pdfs is not empty -%}
+            {%- set pdfContent -%}
+                {%- set multiplePdfs = pdfs|length > 1 ? true : false -%}
+                {%- for pdf in pdfs -%}
+                    {%- set routeParams = {surveyId: pdf.survey.id} -%}
+                    {%- if multiplePdfs -%}{% set routeParams = routeParams|merge({timestamp: pdf.timestamp}) -%}{%- endif -%}
+                    <div><a href="{{ path('app_admin_domestic_surveypdf_pdf', routeParams) }}" target="_blank" rel="noopener noreferrer" class="govuk-link">
+                            {{- pdf.filename() -}}{% if multiplePdfs %} @ {{ pdf.date|date('Y-m-d H:i:s') }}{% endif -%}
+                    </a></div>
+                {%- endfor -%}
+            {%- endset -%}
+            {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
+        {%- endif -%}
     </dl>
 
     <div class="govuk-!-margin-bottom-9">

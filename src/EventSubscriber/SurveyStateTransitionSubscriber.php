@@ -2,28 +2,28 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
-use App\Entity\SurveyTrait;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\TemplateReference;
+use App\Utility\Domestic\PdfHelper as DomesticPdfHelper;
+use App\Utility\International\PdfHelper as InternationalPdfHelper;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
-    private WorkflowInterface $domesticSurveyStateMachine;
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
-    private string $frontendHostname;
+    private DomesticPdfHelper $domesticPdfHelper;
+    private InternationalPdfHelper $internationalPdfHelper;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -39,15 +39,15 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     ];
 
     public function __construct(
-        WorkflowInterface $domesticSurveyStateMachine,
         EntityManagerInterface $entityManager,
         MessageBusInterface $messageBus,
-        $frontendHostname
+        DomesticPdfHelper $domesticPdfHelper,
+        InternationalPdfHelper $internationalPdfHelper
     ) {
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
         $this->entityManager = $entityManager;
-        $this->frontendHostname = $frontendHostname;
         $this->messageBus = $messageBus;
+        $this->domesticPdfHelper = $domesticPdfHelper;
+        $this->internationalPdfHelper = $internationalPdfHelper;
     }
 
     public function transitionInviteUser(Event $event)
@@ -89,6 +89,12 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         if (!$survey->getSubmissionDate()) {
             $survey->setSubmissionDate(new DateTime('now'));
             $this->entityManager->flush();
+
+            if ($survey instanceof DomesticSurvey) {
+                $this->domesticPdfHelper->generateAndUploadPdf($survey);
+            } else if ($survey instanceof InternationalSurvey) {
+                $this->internationalPdfHelper->generateAndUploadPdf($survey);
+            }
         }
     }
 
@@ -97,7 +103,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         /** @var SurveyInterface $survey */
         $survey = $event->getSubject();
         if (!in_array(get_class($survey), [DomesticSurvey::class, InternationalSurvey::class])) {
-            throw new \LogicException("unhandled survey class: ". get_class($survey));
+            throw new LogicException("unhandled survey class: ". get_class($survey));
         }
         return $survey;
     }

@@ -3,9 +3,7 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Survey;
-use App\Entity\PasscodeUser;
 use App\Repository\International\SurveyRepository;
-use App\Utility\PdfHelper;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,23 +66,5 @@ class IndexController extends AbstractController
             'response' => $response,
             'vehicles' => $vehicles,
         ]);
-    }
-
-    /**
-     * @Route("/view-whole-survey")
-     */
-    public function wholeSurvey(UserInterface $user, PdfHelper $pdfHelper): Response
-    {
-        assert($user instanceof PasscodeUser);
-        return new Response($pdfHelper->getSurveyPdfHtml($user->getInternationalSurvey()));
-    }
-
-    /**
-     * @Route("/view-whole-survey-pdf")
-     */
-    public function wholeSurveyPdf(UserInterface $user, PdfHelper $pdfHelper): void
-    {
-        assert($user instanceof PasscodeUser);
-        $pdfHelper->outputPDF($user->getInternationalSurvey());
     }
 }

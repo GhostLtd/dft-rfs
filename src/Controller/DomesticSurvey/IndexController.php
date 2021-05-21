@@ -4,12 +4,10 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Entity\PasscodeUser;
 use App\Security\Voter\Domestic\SurveyVoter;
-use App\Utility\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class IndexController
@@ -85,23 +83,5 @@ class IndexController extends AbstractController
         return $this->render('domestic_survey/completed.html.twig', [
             'survey' => $domesticSurvey,
         ]);
-    }
-
-    /**
-     * @Route("/view-whole-survey")
-     */
-    public function wholeSurvey(UserInterface $user, PdfHelper $pdfHelper): Response
-    {
-        assert($user instanceof PasscodeUser);
-        return new Response($pdfHelper->getSurveyPdfHtml($user->getDomesticSurvey()));
-    }
-
-    /**
-     * @Route("/view-whole-survey-pdf")
-     */
-    public function wholeSurveyPdf(UserInterface $user, PdfHelper $pdfHelper): void
-    {
-        assert($user instanceof PasscodeUser);
-        $pdfHelper->outputPDF($user->getDomesticSurvey());
     }
 }

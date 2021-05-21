@@ -8,6 +8,7 @@ use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
+use App\Utility\International\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -127,6 +128,11 @@ class Survey implements BlameLoggable, SurveyInterface, ApiResponseInterface
     public function getAssociatedEntityId()
     {
         return null;
+    }
+
+    public function getWeekNumber(): int
+    {
+        return WeekNumberHelper::getWeekNumber($this->getSurveyPeriodStart());
     }
 
     public function getNotes()
