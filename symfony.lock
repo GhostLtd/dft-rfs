@@ -117,6 +117,12 @@
     "egulias/email-validator": {
         "version": "2.1.22"
     },
+    "erusev/parsedown": {
+        "version": "1.7.4"
+    },
+    "erusev/parsedown-extra": {
+        "version": "0.8.1"
+    },
     "firebase/php-jwt": {
         "version": "v5.2.0"
     },
@@ -675,6 +681,9 @@
     },
     "twig/intl-extra": {
         "version": "v3.1.1"
+    },
+    "twig/markdown-extra": {
+        "version": "v3.3.1"
     },
     "twig/twig": {
         "version": "v3.1.0"
