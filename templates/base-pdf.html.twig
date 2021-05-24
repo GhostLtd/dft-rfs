@@ -1,0 +1,40 @@
+{% apply spaceless %}
+<html lang="{{ htmlLang | default('en') }}" class="govuk-template {{ htmlClasses | default('') }}">
+<head>
+    <meta charset="utf-8" />
+    <title{% if pageTitleLang | default(false) %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ themeColor | default('#0b0c0c') }}" />
+    {% if block('metaDescription') is defined %}<meta name="description" content="{{ block('metaDescription') }}">{% endif %}
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    {% block head %}
+        {{ encore_entry_inline_styles('pdf') }}
+    {% endblock %}
+</head>
+<body class="template__body {{ bodyClasses | default('') }}">
+
+{% block header %}
+    <header class="header" role="banner" data-module="header">
+    </header>
+{% endblock %}
+
+{% block main %}
+    <div class="container {{ containerClasses | default('') }}">
+        {% block beforeContent %}{% endblock %}
+        <main class="main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <footer class="govuk-footer" role="contentinfo">
+    </footer>
+{% endblock %}
+
+{% block bodyEnd %}{% endblock %}
+</body>
+</html>
+{% endapply %}

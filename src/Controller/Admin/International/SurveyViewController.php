@@ -8,6 +8,7 @@ use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
 use App\Form\NoteType;
 use App\Repository\AuditLog\AuditLogRepository;
+use App\Utility\International\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,12 +23,13 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function view(Survey $survey, AuditLogRepository $logRepository): Response
+    public function view(Survey $survey, AuditLogRepository $logRepository, PdfHelper $pdfHelper): Response
     {
         $addNoteForm = $this->getAddNoteForm($survey);
 
         return $this->render('admin/international/surveys/view.html.twig', [
             'survey' => $survey,
+            'pdfs' => $pdfHelper->getExistingSurveyPDFs($survey),
             'addNoteForm' => $addNoteForm->createView(),
             'auditLogs' => $logRepository->getLogs($survey->getId(), Survey::class),
             'approvedBy' => in_array($survey->getState(), [

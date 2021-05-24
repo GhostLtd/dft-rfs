@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -64,13 +66,16 @@ class ExportController extends AbstractController
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $dataExporter->getDataForExport($week);
 
-                header('content-type: text/plain');
-                echo $sql;
-                exit;
-//                $sql = "SELECT @@version;";
-//
+                $response = new Response($sql);
+                $response->headers->set(
+                    'content-disposition', $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    "irhs-export-{$week}.sql"
+                    )
+                );
+                return $response;
+
 //                $this->exportHelper->upload($sql, $week);
-//
 //                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
             }
         }

@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @Route("/international-survey")
+ */
 class IndexController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -26,7 +29,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey/completed", name=self::COMPLETED_ROUTE)
+     * @Route("/completed", name=self::COMPLETED_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
     public function completed(UserInterface $user): Response {
@@ -37,7 +40,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/international-survey", name=self::SUMMARY_ROUTE)
+     * @Route("", name=self::SUMMARY_ROUTE)
      */
     public function index(UserInterface $user): Response {
         $survey = $this->getSurvey($user);

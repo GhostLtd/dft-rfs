@@ -14,7 +14,9 @@
     {label: 'common.actions.change', srHiddenSuffix: 'international.correspondence-and-business-details.business-details'}
 } -%}
 
-<h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
+{% if showTitle ?? true %}
+    <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
+{% endif %}
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
 
     {{- row(showActions,

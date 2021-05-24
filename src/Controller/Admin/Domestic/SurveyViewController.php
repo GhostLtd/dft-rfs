@@ -1,14 +1,13 @@
 <?php
 
-
 namespace App\Controller\Admin\Domestic;
-
 
 use App\Controller\Admin\SurveyAddNoteController;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyInterface;
 use App\Form\NoteType;
+use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,12 +23,13 @@ class SurveyViewController extends AbstractController
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function viewDetails(Survey $survey, AuditLogRepository $logRepository): Response
+    public function viewDetails(Survey $survey, PdfHelper $pdfHelper, AuditLogRepository $logRepository): Response
     {
         $addNoteForm = $this->getAddNoteForm($survey);
 
         return $this->render('admin/domestic/surveys/view.html.twig', [
             'survey' => $survey,
+            'pdfs' => $pdfHelper->getExistingSurveyPDFs($survey),
             'addNoteForm' => $addNoteForm->createView(),
             'auditLogs' => $logRepository->getLogs($survey->getId(), Survey::class),
             'approvedBy' => in_array($survey->getState(), [

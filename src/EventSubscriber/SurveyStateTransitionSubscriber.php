@@ -8,9 +8,12 @@ use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
+use App\Utility\Domestic\PdfHelper as DomesticPdfHelper;
+use App\Utility\International\PdfHelper as InternationalPdfHelper;
 use App\Utility\AlphagovNotify\Reference;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -19,6 +22,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
+    private DomesticPdfHelper $domesticPdfHelper;
+    private InternationalPdfHelper $internationalPdfHelper;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -33,10 +38,16 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus,
+        DomesticPdfHelper $domesticPdfHelper,
+        InternationalPdfHelper $internationalPdfHelper
+    ) {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
+        $this->domesticPdfHelper = $domesticPdfHelper;
+        $this->internationalPdfHelper = $internationalPdfHelper;
     }
 
     public function transitionInviteUser(Event $event)
@@ -76,6 +87,12 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         if (!$survey->getSubmissionDate()) {
             $survey->setSubmissionDate(new DateTime('now'));
             $this->entityManager->flush();
+
+            if ($survey instanceof DomesticSurvey) {
+                $this->domesticPdfHelper->generateAndUploadPdf($survey);
+            } else if ($survey instanceof InternationalSurvey) {
+                $this->internationalPdfHelper->generateAndUploadPdf($survey);
+            }
         }
     }
 

@@ -59,10 +59,10 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## General
-        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         ## Frontend firewall
-        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER }
         - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: https }
         - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, allow_if: 'false', requires_channel: https }
 

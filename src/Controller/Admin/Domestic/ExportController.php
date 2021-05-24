@@ -7,7 +7,6 @@ use App\Utility\Domestic\DataExporter;
 use App\Utility\Domestic\ExportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,7 +65,7 @@ class ExportController extends AbstractController
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $exporter->getDataForExport($year, $quarter);
-                dump($sql);
+
                 $response = new Response($sql);
                 $response->headers->set(
                     'content-disposition', $response->headers->makeDisposition(
@@ -75,9 +74,9 @@ class ExportController extends AbstractController
                     )
                 );
                 return $response;
-                $this->storageHelper->upload($sql, $year, $quarter);
 
-                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+//                $this->storageHelper->upload($sql, $year, $quarter);
+//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
             }
         }
 
