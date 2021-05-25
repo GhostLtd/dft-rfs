@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% macro errorSummary(context) %}
-    {%- set erroringForms = context | filter(item => item.vars.errors.form.getErrors(true) ?? null) -%}
+    {%- set erroringForms = context | filter(item => not (item.vars.errors.form.getErrors(true) ?? []) is empty) -%}
     {%- if not erroringForms is empty -%}
         <div class="govuk-error-summary govuk-visually-hidden-when-larger-than-mobile" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
