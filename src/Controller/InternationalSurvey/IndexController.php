@@ -4,6 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Survey;
 use App\Repository\International\SurveyRepository;
+use App\Security\Voter\International\SurveyVoter;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,10 +46,10 @@ class IndexController extends AbstractController
     public function index(UserInterface $user): Response {
         $survey = $this->getSurvey($user);
 
-        // ToDo: replace this with a security voter / is_granted call
-        if ($survey->getState() === Survey::STATE_CLOSED) {
+        if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
             return $this->redirectToRoute(self::COMPLETED_ROUTE);
         }
+        $this->denyAccessUnlessGranted(SurveyVoter::EDIT, $survey);
 
         if (!$survey->isInitialDetailsComplete()) {
             return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);

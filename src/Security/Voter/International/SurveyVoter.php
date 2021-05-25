@@ -11,6 +11,7 @@ class SurveyVoter extends Voter
 {
     const EDIT = 'EDIT';
     const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
+
     protected function supports($attribute, $subject)
     {
         return in_array($attribute, [self::EDIT, self::VIEW_SUBMISSION_SUMMARY])
@@ -32,7 +33,7 @@ class SurveyVoter extends Voter
                 return $state === Survey::STATE_IN_PROGRESS;
 
             case self::VIEW_SUBMISSION_SUMMARY:
-                return $state === Survey::STATE_CLOSED;
+                return in_array($state, [Survey::STATE_CLOSED, Survey::STATE_APPROVED]);
         }
 
         return false;
