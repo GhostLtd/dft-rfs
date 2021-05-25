@@ -4,7 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Controller\AbstractActionReorderController;
 use App\Entity\International\Trip;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

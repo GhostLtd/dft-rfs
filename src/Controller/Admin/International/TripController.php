@@ -5,7 +5,7 @@ namespace App\Controller\Admin\International;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Form\Admin\InternationalSurvey\TripType;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;

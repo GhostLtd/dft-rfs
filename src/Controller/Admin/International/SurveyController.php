@@ -8,7 +8,7 @@ use App\Form\Admin\InternationalSurvey\BusinessDetailsType;
 use App\Form\Admin\InternationalSurvey\CorrespondenceDetailsType;
 use App\Form\Admin\InternationalSurvey\FinalDetailsType;
 use App\Form\Admin\InternationalSurvey\InitialDetailsType;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

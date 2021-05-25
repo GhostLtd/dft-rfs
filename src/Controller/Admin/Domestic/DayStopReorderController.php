@@ -5,7 +5,7 @@ namespace App\Controller\Admin\Domestic;
 use App\Controller\AbstractDayStopReorderController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\Survey;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;

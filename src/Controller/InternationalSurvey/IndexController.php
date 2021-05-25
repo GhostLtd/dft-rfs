@@ -4,7 +4,7 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Survey;
 use App\Repository\International\SurveyRepository;
-use App\Security\Voter\International\SurveyVoter;
+use App\Security\Voter\SurveyVoter;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

@@ -7,7 +7,7 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\Edit\DayStopType;
 use App\Repository\Domestic\DayRepository;
-use App\Security\Voter\Domestic\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;

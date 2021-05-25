@@ -7,7 +7,7 @@ use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\ActionDeleteType;
 use App\Form\Admin\InternationalSurvey\ActionLoadType;
 use App\Form\Admin\InternationalSurvey\ActionUnloadType;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;

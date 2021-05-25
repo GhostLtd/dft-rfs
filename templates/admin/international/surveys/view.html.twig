@@ -8,8 +8,8 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
-    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::EDIT'), survey) -%}
-    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\International\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {%- set tabs = {} -%}

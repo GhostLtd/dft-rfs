@@ -10,7 +10,7 @@ use App\Form\Admin\DomesticSurvey\Edit\InitialDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\BusinessDetailsType;
 use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
-use App\Security\Voter\Domestic\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

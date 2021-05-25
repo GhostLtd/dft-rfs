@@ -7,7 +7,7 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\Edit\DaySummaryType;
 use App\Repository\Domestic\DayRepository;
-use App\Security\Voter\Domestic\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;

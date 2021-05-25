@@ -6,7 +6,7 @@ use App\Entity\International\Survey;
 use App\Entity\International\Vehicle;
 use App\Form\Admin\InternationalSurvey\VehicleDeleteType;
 use App\Form\Admin\InternationalSurvey\VehicleType;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\International\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;

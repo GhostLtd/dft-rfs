@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Security\Voter\International;
+namespace App\Security\Voter;
 
-use App\Entity\International\Survey;
+use App\Entity\SurveyInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -15,19 +15,20 @@ class AdminSurveyVoter extends Voter
     protected function supports($attribute, $subject)
     {
         return in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION])
-            && $subject instanceof Survey;
+            && $subject instanceof SurveyInterface;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $closedStatuses = [
-            Survey::STATE_APPROVED,
-            Survey::STATE_CLOSED,
-            Survey::STATE_EXPORTED,
-            Survey::STATE_REJECTED,
+            SurveyInterface::STATE_APPROVED,
+            SurveyInterface::STATE_CLOSED,
+            SurveyInterface::STATE_EXPORTING,
+            SurveyInterface::STATE_EXPORTED,
+            SurveyInterface::STATE_REJECTED,
         ];
 
-        /** @var $subject Survey */
+        /** @var $subject SurveyInterface */
         $state = $subject->getState();
 
         switch ($attribute) {
@@ -35,7 +36,7 @@ class AdminSurveyVoter extends Voter
             case self::RESET_PASSCODE:
                 return !in_array($state, $closedStatuses);
             case self::TRANSITION:
-                return $state !== Survey::STATE_EXPORTED;
+                return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);
         }
 
         return false;

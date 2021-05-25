@@ -3,7 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Entity\PasscodeUser;
-use App\Security\Voter\Domestic\SurveyVoter;
+use App\Security\Voter\SurveyVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

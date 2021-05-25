@@ -8,8 +8,8 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
-    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::EDIT'), survey) -%}
-    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\Domestic\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {#- "vehicle" gets created when the initial-details wizard is complete, although at that stage it only contains regMark -#}

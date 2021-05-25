@@ -3,7 +3,7 @@
 namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
-use App\Security\Voter\International\AdminSurveyVoter;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\International\Admin\SurveyWorkflowConfirmAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
