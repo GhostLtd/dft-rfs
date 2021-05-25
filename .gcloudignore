@@ -14,6 +14,6 @@
 .gitignore
 
 # PHP Composer dependencies:
-vendor/
-node_modules/
-var/
+/vendor/
+/node_modules/
+/var/
