@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SurveyAddNoteController extends AbstractController
 {
-    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, string $viewSurveyTemplate)
+    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, string $viewSurveyTemplate, $additionalViewData=[])
     {
         $addNoteForm->handleRequest($request);
         if (!$addNoteForm->isSubmitted()) {
@@ -28,10 +28,10 @@ class SurveyAddNoteController extends AbstractController
             return $this->redirect(self::addNotesTabAnchor($this->generateUrl($viewSurveyRoute, ['surveyId' => $survey->getId()])));
         }
         // render view
-        return $this->render($viewSurveyTemplate, [
+        return $this->render($viewSurveyTemplate, array_merge($additionalViewData, [
             'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
-        ]);
+        ]));
     }
 
     public static function addNotesTabAnchor(string $url)

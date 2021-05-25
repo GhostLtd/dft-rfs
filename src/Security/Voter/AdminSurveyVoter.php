@@ -11,10 +11,11 @@ class AdminSurveyVoter extends Voter
     const EDIT = 'EDIT';
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
+    const EDIT_NOTES = 'EDIT_NOTES';
 
     protected function supports($attribute, $subject)
     {
-        return in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION])
+        return in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES])
             && $subject instanceof SurveyInterface;
     }
 
@@ -36,6 +37,7 @@ class AdminSurveyVoter extends Voter
             case self::RESET_PASSCODE:
                 return !in_array($state, $closedStatuses);
             case self::TRANSITION:
+            case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);
         }
 

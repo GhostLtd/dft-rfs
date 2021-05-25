@@ -13,7 +13,7 @@
         No notes
     {%- endfor -%}
 </dl>
-{% if addNoteForm is defined %}
+{% if addNoteForm is defined and is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), survey) %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters-from-desktop govuk-grid-column-one-half-from-wide">
         {{ form(addNoteForm) }}
