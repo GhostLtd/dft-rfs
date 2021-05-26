@@ -2,17 +2,21 @@
 
 namespace App\Tests\Functional;
 
-use App\Tests\DataFixtures\SurveyFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
 {
-    protected function doWizardTest(array $wizardData)
+    protected function getBrowserLoadFixturesAndLogin(array $fixtures)
     {
-        $browser = $this->getBrowserAndLoadFixtures([SurveyFixtures::class]);
+        $browser = $this->getBrowserAndLoadFixtures($fixtures);
         $this->login($browser);
 
+        return $browser;
+    }
+
+    protected function doWizardTest(KernelBrowser $browser, array $wizardData)
+    {
         foreach ($wizardData as list($expectedTitle, $formButton, $expectedErrors, $formData)) {
             $crawler = $browser->getCrawler();
 

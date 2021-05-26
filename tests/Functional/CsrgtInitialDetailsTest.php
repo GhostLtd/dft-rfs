@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional;
 
+use App\Tests\DataFixtures\SurveyFixtures;
+
 class CsrgtInitialDetailsTest extends AbstractWizardTest
 {
     protected function initialDetailsData(string $inPossessionAnswer): array
@@ -136,6 +138,8 @@ class CsrgtInitialDetailsTest extends AbstractWizardTest
      */
     public function testInitialDetailsWizard($wizardData)
     {
-        $this->doWizardTest($wizardData);
+        $browser = $this->getBrowserLoadFixturesAndLogin([SurveyFixtures::class]);
+
+        $this->doWizardTest($browser, $wizardData);
     }
 }
