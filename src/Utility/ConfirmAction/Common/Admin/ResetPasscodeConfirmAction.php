@@ -36,7 +36,7 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
 
     public function getTranslationKeyPrefix(): string
     {
-        return 'common.passcode-reset';
+        return 'admin.passcode-reset';
     }
 
     public function doConfirmedAction()

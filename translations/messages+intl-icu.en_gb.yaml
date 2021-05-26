@@ -8,6 +8,7 @@ service:
 format:
   date:
     long: 'l, jS F Y'
+    medium: 'jS M Y'
     short: 'jS M'
   time:
     short: 'g:i a'
@@ -129,17 +130,6 @@ common:
     gross-weight: Gross vehicle weight
     carrying-capacity: Carrying capacity
   start-now: Start now
-  passcode-reset:
-    heading: Reset passcode ({identifier})
-    confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
-    confirm.label: Yes, reset the passcode
-    cancel.label: Cancel
-    confirmed-notification:
-      heading: Passcode successfully reset
-      content: The passcode was successfully reset
-    cancelled-notification:
-      heading: Passcode not reset
-      content: The request to reset the passcode was cancelled
   help:
     summary: 'How can I get help?'
     text:
@@ -362,6 +352,28 @@ admin:
       invitation-address: Invitation address
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
+  passcode-reset:
+    heading: Reset passcode ({identifier})
+    confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
+    confirm.label: Yes, reset the passcode
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Passcode successfully reset
+      content: The passcode was successfully reset
+    cancelled-notification:
+      heading: Passcode not reset
+      content: The request to reset the passcode was cancelled
+  delete-survey-note:
+    heading: Delete note ({createdDate}, by {createdBy})
+    confirmation: "Are you sure you want to delete this note?"
+    confirm.label: Yes, delete the note
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Note successfully deleted
+      content: The note was successfully deleted
+    cancelled-notification:
+      heading: Note not deleted
+      content: The request to delete the note was cancelled
 
   maintenance-warning:
     heading: Maintenance warnings

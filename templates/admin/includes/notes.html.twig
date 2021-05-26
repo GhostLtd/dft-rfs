@@ -1,14 +1,8 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
+{% from 'admin/macros/macros.html.twig' import displayNote %}
 <h2 class="govuk-heading-m">Notes</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }} govuk-summary-list-notes">
     {%- for note in survey.notes -%}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {{- note.createdBy | removeEmailNamespacePrefix -}}
-                <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date.date-time' | trans([], 'admin')) -}}</div>
-            </dt>
-            <dd class="govuk-summary-list__value">{{ note.note | nl2br }}</dd>
-        </div>
+        {{- displayNote(note) -}}
     {%- else -%}
         No notes
     {%- endfor -%}

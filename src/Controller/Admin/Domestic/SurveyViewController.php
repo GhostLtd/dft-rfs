@@ -8,12 +8,16 @@ use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyInterface;
 use App\Form\NoteType;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -76,6 +80,26 @@ class SurveyViewController extends AbstractController
                 SurveyInterface::STATE_CLOSED,
             ]) ? false : $this->logRepository->getApprovedBy($survey),
         ];
+    }
+
+    /**
+     * @Route("/notes/{note}/delete")
+     * @Template("admin/notes/delete.html.twig")
+     * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="survey")
+     */
+    public function deleteNote(Request $request, DeleteSurveyNoteConfirmAction $deleteSurveyNoteConfirmAction, Survey $survey, SurveyNote $note)
+    {
+        // check note is part of survey
+        if ($note->getSurvey()->getId() !== $survey->getId()) {
+            throw new BadRequestHttpException('Given Note is not a member of given Survey');
+        }
+
+        return $deleteSurveyNoteConfirmAction
+            ->setSubject($note)
+            ->controller(
+                $request,
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#tab-notes"
+            );
     }
 
     protected function getAddNoteForm(SurveyInterface $survey)
