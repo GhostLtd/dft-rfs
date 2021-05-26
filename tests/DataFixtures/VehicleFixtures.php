@@ -2,7 +2,6 @@
 
 namespace App\Tests\DataFixtures;
 
-use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Vehicle as VehicleBase;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -13,27 +12,24 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-        /** @var SurveyResponse $response */
-        $response = $this->getReference('response:simple');
+        /** @var Vehicle $vehicle */
+        $vehicle = $this->getReference('vehicle:simple');
 
-        $vehicle = (new Vehicle())
-            ->setRegistrationMark('AB01 ABC')
+        $vehicle
             ->setAxleConfiguration(232)
             ->setTrailerConfiguration(300)
             ->setBodyType(VehicleBase::BODY_TYPE_CURTAIN_SIDED)
             ->setGrossWeight(34000)
             ->setCarryingCapacity(26000)
-            ->setOperationType(VehicleBase::OPERATION_TYPE_ON_OWN_ACCOUNT)
-            ->setResponse($response);
+            ->setOperationType(VehicleBase::OPERATION_TYPE_ON_OWN_ACCOUNT);
 
         $manager->persist($vehicle);
-        $this->setReference('vehicle:simple', $vehicle);
 
         $manager->flush();
     }
 
     public function getDependencies()
     {
-        return [ResponseFixtures::class];
+        return [BusinessFixtures::class];
     }
 }
