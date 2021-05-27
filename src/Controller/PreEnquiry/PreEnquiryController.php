@@ -27,8 +27,6 @@ class PreEnquiryController extends AbstractController
         assert($user instanceof PasscodeUser);
         $preEnquiry = $user->getPreEnquiry();
 
-        dump($preEnquiry);
-
         if ($preEnquiry->getSubmissionDate()) {
             return $this->render('pre_enquiry/thanks.html.twig');
         }

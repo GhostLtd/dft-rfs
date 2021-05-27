@@ -88,4 +88,24 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
     {
         return null;
     }
+
+    public function isValidAlternativeStartState($state): bool
+    {
+        $response = ($this->subject && $this->subject instanceof PreEnquiryResponse) ? $this->subject : null;
+        $isCommitted = $response && !!$response->getId();
+
+        if ($isCommitted) {
+            $validStates = [
+                PreEnquiryState::STATE_COMPANY_NAME,
+                PreEnquiryState::STATE_CORRESPONDENCE_ADDRESS,
+                PreEnquiryState::STATE_CORRESPONDENCE_DETAILS,
+                PreEnquiryState::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                PreEnquiryState::STATE_VEHICLE_QUESTIONS,
+            ];
+
+            return in_array($state, $validStates);
+        }
+
+        return false;
+    }
 }

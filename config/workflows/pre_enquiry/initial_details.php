@@ -7,11 +7,19 @@ use App\Workflow\PreEnquiry\PreEnquiryState as StateObject;
 return static function (ContainerConfigurator $container) {
     $preEnquirySummaryRoute = PreEnquiryController::SUMMARY_ROUTE;
 
+    $endMetadata = [
+        'persist' => true,
+        'redirectRoute' => $preEnquirySummaryRoute,
+    ];
+
+    $guardUncommitted = 'is_empty(subject.getSubject().getId())';
+    $guardCommitted = "!{$guardUncommitted}";
+
     $container->extension('framework', [
         'workflows' => [
             'pre_enquiry_initial_details' => [
                 'type' => 'state_machine',
-                'initial_marking' => StateObject::STATE_COMPANY_NAME,
+                'initial_marking' => StateObject::STATE_INTRODUCTION,
                 'marking_store' => [
                     'type' => 'method',
                     'property' => 'state',
@@ -25,111 +33,71 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_VEHICLE_QUESTIONS,
                     StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
                     StateObject::STATE_SUMMARY,
-
-                    StateObject::STATE_CHANGE_COMPANY_NAME,
-                    StateObject::STATE_CHANGE_CORRESPONDENCE_DETAILS,
-                    StateObject::STATE_CHANGE_CORRESPONDENCE_ADDRESS,
-                    StateObject::STATE_CHANGE_VEHICLE_QUESTIONS,
-                    StateObject::STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
                 ],
                 'transitions' => [
                     'start' => [
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_COMPANY_NAME,
+                        'guard' => $guardUncommitted,
                     ],
                     'name-to-details' => [
                         'from' => StateObject::STATE_COMPANY_NAME,
                         'to' =>  StateObject::STATE_CORRESPONDENCE_DETAILS,
+                        'guard' => $guardUncommitted,
                     ],
                     'details-to-address' => [
                         'from' => StateObject::STATE_CORRESPONDENCE_DETAILS,
                         'to' =>  StateObject::STATE_CORRESPONDENCE_ADDRESS,
+                        'guard' => $guardUncommitted,
                     ],
                     'address-to-vehicles' => [
                         'from' => StateObject::STATE_CORRESPONDENCE_ADDRESS,
                         'to' =>  StateObject::STATE_VEHICLE_QUESTIONS,
+                        'guard' => $guardUncommitted,
                     ],
                     'vehicles-to-employees' => [
                         'from' => StateObject::STATE_VEHICLE_QUESTIONS,
                         'to' =>  StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                        'guard' => $guardUncommitted,
                     ],
                     'finish' => [
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
+                        'metadata' => $endMetadata,
                         'from' => StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
                         'to' =>  StateObject::STATE_SUMMARY,
+                        'guard' => $guardUncommitted,
                     ],
 
-                    'name-change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_COMPANY_NAME,
-                    ],
+                    // -----
+
                     'name-changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_COMPANY_NAME,
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_COMPANY_NAME,
                         'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-
-                    'address-change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_CORRESPONDENCE_ADDRESS,
+                        'guard' => $guardCommitted,
                     ],
                     'address-changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_CORRESPONDENCE_ADDRESS,
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_CORRESPONDENCE_ADDRESS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-
-                    'details-change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_CORRESPONDENCE_DETAILS,
+                        'guard' => $guardCommitted,
                     ],
                     'details-changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_CORRESPONDENCE_DETAILS,
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_CORRESPONDENCE_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-
-                    'vehicle-change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_VEHICLE_QUESTIONS,
+                        'guard' => $guardCommitted,
                     ],
                     'vehicle-changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_VEHICLE_QUESTIONS,
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_VEHICLE_QUESTIONS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                    ],
-
-                    'employees-change' => [
-                        'from' =>  StateObject::STATE_SUMMARY,
-                        'to' =>  StateObject::STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                        'guard' => $guardCommitted,
                     ],
                     'employees-changed' => [
-                        'name' => 'finish',
-                        'metadata' => [
-                            'persist' => true,
-                            'redirectRoute' => $preEnquirySummaryRoute,
-                        ],
-                        'from' =>  StateObject::STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
                         'to' =>  StateObject::STATE_SUMMARY,
+                        'guard' => $guardCommitted,
                     ],
                 ]
             ],

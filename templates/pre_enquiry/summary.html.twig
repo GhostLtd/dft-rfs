@@ -11,9 +11,9 @@
     <h2 class="govuk-heading-m">Business details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set response = preEnquiry.response -%}
-        {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_CHANGE_COMPANY_NAME') -%}
-        {%- set urlVehicleQuestions = wizardUrl('pre-enquiry', 'STATE_CHANGE_VEHICLE_QUESTIONS') -%}
-        {%- set urlEmployeesAndInternationalJourneys = wizardUrl('pre-enquiry', 'STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS') -%}
+        {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME') -%}
+        {%- set urlVehicleQuestions = wizardUrl('pre-enquiry', 'STATE_VEHICLE_QUESTIONS') -%}
+        {%- set urlEmployeesAndInternationalJourneys = wizardUrl('pre-enquiry', 'STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS') -%}
         {%- set change = 'common.actions.change'|trans -%}
 
         {{ gdsComponents.summaryListRow('Company name', response.companyName, {(urlCompanyName): change}) }}
@@ -25,8 +25,8 @@
 
     <h2 class="govuk-heading-m">Correspondence details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CHANGE_CORRESPONDENCE_DETAILS') -%}
-        {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CHANGE_CORRESPONDENCE_ADDRESS') -%}
+        {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS') -%}
+        {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS') -%}
 
         {{ gdsComponents.summaryListRow('Name', response.correspondenceName, {(urlCorrespondenceDetails): change}) }}
         {{ gdsComponents.summaryListRow('Email', response.email, {(urlCorrespondenceDetails): change}) }}
