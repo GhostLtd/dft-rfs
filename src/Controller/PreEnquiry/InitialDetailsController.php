@@ -17,6 +17,8 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
+    protected ?PreEnquiryResponse $preEnquiryResponse;
+
     /**
      * @Route("/pre-enquiry/{state}", name=PreEnquiryController::WIZARD_ROUTE)
      */
@@ -40,6 +42,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         $preEnquiry->setResponse($databaseResponse);
         $formWizard->setSubject($databaseResponse);
 
+        $this->preEnquiryResponse = $databaseResponse;
         return $formWizard;
     }
 
@@ -50,7 +53,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 
     protected function getCancelUrl(): ?Response
     {
-        return null;
+        return $this->preEnquiryResponse->getId() ? $this->redirectToRoute(PreEnquiryController::SUMMARY_ROUTE) : null;
     }
 
     protected function getPreEnquiry(UserInterface $user): PreEnquiry
