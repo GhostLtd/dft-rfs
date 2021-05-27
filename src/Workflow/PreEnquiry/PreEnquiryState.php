@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Workflow\InternationalPreEnquiry;
+namespace App\Workflow\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
-use App\Form\InternationalPreEnquiry\CompanyNameType;
-use App\Form\InternationalPreEnquiry\CorrespondenceAddressType;
-use App\Form\InternationalPreEnquiry\CorrespondenceDetailsType;
-use App\Form\InternationalPreEnquiry\EmployeesAndInternationalJourneysType;
-use App\Form\InternationalPreEnquiry\VehicleQuestionsType;
+use App\Form\PreEnquiry\CompanyNameType;
+use App\Form\PreEnquiry\CorrespondenceAddressType;
+use App\Form\PreEnquiry\CorrespondenceDetailsType;
+use App\Form\PreEnquiry\EmployeesAndInternationalJourneysType;
+use App\Form\PreEnquiry\VehicleQuestionsType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
@@ -43,18 +43,18 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
     ];
 
     private const TEMPLATE_MAP = [
-        self::STATE_INTRODUCTION => 'international_pre_enquiry/introduction.html.twig',
-        self::STATE_COMPANY_NAME => 'international_pre_enquiry/form-business-details.html.twig',
-        self::STATE_CORRESPONDENCE_DETAILS => 'international_pre_enquiry/form-correspondence-details.html.twig',
-        self::STATE_CORRESPONDENCE_ADDRESS => 'international_pre_enquiry/form-correspondence-address.html.twig',
-        self::STATE_VEHICLE_QUESTIONS => 'international_pre_enquiry/form-vehicle-questions.html.twig',
-        self::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS => 'international_pre_enquiry/form-employees-and-international-journeys.html.twig',
+        self::STATE_INTRODUCTION => 'pre_enquiry/introduction.html.twig',
+        self::STATE_COMPANY_NAME => 'pre_enquiry/form-business-details.html.twig',
+        self::STATE_CORRESPONDENCE_DETAILS => 'pre_enquiry/form-correspondence-details.html.twig',
+        self::STATE_CORRESPONDENCE_ADDRESS => 'pre_enquiry/form-correspondence-address.html.twig',
+        self::STATE_VEHICLE_QUESTIONS => 'pre_enquiry/form-vehicle-questions.html.twig',
+        self::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS => 'pre_enquiry/form-employees-and-international-journeys.html.twig',
 
-        self::STATE_CHANGE_COMPANY_NAME => 'international_pre_enquiry/form-business-details.html.twig',
-        self::STATE_CHANGE_CORRESPONDENCE_DETAILS => 'international_pre_enquiry/form-correspondence-details.html.twig',
-        self::STATE_CHANGE_CORRESPONDENCE_ADDRESS => 'international_pre_enquiry/form-correspondence-address.html.twig',
-        self::STATE_CHANGE_VEHICLE_QUESTIONS => 'international_pre_enquiry/form-vehicle-questions.html.twig',
-        self::STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS => 'international_pre_enquiry/form-employees-and-international-journeys.html.twig',
+        self::STATE_CHANGE_COMPANY_NAME => 'pre_enquiry/form-business-details.html.twig',
+        self::STATE_CHANGE_CORRESPONDENCE_DETAILS => 'pre_enquiry/form-correspondence-details.html.twig',
+        self::STATE_CHANGE_CORRESPONDENCE_ADDRESS => 'pre_enquiry/form-correspondence-address.html.twig',
+        self::STATE_CHANGE_VEHICLE_QUESTIONS => 'pre_enquiry/form-vehicle-questions.html.twig',
+        self::STATE_CHANGE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS => 'pre_enquiry/form-employees-and-international-journeys.html.twig',
     ];
 
     /** @var PreEnquiryResponse */
@@ -67,7 +67,7 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === PreEnquiryResponse::class) {
+        if (get_class($subject) !== PreEnquiryResponse::class) {
             throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . PreEnquiryResponse::class);
         }
         $this->subject = $subject;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -14,16 +14,16 @@ class CorrespondenceDetailsType extends AbstractType
     {
         $builder
             ->add('correspondenceName', Gds\InputType::class, [
-                'label' => 'survey.pre-enquiry.correspondence-details.name.label',
-                'help' => 'survey.pre-enquiry.correspondence-details.name.help',
+                'label' => 'pre-enquiry.correspondence-details.name.label',
+                'help' => 'pre-enquiry.correspondence-details.name.help',
             ])
             ->add('phone', Gds\InputType::class, [
-                'label' => 'survey.pre-enquiry.correspondence-details.phone.label',
-                'help' => 'survey.pre-enquiry.correspondence-details.phone.help',
+                'label' => 'pre-enquiry.correspondence-details.phone.label',
+                'help' => 'pre-enquiry.correspondence-details.phone.help',
             ])
             ->add('email', Gds\EmailType::class, [
-                'label' => 'survey.pre-enquiry.correspondence-details.email.label',
-                'help' => 'survey.pre-enquiry.correspondence-details.email.help',
+                'label' => 'pre-enquiry.correspondence-details.email.label',
+                'help' => 'pre-enquiry.correspondence-details.email.help',
             ])
         ;
     }

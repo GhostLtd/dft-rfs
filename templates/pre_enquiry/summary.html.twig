@@ -8,7 +8,7 @@
     {% import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents %}
     <h1 class="page-heading__heading govuk-heading-xl">IRHS Pre-enquiry summary</h1>
 
-    <h2 class="govuk-heading-m">Company details</h2>
+    <h2 class="govuk-heading-m">Business details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set response = preEnquiry.response -%}
         {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_CHANGE_COMPANY_NAME') -%}
@@ -31,7 +31,7 @@
         {{ gdsComponents.summaryListRow('Name', response.correspondenceName, {(urlCorrespondenceDetails): change}) }}
         {{ gdsComponents.summaryListRow('Email', response.email, {(urlCorrespondenceDetails): change}) }}
         {{ gdsComponents.summaryListRow('Phone', response.phone, {(urlCorrespondenceDetails): change}) }}
-        {{ gdsComponents.summaryListRow('Address', response.correspondenceAddress, {(urlCorrespondenceAddress): change}) }}
+        {{ gdsComponents.summaryListRow('Address', response.correspondenceAddress|formatAddress(true)|default('-'), {(urlCorrespondenceAddress): change}) }}
     </dl>
 
     {{ form(form) }}

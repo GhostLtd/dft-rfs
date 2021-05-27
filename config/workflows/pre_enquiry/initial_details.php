@@ -1,15 +1,15 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Controller\InternationalPreEnquiry\PreEnquiryController;
-use App\Workflow\InternationalPreEnquiry\PreEnquiryState as StateObject;
+use App\Controller\PreEnquiry\PreEnquiryController;
+use App\Workflow\PreEnquiry\PreEnquiryState as StateObject;
 
 return static function (ContainerConfigurator $container) {
     $preEnquirySummaryRoute = PreEnquiryController::SUMMARY_ROUTE;
 
     $container->extension('framework', [
         'workflows' => [
-            'pre_enquiry' => [
+            'pre_enquiry_initial_details' => [
                 'type' => 'state_machine',
                 'initial_marking' => StateObject::STATE_COMPANY_NAME,
                 'marking_store' => [

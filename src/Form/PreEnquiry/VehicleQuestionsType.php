@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -14,15 +14,15 @@ class VehicleQuestionsType extends AbstractType
     {
         $builder
             ->add('totalVehicleCount', Gds\NumberType::class, [
-                'label' => 'survey.pre-enquiry.vehicle-questions.total-vehicle-count.label',
-                'help' => 'survey.pre-enquiry.vehicle-questions.total-vehicle-count.help',
+                'label' => 'pre-enquiry.vehicle-questions.total-vehicle-count.label',
+                'help' => 'pre-enquiry.vehicle-questions.total-vehicle-count.help',
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
             ])
             ->add('internationalJourneyVehicleCount', Gds\NumberType::class, [
-                'label' => 'survey.pre-enquiry.vehicle-questions.international-journey-vehicle-count.label',
-                'help' => 'survey.pre-enquiry.vehicle-questions.international-journey-vehicle-count.help',
+                'label' => 'pre-enquiry.vehicle-questions.international-journey-vehicle-count.label',
+                'help' => 'pre-enquiry.vehicle-questions.international-journey-vehicle-count.help',
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],

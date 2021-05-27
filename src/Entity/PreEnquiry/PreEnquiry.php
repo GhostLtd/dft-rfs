@@ -31,12 +31,12 @@ class PreEnquiry implements SurveyInterface
     private $company;
 
     /**
-     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="preEnquiry", cascade={"persist", "remove"})
      */
     private $passcodeUser;
 
     /**
-     * @ORM\OneToMany(targetEntity=PreEnquiryNote::class, mappedBy="survey")
+     * @ORM\OneToMany(targetEntity=PreEnquiryNote::class, mappedBy="preEnquiry")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
     private $notes;

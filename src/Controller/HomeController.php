@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\IndexController as IntIndexController;
 use App\Entity\PasscodeUser;
 use App\Repository\MaintenanceWarningRepository;
@@ -25,6 +26,8 @@ class HomeController extends AbstractController
                 return $this->redirectToRoute('app_domesticsurvey_index');
             } else if ($user->getInternationalSurvey()) {
                 return $this->redirectToRoute(IntIndexController::SUMMARY_ROUTE);
+            } else if ($user->getPreEnquiry()) {
+                return $this->redirectToRoute(PreEnquiryController::SUMMARY_ROUTE);
             }
         }
 

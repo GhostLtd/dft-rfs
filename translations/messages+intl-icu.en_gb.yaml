@@ -910,9 +910,10 @@ domestic:
 # Pre-Enquiry
 pre-enquiry:
   business-details:
+    heading: Business details
     company-name:
       label: Company name
-      help: Provide the name of your company
+      help: ''
   correspondence-details:
     heading: Correspondence details
     help: Provide contact details for correspondence about this survey

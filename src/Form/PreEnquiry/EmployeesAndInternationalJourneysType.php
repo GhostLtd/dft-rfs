@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -14,15 +14,15 @@ class EmployeesAndInternationalJourneysType extends AbstractType
     {
         $builder
             ->add('employeeCount', Gds\NumberType::class, [
-                'label' => 'survey.pre-enquiry.employees-and-international-journeys.employee-count.label',
-                'help' => 'survey.pre-enquiry.employees-and-international-journeys.employee-count.help',
+                'label' => 'pre-enquiry.employees-and-international-journeys.employee-count.label',
+                'help' => 'pre-enquiry.employees-and-international-journeys.employee-count.help',
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
             ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
-                'label' => 'survey.pre-enquiry.employees-and-international-journeys.annual-journey-estimate.label',
-                'help' => 'survey.pre-enquiry.employees-and-international-journeys.annual-journey-estimate.help',
+                'label' => 'pre-enquiry.employees-and-international-journeys.annual-journey-estimate.label',
+                'help' => 'pre-enquiry.employees-and-international-journeys.annual-journey-estimate.help',
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],

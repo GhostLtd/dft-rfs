@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -14,12 +14,11 @@ class CompanyNameType extends AbstractType
     {
         $builder
             ->add('companyName', Gds\InputType::class, [
-                'label' => 'survey.pre-enquiry.business-details.company-name.label',
-                'label_is_page_heading' => true,
+                'label' => 'pre-enquiry.business-details.company-name.label',
                 'label_attr' => [
-                    'class' => 'govuk-label--xl',
+                    'class' => 'govuk-label--s',
                 ],
-                'help' => 'survey.pre-enquiry.business-details.company-name.help',
+                'help' => 'pre-enquiry.business-details.company-name.help',
             ])
         ;
     }

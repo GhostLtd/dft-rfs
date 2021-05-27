@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Symfony\Component\Form\AbstractType;

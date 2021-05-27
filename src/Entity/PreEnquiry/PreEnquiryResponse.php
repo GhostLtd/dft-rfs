@@ -135,7 +135,7 @@ class PreEnquiryResponse
         return $this->correspondenceAddress;
     }
 
-    public function setCorrespondenceAddress(Address $correspondenceAddress): self
+    public function setCorrespondenceAddress(?Address $correspondenceAddress): self
     {
         $this->correspondenceAddress = $correspondenceAddress;
 
@@ -224,5 +224,18 @@ class PreEnquiryResponse
         $this->preEnquiry = $preEnquiry;
 
         return $this;
+    }
+
+    public function mergeInitialDetails(PreEnquiryResponse $response)
+    {
+        $this->setAnnualJourneyEstimate($response->getAnnualJourneyEstimate());
+        $this->setCompanyName($response->getCompanyName());
+        $this->setCorrespondenceAddress($response->getCorrespondenceAddress());
+        $this->setCorrespondenceName($response->getCorrespondenceName());
+        $this->setEmail($response->getEmail());
+        $this->setInternationalJourneyVehicleCount($response->getInternationalJourneyVehicleCount());
+        $this->setPhone($response->getPhone());
+        $this->setTotalVehicleCount($response->getTotalVehicleCount());
+        $this->setEmployeeCount($response->getEmployeeCount());
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Twig;
 
-use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Controller\InternationalSurvey\TripEditController;
@@ -23,7 +23,7 @@ use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\SessionTimeoutHelper;
 use App\Utility\WeekNumberHelper;
-use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
+use App\Workflow\PreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\InternationalPreEnquiry;
+namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Form\AddressType;
@@ -14,12 +14,12 @@ class CorrespondenceAddressType extends AbstractType
     {
         $builder
             ->add('correspondenceAddress', AddressType::class, [
-                'label' => 'survey.pre-enquiry.correspondence-address.address.label',
+                'label' => 'pre-enquiry.correspondence-address.address.label',
                 'label_is_page_heading' => true,
                 'label_attr' => [
                     'class' => 'govuk-label--xl',
                 ],
-                'help' => 'survey.pre-enquiry.correspondence-address.address.help',
+                'help' => 'pre-enquiry.correspondence-address.address.help',
             ])
         ;
     }
