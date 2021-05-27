@@ -3,8 +3,8 @@
 namespace App\Entity\International;
 
 use App\Entity\PasscodeUser;
-use App\Entity\SurveyInterface;
-use App\Entity\SurveyTrait;
+use App\Entity\HaulageSurveyInterface;
+use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey implements SurveyInterface, ApiResponseInterface
+class Survey implements HaulageSurveyInterface, ApiResponseInterface
 {
-    use SurveyTrait;
+    use HaulageSurveyTrait;
 
     /**
      * @ORM\Column(type="string", length=255)

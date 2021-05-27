@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository\International;
+namespace App\Repository\PreEnquiry;
 
-use App\Entity\International\PreEnquiryResponse;
+use App\Entity\PreEnquiry\PreEnquiryResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

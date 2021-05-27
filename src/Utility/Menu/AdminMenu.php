@@ -60,6 +60,11 @@ class AdminMenu implements MenuInterface
             ]),
             new MenuDivider(),
 
+            new RoleMenuItem('pre-enquiry', 'menu.pre-enquiry.root', null, [
+                new RoleMenuItem('add', 'menu.pre-enquiry.add', $this->router->generate('admin_pre_enquiry_add'), [], []),
+            ]),
+            new MenuDivider(),
+
             new RoleMenuItem('maintenance-warnings', 'Maintenance warnings', $this->router->generate('admin_maintenance_warning_list'), [], []),
             new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], ['ROLE_ADMIN_FORM_USER']),
         ]);

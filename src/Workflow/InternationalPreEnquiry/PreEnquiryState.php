@@ -2,7 +2,7 @@
 
 namespace App\Workflow\InternationalPreEnquiry;
 
-use App\Entity\International\PreEnquiryResponse;
+use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Form\InternationalPreEnquiry\CompanyNameType;
 use App\Form\InternationalPreEnquiry\CorrespondenceAddressType;
 use App\Form\InternationalPreEnquiry\CorrespondenceDetailsType;

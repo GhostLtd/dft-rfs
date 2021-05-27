@@ -3,8 +3,8 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\PasscodeUser;
-use App\Entity\SurveyInterface;
-use App\Entity\SurveyTrait;
+use App\Entity\HaulageSurveyInterface;
+use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
@@ -19,9 +19,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @AppAssert\ValidRegistration(groups={"add_survey"})
  */
-class Survey implements SurveyInterface, ApiResponseInterface
+class Survey implements HaulageSurveyInterface, ApiResponseInterface
 {
-    use SurveyTrait;
+    use HaulageSurveyTrait;
 
     /**
      * @ORM\Column(type="boolean")

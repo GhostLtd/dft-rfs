@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Entity\International;
+namespace App\Entity\PreEnquiry;
 
 use App\Entity\Address;
-use App\Repository\International\PreEnquiryResponseRepository;
+use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=PreEnquiryResponseRepository::class)
- * @ORM\Table(name="international_pre_enquiry_response")
+ * @ORM\Table(name="pre_enquiry_response")
  */
 class PreEnquiryResponse
 {

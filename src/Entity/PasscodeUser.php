@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,6 +17,7 @@ class PasscodeUser implements UserInterface
     const ROLE_PASSCODE_USER = 'ROLE_PASSCODE_USER';
     const ROLE_DOMESTIC_SURVEY_USER = 'ROLE_DOMESTIC_SURVEY_USER';
     const ROLE_INTERNATIONAL_SURVEY_USER = 'ROLE_INTERNATIONAL_SURVEY_USER';
+    const ROLE_PRE_ENQUIRY_USER = 'ROLE_PRE_ENQUIRY_USER';
 
     /**
      * @ORM\Id
@@ -50,6 +52,11 @@ class PasscodeUser implements UserInterface
      */
     private $internationalSurvey;
 
+    /**
+     * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
+     */
+    private $preEnquiry;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -82,6 +89,10 @@ class PasscodeUser implements UserInterface
 
             case $this->getInternationalSurvey() :
                 $roles[] = self::ROLE_INTERNATIONAL_SURVEY_USER;
+                break;
+
+            case $this->getPreEnquiry() :
+                $roles[] = self::ROLE_PRE_ENQUIRY_USER;
         }
 
         return array_unique($roles);
@@ -171,6 +182,17 @@ class PasscodeUser implements UserInterface
     {
         $this->internationalSurvey = $internationalSurvey;
 
+        return $this;
+    }
+
+    public function getPreEnquiry(): ?PreEnquiry
+    {
+        return $this->preEnquiry;
+    }
+
+    public function setPreEnquiry($preEnquiry): self
+    {
+        $this->preEnquiry = $preEnquiry;
         return $this;
     }
 }

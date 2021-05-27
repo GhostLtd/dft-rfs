@@ -14,7 +14,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\International\Stop;
-use App\Entity\SurveyInterface;
+use App\Entity\HaulageSurveyInterface;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
@@ -206,7 +206,7 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
-    public function formatSurveyPeriod(SurveyInterface $survey)
+    public function formatSurveyPeriod(HaulageSurveyInterface $survey)
     {
         $numDays = $survey->getSurveyPeriodInDays();
         $translationId = 'common.survey-period.' . ($numDays === 1 ? 'one-day' : 'many-days');

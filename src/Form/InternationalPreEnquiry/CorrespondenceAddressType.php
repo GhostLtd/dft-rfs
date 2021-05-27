@@ -2,7 +2,7 @@
 
 namespace App\Form\InternationalPreEnquiry;
 
-use App\Entity\International\PreEnquiryResponse;
+use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Form\AddressType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

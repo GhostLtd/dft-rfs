@@ -374,6 +374,23 @@ admin:
     cancelled-notification:
       heading: Note not deleted
       content: The request to delete the note was cancelled
+  pre-enquiry:
+    add:
+      heading: Add pre-enquiry
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: ''
+      submit:
+        label: Add
+    add-success:
+      heading: IRHS Pre-Enquiry created
+      business-name: Business name
+      invitation-email: Invitation email
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
 
   maintenance-warning:
     heading: Maintenance warnings

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository\International;
+namespace App\Repository\PreEnquiry;
 
-use App\Entity\International\PreEnquiry;
+use App\Entity\PreEnquiry\PreEnquiry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;

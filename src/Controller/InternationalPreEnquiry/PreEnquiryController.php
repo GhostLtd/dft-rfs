@@ -4,11 +4,11 @@ namespace App\Controller\InternationalPreEnquiry;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Company;
-use App\Entity\International\PreEnquiry;
-use App\Entity\International\PreEnquiryResponse;
+use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Form\InternationalPreEnquiry\SubmitPreEnquiryType;
 use App\Repository\International\CompanyRepository;
-use App\Repository\International\PreEnquiryRepository;
+use App\Repository\PreEnquiry\PreEnquiryRepository;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
 use DateTime;
@@ -124,8 +124,7 @@ class PreEnquiryController extends AbstractSessionStateWorkflowController
 
             $preEnquiry = (new PreEnquiry())
                 ->setCompany($company)
-                ->setNotifiedDate($notifiedDate)
-                ->setDueDate($dueDate);
+                ->setNotifiedDate($notifiedDate);
 
             $this->entityManager->persist($preEnquiry);
             $this->entityManager->flush();
