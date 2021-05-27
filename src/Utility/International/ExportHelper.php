@@ -90,7 +90,7 @@ class ExportHelper
     public function getSignedUrl(string $week): ?string
     {
         $object = $this->getStorageObjectIfExists($week);
-        return $object ? $object->signedUrl(new DateTime('+1 hour')) : null;
+        return $object ? $object->signedUrl(new DateTime('+30 seconds')) : null;
     }
 
     protected function getName(string $week): string

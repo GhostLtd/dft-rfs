@@ -96,7 +96,7 @@ class ExportHelper
     public function getSignedUrl(string $year, string $quarter): ?string
     {
         $object = $this->getStorageObjectIfExists($year, $quarter);
-        return $object ? $object->signedUrl(new DateTime('+1 hour')) : null;
+        return $object ? $object->signedUrl(new DateTime('+30 seconds')) : null;
     }
 
     protected function getName(string $year, string $quarter): string

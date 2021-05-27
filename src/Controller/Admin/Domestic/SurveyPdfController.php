@@ -26,6 +26,6 @@ class SurveyPdfController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        return new RedirectResponse($pdf->getStorageObject()->signedUrl(new DateTime('+1 hour')));
+        return new RedirectResponse($pdf->getStorageObject()->signedUrl(new DateTime('+30 seconds')));
     }
 }
