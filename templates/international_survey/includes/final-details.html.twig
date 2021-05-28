@@ -8,7 +8,9 @@
         {%- set reason = choiceLabel(constant('App\\Entity\\International\\SurveyResponse::REASON_FOR_EMPTY_SURVEY_CHOICES'), survey.response.reasonForEmptySurvey) -%}
         {{- row(showActions,
             'Reason for empty survey',
-            reason ? reason|trans : '-'
+            (reason ? reason|trans : '-')
+                ~ (survey.response.reasonForEmptySurvey == constant('\\App\\Entity\\International\\SurveyResponse::REASON_FOR_EMPTY_SURVEY_OTHER')
+                    ? " - #{survey.response.reasonForEmptySurveyOther}" : '')
         ) -}}
     {%- endif -%}
 </dl>

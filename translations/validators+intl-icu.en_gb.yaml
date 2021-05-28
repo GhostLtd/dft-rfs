@@ -108,6 +108,8 @@ international:
       not-negative: Enter a positive number
     fewer-than-ten-employees:
       not-null: Choose an option
+    reason-for-empty-survey-other:
+      not-null: Specify the reason that no work was done during the survey period
   trip:
     cargo-state-how-at-capacity: Select how the vehicle was at capacity
     dates:
