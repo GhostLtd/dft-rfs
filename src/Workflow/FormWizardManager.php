@@ -88,17 +88,17 @@ class FormWizardManager
             $transition = $transitions[array_key_last($transitions)];
             $metadata = $stateMachine->getMetadataStore()->getTransitionMetadata($transition);
             $isSavePoint = ($metadata['persist'] ?? false) === true;
-            $submitLabel = $metadata['submitLabel'] ?? ($isSavePoint ? 'Save and continue' : null);
+            $submitLabel = $metadata['submitLabel'] ?? ($isSavePoint ? 'common.actions.save-and-continue' : null);
             $cancelLabel = $metadata['cancelLabel'] ?? null;
         }
         $form->add('continue', ButtonType::class, [
             'type' => 'submit',
-            'label' => $submitLabel,
+            'label' => $submitLabel ?? 'common.actions.continue',
         ]);
         if ($showCancelButton) {
             $form->add('cancel', ButtonType::class, [
                 'type' => 'submit',
-                'label' => $cancelLabel,
+                'label' => $cancelLabel ?? 'common.actions.cancel',
                 'attr' => ['class' => 'govuk-button--secondary'],
             ]);
         }
