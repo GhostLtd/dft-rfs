@@ -13,7 +13,7 @@
 {% block address_line1_label %}
     {% set labelTranslation = label|trans == label ? '' : label|trans %}
     {% set newLabel %}{{ labelTranslation }}<span class="govuk-visually-hidden"> {{ 'common.address.line1-hidden'|trans }}</span>{% endset %}
-    {% with {label: newLabel, label_html: true } %}
+    {% with {label: newLabel, label_html: true, translation_domain: false } %}
         {{ block('form_label') }}
     {% endwith %}
 {% endblock %}
@@ -21,7 +21,7 @@
 {% block address_line2_label %}
     {% set labelTranslation = label|trans == label ? '' : label|trans %}
     {% set newLabel %}{{ labelTranslation }}<span class="govuk-visually-hidden"> {{ 'common.address.line2-hidden'|trans }}</span>{% endset %}
-    {% with {label: newLabel, label_html: true } %}
+    {% with {label: newLabel, label_html: true, translation_domain: false } %}
         {{ block('form_label') }}
     {% endwith %}
 {% endblock %}
