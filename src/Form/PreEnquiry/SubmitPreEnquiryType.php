@@ -12,7 +12,7 @@ class SubmitPreEnquiryType extends AbstractType
     {
         $builder
             ->add('submit', ButtonType::class, [
-                'label' => 'Submit pre-enquiry',
+                'label' => 'pre-enquiry.summary.submit.label',
             ]);
     }
 

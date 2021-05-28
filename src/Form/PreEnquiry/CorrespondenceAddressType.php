@@ -15,9 +15,8 @@ class CorrespondenceAddressType extends AbstractType
         $builder
             ->add('correspondenceAddress', AddressType::class, [
                 'label' => 'pre-enquiry.correspondence-address.address.label',
-                'label_is_page_heading' => true,
                 'label_attr' => [
-                    'class' => 'govuk-label--xl',
+                    'class' => 'govuk-label--m',
                 ],
                 'help' => 'pre-enquiry.correspondence-address.address.help',
             ])

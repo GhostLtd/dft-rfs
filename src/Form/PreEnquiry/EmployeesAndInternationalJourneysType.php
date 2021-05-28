@@ -19,6 +19,7 @@ class EmployeesAndInternationalJourneysType extends AbstractType
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
                 'label' => 'pre-enquiry.employees-and-international-journeys.annual-journey-estimate.label',
@@ -26,6 +27,7 @@ class EmployeesAndInternationalJourneysType extends AbstractType
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

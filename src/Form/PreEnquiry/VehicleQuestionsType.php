@@ -19,6 +19,7 @@ class VehicleQuestionsType extends AbstractType
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('internationalJourneyVehicleCount', Gds\NumberType::class, [
                 'label' => 'pre-enquiry.vehicle-questions.international-journey-vehicle-count.label',
@@ -26,6 +27,7 @@ class VehicleQuestionsType extends AbstractType
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

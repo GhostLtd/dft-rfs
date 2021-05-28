@@ -42,7 +42,7 @@ common:
   address:
     line1: Building and street
     line1-hidden: line 1 of 2
-    line2:
+    line2: ''
     line2-hidden: Building and street line 2 of 2
     line3: Town or city
     line4: County
@@ -909,29 +909,62 @@ domestic:
 
 # Pre-Enquiry
 pre-enquiry:
+  completed:
+    heading: Pre-enquiry complete
+  summary:
+    heading: Pre-enquiry dashboard
+    title: ''
+    business-details: Business details
+    correspondence-details: Correspondence details
+    company-name: Company name
+    total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
+    international-journey-vehicle-count: Vehicles used to conduct international journeys
+    employee-count: Employee count
+    annual-journey-estimate: "International journey estimate (Annual)"
+    name: Name
+    email: Email address
+    phone: Telephone number
+    address: Address
+    vehicle-details: Vehicle details
+    employee-count-and-international-journeys: Employee count and international journeys
+    correspondence-address: Correspondence address
+    submit:
+      label: Submit pre-enquiry
+
   business-details:
     heading: Business details
+    title: ''
+    help: ''
     company-name:
       label: Company name
       help: ''
   correspondence-details:
     heading: Correspondence details
+    title: ''
     help: Provide contact details for correspondence about this survey
     name:
       label: Name
       help: ''
     phone:
-      label: Phone
+      label: Telephone number
       help: ''
     email:
-      label: Email
+      label: Email address
       help: ''
   correspondence-address:
+    heading: Correspondence address
+    title: ''
+    help: ''
     address:
-      label: Correspondence address
+      label: Address
       help: Provide the address where correspondence about this survey should be sent
+  introduction:
+    title: Introduction
+    heading: International Pre-Enquiry
   vehicle-questions:
-    heading: Vehicle questions
+    heading: Vehicle details
+    title: ''
+    help: ''
     total-vehicle-count:
       label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
@@ -939,7 +972,9 @@ pre-enquiry:
       label: How many of the above vehicles will be used to conduct international journeys?
       help: ''
   employees-and-international-journeys:
-    heading: Employees and international journeys
+    heading: Employee count and international journeys
+    title: ''
+    help: ''
     employee-count:
       label: How many employees do you currently employee in this firm?
       help: ''

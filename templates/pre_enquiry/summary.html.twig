@@ -1,14 +1,12 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}International Pre-enquiry{% endblock %}
+{% set translation_prefix = 'pre-enquiry.summary' %}
+{% extends 'pre_enquiry/base.html.twig' %}
 
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
     {% import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents %}
-    <h1 class="page-heading__heading govuk-heading-xl">IRHS Pre-enquiry summary</h1>
-
-    <h2 class="govuk-heading-m">Business details</h2>
+    <h1 class="govuk-heading-xl">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.business-details')|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set response = preEnquiry.response -%}
         {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME') -%}
@@ -16,22 +14,22 @@
         {%- set urlEmployeesAndInternationalJourneys = wizardUrl('pre-enquiry', 'STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS') -%}
         {%- set change = 'common.actions.change'|trans -%}
 
-        {{ gdsComponents.summaryListRow('Company name', response.companyName, {(urlCompanyName): change}) }}
-        {{ gdsComponents.summaryListRow("Total vehicle count\n(> 3.5 tonnes gross)", response.totalVehicleCount, {(urlVehicleQuestions): change}) }}
-        {{ gdsComponents.summaryListRow('Vehicles used to conduct international journeys', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): change}) }}
-        {{ gdsComponents.summaryListRow('Employee count', response.employeeCount, {(urlEmployeesAndInternationalJourneys): change}) }}
-        {{ gdsComponents.summaryListRow('International journey estimate (Annual)', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): change}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.company-name', response.companyName, {(urlCompanyName): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.company-name'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.total-vehicle-count', response.totalVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.international-journey-vehicle-count', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.employee-count', response.employeeCount, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.annual-journey-estimate', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
     </dl>
 
-    <h2 class="govuk-heading-m">Correspondence details</h2>
+    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.correspondence-details')|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS') -%}
         {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS') -%}
 
-        {{ gdsComponents.summaryListRow('Name', response.correspondenceName, {(urlCorrespondenceDetails): change}) }}
-        {{ gdsComponents.summaryListRow('Email', response.email, {(urlCorrespondenceDetails): change}) }}
-        {{ gdsComponents.summaryListRow('Phone', response.phone, {(urlCorrespondenceDetails): change}) }}
-        {{ gdsComponents.summaryListRow('Address', response.correspondenceAddress|formatAddress(true)|default('-'), {(urlCorrespondenceAddress): change}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.name', response.correspondenceName, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.email', response.email, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.phone', response.phone, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.address', response.correspondenceAddress|formatAddress(true)|default('-'), {(urlCorrespondenceAddress): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-address'}}) }}
     </dl>
 
     {{ form(form) }}
