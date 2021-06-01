@@ -935,9 +935,12 @@ pre-enquiry:
     heading: Business details
     title: ''
     help: ''
+    correct-company-name:
+      label: 'Is the name of your company "{expectedCompanyName}"?'
+      help: ''
     company-name:
       label: Company name
-      help: ''
+      help: Please state the correct company name
   correspondence-details:
     heading: Correspondence details
     title: ''

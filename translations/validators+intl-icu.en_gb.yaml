@@ -146,8 +146,12 @@ international:
 
 pre-enquiry:
   pre-enquiry-response:
+    company-name:
+      not-blank: Enter your company name
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
+    is-correct-company-name:
+      not-blank: Choose whether this is the correct company name
 
 domestic:
   add:

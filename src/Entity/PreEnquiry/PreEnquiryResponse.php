@@ -22,8 +22,12 @@ class PreEnquiryResponse
     private $id;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isCorrectCompanyName;
+
+    /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"company_name"})
      */
     private $companyName;
 
@@ -89,7 +93,7 @@ class PreEnquiryResponse
     /**
      * @Assert\Callback(groups={"vehicle_questions"})
      */
-    public function validate(ExecutionContextInterface $context)
+    public function validateVehicleDetails(ExecutionContextInterface $context)
     {
         if ($this->getInternationalJourneyVehicleCount() !== null &&
             $this->getTotalVehicleCount() !== null &&
@@ -101,9 +105,40 @@ class PreEnquiryResponse
         }
     }
 
+    /**
+     * @Assert\Callback(groups={"company_name"})
+     */
+    public function validateCompanyName(ExecutionContextInterface $context)
+    {
+        if ($this->isCorrectCompanyName === null) {
+            $context
+                ->buildViolation('pre-enquiry.pre-enquiry-response.is-correct-company-name.not-blank')
+                ->atPath('isCorrectCompanyName')
+                ->addViolation();
+        } else {
+            if ($this->companyName === null) {
+                $context
+                    ->buildViolation('pre-enquiry.pre-enquiry-response.company-name.not-blank')
+                    ->atPath('companyName')
+                    ->addViolation();
+            }
+        }
+    }
+
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getIsCorrectCompanyName(): ?bool
+    {
+        return $this->isCorrectCompanyName;
+    }
+
+    public function setIsCorrectCompanyName(?bool $isCorrectCompanyName): self
+    {
+        $this->isCorrectCompanyName = $isCorrectCompanyName;
+        return $this;
     }
 
     public function getCompanyName(): ?string
@@ -229,6 +264,7 @@ class PreEnquiryResponse
     public function mergeInitialDetails(PreEnquiryResponse $response)
     {
         $this->setAnnualJourneyEstimate($response->getAnnualJourneyEstimate());
+        $this->setIsCorrectCompanyName($response->getIsCorrectCompanyName());
         $this->setCompanyName($response->getCompanyName());
         $this->setCorrespondenceAddress($response->getCorrespondenceAddress());
         $this->setCorrespondenceName($response->getCorrespondenceName());
