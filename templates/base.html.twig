@@ -60,17 +60,22 @@
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
                     {% for form in erroringForms %}
-                        {% for error in form.vars.errors.form.getErrors(true) %}
-                            <li>
-                                <a href="#{{ namesToIds(form, [error.origin.name])|first }}">{{ error.message }}</a>
-                            </li>
-                        {% endfor %}
+                        {{ _self.traverseFormShowErrors(form) }}
                     {% endfor %}
                 </ul>
             </div>
         </div>
     {% endif %}
 {% endmacro %}
+
+{% macro traverseFormShowErrors(formView) %}
+    {%- for error in formView.vars.errors | default([]) -%}
+        <li><a href="#{{ formView.vars.id }}">{{ error.message }}</a></li>
+    {%- endfor -%}
+    {%- for child in formView.children -%}
+        {{- _self.traverseFormShowErrors(child) -}}
+    {%- endfor -%}
+{%- endmacro -%}
 
 {% block footer %}
     {{ govukFooter({
