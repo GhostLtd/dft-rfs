@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveyPdfController extends AbstractController
 {
     /**
-     * @Route("/irhs/pdf/{surveyId}.pdf")
+     * @Route("/irhs/surveys/{surveyId}.pdf")
      * @Entity("survey", expr="repository.find(surveyId)")
      */
     public function pdf(Survey $survey, PdfHelper $pdfHelper, Request $request)
