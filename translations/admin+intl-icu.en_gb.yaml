@@ -16,6 +16,7 @@ menu:
     sample-import: Bulk sample import
   pre-enquiry:
     root: Pre-enquiry
+    pre-enquiries: Pre-enquiries
     add: Add
 
 format:

@@ -12,16 +12,16 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStateLifecycleSubscriber implements EventSubscriber
 {
-//    private $internationalSurveyStateMachine;
+    private WorkflowInterface $preEnquiryStateMachine;
     private EntityManagerInterface $entityManager;
     private PasscodeUserRepository $passcodeUserRepository;
 
     public function __construct(
-//        WorkflowInterface $internationalSurveyStateMachine,
+        WorkflowInterface $preEnquiryStateMachine,
         EntityManagerInterface $entityManager,
         PasscodeUserRepository $passcodeUserRepository
     ) {
-//        $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
+        $this->preEnquiryStateMachine = $preEnquiryStateMachine;
         $this->entityManager = $entityManager;
         $this->passcodeUserRepository = $passcodeUserRepository;
     }
@@ -47,11 +47,10 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
             return;
         }
 
-        // TODO: State machine
-//        if ($this->internationalSurveyStateMachine->can($entity, 'invite_user')) {
-//            $this->internationalSurveyStateMachine->apply($entity, 'invite_user');
-//            $this->entityManager->flush();
-//        }
+        if ($this->preEnquiryStateMachine->can($entity, 'invite_user')) {
+            $this->preEnquiryStateMachine->apply($entity, 'invite_user');
+            $this->entityManager->flush();
+        }
     }
 
     public function getSubscribedEvents()

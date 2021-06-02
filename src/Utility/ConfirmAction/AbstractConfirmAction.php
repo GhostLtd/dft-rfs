@@ -105,13 +105,17 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
             }
         }
 
-        return [
+        return array_merge($this->getExtraViewData(), [
             'translation_domain' => $this->getTranslationDomain(),
             'translation_prefix' => $this->getTranslationKeyPrefix(),
             'translation_parameters' => $this->getTranslationParameters(),
             'subject' => $this->getSubject(),
             'form' => $form->createView(),
-        ];
+        ]);
+    }
 
+    public function getExtraViewData(): array
+    {
+        return [];
     }
 }

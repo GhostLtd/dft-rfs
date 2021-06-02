@@ -391,6 +391,18 @@ admin:
       invitation-email: Invitation email
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
+    edit-response:
+      heading: "Edit Pre-enquiry response — {companyName}"
+    enter-response:
+      heading: "Enter Pre-enquiry response — {companyName}"
+    list:
+      heading: "IRHS Pre-enquiries"
+    view:
+      approved-by: Approved by
+      business-name: Company name
+      heading: "IRHS Pre-enquiry — {companyName}"
+      status: Status
+      username: Username
 
   maintenance-warning:
     heading: Maintenance warnings

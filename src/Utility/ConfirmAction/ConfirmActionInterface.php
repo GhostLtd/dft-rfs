@@ -16,4 +16,5 @@ interface ConfirmActionInterface
     public function doConfirmedAction();
     public function getConfirmedBanner(): NotificationBanner;
     public function getCancelledBanner(): NotificationBanner;
+    public function getExtraViewData(): array;
 }

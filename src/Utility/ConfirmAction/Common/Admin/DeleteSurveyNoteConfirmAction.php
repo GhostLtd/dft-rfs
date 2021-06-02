@@ -15,6 +15,7 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
     /** @var DomesticSurveyNote | InternationalSurveyNote */
     protected $subject;
     protected EntityManagerInterface $entityManager;
+    protected array $extraViewData;
 
     public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
@@ -40,5 +41,16 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();
+    }
+
+    public function getExtraViewData(): array
+    {
+        return $this->extraViewData;
+    }
+
+    public function setExtraViewData(array $extraViewData): DeleteSurveyNoteConfirmAction
+    {
+        $this->extraViewData = $extraViewData;
+        return $this;
     }
 }

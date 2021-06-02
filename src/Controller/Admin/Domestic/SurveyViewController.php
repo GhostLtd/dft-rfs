@@ -62,6 +62,7 @@ class SurveyViewController extends AbstractController
             'survey' => $survey,
             'addNoteForm' => $addNoteForm,
             'viewSurveyRoute' => SurveyController::VIEW_ROUTE,
+            'viewSurveyRouteParams' => ['surveyId' => $survey->getId()],
             'viewSurveyTemplate' => 'admin/domestic/surveys/view.html.twig',
             'additionalViewData' => $this->getSurveyViewData($survey),
         ]);
@@ -70,6 +71,7 @@ class SurveyViewController extends AbstractController
     protected function getSurveyViewData(Survey $survey): array
     {
         return [
+            'survey' => $survey,
             'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
             'auditLogs' => $this->logRepository->getLogs($survey->getId(), Survey::class),
             'approvedBy' => in_array($survey->getState(), [
@@ -83,7 +85,7 @@ class SurveyViewController extends AbstractController
     }
 
     /**
-     * @Route("/notes/{note}/delete")
+     * @Route("/notes/{note}/delete", name=SurveyController::DELETE_NOTE_ROUTE)
      * @Template("admin/notes/delete.html.twig")
      * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="survey")
      */
@@ -96,6 +98,10 @@ class SurveyViewController extends AbstractController
 
         return $deleteSurveyNoteConfirmAction
             ->setSubject($note)
+            ->setExtraViewData([
+                'deleteRoute' => SurveyController::DELETE_NOTE_ROUTE,
+                'deleteParams' => ['surveyId' => $survey->getId()],
+            ])
             ->controller(
                 $request,
                 fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#tab-notes"

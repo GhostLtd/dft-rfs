@@ -6,6 +6,7 @@ use App\Controller\Admin\Domestic\SurveyController as DomSurveyController;
 use App\Controller\Admin\Domestic\ExportController as DomExportControllerAlias;
 use App\Controller\Admin\International\SurveyController as IntSurveyController;
 use App\Controller\Admin\International\ExportController as IntExportControllerAlias;
+use App\Controller\Admin\PreEnquiry\PreEnquiryController;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -61,6 +62,7 @@ class AdminMenu implements MenuInterface
             new MenuDivider(),
 
             new RoleMenuItem('pre-enquiry', 'menu.pre-enquiry.root', null, [
+                new RoleMenuItem('list', 'menu.pre-enquiry.pre-enquiries', $this->router->generate(PreEnquiryController::LIST_ROUTE), [], []),
                 new RoleMenuItem('add', 'menu.pre-enquiry.add', $this->router->generate('admin_pre_enquiry_add'), [], []),
             ]),
             new MenuDivider(),
