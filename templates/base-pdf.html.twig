@@ -15,10 +15,11 @@
 </head>
 <body class="template__body {{ bodyClasses | default('') }}">
 
-{% block header %}
-    <header class="header" role="banner" data-module="header">
+{% if block('header') is defined -%}
+    <header class="header prose-scope" role="banner" data-module="header">
+        {{- block('header') -}}
     </header>
-{% endblock %}
+{%- endif %}
 
 {% block main %}
     <div class="container {{ containerClasses | default('') }}">
@@ -29,10 +30,29 @@
     </div>
 {% endblock %}
 
-{% block footer %}
-    <footer class="govuk-footer" role="contentinfo">
-    </footer>
-{% endblock %}
+{#
+    Page counts/page numbers in Dompdf are difficult...
+    This script
+#}
+{%- if block('footer') is defined -%}
+    {%- verbatim -%}
+<script type="text/php">
+    if ( isset($pdf) && $PAGE_COUNT > 1) {
+        $pdf->page_script('
+            $mmToInchDots = function($a){return ($a / 25.4) * 72.0;};
+            $font = $fontMetrics->getFont("sans-serif");
+            $size = 11;
+            $text = preg_replace(["/{PAGE_COUNT}/", "/{PAGE_NUM}/"], [$PAGE_COUNT, $PAGE_NUM], "{%- endverbatim -%}{{- block('footer') -}}{%- verbatim -%}");
+            $fontHeight = $fontMetrics->getFontHeight($font, $size);
+            $textWidth = $pdf->get_text_width($text, $font, $size);
+            $startY = $pdf->get_height() - $fontHeight - $mmToInchDots(8);
+            $startX = $pdf->get_width() - $textWidth - $mmToInchDots(15);
+            $pdf->text($startX, $startY, $text, $font, $size, [0, 0, 0]);
+        ');
+    }
+</script>
+    {%- endverbatim -%}
+{%- endif -%}
 
 {% block bodyEnd %}{% endblock %}
 </body>

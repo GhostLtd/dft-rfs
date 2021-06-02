@@ -1,7 +1,8 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
 {% set showActions = showActions ?? true %}
+{% set showHeading = showHeading ?? true %}
 
-<h2 class="govuk-heading-m">Vehicle details</h2>
+{% if showHeading %}<h2 class="govuk-heading-m">Vehicle details</h2>{% endif %}
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {# vehicle weights #}
     {% set vehicleWeightsActionLinks = {

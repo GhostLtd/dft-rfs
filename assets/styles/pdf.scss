@@ -2,10 +2,11 @@
 
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/base";
-@import "~govuk-frontend/govuk/core/_typography.scss";
-@import "~govuk-frontend/govuk/components/summary-list/_summary-list.scss";
-@import "~govuk-frontend/govuk/components/table/_table.scss";
-@import "~govuk-frontend/govuk/helpers/_colour.scss";
+@import "~govuk-frontend/govuk/core/typography";
+@import "~govuk-frontend/govuk/components/summary-list/summary-list";
+@import "~govuk-frontend/govuk/components/table/table";
+@import "~govuk-frontend/govuk/helpers/colour";
+@import "~govuk-frontend/govuk/overrides/spacing";
 
 @import "pdf/base";
 
@@ -26,8 +27,7 @@ html {
   font-size: 1.7rem; // No idea why this ends up being too large (without this)
 }
 
-.govuk-summary-list,
-.domestic-journeys {
+.govuk-summary-list {
   margin-bottom: 5rem;
 }
 
@@ -46,7 +46,7 @@ html {
 }
 
 .domestic-day-header {
-  margin-top: 3rem;
+  //margin-top: 3rem;
   margin-bottom: 1.5rem;
 }
 
@@ -55,8 +55,6 @@ html {
 }
 
 .international-vehicle-details {
-  margin-bottom: 5rem;
-
   .international-loading-unloading-places {
     margin-left: 2rem;
   }

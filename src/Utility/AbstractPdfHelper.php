@@ -91,7 +91,9 @@ abstract class AbstractPdfHelper
         $dompdf->getOptions()
             ->setIsHtml5ParserEnabled(true)
             ->setIsRemoteEnabled(true)
-            ->setIsJavascriptEnabled(false);
+            ->setIsJavascriptEnabled(false)
+            ->setIsPhpEnabled(true)
+        ;
 
         $dompdf->loadHtml($this->getSurveyPdfHtml($survey));
         $dompdf->setPaper('A4', 'portrait');
@@ -108,5 +110,31 @@ abstract class AbstractPdfHelper
     public function getSurveyPdfHtml(SurveyInterface $survey): string
     {
         return trim($this->twig->render($this->getTemplate(), ['survey' => $survey]));
+    }
+
+    private function processFooter(Dompdf $pdf): Dompdf
+    {
+        $canvas = $pdf->getCanvas();
+        $pageCount = $canvas->get_page_count();
+        $pageNumberMap = ['/{PAGE_COUNT}/', '/{PAGE_NUM}/'];
+        $fontMetric = $pdf->getFontMetrics();
+        $font = $fontMetric->getFont('sans-serif');
+        $size = 10;
+        $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+        $fontHeight = $fontMetric->getFontHeight($font, $size);
+        $textWidth = $canvas->get_text_width(preg_replace($pageNumberMap, $pageCount, $text), $font, $size);
+        $startY = $canvas->get_height() - $fontHeight - $this->mmToInchDots(10);
+        $startX = $canvas->get_width() - $textWidth - $this->mmToInchDots(10);
+        $canvas->page_text($startX, $startY, $text, $font, $size, [0, 0, 0]);
+
+        return $pdf;
+    }
+
+    /**
+     * DOMpdf units are based on 72dpi, regardless of the actual DPI!!
+     */
+    private function mmToInchDots($mm, $dpi = 72)
+    {
+        return ($mm / 25.4) * $dpi;
     }
 }
