@@ -30,6 +30,10 @@ html {
 .govuk-summary-list {
   margin-bottom: 5rem;
 }
+.domestic-journeys {
+  margin-bottom: 5rem;
+  margin-top: 5rem;
+}
 
 .govuk-summary-list,
 .domestic-day > h2 {
@@ -55,6 +59,8 @@ html {
 }
 
 .international-vehicle-details {
+  margin-bottom: 5rem;
+
   .international-loading-unloading-places {
     margin-left: 2rem;
   }
@@ -67,3 +73,20 @@ html {
 .govuk-section-break {
   border-color: govuk-colour('purple');
 }
+
+
+@media only print {
+  .domestic-journeys {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .international-vehicle-details {
+    margin-bottom: 0;
+  }
+
+  .international-business-details .govuk-summary-list.govuk-\!-margin-bottom-9 {
+    margin-bottom: 0 !important;
+  }
+}
+
