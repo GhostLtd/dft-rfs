@@ -2,38 +2,42 @@
 
 namespace App\Utility\International;
 
-use App\Repository\International\ActionRepository;
+use App\Entity\International\Survey;
+use App\Entity\International\Trip;
 use App\Repository\International\SurveyRepository;
 use App\Repository\International\TripRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
-use App\Serializer\Normalizer\International\SurveysNormalizer;
+use App\Serializer\Normalizer\International\SurveyActionsNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
-use DateTime;
+use App\Utility\Export\AbstractDataExporter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
-class DataExporter
+class DataExporter extends AbstractDataExporter
 {
-    protected ActionRepository $actionRepository;
     protected SerializerInterface $serializer;
     protected SurveyRepository $surveyRepository;
-    protected SurveysNormalizer $surveysNormalizer;
+    protected SurveyActionsNormalizer $surveyActionsNormalizer;
     protected TripRepository $tripRepository;
+    private ExportHelper $exportHelper;
 
     public function __construct(
-        ActionRepository $actionRepository,
         SqlServerInsertEncoder $sqlServerInsertEncoder,
-        SurveysNormalizer $surveysNormalizer,
-        SurveyRepository $surveyRepository,
+        SurveyActionsNormalizer $surveyActionsNormalizer,
         TripNormalizer $tripNormalizer,
-        TripRepository $tripRepository
+        WorkflowInterface $internationalSurveyStateMachine,
+        EntityManagerInterface $entityManager,
+        ExportHelper $exportHelper
     )
     {
-        $this->actionRepository = $actionRepository;
-        $this->surveyRepository = $surveyRepository;
-        $this->tripRepository = $tripRepository;
-        $this->surveysNormalizer = $surveysNormalizer;
+        parent::__construct($internationalSurveyStateMachine, $entityManager);
+
+        $this->surveyRepository = $entityManager->getRepository(Survey::class);
+        $this->tripRepository = $entityManager->getRepository(Trip::class);
+        $this->surveyActionsNormalizer = $surveyActionsNormalizer;
 
         $this->serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
@@ -41,30 +45,38 @@ class DataExporter
         ], [
             $sqlServerInsertEncoder
         ]);
+        $this->exportHelper = $exportHelper;
     }
 
-    public function getDataForExport(int $weekNumber): string {
+    public function getDataForExport(int $weekNumber): ?string {
         $weekStart = WeekNumberHelper::getDate($weekNumber);
         $weekEnd = WeekNumberHelper::getDate($weekNumber + 1);
-        $tablePrefix = "irhs-week-{$weekNumber}";
+        $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
 
-        return
-            $this->getTripsSQL($tablePrefix, $weekStart, $weekEnd).
-            "\n\n".
-            $this->getActionsSQL($tablePrefix, $weekStart, $weekEnd);
+        try {
+            $this->startExport($surveys);
+            $sql = $this->getTripsSQL($surveys).
+                "\n\n".
+                $this->getActionsSQL($surveys);
+            $this->exportHelper->upload($sql, $weekNumber);
+            $this->confirmExport($surveys);
+            return $sql;
+        } catch (\Throwable $e) {
+            $this->cancelExport($surveys);
+            // Todo: log exception
+            return null;
+        }
     }
 
-    protected function getTripsSQL(string $tablePrefix, DateTime $weekStart, DateTime $weekEnd): string
+    protected function getTripsSQL($surveys): string
     {
-        $trips = $this->tripRepository->getTripsForExport($weekStart, $weekEnd);
+        $trips = $this->tripRepository->getTripsForExport($surveys);
         return $this->serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]);
     }
 
-    protected function getActionsSQL(string $tablePrefix, DateTime $weekStart, DateTime $weekEnd): string
+    protected function getActionsSQL($surveys): string
     {
-        $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
-        $normalized = $this->surveysNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
-
+        $normalized = $this->surveyActionsNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
         return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]);
     }
 }

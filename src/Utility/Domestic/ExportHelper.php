@@ -15,7 +15,7 @@ class ExportHelper
     public function __construct(Bucket $exportBucket)
     {
         $this->bucket = $exportBucket;
-        $this->prefix = 'csrgt';
+        $this->prefix = 'csrgt-export/csrgt';
     }
 
     public function getBucket(): Bucket
@@ -68,7 +68,7 @@ class ExportHelper
         [$currentQuarter, $currentYear] = WeekNumberHelper::getQuarterAndYear(new DateTime());
         $lastYear = $currentYear - 1;
 
-        for($quarter=($currentQuarter /* TODO: uncomment "- 1" */); $quarter>=1; $quarter--) {
+        for($quarter=($currentQuarter - 1); $quarter>=1; $quarter--) {
             $possibilities[$currentYear.'-'.$quarter] = new ExportObject(null, $currentYear, $quarter);
         }
 

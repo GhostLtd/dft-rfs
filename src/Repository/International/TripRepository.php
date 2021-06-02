@@ -75,22 +75,17 @@ class TripRepository extends ServiceEntityRepository
     /**
      * @return Trip[]|Collection
      */
-    public function getTripsForExport(DateTime $weekStart, DateTime $weekEnd): array
+    public function getTripsForExport($surveys): array
     {
         return $this->createQueryBuilder('t')
             ->select('t,v,r,s')
             ->leftJoin('t.vehicle', 'v')
             ->leftJoin('v.surveyResponse', 'r')
             ->leftJoin('r.survey', 's')
-            ->where('s.state = :state')
-// TODO: Replace these constraints
-//            ->andWhere('s.surveyPeriodStart >= :weekStart')
-//            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->andWhere('s IN (:surveys)')
             ->getQuery()
             ->setParameters([
-                'state' => Survey::STATE_APPROVED,
-//                'weekStart' => $weekStart,
-//                'weekEnd' => $weekEnd,
+                'surveys' => $surveys,
             ])
             ->execute();
     }

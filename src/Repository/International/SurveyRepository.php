@@ -60,17 +60,16 @@ class SurveyRepository extends ServiceEntityRepository
             ->leftJoin('t.actions', 'a')
             ->leftJoin('a.loadingAction', 'la')
             ->where('s.state = :state')
-// TODO: Replace these constraints
-//            ->andWhere('s.surveyPeriodStart >= :weekStart')
-//            ->andWhere('s.surveyPeriodStart < :weekEnd')
+            ->andWhere('s.surveyPeriodStart >= :weekStart')
+            ->andWhere('s.surveyPeriodStart < :weekEnd')
             ->orderBy('s.surveyPeriodStart', 'ASC')
             ->addOrderBy('v.registrationMark', 'ASC')
             ->addOrderBy('a.number', 'ASC')
             ->getQuery()
             ->setParameters([
                 'state' => Survey::STATE_APPROVED,
-//                'weekStart' => $weekStart,
-//                'weekEnd' => $weekEnd,
+                'weekStart' => $weekStart,
+                'weekEnd' => $weekEnd,
             ])
             ->execute();
     }

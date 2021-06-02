@@ -15,7 +15,7 @@ class ExportHelper
     public function __construct(Bucket $exportBucket, WeekNumberHelper $weekNumberHelper)
     {
         $this->bucket = $exportBucket;
-        $this->prefix = 'irhs';
+        $this->prefix = 'irhs-export/irhs';
         $this->weekNumberHelper = $weekNumberHelper;
     }
 

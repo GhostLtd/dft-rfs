@@ -33,7 +33,7 @@ class WeekNumberHelper
     public static function getQuarterAndYear(DateTimeInterface $dateTime)
     {
         [$week, $year] = self::getWeekNumberAndYear($dateTime);
-        foreach (self::QUARTERS as $quarter => $quarterStartWeek) {
+        foreach (array_reverse(self::QUARTERS) as $quarter => $quarterStartWeek) {
             if ($quarterStartWeek <= $week) {
                 return [$quarter, $year];
             }

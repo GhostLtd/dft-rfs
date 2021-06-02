@@ -8,7 +8,7 @@ use App\Form\CountryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Intl\Countries;
 
-class SurveysNormalizer
+class SurveyActionsNormalizer
 {
     protected array $normalized;
     protected EntityManagerInterface $entityManager;

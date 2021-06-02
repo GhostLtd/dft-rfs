@@ -66,17 +66,20 @@ class ExportController extends AbstractController
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $exporter->getDataForExport($year, $quarter);
 
-                $response = new Response($sql);
-                $response->headers->set(
-                    'content-disposition', $response->headers->makeDisposition(
-                        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                        "csrgt-export-{$year}-Q{$quarter}.sql"
-                    )
-                );
-                return $response;
+//                $response = new Response($sql);
+//                $response->headers->set(
+//                    'content-disposition', $response->headers->makeDisposition(
+//                        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+//                        "csrgt-export-{$year}-Q{$quarter}.sql"
+//                    )
+//                );
+//                return $response;
 
-//                $this->storageHelper->upload($sql, $year, $quarter);
-//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+                if (!is_null($sql)) {
+                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+                } else {
+                    // TODO: handle error
+                }
             }
         }
 

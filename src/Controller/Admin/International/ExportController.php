@@ -66,17 +66,20 @@ class ExportController extends AbstractController
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 $sql = $dataExporter->getDataForExport($week);
 
-                $response = new Response($sql);
-                $response->headers->set(
-                    'content-disposition', $response->headers->makeDisposition(
-                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    "irhs-export-{$week}.sql"
-                    )
-                );
-                return $response;
+//                $response = new Response($sql);
+//                $response->headers->set(
+//                    'content-disposition', $response->headers->makeDisposition(
+//                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+//                    "irhs-export-{$week}.sql"
+//                    )
+//                );
+//                return $response;
 
-//                $this->exportHelper->upload($sql, $week);
-//                return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+                if (!is_null($sql)) {
+                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+                } else {
+                    // TODO: handle error
+                }
             }
         }
 
