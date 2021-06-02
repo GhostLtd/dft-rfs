@@ -10,7 +10,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events as OrmEvents;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class SurveyStateLifecycleSubscriber implements EventSubscriber
+class PreEnquiryStateLifecycleSubscriber implements EventSubscriber
 {
     private WorkflowInterface $preEnquiryStateMachine;
     private EntityManagerInterface $entityManager;

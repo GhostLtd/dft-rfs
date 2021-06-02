@@ -13,7 +13,7 @@ class CorrespondenceAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('correspondenceAddress', AddressType::class, [
+            ->add('contactAddress', AddressType::class, [
                 'label' => 'pre-enquiry.correspondence-address.address.label',
                 'label_attr' => [
                     'class' => 'govuk-label--m',
