@@ -35,26 +35,26 @@ class PreEnquiryResponse
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"correspondence_details"})
      */
-    private $correspondenceName;
+    private $contactName;
 
     /**
      * @ORM\Embedded(class=Address::class)
      * @Assert\Valid(groups={"correspondence_address"})
      */
-    private $correspondenceAddress;
+    private $contactAddress;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\NotBlank(groups={"correspondence_details"})
      */
-    private $phone;
+    private $contactTelephone;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"correspondence_details"})
      * @Assert\Email(groups={"correspondence_details"})
      */
-    private $email;
+    private $contactEmail;
 
     /**
      * @ORM\Column(type="integer")
@@ -153,50 +153,50 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function getCorrespondenceName(): ?string
+    public function getContactName(): ?string
     {
-        return $this->correspondenceName;
+        return $this->contactName;
     }
 
-    public function setCorrespondenceName(?string $correspondenceName): self
+    public function setContactName(?string $contactName): self
     {
-        $this->correspondenceName = $correspondenceName;
+        $this->contactName = $contactName;
 
         return $this;
     }
 
-    public function getCorrespondenceAddress(): ?Address
+    public function getContactAddress(): ?Address
     {
-        return $this->correspondenceAddress;
+        return $this->contactAddress;
     }
 
-    public function setCorrespondenceAddress(?Address $correspondenceAddress): self
+    public function setContactAddress(?Address $contactAddress): self
     {
-        $this->correspondenceAddress = $correspondenceAddress;
+        $this->contactAddress = $contactAddress;
 
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getContactTelephone(): ?string
     {
-        return $this->phone;
+        return $this->contactTelephone;
     }
 
-    public function setPhone(?string $phone): self
+    public function setContactTelephone(?string $contactTelephone): self
     {
-        $this->phone = $phone;
+        $this->contactTelephone = $contactTelephone;
 
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getContactEmail(): ?string
     {
-        return $this->email;
+        return $this->contactEmail;
     }
 
-    public function setEmail(?string $email): self
+    public function setContactEmail(?string $contactEmail): self
     {
-        $this->email = $email;
+        $this->contactEmail = $contactEmail;
 
         return $this;
     }
@@ -266,11 +266,11 @@ class PreEnquiryResponse
         $this->setAnnualJourneyEstimate($response->getAnnualJourneyEstimate());
         $this->setIsCorrectCompanyName($response->getIsCorrectCompanyName());
         $this->setCompanyName($response->getCompanyName());
-        $this->setCorrespondenceAddress($response->getCorrespondenceAddress());
-        $this->setCorrespondenceName($response->getCorrespondenceName());
-        $this->setEmail($response->getEmail());
+        $this->setContactAddress($response->getContactAddress());
+        $this->setContactName($response->getContactName());
+        $this->setContactEmail($response->getContactEmail());
         $this->setInternationalJourneyVehicleCount($response->getInternationalJourneyVehicleCount());
-        $this->setPhone($response->getPhone());
+        $this->setContactTelephone($response->getContactTelephone());
         $this->setTotalVehicleCount($response->getTotalVehicleCount());
         $this->setEmployeeCount($response->getEmployeeCount());
     }

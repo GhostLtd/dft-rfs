@@ -26,10 +26,10 @@
         {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS') -%}
         {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS') -%}
 
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.name', response.correspondenceName, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.email', response.email, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.phone', response.phone, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.address', response.correspondenceAddress|formatAddress(true)|default('-'), {(urlCorrespondenceAddress): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-address'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.name', response.contactName, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.email', response.contactEmail, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.phone', response.contactTelephone, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.address', response.contactAddress|formatAddress(true)|default('-'), {(urlCorrespondenceAddress): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-address'}}) }}
     </dl>
 
     {{ form(form) }}

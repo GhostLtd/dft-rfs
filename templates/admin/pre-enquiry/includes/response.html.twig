@@ -13,8 +13,8 @@
 
 <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.correspondence-details')|trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-    {{ row(translation_prefix ~ '.name', response.correspondenceName) }}
-    {{ row(translation_prefix ~ '.email', response.email) }}
-    {{ row(translation_prefix ~ '.phone', response.phone) }}
-    {{ row(translation_prefix ~ '.address', response.correspondenceAddress|formatAddress(true)|default('-')) }}
+    {{ row(translation_prefix ~ '.name', response.contactName) }}
+    {{ row(translation_prefix ~ '.email', response.contactEmail) }}
+    {{ row(translation_prefix ~ '.phone', response.contactTelephone) }}
+    {{ row(translation_prefix ~ '.address', response.contactAddress|formatAddress(true)|default('-')) }}
 </dl>

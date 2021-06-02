@@ -24,7 +24,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         self::CHOICE_NO => 'no',
     ];
 
-    private const nonListenerFields = ['correspondenceName', 'phone', 'email', 'correspondenceAddress', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'employeeCount', 'annualJourneyEstimate'];
+    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'contactAddress', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'employeeCount', 'annualJourneyEstimate'];
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -67,22 +67,22 @@ class ResponseType extends AbstractType implements DataMapperInterface
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ]);
             })
-            ->add('correspondenceName', Gds\InputType::class, [
+            ->add('contactName', Gds\InputType::class, [
                 'label' => "{$correspondenceDetailsPrefix}.name.label",
                 'help' => "{$correspondenceDetailsPrefix}.name.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('phone', Gds\InputType::class, [
+            ->add('contactTelephone', Gds\InputType::class, [
                 'label' => "{$correspondenceDetailsPrefix}.phone.label",
                 'help' => "{$correspondenceDetailsPrefix}.phone.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('email', Gds\EmailType::class, [
+            ->add('contactEmail', Gds\EmailType::class, [
                 'label' => "{$correspondenceDetailsPrefix}.email.label",
                 'help' => "{$correspondenceDetailsPrefix}.email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('correspondenceAddress', AddressType::class, [
+            ->add('contactAddress', AddressType::class, [
                 'label' => "{$correspondenceAddressPrefix}.address.label",
                 'label_attr' => [
                     'class' => 'govuk-label--m',
