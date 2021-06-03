@@ -932,8 +932,8 @@ pre-enquiry:
     correspondence-details: Correspondence details
     company-name: Company name
     total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
-    international-journey-vehicle-count: Vehicles used to conduct international journeys
-    employee-count: Employee count
+    international-journey-vehicle-count: Vehicles used to make international journeys
+    number-of-employees: Number of employees
     annual-journey-estimate: "International journey estimate (Annual)"
     name: Name
     email: Email address
@@ -986,14 +986,14 @@ pre-enquiry:
       label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
-      label: How many of these vehicles will be used for international journeys?
+      label: How many of these vehicles will be used to make international journeys?
       help: ''
   employees-and-international-journeys:
     heading: Employee count and international journeys
     title: ''
     help: ''
-    employee-count:
-      label: How many employees do you currently employee in this firm?
+    number-of-employees:
+      label: How many people does the firm employee nationally?
       help: ''
     annual-journey-estimate:
       label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months

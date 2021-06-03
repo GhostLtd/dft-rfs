@@ -8,6 +8,7 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\PreEnquiry\PreEnquiryState;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -15,6 +16,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+/**
+ * @Security("is_granted('EDIT', user.getPreEnquiry())")
+ */
 class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
     protected ?PreEnquiryResponse $preEnquiryResponse;

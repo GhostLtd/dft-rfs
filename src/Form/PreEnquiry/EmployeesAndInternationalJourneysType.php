@@ -3,6 +3,7 @@
 namespace App\Form\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
+use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,22 +13,24 @@ class EmployeesAndInternationalJourneysType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $translationPrefix = "pre-enquiry.employees-and-international-journeys";
         $builder
-            ->add('employeeCount', Gds\NumberType::class, [
-                'label' => 'pre-enquiry.employees-and-international-journeys.employee-count.label',
-                'help' => 'pre-enquiry.employees-and-international-journeys.employee-count.help',
-                'attr' => [
-                    'class' => 'govuk-input--width-3',
-                ],
+            ->add('numberOfEmployees', Gds\ChoiceType::class, [
+                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
+                'placeholder' => '',
+                'label' => "{$translationPrefix}.number-of-employees.label",
+                'help' => "{$translationPrefix}.number-of-employees.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-select--width-15'],
+                'expanded' => false,
             ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
-                'label' => 'pre-enquiry.employees-and-international-journeys.annual-journey-estimate.label',
-                'help' => 'pre-enquiry.employees-and-international-journeys.annual-journey-estimate.help',
+                'label' => "{$translationPrefix}.annual-journey-estimate.label",
+                'help' => "{$translationPrefix}.annual-journey-estimate.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
-                'label_attr' => ['class' => 'govuk-label--s'],
             ])
         ;
     }

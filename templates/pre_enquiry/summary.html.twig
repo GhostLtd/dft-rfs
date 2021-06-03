@@ -17,7 +17,7 @@
         {{ gdsComponents.summaryListRow(translation_prefix ~ '.company-name', response.companyName, {(urlCompanyName): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.company-name'}}) }}
         {{ gdsComponents.summaryListRow(translation_prefix ~ '.total-vehicle-count', response.totalVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
         {{ gdsComponents.summaryListRow(translation_prefix ~ '.international-journey-vehicle-count', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.employee-count', response.employeeCount, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.number-of-employees', response.numberOfEmployees, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
         {{ gdsComponents.summaryListRow(translation_prefix ~ '.annual-journey-estimate', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
     </dl>
 

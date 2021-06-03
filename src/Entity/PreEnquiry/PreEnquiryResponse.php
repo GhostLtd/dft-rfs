@@ -71,11 +71,11 @@ class PreEnquiryResponse
     private $internationalJourneyVehicleCount;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=20, nullable=true)
      * @Assert\NotBlank(groups={"employees_and_international_journeys"})
-     * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
+     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"employees_and_international_journeys"})
      */
-    private $employeeCount;
+    private $numberOfEmployees;
 
     /**
      * @ORM\Column(type="integer")
@@ -225,15 +225,14 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function getEmployeeCount(): ?int
+    public function getNumberOfEmployees(): ?string
     {
-        return $this->employeeCount;
+        return $this->numberOfEmployees;
     }
 
-    public function setEmployeeCount(?int $employeeCount): self
+    public function setNumberOfEmployees(?string $numberOfEmployees): self
     {
-        $this->employeeCount = $employeeCount;
-
+        $this->numberOfEmployees = $numberOfEmployees;
         return $this;
     }
 
@@ -272,6 +271,6 @@ class PreEnquiryResponse
         $this->setInternationalJourneyVehicleCount($response->getInternationalJourneyVehicleCount());
         $this->setContactTelephone($response->getContactTelephone());
         $this->setTotalVehicleCount($response->getTotalVehicleCount());
-        $this->setEmployeeCount($response->getEmployeeCount());
+        $this->setNumberOfEmployees($response->getNumberOfEmployees());
     }
 }

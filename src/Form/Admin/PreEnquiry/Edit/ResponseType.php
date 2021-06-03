@@ -3,6 +3,7 @@
 namespace App\Form\Admin\PreEnquiry\Edit;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
+use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Form\AddressType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -24,7 +25,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         self::CHOICE_NO => 'no',
     ];
 
-    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'contactAddress', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'employeeCount', 'annualJourneyEstimate'];
+    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'contactAddress', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -105,13 +106,14 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('employeeCount', Gds\NumberType::class, [
-                'label' => "{$employeesAndJourneysPrefix}.employee-count.label",
-                'help' => "{$employeesAndJourneysPrefix}.employee-count.help",
-                'attr' => [
-                    'class' => 'govuk-input--width-3',
-                ],
+            ->add('numberOfEmployees', Gds\ChoiceType::class, [
+                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
+                'placeholder' => '',
+                'label' => "{$employeesAndJourneysPrefix}.number-of-employees.label",
+                'help' => "{$employeesAndJourneysPrefix}.number-of-employees.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-select--width-15'],
+                'expanded' => false,
             ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
                 'label' => "{$employeesAndJourneysPrefix}.annual-journey-estimate.label",
