@@ -986,7 +986,7 @@ pre-enquiry:
       label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
-      label: How many of the above vehicles will be used to conduct international journeys?
+      label: How many of these vehicles will be used for international journeys?
       help: ''
   employees-and-international-journeys:
     heading: Employee count and international journeys

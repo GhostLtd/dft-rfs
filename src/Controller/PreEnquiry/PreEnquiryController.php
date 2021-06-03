@@ -5,7 +5,6 @@ namespace App\Controller\PreEnquiry;
 use App\Entity\PasscodeUser;
 use App\Form\PreEnquiry\SubmitPreEnquiryType;
 use App\Workflow\PreEnquiry\PreEnquiryState;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -13,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class PreEnquiryController extends AbstractController
 {
@@ -22,7 +22,7 @@ class PreEnquiryController extends AbstractController
     /**
      * @Route("/pre-enquiry", name=PreEnquiryController::SUMMARY_ROUTE)
      */
-    public function index(Request $request, UserInterface $user, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, UserInterface $user, EntityManagerInterface $entityManager, WorkflowInterface $preEnquiryStateMachine): Response
     {
         assert($user instanceof PasscodeUser);
         $preEnquiry = $user->getPreEnquiry();
@@ -42,8 +42,10 @@ class PreEnquiryController extends AbstractController
 
             $button = $form->get('submit');
             if ($button instanceof SubmitButton && $button->isClicked()) {
-                $preEnquiry->setSubmissionDate(new DateTime());
-                $entityManager->flush();
+                if ($preEnquiryStateMachine->can($preEnquiry, 'complete')) {
+                    $preEnquiryStateMachine->apply($preEnquiry, 'complete');
+                    $entityManager->flush();
+                }
 
                 return $this->redirectToRoute(self::SUMMARY_ROUTE);
             }
