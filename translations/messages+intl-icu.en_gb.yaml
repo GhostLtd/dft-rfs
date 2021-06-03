@@ -387,7 +387,7 @@ admin:
         label: Add
     add-success:
       heading: IRHS Pre-Enquiry created
-      business-name: Business name
+      company-name: Company name
       invitation-email: Invitation email
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
@@ -397,9 +397,11 @@ admin:
       heading: "Enter Pre-enquiry response — {companyName}"
     list:
       heading: "IRHS Pre-enquiries"
+    passcode-reset-success:
+      heading: Passcode changed
     view:
       approved-by: Approved by
-      business-name: Company name
+      company-name: Company name
       heading: "IRHS Pre-enquiry — {companyName}"
       status: Status
       username: Username

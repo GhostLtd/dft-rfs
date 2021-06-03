@@ -6,7 +6,7 @@
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
     <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow(translation_prefix ~ '.business-name', preEnquiry.company.businessName) }}
+        {{ actionlessSummaryListRow(translation_prefix ~ '.company-name', preEnquiry.company.businessName) }}
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ (translation_prefix ~ '.invitation-email') | trans | nl2br }}</dt>

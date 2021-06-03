@@ -36,6 +36,9 @@ class PreEnquiryController extends AbstractController
     public const EDIT_RESPONSE_ROUTE = self::ROUTE_PREFIX.'edit_response';
     public const ENTER_RESPONSE_ROUTE = self::ROUTE_PREFIX.'enter_response';
 
+    public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
+    public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
+
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;
 
