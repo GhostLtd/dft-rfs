@@ -36,14 +36,16 @@ class ScreenshotsCommand extends Command
     protected string $frontendHostname;
     protected string $userId = 'screenshot';
     protected string $userPassword = 'screenshot:password';
+    private ?string $appEnvironment;
 
-    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, InternationalDeleteHelper $intDeleteHelper, string $frontendHostname)
+    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, InternationalDeleteHelper $intDeleteHelper, string $frontendHostname, ?string $appEnvironment)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
         $this->domDeleteHelper = $domDeleteHelper;
         $this->intDeleteHelper = $intDeleteHelper;
         $this->frontendHostname = $frontendHostname;
+        $this->appEnvironment = $appEnvironment;
     }
 
     protected function configure()
@@ -56,6 +58,10 @@ class ScreenshotsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($this->appEnvironment !== 'staging') {
+            throw new RuntimeException('must be running in "staging" app environment');
+        }
+
         $mode = $input->getArgument('mode');
 
         if (!in_array($mode, [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL])) {
