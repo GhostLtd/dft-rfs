@@ -55,14 +55,18 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
                 $missingErrors[] = $k;
             }
         }
-        $this->assertEquals([], $missingErrors, 'Expected errors to be present on these fields');
 
         foreach ($actualErrors as $k => $v) {
             if (!isset($expectedErrors[$k])) {
                 $excessErrors[] = $k;
             }
         }
-        $this->assertEquals([], $excessErrors, 'Expected no validation errors on these fields');
+
+        // Show the difference between excess and missing errors in order to show both at the same time
+        // Passing test would expect these both to be empty
+        // excess fields cannot occur in missing fields, and vice-versa
+        // "tricksy as f#$k" - Mark Allman, 2021-06-03
+        $this->assertEquals($excessErrors, $missingErrors, 'Missing/excess validation errors on these fields');
     }
 
     protected function getErrors(Crawler $crawler): array

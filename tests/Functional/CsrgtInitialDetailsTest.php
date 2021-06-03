@@ -52,9 +52,10 @@ class CsrgtInitialDetailsTest extends AbstractWizardTest
                 "Hiree details",
                 "hiree_details_continue",
                 [
-                    "#hiree_details_hireeName",
                     "#hiree_details_hireeEmail",
-                    "#", // TODO: Address + postcode errors aren't generating?
+                    "#hiree_details_hireeName",
+                    '#hiree_details_hireeAddress_line1',
+                    '#hiree_details_hireeAddress_postcode',
                 ],
                 [
                     'hiree_details' => [
@@ -102,7 +103,8 @@ class CsrgtInitialDetailsTest extends AbstractWizardTest
                     "#sold_details_soldDate",
                     "#sold_details_newOwnerName",
                     "#sold_details_newOwnerEmail",
-                    "#", // Address / postcode
+                    '#sold_details_newOwnerAddress_line1',
+                    '#sold_details_newOwnerAddress_postcode',
                 ],
                 [
                     'sold_details' => [
