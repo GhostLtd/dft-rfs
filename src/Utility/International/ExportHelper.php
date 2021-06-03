@@ -34,7 +34,8 @@ class ExportHelper
 
     public function getWeek(string $name): ?int
     {
-        $pattern = "/^{$this->prefix}-export-(?P<week>\d+)\.sql$/i";
+        $prefix = preg_quote($this->prefix);
+        $pattern = "#^{$prefix}-export-(?P<week>\d+)\.sql$#i";
         return preg_match($pattern, $name, $matches) ? intval($matches['week']) : null;
     }
 

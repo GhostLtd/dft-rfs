@@ -53,6 +53,15 @@ abstract class AbstractPdfHelper
         return null;
     }
 
+    public function getMostRecentSurveyPDF(SurveyInterface $survey): ?PdfObjectInterface
+    {
+        $pdfs = $this->getExistingSurveyPDFs($survey);
+        if (empty($pdfs)) {
+            return null;
+        }
+        return $pdfs[array_key_last($pdfs)];
+    }
+
     /**
      * @return PdfObjectInterface[]
      */
@@ -62,7 +71,6 @@ abstract class AbstractPdfHelper
             'delimiter' => '/',
             'prefix' => $this->getPrefix($survey),
         ]);
-
         $pdfs = [];
         foreach(iterator_to_array($iterator) as $obj) {
             $pdfObject = $this->getPdfObject($survey, $obj);

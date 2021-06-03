@@ -4,9 +4,12 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Entity\PasscodeUser;
 use App\Security\Voter\SurveyVoter;
+use App\Utility\Domestic\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -83,5 +86,23 @@ class IndexController extends AbstractController
         return $this->render('domestic_survey/completed.html.twig', [
             'survey' => $domesticSurvey,
         ]);
+    }
+
+    /**
+     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())")
+     * @Route("/completed.pdf", name="app_domesticsurvey_completedpdf")
+     */
+    public function pdf(PdfHelper $pdfHelper): Response
+    {
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
+        $domesticSurvey = $user->getDomesticSurvey();
+        $pdf = $pdfHelper->getMostRecentSurveyPDF($domesticSurvey);
+
+        if (!$pdf) {
+            throw new NotFoundHttpException();
+        }
+
+        return new RedirectResponse($pdf->getStorageObject()->signedUrl(new \DateTime('+30 seconds')));
     }
 }

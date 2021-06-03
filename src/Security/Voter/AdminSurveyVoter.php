@@ -35,7 +35,7 @@ class AdminSurveyVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
             case self::RESET_PASSCODE:
-                return !in_array($state, $closedStatuses);
+                return !in_array($state, $closedStatuses) && (!is_null($subject->getPasscodeUser()));
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);

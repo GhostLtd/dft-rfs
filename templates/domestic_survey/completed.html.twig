@@ -10,4 +10,7 @@
             <strong>{{ survey.surveyPeriodStart | date('Y') }}-{{ survey.registrationMark }}</strong>
         </div>
     </div>
+    <p class="govuk-body">
+        {{ (translation_prefix ~ '.download') | trans({url: path('app_domesticsurvey_completedpdf')}) | raw }}
+    </p>
 {% endblock %}

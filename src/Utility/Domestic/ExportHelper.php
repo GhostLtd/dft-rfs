@@ -33,7 +33,8 @@ class ExportHelper
 
     public function getYearAndQuarter(string $name): array
     {
-        $pattern = "/^{$this->prefix}-export-(?P<year>\d{4})-Q(?P<quarter>[1-4]{1})\.sql$/i";
+        $prefix = preg_quote($this->prefix);
+        $pattern = "#^{$prefix}-export-(?P<year>\d{4})-Q(?P<quarter>[1-4]{1})\.sql$#i";
 
         return preg_match($pattern, $name, $matches) ?
             [intval($matches['year']), intval($matches['quarter'])] :

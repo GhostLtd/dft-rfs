@@ -96,6 +96,12 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
+    public function transitionConfirmExport(Event $event)
+    {
+        $survey = $this->getSurvey($event);
+        $this->entityManager->remove($survey->getPasscodeUser());
+    }
+
     protected function getSurvey(Event $event): SurveyInterface
     {
         $survey = $event->getSubject();
@@ -110,8 +116,10 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         return [
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
+            'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
+            'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
         ];
     }
 }

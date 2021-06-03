@@ -844,6 +844,7 @@ domestic:
   completed:
     heading: Survey complete
     reference-number: Your reference number
+    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
 
   closing-details:
     start:
@@ -941,6 +942,7 @@ international:
   completed:
     heading: Survey complete
     reference-number: Your reference number
+    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
 
   buttons:
     add-vehicles: Add Vehicles

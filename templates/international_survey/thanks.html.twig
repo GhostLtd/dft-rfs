@@ -11,4 +11,8 @@
             <strong>{{ survey.referenceNumber }}</strong>
         </div>
     </div>
+    <p class="govuk-body">
+        {{ (translation_prefix ~ '.download') | trans({url: path('app_internationalsurvey_completedpdf')}) | raw }}
+    </p>
+
 {% endblock %}

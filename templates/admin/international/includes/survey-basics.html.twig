@@ -10,7 +10,7 @@
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d h:i')})") }}{% endif %}
     {%- endif -%}
     {%- if showUsername ?? true -%}
-        {{- actionlessSummaryListRow('Username', survey.passcodeUser.username) }}
+        {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
     {%- endif -%}
     {%- if pdfs is defined and pdfs is not empty -%}
         {%- set pdfContent -%}

@@ -32,6 +32,7 @@ interface SurveyInterface
     ];
 
     public function getId(): ?string;
+    public function getPasscodeUser(): ?PasscodeUser;
     public function getNotifiedDate(): ?DateTime;
     public function setNotifiedDate(?DateTime $notifiedDate): self;
     public function getSurveyPeriodStart(): ?DateTime;
