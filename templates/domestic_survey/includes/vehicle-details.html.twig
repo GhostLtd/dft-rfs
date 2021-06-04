@@ -1,4 +1,5 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
+{%- from 'macros.html.twig' import displayAxleConfiguration -%}
 {% set showActions = showActions ?? true %}
 {% set showHeading = showHeading ?? true %}
 
@@ -39,8 +40,7 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">{{ 'common.vehicle.axle-configuration' | trans }}</dt>
         <dd class="govuk-summary-list__value">
-            {{- svgIcon("lorry-#{survey.response.vehicle.axleConfiguration}.svg") -}}<br>
-            {{- (survey.response.vehicle.axleConfiguration | vehicleAxleConfigTransKey | trans) -}}
+            {{- displayAxleConfiguration(survey.response.vehicle.axleConfiguration) -}}
         </dd>
         {% if showActions -%}
             <dd class="govuk-summary-list__actions">
