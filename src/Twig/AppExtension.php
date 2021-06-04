@@ -138,14 +138,14 @@ class AppExtension extends AbstractExtension
         return (new RegistrationMarkHelper($regMark))->getFormattedRegistrationMark();
     }
 
-    public function formatAddress($address, bool $addNewlines=false): string {
+    public function formatAddress($address, bool $addNewlines=false, bool $showLineOne=true): string {
         if (!$address instanceof Address) {
             return '';
         }
 
         $separator = $addNewlines ? ",\n": ", ";
         return implode($separator, array_filter([
-            $address->getLine1(),
+            $showLineOne ? $address->getLine1() : null,
             $address->getLine2(),
             $address->getLine3(),
             $address->getLine4(),

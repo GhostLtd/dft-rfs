@@ -21,6 +21,14 @@
             {{ form_row(form.annualJourneyEstimate) }}
         </div>
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <h2 class="govuk-heading govuk-heading-m">Correspondence address</h2>
+            {% if form.isCorrectAddress is defined %}
+                <p class="govuk-body govuk-!-margin-bottom-8">
+                    {{ form.isCorrectAddress.vars.label_translation_parameters.expectedAddress|formatAddress(true, false)|nl2br }}
+                </p>
+
+                {{ form_row(form.isCorrectAddress) }}
+            {% endif %}
             {{ form_row(form.contactAddress) }}
         </div>
     </div>

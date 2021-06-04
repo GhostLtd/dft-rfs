@@ -972,6 +972,10 @@ pre-enquiry:
     heading: Correspondence address
     title: ''
     help: ''
+    original-address: "The address we have on record for your company is:"
+    correct-address:
+      label: 'Is the above address where we should send correspondence?'
+      help: ''
     address:
       label: Address
       help: Provide the address where correspondence about this survey should be sent

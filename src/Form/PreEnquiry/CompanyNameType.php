@@ -116,14 +116,24 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
         $isCorrectCompanyName = $forms['isCorrectCompanyName']->getData();
 
         if ($isCorrectCompanyName === self::CHOICES[self::CHOICE_YES]) {
-            $viewData->setCompanyName($viewData->getPreEnquiry()->getCompany()->getBusinessName());
+            $companyName = $viewData->getPreEnquiry()->getCompany()->getBusinessName();
+
+            $viewData->setCompanyName($companyName);
             $viewData->setIsCorrectCompanyName(true);
         } else if ($isCorrectCompanyName === self::CHOICES[self::CHOICE_NO]) {
-            $viewData->setCompanyName($forms['companyName']->getData());
+            $companyName = $forms['companyName']->getData();
+
+            $viewData->setCompanyName($companyName);
             $viewData->setIsCorrectCompanyName(false);
         } else {
+            $companyName = null;
             $viewData->setCompanyName(null);
             $viewData->setIsCorrectCompanyName(null);
+        }
+
+        $address = $viewData->getContactAddress();
+        if ($companyName !== null && $address !== null) {
+            $address->setLine1($companyName);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace App\Form\Admin\PreEnquiry\Edit;
 
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
-use App\Form\AddressType;
+use App\Form\LongAddressType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -25,7 +25,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         self::CHOICE_NO => 'no',
     ];
 
-    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'contactAddress', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
+    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -37,12 +37,33 @@ class ResponseType extends AbstractType implements DataMapperInterface
 
         $builder
             ->setDataMapper($this)
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $formEvent) use ($businessDetailsPrefix) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $formEvent) use ($businessDetailsPrefix, $correspondenceAddressPrefix) {
                 $form = $formEvent->getForm();
                 $data = $formEvent->getData();
 
                 assert($data instanceof PreEnquiryResponse);
                 $expectedCompanyName = $data->getPreEnquiry()->getCompany()->getBusinessName();
+
+                if ($data->getPreEnquiry()->hasInvitationAddress()) {
+                    $form
+                        ->add('isCorrectAddress', Gds\ChoiceType::class, [
+                            'label' => "{$correspondenceAddressPrefix}.correct-address.label",
+                            'label_attr' => [
+                                'class' => 'govuk-label--s',
+                            ],
+                            'label_translation_parameters' => [
+                                'expectedAddress' => $data->getPreEnquiry()->getInvitationAddress(),
+                            ],
+                            'help' => "{$correspondenceAddressPrefix}.correct-address.help",
+                            'choices' => self::CHOICES,
+                            'choice_options' => [
+                                self::CHOICE_NO => [
+                                    'conditional_form_name' => 'contactAddress',
+                                ],
+                            ],
+                            'validation_groups' => ['Default'],
+                        ]);
+                }
 
                 $form
                     ->add('isCorrectCompanyName', Gds\ChoiceType::class, [
@@ -66,6 +87,14 @@ class ResponseType extends AbstractType implements DataMapperInterface
                         'label' => "{$businessDetailsPrefix}.company-name.label",
                         'help' => "{$businessDetailsPrefix}.company-name.help",
                         'label_attr' => ['class' => 'govuk-label--s'],
+                    ])
+                    ->add('contactAddress', LongAddressType::class, [
+                        'label' => "{$correspondenceAddressPrefix}.address.label",
+                        'label_attr' => [
+                            'class' => 'govuk-label--m',
+                        ],
+                        'help' => "{$correspondenceAddressPrefix}.address.help",
+                        'include_addressee' => false,
                     ]);
             })
             ->add('contactName', Gds\InputType::class, [
@@ -82,13 +111,6 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 'label' => "{$correspondenceDetailsPrefix}.email.label",
                 'help' => "{$correspondenceDetailsPrefix}.email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-            ])
-            ->add('contactAddress', AddressType::class, [
-                'label' => "{$correspondenceAddressPrefix}.address.label",
-                'label_attr' => [
-                    'class' => 'govuk-label--m',
-                ],
-                'help' => "{$correspondenceAddressPrefix}.address.help",
             ])
             ->add('totalVehicleCount', Gds\NumberType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.total-vehicle-count.label",
@@ -156,7 +178,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         /** @var FormInterface[] $forms */
 
         $accessor = PropertyAccess::createPropertyAccessor();
-        foreach(self::nonListenerFields as $field) {
+        foreach (self::nonListenerFields as $field) {
             $forms[$field]->setData($accessor->getValue($viewData, $field));
         }
 
@@ -172,6 +194,15 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 $forms['isCorrectCompanyName']->setData(self::CHOICES[self::CHOICE_YES]);
             }
         }
+
+        if (isset($forms['isCorrectAddress'])) {
+            $isCorrectAddress = $viewData->getIsCorrectAddress();
+            if ($isCorrectAddress !== null) {
+                $forms['isCorrectAddress']->setData(self::CHOICES[$isCorrectAddress ? self::CHOICE_YES : self::CHOICE_NO]);
+            }
+        }
+
+        $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -182,7 +213,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         assert($viewData instanceof PreEnquiryResponse);
 
         $accessor = PropertyAccess::createPropertyAccessor();
-        foreach(self::nonListenerFields as $field) {
+        foreach (self::nonListenerFields as $field) {
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
         }
 
@@ -198,5 +229,18 @@ class ResponseType extends AbstractType implements DataMapperInterface
             $viewData->setCompanyName(null);
             $viewData->setIsCorrectCompanyName(null);
         }
+
+        $isCorrectAddress = isset($forms['isCorrectAddress']) &&
+            $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES];
+
+        $address = $isCorrectAddress ?
+            (clone $viewData->getPreEnquiry()->getInvitationAddress()) :
+            $forms['contactAddress']->getData();
+
+        $viewData
+            ->setContactAddress($address)
+            ->setIsCorrectAddress($isCorrectAddress);
+
+        $viewData->getContactAddress()->setLine1($viewData->getCompanyName());
     }
 }

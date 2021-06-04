@@ -2,7 +2,8 @@
 
 namespace App\Entity\PreEnquiry;
 
-use App\Entity\Address;
+use App\Entity\LongAddress;
+use App\Form\Validator as AppAssert;
 use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,6 +28,12 @@ class PreEnquiryResponse
     private $isCorrectCompanyName;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull(groups={"correspondence_address"})
+     */
+    private $isCorrectAddress;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $companyName;
@@ -38,8 +45,8 @@ class PreEnquiryResponse
     private $contactName;
 
     /**
-     * @ORM\Embedded(class=Address::class)
-     * @Assert\Valid(groups={"correspondence_address"})
+     * @ORM\Embedded(class=LongAddress::class)
+     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true)
      */
     private $contactAddress;
 
@@ -141,6 +148,17 @@ class PreEnquiryResponse
         return $this;
     }
 
+    public function getIsCorrectAddress(): ?bool
+    {
+        return $this->isCorrectAddress;
+    }
+
+    public function setIsCorrectAddress(?bool $isCorrectAddress): self
+    {
+        $this->isCorrectAddress = $isCorrectAddress;
+        return $this;
+    }
+
     public function getCompanyName(): ?string
     {
         return $this->companyName;
@@ -165,12 +183,12 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function getContactAddress(): ?Address
+    public function getContactAddress(): ?LongAddress
     {
         return $this->contactAddress;
     }
 
-    public function setContactAddress(?Address $contactAddress): self
+    public function setContactAddress(?LongAddress $contactAddress): self
     {
         $this->contactAddress = $contactAddress;
 
@@ -265,6 +283,7 @@ class PreEnquiryResponse
         $this->setAnnualJourneyEstimate($response->getAnnualJourneyEstimate());
         $this->setIsCorrectCompanyName($response->getIsCorrectCompanyName());
         $this->setCompanyName($response->getCompanyName());
+        $this->setIsCorrectAddress($response->getIsCorrectAddress());
         $this->setContactAddress($response->getContactAddress());
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());

@@ -200,6 +200,11 @@ trait SurveyTrait
         return $this;
     }
 
+    public function hasInvitationAddress(): bool
+    {
+        return $this->invitationAddress instanceof LongAddress && $this->invitationAddress->isFilled();
+    }
+
     protected function getNotifyLetterStatus(string $constSuffix): ?string
     {
 //        $surveyType = preg_split('/', get_class($this));

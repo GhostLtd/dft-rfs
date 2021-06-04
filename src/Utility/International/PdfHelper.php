@@ -35,7 +35,7 @@ class PdfHelper extends AbstractPdfHelper
 
     protected function getPdfObject(object $entity, StorageObject $obj): ?PdfObjectInterface
     {
-        $regex = '#^'. self::PREFIX. "(?P<firmReference>[A-Za-z0-9]+)_(?P<week>\d+)_(?P<timestamp>\d+)\.pdf$#";
+        $regex = '#^'. self::PREFIX. "(?P<firmReference>[A-Za-z0-9\-]+)_(?P<week>\d+)_(?P<timestamp>\d+)\.pdf$#";
 
         if (!$entity instanceof InternationalSurvey) {
             return null;

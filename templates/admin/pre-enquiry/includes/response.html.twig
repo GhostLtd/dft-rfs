@@ -16,5 +16,5 @@
     {{ row(translation_prefix ~ '.name', response.contactName) }}
     {{ row(translation_prefix ~ '.email', response.contactEmail) }}
     {{ row(translation_prefix ~ '.phone', response.contactTelephone) }}
-    {{ row(translation_prefix ~ '.address', response.contactAddress|formatAddress(true)|default('-')) }}
+    {{ row(translation_prefix ~ '.address', response.contactAddress|formatAddress(true, false)|default('-')) }}
 </dl>
