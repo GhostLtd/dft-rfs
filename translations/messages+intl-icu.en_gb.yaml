@@ -377,6 +377,9 @@ admin:
   pre-enquiry:
     add:
       heading: Add pre-enquiry
+      reference-number:
+        label: Reference number
+        help: ''
       invitation-email:
         label: Invitation email
         help: ''
@@ -403,6 +406,7 @@ admin:
       approved-by: Approved by
       company-name: Company name
       heading: "IRHS Pre-enquiry — {companyName}"
+      reference-number: Reference number
       status: Status
       username: Username
 
@@ -925,6 +929,9 @@ domestic:
 pre-enquiry:
   completed:
     heading: Pre-enquiry complete
+  sidebar-summary:
+    title: IRHS Pre-enquiry
+    reference-number: Reference number
   summary:
     heading: Pre-enquiry dashboard
     title: ''

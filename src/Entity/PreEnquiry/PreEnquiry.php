@@ -24,6 +24,13 @@ class PreEnquiry implements SurveyInterface
     private $response;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey"})
+     * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey"})
+     */
+    private $referenceNumber;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"add_survey"})
@@ -56,6 +63,17 @@ class PreEnquiry implements SurveyInterface
             $response->setPreEnquiry($this);
         }
 
+        return $this;
+    }
+
+    public function getReferenceNumber(): ?string
+    {
+        return $this->referenceNumber;
+    }
+
+    public function setReferenceNumber(?string $referenceNumber): self
+    {
+        $this->referenceNumber = $referenceNumber;
         return $this;
     }
 

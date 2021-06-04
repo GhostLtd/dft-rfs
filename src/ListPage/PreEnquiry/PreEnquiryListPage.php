@@ -26,8 +26,9 @@ class PreEnquiryListPage extends AbstractListPage
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
         return [
-            (new TextFilter('Company name', 'preEnquiry.company.businessName'))->sortable(),
-            (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
+            (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
+            (new TextFilter('Company name', 'company.businessName'))->sortable(),
+            (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
         ];
     }

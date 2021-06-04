@@ -17,12 +17,11 @@ class EmployeesAndInternationalJourneysType extends AbstractType
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
-                'placeholder' => '',
                 'label' => "{$translationPrefix}.number-of-employees.label",
                 'help' => "{$translationPrefix}.number-of-employees.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-select--width-15'],
-                'expanded' => false,
+                'expanded' => true,
             ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
                 'label' => "{$translationPrefix}.annual-journey-estimate.label",
