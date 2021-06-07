@@ -40,7 +40,7 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"correspondence_details"})
+     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-name")
      */
     private $contactName;
 
@@ -52,41 +52,41 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @Assert\NotBlank(groups={"correspondence_details"})
+     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-telephone")
      */
     private $contactTelephone;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"correspondence_details"})
+     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-email")
      * @Assert\Email(groups={"correspondence_details"})
      */
     private $contactEmail;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"vehicle_questions"})
+     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.vehicle-count")
      * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $totalVehicleCount;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"vehicle_questions"})
+     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank")
      * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $internationalJourneyVehicleCount;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
      * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"employees_and_international_journeys"})
      */
     private $numberOfEmployees;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
      * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
      */
     private $annualJourneyEstimate;
