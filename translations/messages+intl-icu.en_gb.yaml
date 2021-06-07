@@ -42,7 +42,7 @@ common:
   address:
     line1: Building and street
     line1-hidden: line 1 of 2
-    line2:
+    line2: ''
     line2-hidden: Building and street line 2 of 2
     line3: Town or city
     line4: County
@@ -374,6 +374,41 @@ admin:
     cancelled-notification:
       heading: Note not deleted
       content: The request to delete the note was cancelled
+  pre-enquiry:
+    add:
+      heading: Add pre-enquiry
+      reference-number:
+        label: Reference number
+        help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: ''
+      submit:
+        label: Add
+    add-success:
+      heading: IRHS Pre-Enquiry created
+      company-name: Company name
+      invitation-email: Invitation email
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
+    edit-response:
+      heading: "Edit Pre-enquiry response — {companyName}"
+    enter-response:
+      heading: "Enter Pre-enquiry response — {companyName}"
+    list:
+      heading: "IRHS Pre-enquiries"
+    passcode-reset-success:
+      heading: Passcode changed
+    view:
+      approved-by: Approved by
+      company-name: Company name
+      heading: "IRHS Pre-enquiry — {companyName}"
+      reference-number: Reference number
+      status: Status
+      username: Username
 
   maintenance-warning:
     heading: Maintenance warnings
@@ -893,38 +928,84 @@ domestic:
 
 # Pre-Enquiry
 pre-enquiry:
+  completed:
+    heading: Pre-enquiry complete
+  sidebar-summary:
+    title: IRHS Pre-enquiry
+    reference-number: Reference number
+  summary:
+    heading: Pre-enquiry dashboard
+    title: ''
+    business-details: Business details
+    correspondence-details: Correspondence details
+    company-name: Company name
+    total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
+    international-journey-vehicle-count: Vehicles used to make international journeys
+    number-of-employees: Number of employees
+    annual-journey-estimate: "International journey estimate (Annual)"
+    name: Name
+    email: Email address
+    phone: Telephone number
+    address: Address
+    vehicle-details: Vehicle details
+    employee-count-and-international-journeys: Employee count and international journeys
+    correspondence-address: Correspondence address
+    submit:
+      label: Submit pre-enquiry
+
   business-details:
+    heading: Business details
+    title: ''
+    help: ''
+    correct-company-name:
+      label: 'Is the name of your company "{expectedCompanyName}"?'
+      help: ''
     company-name:
       label: Company name
-      help: Provide the name of your company
+      help: Please state the correct company name
   correspondence-details:
     heading: Correspondence details
+    title: ''
     help: Provide contact details for correspondence about this survey
     name:
       label: Name
       help: ''
     phone:
-      label: Phone
+      label: Telephone number
       help: ''
     email:
-      label: Email
+      label: Email address
       help: ''
   correspondence-address:
+    heading: Correspondence address
+    title: ''
+    help: ''
+    original-address: "The address we have on record for your company is:"
+    correct-address:
+      label: 'Is the above address where we should send correspondence?'
+      help: ''
     address:
-      label: Correspondence address
+      label: Address
       help: Provide the address where correspondence about this survey should be sent
+  introduction:
+    title: Introduction
+    heading: International Pre-Enquiry
   vehicle-questions:
-    heading: Vehicle questions
+    heading: Vehicle details
+    title: ''
+    help: ''
     total-vehicle-count:
       label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
-      label: How many of the above vehicles will be used to conduct international journeys?
+      label: How many of these vehicles will be used to make international journeys?
       help: ''
   employees-and-international-journeys:
-    heading: Employees and international journeys
-    employee-count:
-      label: How many employees do you currently employee in this firm?
+    heading: Employee count and international journeys
+    title: ''
+    help: ''
+    number-of-employees:
+      label: How many people does the firm employee nationally?
       help: ''
     annual-journey-estimate:
       label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months

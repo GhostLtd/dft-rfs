@@ -5,7 +5,6 @@ namespace App\Controller\InternationalSurvey;
 use App\Form\InternationalSurvey\ConfirmationType;
 use App\Repository\International\SurveyRepository;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,7 +67,6 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
             if ($button instanceof SubmitButton && $button->isClicked()) {
                 if ($canSubmitAsNoLongerActive) {
                     // Not trading or domestic journeys only
-                    $survey->setSubmissionDate(new DateTime());
                     $response->setInitialDetailsSignedOff(true);
 
                     if ($internationalSurveyStateMachine->can($survey, 'complete'))

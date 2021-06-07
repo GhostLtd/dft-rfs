@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\International\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

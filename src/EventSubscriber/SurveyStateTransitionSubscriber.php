@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
@@ -13,7 +14,6 @@ use App\Utility\International\PdfHelper as InternationalPdfHelper;
 use App\Utility\AlphagovNotify\Reference;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -35,6 +35,10 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         InternationalSurvey::class => [
             self::TYPE_LETTER => Reference::LETTER_INTERNATIONAL_SURVEY_INVITE,
             self::TYPE_EMAIL => Reference::EMAIL_INTERNATIONAL_SURVEY_INVITE,
+        ],
+        PreEnquiry::class => [
+            self::TYPE_LETTER => Reference::LETTER_PRE_ENQUIRY_INVITE,
+            self::TYPE_EMAIL => Reference::EMAIL_PRE_ENQUIRY_INVITE,
         ],
     ];
 
@@ -92,6 +96,11 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
                 $this->domesticPdfHelper->generateAndUploadPdf($survey);
             } else if ($survey instanceof InternationalSurvey) {
                 $this->internationalPdfHelper->generateAndUploadPdf($survey);
+            } else if ($survey instanceof PreEnquiry) {
+                // Do nothing...
+                return;
+            } else {
+                throw new \RuntimeException("Unsupported survey class".get_class($survey));
             }
         }
     }
@@ -120,6 +129,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
+            'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
+            'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
         ];
     }
 }

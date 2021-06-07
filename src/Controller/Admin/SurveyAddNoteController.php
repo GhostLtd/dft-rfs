@@ -12,11 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SurveyAddNoteController extends AbstractController
 {
-    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, string $viewSurveyTemplate, $additionalViewData=[])
+    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, array $viewSurveyRouteParams, string $viewSurveyTemplate, array $additionalViewData=[])
     {
         $addNoteForm->handleRequest($request);
         if (!$addNoteForm->isSubmitted()) {
-            return $this->redirect(self::addNotesTabAnchor($this->generateUrl($viewSurveyRoute, ['surveyId' => $survey->getId()])));
+            return $this->redirect(self::addNotesTabAnchor($this->generateUrl($viewSurveyRoute, $viewSurveyRouteParams)));
         }
         if ($addNoteForm->isValid()) {
             // save the note
@@ -25,11 +25,10 @@ class SurveyAddNoteController extends AbstractController
             $entityManager->flush();
 
             // redirect to view url (on notes tab)
-            return $this->redirect(self::addNotesTabAnchor($this->generateUrl($viewSurveyRoute, ['surveyId' => $survey->getId()])));
+            return $this->redirect(self::addNotesTabAnchor($this->generateUrl($viewSurveyRoute, $viewSurveyRouteParams)));
         }
         // render view
         return $this->render($viewSurveyTemplate, array_merge($additionalViewData, [
-            'survey' => $survey,
             'addNoteForm' => $addNoteForm->createView(),
         ]));
     }

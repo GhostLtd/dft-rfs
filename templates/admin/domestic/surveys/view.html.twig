@@ -143,7 +143,7 @@
             </div>
 
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
-                {%- with {marginBottom: 5} -%}
+                {%- with {marginBottom: 5, deleteRoute: 'admin_domestic_survey_deletenote', deleteParams: {surveyId: survey.id}} -%}
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>

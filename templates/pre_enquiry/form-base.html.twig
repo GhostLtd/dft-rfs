@@ -1,0 +1,13 @@
+{% extends 'pre_enquiry/base.html.twig' %}
+
+{% block content -%}
+    {%- include 'includes/form-page-content.html.twig' -%}
+{%- endblock %}
+
+{% set oneThirdColumnContent %}
+    {% set preEnquiry = app.user.preEnquiry %}
+    <h2 class="govuk-heading-m">{{ 'pre-enquiry.sidebar-summary.title'|trans }}</h2>
+
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'pre-enquiry.sidebar-summary.reference-number'|trans }}</h3>
+    <p class="govuk-body">{{ preEnquiry.referenceNumber }}</p>
+{% endset %}

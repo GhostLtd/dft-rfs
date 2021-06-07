@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Controller\InternationalSurvey\IndexController;
+use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Entity\PasscodeUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -121,6 +122,9 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
 
             case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER):
                 return new RedirectResponse($this->urlGenerator->generate(IndexController::SUMMARY_ROUTE));
+
+            case $user->hasRole(PasscodeUser::ROLE_PRE_ENQUIRY_USER):
+                return new RedirectResponse($this->urlGenerator->generate(PreEnquiryController::SUMMARY_ROUTE));
         }
 
         throw new AuthenticationException();

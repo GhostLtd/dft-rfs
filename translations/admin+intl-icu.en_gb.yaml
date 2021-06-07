@@ -14,6 +14,10 @@ menu:
     survey-add: Add Survey
     export: Export
     sample-import: Bulk sample import
+  pre-enquiry:
+    root: Pre-enquiry
+    pre-enquiries: Pre-enquiries
+    add: Add
 
 format:
   date:

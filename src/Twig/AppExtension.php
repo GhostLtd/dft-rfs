@@ -2,7 +2,7 @@
 
 namespace App\Twig;
 
-use App\Controller\InternationalPreEnquiry\PreEnquiryController;
+use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Controller\InternationalSurvey\TripEditController;
@@ -14,7 +14,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\International\Stop;
-use App\Entity\SurveyInterface;
+use App\Entity\HaulageSurveyInterface;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
@@ -23,7 +23,7 @@ use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\SessionTimeoutHelper;
 use App\Utility\WeekNumberHelper;
-use App\Workflow\InternationalPreEnquiry\PreEnquiryState;
+use App\Workflow\PreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
@@ -138,14 +138,14 @@ class AppExtension extends AbstractExtension
         return (new RegistrationMarkHelper($regMark))->getFormattedRegistrationMark();
     }
 
-    public function formatAddress($address, bool $addNewlines=false): string {
+    public function formatAddress($address, bool $addNewlines=false, bool $showLineOne=true): string {
         if (!$address instanceof Address) {
             return '';
         }
 
         $separator = $addNewlines ? ",\n": ", ";
         return implode($separator, array_filter([
-            $address->getLine1(),
+            $showLineOne ? $address->getLine1() : null,
             $address->getLine2(),
             $address->getLine3(),
             $address->getLine4(),
@@ -206,7 +206,7 @@ class AppExtension extends AbstractExtension
         return '';
     }
 
-    public function formatSurveyPeriod(SurveyInterface $survey)
+    public function formatSurveyPeriod(HaulageSurveyInterface $survey)
     {
         $numDays = $survey->getSurveyPeriodInDays();
         $translationId = 'common.survey-period.' . ($numDays === 1 ? 'one-day' : 'many-days');

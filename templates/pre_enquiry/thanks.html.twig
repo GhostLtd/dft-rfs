@@ -1,0 +1,11 @@
+{% set translation_prefix = 'pre-enquiry.completed' %}
+{% extends 'pre_enquiry/base.html.twig' %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+        {# <div class="govuk-panel__body"></div> #}
+    </div>
+{% endblock %}

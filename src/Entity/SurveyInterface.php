@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use DateTime;
 
 interface SurveyInterface
@@ -35,10 +34,6 @@ interface SurveyInterface
     public function getPasscodeUser(): ?PasscodeUser;
     public function getNotifiedDate(): ?DateTime;
     public function setNotifiedDate(?DateTime $notifiedDate): self;
-    public function getSurveyPeriodStart(): ?DateTime;
-    public function getSurveyPeriodStartModifiedBy($modifier);
-    public function getSurveyPeriodEnd(): ?DateTime;
-    public function getSurveyPeriodInDays(): ?int;
     public function getResponseStartDate(): ?DateTime;
     public function getSubmissionDate(): ?DateTime;
     public function setSubmissionDate(?DateTime $submissionDate): self;

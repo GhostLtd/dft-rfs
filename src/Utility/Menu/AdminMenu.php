@@ -6,6 +6,7 @@ use App\Controller\Admin\Domestic\SurveyController as DomSurveyController;
 use App\Controller\Admin\Domestic\ExportController as DomExportControllerAlias;
 use App\Controller\Admin\International\SurveyController as IntSurveyController;
 use App\Controller\Admin\International\ExportController as IntExportControllerAlias;
+use App\Controller\Admin\PreEnquiry\PreEnquiryController;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -57,6 +58,12 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('sample-import', 'menu.international.sample-import', $this->router->generate('admin_international_sampleimport_start'), [], []),
                 new RoleMenuItem('export', 'menu.international.export', $this->router->generate(IntExportControllerAlias::EXPORT_ROUTE), [], []),
                 new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('admin_international_survey_add'), [], []),
+            ]),
+            new MenuDivider(),
+
+            new RoleMenuItem('pre-enquiry', 'menu.pre-enquiry.root', null, [
+                new RoleMenuItem('list', 'menu.pre-enquiry.pre-enquiries', $this->router->generate(PreEnquiryController::LIST_ROUTE), [], []),
+                new RoleMenuItem('add', 'menu.pre-enquiry.add', $this->router->generate('admin_pre_enquiry_add'), [], []),
             ]),
             new MenuDivider(),
 

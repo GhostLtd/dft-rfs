@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Utility;
-
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
@@ -55,6 +53,9 @@ class RemindersHelper
 
     protected function getSurveysForReminding()
     {
+        // TODO: Pre-enquiry reminders. Although I've modified preEnquiry responses to be in line with surveyResponses
+        //       in terms of field naming (e.g. contactName, contactTelephone, contactEmail), a preEnquiry does not have
+        //       a due date, which is required for the getFirt/SecondReminderExpression methods
         return [
             1 => [
                 Reference::LETTER_DOMESTIC_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(DomesticSurvey::class),

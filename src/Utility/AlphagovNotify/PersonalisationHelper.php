@@ -6,7 +6,8 @@ namespace App\Utility\AlphagovNotify;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\SurveyInterface;
+use App\Entity\HaulageSurveyInterface;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Utility\RegistrationMarkHelper;
 
 class PersonalisationHelper
@@ -18,6 +19,8 @@ class PersonalisationHelper
                 return self::getForDomesticSurvey($entity);
             case InternationalSurvey::class :
                 return self::getForInternationalSurvey($entity);
+            case PreEnquiry::class:
+                return self::getForPreEnquiry($entity);
         }
         throw new \LogicException("unexpected entity class: " . get_class($entity));
     }
@@ -36,7 +39,15 @@ class PersonalisationHelper
         ]);
     }
 
-    private static function getForAllSurveys(SurveyInterface $survey)
+    public static function getForPreEnquiry(PreEnquiry $preEnquiry)
+    {
+        return [
+            'passcode1' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getUsername() : 'unknown',
+            'passcode2' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getPlainPassword() : 'unknown',
+        ];
+    }
+
+    private static function getForAllSurveys(HaulageSurveyInterface $survey)
     {
         return [
             'surveyPeriodStart' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
