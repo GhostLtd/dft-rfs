@@ -29,7 +29,9 @@
 
                 {{ form_row(form.isCorrectAddress) }}
             {% endif %}
-            {{ form_row(form.contactAddress) }}
+            {% if not form.contactAddress.rendered %}
+                {{ form_row(form.contactAddress) }}
+            {% endif %}
         </div>
     </div>
     {{ form_rest(form) }}

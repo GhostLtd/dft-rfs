@@ -8,9 +8,9 @@ use App\Form\PreEnquiry\SubmitPreEnquiryType;
 use App\Security\Voter\SurveyVoter;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -26,11 +26,16 @@ class PreEnquiryController extends AbstractController
 
     /**
      * @Route("/completed", name=self::COMPLETED_ROUTE)
-     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getPreEnquiry())")
      */
     public function completed(UserInterface $user): Response {
+        $preEnquiry = $this->getPreEnquiry($user);
+
+        if (!$this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $preEnquiry)) {
+            return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
+        }
+
         return $this->render('pre_enquiry/thanks.html.twig', [
-            'preEnquiry' => $this->getPreEnquiry($user),
+            'preEnquiry' => $preEnquiry,
         ]);
     }
 
