@@ -1,31 +1,16 @@
 steps:
-    # Install dependencies
-    - name: node:14
-      id: 'node-install'
-      entrypoint: yarn
-      args: ['install', '--frozen-lockfile']
-    # Run custom commands
-    - name: node:14
-      id: 'node-build'
-      entrypoint: yarn
-      args: ['run', 'deploy-build']
-      waitFor: ['node-install']
-
-    # copy common app deploy files
+    # Copy depoyment config files in to root directory
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
-      id: 'copy-common-deploy-files'
-      args: ['gsutil', 'rsync', 'config/gcloud-build/all/', '.']
+      id: 'copy-deploy-files'
+      entrypoint: sh
+      args: ['-c', 'gsutil rsync config/gcloud-build/all/ . && gsutil rsync config/gcloud-build/$PROJECT_ID/ .']
       waitFor: ['-']
-    # copy project specific app deploy files
-    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
-      id: 'copy-project-deploy-files'
-      args: ['gsutil', 'rsync', 'config/gcloud-build/$PROJECT_ID/', '.']
-      waitFor: ['copy-common-deploy-files']
-    # add protected/substituted env vars
-    - name: node:14
-      id: 'sub-env-vars'
-      entrypoint: yarn
-      args: ["run", "build-env-subs"]
+
+    # build assets, and .env.local file
+    - name: "gcr.io/cloud-builders/yarn"
+      id: 'yarn-build'
+      entrypoint: sh
+      args: ['-c', 'yarn install --frozen-lockfile && yarn run deploy-build && yarn run build-env-subs']
       env:
           - 'APP_ENV=prod'
           - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
@@ -35,18 +20,18 @@ steps:
           - 'APP_SECRET=${_APP_SECRET}'
           - 'APP_FEATURES=${_APP_FEATURES}'
           - 'GOOGLE_BUCKET_EXPORT=${_GOOGLE_BUCKET_EXPORT}'
-      waitFor: ['copy-project-deploy-files']
+      waitFor: ['copy-deploy-files']
 
     # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-default-service'
       args: ["app", "deploy", "app.default.yaml"]
-      waitFor: ['node-build', 'sub-env-vars']
+      waitFor: ['yarn-build']
     # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
       args: ["app", "deploy", "app.admin.yaml"]
-      waitFor: ['node-build', 'sub-env-vars']
+      waitFor: ['yarn-build']
 
 ## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
 # the cloud build service account needs iam.serviceAccountUser role to perform this - but we don't have permission to add that role!
