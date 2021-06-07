@@ -16,6 +16,7 @@
     {%- endif -%}
 
     <p class="govuk-body">
-        <a class="govuk-link" href="{{ path('app_domesticsurvey_index') }}">{{ 'common.actions.back-to-dashboard' | trans }}</a>
+        {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        <a class="govuk-link" href="{{ path(summaryRoute) }}">{{ 'common.actions.back-to-dashboard' | trans }}</a>
     </p>
 {% endblock %}

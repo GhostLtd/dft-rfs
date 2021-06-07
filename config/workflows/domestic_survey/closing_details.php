@@ -1,7 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Entity\Domestic\SurveyResponse;
+use App\Controller\DomesticSurvey\IndexController;
 use App\Workflow\DomesticSurvey\ClosingDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -33,7 +33,7 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_MISSING_DAYS,
                         'to' => StateObject::STATE_END,
                         'metadata' => [
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
                             'transitionWhenFormData' => ['property' => 'missing_days', 'value' => false]
                         ],
                     ],
@@ -73,7 +73,7 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_END,
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_closed',
+                            'redirectRoute' => IndexController::COMPLETED_ROUTE,
                             'submitLabel' => 'Confirm and submit survey',
                         ],
                     ],

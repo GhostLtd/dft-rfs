@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\DomesticSurvey\IndexController;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -52,7 +53,7 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_index',
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
                         ],
                         'from' => StateObject::STATE_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_END,

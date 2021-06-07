@@ -4,7 +4,8 @@
 {% if day.summary | default(false) %}
     {% include "domestic_survey/includes/day-summary.html.twig" %}
     <p class="govuk-body">
-        {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}
+        {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
         {{ buttonLink(path('app_domesticsurvey_daysummary_delete', {dayNumber: day.number}), 'common.actions.delete-summary'|trans, {class: 'govuk-button--warning'}) }}
     </p>
 {% else %}

@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
+use App\Controller\DomesticSurvey\IndexController as DomesticIndexController;
 use App\Controller\PreEnquiry\PreEnquiryController;
-use App\Controller\InternationalSurvey\IndexController as IntIndexController;
+use App\Controller\InternationalSurvey\IndexController as InternationalIndexController;
 use App\Entity\PasscodeUser;
 use App\Repository\MaintenanceWarningRepository;
 use App\Utility\SessionTimeoutHelper;
@@ -23,9 +24,9 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         if ($user && $user instanceof PasscodeUser) {
             if ($user->getDomesticSurvey()) {
-                return $this->redirectToRoute('app_domesticsurvey_index');
+                return $this->redirectToRoute(DomesticIndexController::SUMMARY_ROUTE);
             } else if ($user->getInternationalSurvey()) {
-                return $this->redirectToRoute(IntIndexController::SUMMARY_ROUTE);
+                return $this->redirectToRoute(InternationalIndexController::SUMMARY_ROUTE);
             } else if ($user->getPreEnquiry()) {
                 return $this->redirectToRoute(PreEnquiryController::SUMMARY_ROUTE);
             }

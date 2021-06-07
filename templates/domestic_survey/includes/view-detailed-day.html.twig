@@ -16,8 +16,9 @@
     </p>
 {% endfor %}
 <p class="govuk-body">
+    {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
     {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
-    {{ buttonLink(path('app_domesticsurvey_index'), 'domestic.day-view.actions.complete'|trans) }}
+    {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
 
     {%- if day.stops | length > 1 %}
         {%- set reorderRoute = constant('App\\Controller\\DomesticSurvey\\DayStopController::REORDER_ROUTE') -%}

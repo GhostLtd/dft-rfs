@@ -2,7 +2,8 @@
 
 namespace App\Security;
 
-use App\Controller\InternationalSurvey\IndexController;
+use App\Controller\DomesticSurvey\IndexController as DomesticIndexController;
+use App\Controller\InternationalSurvey\IndexController as InternationalIndexController;
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Entity\PasscodeUser;
 use Doctrine\ORM\EntityManagerInterface;
@@ -118,10 +119,10 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         switch (true)
         {
             case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER):
-                return new RedirectResponse($this->urlGenerator->generate('app_domesticsurvey_index'));
+                return new RedirectResponse($this->urlGenerator->generate(DomesticIndexController::SUMMARY_ROUTE));
 
             case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER):
-                return new RedirectResponse($this->urlGenerator->generate(IndexController::SUMMARY_ROUTE));
+                return new RedirectResponse($this->urlGenerator->generate(InternationalIndexController::SUMMARY_ROUTE));
 
             case $user->hasRole(PasscodeUser::ROLE_PRE_ENQUIRY_USER):
                 return new RedirectResponse($this->urlGenerator->generate(PreEnquiryController::SUMMARY_ROUTE));

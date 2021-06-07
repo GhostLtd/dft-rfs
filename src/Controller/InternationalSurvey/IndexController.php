@@ -2,7 +2,6 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Entity\PasscodeUser;
 use App\Security\Voter\SurveyVoter;
 use App\Utility\International\PdfHelper;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
@@ -21,9 +20,10 @@ class IndexController extends AbstractController
 {
     use SurveyHelperTrait;
 
-    public const COMPLETED_ROUTE = 'app_internationalsurvey_completed';
-    public const COMPLETED_PDF_ROUTE = 'app_internationalsurvey_completedpdf';
-    public const SUMMARY_ROUTE = 'app_internationalsurvey_summary';
+    private const ROUTE_PREFIX = 'app_internationalsurvey_';
+    public const COMPLETED_ROUTE = self::ROUTE_PREFIX.'completed';
+    public const COMPLETED_PDF_ROUTE = self::ROUTE_PREFIX.'completedpdf';
+    public const SUMMARY_ROUTE = self::ROUTE_PREFIX.'summary';
 
     /**
      * @Route("", name=self::SUMMARY_ROUTE)
@@ -56,10 +56,14 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/completed", name=self::COMPLETED_ROUTE)
-     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
     public function completed(UserInterface $user): Response {
         $survey = $this->getSurvey($user);
+
+        if (!$this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
+            return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
+        }
+
         return $this->render('international_survey/thanks.html.twig', [
             'survey' => $survey,
         ]);
@@ -69,11 +73,9 @@ class IndexController extends AbstractController
      * @Route("/completed.pdf", name=self::COMPLETED_PDF_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
-    public function pdf(PdfHelper $pdfHelper): Response
+    public function pdf(PdfHelper $pdfHelper, UserInterface  $user): Response
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-        $survey = $user->getInternationalSurvey();
+        $survey = $this->getSurvey($user);
         $pdf = $pdfHelper->getMostRecentSurveyPDF($survey);
 
         if (!$pdf) {
@@ -82,5 +84,4 @@ class IndexController extends AbstractController
 
         return new RedirectResponse($pdf->getStorageObject()->signedUrl(new \DateTime('+30 seconds')));
     }
-
 }

@@ -97,7 +97,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     {
         if (!$this->daySummary->getId()) {
             // new summary on this day - redirect to dashbaord
-            return $this->redirectToRoute('app_domesticsurvey_index');
+            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
         }
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
     }
@@ -115,7 +115,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             ->setSubject($daySummary)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('app_domesticsurvey_index'),
+                fn() => $this->generateUrl(IndexController::SUMMARY_ROUTE),
                 fn() => $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
             );
     }

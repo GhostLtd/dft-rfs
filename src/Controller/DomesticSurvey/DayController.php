@@ -61,7 +61,7 @@ class DayController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($clickedButton->getName() === 'cancel') {
-                return $this->redirectToRoute('app_domesticsurvey_index');
+                return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
             }
             if ($form->isValid()) {
                 $data = $form->getData();

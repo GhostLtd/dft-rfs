@@ -103,7 +103,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
     {
         if ($this->stopNumber === 'add' && count($this->dayStop->getDay()->getStops()) <= 1) {
             // first stop on this day - redirect to dashbaord
-            return $this->redirectToRoute('app_domesticsurvey_index');
+            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
         }
 
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
@@ -128,7 +128,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
                 function() use ($numStops) {
                     return ($numStops > 1) ?
                         $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]) :
-                        $this->generateUrl('app_domesticsurvey_index');
+                        $this->generateUrl(IndexController::SUMMARY_ROUTE);
                 },
                 fn() => $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
             );

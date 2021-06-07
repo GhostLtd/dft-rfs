@@ -11,7 +11,8 @@
         {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
 
         <p class="govuk-body">
-            <a class="govuk-button govuk-button--secondary" href="{{ url('app_domesticsurvey_index') }}">Back to dashboard</a>
+            {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+            <a class="govuk-button govuk-button--secondary" href="{{ url(summaryRoute) }}">Back to dashboard</a>
         </p>
     {% endif %}
 {% endblock %}
