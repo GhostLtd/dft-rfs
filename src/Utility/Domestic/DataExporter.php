@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Utility\Domestic;
-
 
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
@@ -16,6 +14,7 @@ use App\Serializer\Normalizer\Domestic\SummaryDayNormalizer;
 use App\Serializer\Normalizer\Domestic\SurveyNormalizer;
 use App\Utility\Export\AbstractDataExporter;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -26,15 +25,16 @@ class DataExporter extends AbstractDataExporter
     private SurveyRepository $surveyRepository;
 
     protected SerializerInterface $serializer;
-    private SerializerInterface $surveySerializer;
+    protected SerializerInterface $surveySerializer;
 
-    private SerializerInterface $summaryDaySerializer;
-    private DaySummaryRepository $daySummaryRepository;
-    private DayStopRepository $dayStopRepository;
-    private SerializerInterface  $detailedDaySerializer;
-    private ExportHelper $exportHelper;
+    protected SerializerInterface $summaryDaySerializer;
+    protected DaySummaryRepository $daySummaryRepository;
+    protected DayStopRepository $dayStopRepository;
+    protected SerializerInterface  $detailedDaySerializer;
+    protected ExportHelper $exportHelper;
+    protected LoggerInterface $logger;
 
-    public function __construct(ExportHelper $exportHelper, WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager, SurveyNormalizer $surveyNormalizer, SummaryDayNormalizer $summaryDayNormalizer, DetailedDayNormalizer $detailedDayNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder)
+    public function __construct(ExportHelper $exportHelper, WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager, SurveyNormalizer $surveyNormalizer, SummaryDayNormalizer $summaryDayNormalizer, DetailedDayNormalizer $detailedDayNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder, LoggerInterface $logger)
     {
         parent::__construct($domesticSurveyStateMachine, $entityManager);
 
@@ -52,9 +52,10 @@ class DataExporter extends AbstractDataExporter
         $this->summaryDaySerializer = new Serializer([$summaryDayNormalizer], []);
         $this->detailedDaySerializer = new Serializer([$detailedDayNormalizer], []);
         $this->exportHelper = $exportHelper;
+        $this->logger = $logger;
     }
 
-    public function getDataForExport(int $year, int $quarter) {
+    public function uploadExportData(int $year, int $quarter): bool {
         $surveys = $this->surveyRepository->findForExport($year, $quarter);
         try {
             $this->startExport($surveys);
@@ -64,11 +65,11 @@ class DataExporter extends AbstractDataExporter
                 ;
             $this->exportHelper->upload($sql, $year, $quarter);
             $this->confirmExport($surveys);
-            return $sql;
+            return true;
         } catch (\Throwable $e) {
             $this->cancelExport($surveys);
-            // Todo: log exception
-            return null;
+            $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
+            return false;
         }
     }
 
