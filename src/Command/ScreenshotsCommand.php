@@ -56,7 +56,7 @@ class ScreenshotsCommand extends Command
     protected function configure()
     {
         $this->setDescription('Execute the (external) screenshots utility')
-            ->addArgument('mode', InputArgument::REQUIRED, 'domestic|international')
+            ->addArgument('mode', InputArgument::REQUIRED, 'domestic|international|pre-enquiry')
             ->addArgument('path', InputArgument::REQUIRED, 'Path to the screenshots command')
             ->addOption('protocol', null, InputOption::VALUE_OPTIONAL, 'http or https', 'https');
     }
@@ -109,7 +109,15 @@ class ScreenshotsCommand extends Command
 
             $this->entityManager->persist($company);
 
+            $invitationAddress = (new LongAddress())
+                ->setLine1('Screenshot Tests Ltd')
+                ->setLine2('123 Fictional Road')
+                ->setLine3('Towntown')
+                ->setLine4('West Countyshire')
+                ->setPostcode('W01 1AB');
+
             $survey = (new PreEnquiry())
+                ->setInvitationAddress($invitationAddress)
                 ->setCompany($company)
                 ->setPasscodeUser($user)
                 ->setReferenceNumber('screenshots-test');
