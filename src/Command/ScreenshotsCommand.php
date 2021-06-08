@@ -7,9 +7,11 @@ use App\Entity\International\Company;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
 use App\Utility\Domestic\DeleteHelper as DomesticDeleteHelper;
 use App\Utility\International\DeleteHelper as InternationalDeleteHelper;
+use App\Utility\PreEnquiry\DeleteHelper as PreEnquiryDeleteHelper;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,26 +28,29 @@ class ScreenshotsCommand extends Command
 {
     const MODE_DOMESTIC = 'domestic';
     const MODE_INTERNATIONAL = 'international';
+    const MODE_PRE_ENQUIRY = 'pre-enquiry';
 
     protected static $defaultName = 'rfs:dev:screenshots';
 
     protected EntityManagerInterface $entityManager;
     protected DomesticDeleteHelper $domDeleteHelper;
     protected InternationalDeleteHelper $intDeleteHelper;
+    protected PreEnquiryDeleteHelper $preEnquiryDeleteHelper;
 
     protected string $frontendHostname;
     protected string $userId = 'screenshot';
     protected string $userPassword = 'screenshot:password';
     private ?string $appEnvironment;
 
-    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, InternationalDeleteHelper $intDeleteHelper, string $frontendHostname, ?string $appEnvironment)
+    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, InternationalDeleteHelper $intDeleteHelper, PreEnquiryDeleteHelper $preEnquiryDeleteHelper, string $frontendHostname, ?string $appEnvironment)
     {
         parent::__construct();
+        $this->appEnvironment = $appEnvironment;
         $this->entityManager = $entityManager;
         $this->domDeleteHelper = $domDeleteHelper;
-        $this->intDeleteHelper = $intDeleteHelper;
         $this->frontendHostname = $frontendHostname;
-        $this->appEnvironment = $appEnvironment;
+        $this->intDeleteHelper = $intDeleteHelper;
+        $this->preEnquiryDeleteHelper = $preEnquiryDeleteHelper;
     }
 
     protected function configure()
@@ -64,8 +69,8 @@ class ScreenshotsCommand extends Command
 
         $mode = $input->getArgument('mode');
 
-        if (!in_array($mode, [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL])) {
-            throw new RuntimeException('mode must be either domestic or international');
+        if (!in_array($mode, [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY])) {
+            throw new RuntimeException('mode must be either domestic, international or pre-enquiry');
         }
 
         $this->deleteExistingUser();
@@ -85,7 +90,7 @@ class ScreenshotsCommand extends Command
                 ->setSurveyPeriodEnd($end)
                 ->setPasscodeUser($user)
                 ->setInvitationAddress(new LongAddress());
-        } else {
+        } else if ($mode === self::MODE_INTERNATIONAL) {
             $company = (new Company())
                 ->setBusinessName('Screenshot Tests Ltd');
 
@@ -98,6 +103,16 @@ class ScreenshotsCommand extends Command
                 ->setPasscodeUser($user)
                 ->setReferenceNumber('screenshots-test')
                 ->setInvitationAddress(new LongAddress());
+        } else {
+            $company = (new Company())
+                ->setBusinessName('Screenshot Tests Ltd');
+
+            $this->entityManager->persist($company);
+
+            $survey = (new PreEnquiry())
+                ->setCompany($company)
+                ->setPasscodeUser($user)
+                ->setReferenceNumber('screenshots-test');
         }
 
         $this->entityManager->persist($survey);
@@ -132,11 +147,19 @@ class ScreenshotsCommand extends Command
         if ($user && $user instanceof PasscodeUser) {
             $domesticSurvey = $user->getDomesticSurvey();
             $internationSurvey = $user->getInternationalSurvey();
+            $preEnquiry = $user->getPreEnquiry();
 
             $domesticSurvey && $this->domDeleteHelper->deleteSurvey($domesticSurvey);
+
             if ($internationSurvey) {
                 $company = $internationSurvey->getCompany();
                 $this->intDeleteHelper->deleteSurvey($internationSurvey);
+                $this->entityManager->remove($company);
+            }
+
+            if ($preEnquiry) {
+                $company = $preEnquiry->getCompany();
+                $this->preEnquiryDeleteHelper->deletePreEnquiry($preEnquiry);
                 $this->entityManager->remove($company);
             }
 
