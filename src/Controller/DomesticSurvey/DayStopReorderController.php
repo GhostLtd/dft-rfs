@@ -4,17 +4,16 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Controller\AbstractDayStopReorderController;
 use App\Entity\Domestic\Day;
-use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DayStopReorderController extends AbstractDayStopReorderController
 {
+    use SurveyHelperTrait;
+
     protected function getRedirectResponse(Day $day): RedirectResponse
     {
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $day->getNumber()]);
@@ -34,17 +33,5 @@ class DayStopReorderController extends AbstractDayStopReorderController
     public function reorderStops(string $dayNumber, Request $request): Response
     {
         return parent::reorder($request, $this->getDay($this->getSurvey(), $dayNumber));
-    }
-
-    protected function getSurvey(): Survey
-    {
-        $user = $this->getUser();
-        $survey = $user instanceof PasscodeUser ? $user->getDomesticSurvey() : null;
-
-        if (!$survey) {
-            throw new NotFoundHttpException();
-        }
-
-        return $survey;
     }
 }

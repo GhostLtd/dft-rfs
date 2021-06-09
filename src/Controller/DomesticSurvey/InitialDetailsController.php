@@ -6,10 +6,8 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
 use App\Workflow\FormWizardStateInterface;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,56 +18,48 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
     public const ROUTE_NAME = 'app_domesticsurvey_initialdetails_index';
 
-    /** @var SurveyResponse */
-    protected $surveyResponse;
+    protected SurveyResponse $surveyResponse;
+
+    use SurveyHelperTrait;
 
     /**
      * @Route("/domestic-survey/initial-details", name="app_domesticsurvey_initialdetails_start")
      * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     * @param WorkflowInterface $domesticSurveyInitialDetailsStateMachine
-     * @param Request $request
-     * @param null $state
-     * @return Response
-     * @throws Exception
      */
     public function index(WorkflowInterface $domesticSurveyInitialDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($domesticSurveyInitialDetailsStateMachine, $request, $state);
     }
 
-    /**
-     * @return FormWizardStateInterface
-     */
     protected function getFormWizard(): FormWizardStateInterface
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-        $survey = $em->getRepository(Survey::class)->findOneByIdWithResponseAndVehicle($user->getDomesticSurvey()->getId());
+        $survey = $this->getSurvey();
+        $databaseSurvey = $em->getRepository(Survey::class)->findOneByIdWithResponseAndVehicle($survey->getId());
 
         /** @var InitialDetailsState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), (new InitialDetailsState())->setSubject($survey->getResponse()));
+        $formWizard = $this->session->get($this->getSessionKey(), (new InitialDetailsState())->setSubject($databaseSurvey->getResponse()));
 
         // it's the start of the wizard, and it's a fresh survey (not editing)
         if (is_null($formWizard->getSubject())) {
-            $vehicle = (new Vehicle())
-                ->setRegistrationMark($survey->getRegistrationMark())
-                ->setResponse($surveyResponse = $survey->getResponse() ?? (new SurveyResponse()))
-            ;
-            $surveyResponse->setSurvey($survey);
+            (new Vehicle())
+                ->setRegistrationMark($databaseSurvey->getRegistrationMark())
+                ->setResponse($surveyResponse = $databaseSurvey->getResponse() ?? (new SurveyResponse()));
+
+            $surveyResponse->setSurvey($databaseSurvey);
             $formWizard->setSubject($surveyResponse);
         }
 
         if ($formWizard->getSubject()->getId()) {
-            $surveyResponse = $survey->getResponse();
+            $surveyResponse = $databaseSurvey->getResponse();
             $surveyResponse
                 ->mergeInitialDetails($formWizard->getSubject())
               ;
             $formWizard->setSubject($surveyResponse);
         } else {
-            $survey->setResponse($formWizard->getSubject());
+            $databaseSurvey->setResponse($formWizard->getSubject());
         }
 
         $this->surveyResponse = $formWizard->getSubject();

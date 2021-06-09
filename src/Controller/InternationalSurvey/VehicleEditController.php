@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -27,10 +26,7 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
 
     public const WIZARD_ROUTE = 'app_internationalsurvey_vehicle_edit_state';
 
-    /**
-     * @var Vehicle
-     */
-    protected $vehicle;
+    protected ?Vehicle $vehicle;
 
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/{state}", name=self::WIZARD_ROUTE)
@@ -38,12 +34,11 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,
                           VehicleRepository $vehicleRepository,
-                          UserInterface $user,
                           TranslatorInterface $translator,
                           string $vehicleId,
                           string $state): Response
     {
-        $surveyResponse = $this->getSurveyResponse($user);
+        $surveyResponse = $this->getSurveyResponse();
         $this->vehicle = $vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $surveyResponse);
 
         if (!$this->vehicle) {

@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -23,7 +22,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
 
     public const SUMMARY_ROUTE = 'app_internationalsurvey_correspondence_and_business_details';
 
-    protected $surveyRepo;
+    protected SurveyRepository $surveyRepo;
 
     public function __construct(SurveyRepository $surveyRepo)
     {
@@ -33,8 +32,8 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
     /**
      * @Route("/international-survey/correspondence-and-business-details", name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user, Request $request, EntityManagerInterface $entityManager, WorkflowInterface $internationalSurveyStateMachine) {
-        $survey = $this->getSurvey($user);
+    public function index(Request $request, EntityManagerInterface $entityManager, WorkflowInterface $internationalSurveyStateMachine) {
+        $survey = $this->getSurvey();
 
         if (!$survey->isInitialDetailsComplete()) {
             return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);

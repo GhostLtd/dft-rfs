@@ -4,7 +4,6 @@ namespace App\Controller\InternationalSurvey;
 
 use App\Controller\AbstractActionReorderController;
 use App\Entity\International\Trip;
-use App\Entity\PasscodeUser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/international-survey")
@@ -21,6 +19,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ActionReorderController extends AbstractActionReorderController
 {
+    use SurveyHelperTrait;
+
     protected function getRedirectResponse(Trip $trip): RedirectResponse
     {
         return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $trip->getId()]);
@@ -35,11 +35,12 @@ class ActionReorderController extends AbstractActionReorderController
      * @Route("/trips/{tripId}/reorder-actions", name=ActionController::REORDER_ROUTE)
      * @Entity("trip", expr="repository.find(tripId)")
      */
-    public function reorderAction(UserInterface $user, Trip $trip, Request $request): Response
+    public function reorderAction(Trip $trip, Request $request): Response
     {
         $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
+        $sessionSurvey = $this->getSurvey();
 
-        if (!$user instanceof PasscodeUser || $survey->getId() !== $user->getInternationalSurvey()->getId()) {
+        if ($survey->getId() !== $sessionSurvey->getId()) {
             throw new NotFoundHttpException();
         }
 

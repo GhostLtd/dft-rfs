@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/domestic-survey")
@@ -28,9 +27,9 @@ class IndexController extends AbstractController
     /**
      * @Route(name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user): Response
+    public function index(): Response
     {
-        $survey = $this->getSurvey($user);
+        $survey = $this->getSurvey();
 
         if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
             return $this->redirectToRoute(self::COMPLETED_ROUTE);
@@ -50,9 +49,9 @@ class IndexController extends AbstractController
      * @Route("/contact-and-business-details", name=self::CONTACT_AND_BUSINESS_ROUTE)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
-    public function contactAndBusinessDetails(UserInterface $user): Response
+    public function contactAndBusinessDetails(): Response
     {
-        $survey = $this->getSurvey($user);
+        $survey = $this->getSurvey();
         if (!$survey->isInitialDetailsComplete()) {
             return $this->redirectToRoute("app_domesticsurvey_initialdetails_start");
         }
@@ -69,9 +68,9 @@ class IndexController extends AbstractController
     /**
      * @Route("/completed", name=self::COMPLETED_ROUTE)
      */
-    public function completed(UserInterface $user): Response
+    public function completed(): Response
     {
-        $survey = $this->getSurvey($user);
+        $survey = $this->getSurvey();
 
         if (!$this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
             return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
@@ -86,9 +85,9 @@ class IndexController extends AbstractController
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())")
      * @Route("/completed.pdf", name=self::COMPLETED_PDF_ROUTE)
      */
-    public function pdf(PdfHelper $pdfHelper, UserInterface $user): Response
+    public function pdf(PdfHelper $pdfHelper): Response
     {
-        $survey = $this->getSurvey($user);
+        $survey = $this->getSurvey();
         $pdf = $pdfHelper->getMostRecentSurveyPDF($survey);
 
         if (!$pdf) {

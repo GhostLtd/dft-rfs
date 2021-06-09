@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Security("is_granted('EDIT', user.getInternationalSurvey())")
@@ -40,9 +39,9 @@ class VehicleController extends AbstractController
     /**
      * @Route("/international-survey/vehicles/{vehicleId}", name=self::VEHICLE_ROUTE)
      */
-    public function vehicle(UserInterface $user, string $vehicleId)
+    public function vehicle(string $vehicleId)
     {
-        $vehicle = $this->getVehicle($user, $vehicleId);
+        $vehicle = $this->getVehicle($vehicleId);
 
         return $this->render('international_survey/vehicle/vehicle.html.twig', [
             'vehicle' => $vehicle,
@@ -52,9 +51,9 @@ class VehicleController extends AbstractController
     /**
      * @Route("/international-survey/vehicles/{vehicleId}/delete", name=self::DELETE_ROUTE)
      */
-    public function delete(UserInterface $user, string $vehicleId, Request $request, DeleteHelper $deleteHelper): Response
+    public function delete(string $vehicleId, Request $request, DeleteHelper $deleteHelper): Response
     {
-        $vehicle = $this->getVehicle($user, $vehicleId);
+        $vehicle = $this->getVehicle($vehicleId);
         $form = $this->createForm(VehicleDeleteType::class);
 
         if ($request->getMethod() === Request::METHOD_POST) {
@@ -79,9 +78,9 @@ class VehicleController extends AbstractController
         ]);
     }
 
-    protected function getVehicle(UserInterface $user, string $vehicleId): Vehicle
+    protected function getVehicle(string $vehicleId): Vehicle
     {
-        if (!$response = $this->getSurveyResponse($user)) {
+        if (!$response = $this->getSurveyResponse()) {
             throw new AccessDeniedHttpException();
         } else if (!$vehicle = $this->vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $response)) {
             throw new NotFoundHttpException();

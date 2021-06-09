@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -37,11 +36,10 @@ class TripAddController extends AbstractSessionStateWorkflowController
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           VehicleRepository $vehicleRepository,
                           Request $request,
-                          UserInterface $user,
                           string $vehicleId,
                           ?string $state = null): Response
     {
-        $this->surveyResponse = $this->getSurveyResponse($user);
+        $this->surveyResponse = $this->getSurveyResponse();
         $this->vehicle = $vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
 
         if (!$this->vehicle) {

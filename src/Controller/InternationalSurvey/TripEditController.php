@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -24,10 +23,7 @@ class TripEditController extends AbstractSessionStateWorkflowController
 
     public const WIZARD_ROUTE = 'app_internationalsurvey_trip_edit_state';
 
-    /**
-     * @var Trip
-     */
-    protected $trip;
+    protected ?Trip $trip;
 
     /**
      * @Route("/international-survey/trips/{tripId}/edit/{state}", name=self::WIZARD_ROUTE)
@@ -35,11 +31,10 @@ class TripEditController extends AbstractSessionStateWorkflowController
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           Request $request,
                           TripRepository $tripRepository,
-                          UserInterface $user,
                           string $tripId,
                           string $state): Response
     {
-        $surveyResponse = $this->getSurveyResponse($user);
+        $surveyResponse = $this->getSurveyResponse();
         $this->trip = $tripRepository->findOneByIdAndSurveyResponse($tripId, $surveyResponse);
 
         if (!$this->trip) {

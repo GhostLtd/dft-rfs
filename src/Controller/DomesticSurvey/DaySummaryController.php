@@ -5,8 +5,6 @@ namespace App\Controller\DomesticSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
-use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
@@ -34,6 +32,8 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
 
     protected int $dayNumber;
+
+    use SurveyHelperTrait;
 
     /**
      * @var DaySummary
@@ -148,16 +148,5 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
         } catch (NonUniqueResultException $e) {
             throw new NotFoundHttpException();
         }
-    }
-
-    protected function getSurvey(): Survey
-    {
-        $user = $this->getUser();
-
-        if (!$user instanceof PasscodeUser) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user->getDomesticSurvey();
     }
 }

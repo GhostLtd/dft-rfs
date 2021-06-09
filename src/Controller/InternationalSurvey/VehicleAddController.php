@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -24,7 +23,7 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_vehicle_add_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_vehicle_add_state';
 
-    protected $surveyResponse;
+    protected SurveyResponse $surveyResponse;
 
     /**
      * @Route("/international-survey/add-vehicle/{state}", name=self::WIZARD_ROUTE)
@@ -32,10 +31,9 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
      */
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,
-                          UserInterface $user,
                           $state = null): Response
     {
-        $this->surveyResponse = $this->getSurveyResponse($user);
+        $this->surveyResponse = $this->getSurveyResponse();
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
     }
 

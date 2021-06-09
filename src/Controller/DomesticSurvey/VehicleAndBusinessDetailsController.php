@@ -3,47 +3,35 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
 use App\Workflow\FormWizardStateInterface;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowController
 {
     public const ROUTE_NAME = 'app_domesticsurvey_vehicleandbusinessdetails_index';
 
+    use SurveyHelperTrait;
+
     /**
      * @Route("/domestic-survey/vehicle-and-business-details", name="app_domesticsurvey_vehicleandbusinessdetails_start")
      * @Route("/domestic-survey/vehicle-and-business-details/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     * @param WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine
-     * @param Request $request
-     * @param null | string $state
-     * @return Response
-     * @throws Exception
      */
     public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($domesticSurveyVehicleAndBusinessDetailsStateMachine, $request, $state);
     }
 
-    /**
-     * @return FormWizardStateInterface
-     */
     protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
+        $survey = $this->getSurvey();
 
-        $survey = $user->getDomesticSurvey();
         /** @var SurveyResponse $response */
         $response = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
 

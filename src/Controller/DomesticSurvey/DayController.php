@@ -3,7 +3,6 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
-use App\Entity\PasscodeUser;
 use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -19,6 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DayController extends AbstractController
 {
+    use SurveyHelperTrait;
+
     public const ROUTE_PREFIX = 'app_domesticsurvey_day_';
 
     public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
@@ -27,12 +28,9 @@ class DayController extends AbstractController
     /**
      * @Route("", name=self::VIEW_ROUTE)
      */
-    public function view(EntityManagerInterface $entityManager, $dayNumber): Response
+    public function view(EntityManagerInterface $entityManager, string $dayNumber): Response
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-        // load the survey
-        $survey = $user->getDomesticSurvey();
+        $survey = $this->getSurvey();
 
         // fetch day for survey/dayNumber
         $day = $entityManager->getRepository(Day::class)->findOneBy(['number' => $dayNumber, 'response' => $survey->getResponse()]);

@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -72,9 +71,9 @@ class ActionController extends AbstractSessionStateWorkflowController
      * @Route("/trips/{tripId}/add-action/{state}", name=self::WIZARD_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      * @Route("/trips/{tripId}/add-action", name=self::START_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      */
-    public function add(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $tripId, ?string $state = null): Response
+    public function add(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, string $tripId, ?string $state = null): Response
     {
-        $this->loadSurveyAndTrip($user, $tripId);
+        $this->loadSurveyAndTrip($tripId);
         $this->mode = self::MODE_ADD;
 
         if (in_array($state, [ActionState::STATE_WEIGHT_UNLOADED, ActionState::STATE_CARGO_TYPE])
@@ -94,7 +93,7 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/trips/{tripId}/add-another-action", name=self::ADD_ANOTHER_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
      */
-    public function addAnother(UserInterface $user, string $tripId): Response
+    public function addAnother(string $tripId): Response
     {
         return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $tripId]);
     }
@@ -102,8 +101,8 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/actions/{actionId}", name=self::VIEW_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
-    public function view(UserInterface $user, string $actionId) {
-        $this->loadSurveyAndAction($user, $actionId);
+    public function view(string $actionId) {
+        $this->loadSurveyAndAction($actionId);
 
         return $this->render('international_survey/action/view.html.twig', [
             'action' => $this->action,
@@ -113,8 +112,8 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
-    public function delete(UserInterface $user, Request $request, string $actionId, DeleteHelper $deleteHelper) {
-        $this->loadSurveyAndAction($user, $actionId);
+    public function delete(Request $request, string $actionId, DeleteHelper $deleteHelper) {
+        $this->loadSurveyAndAction($actionId);
         $form = $this->createForm(DeleteActionType::class);
 
         if ($request->getMethod() === Request::METHOD_POST) {
@@ -147,9 +146,9 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/actions/{actionId}/edit/{state}", name=self::EDIT_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
      */
-    public function edit(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, UserInterface $user, string $actionId, string $state): Response
+    public function edit(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, string $actionId, string $state): Response
     {
-        $this->loadSurveyAndAction($user, $actionId);
+        $this->loadSurveyAndAction($actionId);
         $this->mode = self::MODE_EDIT;
         return $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
     }
@@ -157,9 +156,9 @@ class ActionController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/trips/{tripId}/reorder-actions", name=self::REORDER_ROUTE)
      */
-    public function reorder(UserInterface $user, Request $request, string $tripId): Response
+    public function reorder( Request $request, string $tripId): Response
     {
-        $this->loadSurveyAndTrip($user, $tripId);
+        $this->loadSurveyAndTrip($tripId);
 
         /** @var Action[] $actions */
         $actions = $this->trip->getActions()->toArray();
@@ -265,9 +264,9 @@ class ActionController extends AbstractSessionStateWorkflowController
             : $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);
     }
 
-    protected function loadSurveyAndTrip(UserInterface $user, string $tripId): void
+    protected function loadSurveyAndTrip(string $tripId): void
     {
-        $this->surveyResponse = $this->getSurveyResponse($user);
+        $this->surveyResponse = $this->getSurveyResponse();
         $this->trip = $this->tripRepository->findByIdAndSurveyResponse($tripId, $this->surveyResponse);
 
         if (!$this->trip) {
@@ -275,9 +274,9 @@ class ActionController extends AbstractSessionStateWorkflowController
         }
     }
 
-    protected function loadSurveyAndAction(UserInterface $user, string $actionId): void
+    protected function loadSurveyAndAction(string $actionId): void
     {
-        $surveyResponse = $this->getSurveyResponse($user);
+        $surveyResponse = $this->getSurveyResponse();
         $this->action = $this->actionRepository->findOneByIdAndSurveyResponse($actionId, $surveyResponse);
 
         if (!$this->action) {

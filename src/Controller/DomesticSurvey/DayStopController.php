@@ -5,8 +5,6 @@ namespace App\Controller\DomesticSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
-use App\Entity\Domestic\Survey;
-use App\Entity\PasscodeUser;
 use App\Repository\Domestic\DayRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use App\Workflow\DomesticSurvey\DayStopState;
@@ -36,7 +34,9 @@ class DayStopController extends AbstractSessionStateWorkflowController
     protected string $dayNumber;
     protected string $stopNumber;
 
-    private ?DayStop $dayStop = null;
+    protected ?DayStop $dayStop = null;
+
+    use SurveyHelperTrait;
 
     /**
      * @Route(
@@ -158,16 +158,5 @@ class DayStopController extends AbstractSessionStateWorkflowController
         } catch (NonUniqueResultException $e) {}
 
         throw new NotFoundHttpException();
-    }
-
-    protected function getSurvey(): Survey
-    {
-        $user = $this->getUser();
-
-        if (!$user instanceof PasscodeUser) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user->getDomesticSurvey();
     }
 }

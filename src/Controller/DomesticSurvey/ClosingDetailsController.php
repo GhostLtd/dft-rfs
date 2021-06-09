@@ -4,10 +4,8 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\PasscodeUser;
 use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardStateInterface;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,30 +17,21 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     public const ROUTE_NAME = 'app_domesticsurvey_closingdetails_index';
     public const START_ROUTE_NAME = 'app_domesticsurvey_closingdetails_start';
 
+    use SurveyHelperTrait;
+
     /**
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
      * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     * @param WorkflowInterface $domesticSurveyClosingDetailsStateMachine
-     * @param Request $request
-     * @param null | string $state
-     * @return Response
-     * @throws Exception
      */
     public function index(WorkflowInterface $domesticSurveyClosingDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($domesticSurveyClosingDetailsStateMachine, $request, $state);
     }
 
-    /**
-     * @return FormWizardStateInterface
-     */
     protected function getFormWizard(): FormWizardStateInterface
     {
-        /** @var PasscodeUser $user */
-        $user = $this->getUser();
-
-        $survey = $user->getDomesticSurvey();
+        $survey = $this->getSurvey();
         $response = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
 
         /** @var ClosingDetailsState $formWizard */
@@ -67,5 +56,4 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     {
         return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
     }
-
 }

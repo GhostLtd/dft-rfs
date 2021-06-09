@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/international-survey")
@@ -28,8 +27,8 @@ class IndexController extends AbstractController
     /**
      * @Route("", name=self::SUMMARY_ROUTE)
      */
-    public function index(UserInterface $user): Response {
-        $survey = $this->getSurvey($user);
+    public function index(): Response {
+        $survey = $this->getSurvey();
 
         if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
             return $this->redirectToRoute(self::COMPLETED_ROUTE);
@@ -57,8 +56,8 @@ class IndexController extends AbstractController
     /**
      * @Route("/completed", name=self::COMPLETED_ROUTE)
      */
-    public function completed(UserInterface $user): Response {
-        $survey = $this->getSurvey($user);
+    public function completed(): Response {
+        $survey = $this->getSurvey();
 
         if (!$this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
             return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
@@ -73,9 +72,9 @@ class IndexController extends AbstractController
      * @Route("/completed.pdf", name=self::COMPLETED_PDF_ROUTE)
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
      */
-    public function pdf(PdfHelper $pdfHelper, UserInterface  $user): Response
+    public function pdf(PdfHelper $pdfHelper): Response
     {
-        $survey = $this->getSurvey($user);
+        $survey = $this->getSurvey();
         $pdf = $pdfHelper->getMostRecentSurveyPDF($survey);
 
         if (!$pdf) {

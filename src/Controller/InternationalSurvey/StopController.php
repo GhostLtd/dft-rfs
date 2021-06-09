@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/international-survey/trips/{tripId}", requirements={"tripId" = Utility::UUID_REGEX})
@@ -37,7 +36,7 @@ class StopController extends AbstractController
     public const REMOVE_ROUTE = self::SUMMARY_PREFIX."_remove";
     public const REORDER_ROUTE = self::SUMMARY_PREFIX."_reorder";
 
-    protected $tripRepository;
+    protected TripRepository $tripRepository;
 
     public function __construct(TripRepository $tripRepository)
     {
@@ -47,9 +46,9 @@ class StopController extends AbstractController
     /**
      * @Route("/stops", name=self::SUMMARY_ROUTE)
      */
-    public function summary(UserInterface $user, Request $request, string $tripId): Response
+    public function summary(Request $request, string $tripId): Response
     {
-        $response = $this->getSurveyResponse($user);
+        $response = $this->getSurveyResponse();
         $trip = $this->getTrip($response, $tripId);
 
         $form = $this->createForm(AddAnotherType::class, null, [
@@ -79,9 +78,9 @@ class StopController extends AbstractController
      * @Route("/stop-add", name=self::ADD_ROUTE)
      * @Route("/stops/{stopId}", name=self::EDIT_ROUTE, requirements={"stopId" = Utility::UUID_REGEX})
      */
-    public function addStop(UserInterface $user, Request $request, EntityManagerInterface $entityManager, string $tripId, string $stopId = null): Response
+    public function addStop(Request $request, EntityManagerInterface $entityManager, string $tripId, string $stopId = null): Response
     {
-        $surveyResponse = $this->getSurveyResponse($user);
+        $surveyResponse = $this->getSurveyResponse();
         $trip = $this->getTrip($surveyResponse, $tripId);
         $stop = $this->getStop($trip, $stopId);
 
@@ -119,9 +118,9 @@ class StopController extends AbstractController
     /**
      * @Route("/stops/{stopId}/remove", name=self::REMOVE_ROUTE, requirements={"stopId" = Utility::UUID_REGEX})
      */
-    public function removeStop(UserInterface $user, Request $request, EntityManagerInterface $entityManager, string $tripId, string $stopId): Response
+    public function removeStop(Request $request, EntityManagerInterface $entityManager, string $tripId, string $stopId): Response
     {
-        $surveyResponse = $this->getSurveyResponse($user);
+        $surveyResponse = $this->getSurveyResponse();
         $trip = $this->getTrip($surveyResponse, $tripId);
         $stop = $this->getStop($trip, $stopId);
 
@@ -155,9 +154,9 @@ class StopController extends AbstractController
     /**
      * @Route("/stops/re-order", name=self::REORDER_ROUTE)
      */
-    public function reorder(UserInterface $user, Request $request, EntityManagerInterface $entityManager, string $tripId): Response
+    public function reorder(Request $request, EntityManagerInterface $entityManager, string $tripId): Response
     {
-        $response = $this->getSurveyResponse($user);
+        $response = $this->getSurveyResponse();
         $trip = $this->getTrip($response, $tripId);
 
         /** @var Stop[] $stops */

@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -39,9 +38,9 @@ class TripController extends AbstractController
     /**
      * @Route("/international-survey/trips/{id}", name=self::TRIP_ROUTE)
      */
-    public function trip(UserInterface $user, string $id) {
+    public function trip(string $id) {
         return $this->render('international_survey/trip/trip.html.twig', [
-            'trip' => $this->getTrip($user, $id),
+            'trip' => $this->getTrip($id),
         ]);
     }
 
@@ -51,7 +50,7 @@ class TripController extends AbstractController
      */
     public function delete(DeleteTripConfirmAction $deleteTripConfirmAction, Request $request, $tripId)
     {
-        $trip = $this->getTrip($this->getUser(), $tripId);
+        $trip = $this->getTrip($tripId);
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
             $request,
@@ -60,9 +59,9 @@ class TripController extends AbstractController
         );
     }
 
-    protected function getTrip(UserInterface $user, string $id): Trip
+    protected function getTrip(string $id): Trip
     {
-        if (!$response = $this->getSurveyResponse($user)) {
+        if (!$response = $this->getSurveyResponse()) {
             throw new AccessDeniedHttpException();
         } else if (!$trip = $this->tripRepository->findOneByIdAndSurveyResponse($id, $response)) {
             throw new NotFoundHttpException();

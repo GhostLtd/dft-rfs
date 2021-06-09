@@ -10,8 +10,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 trait SurveyHelperTrait
 {
-    protected function getSurvey(UserInterface $user): Survey
+    protected function getSurvey(): Survey
     {
+        $user = $this->getUser();
         $survey = ($user instanceof PasscodeUser) ? $user->getDomesticSurvey() : null;
 
         if (!$survey || !$survey instanceof Survey) {
@@ -21,9 +22,9 @@ trait SurveyHelperTrait
         return $survey;
     }
 
-    protected function getSurveyResponse(UserInterface $user): SurveyResponse
+    protected function getSurveyResponse(): SurveyResponse
     {
-        $response = $this->getSurvey($user)->getResponse();
+        $response = $this->getSurvey()->getResponse();
 
         if (!$response || !$response instanceof SurveyResponse) {
             throw new AccessDeniedHttpException('No such survey response');

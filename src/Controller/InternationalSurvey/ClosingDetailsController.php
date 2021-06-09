@@ -3,13 +3,13 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\International\SurveyResponse;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -22,15 +22,15 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_closing_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_closing_state';
 
-    protected $surveyResponse;
+    protected SurveyResponse $surveyResponse;
 
     /**
      * @Route("/international-survey/closing-details/{state}", name=self::WIZARD_ROUTE)
      * @Route("/international-survey/closing-details", name=self::START_ROUTE)
      */
-    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, UserInterface $user, string $state = null): Response
+    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, string $state = null): Response
     {
-        $this->surveyResponse = $this->getSurveyResponse($user);
+        $this->surveyResponse = $this->getSurveyResponse();
 
         if (!$state || $state === ClosingDetailsState::STATE_START) {
             $formWizard = $this->getFormWizard();
