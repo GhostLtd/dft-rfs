@@ -31,13 +31,7 @@ class StageDeleteFunctionalTest extends AbstractStageFunctionalTest
         $browser = $this->getBrowserAndLoadFixtures([DayStopFixtures::class]);
         $this->login($browser);
 
-        $this->clickSummaryListActionLink($browser, "5 stops or fewer (Bognor Regis to Bognor Regis)");
-
-        $uri = $this->getLink($browser, 'Delete Stage 1', 'govuk-button')->getUri();
-        $uri = str_replace('day-1', 'day-2', $uri);
-
-        $browser->request('GET', $uri);
-
+        $browser->request('GET', "https://{$_ENV['FRONTEND_HOSTNAME']}/domestic-survey/day-2/delete-day-stop-1");
         self::assertEquals(404, $browser->getResponse()->getStatusCode());
     }
 }
