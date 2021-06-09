@@ -6,6 +6,7 @@ use App\Entity\SurveyInterface;
 use Dompdf\Dompdf;
 use Google\Cloud\Storage\Bucket;
 use Google\Cloud\Storage\StorageObject;
+use Psr\Log\LoggerInterface;
 use Twig\Environment;
 
 abstract class AbstractPdfHelper
@@ -17,11 +18,13 @@ abstract class AbstractPdfHelper
 
     protected Environment $twig;
     protected Bucket $bucket;
+    protected LoggerInterface $logger;
 
-    public function __construct(Environment $twig, Bucket $exportBucket)
+    public function __construct(Environment $twig, Bucket $exportBucket, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->bucket = $exportBucket;
+        $this->logger = $logger;
     }
 
     public function generateAndUploadPdf(SurveyInterface $survey): StorageObject
@@ -67,18 +70,20 @@ abstract class AbstractPdfHelper
      */
     public function getExistingSurveyPDFs(SurveyInterface $survey): array
     {
+        $pdfs = [];
         $iterator = $this->bucket->objects([
             'delimiter' => '/',
             'prefix' => $this->getPrefix($survey),
         ]);
-        $pdfs = [];
+
+        /** @var StorageObject $obj */
         foreach(iterator_to_array($iterator) as $obj) {
             $pdfObject = $this->getPdfObject($survey, $obj);
 
-            if (!$pdfObject) {
-                // TODO: Log?
-            } else {
+            if ($pdfObject) {
                 $pdfs[$pdfObject->getComparator()] = $pdfObject;
+            } else {
+                $this->logger->alert("[PdfHelper] Unable to create PdfObject for resource: '{$obj->name()}'");
             }
         }
 
@@ -118,31 +123,5 @@ abstract class AbstractPdfHelper
     public function getSurveyPdfHtml(SurveyInterface $survey): string
     {
         return trim($this->twig->render($this->getTemplate(), ['survey' => $survey]));
-    }
-
-    private function processFooter(Dompdf $pdf): Dompdf
-    {
-        $canvas = $pdf->getCanvas();
-        $pageCount = $canvas->get_page_count();
-        $pageNumberMap = ['/{PAGE_COUNT}/', '/{PAGE_NUM}/'];
-        $fontMetric = $pdf->getFontMetrics();
-        $font = $fontMetric->getFont('sans-serif');
-        $size = 10;
-        $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-        $fontHeight = $fontMetric->getFontHeight($font, $size);
-        $textWidth = $canvas->get_text_width(preg_replace($pageNumberMap, $pageCount, $text), $font, $size);
-        $startY = $canvas->get_height() - $fontHeight - $this->mmToInchDots(10);
-        $startX = $canvas->get_width() - $textWidth - $this->mmToInchDots(10);
-        $canvas->page_text($startX, $startY, $text, $font, $size, [0, 0, 0]);
-
-        return $pdf;
-    }
-
-    /**
-     * DOMpdf units are based on 72dpi, regardless of the actual DPI!!
-     */
-    private function mmToInchDots($mm, $dpi = 72)
-    {
-        return ($mm / 25.4) * $dpi;
     }
 }
