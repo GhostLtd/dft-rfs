@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\ResponseFixtures;
+use App\Tests\Functional\AbstractWizardTest;
 
-class CsrgtBusinessAndVehiclesTest extends AbstractWizardTest
+class BusinessAndVehiclesTest extends AbstractWizardTest
 {
     protected function businessAndVehiclesData(string $trailerConfiguration, string $axleConfiguration): array
     {

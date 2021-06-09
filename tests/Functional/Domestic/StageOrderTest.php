@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\DayStopFixtures;
+use App\Tests\Functional\AbstractFrontendFunctionalTest;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class StageOrderTest extends AbstractFrontendFunctionalTest

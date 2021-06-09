@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\SurveyFixtures;
+use App\Tests\Functional\AbstractWizardTest;
 
-class CsrgtInitialDetailsTest extends AbstractWizardTest
+class InitialDetailsTest extends AbstractWizardTest
 {
     protected function initialDetailsData(string $inPossessionAnswer): array
     {
