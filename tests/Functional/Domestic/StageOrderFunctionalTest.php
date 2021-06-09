@@ -3,10 +3,8 @@
 namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\DayStopFixtures;
-use App\Tests\Functional\AbstractFrontendFunctionalTest;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-class StageOrderTest extends AbstractFrontendFunctionalTest
+class StageOrderFunctionalTest extends AbstractStageFunctionalTest
 {
     public function testStageReordering()
     {
@@ -27,18 +25,5 @@ class StageOrderTest extends AbstractFrontendFunctionalTest
 
         self::assertEquals($worthing, $this->getStageStartingLocation($browser, 'Stage 1'));
         self::assertEquals($bognor, $this->getStageStartingLocation($browser, 'Stage 2'));
-    }
-
-    protected function getStageStartingLocation(KernelBrowser $browser, string $stage): string
-    {
-        return $browser
-            ->getCrawler()
-            ->filterXPath(
-                "//main/h2[normalize-space()='{$stage}']/following-sibling::div[1]/dl/div/".
-                $this->summaryListPart('key', "Start location").
-                "/../".
-                $this->summaryListPart('value')
-            )
-            ->text();
     }
 }

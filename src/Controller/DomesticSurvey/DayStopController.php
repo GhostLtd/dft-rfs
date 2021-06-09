@@ -118,7 +118,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
         $this->dayNumber = intval($dayNumber);
         $this->stopNumber = intval($stopNumber);
 
-        $dayStop = $this->getDayStop();
+        $dayStop = $this->getDayStop(false);
         $numStops = $dayStop->getDay()->getStops()->count();
 
         return $confirmAction
@@ -134,7 +134,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
             );
     }
 
-    protected function getDayStop(): DayStop
+    protected function getDayStop(bool $createIfNotFound=true): DayStop
     {
         /** @var DayRepository $dayRepository */
         $dayRepository = $this->entityManager->getRepository(Day::class);
@@ -151,7 +151,9 @@ class DayStopController extends AbstractSessionStateWorkflowController
                     return $stop;
                 }
             } else {
-                return (new DayStop());
+                if ($createIfNotFound) {
+                    return (new DayStop());
+                }
             }
         } catch (NonUniqueResultException $e) {}
 

@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Link;
 
 abstract class AbstractFunctionalTest extends WebTestCase
 {
@@ -72,6 +73,11 @@ abstract class AbstractFunctionalTest extends WebTestCase
 
     protected function clickLink(KernelBrowser $client, string $text, string $linkClass=null): Crawler
     {
+        return $client->click($this->getLink($client, $text, $linkClass));
+    }
+
+    protected function getLink(KernelBrowser $client, string $text, string $linkClass=null): Link
+    {
         $parts = [];
 
         if ($linkClass) {
@@ -80,12 +86,10 @@ abstract class AbstractFunctionalTest extends WebTestCase
 
         $parts[] = "normalize-space()='{$text}'";
 
-        $link = $client
+        return $client
             ->getCrawler()
             ->filterXPath("//a[".join(' and ', $parts)."]")
             ->link();
-
-        return $client->click($link);
     }
 
     protected function classCheck(string $class): string
