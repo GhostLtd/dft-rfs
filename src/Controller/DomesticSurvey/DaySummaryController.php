@@ -35,15 +35,11 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     use SurveyHelperTrait;
 
-    /**
-     * @var DaySummary
-     */
     private DaySummary $daySummary;
 
     /**
      * @Route("/summary/start", name=self::START_ROUTE)
      * @Route("/summary/{state}", name=self::WIZARD_ROUTE)
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())") // TODO: Is this needed??
      */
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {

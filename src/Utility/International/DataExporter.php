@@ -11,6 +11,7 @@ use App\Serializer\Normalizer\International\SurveyActionsNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
 use App\Utility\Export\AbstractDataExporter;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -22,7 +23,8 @@ class DataExporter extends AbstractDataExporter
     protected SurveyRepository $surveyRepository;
     protected SurveyActionsNormalizer $surveyActionsNormalizer;
     protected TripRepository $tripRepository;
-    private ExportHelper $exportHelper;
+    protected ExportHelper $exportHelper;
+    protected LoggerInterface $logger;
 
     public function __construct(
         SqlServerInsertEncoder $sqlServerInsertEncoder,
@@ -30,7 +32,8 @@ class DataExporter extends AbstractDataExporter
         TripNormalizer $tripNormalizer,
         WorkflowInterface $internationalSurveyStateMachine,
         EntityManagerInterface $entityManager,
-        ExportHelper $exportHelper
+        ExportHelper $exportHelper,
+        LoggerInterface $logger
     )
     {
         parent::__construct($internationalSurveyStateMachine, $entityManager);
@@ -46,9 +49,10 @@ class DataExporter extends AbstractDataExporter
             $sqlServerInsertEncoder
         ]);
         $this->exportHelper = $exportHelper;
+        $this->logger = $logger;
     }
 
-    public function getDataForExport(int $weekNumber): ?string {
+    public function uploadExportData(int $weekNumber): bool {
         $weekStart = WeekNumberHelper::getDate($weekNumber);
         $weekEnd = WeekNumberHelper::getDate($weekNumber + 1);
         $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
@@ -60,11 +64,11 @@ class DataExporter extends AbstractDataExporter
                 $this->getActionsSQL($surveys);
             $this->exportHelper->upload($sql, $weekNumber);
             $this->confirmExport($surveys);
-            return $sql;
+            return true;
         } catch (\Throwable $e) {
             $this->cancelExport($surveys);
-            // Todo: log exception
-            return null;
+            $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
+            return false;
         }
     }
 

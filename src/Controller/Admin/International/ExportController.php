@@ -5,14 +5,14 @@ namespace App\Controller\Admin\International;
 use App\Form\ConfirmationType;
 use App\Utility\International\ExportHelper;
 use App\Utility\International\DataExporter;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/irhs/export")
@@ -45,7 +45,7 @@ class ExportController extends AbstractController
     /**
      * @Route("/{week}", name=self::EXPORT_WEEK_ROUTE, requirements={"week": "\d+"})
      */
-    public function exportWeek(Request $request, string $week, DataExporter $dataExporter)
+    public function exportWeek(Request $request, string $week, DataExporter $dataExporter, TranslatorInterface $translator)
     {
         if ($this->objectExists($week)) {
             throw new NotFoundHttpException();
@@ -64,21 +64,15 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                $sql = $dataExporter->getDataForExport($week);
-
-//                $response = new Response($sql);
-//                $response->headers->set(
-//                    'content-disposition', $response->headers->makeDisposition(
-//                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-//                    "irhs-export-{$week}.sql"
-//                    )
-//                );
-//                return $response;
-
-                if (!is_null($sql)) {
+                if ($dataExporter->uploadExportData($week)) {
                     return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
                 } else {
-                    // TODO: handle error
+                    $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+                        $translator->trans('international.export-failed-notification.title'),
+                        $translator->trans('international.export-failed-notification.heading'),
+                        $translator->trans('international.export-failed-notification.content')
+                    ));
+                    return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
                 }
             }
         }

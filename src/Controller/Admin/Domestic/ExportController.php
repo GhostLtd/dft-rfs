@@ -5,14 +5,14 @@ namespace App\Controller\Admin\Domestic;
 use App\Form\ConfirmationType;
 use App\Utility\Domestic\DataExporter;
 use App\Utility\Domestic\ExportHelper;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/csrgt/export")
@@ -45,7 +45,7 @@ class ExportController extends AbstractController
     /**
      * @Route("/{year}/{quarter}", name=self::EXPORT_QUARTER_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter)
+    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter, TranslatorInterface $translator)
     {
         if ($this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
@@ -64,21 +64,15 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                $sql = $exporter->getDataForExport($year, $quarter);
-
-//                $response = new Response($sql);
-//                $response->headers->set(
-//                    'content-disposition', $response->headers->makeDisposition(
-//                        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-//                        "csrgt-export-{$year}-Q{$quarter}.sql"
-//                    )
-//                );
-//                return $response;
-
-                if (!is_null($sql)) {
+                if ($exporter->uploadExportData($year, $quarter)) {
                     return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
                 } else {
-                    // TODO: handle error
+                    $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+                        $translator->trans('domestic.export-failed-notification.title'),
+                        $translator->trans('domestic.export-failed-notification.heading'),
+                        $translator->trans('domestic.export-failed-notification.content')
+                    ));
+                    return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
                 }
             }
         }
