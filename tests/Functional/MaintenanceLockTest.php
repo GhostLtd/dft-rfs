@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Tests\Functional\Deployment;
+namespace App\Tests\Functional;
 
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\DataFixtures\MaintenanceLockWithWhitelistFixtures;
-use App\Tests\Functional\AbstractFrontendFunctionalTest;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 

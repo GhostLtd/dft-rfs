@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Functional\Deployment;
+namespace App\Tests\Utility;
 
-use App\Tests\Functional\AbstractFrontendFunctionalTest;
+use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\RemoteActions;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class RemoteActionsHmacTest extends AbstractFrontendFunctionalTest
+class RemoteActionsHmacTest extends AbstractFunctionalTest
 {
     const HMAC_ACTION = 'test-function';
 

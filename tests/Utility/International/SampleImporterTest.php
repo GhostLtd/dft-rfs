@@ -28,6 +28,8 @@ class SampleImporterTest extends WebTestCase
 
     protected function tearDown(): void
     {
+        parent::tearDown();
+
         if ($this->tempFilename) {
             unlink($this->tempFilename);
         }

@@ -33,10 +33,11 @@ class RemoteActions
         return $output;
     }
 
-    public static function postInstall($kernelDir)
+    public static function postInstall($kernelDir = '')
     {
         $output = self::runProcess(["{$kernelDir}bin/console", 'messenger:stop-workers']); // stop running messenger workers
         $output .= self::runProcess(["{$kernelDir}bin/console", 'doctrine:migrations:migrate', '-n']); // run any pending migrations
+        $output .= "Post-install script completed successfully.\n";
         return $output;
     }
 
