@@ -13,6 +13,12 @@ abnormal_exit() {
   exit 1
 }
 
+success_exit() {
+  echo "Remote action successful."
+  exit 0
+}
+
+
 while getopts :a: option
 do
   case "${option}" in
@@ -56,12 +62,25 @@ URL=https://${FRONTEND_HOSTNAME}/_util/${ACTION}
 # If testing from dev environment with self-signed certs, add the "-k" option to curl
 HTTP_STATUS=$(curl ${URL} -w "%{http_code}" -G -d timestamp=${TIMESTAMP} -d hmac=${HASH} -s -o remote-action-response-${ACTION}.txt)
 
+# Host not resolved? Assume fresh install
+if [ $? == 6 ]; then
+  echo "Host not resolved. Stopping gracefully."
+  success_exit
+fi
+
+# 404? Assume fresh install or first deployment after adding script
+if [ $HTTP_STATUS == "404" ]; then
+  echo "Remote script not found. Stopping gracefully."
+  success_exit
+fi
+
 cat remote-action-response-${ACTION}.txt
 echo
 
-if [ ! $HTTP_STATUS == "200" ]; then
-  echo "Invalid HTTP response code: $HTTP_STATUS"
-  exit 1
+if [ $HTTP_STATUS == "200" ]; then
+  success_exit
 fi
 
-echo "Remote action successful."
+
+echo "Invalid HTTP response code: $HTTP_STATUS"
+exit 1
