@@ -4,8 +4,7 @@
 namespace App\EventSubscriber;
 
 
-use App\Entity\Utility\MaintenanceLock;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\MaintenanceLockRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -16,19 +15,21 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
 {
     protected Environment $twig;
     protected RouterInterface $router;
-    private EntityManagerInterface $entityManager;
+    protected MaintenanceLockRepository $maintenanceLockRepository;
 
     protected const ROUTE_WHITELIST = [
         'app_home_index',
         'app_home_sitemap',
         'app_home_accessibilitystatement',
+        'util_remoteaction_preinstall',
+        'util_remoteaction_postinstall',
     ];
 
-    public function __construct(Environment $twig, RouterInterface $router, EntityManagerInterface $entityManager)
+    public function __construct(Environment $twig, RouterInterface $router, MaintenanceLockRepository $maintenanceLockRepository)
     {
         $this->twig = $twig;
         $this->router = $router;
-        $this->entityManager = $entityManager;
+        $this->maintenanceLockRepository = $maintenanceLockRepository;
     }
 
     public function onKernelRequest(RequestEvent $event)
@@ -50,21 +51,12 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
             return false;
         }
 
-        try {
-            $queryResult = $this->entityManager->createQueryBuilder()
-                ->select('m.whitelistedIps')
-                ->from(MaintenanceLock::class, 'm')
-                ->getQuery()
-                ->getSingleScalarResult();
-        } catch (\Throwable $e) {
+        $whitelistIPs = $this->maintenanceLockRepository->isLocked();
+        if ($whitelistIPs === false) {
             return false;
         }
 
-        if (empty($queryResult)) {
-            return false;
-        }
-
-        if (in_array($event->getRequest()->getClientIp(), json_decode($queryResult, true))) {
+        if (in_array($event->getRequest()->getClientIp(), $whitelistIPs)) {
             return false;
         }
 

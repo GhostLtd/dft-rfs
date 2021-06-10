@@ -32,14 +32,6 @@ class MessageHandlerTest extends AbstractFunctionalTest
         self::ensureKernelShutdown();
     }
 
-    protected function tearDown(): void
-    {
-        // empty the queue (clear up left over messages)
-        $this->entityManager->getConnection()->createQueryBuilder()
-            ->delete('messenger_messages')
-            ->execute();
-    }
-
     public function testSendLetterAccepted()
     {
         $survey = $this->getSurvey();

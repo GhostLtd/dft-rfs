@@ -9,7 +9,7 @@ abstract class AbstractFrontendFunctionalTest extends AbstractFunctionalTest
 {
     protected function login(KernelBrowser $client): Crawler
     {
-        $client->request('GET', 'https://frontend.rfs.test/login');
+        $client->request('GET', "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
 
         return $client->submitForm('passcode_login_sign_in', [
             'passcode_login[passcode][0]' => 'test',
