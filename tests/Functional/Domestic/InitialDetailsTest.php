@@ -4,61 +4,51 @@ namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\SurveyFixtures;
 use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\Wizard\FormTestCase;
+use App\Tests\Functional\Wizard\WizardStepTestCase;
 
 class InitialDetailsTest extends AbstractWizardTest
 {
     protected function initialDetailsData(string $inPossessionAnswer): array
     {
         return [
-            [
-                "Welcome to your Domestic Road Haulage Survey", // Page title
-                "form_continue", // Submission button
-                [], // Expected errors
-                [], // Data
-            ],
-            [
-                "Contact details",
-                "contact_details_continue",
-                [
-                    "#contact_details_contactName",
-                    "#contact_details_contactTelephone",
-                    "#contact_details_contactEmail",
-                ],
-                [
+            new WizardStepTestCase("Welcome to your Domestic Road Haulage Survey", "form_continue", [
+                new FormTestCase([])
+            ]),
+            new WizardStepTestCase("Contact details", "contact_details_continue", [
+                new FormTestCase(
+                    [],
+                    ["#contact_details_contactName", "#contact_details_contactTelephone", "#contact_details_contactEmail"]
+                ),
+                new FormTestCase([
                     'contact_details' => [
                         'contactName' => 'Mark',
                         'contactEmail' => 'mark@example.com',
                     ],
-                ],
-            ],
-            [
-                "Will you be in possession of the vehicle during your survey week?",
-                "in_possession_of_vehicle_continue",
-                [
-                    "#in_possession_of_vehicle_isInPossessionOfVehicle",
-                ],
-                [
+                ]),
+            ]),
+            new WizardStepTestCase("Will you be in possession of the vehicle during your survey week?", "in_possession_of_vehicle_continue", [
+                new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
+                new FormTestCase([
                     'in_possession_of_vehicle' => [
                         'isInPossessionOfVehicle' => $inPossessionAnswer,
-                    ],
-                ],
-            ]
+                    ]
+                ]),
+            ]),
         ];
     }
 
     protected function onHireData(): array
     {
         return [
-            [
-                "Hiree details",
-                "hiree_details_continue",
-                [
+            new WizardStepTestCase("Hiree details", "hiree_details_continue", [
+                new FormTestCase([], [
                     "#hiree_details_hireeEmail",
                     "#hiree_details_hireeName",
                     '#hiree_details_hireeAddress_line1',
                     '#hiree_details_hireeAddress_postcode',
-                ],
-                [
+                ]),
+                new FormTestCase([
                     'hiree_details' => [
                         'hireeName' => "Mark",
                         'hireeEmail' => "mark@example.com",
@@ -67,21 +57,19 @@ class InitialDetailsTest extends AbstractWizardTest
                             'postcode' => 'AB10 1AB',
                         ],
                     ],
-                ],
-            ],
+                ]),
+            ]),
         ];
     }
 
     protected function scrappedData(): array
     {
         return [
-            [
-                "When was the vehicle scrapped or stolen?",
-                "scrapped_details_continue",
-                [
+            new WizardStepTestCase("When was the vehicle scrapped or stolen?","scrapped_details_continue", [
+                new FormTestCase([], [
                     "#scrapped_details_scrappedDate",
-                ],
-                [
+                ]),
+                new FormTestCase([
                     'scrapped_details' => [
                         'scrappedDate' => [
                             'day' => '12',
@@ -89,25 +77,23 @@ class InitialDetailsTest extends AbstractWizardTest
                             'year' => '2021',
                         ],
                     ],
-                ],
-            ],
+                ]),
+            ]),
         ];
     }
 
     protected function soldData(): array
     {
         return [
-            [
-                "Details of the sale",
-                "sold_details_continue",
-                [
+            new WizardStepTestCase("Details of the sale","sold_details_continue", [
+                new FormTestCase([], [
                     "#sold_details_soldDate",
                     "#sold_details_newOwnerName",
                     "#sold_details_newOwnerEmail",
                     '#sold_details_newOwnerAddress_line1',
                     '#sold_details_newOwnerAddress_postcode',
-                ],
-                [
+                ]),
+                new FormTestCase([
                     'sold_details' => [
                         'soldDate' => [
                             'day' => '12',
@@ -121,8 +107,8 @@ class InitialDetailsTest extends AbstractWizardTest
                             'postcode' => 'AB10 1AB',
                         ],
                     ],
-                ],
-            ],
+                ]),
+            ]),
         ];
     }
 
