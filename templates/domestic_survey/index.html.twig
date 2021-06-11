@@ -9,7 +9,7 @@
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.summary.heading'|trans }}</h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('domestic.summary.vehicle', survey.registrationMark) }}
+        {{ actionlessSummaryListRow('domestic.summary.vehicle', survey.registrationMark|formatRegMark) }}
         {{ actionlessSummaryListRow('domestic.summary.start-date', survey.surveyPeriodStart | date('l, jS F Y')) }}
     </dl>
     {% if survey.initialDetailsComplete %}
