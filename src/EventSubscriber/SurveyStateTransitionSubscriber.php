@@ -90,7 +90,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         if (!$survey->getSubmissionDate()) {
             $survey->setSubmissionDate(new DateTime('now'));
-            $this->entityManager->flush();
 
             if ($survey instanceof DomesticSurvey) {
                 $this->domesticPdfHelper->generateAndUploadPdf($survey);
