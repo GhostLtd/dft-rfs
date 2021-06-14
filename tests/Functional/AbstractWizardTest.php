@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use App\Tests\Functional\Wizard\DatabaseTestCase;
 use App\Tests\Functional\Wizard\WizardEndTestCase;
 use App\Tests\Functional\Wizard\WizardStepTestCase;
 use App\Tests\Functional\Wizard\WizardTestCase;
@@ -10,16 +11,18 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
 {
-    protected function getBrowserLoadFixturesAndLogin(array $fixtures)
+    protected function getBrowserLoadFixturesAndLogin(array $fixtures): KernelBrowser
     {
-        $browser = $this->getBrowserAndLoadFixtures($fixtures);
-        $this->login($browser);
+        $this->loadFixtures($fixtures);
+        $this->login($this->browser);
 
-        return $browser;
+        return $this->browser;
     }
 
     protected function doWizardTest(KernelBrowser $browser, array $wizardTestCases)
     {
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+
         /** @var WizardTestCase $wizardTestCase */
         foreach ($wizardTestCases as $wizardTestCase) {
             $crawler = $browser->getCrawler();
@@ -52,6 +55,11 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
                 } else if ($matchMode === WizardEndTestCase::MODE_CONTAINS) {
                     $this->assertStringContainsString($expectedTitle, $actualTitle, 'Page title as expected');
                 }
+            } else if ($wizardTestCase instanceof DatabaseTestCase) {
+                $wizardTestCase->checkDatabaseAsExpected($entityManager, $this);
+            } else {
+                $wizardTestCaseClass = get_class($wizardTestCase);
+                $this->fail("Unknown wizard test case type - '{$wizardTestCaseClass}'");
             }
         }
     }

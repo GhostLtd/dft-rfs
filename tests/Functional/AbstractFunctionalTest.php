@@ -4,6 +4,8 @@ namespace App\Tests\Functional;
 
 use Doctrine\Common\DataFixtures\Executor\AbstractExecutor;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -20,20 +22,23 @@ abstract class AbstractFunctionalTest extends WebTestCase
     }
 
     protected ReferenceRepository $fixtureReferenceRepository;
+    protected KernelBrowser $browser;
+
+    protected function setUp()
+    {
+        $this->browser = self::createClient();
+        $this->browser->followRedirects(true);
+
+//        $this->browser->disableReboot();
+//        $entityManager = $this->getEntityManager();
+//        $entityManager->clear();
+
+        parent::setUp();
+    }
 
     protected function getFixtureByReference($reference)
     {
         return $this->fixtureReferenceRepository->getReference($reference);
-    }
-
-    protected function getBrowserAndLoadFixtures(array $fixtures): KernelBrowser
-    {
-        $client = self::createClient();
-        $client->followRedirects(true);
-
-        $this->loadFixtures($fixtures);
-
-        return $client;
     }
 
     protected function loadFixtures(array $classNames = [], bool $append = false, ?string $omName = null, string $registryName = 'doctrine', ?int $purgeMode = null): ?AbstractExecutor
@@ -95,5 +100,11 @@ abstract class AbstractFunctionalTest extends WebTestCase
     protected function classCheck(string $class): string
     {
         return "contains(concat(' ',normalize-space(@class),' '),' {$class} ')";
+    }
+
+    protected function getEntityManager(): EntityManager
+    {
+        $container = self::$kernel->getContainer();
+        return $container->get(EntityManagerInterface::class);
     }
 }
