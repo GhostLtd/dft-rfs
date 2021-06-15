@@ -12,25 +12,25 @@ class MaintenanceLockTest extends AbstractFrontendFunctionalTest
     public function testMaintenanceLockInactive()
     {
         // we have to load no fixtures to get an empty database
-        $browser = $this->getBrowserAndLoadFixtures([]);
-        $this->verifyAccessNormal($browser);
+        $this->loadFixtures([]);
+        $this->verifyAccessNormal($this->browser);
     }
 
     public function testMaintenanceLockActive()
     {
-        $browser = $this->getBrowserAndLoadFixtures([MaintenanceLockFixtures::class]);
+        $this->loadFixtures([MaintenanceLockFixtures::class]);
 
-        $response = $browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/");
+        $response = $this->browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/");
         self::assertStringContainsString('To complete the survey', $response->outerHtml());
 
-        $response = $browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
+        $response = $this->browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
         self::assertStringContainsString('Scheduled maintenance - Service unavailable', $response->outerHtml());
     }
 
     public function testMaintenanceLockActiveWhitelist()
     {
-        $browser = $this->getBrowserAndLoadFixtures([MaintenanceLockWithWhitelistFixtures::class]);
-        $this->verifyAccessNormal($browser);
+        $this->loadFixtures([MaintenanceLockWithWhitelistFixtures::class]);
+        $this->verifyAccessNormal($this->browser);
     }
 
     protected function verifyAccessNormal(KernelBrowser $browser)

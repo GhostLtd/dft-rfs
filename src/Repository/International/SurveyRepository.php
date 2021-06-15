@@ -4,9 +4,11 @@ namespace App\Repository\International;
 
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
+use App\Repository\DashboardStatsTrait;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,10 +19,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SurveyRepository extends ServiceEntityRepository
 {
-    protected $entityManager;
+    protected CompanyRepository $companyRepo;
+    protected EntityManagerInterface $entityManager;
 
-    /** @var CompanyRepository $companyRepo */
-    protected $companyRepo;
+    use DashboardStatsTrait;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,7 +32,7 @@ class SurveyRepository extends ServiceEntityRepository
         parent::__construct($registry, Survey::class);
     }
 
-    public function findWithVehiclesAndTrips(string $id)
+    public function findWithVehiclesAndTrips(string $id): ?Survey
     {
         return $this->createQueryBuilder('s')
             ->select('s, r, v, t, a, p')

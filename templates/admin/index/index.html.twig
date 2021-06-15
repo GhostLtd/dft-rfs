@@ -3,4 +3,18 @@
 {% set translation_prefix = "admin.dashboard" %}
 
 {% block adminContent %}
+    <div class="charts-container">
+        <div class="chart-container">
+            <h2 class="govuk-heading govuk-heading-m">Domestic surveys</h2>
+            <canvas class="pie-chart chart-domestic-counts" data-chart="{{ domesticCounts|json_encode }}"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2 class="govuk-heading govuk-heading-m">International surveys</h2>
+            <canvas class="pie-chart chart-international-counts" data-chart="{{ internationalCounts|json_encode }}"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2 class="govuk-heading govuk-heading-m">Pre-enquiries</h2>
+            <canvas class="pie-chart chart-pre-enquiry-counts" data-chart="{{ preEnquiryCounts|json_encode }}"></canvas>
+        </div>
+    </div>
 {% endblock %}

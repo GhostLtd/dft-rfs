@@ -3,6 +3,7 @@
 namespace App\Repository\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Repository\DashboardStatsTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +17,8 @@ use RuntimeException;
  */
 class PreEnquiryRepository extends ServiceEntityRepository
 {
+    use DashboardStatsTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PreEnquiry::class);
