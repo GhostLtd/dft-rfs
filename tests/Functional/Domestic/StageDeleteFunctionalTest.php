@@ -10,28 +10,29 @@ class StageDeleteFunctionalTest extends AbstractStageFunctionalTest
     {
         $bognor = 'Bognor Regis — loaded';
         $worthing = 'Worthing — loaded';
+        
+        $this->loadFixtures([DayStopFixtures::class]);
+        $this->login($this->browser);
 
-        $browser = $this->getBrowserAndLoadFixtures([DayStopFixtures::class]);
-        $this->login($browser);
-        $this->clickSummaryListActionLink($browser, "5 stops or fewer (Bognor Regis to Bognor Regis)");
+        $this->clickSummaryListActionLink($this->browser, "5 stops or fewer (Bognor Regis to Bognor Regis)");
 
-        self::assertEquals($bognor, $this->getStageStartingLocation($browser, 'Stage 1'));
-        self::assertEquals($worthing, $this->getStageStartingLocation($browser, 'Stage 2'));
+        self::assertEquals($bognor, $this->getStageStartingLocation($this->browser, 'Stage 1'));
+        self::assertEquals($worthing, $this->getStageStartingLocation($this->browser, 'Stage 2'));
 
-        $this->clickLink($browser, 'Delete Stage 1', 'govuk-button');
+        $this->clickLink($this->browser, 'Delete Stage 1', 'govuk-button');
 
-        $browser->submitForm('Yes, delete this stage');
+        $this->browser->submitForm('Yes, delete this stage');
 
-        self::assertEquals($worthing, $this->getStageStartingLocation($browser, 'Stage 1'));;
-        self::assertEquals(1, $this->countStages($browser));
+        self::assertEquals($worthing, $this->getStageStartingLocation($this->browser, 'Stage 1'));;
+        self::assertEquals(1, $this->countStages($this->browser));
     }
 
     public function testStageDeletionOnNonExistentDay()
     {
-        $browser = $this->getBrowserAndLoadFixtures([DayStopFixtures::class]);
-        $this->login($browser);
+        $this->loadFixtures([DayStopFixtures::class]);
+        $this->login($this->browser);
 
-        $browser->request('GET', "https://{$_ENV['FRONTEND_HOSTNAME']}/domestic-survey/day-2/delete-day-stop-1");
-        self::assertEquals(404, $browser->getResponse()->getStatusCode());
+        $this->browser->request('GET', "https://{$_ENV['FRONTEND_HOSTNAME']}/domestic-survey/day-2/delete-day-stop-1");
+        self::assertEquals(404, $this->browser->getResponse()->getStatusCode());
     }
 }

@@ -11,19 +11,20 @@ class StageOrderFunctionalTest extends AbstractStageFunctionalTest
         $bognor = 'Bognor Regis — loaded';
         $worthing = 'Worthing — loaded';
 
-        $browser = $this->getBrowserAndLoadFixtures([DayStopFixtures::class]);
-        $this->login($browser);
-        $this->clickSummaryListActionLink($browser, "5 stops or fewer (Bognor Regis to Bognor Regis)");
+        $this->loadFixtures([DayStopFixtures::class]);
+        $this->login($this->browser);
 
-        self::assertEquals($bognor, $this->getStageStartingLocation($browser, 'Stage 1'));
-        self::assertEquals($worthing, $this->getStageStartingLocation($browser, 'Stage 2'));
+        $this->clickSummaryListActionLink($this->browser, "5 stops or fewer (Bognor Regis to Bognor Regis)");
 
-        $this->clickLink($browser, 'Re-order stages', 'govuk-button');
-        $this->clickLink($browser, 'Move down: stage #1 - Bognor Regis to Chichester', 'govuk-link');
+        self::assertEquals($bognor, $this->getStageStartingLocation($this->browser, 'Stage 1'));
+        self::assertEquals($worthing, $this->getStageStartingLocation($this->browser, 'Stage 2'));
 
-        $browser->submitForm('Save order');
+        $this->clickLink($this->browser, 'Re-order stages', 'govuk-button');
+        $this->clickLink($this->browser, 'Move down: stage #1 - Bognor Regis to Chichester', 'govuk-link');
 
-        self::assertEquals($worthing, $this->getStageStartingLocation($browser, 'Stage 1'));
-        self::assertEquals($bognor, $this->getStageStartingLocation($browser, 'Stage 2'));
+        $this->browser->submitForm('Save order');
+
+        self::assertEquals($worthing, $this->getStageStartingLocation($this->browser, 'Stage 1'));
+        self::assertEquals($bognor, $this->getStageStartingLocation($this->browser, 'Stage 2'));
     }
 }
