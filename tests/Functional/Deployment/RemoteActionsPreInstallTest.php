@@ -14,6 +14,11 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 {
     private array $addedMigrations = [];
 
+    protected function setUp()
+    {
+        $kernel = static::bootKernel();
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -21,11 +26,12 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
         // delete any migration files that have been created!!
         $filesystem = new Filesystem();
         $filesystem->remove($this->addedMigrations);
+
+        self::ensureKernelShutdown();
     }
 
     public function testNoMigrations()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         self::assertStringContainsString('Pre-install checks have passed.', RemoteActions::preInstall());
@@ -33,7 +39,6 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 
     public function testMigrationsNotMaintenance()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         $this->generateMigration();
@@ -48,7 +53,6 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 
     public function testMigrationsMaintenance()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([MaintenanceLockFixtures::class, DoctrineMigrationFixtures::class]);
 
         $this->generateMigration();
