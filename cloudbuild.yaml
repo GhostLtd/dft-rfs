@@ -17,7 +17,7 @@ steps:
       waitFor: ['pre-install-script']
 
     # build assets, and .env.local file
-    - name: "gcr.io/cloud-builders/yarn"
+    - name: node:14
       id: 'yarn-build'
       entrypoint: sh
       args: ['-c', 'yarn install --frozen-lockfile && yarn run deploy-build && yarn run build-env-subs']
