@@ -6,10 +6,9 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Vehicle;
 use App\Entity\Volume;
+use App\Repository\DashboardStatsTrait;
 use App\Utility\WeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,16 +19,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SurveyRepository extends ServiceEntityRepository
 {
+    use DashboardStatsTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Survey::class);
     }
 
-    /**
-     * @param $id
-     * @return Survey
-     */
-    public function findOneByIdWithResponseAndVehicle($id)
+    public function findOneByIdWithResponseAndVehicle($id): ?Survey
     {
         return $this->createQueryBuilder('survey')
             ->select('survey, passcode_user, response, vehicle')
@@ -47,7 +44,7 @@ class SurveyRepository extends ServiceEntityRepository
      * @param bool $isNorthernIreland
      * @return Survey[]
      */
-    public function findByTypeWithResponseAndVehicle($isNorthernIreland = false)
+    public function findByTypeWithResponseAndVehicle($isNorthernIreland = false): array
     {
         return $this->createQueryBuilder('survey')
             ->select('survey, passcode_user, response, vehicle')
@@ -60,11 +57,10 @@ class SurveyRepository extends ServiceEntityRepository
             ->execute();
     }
 
-
     /**
      * @return Survey[]
      */
-    public function findForExport($year, $quarter)
+    public function findForExport($year, $quarter): array
     {
         $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
@@ -92,41 +88,12 @@ class SurveyRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    // /**
-    //  * @return Survey[] Returns an array of Survey objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Survey
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
     public function queryForExport()
     {
         $true = 1;
         $false = 0;
-        $c = fn($constant) => $constant;
-        $chr = 'chr';
+//        $c = fn($constant) => $constant;
+//        $chr = 'chr';
 
         $expandConstBitMap = function($field, $map, $addCommaToLastItem = false) use ($true, $false) {
             $sql = "";
