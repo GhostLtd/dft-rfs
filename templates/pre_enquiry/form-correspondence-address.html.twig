@@ -5,7 +5,7 @@
     {% if form.isCorrectAddress is defined %}
         <h3 class="govuk-heading-s">{{ "#{translation_prefix}.original-address"|trans }}</h3>
         <p class="govuk-body govuk-!-margin-bottom-8">
-            {{ form.isCorrectAddress.vars.label_translation_parameters.expectedAddress|formatAddress(true, false)|nl2br }}
+            {{ form.vars.value.preEnquiry.invitationAddress|formatAddress(true, false)|nl2br }}
         </p>
     {% endif %}
 {% endset %}

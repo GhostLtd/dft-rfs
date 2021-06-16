@@ -530,6 +530,9 @@ domestic:
       name:
         label: "Full name"
         help: ""
+      telephone:
+        label: "Phone number"
+        help: ""
       email:
         label: "Email address"
         help: ""

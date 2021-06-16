@@ -112,7 +112,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
 
         switch ($viewData->getIsInPossessionOfVehicle()) {
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
-                foreach(['hireeAddress', 'hireeName', 'hireeEmail'] as $field) {
+                foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {
                     $forms[$field]->setData($accessor->getValue($viewData, $field));
                 }
                 break;
@@ -147,7 +147,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         // If you say "hire", it'll give you the "sold" fields. If you say "scrapped", it'll give you "sold" + "hire" fields etc.
         $getFieldsExcluding = function(string $excludeGroup) {
             return array_merge(...array_values(array_filter([
-                'hire' => ['hireeAddress', 'hireeName', 'hireeEmail'],
+                'hire' => ['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'],
                 'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
             ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
         };
@@ -155,7 +155,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         switch ($isInPossession) {
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
                 $viewData->setUnableToCompleteDate(null);
-                foreach(['hireeAddress', 'hireeName', 'hireeEmail'] as $field) {
+                foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {
                     $accessor->setValue($viewData, $field, $forms[$field]->getData());
                 }
 

@@ -20,6 +20,12 @@ class HireeDetailsType extends AbstractType
                 'attr' => ['class' => 'govuk-input--width-20'],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
+            ->add('hireeTelephone', Gds\InputType::class, [
+                'label' => 'domestic.survey-response.hiree-details.telephone.label',
+                'help' => 'domestic.survey-response.hiree-details.telephone.help',
+                'attr' => ['class' => 'govuk-input--width-20'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
             ->add('hireeEmail', Gds\EmailType::class, [
                 'label' => 'domestic.survey-response.hiree-details.email.label',
                 'help' => 'domestic.survey-response.hiree-details.email.help',

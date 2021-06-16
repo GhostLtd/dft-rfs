@@ -28,7 +28,10 @@
             'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label',
             (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans
         ) -}}
+
+        {# Contact details have been left out intentionally, for data protection purposes #}
     </dl>
+
 
     {%- if isInPossession and survey.response -%}
         <h1 class="govuk-heading-xl">Business details</h1>

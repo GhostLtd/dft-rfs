@@ -18,8 +18,9 @@
     <h2 class="govuk-heading-m">Hiree details</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 7 }}">
         {{ row(showActions, 'domestic.survey-response.hiree-details.name.label', survey.response.hireeName, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.hiree-details.email.label', survey.response.hireeEmail, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.hiree-details.address.label', survey.response.hireeAddress|formatAddress(true), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.telephone.label', survey.response.hireeTelephone ?? '-', canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.email.label', survey.response.hireeEmail ?? '-', canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.hiree-details.address.label', (survey.response.hireeAddress and survey.response.hireeAddress.filled) ? (survey.response.hireeAddress|formatAddress(true)) : '-', canCompleteActionLinks) }}
     </dl>
 {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
     <h2 class="govuk-heading-m">{{ 'domestic.survey-response.sold-details-display.heading'|trans }}</h2>
