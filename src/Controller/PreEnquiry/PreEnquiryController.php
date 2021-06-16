@@ -25,7 +25,7 @@ class PreEnquiryController extends AbstractController
     public const COMPLETED_ROUTE = 'app_pre_enquiry_completed';
 
     /**
-     * @Route("/completed", name=self::COMPLETED_ROUTE)
+     * @Route("/pre-enquiry/completed", name=self::COMPLETED_ROUTE)
      */
     public function completed(UserInterface $user): Response {
         $preEnquiry = $this->getPreEnquiry($user);

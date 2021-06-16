@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/irhs/preEnquiry/{preEnquiryId}")
+ * @Route("/irhs/pre-enquiry/{preEnquiryId}")
  * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
  */
 class PreEnquiryViewController extends AbstractController
