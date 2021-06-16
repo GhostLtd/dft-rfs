@@ -77,15 +77,23 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Email(message="common.email.invalid", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
+     * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
      */
     private $hireeEmail;
 
     /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
+     * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
+     */
+    private $hireeTelephone;
+
+    /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"hiree_details", "admin_on_hire"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"hiree_details", "admin_on_hire"}, validatePostcode=true, allowBlank=true)
+     * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
      */
     private $hireeAddress;
 
@@ -408,5 +416,29 @@ class SurveyResponse extends AbstractSurveyResponse
     public function getStopDayCount(): int
     {
         return $this->days->filter(fn(Day $day) => $day->getStops()->count() !== 0)->count();
+    }
+
+    public function getHireeTelephone(): ?string
+    {
+        return $this->hireeTelephone;
+    }
+
+    public function setHireeTelephone(?string $hireeTelephone): self
+    {
+        $this->hireeTelephone = $hireeTelephone;
+
+        return $this;
+    }
+
+    /**
+     * Used in constraint validation for hiree details
+     */
+    public function getHireeContactMethodCount(): int
+    {
+        return
+            (empty($this->getHireeEmail()) ? 0 : 1)
+            + (empty($this->getHireeTelephone()) ? 0 : 1)
+            + ((is_null($this->getHireeAddress()) || !$this->getHireeAddress()->isFilled()) ? 0 : 1)
+        ;
     }
 }

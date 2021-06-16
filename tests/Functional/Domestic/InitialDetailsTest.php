@@ -43,10 +43,10 @@ class InitialDetailsTest extends AbstractWizardTest
         return [
             new WizardStepTestCase("Hiree details", "hiree_details_continue", [
                 new FormTestCase([], [
+                    "#hiree_details_hireeTelephone",
                     "#hiree_details_hireeEmail",
                     "#hiree_details_hireeName",
-                    '#hiree_details_hireeAddress_line1',
-                    '#hiree_details_hireeAddress_postcode',
+                    '#hiree_details_hireeAddress',
                 ]),
                 new FormTestCase([
                     'hiree_details' => [
