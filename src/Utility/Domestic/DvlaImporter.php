@@ -1,13 +1,10 @@
 <?php
 
-
 namespace App\Utility\Domestic;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\LongAddress;
 use App\Utility\AbstractBulkSurveyImporter;
-use App\Utility\WeekNumberHelper;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Form\FormError;

@@ -4,6 +4,7 @@ namespace App\Repository\International;
 
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
+use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -74,5 +75,27 @@ class SurveyRepository extends ServiceEntityRepository
                 'weekEnd' => $weekEnd,
             ])
             ->execute();
+    }
+
+    public function getOverdueCount(): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.surveyPeriodEnd < :now')
+            ->andWhere('s.state IN (:activeStates)')
+            ->setParameter('now', new \DateTime())
+            ->setParameter('activeStates', SurveyInterface::ACTIVE_STATES)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getInProgressCount(): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.state IN (:activeStates)')
+            ->setParameter('activeStates', SurveyInterface::ACTIVE_STATES)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

@@ -22,7 +22,7 @@ use App\Features;
 use App\Utility\LoadingPlaceHelper;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\SessionTimeoutHelper;
-use App\Utility\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\ConsignmentState;

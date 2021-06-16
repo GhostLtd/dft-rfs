@@ -2,7 +2,7 @@
 
 namespace App\Tests\Utility;
 
-use App\Utility\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 

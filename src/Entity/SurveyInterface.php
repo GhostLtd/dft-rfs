@@ -30,6 +30,14 @@ interface SurveyInterface
         'admin.survey.state.exported' => self::STATE_EXPORTED,
     ];
 
+    public const ACTIVE_STATES = [
+        self::STATE_INVITATION_SENT,
+        self::STATE_INVITATION_PENDING,
+        self::STATE_INVITATION_FAILED,
+        self::STATE_IN_PROGRESS,
+        self::STATE_NEW,
+    ];
+
     public function getId(): ?string;
     public function getPasscodeUser(): ?PasscodeUser;
     public function getNotifiedDate(): ?DateTime;

@@ -4,10 +4,11 @@ namespace App\Repository\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\SurveyInterface;
 use App\Entity\Vehicle;
 use App\Entity\Volume;
 use App\Repository\DashboardStatsTrait;
-use App\Utility\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -86,6 +87,36 @@ class SurveyRepository extends ServiceEntityRepository
             ])
             ->getQuery()
             ->execute();
+    }
+
+    public function getOverdueCount(bool $isNortherIreland): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.isNorthernIreland = :isNorthernIreland')
+            ->andWhere('s.surveyPeriodEnd < :now')
+            ->andWhere('s.state IN (:activeStates)')
+            ->setParameters([
+                'now' => new \DateTime(),
+                'activeStates' => SurveyInterface::ACTIVE_STATES,
+                'isNorthernIreland' => $isNortherIreland,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getInProgressCount(bool $isNortherIreland): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.isNorthernIreland = :isNorthernIreland')
+            ->andWhere('s.state IN (:activeStates)')
+            ->setParameters([
+                'activeStates' => SurveyInterface::ACTIVE_STATES,
+                'isNorthernIreland' => $isNortherIreland,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function queryForExport()

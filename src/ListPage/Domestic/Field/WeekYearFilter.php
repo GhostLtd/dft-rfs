@@ -7,7 +7,7 @@ namespace App\ListPage\Domestic\Field;
 use App\Form\Admin\DomesticSurvey\SurveyListField\WeekYearFilterType;
 use App\ListPage\Field\FilterableInterface;
 use App\ListPage\Field\Simple;
-use App\Utility\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\QueryBuilder;
 
 class WeekYearFilter extends Simple implements FilterableInterface

@@ -9,7 +9,7 @@ use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
 use App\Utility\RegistrationMarkHelper;
-use App\Utility\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

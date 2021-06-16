@@ -3,6 +3,30 @@
 {% set translation_prefix = "admin.dashboard" %}
 
 {% block adminContent %}
+    <div class="info-blocks-container info-blocks-container-csrgt">
+        <div class="info-block-container info-block-container-gb">
+            <div class="info-block">
+                <span class="info-block--large">CSRGT</span>
+                <span class="info-block--small">Week {{ domesticWeek }}, {{ domesticYear }}</span>
+            </div>
+            {{ _self.surveyBlocks(domesticGbInProgressCount, domesticGbOverdueCount, '(GB)') }}
+        </div>
+        <div class="info-block-container info-block-container-ni">
+            <div class="info-block info-block-empty"></div>
+            {{ _self.surveyBlocks(domesticNiInProgressCount, domesticNiOverdueCount, '(NI)') }}
+        </div>
+    </div>
+
+    <div class="info-blocks-container info-blocks-container-irhs">
+        <div class="info-block-container info-block-container-irhs">
+            <div class="info-block">
+                <span class="info-block--large">IRHS</span>
+                <span class="info-block--small">Week {{ internationalWeek }}</span>
+            </div>
+            {{ _self.surveyBlocks(internationalInProgressCount, internationalOverdueCount) }}
+        </div>
+    </div>
+
     <div class="charts-container">
         <div class="chart-container">
             <h2 class="govuk-heading govuk-heading-m">Domestic surveys</h2>
@@ -10,7 +34,8 @@
         </div>
         <div class="chart-container">
             <h2 class="govuk-heading govuk-heading-m">International surveys</h2>
-            <canvas class="pie-chart chart-international-counts" data-chart="{{ internationalCounts|json_encode }}"></canvas>
+            <canvas class="pie-chart chart-international-counts"
+                    data-chart="{{ internationalCounts|json_encode }}"></canvas>
         </div>
         <div class="chart-container">
             <h2 class="govuk-heading govuk-heading-m">Pre-enquiries</h2>
@@ -18,3 +43,14 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro surveyBlocks(inProgressCount, overdueCount, extra) %}
+    <div class="info-block info-block-success">
+        <span class="info-block--large">{{ inProgressCount }}</span>
+        <span class="info-block--small">Open surveys{% if extra %} {{ extra }}{% endif %}</span>
+    </div>
+    <div class="info-block info-block-warning">
+        <span class="info-block--large">{{ overdueCount }}</span>
+        <span class="info-block--small">Overdue surveys{% if extra %} {{ extra }}{% endif %}</span>
+    </div>
+{% endmacro %}

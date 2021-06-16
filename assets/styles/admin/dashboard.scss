@@ -1,9 +1,69 @@
+@import "~govuk-frontend/govuk/base";
+
 .charts-container {
   display: flex;
   margin: 0 -15px;
+
+  .chart-container {
+    width: 33%;
+    padding: 0 15px;
+  }
 }
 
-.chart-container {
-  width: 33%;
-  padding: 0 15px;
+.info-blocks-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 -15px 15px;
+
+  .info-block-container {
+    padding: 0 15px;
+    display: flex;
+  }
+}
+
+.info-block-container-gb .info-block {
+  margin-bottom: 5px;
+}
+
+.info-blocks-container-csrgt
+{
+  margin-bottom: 0;
+}
+
+.info-block {
+  width: percentage(1/7);
+  padding: 15px;
+  margin-right: 5px;
+  margin-bottom: 15px;
+
+  background: govuk-colour('blue');
+  color: govuk-colour('white');
+
+  &-empty {
+    background: govuk-colour('white');
+  }
+
+  &-success {
+    background: govuk-colour('green');
+  }
+
+  &-warning {
+    background: govuk-colour('red');
+  }
+
+  &--large {
+    @include govuk-font(27, 'bold');
+
+    span {
+      @include govuk-font(19, 'regular');
+    }
+  }
+
+  &--small {
+    @include govuk-font(19);
+  }
+
+  > span {
+    display: block;
+  }
 }
