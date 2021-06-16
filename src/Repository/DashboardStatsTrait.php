@@ -2,46 +2,48 @@
 
 namespace App\Repository;
 
+use App\Entity\SurveyInterface;
+
 trait DashboardStatsTrait
 {
     private static array $statusColourMap = [
-        "in-progress" => [
+        SurveyInterface::STATE_IN_PROGRESS => [
             "background" => "#ffdd00", // Yellow
             "colour" => "#000",
         ],
-        "new" => [
+        SurveyInterface::STATE_NEW => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        "invitation pending" => [
+        SurveyInterface::STATE_INVITATION_PENDING => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        "invitation failed" => [
+        SurveyInterface::STATE_INVITATION_FAILED => [
             "background" => "#942514", // Red
             "colour" => "#fff",
         ],
-        "invited" => [
+        SurveyInterface::STATE_INVITATION_SENT => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        "closed" => [
+        SurveyInterface::STATE_CLOSED => [
             "background" => "#1d70b8", // Blue
             "colour" => "#fff",
         ],
-        "approved" => [
+        SurveyInterface::STATE_APPROVED => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
-        "rejected" => [
+        SurveyInterface::STATE_REJECTED => [
             "background" => "#942514", // Red
             "colour" => "#fff",
         ],
-        "exporting" => [
+        SurveyInterface::STATE_EXPORTING => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
-        "exported" => [
+        SurveyInterface::STATE_EXPORTED => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
@@ -49,12 +51,23 @@ trait DashboardStatsTrait
 
     public function getCountsByStatus(): array
     {
-        $wantedStates = ['in-progress', 'invited', 'approved'];
-        $ignoredStates = ['exporting', 'exported', 'rejected'];
+        $wantedStates = [
+            SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_IN_PROGRESS,
+            SurveyInterface::STATE_APPROVED,
+            SurveyInterface::STATE_CLOSED,
+        ];
+
+        $ignoredStates = [
+            SurveyInterface::STATE_EXPORTING,
+            SurveyInterface::STATE_EXPORTED,
+            SurveyInterface::STATE_REJECTED,
+        ];
+
         $mergeStates = [
-            'new' => 'invited',
-            'invitation pending' => 'invited',
-            'exporting' => 'exported',
+            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
         ];
 
         $counts = $this->createQueryBuilder('s')
@@ -64,21 +77,18 @@ trait DashboardStatsTrait
             ->execute();
 
         // Add any missing but wanted states into the mix with a count of zero
-        foreach($wantedStates as $state) {
-            foreach($counts as $count) {
-                if ($count['state'] === $state) {
-                    continue 2;
-                }
-            }
-            $counts[] = ['state' => $state, 'count' => 0];
+
+        $restructuredCounts = [];
+        foreach($counts as $count) {
+            $restructuredCounts[$count['state']] = $count['count'];
         }
 
+        $counts = $this->addMissingCounts($restructuredCounts, $wantedStates);
         $counts = $this->mergeCounts($counts, $mergeStates);
+        $counts = $this->orderCounts($counts, $wantedStates);
 
         $result = [];
-        foreach($counts as $count) {
-            $state = $count['state'];
-
+        foreach($counts as $state => $count) {
             if (in_array($state, $ignoredStates)) {
                 continue;
             }
@@ -87,7 +97,7 @@ trait DashboardStatsTrait
             $result[ucfirst($state)] = [
                 'background' => $colours['background'],
                 'colour' => $colours['colour'],
-                'count' => $count['count'],
+                'count' => $count,
             ];
         }
 
@@ -98,27 +108,43 @@ trait DashboardStatsTrait
     {
         $mergedCounts = [];
 
-        foreach ($counts as $count) {
-            $state = $count['state'];
+        foreach ($counts as $state => $count) {
             if (!isset($mergeStates[$state])) {
                 $mergedCounts[$state] = $count;
             }
         }
 
-        foreach ($counts as $count) {
-            $state = $count['state'];
+        foreach ($counts as $state => $count) {
             if (isset($mergeStates[$state])) {
                 $target = $mergeStates[$state];
 
                 if (isset($mergedCounts[$target])) {
-                    $mergedCounts[$target]['count'] += $count['count'];
+                    $mergedCounts[$target] += $count;
                 } else {
                     $mergedCounts[$target] = $count;
-                    $mergedCounts[$target]['state'] = $target;
                 }
             }
         }
 
-        return array_values($mergedCounts);
+        return $mergedCounts;
+    }
+
+    private function addMissingCounts(array $counts, array $wantedStates): array
+    {
+        foreach ($wantedStates as $state) {
+            if (!isset($counts[$state])) {
+                $counts[$state] = 0;
+            }
+        }
+        return $counts;
+    }
+
+    private function orderCounts(array $counts, array $wantedStates): array
+    {
+        $orderedCounts = [];
+        foreach($wantedStates as $state) {
+            $orderedCounts[$state] = $counts[$state];
+        }
+        return $orderedCounts;
     }
 }
