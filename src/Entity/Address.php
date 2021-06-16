@@ -9,12 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Address
 {
-    public function __toString()
-    {
-        @trigger_error('The __tostring() method is deprecated and will be removed. Use the formatAddress twig filter instead.', E_USER_DEPRECATED);
-        return implode(", ", array_filter([$this->line1, $this->line2, $this->line3, $this->line4, $this->postcode]));
-    }
-
     public function toArray()
     {
         return [

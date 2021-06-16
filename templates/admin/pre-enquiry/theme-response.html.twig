@@ -24,7 +24,7 @@
             <h2 class="govuk-heading govuk-heading-m">Correspondence address</h2>
             {% if form.isCorrectAddress is defined %}
                 <p class="govuk-body govuk-!-margin-bottom-8">
-                    {{ form.isCorrectAddress.vars.label_translation_parameters.expectedAddress|formatAddress(true, false)|nl2br }}
+                    {{ form.vars.value.preEnquiry.invitationAddress|formatAddress(true, false)|nl2br }}
                 </p>
 
                 {{ form_row(form.isCorrectAddress) }}

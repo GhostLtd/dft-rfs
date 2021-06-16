@@ -51,9 +51,6 @@ class ResponseType extends AbstractType implements DataMapperInterface
                             'label_attr' => [
                                 'class' => 'govuk-label--s',
                             ],
-                            'label_translation_parameters' => [
-                                'expectedAddress' => $data->getPreEnquiry()->getInvitationAddress(),
-                            ],
                             'help' => "{$correspondenceAddressPrefix}.correct-address.help",
                             'choices' => self::CHOICES,
                             'choice_options' => [

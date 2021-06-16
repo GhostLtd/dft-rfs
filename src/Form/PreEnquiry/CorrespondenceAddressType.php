@@ -44,9 +44,6 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
                             'label_attr' => [
                                 'class' => 'govuk-label--s',
                             ],
-                            'label_translation_parameters' => [
-                                'expectedAddress' => $data->getPreEnquiry()->getInvitationAddress(),
-                            ],
                             'help' => "{$correctAddressPrefix}.help",
                             'choices' => self::CHOICES,
                             'choice_options' => [
