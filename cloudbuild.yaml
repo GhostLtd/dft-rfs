@@ -1,6 +1,6 @@
 steps:
     # Start by running some pre-install actions
-    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+    - name: node:14
       id: 'pre-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
@@ -9,7 +9,7 @@ steps:
           - 'APP_SECRET=${_APP_SECRET}'
           - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
 
-    # Copy depoyment config files in to root directory
+    # Copy depoyment config files in to root directory (alpine required for gsutil)
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
       id: 'copy-deploy-files'
       entrypoint: sh
@@ -45,7 +45,7 @@ steps:
 
 
     # Finish up by calling the post-install-script
-    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+    - name: node:14
       id: 'post-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']
