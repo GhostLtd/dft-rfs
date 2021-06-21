@@ -19,6 +19,11 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity'
                         prefix: 'App\Entity'
                         alias: App
+                dql:
+                    string_functions:
+                        WEEK: DoctrineExtensions\Query\Mysql\Week
+                        MONTH: DoctrineExtensions\Query\Mysql\Month
+                        YEAR: DoctrineExtensions\Query\Mysql\Year
             audit_log:
 #                connection: default
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
