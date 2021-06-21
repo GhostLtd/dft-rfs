@@ -44,12 +44,12 @@ class RemoteActions
     public static function denyAccessUnlessHmacPasses($hmac, $timestamp, $action): bool
     {
         if (
-            abs(time() - $timestamp) <= 5
+            abs(($currentTime = time()) - $timestamp) <= 5
             && hash_equals(hash_hmac('sha256', "{$action}:{$timestamp}", "{$_ENV['APP_SECRET']}"), $hmac)
         ) {
             return true;
         }
-        throw new AccessDeniedHttpException("HMAC: {$hmac}\nTimestamp: {$timestamp}\nAction: {$action}");
+        throw new AccessDeniedHttpException("HMAC: {$hmac}\nTime: {$currentTime}\nTimestamp: {$timestamp}\nAction: {$action}");
     }
 
     public static function runProcess($command, $addInformationalOutput = true): string
