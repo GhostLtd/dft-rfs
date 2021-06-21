@@ -1,6 +1,6 @@
 steps:
     # Start by running some pre-install actions
-    - name: "gcr.io/cloud-builders/yarn"
+    - name: node:14
       id: 'pre-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
@@ -10,7 +10,7 @@ steps:
           - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
 
     # Copy depoyment config files in to root directory
-    - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+    - name: node:14
       id: 'copy-deploy-files'
       entrypoint: sh
       args: ['-c', 'gsutil rsync config/gcloud-build/all/ . && gsutil rsync config/gcloud-build/$PROJECT_ID/ .']
@@ -35,17 +35,17 @@ steps:
     # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-default-service'
-      args: ["app", "deploy", "app.default.yaml"]
+      args: ["app", "deploy", "app.default.yaml", "--ignore-file=.gcloudignore"]
       waitFor: ['yarn-build']
     # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
-      args: ["app", "deploy", "app.admin.yaml"]
+      args: ["app", "deploy", "app.admin.yaml", "--ignore-file=.gcloudignore"]
       waitFor: ['yarn-build']
 
 
     # Finish up by calling the post-install-script
-    - name: "gcr.io/cloud-builders/yarn"
+    - name: node:14
       id: 'post-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']
