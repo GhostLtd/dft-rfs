@@ -49,7 +49,7 @@ class RemoteActions
         ) {
             return true;
         }
-        throw new AccessDeniedHttpException();
+        throw new AccessDeniedHttpException("HMAC: {$hmac}\nTimestamp: {$timestamp}\nAction: {$action}");
     }
 
     public static function runProcess($command, $addInformationalOutput = true): string
