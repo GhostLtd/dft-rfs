@@ -3,7 +3,7 @@ steps:
     - name: "gcr.io/cloud-builders/yarn"
       id: 'pre-install-script'
       entrypoint: sh
-      args: ['-c', 'config/gcloud-build/call-remote-action.sh', '-a pre-install']
+      args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
       waitFor: ['-']
       env:
           - 'APP_SECRET=${_APP_SECRET}'
@@ -48,7 +48,7 @@ steps:
     - name: "gcr.io/cloud-builders/yarn"
       id: 'post-install-script'
       entrypoint: sh
-      args: ['-c', 'config/gcloud-build/call-remote-action.sh', '-a post-install']
+      args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']
       waitFor: ['deploy-default-service', 'deploy-admin-service']
       env:
           - 'APP_SECRET=${_APP_SECRET}'
