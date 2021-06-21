@@ -43,8 +43,9 @@ class RemoteActions
 
     public static function denyAccessUnlessHmacPasses($hmac, $timestamp, $action): bool
     {
+        $currentTime = time();
         if (
-            abs(($currentTime = time()) - $timestamp) <= 5
+            abs($currentTime - $timestamp) <= 5
             && hash_equals(hash_hmac('sha256', "{$action}:{$timestamp}", "{$_ENV['APP_SECRET']}"), $hmac)
         ) {
             return true;
