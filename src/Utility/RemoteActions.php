@@ -10,6 +10,8 @@ use Symfony\Component\Process\Process;
 
 class RemoteActions
 {
+    const HMAC_TIMEOUT = 30;
+
     public static function preInstall($kernelDir = '')
     {
         $output = "";
@@ -45,7 +47,7 @@ class RemoteActions
     {
         $currentTime = time();
         if (
-            abs($currentTime - $timestamp) <= 5
+            abs($currentTime - $timestamp) <= self::HMAC_TIMEOUT
             && hash_equals(hash_hmac('sha256', "{$action}:{$timestamp}", "{$_ENV['APP_SECRET']}"), $hmac)
         ) {
             return true;
