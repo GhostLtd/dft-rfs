@@ -10,6 +10,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/menu";
 @import "admin/notes";
 @import "admin/pagination";
+@import "admin/report-table";
 @import "admin/surveys";
 
 .govuk-summary-list__row.access-code .govuk-summary-list__value {

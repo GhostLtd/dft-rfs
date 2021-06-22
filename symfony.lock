@@ -2,6 +2,9 @@
     "alphagov/notifications-php-client": {
         "version": "3.2.0"
     },
+    "beberlei/doctrineextensions": {
+        "version": "v1.3.0"
+    },
     "composer/ca-bundle": {
         "version": "1.2.8"
     },

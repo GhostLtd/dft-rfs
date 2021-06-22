@@ -169,6 +169,8 @@ admin:
     password.label: Password
   dashboard:
     heading: Dashboard
+  reports:
+    heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow
