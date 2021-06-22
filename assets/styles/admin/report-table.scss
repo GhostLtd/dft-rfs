@@ -8,11 +8,11 @@
     display: block;
   }
 
-  thead {
-    position: sticky;
-    top: 0;
-    background: govuk-shade(govuk-colour('light-grey'), 10%);
-  }
+  //thead {
+  //  position: sticky;
+  //  top: 0;
+  //  background: govuk-shade(govuk-colour('light-grey'), 10%);
+  //}
 
   tr {
     > .govuk-table__cell,
@@ -26,9 +26,9 @@
       text-align: left;
     }
 
-    td:nth-child(2n) {
-      background: govuk-tint(govuk-colour('light-grey'), 50%);
-    }
+    //td:nth-child(2n) {
+    //  background: govuk-tint(govuk-colour('light-grey'), 50%);
+    //}
   }
 }
 

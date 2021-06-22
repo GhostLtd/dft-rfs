@@ -1,46 +1,50 @@
 @import "~govuk-frontend/govuk/base";
 
-.charts-container {
-  display: flex;
-  margin: 0 -15px;
+.chart-container {
+  @include govuk-responsive-margin(9, "bottom");
+}
 
-  .chart-container {
-    width: 33%;
-    padding: 0 15px;
+.info-container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.info-row {
+  display: flex;
+
+  & + .info-row {
+    @include govuk-responsive-margin(1, "top");
+  }
+
+  &.info-row--csrgt,
+  &.info-row--irhs {
+    @include govuk-responsive-margin(4, "top");
+  }
+
+  &.info-row--irhs {
+    @include govuk-responsive-margin(9, "bottom");
   }
 }
 
-.info-blocks-container {
-  display: flex;
-  flex-direction: column;
-  margin: 0 -15px 15px;
 
-  .info-block-container {
-    padding: 0 15px;
-    display: flex;
+.info-block {
+  @include govuk-responsive-padding(2);
+
+  & + .info-block {
+    @include govuk-responsive-margin(1, "left");
   }
-}
-
-.info-block-container-gb .info-block {
-  margin-bottom: 5px;
-}
-
-.info-blocks-container-csrgt
-{
-  margin-bottom: 0;
 }
 
 .info-block {
-  width: percentage(1/7);
-  padding: 15px;
-  margin-right: 5px;
-  margin-bottom: 15px;
-
   background: govuk-colour('blue');
   color: govuk-colour('white');
 
   &-empty {
     background: govuk-colour('white');
+  }
+
+  &-grey {
+    background: govuk-colour('dark-grey');
   }
 
   &-success {

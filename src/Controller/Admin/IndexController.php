@@ -45,7 +45,8 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/reports", name="admin_reports")
-     * @Route("/reports/{type}/{year}/{quarter}", name="admin_reports_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
+     * @Route("/reports/{type}", name="admin_reports_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
+     * @Route("/reports/{type}/{year}/{quarter}", name="admin_reports_full", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
      */
     public function reports(DomesticSurveyRepository $domesticRepo, InternationalSurveyRepository $interationalRepo, Request $request, string $type=null, int $year=null, int $quarter=null): Response
     {
@@ -53,6 +54,12 @@ class IndexController extends AbstractController
 
         if (!$year || !$quarter) {
             [$quarter, $year] = DomesticWeekNumberHelper::getQuarterAndYear(new \DateTime());
+
+            return new RedirectResponse($this->generateUrl('admin_reports_full', [
+                'type' => $type,
+                'year' => $year,
+                'quarter' => $quarter
+            ]));
         }
 
         [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
@@ -79,7 +86,7 @@ class IndexController extends AbstractController
                 $quarter = $data['quarter'];
                 $type = $data['type'];
 
-                return new RedirectResponse($this->generateUrl('admin_reports_type', [
+                return new RedirectResponse($this->generateUrl('admin_reports_full', [
                     'type' => $type,
                     'year' => $year,
                     'quarter' => $quarter,
