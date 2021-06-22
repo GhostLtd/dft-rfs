@@ -6,6 +6,7 @@ use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
+use App\Utility\International\WeekNumberHelper;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -97,5 +98,111 @@ class SurveyRepository extends ServiceEntityRepository
             ->setParameter('activeStates', SurveyInterface::ACTIVE_STATES)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function getReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null)
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('s.state, count(s) AS count, s.surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
+
+        if ($minStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart >= :minStart')
+                ->setParameter('minStart', $minStart);
+        }
+
+        if ($maxStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart <= :maxStart')
+                ->setParameter('maxStart', $maxStart);
+        }
+
+        $results = $qb
+            ->groupBy('s.state, week')
+            ->orderBy('week, s.state')
+            ->getQuery()
+            ->execute();
+
+        if ($minStart !== null && $maxStart !== null) {
+            $firstWeek = WeekNumberHelper::getWeekNumber($minStart);
+            $lastWeek = WeekNumberHelper::getWeekNumber($maxStart);
+            $lastWeek--;
+        } else {
+            $firstWeek = WeekNumberHelper::getWeekNumber($results[0]['surveyPeriodStart']);
+            $lastWeek = WeekNumberHelper::getWeekNumber($results[count($results) - 1]['surveyPeriodStart']);
+        }
+
+        $mergeStates = [
+            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
+            SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
+        ];
+
+        $stats = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $stats['data'][$week] = [
+                'data' => [
+                    SurveyInterface::STATE_INVITATION_SENT => 0,
+                    SurveyInterface::STATE_IN_PROGRESS => 0,
+                    SurveyInterface::STATE_CLOSED => 0,
+                    SurveyInterface::STATE_REJECTED => 0,
+                    SurveyInterface::STATE_EXPORTED => 0,
+                    SurveyInterface::STATE_APPROVED => 0,
+                ],
+            ];
+        }
+
+        foreach ($results as $result) {
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
+            $state = $result['state'];
+
+            if (array_key_exists($state, $mergeStates)) {
+                $state = $mergeStates[$state];
+            }
+
+            $stats['data'][$week]['data'][$state] = $result['count'];
+        }
+
+        $totals = [];
+        $sumOfTotals = 0;
+        foreach ($stats['data'] as $week => $weekStats) {
+            $allZeros = true;
+            $total = 0;
+            foreach ($weekStats['data'] as $name => $state) {
+                $total += $state;
+                if ($state > 0) {
+                    $allZeros = false;
+                }
+
+                if (!isset($totals[$name])) {
+                    $totals[$name] = $state;
+                } else {
+                    $totals[$name] += $state;
+                }
+            }
+            $stats['data'][$week]['total'] = $total;
+            $stats['data'][$week]['allZeros'] = $allZeros;
+            $sumOfTotals += $total;
+        }
+        $stats['totals'] = $totals;
+        $stats['total'] = $sumOfTotals;
+
+        return $stats;
+    }
+
+    public function getMinimumAndMaximumYear()
+    {
+        $result = $this->createQueryBuilder('s')
+            ->select('MIN(YEAR(s.surveyPeriodStart)) AS min, MAX(YEAR(s.surveyPeriodStart)) AS max')
+            ->getQuery()
+            ->getArrayResult();
+
+        if (count($result) === 0) {
+            $year = (new \DateTime())->format('Y');
+            return [$year, $year];
+        } else {
+            return array_values(current($result));
+        }
     }
 }

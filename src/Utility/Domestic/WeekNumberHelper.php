@@ -110,4 +110,9 @@ class WeekNumberHelper
             $dateTime :
             $dateTime->modify('last monday');
     }
+
+    public static function getLastDayOfYear(int $year): DateTime
+    {
+        return self::getFirstDayOfYear($year + 1)->modify('-1 day');
+    }
 }
