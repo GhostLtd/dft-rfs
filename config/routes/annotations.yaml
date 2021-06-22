@@ -1,5 +1,10 @@
 front_end:
-    resource: ../../src/Controller/
+    # The glob (`**/*`) is needed for the `exclude` directive to work
+    resource: '../../src/Controller/**/*'
+    exclude:
+        - '../../src/Controller/Cron/'
+        - '../../src/Controller/Admin/'
+        - '../../src/Controller/Workflow/'
     type: annotation
     host: '%frontend_hostname%'
 
