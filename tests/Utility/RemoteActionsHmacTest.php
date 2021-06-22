@@ -14,8 +14,8 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
     {
         return [
             ['wrong-action', 'now', $_ENV['APP_SECRET']],
-            [self::HMAC_ACTION, '-6 seconds', $_ENV['APP_SECRET']],
-            [self::HMAC_ACTION, '+6 seconds', $_ENV['APP_SECRET']],
+            [self::HMAC_ACTION, '-31 seconds', $_ENV['APP_SECRET']],
+            [self::HMAC_ACTION, '+31 seconds', $_ENV['APP_SECRET']],
             [self::HMAC_ACTION, 'now', "wrong-secret"],
         ];
     }
@@ -42,8 +42,8 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
     {
         return [
             [self::HMAC_ACTION, 'now', $_ENV['APP_SECRET']],
-            [self::HMAC_ACTION, '+5 seconds', $_ENV['APP_SECRET']],
-            [self::HMAC_ACTION, '-5 seconds', $_ENV['APP_SECRET']],
+            [self::HMAC_ACTION, '+30 seconds', $_ENV['APP_SECRET']],
+            [self::HMAC_ACTION, '-30 seconds', $_ENV['APP_SECRET']],
         ];
     }
 
