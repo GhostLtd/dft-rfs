@@ -32,15 +32,17 @@ steps:
           - 'GOOGLE_BUCKET_EXPORT=${_GOOGLE_BUCKET_EXPORT}'
       waitFor: ['copy-deploy-files']
 
+    ## The app deployment will not run `composer install` if the composer.lock file has not changed
+    ## meaning that post install scripts, or even update scripts to not get run
     # deploy default service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-default-service'
-      args: ["app", "deploy", "app.default.yaml", "--ignore-file=.gcloudignore"]
+      args: ["app", "deploy", "app.default.yaml", "--ignore-file=.gcloudignore", "--no-cache"]
       waitFor: ['yarn-build']
     # deploy admin service
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
-      args: ["app", "deploy", "app.admin.yaml", "--ignore-file=.gcloudignore"]
+      args: ["app", "deploy", "app.admin.yaml", "--ignore-file=.gcloudignore", "--no-cache"]
       waitFor: ['yarn-build']
 
 
