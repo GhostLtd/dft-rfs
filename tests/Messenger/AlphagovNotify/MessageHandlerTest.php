@@ -74,16 +74,16 @@ class MessageHandlerTest extends AbstractFunctionalTest
     protected function getValidTestAddress(): Address
     {
         return (new Address())
-            ->setLine1('Test Road')
-            ->setLine2('Test Place')
+            ->setLine1('Unit Test Road')
+            ->setLine2('Unit Test Place')
             ->setPostcode('BA111HR');
     }
 
     protected function getInvalidTestAddress(): Address
     {
         return (new Address())
-            ->setLine1('Test Road')
-            ->setLine2('Test Place')
+            ->setLine1('Unit Test Road')
+            ->setLine2('Unit Test Place')
             ->setPostcode('AB123CD');
     }
 
