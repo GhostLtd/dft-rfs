@@ -8,6 +8,7 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
+use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\Domestic\PdfHelper as DomesticPdfHelper;
 use App\Utility\International\PdfHelper as InternationalPdfHelper;
@@ -17,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
+use Symfony\Component\Workflow\Event\GuardEvent;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
@@ -24,6 +26,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     private MessageBusInterface $messageBus;
     private DomesticPdfHelper $domesticPdfHelper;
     private InternationalPdfHelper $internationalPdfHelper;
+    private AuditLogRepository $auditLogRepository;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -42,16 +45,12 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        MessageBusInterface $messageBus,
-        DomesticPdfHelper $domesticPdfHelper,
-        InternationalPdfHelper $internationalPdfHelper
-    ) {
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository) {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
         $this->domesticPdfHelper = $domesticPdfHelper;
         $this->internationalPdfHelper = $internationalPdfHelper;
+        $this->auditLogRepository = $auditLogRepository;
     }
 
     public function transitionInviteUser(Event $event)
@@ -119,9 +118,19 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         return $survey;
     }
 
+    public function guardUnReject(GuardEvent $event)
+    {
+        $event->setBlocked(
+            !$this->auditLogRepository->surveyHasPreviouslyBeenInClosedState(
+                $this->getSurvey($event)
+            )
+        );
+    }
+
     public static function getSubscribedEvents()
     {
         return [
+            // Transitions
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
@@ -130,6 +139,10 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
             'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
+
+            // Guards
+            'workflow.domestic_survey.guard.un_reject' => 'guardUnReject',
+            'workflow.international_survey.guard.un_reject' => 'guardUnReject',
         ];
     }
 }

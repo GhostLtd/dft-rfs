@@ -14,6 +14,24 @@ class AuditLogRepository extends ServiceEntityRepository
         parent::__construct($registry, AuditLog::class);
     }
 
+    public function surveyHasPreviouslyBeenInClosedState(SurveyInterface $entity): bool
+    {
+        $transitions = $this->createQueryBuilder('audit_log')
+            ->select('audit_log')
+            ->where('audit_log.entityId = :id')
+            ->andWhere('audit_log.entityClass = :class')
+            ->andWhere('audit_log.data LIKE :props')
+            ->setParameters([
+                'id' => $entity->getId(),
+                'class' => get_class($entity),
+                'props' => '%"' . SurveyInterface::STATE_CLOSED . '"%',
+            ])
+            ->orderBy('audit_log.timestamp', 'desc')
+            ->getQuery()
+            ->execute();
+        return count($transitions) > 0;
+    }
+
     public function getApprovedBy($entity)
     {
         return $this->createQueryBuilder('audit_log')
