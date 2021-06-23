@@ -6,7 +6,7 @@ use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardEndTestCase;
 use App\Tests\Functional\Wizard\WizardStepTestCase;
 
-class DayStopData
+class DayStopData extends AbstractDayStopOrSummaryData
 {
     public static function dayStopData(bool $goodsLoaded, ?bool $goodsUnloaded=null, ?bool $isEmpty=null, ?bool $isHazardous=null, ?bool $atCapacityBySpace=null, ?bool $atCapacityByWeight=null): array
     {
@@ -148,57 +148,6 @@ class DayStopData
         ]);
     }
 
-    protected static function getLocationFormTestCases(string $prefix, bool $loaded, string $location): array
-    {
-        if ($prefix === 'origin') {
-            $transferred = 'Loaded';
-            $direction = 'From';
-        } else if ($prefix === 'destination') {
-            $transferred = 'Unloaded';
-            $direction = 'To';
-        } else {
-            throw new \RuntimeException('Invalid prefix');
-        }
-
-        $formTests = [
-            new FormTestCase([], [
-                "#{$prefix}_{$prefix}Location",
-                "#{$prefix}_goods{$transferred}",
-            ]),
-        ];
-
-        if ($loaded) {
-            $formTests[] =
-                new FormTestCase([
-                    "{$prefix}" => [
-                        "{$prefix}Location" => $location,
-                        "goods{$transferred}" => "1",
-                    ],
-                ], [
-                    "#{$prefix}_goodsTransferred{$direction}",
-                ]);
-
-            $formTests[] =
-                new FormTestCase([
-                    "{$prefix}" => [
-                        "{$prefix}Location" => $location,
-                        "goods{$transferred}" => "1",
-                        "goodsTransferred{$direction}" => "0"
-                    ],
-                ]);
-        } else {
-            $formTests[] =
-                new FormTestCase([
-                    "{$prefix}" => [
-                        "{$prefix}Location" => $location,
-                        "goods{$transferred}" => "0",
-                    ],
-                ]);
-        }
-
-        return $formTests;
-    }
-
     protected static function getGoodsDescriptionTests(bool $isEmpty): array
     {
         $goodsDescriptionTests = [
@@ -229,39 +178,5 @@ class DayStopData
         }
 
         return $goodsDescriptionTests;
-    }
-
-    protected static function getHazardousTests(bool $isHazardous): array
-    {
-        $hazardousTests = [
-            new FormTestCase([], [
-                "#hazardous_goods_isHazardousGoods",
-            ])
-        ];
-
-        if ($isHazardous) {
-            $hazardousTests[] = new FormTestCase([
-                "hazardous_goods" => [
-                    "isHazardousGoods" => "1",
-                ]
-            ], [
-                "#hazardous_goods_hazardousGoodsCode",
-            ]);
-
-            $hazardousTests[] = new FormTestCase([
-                "hazardous_goods" => [
-                    "isHazardousGoods" => "1",
-                    "hazardousGoodsCode" => "7", // Radioactive bread
-                ]
-            ]);
-        } else {
-            $hazardousTests[] = new FormTestCase([
-                "hazardous_goods" => [
-                    "isHazardousGoods" => "0",
-                ]
-            ]);
-        }
-
-        return $hazardousTests;
     }
 }
