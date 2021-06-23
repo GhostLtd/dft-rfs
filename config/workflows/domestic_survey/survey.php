@@ -72,12 +72,13 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_EXPORTED,
                     ],
                     'reject' => [
-                        'from' => StateObject::STATE_CLOSED,
+                        'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_REJECTED,
                     ],
                     'un_reject' => [
                         'from' => StateObject::STATE_REJECTED,
                         'to' => StateObject::STATE_CLOSED,
+                        // this transition has a guard event subscriber
                     ],
                 ]
             ],
