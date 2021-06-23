@@ -136,12 +136,12 @@ class SurveyRepository extends ServiceEntityRepository
 
         if ($maxStart !== null) {
             $qb
-                ->andWhere('s.surveyPeriodStart <= :maxStart')
+                ->andWhere('s.surveyPeriodStart < :maxStart')
                 ->setParameter('maxStart', $maxStart);
         }
 
         $results = $qb
-            ->groupBy('s.state, week')
+            ->groupBy('s.surveyPeriodStart, s.state, week')
             ->orderBy('week, s.state')
             ->getQuery()
             ->execute();
