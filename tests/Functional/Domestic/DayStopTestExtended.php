@@ -2,6 +2,9 @@
 
 namespace App\Tests\Functional\Domestic;
 
+use App\Entity\AbstractGoodsDescription;
+use App\Entity\Distance;
+use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\BusinessFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\DayStopDatabaseTestCase;
@@ -20,14 +23,44 @@ class DayStopTestExtended extends AbstractWizardTest
                             foreach([true, false] as $atCapacityBySpace) {
                                 foreach([true, false] as $atCapacityByWeight) {
                                     $testData = DayStopData::dayStopData($goodsLoaded, $goodsUnloaded, $isEmpty, $isHazardous, $atCapacityBySpace, $atCapacityByWeight);
-                                    $testData[] = new DayStopDatabaseTestCase($goodsLoaded, $goodsUnloaded, $isEmpty, $isHazardous, $atCapacityBySpace, $atCapacityByWeight);
+                                    $testData[] = new DayStopDatabaseTestCase(
+                                        $goodsLoaded,
+                                        'Portsmouth',
+                                        $goodsUnloaded,
+                                        'Worthing',
+                                        'Hove',
+                                        120,
+                                        Distance::UNIT_MILES,
+                                        AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
+                                        "Bread",
+                                        $isHazardous ? HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL : HazardousGoods::CODE_0_NOT_HAZARDOUS,
+                                        "RC",
+                                        100,
+                                        $atCapacityBySpace,
+                                        $atCapacityByWeight
+                                    );
                                     $data[$this->getTestName($goodsLoaded, $goodsUnloaded, $isEmpty, $isHazardous, $atCapacityBySpace, $atCapacityByWeight)] = [$testData];
                                 }
                             }
                         }
                     } else {
                         $testData = DayStopData::dayStopData($goodsLoaded, $goodsUnloaded, true);
-                        $testData[] = new DayStopDatabaseTestCase($goodsLoaded, $goodsUnloaded, true);
+                        $testData[] = new DayStopDatabaseTestCase(
+                            $goodsLoaded,
+                            'Portsmouth',
+                            $goodsUnloaded,
+                            'Worthing',
+                            'Hove',
+                            120,
+                            Distance::UNIT_MILES,
+                            AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                        );
                         $data[$this->getTestName($goodsLoaded, $goodsUnloaded, true)] = [$testData];
                     }
                 }

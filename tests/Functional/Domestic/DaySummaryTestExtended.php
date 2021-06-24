@@ -2,6 +2,9 @@
 
 namespace App\Tests\Functional\Domestic;
 
+use App\Entity\AbstractGoodsDescription;
+use App\Entity\Distance;
+use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\BusinessFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\DaySummaryDatabaseTestCase;
@@ -16,7 +19,26 @@ class DaySummaryTestExtended extends AbstractWizardTest
             foreach ([true, false] as $goodsUnloaded) {
                     foreach ([true, false] as $isHazardous) {
                         $testData = DaySummaryData::daySummaryData($goodsLoaded, $goodsUnloaded, $isHazardous);
-                        $testData[] = new DaySummaryDatabaseTestCase($goodsLoaded, $goodsUnloaded, $isHazardous);
+                        $testData[] = new DaySummaryDatabaseTestCase(
+                            $goodsLoaded,
+                            'Portsmouth',
+                            $goodsUnloaded,
+                            'Worthing',
+                            $isHazardous ? HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL : HazardousGoods::CODE_0_NOT_HAZARDOUS,
+                        'The Moon',
+                        'Hove',
+                        10,
+                        Distance::UNIT_MILES,
+                        16,
+                        Distance::UNIT_KILOMETERS,
+                        AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
+                        'Bread',
+                        'RC',
+                        2000,
+                        1800,
+                        2,
+                        8,
+                        0);
                         $data[$this->getTestName($goodsLoaded, $goodsUnloaded, $isHazardous)] = [$testData];
                 }
             }
