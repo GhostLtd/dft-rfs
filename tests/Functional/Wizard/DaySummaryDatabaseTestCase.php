@@ -13,7 +13,7 @@ class DaySummaryDatabaseTestCase implements DatabaseTestCase
     protected ?string $originLocation;
     protected ?bool $goodsUnloaded;
     protected ?string $destinationLocation;
-    protected ?bool $hazardousGoodsCode;
+    protected ?string $hazardousGoodsCode;
     protected ?string $furthestStop;
     protected ?string $borderCrossing;
     protected ?string $distanceLoadedValue;
