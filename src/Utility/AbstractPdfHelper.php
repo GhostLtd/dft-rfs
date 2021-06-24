@@ -27,8 +27,13 @@ abstract class AbstractPdfHelper
         $this->logger = $logger;
     }
 
-    public function generateAndUploadPdf(SurveyInterface $survey): StorageObject
+    public function generateAndUploadPdf(SurveyInterface $survey): ?StorageObject
     {
+        if (!$this->bucket->name()) {
+            // Bucket isn't configured
+            return null;
+        }
+
         $pdf = $this->generatePDF($survey)->output();
 
         return $this->bucket->upload($pdf, [
