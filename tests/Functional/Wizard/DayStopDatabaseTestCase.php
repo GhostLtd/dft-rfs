@@ -60,6 +60,7 @@ class DayStopDatabaseTestCase implements DatabaseTestCase
     {
         /** @var DayStopRepository $repo */
         $repo = $entityManager->getRepository(DayStop::class);
+        $entityManager->clear();
         $dayStops = $repo->findAll();
 
         $test::assertCount(1, $dayStops, 'Expected a single dayStop to be in the database');

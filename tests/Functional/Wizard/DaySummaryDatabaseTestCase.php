@@ -75,8 +75,7 @@ class DaySummaryDatabaseTestCase implements DatabaseTestCase
     {
         /** @var DaySummaryRepository $repo */
         $repo = $entityManager->getRepository(DaySummary::class);
-
-        /** @var DaySummary[] $daySummary */
+        $entityManager->clear();
         $daySummaries = $repo->findAll();
 
         $test::assertCount(1, $daySummaries, 'Expected a single daySummary to be in the database');
