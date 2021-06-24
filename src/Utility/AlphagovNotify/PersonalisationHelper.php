@@ -49,9 +49,12 @@ class PersonalisationHelper
 
     private static function getForAllSurveys(HaulageSurveyInterface $survey)
     {
+        $periodStart = $survey->getSurveyPeriodStart()->format('l, jS F Y');
+        $periodEnd = $survey->getSurveyPeriodEnd()->format('l, jS F Y');
         return [
-            'surveyPeriodStart' => $survey->getSurveyPeriodStart()->format('l, jS F Y'),
-            'surveyPeriodEnd' => $survey->getSurveyPeriodEnd()->format('l, jS F Y'),
+            'surveyPeriodStart' => $periodStart,
+            'surveyPeriodEnd' => $periodEnd,
+            'surveyPeriod' => ($periodStart === $periodEnd) ? $periodStart : "{$periodStart} to {$periodEnd}",
             'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
             'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
