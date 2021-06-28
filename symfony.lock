@@ -50,6 +50,9 @@
     "doctrine/dbal": {
         "version": "2.11.3"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
         "recipe": {
@@ -123,6 +126,9 @@
     "firebase/php-jwt": {
         "version": "v5.2.0"
     },
+    "friendsofphp/proxy-manager-lts": {
+        "version": "v1.0.1"
+    },
     "google/auth": {
         "version": "v1.14.3"
     },
@@ -188,9 +194,6 @@
     },
     "nikic/php-parser": {
         "version": "v4.10.2"
-    },
-    "ocramius/proxy-manager": {
-        "version": "2.2.3"
     },
     "phenx/php-font-lib": {
         "version": "0.5.2"
@@ -498,6 +501,9 @@
     },
     "symfony/polyfill-php80": {
         "version": "v1.18.1"
+    },
+    "symfony/polyfill-php81": {
+        "version": "v1.23.0"
     },
     "symfony/process": {
         "version": "v4.4.15"
