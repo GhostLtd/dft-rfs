@@ -120,12 +120,6 @@
     "egulias/email-validator": {
         "version": "2.1.22"
     },
-    "erusev/parsedown": {
-        "version": "1.7.4"
-    },
-    "erusev/parsedown-extra": {
-        "version": "0.8.1"
-    },
     "firebase/php-jwt": {
         "version": "v5.2.0"
     },
@@ -173,9 +167,6 @@
     },
     "justinrainbow/json-schema": {
         "version": "5.2.10"
-    },
-    "kelvinmo/simplejwt": {
-        "version": "v0.4.2"
     },
     "laminas/laminas-code": {
         "version": "3.4.1"
