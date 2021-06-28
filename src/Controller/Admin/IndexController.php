@@ -112,7 +112,7 @@ class IndexController extends AbstractController
                 throw new NotFoundHttpException('Invalid report type');
         }
 
-        return $this->render('admin/domestic/report/report.html.twig', array_merge($current, [
+        return $this->render('admin/report/report.html.twig', array_merge($current, [
             'stats' => $stats,
             'form' => $form->createView(),
             'typeLabel' => array_flip(ReportFilterType::CHOICE_TYPES)[$type],
