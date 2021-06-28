@@ -19,7 +19,7 @@ final class Version20210621113047 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        $this->addSql("CREATE TABLE `sessions` (`sess_id` VARBINARY(128) NOT NULL PRIMARY KEY, `sess_data` BLOB NOT NULL, `sess_lifetime` INTEGER UNSIGNED NOT NULL, `sess_time` INTEGER UNSIGNED NOT NULL ) COLLATE utf8mb4_bin, ENGINE = InnoDB;");
+        $this->addSql("CREATE TABLE `sessions` (`sess_id` VARBINARY(128) NOT NULL PRIMARY KEY, `sess_data` MEDIUMBLOB NOT NULL, `sess_lifetime` INTEGER UNSIGNED NOT NULL, `sess_time` INTEGER UNSIGNED NOT NULL ) COLLATE utf8mb4_bin, ENGINE = InnoDB;");
         $this->addSql("CREATE TABLE messenger_messages (id bigint auto_increment primary key, body longtext not null, headers      longtext     not null,     queue_name   varchar(190) not null,    created_at   datetime     not null,    available_at datetime     not null,    delivered_at datetime     null, INDEX IDX_75EA56E016BA31DB (delivered_at), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E0FB7336F0 (queue_name))  DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB");
 
         // this up() migration is auto-generated, please modify it to your needs
