@@ -19,6 +19,11 @@
     {{ row(showActions, 'domestic.day-view.furthest-stop', day.summary.furthestStop | default('-'),
         locationsChangeLink
     )}}
+    {% if day.response.survey.isNorthernIreland %}
+        {{ row(showActions, 'domestic.day-view.border-crossing', day.summary.borderCrossingLocation | default('-'),
+            locationsChangeLink
+        )}}
+    {% endif %}
 
     {% set distanceChangeLink = {(url('app_domesticsurvey_daysummary_wizard', {dayNumber: day.number, state: constant('App\\Workflow\\DomesticSurvey\\DaySummaryState::STATE_DISTANCE_TRAVELLED')})):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.summary-change-link-sr-suffix.distance-travelled'}
