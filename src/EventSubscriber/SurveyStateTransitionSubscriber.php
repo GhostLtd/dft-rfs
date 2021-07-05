@@ -56,7 +56,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function guardInviteUser(GuardEvent $event)
     {
         $survey = $this->getSurvey($event);
-        if (!$survey->getInvitationAddress()->isFilled() && !$survey->getInvitationEmail()) {
+        $address = $survey->getInvitationAddress();
+        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmail()) {
             $event->setBlocked(true);
         }
     }
