@@ -2,7 +2,6 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Entity\International\Survey as StateObject;
-use App\Security\Voter\SurveyTransitionGuardVoter;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
@@ -31,6 +30,7 @@ return static function (ContainerConfigurator $container) {
                     'invite_user' => [
                         'from' => StateObject::STATE_NEW,
                         'to' => StateObject::STATE_INVITATION_PENDING,
+                        // this transition has a guard event subscriber
                     ],
                     'invitation_sent' => [
                         'from' => StateObject::STATE_INVITATION_PENDING,

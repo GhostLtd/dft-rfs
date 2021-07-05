@@ -53,6 +53,14 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $this->auditLogRepository = $auditLogRepository;
     }
 
+    public function guardInviteUser(GuardEvent $event)
+    {
+        $survey = $this->getSurvey($event);
+        if (!$survey->getInvitationAddress()->isFilled() && !$survey->getInvitationEmail()) {
+            $event->setBlocked(true);
+        }
+    }
+
     public function transitionInviteUser(Event $event)
     {
         $survey = $this->getSurvey($event);
@@ -143,6 +151,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             // Guards
             'workflow.domestic_survey.guard.un_reject' => 'guardUnReject',
             'workflow.international_survey.guard.un_reject' => 'guardUnReject',
+            'workflow.domestic_survey.guard.invite_user' => 'guardInviteUser',
+            'workflow.international_survey.guard.invite_user' => 'guardInviteUser',
+            'workflow.pre_enquiry.guard.invite_user' => 'guardInviteUser',
         ];
     }
 }

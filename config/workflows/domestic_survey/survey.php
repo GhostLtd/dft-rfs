@@ -30,6 +30,7 @@ return static function (ContainerConfigurator $container) {
                     'invite_user' => [
                         'from' => StateObject::STATE_NEW,
                         'to' => StateObject::STATE_INVITATION_PENDING,
+                        // this transition has a guard event subscriber
                     ],
                     'invitation_sent' => [
                         'from' => StateObject::STATE_INVITATION_PENDING,
