@@ -120,4 +120,33 @@ class WeekNumberHelperTest extends TestCase
         $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
         $this->assertEquals($expectedDateRange, $dateRange);
     }
+
+    public function providerQuarterAndYear()
+    {
+        return [
+            ['2021/12/27', 1, 2022],
+            ['2022/03/27', 1, 2022],
+
+            ['2024/01/01', 1, 2024],
+            ['2024/03/31', 1, 2024],
+
+            ['2020/09/28', 4, 2020],
+            ['2020/12/27', 4, 2020],
+
+            ['2020/12/28', 1, 2021],
+            ['2021/03/28', 1, 2021],
+
+            ['2023/09/25', 4, 2023],
+            ['2023/12/31', 4, 2023],
+        ];
+    }
+
+    /**
+     * @dataProvider providerQuarterAndYear
+     */
+    public function testQuarterAndYearFromDate(string $date, int $expectedQuarter, int $expectedYear)
+    {
+        $quarterAndYear = WeekNumberHelper::getQuarterAndYear(new \DateTime($date));
+        $this->assertEquals([$expectedQuarter, $expectedYear], $quarterAndYear);
+    }
 }

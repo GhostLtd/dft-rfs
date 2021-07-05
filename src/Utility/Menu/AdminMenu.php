@@ -48,7 +48,7 @@ class AdminMenu implements MenuInterface
             new RoleMenuItem('domestic', 'menu.domestic.root', null, [
                 new RoleMenuItem('surveys-gb', 'menu.domestic.surveys-gb', $this->router->generate(DomSurveyController::LIST_ROUTE, ['type' => 'gb']), [], []),
                 new RoleMenuItem('surveys-ni', 'menu.domestic.surveys-ni', $this->router->generate(DomSurveyController::LIST_ROUTE, ['type' => 'ni']), [], []),
-                new RoleMenuItem('reports', 'menu.domestic.reports', $this->router->generate('admin_reports'), [], []),
+                new RoleMenuItem('reports', 'menu.domestic.reports', $this->router->generate('admin_reports_type', ['type' => ReportFilterType::TYPE_CSRGT_GB]), [], []),
                 new RoleMenuItem('dvla-import', 'menu.domestic.dvla-import', $this->router->generate('admin_domestic_importdvla_index'), [], []),
                 new RoleMenuItem('export', 'menu.domestic.export', $this->router->generate(DomExportControllerAlias::EXPORT_ROUTE), [], []),
                 new RoleMenuItem('add-survey', 'menu.domestic.survey-add', $this->router->generate('admin_domestic_survey_add'), [], []),
