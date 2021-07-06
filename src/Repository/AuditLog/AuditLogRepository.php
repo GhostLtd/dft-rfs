@@ -65,4 +65,23 @@ class AuditLogRepository extends ServiceEntityRepository
             ])
             ->execute();
     }
+
+    public function getQualityAssuredBy($entity)
+    {
+        return $this->createQueryBuilder('audit_log')
+            ->select('audit_log.username, audit_log.timestamp')
+            ->where('audit_log.entityId = :id')
+            ->andWhere('audit_log.entityClass = :class')
+            ->andWhere('audit_log.category = :category')
+            ->setParameters([
+                'id' => $entity->getId(),
+                'class' => get_class($entity),
+                'category' => 'survey-qa',
+            ])
+            ->orderBy('audit_log.timestamp', 'desc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }

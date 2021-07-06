@@ -12,17 +12,22 @@ trait HaulageSurveyTrait {
     use SurveyTrait;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $qualityAssured;
+
+    /**
      * @ORM\Column(type="date", nullable=true)
      * add_survey group is used by both international and domestic
      * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
      * @Assert\NotNull(message="common.date.not-null", groups={"add_survey"})
      */
-    private $surveyPeriodStart;
+    private ?DateTime $surveyPeriodStart;
 
     /**
      * @ORM\Column(type="date", nullable=true)
      */
-    private $surveyPeriodEnd;
+    private ?DateTime $surveyPeriodEnd;
 
     public function getSurveyPeriodStart(): ?DateTime
     {
@@ -61,5 +66,16 @@ trait HaulageSurveyTrait {
         }
 
         return $this->getSurveyPeriodEnd()->diff($this->surveyPeriodStart)->days + 1;
+    }
+
+    public function getQualityAssured(): ?bool
+    {
+        return $this->qualityAssured;
+    }
+
+    public function setQualityAssured(?bool $qualityAssured): self
+    {
+        $this->qualityAssured = $qualityAssured;
+        return $this;
     }
 }

@@ -6,8 +6,13 @@
     {{- actionlessSummaryListRow('common.survey-period.label', survey|formatSurveyPeriod) }}
 
     {%- if showStatus ?? true -%}
-        {{- actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d h:i')})") }}{% endif %}
+        {% set status -%}
+            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
+            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+        {%- endset %}
+        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}

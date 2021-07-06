@@ -16,6 +16,7 @@
             {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d'), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
             {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
                 '-' :
                 (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
