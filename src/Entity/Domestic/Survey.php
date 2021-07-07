@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table("domestic_survey")
  *
- * @AppAssert\ValidRegistration(groups={"add_survey"})
+ * @AppAssert\ValidRegistration(groups={"add_survey", "import_survey"})
  */
 class Survey implements HaulageSurveyInterface, ApiResponseInterface
 {
@@ -25,7 +25,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey"})
+     * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey", "import_survey"})
      */
     private $isNorthernIreland;
 
@@ -36,7 +36,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     /**
      * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank(groups={"add_survey"}, message="common.vehicle.vehicle-registration.not-blank")
+     * @Assert\NotBlank(groups={"add_survey", "import_survey"}, message="common.vehicle.vehicle-registration.not-blank")
      */
     private $registrationMark;
 

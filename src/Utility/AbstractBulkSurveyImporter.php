@@ -87,7 +87,7 @@ abstract class AbstractBulkSurveyImporter
 
     protected function isSurveyValid($survey)
     {
-        $violations = $this->validator->validate($survey, null, 'add_survey');
+        $violations = $this->validator->validate($survey, null, ['import_survey']);
         return ($violations->count() === 0);
     }
 }
