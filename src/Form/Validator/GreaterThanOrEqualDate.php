@@ -2,13 +2,13 @@
 
 namespace App\Form\Validator;
 
-use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  **/
-class GreaterThanOrEqualDate extends GreaterThan
+class GreaterThanOrEqualDate extends GreaterThanOrEqual
 {
     public $message = 'common.date.greater-than-or-equal';
 }
