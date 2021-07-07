@@ -24,7 +24,7 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
     protected ?PreEnquiryResponse $preEnquiryResponse;
 
     /**
-     * @Route("/pre-enquiry/{state}", name=PreEnquiryController::WIZARD_ROUTE)
+     * @Route("/pre-enquiry/{state}", name=PreEnquiryController::WIZARD_ROUTE, requirements={"state": "^(?!completed).+$"})
      */
     public function wizard(WorkflowInterface $preEnquiryInitialDetailsStateMachine, Request $request, $state): Response
     {

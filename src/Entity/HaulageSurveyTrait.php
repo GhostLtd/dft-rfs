@@ -19,7 +19,7 @@ trait HaulageSurveyTrait {
     /**
      * @ORM\Column(type="date", nullable=true)
      * add_survey group is used by both international and domestic
-     * @AppAssert\GreaterThanOrEqualDate("today", groups={"add_survey"})
+     * @AppAssert\GreaterThanOrEqualDate("midnight -6 weeks", groups={"add_survey"})
      * @Assert\NotNull(message="common.date.not-null", groups={"add_survey"})
      */
     private ?DateTime $surveyPeriodStart;
