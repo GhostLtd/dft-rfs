@@ -55,14 +55,14 @@ trait SurveyTrait
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Email(groups={"add_survey"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey"})
+     * @Assert\Email(groups={"add_survey", "import_survey"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
     private $invitationEmail;
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"add_survey"}, validatePostcode=true, allowBlank=true)
+     * @AppAssert\ValidAddress(groups={"add_survey", "import_survey"}, validatePostcode=true, allowBlank=true)
      *
      * @var LongAddress|null
      */
