@@ -6,6 +6,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "common/radios";
 @import "common/value-unit-field";
 @import "common/warning-text";
+@import "common/buttons";
 
 .govuk-visually-hidden-when-larger-than-mobile {
   @include govuk-media-query($from: tablet) {
