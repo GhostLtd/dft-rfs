@@ -177,28 +177,24 @@
                     </div>
                     {%- endif -%}
 
-                    {% if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') %}
-                        {# Not implemented #}
-                    {% else %}
-                        <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Places where goods were loaded or unloaded</h4>
-                        {%- set isReOrderable = trip.actions|length  > 1 -%}
-                        {%- if trip.actions is not empty -%}
-                            {%- with {trip: trip, marginBottom: canEdit ? 5 : 9, isAdmin: true, showActions: canEdit} -%}
-                                {%- include "international_survey/includes/actions.html.twig" -%}
-                            {%- endwith -%}
-                        {%- else -%}
-                            <div class="govuk-body govuk-!-margin-bottom-{{ canEdit ? 5 : 9 }}">No loading or unloading places</div>
-                        {%- endif -%}
+                    <h4 class="govuk-heading-s" id="actions-{{ trip.id }}">Places where goods were loaded or unloaded</h4>
+                    {%- set isReOrderable = trip.actions|length  > 1 -%}
+                    {%- if trip.actions is not empty -%}
+                        {%- with {trip: trip, marginBottom: canEdit ? 5 : 9, isAdmin: true, showActions: canEdit} -%}
+                            {%- include "international_survey/includes/actions.html.twig" -%}
+                        {%- endwith -%}
+                    {%- else -%}
+                        <div class="govuk-body govuk-!-margin-bottom-{{ canEdit ? 5 : 9 }}">No loading or unloading places</div>
+                    {%- endif -%}
 
-                        {%- if canEdit -%}
-                        <div class="govuk-!-margin-bottom-9 govuk-body">
-                            <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
-                            <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
-                            {%- if isReOrderable -%}
-                            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
-                            {%- endif -%}
-                        </div>
+                    {%- if canEdit -%}
+                    <div class="govuk-!-margin-bottom-9 govuk-body">
+                        <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
+                        <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
+                        {%- if isReOrderable -%}
+                        <a class="govuk-button govuk-button--secondary" href="{{ path('admin_international_action_reorder', {tripId: trip.id}) }}">Re-order actions<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
                         {%- endif -%}
+                    </div>
                     {%- endif -%}
                 {%- else -%}
                     <div class="govuk-body">No trips</div>

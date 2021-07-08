@@ -7,18 +7,13 @@ use Exception;
 class Features
 {
     public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
-
-    // Use IRHS consignment / stops model rather than newer actions model
-    public const IRHS_CONSIGNMENTS_AND_STOPS = 'IRHS_CONSIGNMENTS_AND_STOPS';
-
     public const WISDOM_USER_SESSION_RECORDING = 'WISDOM_USER_SESSION_RECORDING';
 
     public const FEATURE_MAP = [
-        'irhs-consignments-and-stops' => self::IRHS_CONSIGNMENTS_AND_STOPS,
         'wisdom-user-session-recording' => self::WISDOM_USER_SESSION_RECORDING,
     ];
 
-    private $enabledFeatures;
+    private array $enabledFeatures;
 
     public function __construct($enableFeatures = [])
     {

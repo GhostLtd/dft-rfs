@@ -123,13 +123,6 @@ class Trip
     private $roundTripDistance;
 
     /**
-     * @ORM\OneToMany(targetEntity=Stop::class, mappedBy="trip", orphanRemoval=true)
-     * @ORM\OrderBy({"number" = "ASC"})
-     * @var Stop[]|Collection
-     */
-    private $stops;
-
-    /**
      * @ORM\Column(type="json")
      */
     private $countriesTransitted = [];
@@ -145,11 +138,6 @@ class Trip
      * @ORM\JoinColumn(nullable=false)
      */
     private $vehicle;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Consignment::class, mappedBy="trip")
-     */
-    private $consignments;
 
     /**
      * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip")
@@ -273,8 +261,6 @@ class Trip
 
     public function __construct()
     {
-        $this->stops = new ArrayCollection();
-        $this->consignments = new ArrayCollection();
         $this->actions = new ArrayCollection();
     }
 
@@ -439,39 +425,6 @@ class Trip
         return $this;
     }
 
-    /**
-     * @return Collection|Stop[]
-     */
-    public function getStops(): Collection
-    {
-        return $this->stops;
-    }
-
-    public function addStop(Stop $stop): self
-    {
-        if (!$this->stops->contains($stop)) {
-            $this->stops[] = $stop;
-            $stop->setTrip($this);
-            $this->renumberStops();
-        }
-
-        return $this;
-    }
-
-    public function removeStop(Stop $stop): self
-    {
-        if ($this->stops->removeElement($stop)) {
-            // set the owning side to null (unless already changed)
-            if ($stop->getTrip() === $this) {
-                $stop->setTrip(null);
-            }
-
-            $this->renumberStops();
-        }
-
-        return $this;
-    }
-
     public function getCountriesTransitted(): ?array
     {
         return $this->countriesTransitted;
@@ -614,52 +567,9 @@ class Trip
         $this->setBodyType($trip->getBodyType());
     }
 
-    /**
-     * @return Collection|Consignment[]
-     */
-    public function getConsignments(): Collection
-    {
-        return $this->consignments;
-    }
-
-    public function addConsignment(Consignment $consignment): self
-    {
-        if (!$this->consignments->contains($consignment)) {
-            $this->consignments[] = $consignment;
-            $consignment->setTrip($this);
-        }
-
-        return $this;
-    }
-
-    public function removeConsignment(Consignment $consignment): self
-    {
-        if ($this->consignments->removeElement($consignment)) {
-            // set the owning side to null (unless already changed)
-            if ($consignment->getTrip() === $this) {
-                $consignment->setTrip(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getNextStopNumber(): int
-    {
-        return ($this->stops->last()) ? $this->stops->last()->getNumber() + 1 : 1;
-    }
-
     public function getNextActionNumber(): int
     {
         return ($this->actions->last()) ? $this->actions->last()->getNumber() + 1 : 1;
-    }
-
-    protected function renumberStops(): void
-    {
-        $count = 1;
-        foreach($this->stops as $stop) {
-            $stop->setNumber($count++);
-        }
     }
 
     public function renumberActions(): void

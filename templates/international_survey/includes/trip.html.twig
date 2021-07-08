@@ -91,13 +91,4 @@
         trip.allCountriesTransitted|default('-'),
         countriesTransittedChangeLink
     ) }}
-
-    {%- if is_feature_enabled('IRHS_CONSIGNMENTS_AND_STOPS') and trip.stops is not empty -%}
-        {%- set stopsRoute = constant('App\\Controller\\InternationalSurvey\\StopController::SUMMARY_ROUTE') -%}
-        {{ row(showActions,
-            'international.trip.summary.stops',
-            trip.stops | formatStops,
-            {(url(stopsRoute, {tripId: trip.id})): {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.stops'}}
-        ) }}
-    {%- endif -%}
 </dl>
