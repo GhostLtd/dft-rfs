@@ -68,9 +68,9 @@ class ExportController extends AbstractController
                     return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
                 } else {
                     $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
-                        $translator->trans('international.export-failed-notification.title'),
-                        $translator->trans('international.export-failed-notification.heading'),
-                        $translator->trans('international.export-failed-notification.content')
+                        $translator->trans('international.export-failed-notification.title', [], 'admin'),
+                        $translator->trans('international.export-failed-notification.heading', [], 'admin'),
+                        $translator->trans('international.export-failed-notification.content', [], 'admin')
                     ));
                     return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
                 }

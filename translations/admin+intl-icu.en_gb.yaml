@@ -38,6 +38,12 @@ common:
         heading: '{transitionTitleUcfirst} survey'
         content: 'The requested {transitionTitle} survey transition was completed.'
 
+domestic:
+  export-failed-notification:
+    heading: 'Export failed'
+    content: 'The export failed'
+    title: ''
+
 international:
   action:
     delete:
@@ -47,3 +53,7 @@ international:
     delete:
       delete.label: Yes, delete this vehicle
       cancel.label: Cancel
+  export-failed-notification:
+    heading: 'Export failed'
+    content: 'The export failed'
+    title: ''

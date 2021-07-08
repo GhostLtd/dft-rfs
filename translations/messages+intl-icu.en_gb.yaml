@@ -928,10 +928,6 @@ domestic:
       phone-number: '0207 944 8233'
   general-help:
     text.call: 'For help with a domestic survey, call'
-  export-failed-notification:
-    heading: 'Export failed'
-    content: 'The export failed'
-    title: ''
 
 
 # Pre-Enquiry
@@ -1080,11 +1076,6 @@ international:
       cancelled:
         heading: Action not deleted
         content: The request to delete the action was cancelled
-
-  export-failed-notification:
-    heading: 'Export failed'
-    content: 'The export failed'
-    title: ''
 
   trip-delete:
     heading: "Delete trip — {date, date, short}"
