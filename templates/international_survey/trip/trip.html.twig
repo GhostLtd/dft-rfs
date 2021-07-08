@@ -20,7 +20,7 @@
 
     {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
     {# -------------------------------------------------------------------------------- #}
-    {# Loading/Unloading Actions #}
+    {# Loading/Unloading Actions                                                        #}
     {# -------------------------------------------------------------------------------- #}
     {%- from 'international_survey/macros.html.twig' import consignmentActionHelp -%}
     {%- if trip.actions is empty -%}
@@ -45,20 +45,20 @@
                 <a href="{{ url(reorderRoute, {tripId: trip.id}) }}"
                    class="govuk-link">{{ 'common.actions.re-order-actions'|trans }}</a>
             </div>
-        {%- endif -%}
-        <div>
-            {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
-            {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
-            {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
-            <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
-        </div>
+        {% endif %}
+    {%- endif -%}
+    <div>
+        {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
+        {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
+        {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
+        <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
+    </div>
 
-        <hr class="govuk-!-margin-bottom-9">
-        <div>
-            {%- if trip.actions.count() > 0 -%}
-            <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
-            {%- endif -%}
-            <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
-        </div>
-    {% endif %}
+    <hr class="govuk-!-margin-bottom-9">
+    <div>
+        {%- if trip.actions.count() > 0 -%}
+        <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+        {%- endif -%}
+        <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
+    </div>
 {% endblock %}
