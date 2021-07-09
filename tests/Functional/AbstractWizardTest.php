@@ -81,6 +81,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         }
 
         foreach ($actualErrors as $k => $v) {
+            $this->assertNotRegExp('/^[\w\-]+(\.[\w\-]+)+$/', $v, 'error message appears to be un-translated');
             if (!isset($expectedErrors[$k])) {
                 $excessErrors[] = $k;
             }
@@ -89,7 +90,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         // Show the difference between excess and missing errors in order to show both at the same time
         // Passing test would expect these both to be empty
         // excess fields cannot occur in missing fields, and vice-versa
-        $this->assertEquals($excessErrors, $missingErrors, 'Missing/excess validation errors on these fields');
+        $this->assertEquals($missingErrors, $excessErrors, 'Missing/excess validation errors on these fields');
     }
 
     protected function getErrors(Crawler $crawler): array
