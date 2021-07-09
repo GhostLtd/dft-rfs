@@ -1,6 +1,6 @@
 {% extends 'admin/base-with-nav.twig' %}
 
-{% set translation_prefix = "admin.reports" %}
+{% set translation_prefix = "admin.reports.state" %}
 
 {% set headingParams = {
     typeLabel: typeLabel,
@@ -73,6 +73,3 @@
         <span>{% if data[field] > 0 %}{{- ((data[field] / total) * 100) | number_format(1) -}}%{% endif %}</span>
     {%- endif -%}
 {% endmacro %}
-
-{% block formszsdad %}
-{% endblock %}

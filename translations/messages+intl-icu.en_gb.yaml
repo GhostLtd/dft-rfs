@@ -170,7 +170,10 @@ admin:
   dashboard:
     heading: Dashboard
   reports:
-    heading: "{typeLabel} — Quarter {quarter}, {year}"
+    dashboard:
+      heading: Reports
+    state:
+      heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow

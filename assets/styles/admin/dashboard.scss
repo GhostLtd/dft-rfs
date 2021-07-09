@@ -26,11 +26,11 @@
   }
 }
 
-
 .info-block {
   @include govuk-responsive-padding(2);
 
-  & + .info-block {
+  & + .info-block,
+  & + .info-sub-block {
     @include govuk-responsive-margin(1, "left");
   }
 }

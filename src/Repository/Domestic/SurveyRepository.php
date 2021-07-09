@@ -117,7 +117,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null)
+    public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.state, count(s) AS count, s.surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');

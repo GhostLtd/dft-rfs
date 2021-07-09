@@ -1,0 +1,33 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% set translation_prefix = "admin.reports.dashboard" %}
+
+{% block adminContent %}
+    <div class="govuk-grid-row info-container">
+        <div class="govuk-grid-column-one-half-from-desktop">
+
+            <div class="govuk-grid-row info-row">
+                <a class="govuk-grid-column-one-quarter info-block info-block-grey">
+                    <span class="info-block--small">Surveys by state</span>
+                </a>
+                <div class="govuk-grid-column-three-quarters info-sub-block">
+                    <div class="govuk-grid-row info-row">
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_state_type', {type: 'csrgt'}) }}">
+                            <span class="info-block--small">CSRGT (All)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_state_type', {type: 'csrgt-gb'}) }}">
+                            <span class="info-block--small">CSRGT (GB)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_state_type', {type: 'csrgt-ni'}) }}">
+                            <span class="info-block--small">CSRGT (NI)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_state_type', {type: 'irhs'}) }}">
+                            <span class="info-block--small">IRHS</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
