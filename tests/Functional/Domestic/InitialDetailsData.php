@@ -102,8 +102,8 @@ class InitialDetailsData
                     "#sold_details_soldDate",
                     "#sold_details_newOwnerName",
                     "#sold_details_newOwnerEmail",
-                    '#sold_details_newOwnerAddress_line1',
-                    '#sold_details_newOwnerAddress_postcode',
+                    "#sold_details_newOwnerTelephone",
+                    "#sold_details_newOwnerAddress",
                 ]),
                 new FormTestCase([
                     'sold_details' => [

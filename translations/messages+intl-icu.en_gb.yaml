@@ -512,6 +512,9 @@ domestic:
       new-owner-name:
         label: "What is the new owner's name?"
         help: ''
+      new-owner-telephone:
+        label: "What is the new owner's phone number?"
+        help: ''
       new-owner-email:
         label: "What is the new owner's email address?"
         help: ''

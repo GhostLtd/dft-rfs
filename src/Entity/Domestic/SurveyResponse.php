@@ -106,15 +106,23 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.email.not-blank", groups={"sold_details", "admin_sold"})
+     * @Assert\Expression("this.getNewOwnerContactMethodCount() > 0", message="domestic.survey-response.sold-details.contact-details-required", groups={"sold_details", "admin_sold"})
      * @Assert\Email(message="common.email.invalid", groups={"sold_details", "admin_sold"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      */
     private $newOwnerEmail;
 
     /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
+     * @Assert\Expression("this.getNewOwnerContactMethodCount() > 0", message="domestic.survey-response.sold-details.contact-details-required", groups={"sold_details", "admin_sold"})
+     */
+    private $newOwnerTelephone;
+
+    /**
      * @ORM\Embedded(class=Address::class)
-     * @AppAssert\ValidAddress(groups={"sold_details", "admin_sold"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"sold_details", "admin_sold"}, validatePostcode=true, allowBlank=true)
+     * @Assert\Expression("this.getNewOwnerContactMethodCount() > 0", message="domestic.survey-response.sold-details.contact-details-required", groups={"sold_details", "admin_sold"})
      */
     private $newOwnerAddress;
 
@@ -430,6 +438,16 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
+    public function getNewOwnerTelephone(): ?string
+    {
+        return $this->newOwnerTelephone;
+    }
+
+    public function setNewOwnerTelephone(?string $newOwnerTelephone): self
+    {
+        $this->newOwnerTelephone = $newOwnerTelephone;
+        return $this;
+    }
     /**
      * Used in constraint validation for hiree details
      */
@@ -440,5 +458,17 @@ class SurveyResponse extends AbstractSurveyResponse
             + (empty($this->getHireeTelephone()) ? 0 : 1)
             + ((is_null($this->getHireeAddress()) || !$this->getHireeAddress()->isFilled()) ? 0 : 1)
         ;
+    }
+
+    /**
+     * Used in constraint validation for sold details
+     */
+    public function getNewOwnerContactMethodCount(): int
+    {
+        return
+            (empty($this->getNewOwnerEmail()) ? 0 : 1)
+            + (empty($this->getNewOwnerTelephone()) ? 0 : 1)
+            + ((is_null($this->getNewOwnerAddress()) || !$this->getNewOwnerAddress()->isFilled()) ? 0 : 1)
+            ;
     }
 }

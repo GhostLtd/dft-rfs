@@ -32,6 +32,12 @@ class SoldDetailsType extends AbstractType
                 'help' => 'domestic.survey-response.sold-details.new-owner-name.help',
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
+            ->add('newOwnerTelephone', Gds\EmailType::class, [
+                'label' => 'domestic.survey-response.sold-details.new-owner-telephone.label',
+                'help' => 'domestic.survey-response.sold-details.new-owner-telephone.help',
+                'attr' => ['class' => 'govuk-input--width-20'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
             ->add('newOwnerEmail', Gds\EmailType::class, [
                 'label' => 'domestic.survey-response.sold-details.new-owner-email.label',
                 'help' => 'domestic.survey-response.sold-details.new-owner-email.help',
