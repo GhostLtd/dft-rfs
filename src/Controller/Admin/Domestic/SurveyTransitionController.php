@@ -4,6 +4,7 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\ConfirmAction\Domestic\Admin\FlagQaConfirmAction;
 use App\Utility\ConfirmAction\Domestic\Admin\SurveyWorkflowConfirmAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -39,4 +40,25 @@ class SurveyTransitionController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/csrgt/surveys/{surveyId}/flag-qa", name=SurveyController::FLAG_QA_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/domestic/surveys/flag-qa.html.twig")
+     * @IsGranted(AdminSurveyVoter::FLAG_QA, subject="survey")
+     */
+    public function flagQa(FlagQaConfirmAction $flagQaConfirmAction, Request $request, Survey $survey)
+    {
+        $flagQaConfirmAction
+            ->setSubject($survey);
+
+        return $flagQaConfirmAction->controller(
+            $request,
+            function() use ($survey) {
+                return $this->generateUrl(
+                    SurveyController::VIEW_ROUTE,
+                    ['surveyId' => $survey->getId()]
+                );
+            }
+        );
+    }
 }

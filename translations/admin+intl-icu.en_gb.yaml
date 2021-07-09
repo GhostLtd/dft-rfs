@@ -27,6 +27,16 @@ format:
 
 common:
   survey:
+    flag-qa:
+      heading: Flag survey as QA'd
+      confirm.label: "Flag as QA'd"
+      cancel.label: "Cancel"
+      cancelled-notification:
+        heading: Operation cancelled
+        content: The survey was NOT flagged as QA'd
+      confirmed-notification:
+        heading: Operation successful
+        content: The survey was successfully flagged as QA'd
     workflow-transition:
       heading: "{transitionTitleUcfirst} survey"
       confirm.label: "{transitionTitleUcfirst} survey"

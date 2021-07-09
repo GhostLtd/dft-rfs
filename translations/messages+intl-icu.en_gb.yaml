@@ -161,6 +161,7 @@ admin:
       event: "Event"
       header: "Audit Logs"
       user: "User"
+    survey-qa: "Flagged survey as QA checked"
     survey-state: "Changed survey state from `{from}` to `{to}`"
   login:
     label: Login

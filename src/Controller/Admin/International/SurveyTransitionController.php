@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\ConfirmAction\International\Admin\FlagQaConfirmAction;
 use App\Utility\ConfirmAction\International\Admin\SurveyWorkflowConfirmAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -35,5 +36,27 @@ class SurveyTransitionController extends AbstractController
                 ['surveyId' => $survey->getId()]
             );
         });
+    }
+
+    /**
+     * @Route("/irhs/surveys/{surveyId}/flag-qa", name=SurveyController::FLAG_QA_ROUTE)
+     * @Entity("survey", expr="repository.find(surveyId)")
+     * @Template("admin/international/surveys/flag-qa.html.twig")
+     * @IsGranted(AdminSurveyVoter::FLAG_QA, subject="survey")
+     */
+    public function flagQa(FlagQaConfirmAction $flagQaConfirmAction, Request $request, Survey $survey)
+    {
+        $flagQaConfirmAction
+            ->setSubject($survey);
+
+        return $flagQaConfirmAction->controller(
+            $request,
+            function() use ($survey) {
+                return $this->generateUrl(
+                    SurveyController::VIEW_ROUTE,
+                    ['surveyId' => $survey->getId()]
+                );
+            }
+        );
     }
 }

@@ -15,6 +15,7 @@
             {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d')) }}
             {{ tableCell(survey.company.businessName) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
             {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
             {{- countField(survey, 'numberOfVehicles') -}}
             {{- countField(survey, 'totalNumberOfTrips') -}}
