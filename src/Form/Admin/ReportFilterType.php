@@ -5,6 +5,7 @@ namespace App\Form\Admin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReportFilterType extends AbstractType
@@ -61,5 +62,11 @@ class ReportFilterType extends AbstractType
         $resolver->setRequired([
             'minYear',
         ]);
+
+        $resolver->setNormalizer('minYear', function(Options $options, ?int $minYear) {
+            return $minYear === null ?
+                intval((new \DateTime())->format('Y')) :
+                $minYear;
+        });
     }
 }
