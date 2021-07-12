@@ -28,6 +28,25 @@
                 </div>
             </div>
 
+            <div class="govuk-grid-row info-row">
+                <a class="govuk-grid-column-one-quarter info-block info-block-grey">
+                    <span class="info-block--small">Possession of vehicle</span>
+                </a>
+                <div class="govuk-grid-column-three-quarters info-sub-block">
+                    <div class="govuk-grid-row info-row">
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_possession_type', {type: 'csrgt'}) }}">
+                            <span class="info-block--small">CSRGT (All)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_possession_type', {type: 'csrgt-gb'}) }}">
+                            <span class="info-block--small">CSRGT (GB)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_possession_type', {type: 'csrgt-ni'}) }}">
+                            <span class="info-block--small">CSRGT (NI)</span>
+                        </a>
+                        <span class="govuk-grid-column-one-quarter info-block info-block-empty"></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

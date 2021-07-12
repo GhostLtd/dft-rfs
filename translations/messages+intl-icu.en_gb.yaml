@@ -173,6 +173,8 @@ admin:
   reports:
     dashboard:
       heading: Reports
+    possession:
+      heading: "{typeLabel} — Quarter {quarter}, {year}"
     state:
       heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:

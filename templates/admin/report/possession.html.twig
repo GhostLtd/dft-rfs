@@ -1,0 +1,62 @@
+{% extends 'admin/base-with-nav.twig' %}
+
+{% set translation_prefix = "admin.reports.possession" %}
+
+{% set headingParams = {
+    typeLabel: typeLabel,
+    quarter: quarter,
+    year: year
+} %}
+
+{% block adminContent %}
+    {% form_theme form _self %}
+    <div class="rfs-admin-report-table">
+        <div class="rfs-admin-report-table--filter">{{ form(form) }}</div>
+        {% for year, yearStats in stats %}
+            {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+{% macro displayTable(stats, totals, totalOfTotals) %}
+    <table class="govuk-table rfs-admin-report-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Week</th>
+            <th scope="col" class="govuk-table__header">In possession</th>
+            <th scope="col" class="govuk-table__header">On hire</th>
+            <th scope="col" class="govuk-table__header">Scrapped</th>
+            <th scope="col" class="govuk-table__header">Sold</th>
+            <th scope="col" class="govuk-table__header">Total</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        {% for week, weekStats in stats %}
+            {%- set allZeros = weekStats.allZeros -%}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__header">{{ week }}</td>
+                {{ _self.displayRow(weekStats.data, weekStats.total, weekStats.allZeros) }}
+            </tr>
+        {% endfor %}
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header">Total</td>
+            {{ _self.displayRow(totals, totalOfTotals, false) }}
+        </tr>
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro displayRow(data, total, allZeros) %}
+    {%- for field in ['yes', 'on-hire', 'scrapped-or-stolen', 'sold'] -%}
+        <td class="govuk-table__cell">{{ _self.displayCell(data, total, allZeros, field) }}</td>
+    {%- endfor -%}
+    <td class="govuk-table__cell">{{- allZeros ? '-' : total -}}</td>
+{% endmacro %}
+
+{% macro displayCell(data, total, allZeros, field,) %}
+    {{ allZeros ? '-' : data[field] }}
+    {%- if not allZeros -%}
+        <span>{% if data[field] > 0 %}{{- ((data[field] / total) * 100) | number_format(1) -}}%{% endif %}</span>
+    {%- endif -%}
+{% endmacro %}

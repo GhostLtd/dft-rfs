@@ -8,6 +8,7 @@ use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -43,7 +44,7 @@ class SurveyRepository extends ServiceEntityRepository
      * @param bool $isNorthernIreland
      * @return Survey[]
      */
-    public function findByTypeWithResponseAndVehicle($isNorthernIreland = false): array
+    public function findByTypeWithResponseAndVehicle(bool $isNorthernIreland = false): array
     {
         return $this->createQueryBuilder('survey')
             ->select('survey, passcode_user, response, vehicle')
@@ -120,46 +121,17 @@ class SurveyRepository extends ServiceEntityRepository
     public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, s.surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
+            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
 
-        if ($isNorthernIreland !== null) {
-            $qb
-                ->where('s.isNorthernIreland = :isNorthernIreland')
-                ->setParameter('isNorthernIreland', $isNorthernIreland);
-        }
-
-        if ($minStart !== null) {
-            $qb
-                ->andWhere('s.surveyPeriodStart >= :minStart')
-                ->setParameter('minStart', $minStart);
-        }
-
-        if ($maxStart !== null) {
-            $qb
-                ->andWhere('s.surveyPeriodStart < :maxStart')
-                ->setParameter('maxStart', $maxStart);
-        }
+        $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.surveyPeriodStart, s.state, week')
+            ->groupBy('s.state, week')
             ->orderBy('week, s.state')
             ->getQuery()
             ->execute();
 
-        if ($minStart !== null && $maxStart !== null) {
-            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($minStart);
-            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($maxStart);
-
-            if ($lastWeek === 1) {
-                $lastWeek = 53;
-                $lastYear--;
-            } else {
-                $lastWeek--;
-            }
-        } else {
-            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($results[0]['surveyPeriodStart']);
-            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($results[count($results) - 1]['surveyPeriodStart']);
-        }
+        [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($results, $minStart, $maxStart);
 
         $mergeStates = [
             SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
@@ -186,7 +158,8 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($result['surveyPeriodStart']);
+            $dateTime = new \DateTime($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($dateTime);
             $state = $result['state'];
 
             if (array_key_exists($state, $mergeStates)) {
@@ -196,33 +169,7 @@ class SurveyRepository extends ServiceEntityRepository
             $stats[$year]['data'][$week]['data'][$state] = $result['count'];
         }
 
-        foreach ($stats as $year => $yearsStats) {
-            $totals = [];
-            $sumOfTotals = 0;
-            foreach ($yearsStats['data'] as $week => $weekStats) {
-                $allZeros = true;
-                $total = 0;
-                foreach ($weekStats['data'] as $name => $state) {
-                    $total += $state;
-                    if ($state > 0) {
-                        $allZeros = false;
-                    }
-
-                    if (!isset($totals[$name])) {
-                        $totals[$name] = $state;
-                    } else {
-                        $totals[$name] += $state;
-                    }
-                }
-                $stats[$year]['data'][$week]['total'] = $total;
-                $stats[$year]['data'][$week]['allZeros'] = $allZeros;
-                $sumOfTotals += $total;
-            }
-            $stats[$year]['totals'] = $totals;
-            $stats[$year]['total'] = $sumOfTotals;
-        }
-
-        return $stats;
+        return $this->addTotalsAndFlags($stats);
     }
 
     public function getMinimumAndMaximumYear(): array
@@ -238,5 +185,131 @@ class SurveyRepository extends ServiceEntityRepository
         } else {
             return array_values(current($result));
         }
+    }
+
+    public function getPossessionReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        $closedStates = [
+            SurveyInterface::STATE_CLOSED,
+            SurveyInterface::STATE_APPROVED,
+            SurveyInterface::STATE_REJECTED,
+            SurveyInterface::STATE_EXPORTING,
+            SurveyInterface::STATE_EXPORTED,
+        ];
+
+        $qb = $this->createQueryBuilder('s')
+            ->select('r.isInPossessionOfVehicle, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week')
+            ->leftJoin('s.response', 'r')
+            ->where('s.state in (:closedStates)')
+            ->setParameter('closedStates', $closedStates);
+
+        $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);
+
+        $results = $qb
+            ->groupBy('s.surveyPeriodStart, r.isInPossessionOfVehicle, week')
+            ->orderBy('week')
+            ->getQuery()
+            ->execute();
+
+        [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($results, $minStart, $maxStart);
+
+        $stats = [];
+        for ($year = $firstYear; $year <= $lastYear; $year++) {
+            $stats[$year] = ['data' => []];
+            for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+                $stats[$year]['data'][$week] = [
+                    'data' => [
+                        SurveyResponse::IN_POSSESSION_ON_HIRE => 0,
+                        SurveyResponse::IN_POSSESSION_SOLD => 0,
+                        SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN => 0,
+                        SurveyResponse::IN_POSSESSION_YES => 0,
+                    ],
+                ];
+            }
+        }
+
+        foreach ($results as $result) {
+            $dateTime = new \DateTime($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($dateTime);
+            $possessionMode = $result['isInPossessionOfVehicle'];
+
+            $stats[$year]['data'][$week]['data'][$possessionMode] = $result['count'];
+        }
+
+        return $this->addTotalsAndFlags($stats);
+    }
+
+    protected function addTimeAndLocationBounds(QueryBuilder $qb, ?bool $isNorthernIreland, ?\DateTime $minStart, ?\DateTime $maxStart): QueryBuilder
+    {
+        if ($isNorthernIreland !== null) {
+            $qb
+                ->andWhere('s.isNorthernIreland = :isNorthernIreland')
+                ->setParameter('isNorthernIreland', $isNorthernIreland);
+        }
+
+        if ($minStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart >= :minStart')
+                ->setParameter('minStart', $minStart);
+        }
+
+        if ($maxStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart < :maxStart')
+                ->setParameter('maxStart', $maxStart);
+        }
+
+        return $qb;
+    }
+
+    protected function getWeekAndYearRange($results, ?\DateTime $minStart, ?\DateTime $maxStart): array
+    {
+        if ($minStart !== null && $maxStart !== null) {
+            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($minStart);
+            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($maxStart);
+
+            if ($lastWeek === 1) {
+                $lastWeek = 53;
+                $lastYear--;
+            } else {
+                $lastWeek--;
+            }
+        } else {
+            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($results[0]['surveyPeriodStart']);
+            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($results[count($results) - 1]['surveyPeriodStart']);
+        }
+
+        return [$firstWeek, $firstYear, $lastWeek, $lastYear];
+    }
+
+    protected function addTotalsAndFlags(array $stats): array
+    {
+        foreach ($stats as $year => $yearsStats) {
+            $totals = [];
+            $sumOfTotals = 0;
+            foreach ($yearsStats['data'] as $week => $weekStats) {
+                $allZeros = true;
+                $total = 0;
+                foreach ($weekStats['data'] as $name => $data) {
+                    $total += $data;
+                    if ($data > 0) {
+                        $allZeros = false;
+                    }
+
+                    if (!isset($totals[$name])) {
+                        $totals[$name] = $data;
+                    } else {
+                        $totals[$name] += $data;
+                    }
+                }
+                $stats[$year]['data'][$week]['total'] = $total;
+                $stats[$year]['data'][$week]['allZeros'] = $allZeros;
+                $sumOfTotals += $total;
+            }
+            $stats[$year]['totals'] = $totals;
+            $stats[$year]['total'] = $sumOfTotals;
+        }
+
+        return $stats;
     }
 }

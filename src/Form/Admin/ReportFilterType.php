@@ -32,9 +32,13 @@ class ReportFilterType extends AbstractType
         ];
         $years = range($options['minYear'], $options['maxYear']);
 
+        $choices = array_filter(self::CHOICE_TYPES, function(string $choice) use ($options) {
+            return !in_array($choice, $options['excludeChoices']);
+        });
+
         $builder
             ->add('type', Gds\ChoiceType::class, [
-                'choices' => self::CHOICE_TYPES,
+                'choices' => $choices,
                 'expanded' => false,
                 'label' => 'Survey type',
             ])
@@ -57,11 +61,14 @@ class ReportFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'maxYear' => intval((new \DateTime())->format('Y')),
+            'excludeChoices' => [],
         ]);
 
         $resolver->setRequired([
             'minYear',
         ]);
+
+        $resolver->setAllowedTypes('excludeChoices', 'array');
 
         $resolver->setNormalizer('minYear', function(Options $options, ?int $minYear) {
             return $minYear === null ?
