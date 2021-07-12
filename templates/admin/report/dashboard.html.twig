@@ -7,9 +7,9 @@
         <div class="govuk-grid-column-one-half-from-desktop">
 
             <div class="govuk-grid-row info-row">
-                <a class="govuk-grid-column-one-quarter info-block info-block-grey">
+                <span class="govuk-grid-column-one-quarter info-block info-block-grey">
                     <span class="info-block--small">Surveys by state</span>
-                </a>
+                </span>
                 <div class="govuk-grid-column-three-quarters info-sub-block">
                     <div class="govuk-grid-row info-row">
                         <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_state_type', {type: 'csrgt'}) }}">
@@ -29,9 +29,9 @@
             </div>
 
             <div class="govuk-grid-row info-row">
-                <a class="govuk-grid-column-one-quarter info-block info-block-grey">
+                <span class="govuk-grid-column-one-quarter info-block info-block-grey">
                     <span class="info-block--small">Possession of vehicle</span>
-                </a>
+                </span>
                 <div class="govuk-grid-column-three-quarters info-sub-block">
                     <div class="govuk-grid-row info-row">
                         <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_possession_type', {type: 'csrgt'}) }}">
@@ -44,6 +44,28 @@
                             <span class="info-block--small">CSRGT (NI)</span>
                         </a>
                         <span class="govuk-grid-column-one-quarter info-block info-block-empty"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row info-row">
+                <span class="govuk-grid-column-one-quarter info-block info-block-grey">
+                    <span class="info-block--small">Quality assurance</span>
+                </span>
+                <div class="govuk-grid-column-three-quarters info-sub-block">
+                    <div class="govuk-grid-row info-row">
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_qa_type', {type: 'csrgt'}) }}">
+                            <span class="info-block--small">CSRGT (All)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_qa_type', {type: 'csrgt-gb'}) }}">
+                            <span class="info-block--small">CSRGT (GB)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_qa_type', {type: 'csrgt-ni'}) }}">
+                            <span class="info-block--small">CSRGT (NI)</span>
+                        </a>
+                        <a class="govuk-grid-column-one-quarter info-block info-block-success" href="{{ path('admin_reports_qa_type', {type: 'irhs'}) }}">
+                            <span class="info-block--small">IRHS</span>
+                        </a>
                     </div>
                 </div>
             </div>

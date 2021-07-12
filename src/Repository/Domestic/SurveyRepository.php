@@ -187,26 +187,69 @@ class SurveyRepository extends ServiceEntityRepository
         }
     }
 
-    public function getPossessionReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    public function getQualityAssuranceReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
-        $closedStates = [
-            SurveyInterface::STATE_CLOSED,
-            SurveyInterface::STATE_APPROVED,
-            SurveyInterface::STATE_REJECTED,
-            SurveyInterface::STATE_EXPORTING,
-            SurveyInterface::STATE_EXPORTED,
-        ];
-
         $qb = $this->createQueryBuilder('s')
-            ->select('r.isInPossessionOfVehicle, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week')
-            ->leftJoin('s.response', 'r')
-            ->where('s.state in (:closedStates)')
-            ->setParameter('closedStates', $closedStates);
+            ->select('s.qualityAssured, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week')
+            ->where('s.state in (:approvedStates)')
+            ->setParameter('approvedStates', [
+                SurveyInterface::STATE_APPROVED,
+                SurveyInterface::STATE_EXPORTING,
+                SurveyInterface::STATE_EXPORTED,
+            ]);
 
         $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.surveyPeriodStart, r.isInPossessionOfVehicle, week')
+            ->groupBy('s.qualityAssured, week')
+            ->orderBy('week')
+            ->getQuery()
+            ->execute();
+
+        [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($results, $minStart, $maxStart);
+
+        $stats = [];
+        for ($year = $firstYear; $year <= $lastYear; $year++) {
+            $stats[$year] = ['data' => []];
+            for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+                $stats[$year]['data'][$week] = [
+                    'data' => [
+                        'quality-assured' => 0,
+                        'not-quality-assured' => 0,
+                    ],
+                ];
+            }
+        }
+
+        foreach ($results as $result) {
+            $dateTime = new \DateTime($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($dateTime);
+            $qualityAssured = $result['qualityAssured'] == 1 ? 'quality-assured' : 'not-quality-assured';
+
+            $stats[$year]['data'][$week]['data'][$qualityAssured] = $result['count'];
+        }
+
+        return $this->addTotalsAndFlags($stats);
+    }
+
+    public function getPossessionReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('r.isInPossessionOfVehicle, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week')
+            ->leftJoin('s.response', 'r')
+            ->where('s.state in (:closedStates)')
+            ->setParameter('closedStates', [
+                SurveyInterface::STATE_CLOSED,
+                SurveyInterface::STATE_APPROVED,
+                SurveyInterface::STATE_REJECTED,
+                SurveyInterface::STATE_EXPORTING,
+                SurveyInterface::STATE_EXPORTED,
+            ]);
+
+        $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);
+
+        $results = $qb
+            ->groupBy('r.isInPossessionOfVehicle, week')
             ->orderBy('week')
             ->getQuery()
             ->execute();

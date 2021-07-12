@@ -174,9 +174,14 @@ admin:
     dashboard:
       heading: Reports
     possession:
-      heading: "{typeLabel} — Quarter {quarter}, {year}"
+      heading: Surveys by possession of vehicle
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    quality-assurance:
+      heading: Surveys by quality assurance
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
     state:
-      heading: "{typeLabel} — Quarter {quarter}, {year}"
+      heading: Surveys by state
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow

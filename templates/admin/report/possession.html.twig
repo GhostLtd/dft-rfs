@@ -10,6 +10,7 @@
 
 {% block adminContent %}
     {% form_theme form _self %}
+    <h3 class="govuk-heading-m">{{ (translation_prefix ~ ".sub-heading")|trans(headingParams) }}</h3>
     <div class="rfs-admin-report-table">
         <div class="rfs-admin-report-table--filter">{{ form(form) }}</div>
         {% for year, yearStats in stats %}
