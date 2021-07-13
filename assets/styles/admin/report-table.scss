@@ -3,6 +3,10 @@
 .rfs-admin-report-table {
   max-width: 1100px;
 
+  h1 {
+    margin-bottom: 0;
+  }
+
   td > span {
     @include govuk-font(14);
     display: block;
@@ -38,6 +42,7 @@
 
     align-items: flex-end;
     justify-content: flex-end;
+    flex-wrap: wrap;
 
     .govuk-form-group {
       @include govuk-responsive-margin(3, "right");
