@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Utility;
+namespace App\Tests\Utility\Domestic;
 
 use App\Utility\Domestic\WeekNumberHelper;
 use DateTime;
