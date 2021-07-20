@@ -36,28 +36,36 @@
     {%- if isInPossession and survey.response -%}
         <h1 class="govuk-heading-xl">Business details</h1>
         <hr class="govuk-section-break govuk-section-break--xl">
-        <dl class="govuk-summary-list">
-            {{- row(
-                'domestic.survey-response.business-details.number-of-employees.label',
-                "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans) -}}
-            {{- row(
-                'domestic.survey-response.business-details.business-nature.label',
-                survey.response.businessNature) -}}
-            {{- row(
-                'domestic.survey-response.business-details.operation-type.label',
-                (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans) -}}
-        </dl>
+        {%- if not survey.isBusinessAndVehicleDetailsComplete -%}
+            <p class="govuk-body">Not completed</p>
+        {%- else -%}
+            <dl class="govuk-summary-list">
+                {{- row(
+                    'domestic.survey-response.business-details.number-of-employees.label',
+                    "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans) -}}
+                {{- row(
+                    'domestic.survey-response.business-details.business-nature.label',
+                    survey.response.businessNature) -}}
+                {{- row(
+                    'domestic.survey-response.business-details.operation-type.label',
+                    (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans) -}}
+            </dl>
+        {%- endif -%}
 
         <h1 class="govuk-heading-xl">Vehicle details</h1>
         <hr class="govuk-section-break govuk-section-break--xl">
-        {% with {showActions: false, showHeading: false, showReasonForEmptySurvey: true, marginBottom: 0} %}
-            {% include "domestic_survey/includes/vehicle-details.html.twig" %}
-        {% endwith %}
+        {%- if not survey.isBusinessAndVehicleDetailsComplete -%}
+            <p class="govuk-body">Not completed</p>
+        {%- else -%}
+            {%- with {showActions: false, showHeading: false, showReasonForEmptySurvey: true, marginBottom: 0} -%}
+                {%- include "domestic_survey/includes/vehicle-details.html.twig" -%}
+            {%- endwith -%}
 
-        {%- for dayNumber in 1..7 -%}
-            {%- set day = survey.response.dayByNumber(dayNumber) -%}
-            {{- _self.dailyJourneys(day, dayNumber, (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber - 1) ~ ' day'))) -}}
-        {%- endfor -%}
+            {%- for dayNumber in 1..7 -%}
+                {%- set day = survey.response.dayByNumber(dayNumber) -%}
+                {{- _self.dailyJourneys(day, dayNumber, (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber - 1) ~ ' day'))) -}}
+            {%- endfor -%}
+        {%- endif -%}
     {%- endif -%}
 {%- endblock -%}
 
