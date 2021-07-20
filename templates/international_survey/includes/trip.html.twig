@@ -76,8 +76,14 @@
         </div>
     {% endif %}
     {% if trip.canChangeWeights %}
-        {{ row(showActions, 'international.trip.summary.gross-weight', "#{trip.grossWeight} Kg", trailerChangeLink) }}
-        {{ row(showActions, 'international.trip.summary.carrying-capacity', "#{trip.carryingCapacity} Kg", trailerChangeLink) }}
+        {{ row(showActions, 'international.trip.summary.gross-weight',
+            ('common.weight.kilograms'|trans({value: trip.grossWeight})),
+            trailerChangeLink
+        ) }}
+        {{ row(showActions, 'international.trip.summary.carrying-capacity',
+            ('common.weight.kilograms'|trans({value: trip.carryingCapacity})),
+            trailerChangeLink
+        ) }}
     {% endif %}
 
     {{ row(showActions, 'international.trip.summary.distance',

@@ -12,7 +12,7 @@
     } %}
     {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
         {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
-            "#{survey.response.vehicle.fuelQuantity.value} #{survey.response.vehicle.fuelQuantity.unit}" :
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
             '-'
         -%}
         {{ row(showActions,
@@ -23,12 +23,12 @@
     {% endif %}
     {{ row(showActions,
         'common.vehicle.gross-weight',
-        "#{survey.response.vehicle.grossWeight} Kg",
+        ('common.weight.kilograms'|trans({value: survey.response.vehicle.grossWeight})),
         vehicleWeightsActionLinks
     ) }}
     {{ row(showActions,
         'common.vehicle.carrying-capacity',
-        "#{survey.response.vehicle.carryingCapacity} Kg",
+        ('common.weight.kilograms'|trans({value: survey.response.vehicle.carryingCapacity})),
         vehicleWeightsActionLinks
     ) }}
 

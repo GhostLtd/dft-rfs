@@ -92,15 +92,38 @@ common:
     unloading-goods-at: "Unloading {goods} at {name}, {country}"
     loaded-at: "Loaded at {name}, {country}"
     unloaded-at: "Unloaded at {name}, {country}"
-    unloaded-all: "All ({weight})"
+    unloaded-all: "All {value, number}kg"
     fully-unloaded: "Fully unloaded - unavailable"
     weight-none-unloaded: "None unloaded ({loaded, number}kg remaining)"
     weight-partially-unloaded: "Partially unloaded - {unloaded, number}kg of {loaded, number}kg ({remaining, number}kg remaining)"
     weight-fully-unloaded: "Fully unloaded - {unloaded, number}kg of {loaded, number}kg"
     weight-status: "{unloaded, number}kg of {loaded, number}kg unloaded so far"
   distance:
-    miles: "{value} miles"
-    kilometers: "{value} kilometers"
+    miles: >-
+      {value, plural,
+        one {1.0 mile}
+        other {{value, number} miles}
+      }
+    kilometers: >-
+      {value, plural,
+        one {1.0 kilometer}
+        other {{value, number} kilometers}
+      }
+  number:
+    plain: "{value, number}"
+  volume:
+    gallons: >-
+      {value, plural,
+        one {1.0 gallon}
+        other {{value, number} gallons}
+      }
+    litres: >-
+      {value, plural,
+        one {1.0 litre}
+        other {{value, number} litres}
+      }
+  weight:
+    kilograms: "{value, number}kg"
   headings:
     next-step: Next step
     next-steps: Next steps
@@ -647,24 +670,13 @@ domestic:
       space-and-weight: At capacity by space and weight
     weight-of-goods:
       label: Weight of goods
-      plain: "{value}kg"
-      loaded: "{value}kg loaded"
-      unloaded: "{value}kg unloaded"
+      loaded: "{value, number}kg loaded"
+      unloaded: "{value, number}kg unloaded"
     number-of-stops:
       label: Number of stops
       loading: "{value} loading"
       unloading: "{value} unloading"
       loading-and-unloading: "{value} both loading and unloading"
-    distance:
-      plain:
-        miles: "{value} miles"
-        kilometers: "{value} kilometers"
-      loaded:
-        miles: "{value} miles loaded"
-        kilometers: "{value} kilometers loaded"
-      unloaded:
-        miles: "{value} miles unloaded"
-        kilometers: "{value} kilometers unloaded"
     loaded:
       none: loaded
       rail: loaded via rail
@@ -1313,7 +1325,7 @@ international:
       heading: 'Weight unloaded'
       help: ''
       unloaded-all:
-        label: 'Did you unload all {weight}kg of {goods} from {place}, {country}?'
+        label: 'Did you unload all {weight, number}kg of {goods} from {place}, {country}?'
         help: ''
       weight-of-goods:
         label: Weight of goods unloaded

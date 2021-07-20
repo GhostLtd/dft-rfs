@@ -73,11 +73,11 @@
             vehicleBodyLink
         ) }}
         {{ summaryListRow('common.vehicle.gross-weight' | trans,
-            "#{vehicle.grossWeight|number_format}kg",
+            ('common.weight.kilograms'|trans({value: vehicle.grossWeight})),
             vehicleWeightLink
         ) }}
         {{ summaryListRow('common.vehicle.carrying-capacity' | trans,
-            "#{vehicle.carryingCapacity|number_format}kg",
+            ('common.weight.kilograms'|trans({value: vehicle.carryingCapacity})),
             vehicleWeightLink
         ) }}
     </dl>

@@ -17,11 +17,20 @@
         {%- endif -%}
 
         {{- tableCell(day.summary.furthestStop) -}}
-        {{- tableCell("#{day.summary.distanceTravelledLoaded | formatValueUnit} / #{day.summary.distanceTravelledUnloaded | formatValueUnit}", {numeric: true}) -}}
+        {{- tableCell(
+            ("common.distance.#{day.summary.distanceTravelledLoaded.unit}" | trans({value: day.summary.distanceTravelledLoaded.value})) ~
+            " / " ~
+            ("common.distance.#{day.summary.distanceTravelledUnloaded.unit}" | trans({value: day.summary.distanceTravelledUnloaded.value})),
+            {numeric: true}
+        ) -}}
         {{- tableCell(day.summary | formatGoodsDescription(true)) -}}
         {{- tableCell(displayHazardousGoods(day.summary.hazardousGoodsCode)) -}}
         {{- tableCell(day.summary.cargoTypeCode) -}}
-        {{- tableCell("#{day.summary.weightOfGoodsLoaded}kg / #{day.summary.weightOfGoodsUnloaded}kg", {numeric: true}) -}}
+        {{- tableCell(
+            ('common.weight.kilograms'|trans({value: day.summary.weightOfGoodsLoaded})) ~
+            " / " ~
+            ('common.weight.kilograms'|trans({value: day.summary.weightOfGoodsUnloaded}))
+        , {numeric: true}) -}}
         {{- tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) -}}
 
         {%- if showActions ?? true -%}

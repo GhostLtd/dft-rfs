@@ -21,7 +21,7 @@
 
     {{- row(showActions,
         'international.correspondence-and-business-details.number-of-trips',
-        response.annualInternationalJourneyCount|number_format,
+        ('common.number.plain'|trans({value: response.annualInternationalJourneyCount})),
         numberOfTripsChangeLink
     ) -}}
     {%- if response.isNoLongerActive -%}

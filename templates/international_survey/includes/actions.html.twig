@@ -8,11 +8,11 @@
 
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- if isAdmin -%}
-        {%- set headers = {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, 'Cargo Type': {}, 'Hazardous?': {}} -%}
+        {%- set headers = {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {numeric: true}, 'common.action.goods': {}, 'common.action.from': {}, 'Cargo Type': {}, 'Hazardous?': {}} -%}
         {%- if showActions -%}{%- set headers = headers | merge({('common.actions.table-heading' | trans): {html: true}}) -%}{%- endif -%}
         {{- tableHeadComplex(false, headers) -}}
     {%- else -%}
-        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {}, 'common.action.goods': {}, 'common.action.from': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}
+        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {numeric: true}, 'common.action.goods': {}, 'common.action.from': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}
     {%- endif -%}
     <tbody class="govuk-table__body">
     {%- for action in trip.actions %}
@@ -23,9 +23,15 @@
             {{ tableCell((action.loading ? 'common.action.loading' : 'common.action.unloading')|trans) }}
 
             {%- if action.loading or not action.weightUnloadedAll -%}
-                {{ tableCell((action.weightOfGoods|number_format) ~ 'kg') }}
+                {{ tableCell(
+                    ('common.weight.kilograms'|trans({value: action.weightOfGoods})),
+                    {numeric: true}
+                ) }}
             {%- else -%}
-                {{ tableCell('common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'})) }}
+                {{ tableCell(
+                    ('common.action.unloaded-all'|trans({value: action.loadingAction.weightOfGoods})),
+                    {numeric: true}
+                ) }}
             {%- endif -%}
 
 

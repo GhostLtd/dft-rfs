@@ -33,7 +33,10 @@
                     } -%}
 
                     {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), loadGoodsChangeLink) }}
-                    {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', loadGoodsChangeLink) }}
+                    {{ summaryListRow('common.action.weight',
+                        ('common.weight.kilograms'|trans({value: action.weightOfGoods})),
+                        loadGoodsChangeLink
+                    ) }}
 
                     {{ summaryListRow('common.action.is-hazardous', displayHazardousGoods(action.hazardousGoodsCode, 'common.action.not-hazardous'), loadHazardousChangeLink) }}
                     {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, loadHazardousChangeLink) }}
@@ -47,9 +50,9 @@
                         {{ summaryListRow('common.action.goods', goodsCopy, unloadConsignmentChangeLink) }}
                     {% endwith %}
                     {% if action.weightUnloadedAll %}
-                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({weight: (action.loadingAction.weightOfGoods|number_format) ~ 'kg'}), unloadConsignmentChangeLink) }}
+                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({value: action.loadingAction.weightOfGoods}), unloadConsignmentChangeLink) }}
                     {% else %}
-                        {{ summaryListRow('common.action.weight', (action.weightOfGoods|number_format) ~ 'kg', unloadConsignmentChangeLink) }}
+                        {{ summaryListRow('common.action.weight', ('common.weight.kilograms'|trans({value: action.weightOfGoods})), unloadConsignmentChangeLink) }}
                     {% endif %}
                 {%- endif -%}
             </dl>
