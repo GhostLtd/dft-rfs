@@ -98,17 +98,17 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         if (!$survey->getSubmissionDate()) {
             $survey->setSubmissionDate(new DateTime('now'));
+        }
 
-            if ($survey instanceof DomesticSurvey) {
-                $this->domesticPdfHelper->generateAndUploadPdf($survey);
-            } else if ($survey instanceof InternationalSurvey) {
-                $this->internationalPdfHelper->generateAndUploadPdf($survey);
-            } else if ($survey instanceof PreEnquiry) {
-                // Do nothing...
-                return;
-            } else {
-                throw new \RuntimeException("Unsupported survey class".get_class($survey));
-            }
+        if ($survey instanceof DomesticSurvey) {
+            $this->domesticPdfHelper->generateAndUploadPdfIfNotExists($survey);
+        } else if ($survey instanceof InternationalSurvey) {
+            $this->internationalPdfHelper->generateAndUploadPdfIfNotExists($survey);
+        } else if ($survey instanceof PreEnquiry) {
+            // Do nothing...
+            return;
+        } else {
+            throw new \RuntimeException("Unsupported survey class".get_class($survey));
         }
     }
 

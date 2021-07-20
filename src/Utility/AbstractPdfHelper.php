@@ -27,6 +27,12 @@ abstract class AbstractPdfHelper
         $this->logger = $logger;
     }
 
+    public function generateAndUploadPdfIfNotExists(SurveyInterface $survey): ?StorageObject
+    {
+        $existingSurvey = $this->getMostRecentSurveyPDF($survey);
+        return $existingSurvey ? null : $this->generateAndUploadPdf($survey);
+    }
+
     public function generateAndUploadPdf(SurveyInterface $survey): ?StorageObject
     {
         if (!$this->bucket->name()) {
