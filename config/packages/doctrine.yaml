@@ -4,7 +4,7 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                schema_filter: '~^(?!messenger_messages)~'
+                schema_filter: '~^(?!messenger_messages|cache_items)~'
 
     orm:
         auto_generate_proxy_classes: true
