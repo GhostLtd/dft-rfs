@@ -81,6 +81,11 @@ abstract class AbstractPdfHelper
      */
     public function getExistingSurveyPDFs(SurveyInterface $survey): array
     {
+        if (!$this->bucket->name()) {
+            // Bucket isn't configured
+            return [];
+        }
+
         $pdfs = [];
         $iterator = $this->bucket->objects([
             'delimiter' => '/',
