@@ -4,7 +4,6 @@ namespace App\Twig;
 
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\ActionController;
-use App\Controller\InternationalSurvey\ConsignmentWorkflowController;
 use App\Controller\InternationalSurvey\TripEditController;
 use App\Controller\InternationalSurvey\VehicleEditController;
 use App\Entity\AbstractGoodsDescription;
@@ -13,7 +12,6 @@ use App\Entity\CountryInterface;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
-use App\Entity\International\Stop;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
@@ -25,12 +23,10 @@ use App\Utility\SessionTimeoutHelper;
 use App\Utility\Domestic\WeekNumberHelper;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use App\Workflow\InternationalSurvey\ActionState;
-use App\Workflow\InternationalSurvey\ConsignmentState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\InternationalSurvey\VehicleState;
 use DateTimeInterface;
-use Doctrine\Common\Collections\Collection;
 use Exception;
 use RuntimeException;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -84,7 +80,6 @@ class AppExtension extends AbstractExtension
             }),
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
-            new TwigFilter('formatStops', [$this, 'formatStops']),
             new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
             new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
@@ -195,17 +190,6 @@ class AppExtension extends AbstractExtension
         return $nonBlankPrefix . $this->translator->trans("domestic.day-view." . join('.', $parts));
     }
 
-    public function formatStops($stops): string
-    {
-        if ($stops && $stops instanceof Collection) {
-            return join(', ', $stops->map(function(Stop $stop) {
-                return $stop->getName();
-            })->toArray());
-        }
-
-        return '';
-    }
-
     public function formatSurveyPeriod(HaulageSurveyInterface $survey)
     {
         $numDays = $survey->getSurveyPeriodInDays();
@@ -238,7 +222,6 @@ class AppExtension extends AbstractExtension
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
         'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
-        'international-consignment' => ['class' => ConsignmentState::class, 'route' => ConsignmentWorkflowController::WIZARD_ROUTE],
         'international-action' => ['class' => ActionState::class, 'route' => ActionController::EDIT_ROUTE],
     ];
 
