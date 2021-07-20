@@ -104,7 +104,7 @@ class SurveyRepository extends ServiceEntityRepository
     public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart), WEEK(s.surveyPeriodStart) AS week');
+            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart) as surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
 
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
@@ -138,7 +138,8 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
+            $dateTime = new \DateTime($result['surveyPeriodStart']);
+            $week = WeekNumberHelper::getWeekNumber($dateTime);
             $state = $result['state'];
 
             if (array_key_exists($state, $mergeStates)) {
