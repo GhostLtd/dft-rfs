@@ -1,0 +1,24 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = {
+    typeLabel: typeLabel,
+    quarter: quarter,
+    year: year
+} %}
+
+{% block adminContentIncludingHeader %}
+    <div class="rfs-admin-report-table">
+        <a href="{{ path('admin_reports_dashboard') }}" class="govuk-back-link">Back</a>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half-from-desktop">
+                <h1 class="govuk-heading-l" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}
+                </h1>
+                <h3 class="govuk-heading-m">{{ (translation_prefix ~ ".sub-heading")|trans(headingParams) }}</h3>
+            </div>
+            <div class="govuk-grid-column-one-half-from-desktop">
+                <div class="rfs-admin-report-table--filter">{{ form(form) }}</div>
+            </div>
+        </div>
+        {% block statsTable %}{% endblock %}
+    </div>
+{% endblock %}

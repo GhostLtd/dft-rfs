@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\HaulageSurveyInterface;
 use App\Entity\SurveyInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -12,11 +13,17 @@ class AdminSurveyVoter extends Voter
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
     const EDIT_NOTES = 'EDIT_NOTES';
+    const FLAG_QA = 'FLAG_QA';
 
     protected function supports($attribute, $subject)
     {
-        return in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES])
+        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES])
             && $subject instanceof SurveyInterface;
+
+        $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA])
+            && $subject instanceof HaulageSurveyInterface;
+
+        return $surveyInterfaceSupport || $haulageInterfaceSupport;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -40,6 +47,12 @@ class AdminSurveyVoter extends Voter
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);
+        }
+
+        if ($subject instanceof HaulageSurveyInterface) {
+            if ($attribute === self::FLAG_QA) {
+                return $state === SurveyInterface::STATE_APPROVED && !$subject->getQualityAssured();
+            }
         }
 
         return false;

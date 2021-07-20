@@ -81,6 +81,9 @@ class SurveyViewController extends AbstractController
                 SurveyInterface::STATE_REJECTED,
                 SurveyInterface::STATE_CLOSED,
             ]) ? false : $this->logRepository->getApprovedBy($survey),
+            'qualityAssuredBy' => $survey->getQualityAssured() ?
+                $this->logRepository->getQualityAssuredBy($survey) :
+                false,
         ];
     }
 

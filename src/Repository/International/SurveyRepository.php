@@ -11,6 +11,7 @@ use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -100,37 +101,20 @@ class SurveyRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null)
+    public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, s.surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
+            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart), WEEK(s.surveyPeriodStart) AS week');
 
-        if ($minStart !== null) {
-            $qb
-                ->andWhere('s.surveyPeriodStart >= :minStart')
-                ->setParameter('minStart', $minStart);
-        }
-
-        if ($maxStart !== null) {
-            $qb
-                ->andWhere('s.surveyPeriodStart < :maxStart')
-                ->setParameter('maxStart', $maxStart);
-        }
+        $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.surveyPeriodStart, s.state, week')
+            ->groupBy('s.state, week')
             ->orderBy('week, s.state')
             ->getQuery()
             ->execute();
 
-        if ($minStart !== null && $maxStart !== null) {
-            $firstWeek = WeekNumberHelper::getWeekNumber($minStart);
-            $lastWeek = WeekNumberHelper::getWeekNumber($maxStart);
-            $lastWeek--;
-        } else {
-            $firstWeek = WeekNumberHelper::getWeekNumber($results[0]['surveyPeriodStart']);
-            $lastWeek = WeekNumberHelper::getWeekNumber($results[count($results) - 1]['surveyPeriodStart']);
-        }
+        [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
 
         $mergeStates = [
             SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
@@ -164,31 +148,51 @@ class SurveyRepository extends ServiceEntityRepository
             $stats['data'][$week]['data'][$state] = $result['count'];
         }
 
-        $totals = [];
-        $sumOfTotals = 0;
-        foreach ($stats['data'] as $week => $weekStats) {
-            $allZeros = true;
-            $total = 0;
-            foreach ($weekStats['data'] as $name => $state) {
-                $total += $state;
-                if ($state > 0) {
-                    $allZeros = false;
-                }
+        return $this->addTotalsAndFlags($stats);
+    }
 
-                if (!isset($totals[$name])) {
-                    $totals[$name] = $state;
-                } else {
-                    $totals[$name] += $state;
-                }
-            }
-            $stats['data'][$week]['total'] = $total;
-            $stats['data'][$week]['allZeros'] = $allZeros;
-            $sumOfTotals += $total;
+
+    public function getQualityAssuranceReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('s.qualityAssured, count(s) AS count, MIN(s.surveyPeriodStart), WEEK(s.surveyPeriodStart) AS week')
+            ->where('s.state in (:approvedStates)')
+            ->setParameter('approvedStates', [
+                SurveyInterface::STATE_APPROVED,
+                SurveyInterface::STATE_EXPORTING,
+                SurveyInterface::STATE_EXPORTED,
+            ]);
+
+        $this->addTimeBounds($qb, $minStart, $maxStart);
+
+        $results = $qb
+            ->groupBy('s.qualityAssured, week')
+            ->orderBy('week')
+            ->getQuery()
+            ->execute();
+
+        [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
+
+
+        $stats = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $stats['data'][$week] = [
+                'data' => [
+                    'quality-assured' => 0,
+                    'not-quality-assured' => 0,
+                ],
+            ];
         }
-        $stats['totals'] = $totals;
-        $stats['total'] = $sumOfTotals;
 
-        return $stats;
+        foreach ($results as $result) {
+            $dateTime = new \DateTime($result['surveyPeriodStart']);
+            $week = WeekNumberHelper::getWeekNumber($dateTime);
+            $qualityAssured = $result['qualityAssured'] == 1 ? 'quality-assured' : 'not-quality-assured';
+
+            $stats['data'][$week]['data'][$qualityAssured] = $result['count'];
+        }
+
+        return $this->addTotalsAndFlags($stats);
     }
 
     public function getMinimumAndMaximumYear()
@@ -204,5 +208,64 @@ class SurveyRepository extends ServiceEntityRepository
         } else {
             return array_values(current($result));
         }
+    }
+
+    protected function addTimeBounds(QueryBuilder $qb, ?DateTime $minStart, ?DateTime $maxStart): QueryBuilder
+    {
+        if ($minStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart >= :minStart')
+                ->setParameter('minStart', $minStart);
+        }
+
+        if ($maxStart !== null) {
+            $qb
+                ->andWhere('s.surveyPeriodStart < :maxStart')
+                ->setParameter('maxStart', $maxStart);
+        }
+
+        return $qb;
+    }
+
+    protected function getWeekRange(?DateTime $minStart, ?DateTime $maxStart, $results): array
+    {
+        if ($minStart !== null && $maxStart !== null) {
+            $firstWeek = WeekNumberHelper::getWeekNumber($minStart);
+            $lastWeek = WeekNumberHelper::getWeekNumber($maxStart);
+            $lastWeek--;
+        } else {
+            $firstWeek = WeekNumberHelper::getWeekNumber($results[0]['surveyPeriodStart']);
+            $lastWeek = WeekNumberHelper::getWeekNumber($results[count($results) - 1]['surveyPeriodStart']);
+        }
+
+        return [$firstWeek, $lastWeek];
+    }
+
+    protected function addTotalsAndFlags(array $stats): array
+    {
+        $totals = [];
+        $sumOfTotals = 0;
+        foreach ($stats['data'] as $week => $weekStats) {
+            $allZeros = true;
+            $total = 0;
+            foreach ($weekStats['data'] as $name => $data) {
+                $total += $data;
+                if ($data > 0) {
+                    $allZeros = false;
+                }
+
+                if (!isset($totals[$name])) {
+                    $totals[$name] = $data;
+                } else {
+                    $totals[$name] += $data;
+                }
+            }
+            $stats['data'][$week]['total'] = $total;
+            $stats['data'][$week]['allZeros'] = $allZeros;
+            $sumOfTotals += $total;
+        }
+        $stats['totals'] = $totals;
+        $stats['total'] = $sumOfTotals;
+        return $stats;
     }
 }

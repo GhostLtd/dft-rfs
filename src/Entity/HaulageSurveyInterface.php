@@ -14,4 +14,7 @@ interface HaulageSurveyInterface extends SurveyInterface
 
     public function getSurveyPeriodStartModifiedBy($modifier);
     public function getSurveyPeriodInDays(): ?int;
+
+    public function getQualityAssured(): ?bool;
+    public function setQualityAssured(?bool $qualityAssured): self;
  }

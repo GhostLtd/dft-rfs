@@ -34,6 +34,10 @@ class SurveyListPage extends AbstractListPage
             (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
             (new TextFilter('Business name', 'company.businessName'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
+            (new ChoiceFilter("QA'd?", 'survey.qualityAssured', [
+                'Yes' => true,
+                'No' => false,
+            ]))->sortable(),
             (new Simple('Reminders')),
             (new Simple('# Vehicles')),
             (new Simple('# Trips')),

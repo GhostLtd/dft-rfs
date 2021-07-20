@@ -51,6 +51,7 @@ class SurveyController extends AbstractController
 
     public const TRANSITION_ROUTE = self::ROUTE_PREFIX.'transition';
     public const COMPLETE_ROUTE = self::ROUTE_PREFIX.'complete';
+    public const FLAG_QA_ROUTE = self::ROUTE_PREFIX.'flag_qa';
 
     protected EntityManagerInterface $entityManager;
     protected RequestStack $requestStack;

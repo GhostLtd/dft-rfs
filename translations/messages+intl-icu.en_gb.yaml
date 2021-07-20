@@ -161,6 +161,7 @@ admin:
       event: "Event"
       header: "Audit Logs"
       user: "User"
+    survey-qa: "Flagged survey as QA checked"
     survey-state: "Changed survey state from `{from}` to `{to}`"
   login:
     label: Login
@@ -170,7 +171,17 @@ admin:
   dashboard:
     heading: Dashboard
   reports:
-    heading: "{typeLabel} — Quarter {quarter}, {year}"
+    dashboard:
+      heading: Reports
+    possession:
+      heading: Surveys by possession of vehicle
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    quality-assurance:
+      heading: Surveys by quality assurance
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    state:
+      heading: Surveys by state
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow

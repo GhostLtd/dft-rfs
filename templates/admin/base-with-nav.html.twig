@@ -1,0 +1,38 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set translation_prefix = translation_prefix | default('default') %}
+
+{% block pageTitle -%}
+    {{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }} - {{ parent() -}}
+{%- endblock %}
+
+{% block main %}
+    <div class="govuk-width-container {{ containerClasses | default('') }}">
+        <div class="govuk-grid-row">
+            <nav class="govuk-grid-column-menu" aria-labelledby="main-menu-label" id="main-menu">
+                <h2 id="main-menu-label" class="govuk-visually-hidden">Main Menu</h2>
+                {% block adminMenu %}
+                    {% if menu is defined %}
+                        {% from 'admin/macros/menu.html.twig' import displayAdminMenu %}
+                        {{ displayAdminMenu(menu) }}
+                    {% else %}
+                        <p class="govuk-body">Menu not defined</p>
+                    {% endif %}
+                {% endblock %}
+            </nav>
+
+            {% block beforeContent %}{% endblock %}
+            <main class="govuk-grid-column-content govuk-main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners %}
+                {{ flashNotificationBanners() }}
+
+                {% block adminContentIncludingHeader %}
+                <h1 class="govuk-heading-l" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}</h1>
+                {% block adminContent %}
+                    <p class="govuk-body">Content</p>
+                {% endblock %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+{% endblock %}

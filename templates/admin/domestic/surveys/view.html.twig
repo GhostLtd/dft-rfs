@@ -1,4 +1,4 @@
-{%- extends 'admin/base-with-nav.twig' -%}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
 {%- set translation_prefix = 'admin.domestic.survey.type-' ~ (survey.isNorthernIreland ? 'ni' : 'gb') -%}
 {%- set headingParams = {
@@ -46,8 +46,13 @@
     {%- endif -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-        {{ actionlessSummaryListRow('Status', tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+        {% set status -%}
+            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
+            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+        {%- endset %}
+        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
@@ -178,6 +183,17 @@
             {{ _self.workflow_link(survey, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
             {{ _self.workflow_link(survey, 'approve', 'Approve') }}
             {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+
+            {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+                {%- with {
+                    attr: (options.attr ?? {}) | merge({
+                    href: path('admin_domestic_survey_flag_qa', {surveyId: survey.id}),
+                    class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+                })} -%}
+                    <a {{ attributes(attr) }}>Flag as QA'd</a>
+                {%- endwith -%}
+            {% endif %}
         </div>
     {% endif %}
 {%- endblock -%}
