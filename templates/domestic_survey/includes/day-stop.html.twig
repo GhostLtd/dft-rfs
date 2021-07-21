@@ -30,7 +30,7 @@
     } %}
     {%- set distanceValue = stop.distanceTravelled.isBlank ?
         '-' :
-        ("domestic.day-view.distance.plain.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value|number_format}))
+        ("common.distance.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value}))
     -%}
     {{- row(showActions, 'domestic.day-view.distance-travelled',
         distanceValue,
@@ -67,7 +67,7 @@
             {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.goods-weight', srHiddenSuffixParams: suffixParams}
         } %}
         {{ row(showActions, 'domestic.day-view.weight-of-goods.label',
-            ('domestic.day-view.weight-of-goods.plain' | trans({value: stop.weightOfGoodsCarried|number_format})) ~ wasLimitedBy,
+            ("common.weight.kilograms" | trans({value: stop.weightOfGoodsCarried})) ~ wasLimitedBy,
             weightChangeLink
         ) }}
     {% endif %}

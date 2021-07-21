@@ -15,7 +15,7 @@
     {%- else -%}
         {{- row(showActions,
             'Fuel used during survey week',
-            survey.response.vehicle.fuelQuantity|formatValueUnit|default('-')
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value}))
         ) -}}
     {%- endif -%}
 </dl>

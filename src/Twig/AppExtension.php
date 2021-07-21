@@ -13,7 +13,6 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\StopTrait;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HaulageSurveyInterface;
-use App\Entity\ValueUnitInterface;
 use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
@@ -81,7 +80,6 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
-            new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
                 return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];

@@ -11,6 +11,6 @@
 
     {{- row(showActions, 'common.vehicle.operation-type', choiceLabel(operationChoices, vehicle.operationType) | trans, {('#'): 'common.actions.view'}) -}}
     {{- row(showActions, 'common.vehicle.body-type' | trans, choiceLabel(bodyChoices, vehicle.bodyType) | trans, {('#'): 'common.actions.view'}) -}}
-    {{- row(showActions, 'common.vehicle.gross-weight' | trans, "#{vehicle.grossWeight|number_format}kg", {('#'): 'common.actions.view'}) -}}
-    {{- row(showActions, 'common.vehicle.carrying-capacity' | trans, "#{vehicle.carryingCapacity|number_format}kg", {('#'): 'common.actions.view'}) -}}
+    {{- row(showActions, 'common.vehicle.gross-weight' | trans, 'common.weight.kilograms' | trans({value: vehicle.grossWeight}), {('#'): 'common.actions.view'}) -}}
+    {{- row(showActions, 'common.vehicle.carrying-capacity' | trans, 'common.weight.kilograms' | trans({value: vehicle.carryingCapacity}), {('#'): 'common.actions.view'}) -}}
 </dl>
