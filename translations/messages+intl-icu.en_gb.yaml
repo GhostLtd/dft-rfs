@@ -92,12 +92,12 @@ common:
     unloading-goods-at: "Unloading {goods} at {name}, {country}"
     loaded-at: "Loaded at {name}, {country}"
     unloaded-at: "Unloaded at {name}, {country}"
-    unloaded-all: "All {value, number}kg"
+    unloaded-all: "All {value, number} kg"
     fully-unloaded: "Fully unloaded - unavailable"
-    weight-none-unloaded: "None unloaded ({loaded, number}kg remaining)"
-    weight-partially-unloaded: "Partially unloaded - {unloaded, number}kg of {loaded, number}kg ({remaining, number}kg remaining)"
-    weight-fully-unloaded: "Fully unloaded - {unloaded, number}kg of {loaded, number}kg"
-    weight-status: "{unloaded, number}kg of {loaded, number}kg unloaded so far"
+    weight-none-unloaded: "None unloaded ({loaded, number} kg remaining)"
+    weight-partially-unloaded: "Partially unloaded - {unloaded, number} kg of {loaded, number} kg ({remaining, number} kg remaining)"
+    weight-fully-unloaded: "Fully unloaded - {unloaded, number} kg of {loaded, number} kg"
+    weight-status: "{unloaded, number} kg of {loaded, number} kg unloaded so far"
   distance:
     miles: >-
       {value, plural,
@@ -123,7 +123,7 @@ common:
         other {{value, number} litres}
       }
   weight:
-    kilograms: "{value, number}kg"
+    kilograms: "{value, number} kg"
   headings:
     next-step: Next step
     next-steps: Next steps
@@ -670,8 +670,8 @@ domestic:
       space-and-weight: At capacity by space and weight
     weight-of-goods:
       label: Weight of goods
-      loaded: "{value, number}kg loaded"
-      unloaded: "{value, number}kg unloaded"
+      loaded: "{value, number} kg loaded"
+      unloaded: "{value, number} kg unloaded"
     number-of-stops:
       label: Number of stops
       loading: "{value} loading"
@@ -1325,7 +1325,7 @@ international:
       heading: 'Weight unloaded'
       help: ''
       unloaded-all:
-        label: 'Did you unload all {weight, number}kg of {goods} from {place}, {country}?'
+        label: 'Did you unload all {weight, number} kg of {goods} from {place}, {country}?'
         help: ''
       weight-of-goods:
         label: Weight of goods unloaded
