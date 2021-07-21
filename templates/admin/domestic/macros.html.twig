@@ -77,8 +77,7 @@
     {{- location -}}
     {%- set type = _self.transfer(port) %}
     {%- if loaded -%}
-        <br><span>{{ (isOrigin ?? true) ? 'Loaded' : 'Unloaded' }}
-        {%- if type != '' %} ({{ type }}){% endif -%}</span>
+        {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
     {%- endif -%}
 {%- endmacro -%}
 
