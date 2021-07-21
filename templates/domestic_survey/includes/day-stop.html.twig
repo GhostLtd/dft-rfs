@@ -9,20 +9,19 @@
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.locations', srHiddenSuffixParams: suffixParams}
     } %}
     {{ row(showActions, 'domestic.day-view.start-location',
-        (stop.originLocation | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
+        (stop.originLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
         locationsChangeLink
     ) }}
     {{ row(showActions, 'domestic.day-view.destination-location',
-        (stop.destinationLocation | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — ')),
+        (stop.destinationLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — ')),
         locationsChangeLink
     ) }}
     {% if stop.day.response.survey.isNorthernIreland %}
         {{ row(showActions, 'domestic.day-view.border-crossing',
-            stop.borderCrossingLocation | default('-'),
+            stop.borderCrossingLocation | formatPotentialPostcode | default('-'),
             locationsChangeLink
         ) }}
     {% endif %}
-
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_DISTANCE_TRAVELLED')}) -%}
     {% set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):

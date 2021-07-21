@@ -2,6 +2,7 @@
 
 namespace App\Form\Validator;
 
+use App\Utility\PostcodeHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -23,9 +24,7 @@ class PostcodeValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        $regex = '/^[A-Z]{1,2}\d[A-Z0-9]? ?\d[A-Z]{2}$/i';
-
-        if (!preg_match($regex, $value)) {
+        if (!PostcodeHelper::isValidPostcode($value)) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }
     }

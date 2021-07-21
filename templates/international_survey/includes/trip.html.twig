@@ -23,8 +23,8 @@
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
     {{ row(showActions, 'international.trip.summary.places',
         'international.trip.summary.origin-to-destination'|trans({
-            'origin': trip.origin|capitalize,
-            'destination': trip.destination|capitalize,
+            'origin': trip.origin|capitalize|formatPotentialPostcode,
+            'destination': trip.destination|capitalize|formatPotentialPostcode,
         }),
         placesChangeLink
     ) }}

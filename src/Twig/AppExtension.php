@@ -18,6 +18,7 @@ use App\Entity\Vehicle;
 use App\Controller\InternationalSurvey\InitialDetailsController;
 use App\Features;
 use App\Utility\LoadingPlaceHelper;
+use App\Utility\PostcodeHelper;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\SessionTimeoutHelper;
 use App\Utility\Domestic\WeekNumberHelper;
@@ -82,6 +83,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
             new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
             new TwigFilter('formatValueUnit', fn(ValueUnitInterface $a) => ($a->getValue() === null || $a->getUnit() === null) ? null : "{$a->getValue()} {$a->getUnit()}"),
+            new TwigFilter('formatPotentialPostcode', fn(?string $a) => PostcodeHelper::formatIfPostcode($a, true)),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
                 return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
