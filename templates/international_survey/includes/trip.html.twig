@@ -88,7 +88,7 @@
 
     {{ row(showActions, 'international.trip.summary.distance',
         ("common.distance.#{trip.roundTripDistance.unit}" |
-        trans({value: trip.roundTripDistance.value|number_format})),
+        trans({value: trip.roundTripDistance.value})),
         distanceChangeLink
     ) }}
     {{ row(
