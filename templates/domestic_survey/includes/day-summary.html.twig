@@ -9,18 +9,18 @@
     } %}
 
     {{ row(showActions, 'domestic.day-view.start-location',
-        (day.summary.originLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
+        (day.summary.originLocation | formatPotentialPostcode | default('-')) ~ (day.summary | formatGoodsTransferDetails('loading', ' — ')),
         locationsChangeLink
     ) }}
     {{ row(showActions, 'domestic.day-view.destination-location',
-        (day.summary.destinationLocation | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — ')),
+        (day.summary.destinationLocation | formatPotentialPostcode | default('-')) ~ (day.summary | formatGoodsTransferDetails('unloading', ' — ')),
         locationsChangeLink
     ) }}
-    {{ row(showActions, 'domestic.day-view.furthest-stop', day.summary.furthestStop | default('-'),
+    {{ row(showActions, 'domestic.day-view.furthest-stop', day.summary.furthestStop | formatPotentialPostcode | default('-'),
         locationsChangeLink
     )}}
     {% if day.response.survey.isNorthernIreland %}
-        {{ row(showActions, 'domestic.day-view.border-crossing', day.summary.borderCrossingLocation | default('-'),
+        {{ row(showActions, 'domestic.day-view.border-crossing', day.summary.borderCrossingLocation | formatPotentialPostcode | default('-'),
             locationsChangeLink
         )}}
     {% endif %}

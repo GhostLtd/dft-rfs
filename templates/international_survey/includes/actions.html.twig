@@ -19,7 +19,7 @@
         {%- if filter is not defined or action.id in filter -%}
         <tr class="govuk-table__row">
             {{ tableCell(action.number) }}
-            {{ tableCell('common.action.place-name'|trans({name: action.name, country: action|formatCountry})) }}
+            {{ tableCell('common.action.place-name'|trans({name: action.name|formatPotentialPostcode, country: action|formatCountry})) }}
             {{ tableCell((action.loading ? 'common.action.loading' : 'common.action.unloading')|trans) }}
 
             {%- if action.loading or not action.weightUnloadedAll -%}

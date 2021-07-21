@@ -22,7 +22,7 @@
                 {%- set changeLink = {(wizardUrl('international-action', 'STATE_PLACE', params)):
                     {label: 'common.actions.change', srHiddenSuffix: 'common.action.place'}
                 } -%}
-                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name, country: action|formatCountry}), changeLink) }}
+                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name|formatPotentialPostcode, country: action|formatCountry}), changeLink) }}
                 {%- if action.loading -%}
             {# Loading #}
                     {%- set loadGoodsChangeLink = {(wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params)):
