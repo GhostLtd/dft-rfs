@@ -16,8 +16,9 @@ class SurveyAddController extends AbstractController
 {
     /**
      * @Route("/csrgt/survey-add/", name=SurveyController::ADD_ROUTE)
+     * @Route("/csrgt/survey-reissue/{originalSurveyId}", name="admin_domestic_survey_reissue")
      */
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, string $originalSurveyId = null): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 

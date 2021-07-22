@@ -19,6 +19,19 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 {
     use HaulageSurveyTrait;
 
+    const STATE_FILTER_CHOICES = [
+        self::STATE_NEW,
+        self::STATE_INVITATION_PENDING,
+        self::STATE_INVITATION_SENT,
+        self::STATE_INVITATION_FAILED,
+        self::STATE_IN_PROGRESS,
+        self::STATE_CLOSED,
+        self::STATE_APPROVED,
+        self::STATE_REJECTED,
+        self::STATE_EXPORTING,
+        self::STATE_EXPORTED,
+    ];
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})

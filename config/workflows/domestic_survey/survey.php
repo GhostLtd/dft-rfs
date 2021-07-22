@@ -2,6 +2,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Entity\Domestic\Survey as StateObject;
+use App\Entity\Domestic\SurveyResponse;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
@@ -25,6 +26,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_REJECTED,
                     StateObject::STATE_EXPORTING,
                     StateObject::STATE_EXPORTED,
+                    StateObject::STATE_REISSUED,
                 ],
                 'transitions' => [
                     'invite_user' => [
@@ -55,6 +57,13 @@ return static function (ContainerConfigurator $container) {
                     'approve' => [
                         'from' => StateObject::STATE_CLOSED,
                         'to' => StateObject::STATE_APPROVED,
+                        'guard' => sprintf("not (subject.getResponse().getIsInPossessionOfVehicle() === '%s' and is_empty(subject.getOriginalSurvey()))", SurveyResponse::IN_POSSESSION_ON_HIRE)
+                    ],
+                    'reissue' => [
+                        'from' => StateObject::STATE_CLOSED,
+                        'to' => StateObject::STATE_REISSUED,
+                        'guard' => sprintf("subject.getResponse().getIsInPossessionOfVehicle() in ['%s', '%s']", SurveyResponse::IN_POSSESSION_ON_HIRE, SurveyResponse::IN_POSSESSION_SOLD)
+                            . " and is_empty(subject.getOriginalSurvey())",
                     ],
                     'un_approve' => [
                         'from' => StateObject::STATE_APPROVED,
