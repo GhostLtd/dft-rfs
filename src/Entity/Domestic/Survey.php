@@ -51,6 +51,16 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      */
     private $notes;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="reissuedSurvey", cascade={"persist"})
+     */
+    private $originalSurvey;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="originalSurvey", cascade={"persist", "remove"})
+     */
+    private $reissuedSurvey;
+
     public function isInitialDetailsComplete()
     {
         return (
@@ -145,6 +155,40 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             $note->setSurvey($this);
             $this->notes[] = $note;
         }
+
+        return $this;
+    }
+
+    public function getOriginalSurvey(): ?self
+    {
+        return $this->originalSurvey;
+    }
+
+    public function setOriginalSurvey(?self $originalSurvey): self
+    {
+        $this->originalSurvey = $originalSurvey;
+
+        return $this;
+    }
+
+    public function getReissuedSurvey(): ?self
+    {
+        return $this->reissuedSurvey;
+    }
+
+    public function setReissuedSurvey(?self $reissuedSurvey): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($reissuedSurvey === null && $this->reissuedSurvey !== null) {
+            $this->reissuedSurvey->setOriginalSurvey(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($reissuedSurvey !== null && $reissuedSurvey->getOriginalSurvey() !== $this) {
+            $reissuedSurvey->setOriginalSurvey($this);
+        }
+
+        $this->reissuedSurvey = $reissuedSurvey;
 
         return $this;
     }
