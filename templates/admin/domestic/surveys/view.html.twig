@@ -9,6 +9,7 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canEnterVehicleAndBusinessDetails = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::ENTER_BUSINESS_AND_VEHICLE_DETAILS'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
@@ -75,7 +76,7 @@
         {%- if canEdit -%}
             {%- if not hasInitialDetails -%}
             <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
-            {%- elseif not hasVehicle %}
+            {%- elseif canEnterVehicleAndBusinessDetails %}
             <a class="govuk-button" href="{{ path('admin_domestic_survey_business_and_vehicle_enter', {surveyId: survey.id}) }}">Enter business and vehicle details</a>
             {%- endif -%}
         {%- endif -%}

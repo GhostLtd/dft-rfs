@@ -14,6 +14,7 @@ use App\Security\Voter\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -64,6 +65,7 @@ class SurveyController extends AbstractController
 
     /**
      * @Route("/enter-business-and-vehicle-details", name=self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)
+     * @Security("is_granted('ENTER_BUSINESS_AND_VEHICLE_DETAILS', survey)");
      */
     public function enterBusinessAndVehicle(Survey $survey): Response
     {
