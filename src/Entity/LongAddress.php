@@ -65,4 +65,15 @@ class LongAddress extends Address
         return boolval($this->line1) + boolval($this->line2) + boolval($this->line3) + boolval($this->line4)
             + boolval($this->line5) + boolval($this->line6) + boolval($this->postcode);
     }
+
+    public static function createFromAddress(string $name, Address $address): self
+    {
+        return (new LongAddress())
+            ->setLine1($name)
+            ->setLine2($address->getLine1())
+            ->setLine3($address->getLine2())
+            ->setLine4($address->getLine3())
+            ->setLine5($address->getLine4())
+            ->setPostcode($address->getPostcode());
+    }
 }

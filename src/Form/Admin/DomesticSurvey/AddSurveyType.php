@@ -21,6 +21,7 @@ class AddSurveyType extends AbstractType
                 'help' => "{$translationKeyPrefix}.registration-mark.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'disabled' => $options['is_reissue'],
             ])
             ->add('isNorthernIreland', Gds\ChoiceType::class, [
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -29,7 +30,8 @@ class AddSurveyType extends AbstractType
                 'choices' => [
                     'GB' => false,
                     'NI' => true,
-                ]
+                ],
+                'disabled' => $options['is_reissue'],
             ])
             ->add('surveyPeriodStart', Gds\DateType::class, [
                 'label' => "{$translationKeyPrefix}.start-date.label",
@@ -58,6 +60,7 @@ class AddSurveyType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Survey::class,
             'validation_groups' => ['add_survey'],
+            'is_reissue' => false,
         ]);
     }
 }
