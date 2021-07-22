@@ -47,7 +47,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [
-                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_NEW, StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_FAILED, StateObject::STATE_INVITATION_PENDING],
                         'to' => StateObject::STATE_CLOSED,
                     ],
                     're_open' => [
@@ -57,12 +57,14 @@ return static function (ContainerConfigurator $container) {
                     'approve' => [
                         'from' => StateObject::STATE_CLOSED,
                         'to' => StateObject::STATE_APPROVED,
-                        'guard' => sprintf("not (subject.getResponse().getIsInPossessionOfVehicle() === '%s' and is_empty(subject.getOriginalSurvey()))", SurveyResponse::IN_POSSESSION_ON_HIRE)
+                        'guard' => "is_empty(subject.getResponse())"
+                            . sprintf(" or not (subject.getResponse().getIsInPossessionOfVehicle() === '%s' and is_empty(subject.getOriginalSurvey()))", SurveyResponse::IN_POSSESSION_ON_HIRE)
                     ],
                     'reissue' => [
                         'from' => StateObject::STATE_CLOSED,
                         'to' => StateObject::STATE_REISSUED,
-                        'guard' => sprintf("subject.getResponse().getIsInPossessionOfVehicle() in ['%s', '%s']", SurveyResponse::IN_POSSESSION_ON_HIRE, SurveyResponse::IN_POSSESSION_SOLD)
+                        'guard' => "not is_empty(subject.getResponse())"
+                            . sprintf(" and subject.getResponse().getIsInPossessionOfVehicle() in ['%s', '%s']", SurveyResponse::IN_POSSESSION_ON_HIRE, SurveyResponse::IN_POSSESSION_SOLD)
                             . " and is_empty(subject.getOriginalSurvey())",
                     ],
                     'un_approve' => [
