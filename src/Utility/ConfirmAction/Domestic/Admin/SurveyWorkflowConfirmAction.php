@@ -69,7 +69,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
                 return ConfirmApprovedActionType::class;
             }
 
-            if ($survey->shouldAskWhyNoJourneys()) {
+            if ($survey->shouldAskWhyNoJourneys() && !$survey->getResponse()->getReasonForEmptySurvey()) {
                 return FinalDetailsType::class;
             }
         }
