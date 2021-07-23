@@ -58,7 +58,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return "common.survey.workflow-transition";
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction(array $formData)
     {
         $this->internationalSurveyStateMachine->apply($this->getSubject(), $this->transition);
         $this->entityManager->flush();

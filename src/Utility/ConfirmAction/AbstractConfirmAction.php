@@ -79,6 +79,11 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         return [];
     }
 
+    public function getFormClass(): string
+    {
+        return ConfirmActionType::class;
+    }
+
     /**
      * @param Request $request
      * @param callable $confirmedActionUrlCallback
@@ -87,18 +92,20 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
      */
     public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null)
     {
-        $form = $this->formFactory->create(ConfirmActionType::class, null, $this->getFormOptions());
+        $form = $this->formFactory->create($this->getFormClass(), null, $this->getFormOptions());
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
             $confirm = $form->get('confirm');
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
-                $this->doConfirmedAction();
-                $redirectUrl = $confirmedActionUrlCallback();
+                if ($form->isValid()) {
+                    $this->doConfirmedAction($form->getData());
+                    $redirectUrl = $confirmedActionUrlCallback();
 
-                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
-                return new RedirectResponse($redirectUrl);
+                    $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
+                    return new RedirectResponse($redirectUrl);
+                }
             } else {
                 $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
                 return new RedirectResponse($cancelledActionUrlCallback ? $cancelledActionUrlCallback() : $confirmedActionUrlCallback());

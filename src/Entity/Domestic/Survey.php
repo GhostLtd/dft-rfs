@@ -39,6 +39,30 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         self::STATE_REISSUED,
     ];
 
+    const REASON_NOT_DELIVERED = 'not-delivered';
+    const REASON_REFUSED = 'respondent-refused';
+    const REASON_EXCUSED_PERSONAL = 'excused-personal';
+    const REASON_EXCUSED_OTHER = 'excused-other';
+    const REASON_OTHER = 'other';
+
+    const UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-unfilled-survey.option.';
+    const UNFILLED_SURVEY_REASON_CHOICES = [
+        self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_DELIVERED => self::REASON_NOT_DELIVERED,
+        self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_REFUSED => self::REASON_REFUSED,
+        self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_EXCUSED_PERSONAL => self::REASON_EXCUSED_PERSONAL,
+        self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_EXCUSED_OTHER => self::REASON_EXCUSED_OTHER,
+        self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
+
+    ];
+
+    const UNFILLED_SURVEY_REASON_EXPORT_IDS = [
+        self::REASON_NOT_DELIVERED => 6,
+        self::REASON_REFUSED => 7,
+        self::REASON_EXCUSED_PERSONAL => 8,
+        self::REASON_EXCUSED_OTHER => 9,
+        self::REASON_OTHER => 10,
+    ];
+
     /**
      * @ORM\Column(type="boolean")
      * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey", "import_survey"})
@@ -77,14 +101,20 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      */
     private $reissuedSurvey;
 
-    public function isInitialDetailsComplete()
+    /**
+     * @ORM\Column(type="string", length=20, nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"admin_reason_for_unfilled_survey"})
+     */
+    private ?string $reasonForUnfilledSurvey;
+
+    public function isInitialDetailsComplete(): bool
     {
         return (
             !empty($this->getResponse())
         );
     }
 
-    public function isBusinessAndVehicleDetailsComplete()
+    public function isBusinessAndVehicleDetailsComplete(): bool
     {
         return (
             $this->isInitialDetailsComplete()
@@ -215,5 +245,21 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         $this->reissuedSurvey = $reissuedSurvey;
 
         return $this;
+    }
+
+    public function getReasonForUnfilledSurvey(): ?string
+    {
+        return $this->reasonForUnfilledSurvey;
+    }
+
+    public function setReasonForUnfilledSurvey(?string $reasonForUnfilledSurvey): self
+    {
+        $this->reasonForUnfilledSurvey = $reasonForUnfilledSurvey;
+        return $this;
+    }
+
+    public function getReasonForUnfilledSurveyExportId(): ?int
+    {
+        return self::UNFILLED_SURVEY_REASON_EXPORT_IDS[$this->reasonForUnfilledSurvey] ?? null;
     }
 }

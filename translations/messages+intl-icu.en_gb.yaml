@@ -518,6 +518,7 @@ domestic:
           sold: 'No - sold'
           on-hire: 'No - on hire'
       change-link-sr-suffix: vehicle posession details
+
     reason-for-empty-survey:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
@@ -531,6 +532,14 @@ domestic:
         maintenance: 'The vehicle was having MOT / service'
         no-driver: 'There was no driver available'
         other: 'Other'
+
+    reason-for-unfilled-survey:
+      option:
+        not-delivered: Form not delivered
+        respondent-refused: Respondent refused
+        excused-personal: Respondent excused — personal
+        excused-other: Respondent excused — other
+        other: Other
 
     scrapped-details:
       date:

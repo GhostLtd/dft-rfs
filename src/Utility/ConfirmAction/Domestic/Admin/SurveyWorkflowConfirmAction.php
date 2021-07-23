@@ -3,6 +3,8 @@
 namespace App\Utility\ConfirmAction\Domestic\Admin;
 
 use App\Entity\Domestic\Survey;
+use App\Form\Admin\DomesticSurvey\ConfirmCompleteActionType;
+use App\Form\ConfirmActionType;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -56,9 +58,36 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return "common.survey.workflow-transition";
     }
 
-    public function doConfirmedAction()
+    public function getFormClass(): string
     {
-        $this->domesticSurveyStateMachine->apply($this->getSubject(), $this->transition);
+        return $this->shouldAskWhyUnfilled() ?
+            ConfirmCompleteActionType::class :
+            ConfirmActionType::class;
+    }
+
+    public function doConfirmedAction(array $formData)
+    {
+        $survey = $this->getSurvey();
+
+        if ($this->shouldAskWhyUnfilled()) {
+            $survey->setReasonForUnfilledSurvey($formData['reasonForUnfilledSurvey']);
+        }
+
+        $this->domesticSurveyStateMachine->apply($survey, $this->transition);
         $this->entityManager->flush();
+    }
+
+    public function getSurvey(): Survey
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function shouldAskWhyUnfilled(): bool
+    {
+        return $this->getTransition() === 'approve' &&
+            !$this->getSurvey()->isBusinessAndVehicleDetailsComplete();
     }
 }
