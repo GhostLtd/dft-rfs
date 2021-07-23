@@ -50,6 +50,11 @@
         {% set status -%}
             {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
             {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+            {% if survey.originalSurvey %}
+                <a class="govuk-!-margin-left-3" href="{{ path('admin_domestic_survey_view', {surveyId: survey.originalSurvey.id}) }}">view original</a>
+            {% elseif survey.reissuedSurvey %}
+                <a class="govuk-!-margin-left-3" href="{{ path('admin_domestic_survey_view', {surveyId: survey.reissuedSurvey.id}) }}">view reissued</a>
+            {% endif %}
         {%- endset %}
         {{ actionlessSummaryListRow('Status', status, {html: true}) }}
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
