@@ -904,7 +904,7 @@ domestic:
           </ul>
 
         fewer-than-5: 5 stops or fewer
-        5-or-more: More than 5 stops
+        5-or-more: 6 stops or more
 
   completed:
     heading: Survey complete
