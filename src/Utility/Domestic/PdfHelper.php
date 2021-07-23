@@ -28,16 +28,12 @@ class PdfHelper extends AbstractPdfHelper
     protected function getPrefix(SurveyInterface $survey): string
     {
         assert($survey instanceof DomesticSurvey);
-        $regMark = $survey->getRegistrationMark();
-        [$week, $year] = $survey->getWeekNumberAndYear();
-        $region = $survey->getIsNorthernIreland() ? 'NI' : 'GB';
-
-        return self::PREFIX."{$regMark}_{$year}_{$region}";
+        return self::PREFIX.str_replace('-', '_', $survey->getReferenceNumber());
     }
 
     protected function getPdfObject(object $entity, StorageObject $obj): ?PdfObjectInterface
     {
-        $regex = '#^'. self::PREFIX. "(?P<regMark>[A-Z0-9]+)_(?P<year>\d{4})_(?P<region>GB|NI)_(?P<timestamp>\d+)\.pdf$#";
+        $regex = '#^'. self::PREFIX. "(?P<regMark>[A-Z0-9]+)_(?P<year>\d{4})(?P<reissue>_R)?_(?P<region>GB|NI)_(?P<timestamp>\d+)\.pdf$#";
 
         if (!$entity instanceof Survey) {
             return null;
@@ -47,6 +43,6 @@ class PdfHelper extends AbstractPdfHelper
             return null;
         }
 
-        return new PdfObject($entity, $obj, $parts['regMark'], $parts['region'], intval($parts['year']), intval($parts['timestamp']));
+        return new PdfObject($entity, $obj, $parts['regMark'], $parts['region'], intval($parts['year']), !empty($parts['reissue']), intval($parts['timestamp']));
     }
 }

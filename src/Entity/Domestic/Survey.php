@@ -68,12 +68,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     private $notes;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="reissuedSurvey", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="reissuedSurvey", cascade={"persist"}, fetch="EAGER")
      */
     private $originalSurvey;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="originalSurvey", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="originalSurvey", cascade={"persist", "remove"}, fetch="EAGER")
      */
     private $reissuedSurvey;
 
@@ -93,6 +93,14 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             && !empty($this->getResponse()->getVehicle()->getCarryingCapacity())
             && !empty($this->getResponse()->getVehicle()->getAxleConfiguration())
         );
+    }
+
+    public function getReferenceNumber(): string
+    {
+        [$week, $year] = $this->getWeekNumberAndYear();
+        $reissue = $this->getOriginalSurvey() ? '-R' : '';
+        $region = $this->getIsNorthernIreland() ? 'NI' : 'GB';
+        return "{$this->getRegistrationMark()}-{$year}{$reissue}-{$region}";
     }
 
     public function getIsNorthernIreland(): ?bool
