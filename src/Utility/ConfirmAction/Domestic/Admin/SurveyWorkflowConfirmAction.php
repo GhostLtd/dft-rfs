@@ -3,7 +3,6 @@
 namespace App\Utility\ConfirmAction\Domestic\Admin;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\Domestic\SurveyResponse;
 use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Form\ConfirmActionType;
@@ -63,12 +62,14 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 
     public function getFormClass(): string
     {
+        $survey = $this->getSurvey();
+
         if ($this->getTransition() === 'approve') {
-            if ($this->shouldAskWhyUnfilled()) {
+            if ($survey->shouldAskWhyUnfilled()) {
                 return ConfirmApprovedActionType::class;
             }
 
-            if ($this->shouldAskWhyNoJourneys()) {
+            if ($survey->shouldAskWhyNoJourneys()) {
                 return FinalDetailsType::class;
             }
         }
@@ -107,17 +108,6 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
     public function doConfirmedAction($formData)
     {
         $survey = $this->getSurvey();
-        $response = $survey->getResponse();
-
-        if ($this->getTransition() === 'approve') {
-            if (!$this->shouldAskWhyUnfilled()) {
-                $survey->setReasonForUnfilledSurvey(null);
-            }
-
-            if (!$this->shouldAskWhyNoJourneys()) {
-                $response->setReasonForEmptySurvey(null);
-            }
-        }
 
         $this->domesticSurveyStateMachine->apply($survey, $this->transition);
         $this->entityManager->flush();
@@ -126,26 +116,5 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
     public function getSurvey(): Survey
     {
         return $this->subject;
-    }
-
-    protected function shouldAskWhyUnfilled(): bool
-    {
-        $survey = $this->getSurvey();
-        $response = $survey->getResponse();
-
-        $isInPossession = $response && $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES;
-
-        return !$survey->isInitialDetailsComplete() ||
-               ($isInPossession && !$survey->isBusinessAndVehicleDetailsComplete());
-    }
-
-    protected function shouldAskWhyNoJourneys(): bool
-    {
-        $survey = $this->getSurvey();
-        $response = $survey->getResponse();
-
-        return $survey->isBusinessAndVehicleDetailsComplete() &&
-            $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
-            !$response->hasJourneys();
     }
 }

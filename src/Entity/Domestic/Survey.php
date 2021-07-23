@@ -262,4 +262,33 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         return self::UNFILLED_SURVEY_REASON_EXPORT_IDS[$this->reasonForUnfilledSurvey] ?? null;
     }
+
+    /**
+     * Is the survey completely unfilled?
+     *
+     * Respondent either:
+     * a) Hasn't filled out initial details
+     * b) Has stated they're in possession of the vehicle, but hasn't completed business/vehicle details
+     */
+    public function shouldAskWhyUnfilled(): bool
+    {
+        $response = $this->getResponse();
+
+        $isInPossession = $response && $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES;
+
+        return !$this->isInitialDetailsComplete() ||
+            ($isInPossession && !$this->isBusinessAndVehicleDetailsComplete());
+    }
+
+    /**
+     * Is the survey lacking journeys? (excluding if sold/scrapped/on hire)
+     */
+    public function shouldAskWhyNoJourneys(): bool
+    {
+        $response = $this->getResponse();
+
+        return $this->isBusinessAndVehicleDetailsComplete() &&
+            $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->hasJourneys();
+    }
 }
