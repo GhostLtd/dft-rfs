@@ -3,11 +3,14 @@
 namespace App\Utility\ConfirmAction\Domestic\Admin;
 
 use App\Entity\Domestic\Survey;
-use App\Form\Admin\DomesticSurvey\ConfirmCompleteActionType;
+use App\Entity\Domestic\SurveyResponse;
+use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
+use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Form\ConfirmActionType;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -60,17 +63,60 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 
     public function getFormClass(): string
     {
-        return $this->shouldAskWhyUnfilled() ?
-            ConfirmCompleteActionType::class :
-            ConfirmActionType::class;
+        if ($this->getTransition() === 'approve') {
+            if ($this->shouldAskWhyUnfilled()) {
+                return ConfirmApprovedActionType::class;
+            }
+
+            if ($this->shouldAskWhyNoJourneys()) {
+                return FinalDetailsType::class;
+            }
+        }
+
+        return ConfirmActionType::class;
     }
 
-    public function doConfirmedAction(array $formData)
+    public function getForm(): FormInterface
     {
+        $formClass = $this->getFormClass();
         $survey = $this->getSurvey();
 
-        if ($this->shouldAskWhyUnfilled()) {
-            $survey->setReasonForUnfilledSurvey($formData['reasonForUnfilledSurvey']);
+        switch($formClass) {
+            case ConfirmApprovedActionType::class:
+                $data = $survey;
+                $formOptions = $this->getFormOptions();
+                break;
+            case ConfirmActionType::class:
+                $data = null;
+                $formOptions = $this->getFormOptions();
+                break;
+            case FinalDetailsType::class:
+                $data = $survey->getResponse();
+                $formOptions = [
+                    'submit_name' => 'confirm',
+                    'submit_label' => $this->getTranslationKeyPrefix().".confirm.label",
+                    'label_translation_domain' => $this->getTranslationDomain(),
+                    'label_translation_parameters' => $this->getTranslationParameters(),
+                ];
+                break;
+        }
+
+        return $this->formFactory->create($formClass, $data, $formOptions);
+    }
+
+    public function doConfirmedAction($formData)
+    {
+        $survey = $this->getSurvey();
+        $response = $survey->getResponse();
+
+        if ($this->getTransition() === 'approve') {
+            if (!$this->shouldAskWhyUnfilled()) {
+                $survey->setReasonForUnfilledSurvey(null);
+            }
+
+            if (!$this->shouldAskWhyNoJourneys()) {
+                $response->setReasonForEmptySurvey(null);
+            }
         }
 
         $this->domesticSurveyStateMachine->apply($survey, $this->transition);
@@ -82,12 +128,24 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return $this->subject;
     }
 
-    /**
-     * @return bool
-     */
     protected function shouldAskWhyUnfilled(): bool
     {
-        return $this->getTransition() === 'approve' &&
-            !$this->getSurvey()->isBusinessAndVehicleDetailsComplete();
+        $survey = $this->getSurvey();
+        $response = $survey->getResponse();
+
+        $isInPossession = $response && $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES;
+
+        return !$survey->isInitialDetailsComplete() ||
+               ($isInPossession && !$survey->isBusinessAndVehicleDetailsComplete());
+    }
+
+    protected function shouldAskWhyNoJourneys(): bool
+    {
+        $survey = $this->getSurvey();
+        $response = $survey->getResponse();
+
+        return $survey->isBusinessAndVehicleDetailsComplete() &&
+            $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->hasJourneys();
     }
 }

@@ -118,15 +118,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $this->entityManager->remove($survey->getPasscodeUser());
     }
 
-    public function transitionUnapprove(Event $event)
-    {
-        $survey = $this->getSurvey($event);
-        if ($survey instanceof DomesticSurvey) {
-            $survey->setReasonForUnfilledSurvey(null);
-            dump('Set to null');
-        }
-    }
-
     protected function getSurvey(Event $event): SurveyInterface
     {
         $survey = $event->getSubject();
@@ -152,7 +143,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.domestic_survey.transition.un_approve' => 'transitionUnapprove',
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',

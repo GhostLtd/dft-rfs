@@ -37,7 +37,7 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
         return 'admin.delete-survey-note';
     }
 
-    public function doConfirmedAction(array $formData)
+    public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

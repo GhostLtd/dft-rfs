@@ -7,9 +7,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ConfirmCompleteActionType extends AbstractType
+class ConfirmApprovedActionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -20,7 +19,6 @@ class ConfirmCompleteActionType extends AbstractType
                 'choices' => Survey::UNFILLED_SURVEY_REASON_CHOICES,
                 'choice_translation_domain' => 'messages',
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'constraints' => [new NotBlank(['message' => 'Choose a reason'])],
             ])
             ->add('confirm', Gds\ButtonType::class, array_merge($options['confirm_button_options'], [
                 'type' => 'submit',
@@ -37,8 +35,11 @@ class ConfirmCompleteActionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'data_class' => Survey::class,
             'confirm_button_options' => [],
+            'validation_groups' => ['admin_reason_for_unfilled_survey'],
         ]);
+
         $resolver->setRequired([
             'translation_key_prefix',
         ]);

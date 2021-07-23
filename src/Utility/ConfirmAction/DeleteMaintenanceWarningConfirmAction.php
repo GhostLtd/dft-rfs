@@ -42,7 +42,7 @@ class DeleteMaintenanceWarningConfirmAction extends AbstractConfirmAction
         return 'admin.maintenance-warning.delete';
     }
 
-    public function doConfirmedAction(array $formData)
+    public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

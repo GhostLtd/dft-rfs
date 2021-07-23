@@ -19,9 +19,13 @@
             reason ? reason|trans : '-'
         ) -}}
     {%- else -%}
+        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
+            '-'
+        -%}
         {{- row(showActions,
             'Fuel used during survey week',
-            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value}))
+            fuelValue
         ) -}}
     {%- endif -%}
 </dl>
