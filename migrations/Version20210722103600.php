@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Entity\Domestic\Survey;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -23,6 +24,21 @@ final class Version20210722103600 extends AbstractMigration
         $this->addSql('ALTER TABLE domestic_survey ADD original_survey_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:guid)\'');
         $this->addSql('ALTER TABLE domestic_survey ADD CONSTRAINT FK_C3309B36D96D2F88 FOREIGN KEY (original_survey_id) REFERENCES domestic_survey (id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_C3309B36D96D2F88 ON domestic_survey (original_survey_id)');
+
+        $originalDiscards = $this->connection->fetchAllAssociative("SELECT domestic_survey.id, domestic_survey.is_northern_ireland, domestic_survey.survey_period_start, domestic_survey.registration_mark, domestic_survey.state, domestic_survey_response.is_in_possession_of_vehicle FROM domestic_survey LEFT JOIN domestic_survey_response ON domestic_survey.id = domestic_survey_response.survey_id WHERE domestic_survey_response.is_in_possession_of_vehicle IN('on-hire', 'sold')");
+        foreach ($originalDiscards as $k=>$originalDiscard) {
+            // missing check for start date, as there's one that has the wrong date!!
+            $result = $this->connection->fetchAllAssociative("SELECT domestic_survey.id, domestic_survey.is_northern_ireland, domestic_survey.survey_period_start, domestic_survey.registration_mark, domestic_survey.state, domestic_survey_response.is_in_possession_of_vehicle FROM domestic_survey LEFT JOIN domestic_survey_response ON domestic_survey.id = domestic_survey_response.survey_id WHERE domestic_survey.is_northern_ireland = :is_northern_ireland AND domestic_survey.registration_mark = :registration_mark AND (domestic_survey_response.is_in_possession_of_vehicle NOT IN ('on-hire', 'sold') OR domestic_survey_response.is_in_possession_of_vehicle IS NULL)" , $originalDiscard);
+            if (empty($result)) {
+                echo "missing reissue: {$originalDiscard['registration_mark']}\n";
+            } else if (count($result) > 1) {
+                echo "multiple reissues: {$originalDiscard['registration_mark']}";
+            } else {
+                $reissued = $result[0];
+                $this->addSql("UPDATE domestic_survey SET state = :state WHERE id = :id", ['state' => Survey::STATE_REISSUED, 'id' => $originalDiscard['id']]);
+                $this->addSql("UPDATE domestic_survey SET original_survey_id = :originalId WHERE id = :id", ['originalId' => $originalDiscard['id'], 'id' => $reissued['id']]);
+            }
+        }
     }
 
     public function down(Schema $schema): void
@@ -31,5 +47,7 @@ final class Version20210722103600 extends AbstractMigration
         $this->addSql('ALTER TABLE domestic_survey DROP FOREIGN KEY FK_C3309B36D96D2F88');
         $this->addSql('DROP INDEX UNIQ_C3309B36D96D2F88 ON domestic_survey');
         $this->addSql('ALTER TABLE domestic_survey DROP original_survey_id');
+
+        $this->addSql("UPDATE domestic_survey SET state = :rejected WHERE state = :reissued", ['rejected' => Survey::STATE_REJECTED, 'reissued' => Survey::STATE_REISSUED]);
     }
 }

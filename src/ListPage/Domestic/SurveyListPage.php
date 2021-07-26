@@ -3,6 +3,7 @@
 namespace App\ListPage\Domestic;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\WeekYearFilter;
 use App\ListPage\Field\ChoiceFilter;
@@ -40,6 +41,8 @@ class SurveyListPage extends AbstractListPage
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
+        $possessionChoices = array_combine(array_map(fn($x) => ucfirst($x), SurveyResponse::IN_POSSESSION_CHOICES), SurveyResponse::IN_POSSESSION_CHOICES);
+
         return [
             (new WeekYearFilter('Week', 'survey.surveyPeriodStart')),
             (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
@@ -50,7 +53,7 @@ class SurveyListPage extends AbstractListPage
                 'Yes' => true,
                 'No' => false,
             ]))->sortable(),
-            (new Simple('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
+            (new ChoiceFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),
             (new Simple("Summ.\nDays")),
             (new Simple("Stop\nDays")),
