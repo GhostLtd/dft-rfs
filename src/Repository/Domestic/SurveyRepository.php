@@ -7,6 +7,7 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\Domestic\WeekNumberHelper;
+use App\Utility\StateReportHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,9 +21,11 @@ use Doctrine\Persistence\ManagerRegistry;
 class SurveyRepository extends ServiceEntityRepository
 {
     use DashboardStatsTrait;
+    protected StateReportHelper $stateReportHelper;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, StateReportHelper $stateReportHelper)
     {
+        $this->stateReportHelper = $stateReportHelper;
         parent::__construct($registry, Survey::class);
     }
 
@@ -133,12 +136,7 @@ class SurveyRepository extends ServiceEntityRepository
 
         [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($results, $minStart, $maxStart);
 
-        $mergeStates = [
-            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
-            SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
-        ];
+        $mergeStates = $this->stateReportHelper->getStateReportMergeMappings();
 
         $stats = [];
         for ($year = $firstYear; $year <= $lastYear; $year++) {

@@ -7,6 +7,7 @@ use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\International\WeekNumberHelper;
+use App\Utility\StateReportHelper;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -24,11 +25,13 @@ class SurveyRepository extends ServiceEntityRepository
 {
     protected CompanyRepository $companyRepo;
     protected EntityManagerInterface $entityManager;
+    protected StateReportHelper $stateReportHelper;
 
     use DashboardStatsTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, StateReportHelper $stateReportHelper)
     {
+        $this->stateReportHelper = $stateReportHelper;
         $this->entityManager = $registry->getManager();
         $this->companyRepo = $this->entityManager->getRepository(Company::class);
 
@@ -116,12 +119,7 @@ class SurveyRepository extends ServiceEntityRepository
 
         [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
 
-        $mergeStates = [
-            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
-            SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
-        ];
+        $mergeStates = $this->stateReportHelper->getStateReportMergeMappings();
 
         $stats = [];
         for ($week = $firstWeek; $week <= $lastWeek; $week++) {

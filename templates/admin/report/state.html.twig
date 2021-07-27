@@ -4,23 +4,47 @@
 
 {% block statsTable %}
     {%- if type == 'irhs' -%}
-        {{- _self.displayIrhs(stats) -}}
+        {{- _self.displayIrhs(stateMappings, stats) -}}
     {%- else -%}
-        {{- _self.displayCsrgt(stats) -}}
+        {{- _self.displayCsrgt(stateMappings, stats) -}}
     {%- endif -%}
 {% endblock %}
 
-{% macro displayCsrgt(stats) %}
+{% macro displayCsrgt(stateMappings, stats) %}
     {% for year, yearStats in stats %}
-        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+        {{ _self.displayTable(stateMappings, yearStats.data, yearStats.totals, yearStats.total) }}
     {% endfor %}
 {% endmacro %}
 
-{% macro displayIrhs(stats) %}
-    {{ _self.displayTable(stats.data, stats.totals, stats.total) }}
+{% macro displayIrhs(stateMappings, stats) %}
+    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total) }}
 {% endmacro %}
 
-{% macro displayTable(stats, totals, totalOfTotals) %}
+{% macro displayTable(stateMappings, stats, totals, totalOfTotals) %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Column mappings
+    </span>
+        </summary>
+        <div class="govuk-details__text">
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+                {%- for state, mappings in stateMappings -%}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ state|capitalize }}</th>
+                    <td class="govuk-table__cell">
+                        {% for mapping in mappings %}
+                            {{- tag({text: mapping, classes: "admin.survey.state.#{mapping}" | trans}) -}}{{- ' ' -}}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {%- endfor -%}
+                </tbody>
+            </table>
+        </div>
+    </details>
     <table class="govuk-table rfs-admin-report-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
