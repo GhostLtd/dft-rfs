@@ -27,8 +27,8 @@
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
             <p class="govuk-body">
                 {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
-                    origin: previousStage.originLocation,
-                    destination: previousStage.destinationLocation
+                    origin: previousStage.originLocation | formatPotentialPostcode,
+                    destination: previousStage.destinationLocation | formatPotentialPostcode
                 }) -}}
         {% else %}
             <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>

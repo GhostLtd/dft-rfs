@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Form\Validator as AppAssert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
@@ -128,7 +129,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * N.B. Validation in individual form types due to message varying depending upon context.
+     * N.B. Validation in individual form types or callback validators due to criteria and errors depending upon context.
      */
     private $unableToCompleteDate;
 
@@ -176,6 +177,60 @@ class SurveyResponse extends AbstractSurveyResponse
      * @ORM\OrderBy({"number" = "ASC"})
      */
     private $days;
+
+    /**
+     * @Assert\Callback(groups={"admin_sold"})
+     */
+    public function validateSoldDateAdmin(ExecutionContextInterface $context) {
+        $this->doSoldDateValidation($context, 'soldDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"sold_details"})
+     */
+    public function validateSoldDateFrontend(ExecutionContextInterface $context) {
+        $this->doSoldDateValidation($context, 'unableToCompleteDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"admin_scrapped"})
+     */
+    public function validateScrappedDateAdmin(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'scrappedDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"scrapped_details"})
+     */
+    public function validateScrappedDateFrontend(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'unableToCompleteDate');
+    }
+
+    protected function doSoldDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SOLD, "domestic.survey-response.sold-details");
+    }
+
+    protected function doScrappedDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SCRAPPED_OR_STOLEN, "domestic.survey-response.scrapped-details");
+    }
+
+    protected function doSoldOrScrappedDateValidation(ExecutionContextInterface $context, string $validationPath, string $isPossessionState, string $errorPrefix)
+    {
+        /** @var SurveyResponse $response */
+        $response = $context->getValue();
+        $survey = $response->getSurvey();
+
+        if ($response->getIsInPossessionOfVehicle() === $isPossessionState) {
+            $date = $response->getUnableToCompleteDate();
+            $max = $survey->getSurveyPeriodEnd();
+
+            if (!$date) {
+                $context->buildViolation("{$errorPrefix}.date")->atPath($validationPath)->addViolation();
+            } else if ($date > $max) {
+                $context->buildViolation("{$errorPrefix}.date-max")->atPath($validationPath)->addViolation();
+            }
+        }
+    }
 
     public function __construct()
     {

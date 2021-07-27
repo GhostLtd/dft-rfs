@@ -6,6 +6,7 @@ use App\Form\Admin\ReportFilterType;
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
+use App\Utility\StateReportHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -129,7 +130,7 @@ class ReportsController extends AbstractController
     /**
      * @Route("/state/{type}/{year}/{quarter}", name="state_full", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs", "year": "\d{4}", "quarter": "1|2|3|4"})
      */
-    public function stateReports(Request $request, string $type, int $year, int $quarter): Response
+    public function stateReports(Request $request, StateReportHelper $stateReportHelper, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
@@ -158,6 +159,7 @@ class ReportsController extends AbstractController
             'stats' => $stats ?? null,
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
+            'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn(),
         ]));
     }
 
