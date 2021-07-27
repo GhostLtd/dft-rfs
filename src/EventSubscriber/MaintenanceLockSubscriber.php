@@ -21,6 +21,7 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
         'app_home_index',
         'app_home_sitemap',
         'app_home_accessibilitystatement',
+        'app_home_privacystatement',
         'util_remoteaction_preinstall',
         'util_remoteaction_postinstall',
     ];
