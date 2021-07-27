@@ -192,14 +192,35 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->doSoldDateValidation($context, 'unableToCompleteDate');
     }
 
-    protected function doSoldDateValidation(ExecutionContextInterface $context, string $validationPath)
+    /**
+     * @Assert\Callback(groups={"admin_scrapped"})
+     */
+    public function validateScrappedDateAdmin(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'scrappedDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"scrapped_details"})
+     */
+    public function validateScrappedDateFrontend(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'unableToCompleteDate');
+    }
+
+    protected function doSoldDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SOLD, "domestic.survey-response.sold-details");
+    }
+
+    protected function doScrappedDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SCRAPPED_OR_STOLEN, "domestic.survey-response.scrapped-details");
+    }
+
+    protected function doSoldOrScrappedDateValidation(ExecutionContextInterface $context, string $validationPath, string $isPossessionState, string $errorPrefix)
     {
         /** @var SurveyResponse $response */
         $response = $context->getValue();
         $survey = $response->getSurvey();
-        $errorPrefix = 'domestic.survey-response.sold-details';
 
-        if ($response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_SOLD) {
+        if ($response->getIsInPossessionOfVehicle() === $isPossessionState) {
             $date = $response->getUnableToCompleteDate();
             $max = $survey->getSurveyPeriodEnd();
 
