@@ -218,4 +218,5 @@ domestic:
       date: Enter the date when the vehicle was scrapped or stolen
     sold-details:
       date: Enter the date when the vehicle was sold
+      date-max: "Enter a date before the end of survey period"
       contact-details-required: Prvoide at least one contact method for the new owner
