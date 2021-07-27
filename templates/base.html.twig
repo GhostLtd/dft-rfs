@@ -80,7 +80,8 @@
 {% block footer %}
     {{ govukFooter({
         meta: {items: [
-            {href: path('app_home_accessibilitystatement'), text: 'Accessibility'}
+            {href: path('app_home_accessibilitystatement'), text: 'Accessibility'},
+            {attributes: {target: "_blank"}, text: 'Privacy', href: "https://www.gov.uk/government/organisations/department-for-transport/about/personal-information-charter"}
         ]}
     }) }}
 {% endblock %}
