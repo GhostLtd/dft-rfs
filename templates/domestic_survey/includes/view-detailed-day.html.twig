@@ -1,0 +1,27 @@
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
+
+<h2 class="govuk-heading-l">{{ 'domestic.day-view.headings.five-stops-or-fewer' | trans }}</h2>
+{% for stop in day.stops %}
+    <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- with {marginBottom: 5} -%}
+            {% include "/domestic_survey/includes/day-stop.html.twig" %}
+        {%- endwith -%}
+        {{ buttonLink(path('app_domesticsurvey_daystop_delete', {dayNumber: day.number, stopNumber: stop.number}), 'common.actions.delete-stop'|trans({stopNumber: stop.number}), {class: 'govuk-button--warning'}) }}
+    </div>
+{% else %}
+    <p class="govuk-body">
+        {{ 'domestic.day-view.no-info' | trans }}
+    </p>
+{% endfor %}
+<p class="govuk-body">
+    {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+    {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
+    {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
+
+    {%- if day.stops | length > 1 %}
+        {%- set reorderRoute = constant('App\\Controller\\DomesticSurvey\\DayStopController::REORDER_ROUTE') -%}
+        <a href="{{ url(reorderRoute, {dayNumber: day.number}) }}" class="govuk-button govuk-button--secondary">{{ 'domestic.day-stop.re-order.button'|trans }}</a>
+    {% endif %}
+</p>

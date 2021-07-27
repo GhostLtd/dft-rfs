@@ -1,0 +1,68 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.dashboard" %}
+
+{% block adminContent %}
+    <div class="govuk-grid-row info-container">
+        <div class="govuk-grid-column-one-half-from-desktop">
+
+            <div class="govuk-grid-row info-row info-row--weeks">
+                <div class="govuk-grid-column-one-third info-block info-block-grey">
+                    <span class="info-block--large">CSRGT</span>
+                    <span class="info-block--small">Week {{ domesticWeek }}, {{ domesticYear }}</span>
+                </div>
+                <div class="govuk-grid-column-one-third info-block info-block-grey">
+                    <span class="info-block--large">IRHS</span>
+                    <span class="info-block--small">Week {{ internationalWeek }}</span>
+                </div>
+                <div class="govuk-grid-column-one-third info-block info-block-empty"></div>
+            </div>
+
+            <div class="govuk-grid-row info-row info-row--csrgt">
+                <div class="govuk-grid-column-one-third info-block">
+                    <span class="info-block--large">CSRGT</span>
+                </div>
+                {{ _self.surveyBlocks(domesticGbInProgressCount, domesticGbOverdueCount, '(GB)') }}
+            </div>
+            <div class="govuk-grid-row info-row">
+                <div class="govuk-grid-column-one-third info-block info-block-empty">
+                </div>
+                {{ _self.surveyBlocks(domesticNiInProgressCount, domesticNiOverdueCount, '(NI)') }}
+            </div>
+            <div class="govuk-grid-row info-row info-row--irhs">
+                <div class="govuk-grid-column-one-third info-block">
+                    <span class="info-block--large">IRHS</span>
+                </div>
+                {{ _self.surveyBlocks(internationalInProgressCount, internationalOverdueCount) }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="charts-container govuk-grid-row">
+        <div class="chart-container govuk-grid-column-one-third-from-desktop">
+            <h2 class="govuk-heading govuk-heading-m">Domestic surveys</h2>
+            <canvas class="pie-chart chart-domestic-counts" data-chart="{{ domesticCounts|json_encode }}"></canvas>
+        </div>
+        <div class="chart-container govuk-grid-column-one-third-from-desktop">
+            <h2 class="govuk-heading govuk-heading-m">International surveys</h2>
+            <canvas class="pie-chart chart-international-counts"
+                    data-chart="{{ internationalCounts|json_encode }}"></canvas>
+        </div>
+{#        <div class="chart-container">#}
+{#            <h2 class="govuk-heading govuk-heading-m">Pre-enquiries</h2>#}
+{#            <canvas class="pie-chart chart-pre-enquiry-counts" data-chart="{{ preEnquiryCounts|json_encode }}"></canvas>#}
+{#        </div>#}
+    </div>
+{% endblock %}
+
+{% macro surveyBlocks(inProgressCount, overdueCount, extra) %}
+    <div class="govuk-grid-column-one-third info-block info-block-success">
+        <span class="info-block--large">{{ inProgressCount }}</span>
+        <span class="info-block--small">Open surveys{% if extra %} {{ extra }}{% endif %}</span>
+    </div>
+    <div class="govuk-grid-column-one-third info-block info-block-warning">
+        <span class="info-block--large">{{ overdueCount }}</span>
+        <span class="info-block--small">Overdue surveys{% if extra %} {{ extra }}{% endif %}</span>
+    </div>
+{% endmacro %}

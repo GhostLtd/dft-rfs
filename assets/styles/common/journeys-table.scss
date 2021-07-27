@@ -1,0 +1,22 @@
+.journeys-table {
+  .govuk-table__caption {
+    border-bottom: 4px solid govuk-colour('mid-grey');
+    @include govuk-font(24, 'bold');
+    margin-bottom: govuk-spacing(4);
+
+    .journeys-table__subcaption {
+      @include govuk-font(19, 'bold');
+    }
+  }
+
+  & + .journeys-table {
+    margin-top: govuk-spacing(9);
+  }
+
+  .journeys-table__load-status {
+    line-height: 1.0;
+    span {
+      @include govuk-font(14);
+    }
+  }
+}

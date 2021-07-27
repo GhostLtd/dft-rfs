@@ -1,0 +1,20 @@
+{% set translation_prefix = 'international.vehicle-delete' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% set headingParams = {
+    regMark: vehicle.registrationMark|formatRegMark
+} %}
+
+{%- block content -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
+
+    {%- with {showActions: false, vehicle: vehicle, marginBottom: 4} -%}
+        {%- include "international_survey/includes/vehicle.html.twig" -%}
+    {%- endwith -%}
+
+    {{ warningText("#{translation_prefix}.delete"|trans) }}
+
+    {{ form(form) }}
+{%- endblock -%}
+

@@ -1,0 +1,33 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.domestic.surveys.type-#{type}" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    {{ listTableStart(data, form) }}
+    {% for survey in data.entities %}
+        <tr class="govuk-table__row">
+            {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
+            {{ tableCell("#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}", {}) }}
+            {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
+            {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d'), {}) }}
+            {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
+            {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+            {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
+            {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
+                '-' :
+                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
+            }}
+            {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
+            {{- countField(survey, 'summaryDayCount') -}}
+            {{- countField(survey, 'stopDayCount') -}}
+            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('d/m/Y') }"} }), {}) }}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form) }}
+{% endblock %}

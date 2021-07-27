@@ -1,0 +1,27 @@
+{% macro dayText(day) -%}
+    {{- (day | default(false))
+        ? (day.hasMoreThanFiveStops
+            ? ('More than 5 stops' ~ (day.isComplete
+                ? " (#{day.summary.originLocation|formatPotentialPostcode} to #{day.summary.destinationLocation|formatPotentialPostcode})"
+                : ' (incomplete)'
+            ))
+            : ('5 stops or fewer' ~ (day.isComplete
+                ? " (#{(day.stops | first).originLocation|formatPotentialPostcode} to #{(day.stops | last).destinationLocation|formatPotentialPostcode})"
+                : " (incomplete)"
+            ))
+        )
+        : 'No journeys'
+    -}}
+{%- endmacro %}
+
+{% macro userAssitanceHelpBlock() %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">{{ 'common.help.summary'|trans }}</span>
+        </summary>
+        <div class="govuk-details__text">
+            <p class="govuk-body">{{ 'common.help.text.call'|trans }} <strong>{{ 'domestic.help.text.phone-number'|trans }}</strong></p>
+            <p class="govuk-body">{{ 'common.help.text.office-hours'|trans }}</p>
+        </div>
+    </details>
+{% endmacro %}

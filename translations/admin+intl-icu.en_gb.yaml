@@ -1,0 +1,69 @@
+menu:
+  dashboard: Home
+  logout: Sign out
+  domestic:
+    root: CSRGT
+    surveys-gb: Surveys (GB)
+    surveys-ni: Surveys (NI)
+    survey-add: Add Survey
+    reports: Reports
+    export: Export
+    dvla-import: DVLA bulk import
+  international:
+    root: IRHS
+    surveys: Surveys
+    reports: Reports
+    survey-add: Add Survey
+    export: Export
+    sample-import: Bulk sample import
+  pre-enquiry:
+    root: Pre-enquiry
+    pre-enquiries: Pre-enquiries
+    add: Add
+
+format:
+  date:
+    date-time: Y-m-d H:i
+
+common:
+  survey:
+    flag-qa:
+      heading: Flag survey as QA'd
+      confirm.label: "Flag as QA'd"
+      cancel.label: "Cancel"
+      cancelled-notification:
+        heading: Operation cancelled
+        content: The survey was NOT flagged as QA'd
+      confirmed-notification:
+        heading: Operation successful
+        content: The survey was successfully flagged as QA'd
+    workflow-transition:
+      heading: "{transitionTitleUcfirst} survey"
+      confirm.label: "{transitionTitleUcfirst} survey"
+      cancel.label: "Cancel"
+      cancelled-notification:
+        heading: '{transitionTitleUcfirst} survey transition cancelled'
+        content: 'The requested {transitionTitle} survey transition was cancelled.'
+      confirmed-notification:
+        heading: '{transitionTitleUcfirst} survey'
+        content: 'The requested {transitionTitle} survey transition was completed.'
+
+domestic:
+  export-failed-notification:
+    heading: 'Export failed'
+    content: 'The export failed'
+    title: ''
+
+international:
+  action:
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel
+  vehicle:
+    delete:
+      delete.label: Yes, delete this vehicle
+      cancel.label: Cancel
+  export-failed-notification:
+    heading: 'Export failed'
+    content: 'The export failed'
+    title: ''

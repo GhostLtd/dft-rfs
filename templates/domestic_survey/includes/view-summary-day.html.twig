@@ -1,0 +1,18 @@
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
+
+<h2 class="govuk-heading-m">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
+{% if day.summary | default(false) %}
+    {% include "domestic_survey/includes/day-summary.html.twig" %}
+    <p class="govuk-body">
+        {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
+        {{ buttonLink(path('app_domesticsurvey_daysummary_delete', {dayNumber: day.number}), 'common.actions.delete-summary'|trans, {class: 'govuk-button--warning'}) }}
+    </p>
+{% else %}
+    <p class="govuk-body">
+        {{ 'domestic.day-view.no-info' | trans }}
+    </p>
+    <p class="govuk-body">
+        {{ buttonLink(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number}), 'domestic.day-view.actions.enter-information-for-this-journey'|trans) }}
+    </p>
+{% endif %}

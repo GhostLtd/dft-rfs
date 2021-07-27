@@ -1,0 +1,17 @@
+html {
+  margin: 0;
+}
+
+body {
+  padding: 20mm 15mm;
+}
+
+header {
+  padding: 0 15mm;
+  position: fixed;
+  top: 5mm;
+  left: 0;
+  right: 0;
+  @extend .govuk-body;
+  text-align: center;
+}

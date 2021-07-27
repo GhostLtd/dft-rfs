@@ -1,0 +1,40 @@
+{%- from "admin/macros/macros.html.twig" import displayHazardousGoods, displayLimitedBy -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell, actionLinks -%}
+{%- from "admin/domestic/macros.html.twig" import locationAndStatus, dayJourneyTableCaption -%}
+
+{%- set showActions = showActions ?? true -%}
+
+{%- for dayNumber in 1..7 -%}
+    {%- set day = survey.response.dayByNumber(dayNumber) -%}
+        {%- if day and day.hasMoreThanFiveStops and day.summary -%}
+            {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+        {%- elseif day and day.stops|length > 0 -%}
+            {%- include "admin/domestic/includes/day-stop.html.twig" -%}
+        {%- else -%}
+            <table class="govuk-table journeys-table">
+                <thead class="govuk-table__head">
+                {{- dayJourneyTableCaption(dayNumber, survey) -}}
+                </thead>
+                <tbody class="govuk-table__body">
+                <tr>
+                    <td>-- Nothing recorded --</td>
+                </tr>
+                </tbody>
+            </table>
+
+            {%- if showActions -%}
+            <div class="govuk-!-margin-bottom-9">
+                {%- set addStopRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_DAY_AND_STOP_ROUTE') -%}
+                <a href="{{ url(addStopRoute, {surveyId: survey.id, dayNumber: dayNumber}) }}" class="govuk-button govuk-!-margin-bottom-0">
+                    {{- 'common.actions.add-day-and-stop'|trans -}}
+                    <span class="govuk-visually-hidden">(Day {{ dayNumber }})</span>
+                </a>
+                {%- set addSummaryRoute = constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::ADD_DAY_AND_SUMMARY_ROUTE') -%}
+                <a href="{{ url(addSummaryRoute, {surveyId: survey.id, dayNumber: dayNumber}) }}" class="govuk-button govuk-!-margin-bottom-0">
+                    {{- 'common.actions.add-day-and-summary'|trans -}}
+                    <span class="govuk-visually-hidden">(Day {{ dayNumber }})</span>
+                </a>
+            </div>
+            {%- endif -%}
+        {%- endif -%}
+{%- endfor -%}

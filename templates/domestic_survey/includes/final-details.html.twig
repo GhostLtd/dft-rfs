@@ -1,0 +1,21 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- set showActions = showActions ?? true -%}
+{# This include is only currently used in the admin, and so showActions does nothing #}
+
+<h2 class="govuk-heading-m">Final details</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {%- if not survey.response.isInPossessionOfVehicle -%}
+        No final details — respondent is not in possession of vehicle
+    {%- elseif not survey.response.hasJourneys -%}
+        {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
+        {{- row(showActions,
+            'Reason for empty survey',
+            reason ? reason|trans : '-'
+        ) -}}
+    {%- else -%}
+        {{- row(showActions,
+            'Fuel used during survey week',
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value}))
+        ) -}}
+    {%- endif -%}
+</dl>

@@ -1,0 +1,23 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = {
+    createdDate: subject.createdAt | date(('format.date.medium' | trans)),
+    createdBy: subject.createdBy | removeEmailNamespacePrefix,
+} %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {%- with {note: subject} -%}
+        {%- set survey = note.survey ?? note.preEnquiry -%}
+
+        <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }} govuk-summary-list-notes">
+            {%- from 'admin/macros/macros.html.twig' import displayNote -%}
+            {{ displayNote(note, deleteRoute, deleteParams, {hideActions: true}) }}
+        </dl>
+
+        {{- warningText("#{translation_prefix}.confirmation" | trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{%- endblock -%}

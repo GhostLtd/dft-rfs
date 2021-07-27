@@ -1,0 +1,29 @@
+{% extends 'international_survey/base.html.twig' %}
+{% set translation_prefix = 'international.introduction' %}
+
+{% block content %}
+    {% set survey = app.user.internationalSurvey %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'service.international.name' | trans }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">The survey is for <strong>{{ survey.company.businessName }}</strong> and covers
+                {%- set surveyPeriodInDays = survey.getSurveyPeriodInDays -%}
+                {%- if surveyPeriodInDays == 1 %} a single day — <strong>{{ survey.surveyPeriodStart | date('format.date.long' | trans) }}</strong>.
+                {%- else %} the period from<br><strong>{{ survey.surveyPeriodStart | date('format.date.long' | trans) }}</strong> to <strong>{{ survey.surveyPeriodEnd | date('format.date.long' | trans) }}</strong>.
+                {%- endif -%}
+            </p>
+
+            <p class="govuk-body">We recommend answering the initial questions as soon as possible.</p>
+
+            <h2 class="govuk-heading-m">Initial questions</h2>
+            <p class="govuk-body">We now want to ask you some initial questions which will take around 5 minutes. The questions will cover:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Who to contact about this survey</li>
+                <li>Some essential details about your business</li>
+            </ul>
+        </div>
+    </div>
+
+    {{ form(form) }}
+{% endblock %}

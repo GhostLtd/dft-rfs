@@ -1,0 +1,132 @@
+@import "../../../node_modules/govuk-frontend/govuk/base";
+
+@include govuk-exports("govuk/component/add-to-list") {
+  .govuk-add-to-list {
+    @include govuk-font($size: 19);
+    @include govuk-text-colour;
+    @include govuk-media-query($from: tablet) {
+      display: table;
+      width: 100%;
+      table-layout: fixed; // Required to allow us to wrap words that overflow.
+    }
+    margin: 0; // Reset default user agent styles
+    @include govuk-responsive-margin(6, "bottom");
+  }
+
+  .govuk-add-to-list__row {
+    @include govuk-media-query($until: tablet) {
+      margin-bottom: govuk-spacing(3);
+      border-bottom: 1px solid $govuk-border-colour;
+    }
+    @include govuk-media-query($from: tablet) {
+      display: table-row;
+    }
+  }
+
+  .govuk-add-to-list__key,
+  .govuk-add-to-list__actions {
+    margin: 0; // Reset default user agent styles
+
+    @include govuk-media-query($from: tablet) {
+      display: table-cell;
+      padding-top: govuk-spacing(2);
+      padding-right: govuk-spacing(4);
+      padding-bottom: govuk-spacing(2);
+      border-bottom: 1px solid $govuk-border-colour;
+    }
+  }
+
+  .govuk-add-to-list__actions {
+    margin-bottom: govuk-spacing(3);
+    @include govuk-media-query($from: tablet) {
+      width: 35%;
+      padding-right: 0;
+      text-align: right;
+    }
+  }
+
+  .govuk-add-to-list__key {
+    // Automatic wrapping for unbreakable text (e.g. URLs)
+    word-wrap: break-word; // Fallback for older browsers only
+    overflow-wrap: break-word;
+    margin-bottom: govuk-spacing(1);
+    //@include govuk-typography-weight-bold;
+    @include govuk-media-query($from: tablet) {
+      width: 65%;
+    }
+
+    strong {
+      width: 30px;
+      display: inline-block;
+    }
+  }
+
+  // Expand width when value is last column (no action)
+  .govuk-add-to-list__value:last-child {
+    @include govuk-media-query($from: tablet) {
+      width: 65%;
+    }
+  }
+
+  .govuk-add-to-list__value > p {
+    margin-bottom: govuk-spacing(2);
+  }
+
+  .govuk-add-to-list__value > :last-child {
+    margin-bottom: 0;
+  }
+
+  .govuk-add-to-list__actions-list {
+    width: 100%;
+    margin: 0; // Reset default user agent styles
+    padding: 0; // Reset default user agent styles
+  }
+
+  .govuk-add-to-list__actions-list-item {
+    display: inline;
+    margin-right: govuk-spacing(3);
+    padding-right: govuk-spacing(3);
+  }
+
+  .govuk-add-to-list__actions-list-item:last-child {
+    margin-right: 0;
+    padding-right: 0;
+    border: 0;
+  }
+
+  // No border on entire summary list
+  .govuk-add-to-list--no-border {
+    @include govuk-media-query($until: tablet) {
+      .govuk-add-to-list__row {
+        border: 0;
+      }
+    }
+
+    @include govuk-media-query($from: tablet) {
+      .govuk-add-to-list__key,
+      .govuk-add-to-list__value,
+      .govuk-add-to-list__actions {
+        // Remove 1px border, add 1px height back on
+        padding-bottom: govuk-spacing(2) + 1px;
+        border: 0;
+      }
+    }
+  }
+
+  // No border on specific rows
+  .govuk-add-to-list__row--no-border {
+    @include govuk-media-query($until: tablet) {
+      border: 0;
+    }
+
+    @include govuk-media-query($from: tablet) {
+      .govuk-add-to-list__key,
+      .govuk-add-to-list__value,
+      .govuk-add-to-list__actions {
+        // Remove 1px border, add 1px height back on
+        padding-bottom: govuk-spacing(2) + 1px;
+        border: 0;
+      }
+    }
+  }
+}

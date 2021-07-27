@@ -1,0 +1,73 @@
+@import "~govuk-frontend/govuk/base";
+
+.chart-container {
+  @include govuk-responsive-margin(9, "bottom");
+}
+
+.info-container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.info-row {
+  display: flex;
+
+  & + .info-row {
+    @include govuk-responsive-margin(1, "top");
+  }
+
+  &.info-row--csrgt,
+  &.info-row--irhs {
+    @include govuk-responsive-margin(4, "top");
+  }
+
+  &.info-row--irhs {
+    @include govuk-responsive-margin(9, "bottom");
+  }
+}
+
+.info-block {
+  @include govuk-responsive-padding(2);
+
+  & + .info-block,
+  & + .info-sub-block {
+    @include govuk-responsive-margin(1, "left");
+  }
+}
+
+.info-block {
+  background: govuk-colour('blue');
+  color: govuk-colour('white');
+
+  &-empty {
+    background: govuk-colour('white');
+  }
+
+  &-grey {
+    background: govuk-colour('dark-grey');
+  }
+
+  &-success {
+    background: govuk-colour('green');
+  }
+
+  &-warning {
+    background: govuk-colour('red');
+  }
+
+  &--large {
+    @include govuk-font(27, 'bold');
+
+    span {
+      @include govuk-font(19, 'regular');
+    }
+  }
+
+  &--small {
+    @include govuk-font(19);
+  }
+
+  > span {
+    display: block;
+  }
+}

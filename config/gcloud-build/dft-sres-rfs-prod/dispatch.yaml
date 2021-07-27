@@ -1,0 +1,4 @@
+dispatch:
+    # Default service serves simple hostname request.
+    - url: "admin.roadhaulagesurveys.dft.gov.uk/*"
+      service: admin

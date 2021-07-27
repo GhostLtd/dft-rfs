@@ -1,0 +1,28 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.maintenance-warning" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    <p class="govuk-body">Maintenance Warnings show warnings of upcoming maintenance periods (when the service will be down) on the frontend.</p>
+
+    {{ listTableStart(data, form) }}
+    {% for warning in data.entities %}
+        <tr class="govuk-table__row">
+            {{ tableCell(warning.start | date ('Y-m-d'), {}) }}
+            {{ tableCell(warning.start | date ('g:i a'), {}) }}
+            {{ tableCell(warning.end | date ('g:i a'), {}) }}
+            {{ tableCell(actionLinks({
+                (path('admin_maintenance_warning_delete', {id: warning.id})): {label: 'Delete'},
+                (path('admin_maintenance_warning_edit', {id: warning.id})): {label: 'Edit'},
+            }), {}) }}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form) }}
+    <a class="govuk-button" href="{{ path('admin_maintenance_warning_add') }}">Add maintenance warning</a>
+{% endblock %}

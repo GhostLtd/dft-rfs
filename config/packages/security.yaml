@@ -1,0 +1,75 @@
+security:
+    encoders:
+        App\Entity\PasscodeUser:
+            algorithm: 'bcrypt'
+            # these users have a short lifespan, and bulk creation of surveys/users needs faster hashing
+            cost: 8
+        Symfony\Component\Security\Core\User\User:
+            algorithm: 'bcrypt'
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        passcode:
+            entity:
+                class: App\Entity\PasscodeUser
+                property: username
+        passwd_file:
+            id: App\Security\FileUserProvider
+        null_provider:
+            memory:
+                users: ~
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            host: '^%frontend_hostname%$'
+            anonymous: lazy
+            provider: passcode
+            guard:
+                authenticator: App\Security\PasscodeAuthenticator
+            logout:
+                path: app_logout
+                target: app_login
+
+        admin:
+            host: '^%admin_hostname%$'
+            anonymous: lazy
+            provider: null_provider
+            logout:
+                path: admin_logout
+                target: admin_login
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    role_hierarchy:
+        ROLE_ADMIN_FORM_USER: ROLE_ADMIN_USER
+        ROLE_ADMIN_IAP_USER: ROLE_ADMIN_USER
+        ROLE_DOMESTIC_SURVEY_USER: ROLE_SURVEY_USER
+        ROLE_INTERNATIONAL_SURVEY_USER: ROLE_SURVEY_USER
+        ROLE_PRE_ENQUIRY_USER: ROLE_SURVEY_USER
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        ## General
+        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+
+        ## Frontend firewall
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, roles: ROLE_PRE_ENQUIRY_USER, requires_channel: https }
+
+        ## Admin firewall
+        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER, requires_channel: https }
+
+        ## Remainder
+        - { path: '^/', requires_channel: https }
+

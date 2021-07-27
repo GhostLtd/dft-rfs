@@ -1,0 +1,19 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {%- with {summary: subject} -%}
+        {%- set survey = summary.day.response.survey -%}
+
+        {%- with {showActions: false, marginBottom: 4, day: summary.day} -%}
+            {%- include "admin/domestic/includes/day-summary.html.twig" -%}
+        {%- endwith -%}
+
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{%- endblock -%}

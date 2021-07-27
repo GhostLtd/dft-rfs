@@ -1,0 +1,211 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = 'admin.domestic.survey.type-' ~ (survey.isNorthernIreland ? 'ni' : 'gb') -%}
+{%- set headingParams = {
+    registrationMark: survey.registrationMark|formatRegMark
+} %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
+    {%- set hasInitialDetails = survey.response | default(false) -%}
+    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set hasAuditLogs = auditLogs is not empty -%}
+
+    {#- "vehicle" gets created when the initial-details wizard is complete, although at that stage it only contains regMark -#}
+    {%- set hasVehicle = hasInitialDetails and
+        survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') and
+        survey.response.vehicle.trailerConfiguration != null
+    -%}
+
+    {%- set tabs = {} -%}
+    {%- if hasInitialDetails -%}
+        {%- set tabs = tabs | merge({
+            'Initial details': 'tab-initial-details',
+        }) -%}
+        {%- if hasVehicle -%}
+            {%- set tabs = tabs | merge({
+                'Business details': 'tab-business-details',
+                'Vehicle details': 'tab-vehicle-details',
+            }) -%}
+        {%- endif -%}
+        {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+            {%- set tabs = tabs | merge({
+                'Final details': 'tab-final-details',
+            }) -%}
+        {%- endif -%}
+    {%- endif -%}
+    {%- set tabs = tabs | merge({
+        ("Notes (#{ survey.notes | length })"): 'tab-notes',
+        'Invitation/reminders': 'tab-invitation-details',
+    }) -%}
+    {%- if hasAuditLogs -%}
+        {%- set tabs = tabs | merge({
+            'Audit logs': 'tab-audit-logs',
+        }) -%}
+    {%- endif -%}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+        {% set status -%}
+            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
+            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+        {%- endset %}
+        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
+        {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
+        {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
+        {%- if pdfs is not empty -%}
+            {%- set pdfContent -%}
+                {%- set multiplePdfs = pdfs|length > 1 ? true : false -%}
+                {%- for pdf in pdfs -%}
+                    {%- set routeParams = {surveyId: pdf.survey.id} -%}
+                    {%- if multiplePdfs -%}{% set routeParams = routeParams|merge({timestamp: pdf.timestamp}) -%}{%- endif -%}
+                    <div><a href="{{ path('app_admin_domestic_surveypdf_pdf', routeParams) }}" target="_blank" rel="noopener noreferrer" class="govuk-link">
+                            {{- pdf.filename() -}}{% if multiplePdfs %} @ {{ pdf.date|date('Y-m-d H:i:s') }}{% endif -%}
+                    </a></div>
+                {%- endfor -%}
+            {%- endset -%}
+            {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
+        {%- endif -%}
+    </dl>
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- if canEdit -%}
+            {%- if not hasInitialDetails -%}
+            <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
+            {%- elseif not hasVehicle %}
+            <a class="govuk-button" href="{{ path('admin_domestic_survey_business_and_vehicle_enter', {surveyId: survey.id}) }}">Enter business and vehicle details</a>
+            {%- endif -%}
+        {%- endif -%}
+        {%- if canResetPasscode -%}
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+        {%- endif -%}
+    </div>
+
+    {%- if tabs|default(false) -%}
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+            {{- tabsHead(tabs) -}}
+
+            {%- if 'Initial details' in tabs | keys -%}
+                <div class="govuk-tabs__panel" id="tab-initial-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'domestic_survey/includes/initial-details.html.twig' -%}
+                    {%- endwith -%}
+                    {%- if canEdit -%}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_initial_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
+                    </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            {%- if 'Business details' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'domestic_survey/includes/business-details.html.twig' -%}
+                    {%- endwith -%}
+
+                    {%- if canEdit -%}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_business_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> business details</span></a>
+                    </div>
+                    {%- endif -%}
+               </div>
+            {%- endif -%}
+
+            {%- if 'Vehicle details' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'domestic_survey/includes/vehicle-details.html.twig' -%}
+                    {%- endwith -%}
+                    {%- if canEdit -%}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_vehicle_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> vehicle details</span></a>
+                    </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            {%- if 'Final details' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                    {%- with {showActions: false, marginBottom: 5} -%}
+                        {%- include 'domestic_survey/includes/final-details.html.twig' -%}
+                    {%- endwith -%}
+                    {%- if canEdit -%}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_domestic_survey_final_details_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> final details</span></a>
+                    </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+                {%- with {marginBottom: 5} -%}
+                    {%- include 'admin/includes/invitation-details.html.twig' -%}
+                {%- endwith -%}
+            </div>
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+                {%- with {marginBottom: 5, deleteRoute: 'admin_domestic_survey_deletenote', deleteParams: {surveyId: survey.id}} -%}
+                    {%- include 'admin/includes/notes.html.twig' -%}
+                {%- endwith -%}
+            </div>
+            
+            {%- if hasAuditLogs -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                    {%- with {marginBottom: 5} -%}
+                        {%- include 'admin/includes/audit-log.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+
+    {%- if hasVehicle -%}
+        <h1 class="govuk-heading govuk-heading-l govuk-heading--underline">Journeys</h1>
+
+        {%- with {showActions: canEdit} -%}
+            {% include 'admin/domestic/surveys/survey-week.html.twig' %}
+        {%- endwith -%}
+    {%- endif -%}
+
+    {% if workflow_can(survey, 'approve') or workflow_can(survey, 'reject') or workflow_can(survey, 'complete')
+        or workflow_can(survey, 're_open') or workflow_can(survey, 'un_approve') or workflow_can(survey, 'un_reject')
+    %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <div class="govuk-!-margin-bottom-9 govuk-body">
+            <h2 class="govuk-heading--l">Survey actions</h2>
+            {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(survey, 'complete', 'Complete') }}
+            {{ _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
+            {{ _self.workflow_link(survey, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(survey, 'approve', 'Approve') }}
+            {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+
+            {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+                {%- with {
+                    attr: (options.attr ?? {}) | merge({
+                    href: path('admin_domestic_survey_flag_qa', {surveyId: survey.id}),
+                    class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+                })} -%}
+                    <a {{ attributes(attr) }}>Flag as QA'd</a>
+                {%- endwith -%}
+            {% endif %}
+        </div>
+    {% endif %}
+{%- endblock -%}
+
+{% macro workflow_link(survey, transitionName, transitionText, options) -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {%- with {
+        attr: (options.attr ?? {}) | merge({
+        href: path('admin_domestic_survey_transition', {surveyId: survey.id, transition: transitionName}),
+        class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+    })
+        } -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+    {%- endwith -%}
+{%- endmacro %}

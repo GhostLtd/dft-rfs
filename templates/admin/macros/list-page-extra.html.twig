@@ -1,0 +1,19 @@
+{%- macro countField(survey, fieldName) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
+    {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
+    {%- set value = (field == null or field == 0) ? '-' : field -%}
+    {{- tableCell(value) -}}
+{%- endmacro -%}
+
+{%- macro reminderDate(value, recursiveValue) -%}
+    {%- if value | default(false) -%}
+        {%- if ((value | date('Y-m-d')) == '1970-01-01') -%}
+            -
+        {%- else -%}
+            {{- value | date('Y-m-d') -}}
+            {%- if recursiveValue | default(false) %}, {{ _self.reminderDate(recursiveValue) }}{% endif -%}
+        {%- endif -%}
+    {%- else -%}
+        -
+    {%- endif -%}
+{%- endmacro -%}

@@ -1,0 +1,30 @@
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+
+@import "app/choice-label-icons";
+@import "app/choice-label-bring-to-attention";
+@import "app/passcode-fieldset";
+@import "app/session-reminder";
+@import "app/vehicle-icons";
+@import "app/prose-scope";
+
+body {
+    background-color: lightgray;
+}
+
+#non-existent-item {
+    color: #fff;
+}
+
+.govuk-add-to-list__key .goods {
+    margin-left: 30px;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+#international_vehicle_weights_reminder {
+    dt, dd {
+        width: 50%;
+    }
+}

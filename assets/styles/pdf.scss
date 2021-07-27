@@ -1,0 +1,93 @@
+@import "pdf/reset";
+
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+@import "~govuk-frontend/govuk/base";
+@import "~govuk-frontend/govuk/core/typography";
+@import "~govuk-frontend/govuk/components/summary-list/summary-list";
+@import "~govuk-frontend/govuk/components/table/table";
+@import "~govuk-frontend/govuk/helpers/colour";
+@import "~govuk-frontend/govuk/overrides/spacing";
+
+@import "pdf/base";
+
+html {
+  font-size: 80%;
+}
+
+// The usual govuk-!-margin-bottom-9 etc are responsive based upon screen size
+// and just don't work well in the PDF, so manual overrides for specific elements
+// are instead used here
+
+.govuk-heading-xl {
+  margin-bottom: 1rem;
+}
+
+.govuk-heading-l {
+  margin-bottom: 0.8rem;
+  font-size: 1.7rem; // No idea why this ends up being too large (without this)
+}
+
+.govuk-body,
+.govuk-summary-list {
+  margin-bottom: 5rem;
+}
+.domestic-journeys {
+  margin-bottom: 5rem;
+  margin-top: 5rem;
+}
+
+.govuk-summary-list,
+.domestic-day > h2 {
+  padding-left: 2rem;
+}
+
+.govuk-summary-list__key {
+  width: 50%;
+}
+
+.govuk-summary-list__value,
+.govuk-summary-list__value:last-child {
+  width: 50%;
+}
+
+.domestic-day-header {
+  //margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.domestic-day > h2 {
+  margin-bottom: 0.75rem;
+}
+
+.international-vehicle-details {
+  margin-bottom: 5rem;
+
+  .international-loading-unloading-places {
+    margin-left: 2rem;
+  }
+}
+
+.international-section-break {
+  margin-bottom: 1.5rem;
+}
+
+.govuk-section-break {
+  border-color: govuk-colour('purple');
+}
+
+
+@media only print {
+  .domestic-journeys {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .international-vehicle-details {
+    margin-bottom: 0;
+  }
+
+  .international-business-details .govuk-summary-list.govuk-\!-margin-bottom-9 {
+    margin-bottom: 0 !important;
+  }
+}
+

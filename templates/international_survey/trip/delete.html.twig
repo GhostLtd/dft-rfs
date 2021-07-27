@@ -1,0 +1,31 @@
+{% set translation_prefix = 'international.trip-delete' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% set headingParams = {
+    date: subject.outboundDate,
+} %}
+
+{%- block content -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
+
+    {%- set showActions = subject.actions|length > 0 -%}
+
+    {%- with {showActions: false, trip: subject, marginBottom: showActions ? 9 : 4} -%}
+        {%- include "international_survey/includes/trip.html.twig" -%}
+    {%- endwith -%}
+
+    {%- if showActions -%}
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Actions</h2>
+        {%- with {showActions: false, trip: subject, marginBottom: 4} -%}
+            {%- include "international_survey/includes/actions.html.twig" -%}
+        {%- endwith -%}
+
+        {{ warningText("#{translation_prefix}.delete-multi"|trans) }}
+    {%- else -%}
+        {{ warningText("#{translation_prefix}.delete"|trans) }}
+    {%- endif -%}
+
+    {{ form(form) }}
+{%- endblock -%}
+

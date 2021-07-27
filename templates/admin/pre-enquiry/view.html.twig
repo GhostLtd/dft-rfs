@@ -1,0 +1,113 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.pre-enquiry.view" %}
+{% set headingParams = {
+    companyName: preEnquiry.company.businessName
+} %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
+    {%- set hasInitialDetails = preEnquiry.response | default(false) -%}
+    {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), preEnquiry) -%}
+    {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), preEnquiry) -%}
+    {%- set hasAuditLogs = auditLogs is not empty -%}
+
+    {%- set tabs = {} -%}
+    {%- if hasInitialDetails -%}
+        {%- set tabs = tabs|merge({
+            'Response': 'tab-response',
+        }) -%}
+    {%- endif -%}
+    {%- set tabs = tabs | merge({
+        ("Notes (#{ preEnquiry.notes | length })"): 'tab-notes',
+        'Invitation/reminders': 'tab-invitation-details',
+    }) -%}
+    {%- if hasAuditLogs -%}
+        {%- set tabs = tabs | merge({
+            'Audit logs': 'tab-audit-logs',
+        }) -%}
+    {%- endif -%}
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- with {marginBottom: 5} -%}
+            {%- include "admin/pre-enquiry/includes/basics.html.twig" -%}
+        {%- endwith -%}
+
+        {%- if canEdit and not hasInitialDetails -%}
+            <a class="govuk-button" href="{{ path('admin_pre_enquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
+        {%- endif -%}
+        {%- if canResetPasscode -%}
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_reset_passcode', {preEnquiryId: preEnquiry.id}) }}">Reset passcode</a>
+        {%- endif -%}
+    </div>
+
+    {%- if tabs is defined -%}
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+            {{ tabsHead(tabs) }}
+
+            {%- if 'Response' in tabs | keys -%}
+                <div class="govuk-tabs__panel" id="tab-response">
+                    <h2 class="govuk-heading-m">Response</h2>
+
+                    {%- with {marginBottom: 5} -%}
+                        {%- include 'admin/pre-enquiry/includes/response.html.twig' -%}
+                    {%- endwith -%}
+
+                    {%- if canEdit -%}
+                    <div>
+                        <a class="govuk-button" href="{{ path('admin_pre_enquiry_edit_response', {preEnquiryId: preEnquiry.id}) }}">Edit<span class="govuk-visually-hidden"> response</span></a>
+                    </div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+                {%- with {marginBottom: 5, survey: preEnquiry} -%}
+                    {%- include "admin/includes/invitation-details.html.twig" -%}
+                {%- endwith -%}
+            </div>
+
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+                {%- with {marginBottom: 5, survey: preEnquiry, deleteRoute: 'admin_pre_enquiry_deletenote', deleteParams: {preEnquiryId: preEnquiry.id}} -%}
+                    {%- include 'admin/includes/notes.html.twig' -%}
+                {%- endwith -%}
+            </div>
+
+            {%- if hasAuditLogs -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                    {%- with {marginBottom: 5} -%}
+                        {%- include 'admin/includes/audit-log.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+
+    {% if workflow_can(preEnquiry, 'approve') or workflow_can(preEnquiry, 'reject') or workflow_can(preEnquiry, 'complete')
+        or workflow_can(preEnquiry, 're_open') or workflow_can(preEnquiry, 'un_approve') or workflow_can(preEnquiry, 'un_reject')
+    %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <div class="govuk-!-margin-bottom-9 govuk-body">
+            <h2 class="govuk-heading--l">Pre-enquiry actions</h2>
+            {{ _self.workflow_link(preEnquiry, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(preEnquiry, 'complete', 'Complete') }}
+            {{ _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
+            {{ _self.workflow_link(preEnquiry, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(preEnquiry, 'approve', 'Approve') }}
+            {{ _self.workflow_link(preEnquiry, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+        </div>
+    {% endif %}
+
+{%- endblock -%}
+
+{% macro workflow_link(preEnquiry, transitionName, transitionText, options) -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {%- with {
+        attr: (options.attr ?? {}) | merge({
+            href: path('admin_pre_enquiry_transition', {preEnquiryId: preEnquiry.id, transition: transitionName}),
+            class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+        })
+    } -%}
+        {%- if workflow_can(preEnquiry, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} pre-enquiry</a>{% endif -%}
+    {%- endwith -%}
+{%- endmacro %}

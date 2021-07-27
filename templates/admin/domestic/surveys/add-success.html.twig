@@ -1,0 +1,37 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{%- set bodyClasses = 'page__admin-survey-add-success' -%}
+{% set translation_prefix = "admin.domestic.survey-add-success" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+
+    <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark|formatRegMark) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y')) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y')) }}
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ 'admin.domestic.survey-created.invitation-email' | trans | nl2br }}</dt>
+            <dd class="govuk-summary-list__value">
+                {%- if survey.invitationEmail -%}
+{%- set bodyText -%}
+Access code 1: {{ survey.passcodeUser.username }}
+Access code 2: {{ survey.passcodeUser.plainPassword }}
+{%- endset -%}
+                    {%- set mailLink = "mailto:#{survey.invitationEmail}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
+                    <a href="{{ mailLink }}">{{ survey.invitationEmail }}</a>
+                {%- else -%}-
+                {%- endif %}
+            </dd>
+        </div>
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.invitation-address', survey.invitationAddress.isFilled ?
+            (survey.invitationAddress | formatAddress(true)) :
+            '-', null) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', survey.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
+    </dl>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.domestic.export" %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
+
+    {%- set headers = ['Year', 'Quarter', 'State', ''] -%}
+
+<table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- tableHead(false, headers) -}}
+    <tbody class="govuk-table__body">
+    {%- for export in exports -%}
+        <tr class="govuk-table__row">
+            {{- tableCell(export.year) -}}
+            {{- tableCell('Q' ~ export.quarter) -}}
+            {{- tableCell(export.storageObject ? 'Exported' : 'Not exported') -}}
+
+            {%- set actions -%}
+                {%- if export.storageObject -%}
+                    <a href="{{ url('admin_domestic_export_download', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Download</a>
+                {%- else -%}
+                    <a href="{{ url('admin_domestic_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Export</a>
+                {%- endif -%}
+            {%- endset -%}
+
+            {{- tableCell(actions, {actions: true}) -}}
+        </tr>
+    {%- endfor -%}
+    </tbody>
+</table>
+{%- endblock -%}

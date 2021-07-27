@@ -1,0 +1,63 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
+{%- from 'macros.html.twig' import displayAxleConfiguration -%}
+{% set showActions = showActions ?? true %}
+{% set showHeading = showHeading ?? true %}
+
+{% if showHeading %}<h2 class="govuk-heading-m">Vehicle details</h2>{% endif %}
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {# vehicle weights #}
+    {% set vehicleWeightsActionLinks = {
+        (url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS')})):
+        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-weights.heading'}
+    } %}
+    {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
+        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
+            '-'
+        -%}
+        {{ row(showActions,
+            'domestic.survey-response.vehicle-fuel.fuel-quantity.label',
+            fuelValue,
+            vehicleWeightsActionLinks
+        ) }}
+    {% endif %}
+    {{ row(showActions,
+        'common.vehicle.gross-weight',
+        ('common.weight.kilograms'|trans({value: survey.response.vehicle.grossWeight})),
+        vehicleWeightsActionLinks
+    ) }}
+    {{ row(showActions,
+        'common.vehicle.carrying-capacity',
+        ('common.weight.kilograms'|trans({value: survey.response.vehicle.carryingCapacity})),
+        vehicleWeightsActionLinks
+    ) }}
+
+    {# vehicle config #}
+    {% set vehicleConfigActionLinks = {
+        (url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})):
+        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-trailer-configuration.change-link-sr-suffix'}
+    } %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ 'common.vehicle.axle-configuration' | trans }}</dt>
+        <dd class="govuk-summary-list__value">
+            {{- displayAxleConfiguration(survey.response.vehicle.axleConfiguration) -}}
+        </dd>
+        {% if showActions -%}
+            <dd class="govuk-summary-list__actions">
+                {{- actionLinks(vehicleConfigActionLinks) -}}
+            </dd>
+        {%- endif %}
+    </div>
+    {{ row(showActions,
+        'common.vehicle.body-type',
+        (constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_TRANSLATION_PREFIX') ~ survey.response.vehicle.bodyType) | trans,
+        vehicleConfigActionLinks
+    ) }}
+    {%- if (showReasonForEmptySurvey ?? false) and survey.response.isInPossessionOfVehicle and not survey.response.hasJourneys -%}
+        {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
+        {{- row(false,
+            'Reason for empty survey',
+            reason ? reason|trans : '-'
+        ) -}}
+    {%- endif -%}
+</dl>

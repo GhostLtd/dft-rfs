@@ -1,0 +1,6 @@
+{% set translation_prefix = 'international.trip.return-ports' %}
+{% extends 'international_survey/trip/form-base.html.twig' %}
+
+{% set preFormContent -%}
+    {%- include 'international_survey/includes/ports-help.html.twig' -%}
+{%- endset %}

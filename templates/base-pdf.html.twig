@@ -1,0 +1,60 @@
+{% apply spaceless %}
+<html lang="{{ htmlLang | default('en') }}" class="govuk-template {{ htmlClasses | default('') }}">
+<head>
+    <meta charset="utf-8" />
+    <title{% if pageTitleLang | default(false) %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ themeColor | default('#0b0c0c') }}" />
+    {% if block('metaDescription') is defined %}<meta name="description" content="{{ block('metaDescription') }}">{% endif %}
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    {% block head %}
+        {{ encore_entry_inline_styles('pdf') }}
+    {% endblock %}
+</head>
+<body class="template__body {{ bodyClasses | default('') }}">
+
+{% if block('header') is defined -%}
+    <header class="header prose-scope" role="banner" data-module="header">
+        {{- block('header') -}}
+    </header>
+{%- endif %}
+
+{% block main %}
+    <div class="container {{ containerClasses | default('') }}">
+        {% block beforeContent %}{% endblock %}
+        <main class="main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
+
+{#
+    Page counts/page numbers in Dompdf are difficult...
+    This script
+#}
+{%- if block('footer') is defined -%}
+    {%- verbatim -%}
+<script type="text/php">
+    if ( isset($pdf) && $PAGE_COUNT > 1) {
+        $pdf->page_script('
+            $mmToInchDots = function($a){return ($a / 25.4) * 72.0;};
+            $font = $fontMetrics->getFont("sans-serif");
+            $size = 11;
+            $text = preg_replace(["/{PAGE_COUNT}/", "/{PAGE_NUM}/"], [$PAGE_COUNT, $PAGE_NUM], "{%- endverbatim -%}{{- block('footer') -}}{%- verbatim -%}");
+            $fontHeight = $fontMetrics->getFontHeight($font, $size);
+            $textWidth = $pdf->get_text_width($text, $font, $size);
+            $startY = $pdf->get_height() - $fontHeight - $mmToInchDots(8);
+            $startX = $pdf->get_width() - $textWidth - $mmToInchDots(15);
+            $pdf->text($startX, $startY, $text, $font, $size, [0, 0, 0]);
+        ');
+    }
+</script>
+    {%- endverbatim -%}
+{%- endif -%}
+
+{% block bodyEnd %}{% endblock %}
+</body>
+</html>
+{% endapply %}

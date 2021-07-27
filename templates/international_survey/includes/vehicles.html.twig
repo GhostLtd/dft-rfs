@@ -1,0 +1,27 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableCell, actionLinks -%}
+{%- from 'macros.html.twig' import displayAxleConfiguration -%}
+
+{%- set showActions = showActions ?? true -%}
+{%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
+
+<table class="govuk-table govuk-!-margin-bottom-9">
+    {{- tableHeadComplex(false, {'international.summary.registration': {}, 'international.summary.type-and-configuration': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}{# 'international.summary.status' #}
+    <tbody class="govuk-table__body">
+    {%- for vehicle in vehicles -%}
+        <tr class="govuk-table__row">
+            {{- tableCell(vehicle.formattedRegistrationMark) -}}
+            {{- tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) -}}
+{#            {{- tableCell('-') -}}#}
+            {%- set viewContents = actionLinks({
+                (url(vehicleRoute, {vehicleId: vehicle.id})):
+                {label: 'common.actions.view', srHiddenSuffix: 'international.summary.view-vehicle-sr-suffix', srHiddenSuffixParams: {regMark: vehicle.registrationMark}}
+            }) -%}
+            {{- tableCell(viewContents, {actions: true}) -}}
+        </tr>
+    {%- else -%}
+        <tr class="govuk-table__row">
+            {{- tableCell('international.summary.no-vehicles' | trans, {colSpan: showActions ? 4 : 3}) -}}
+        </tr>
+    {%- endfor -%}
+    </tbody>
+</table>

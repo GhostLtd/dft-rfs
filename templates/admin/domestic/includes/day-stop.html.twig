@@ -1,0 +1,25 @@
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell -%}
+{%- from "admin/domestic/macros.html.twig" import dayStopTableHeadingAndCaption -%}
+
+{%- set isNorthernIreland = survey.isNorthernIreland -%}
+
+<table class="govuk-table journeys-table govuk-!-margin-bottom-{{ (showActions ?? true) ? 5 : 9 }}" id="{{ day.id }}">
+    {{- dayStopTableHeadingAndCaption(null, survey, day) -}}
+    <tbody class="govuk-table__body">
+    {%- for stop in day.stops -%}
+        {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
+    {%- endfor -%}
+    </tbody>
+</table>
+{%- if showActions ?? true -%}
+    <div class="govuk-!-margin-bottom-9">
+        {%- set addRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_ROUTE') -%}
+        <a href="{{ url(addRoute, {dayId: day.id}) }}" class="govuk-button govuk-!-margin-bottom-0">
+            {{- 'common.actions.add-day-stop'|trans -}}
+            <span class="govuk-visually-hidden">(Day {{ day.number }})</span>
+        </a>
+        {%- if day.stops | length > 1 -%}
+            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_domestic_daystop_reorder', {surveyId: survey.id, dayNumber: day.number}) }}">Re-order stages<span class="govuk-visually-hidden">: for day {{ day.number }}</span></a>
+        {%- endif -%}
+    </div>
+{%- endif -%}

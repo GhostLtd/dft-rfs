@@ -1,0 +1,92 @@
+{%- macro daySummaryTableHeadingAndCaption(dayNumber, survey, day) -%}
+    {{- _self.daySummaryTableHeading(survey.isNorthernIreland, {
+        captionContent: _self.dayJourneyTableCaption(dayNumber, survey, day)
+    }) -}}
+{%- endmacro -%}
+
+{%- macro dayStopTableHeadingAndCaption(dayNumber, survey, day) -%}
+    {{- _self.dayStopTableHeading(survey.isNorthernIreland, {
+        captionContent: _self.dayJourneyTableCaption(dayNumber, survey, day)
+    }) -}}
+{%- endmacro -%}
+
+{%- macro daySummaryTableHeading(isNorthernIreland, options={}) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRowComplex -%}
+
+    <thead class="govuk-table__head">
+    {%- if options.captionContent is defined -%}
+        {{- options.captionContent|raw -}}
+    {%- endif -%}
+
+    {%- set headings = {
+        'Origin': {},
+        'Destination': {},
+    } | merge(isNorthernIreland ? {'Border': {}} : {}) | merge({
+        'Furthest point': {},
+        "Distance (l/u)": {numeric: true},
+        'Goods': {},
+        'Hazardous?': {},
+        'Cargo type': {},
+        "Weight (l/u)": {numeric: true},
+        "Stops (l/u/b)": {numeric: true},
+        ('common.actions.table-heading' | trans): {html: true}
+    }) -%}
+
+    {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
+    </thead>
+{%- endmacro -%}
+
+{%- macro dayStopTableHeading(isNorthernIreland, options={}) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRowComplex -%}
+
+    <thead class="govuk-table__head">
+        {%- if options.captionContent is defined -%}
+            {{- options.captionContent|raw -}}
+        {%- endif -%}
+
+        {%- set headings = {
+            'Origin': {},
+            'Destination': {},
+        } | merge(isNorthernIreland ? {'Border': {}} : {}) | merge({
+            "Distance": {numeric: true},
+            'Goods': {},
+            'Hazardous?': {},
+            'Cargo type': {},
+            "Weight": {numeric: true},
+            "Capacity": {},
+            ('common.actions.table-heading' | trans): {html: true}
+        }) -%}
+
+        {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
+    </thead>
+{%- endmacro -%}
+
+{%- macro dayJourneyTableCaption(dayNumber, survey, day) -%}
+    {%- from "domestic_survey/includes/macros.html.twig" import dayText -%}
+    {%- if not dayNumber -%}
+        {%- set dayNumber = day.number -%}
+    {%- endif -%}
+    <caption class="govuk-table__caption">
+        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M') }}</div>
+        {%- if day|default(false) %}
+            <div class="journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
+    </caption>
+{%- endmacro -%}
+
+{%- macro locationAndStatus(location, loaded, port, isOrigin) -%}
+    {{- location|formatPotentialPostcode -}}
+    {%- set type = _self.transfer(port) %}
+    {%- if loaded -%}
+        {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro transfer(xfer) -%}
+    {%- if xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_AIR') -%}
+        Airport
+    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_PORT') -%}
+        Ports/docks
+    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_RAIL') -%}
+        Rail siding/terminal
+    {%- endif -%}
+{%- endmacro -%}

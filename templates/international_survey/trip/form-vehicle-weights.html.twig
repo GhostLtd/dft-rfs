@@ -1,0 +1,15 @@
+{% set translation_prefix = 'international.trip.vehicle-weights' %}
+{% extends 'international_survey/trip/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-8" id="international_vehicle_weights_reminder">
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key">{{ "#{translation_prefix}.gross-weight"|trans }}</dt>
+            <dd class="govuk-summary-list__value">{{ 'common.weight.kilograms'|trans({value: subject.vehicle.grossWeight}) }}</dd>
+        </div>
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key">{{ "#{translation_prefix}.carrying-capacity"|trans }}</dt>
+            <dd class="govuk-summary-list__value">{{ 'common.weight.kilograms'|trans({value: subject.vehicle.carryingCapacity}) }}</dd>
+        </div>
+    </dl>
+{% endset %}

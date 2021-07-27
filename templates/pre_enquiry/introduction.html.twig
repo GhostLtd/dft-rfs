@@ -1,0 +1,18 @@
+{% set translation_prefix = 'pre-enquiry.introduction' %}
+{% extends 'pre_enquiry/base.html.twig' %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ (translation_prefix ~ '.heading') | trans }}</h1>
+
+    <p class="govuk-body">The purpose of this pre-enquiry is to ascertain the number of trips that you will be making to the continent or to the Republic of Ireland each year.</p>
+    <p class="govuk-body">The questions will cover:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Contact details</li>
+        <li>Questions about your company and its vehicles</li>
+    </ul>
+    <p class="govuk-body">It will take around 5 minutes</p>
+
+    {{ form(form) }}
+{% endblock %}

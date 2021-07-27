@@ -1,0 +1,14 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- set showActions = showActions ?? true -%}
+
+{%- set changeLink = {
+    (wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS')):
+    {label: 'common.actions.change', srHiddenSuffix: 'international.survey-response.contact-details.heading'}
+} %}
+
+<h2 class="govuk-heading-m">{{- 'international.correspondence-and-business-details.correspondence-details'|trans -}}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
+    {{- row(showActions, 'Name', response.contactName, changeLink) -}}
+    {{- row(showActions, 'Email', response.contactEmail ?? '-', changeLink) -}}
+    {{- row(showActions, 'Phone', response.contactTelephone ?? '-', changeLink) -}}
+</dl>

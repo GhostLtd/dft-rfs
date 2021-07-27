@@ -1,0 +1,36 @@
+{% set translation_prefix = 'pre-enquiry.summary' %}
+{% extends 'pre_enquiry/base.html.twig' %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    {% import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents %}
+    <h1 class="govuk-heading-xl">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.business-details')|trans }}</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {%- set response = preEnquiry.response -%}
+        {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME') -%}
+        {%- set urlVehicleQuestions = wizardUrl('pre-enquiry', 'STATE_VEHICLE_QUESTIONS') -%}
+        {%- set urlEmployeesAndInternationalJourneys = wizardUrl('pre-enquiry', 'STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS') -%}
+        {%- set change = 'common.actions.change'|trans -%}
+
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.company-name', response.companyName, {(urlCompanyName): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.company-name'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.total-vehicle-count', response.totalVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.international-journey-vehicle-count', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.number-of-employees', response.numberOfEmployees, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.annual-journey-estimate', response.annualJourneyEstimate, {(urlEmployeesAndInternationalJourneys): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
+    </dl>
+
+    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.correspondence-details')|trans }}</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS') -%}
+        {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS') -%}
+
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.name', response.contactName, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.email', response.contactEmail, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.phone', response.contactTelephone, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
+        {{ gdsComponents.summaryListRow(translation_prefix ~ '.address', response.contactAddress|formatAddress(true, false)|default('-'), {(urlCorrespondenceAddress): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-address'}}) }}
+    </dl>
+
+    {{ form(form) }}
+{% endblock %}

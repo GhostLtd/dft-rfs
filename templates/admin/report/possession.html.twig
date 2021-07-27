@@ -1,0 +1,42 @@
+{% extends 'admin/report/report-base.html.twig' %}
+
+{% set translation_prefix = "admin.reports.possession" %}
+
+{% block statsTable %}
+    {% for year, yearStats in stats %}
+        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+    {% endfor %}
+{% endblock %}
+
+{% macro displayTable(stats, totals, totalOfTotals) %}
+    <p class="govuk-body">
+        Stats shown for surveys that have been completed (closed, accepted, rejected, exported etc.)
+    </p>
+    <table class="govuk-table rfs-admin-report-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Week</th>
+            <th scope="col" class="govuk-table__header">In possession</th>
+            <th scope="col" class="govuk-table__header">On hire</th>
+            <th scope="col" class="govuk-table__header">Scrapped</th>
+            <th scope="col" class="govuk-table__header">Sold</th>
+            <th scope="col" class="govuk-table__header">Total</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        {% import "admin/report/macros.html.twig" as m %}
+        {% set fields = ['yes', 'on-hire', 'scrapped-or-stolen', 'sold'] %}
+        {% for week, weekStats in stats %}
+            {%- set allZeros = weekStats.allZeros -%}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__header">{{ week }}</td>
+                {{ m.displayRow(weekStats.data, weekStats.total, weekStats.allZeros, fields) }}
+            </tr>
+        {% endfor %}
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header">Total</td>
+            {{ m.displayRow(totals, totalOfTotals, false, fields) }}
+        </tr>
+        </tbody>
+    </table>
+{% endmacro %}

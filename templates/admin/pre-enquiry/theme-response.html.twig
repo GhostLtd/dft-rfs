@@ -1,0 +1,38 @@
+{% block form %}
+    {{ form_start(form) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <h2 class="govuk-heading govuk-heading-m">Business name</h2>
+            {{ form_row(form.isCorrectCompanyName) }}
+        </div>
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <h2 class="govuk-heading govuk-heading-m">Correspondence details</h2>
+            {{ form_row(form.contactName) }}
+            {{ form_row(form.contactTelephone) }}
+            {{ form_row(form.contactEmail) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <h2 class="govuk-heading govuk-heading-m">Vehicle and employee questions</h2>
+            {{ form_row(form.totalVehicleCount) }}
+            {{ form_row(form.internationalJourneyVehicleCount) }}
+            {{ form_row(form.numberOfEmployees) }}
+            {{ form_row(form.annualJourneyEstimate) }}
+        </div>
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <h2 class="govuk-heading govuk-heading-m">Correspondence address</h2>
+            {% if form.isCorrectAddress is defined %}
+                <p class="govuk-body govuk-!-margin-bottom-8">
+                    {{ form.vars.value.preEnquiry.invitationAddress|formatAddress(true, false)|nl2br }}
+                </p>
+
+                {{ form_row(form.isCorrectAddress) }}
+            {% endif %}
+            {% if not form.contactAddress.rendered %}
+                {{ form_row(form.contactAddress) }}
+            {% endif %}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endblock %}

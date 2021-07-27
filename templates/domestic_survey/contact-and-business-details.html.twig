@@ -1,0 +1,18 @@
+{% set translation_prefix = 'domestic.survey-response.contact-and-business-details' %}
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+
+    {% include 'domestic_survey/includes/initial-details.html.twig' %}
+
+    {% if survey.businessAndVehicleDetailsComplete %}
+        {% include 'domestic_survey/includes/business-details.html.twig' %}
+        {% include 'domestic_survey/includes/vehicle-details.html.twig' %}
+
+        <p class="govuk-body">
+            {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+            <a class="govuk-button govuk-button--secondary" href="{{ url(summaryRoute) }}">Back to dashboard</a>
+        </p>
+    {% endif %}
+{% endblock %}

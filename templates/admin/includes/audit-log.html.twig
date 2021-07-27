@@ -1,0 +1,20 @@
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">{{ 'admin.audit.table.date'|trans }}</th>
+        <th scope="col" class="govuk-table__header">{{ 'admin.audit.table.user'|trans }}</th>
+        <th scope="col" class="govuk-table__header">{{ 'admin.audit.table.event'|trans }}</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    {% for log in auditLogs %}
+    <tr class="govuk-table__row">
+        <th class="govuk-table__cell">{{ log.timestamp | date('Y-m-d H:i:s') }}</th>
+        <td class="govuk-table__cell">{{ log.username | removeEmailNamespacePrefix }}</td>
+        <td class="govuk-table__cell">
+            {{ "admin.audit.#{log.category}"|trans(log.data) }}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

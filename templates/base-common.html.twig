@@ -1,0 +1,20 @@
+{% extends "@GhostGovUkFrontend/template.html.twig" %}
+
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader -%}
+
+{% block pageTitlePrefix -%}
+    {# search the context for invalid forms, in order to add "Error: " to title #}
+    {%- if (_context | filter(item => not (item.vars.errors.form.getErrors(true) ?? []) is empty)) %}Error: {% endif -%}
+{%- endblock %}
+
+{% block pageTitle -%}
+    {{- 'service.name' | trans }} - GOV.UK
+{%- endblock %}
+
+{% block beforeContent -%}
+    {%- block backLink -%}
+        {%- if (formWizardState | default(false)) and formWizardState.previousHistoryState -%}
+            <a href="{{ url(app.request.get('_route'), app.request.get('_route_params') | default({}) | merge({state: formWizardState.previousHistoryState})) }}" class="govuk-back-link">Back</a>
+        {%- endif -%}
+    {%- endblock -%}
+{%- endblock %}

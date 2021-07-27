@@ -1,0 +1,45 @@
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell, actionLinks -%}
+{%- from "admin/domestic/macros.html.twig" import locationAndStatus -%}
+{%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
+{%- from "macros.html.twig" import displayHazardousGoods -%}
+
+{%- set isNorthernIreland = stop.day.response.survey.isNorthernIreland -%}
+
+<tr class="govuk-table__row" id="{{ stop.id }}">
+    {{- tableCell(locationAndStatus(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom), {class: 'journeys-table__load-status'}) -}}
+    {{- tableCell(locationAndStatus(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false), {class: 'journeys-table__load-status'}) -}}
+
+    {%- if isNorthernIreland -%}
+        {{- tableCell(stop.borderCrossingLocation | default('-')) -}}
+    {%- endif -%}
+
+    {{- tableCell(
+        ("common.distance.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value})),
+        {numeric: true}
+    ) -}}
+    {{- tableCell(stop | formatGoodsDescription(true)) -}}
+    {%- if stop.goodsDescription == constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') -%}
+        {{- tableCell('-') -}}
+        {{- tableCell(constant('App\\Entity\\CargoType::CODE_NS_EMPTY')) -}}
+        {{- tableCell(
+            ('common.weight.kilograms'|trans({value: 0})), {numeric: true})
+        -}}
+        {{- tableCell('-') -}}
+    {%- else -%}
+        {{- tableCell(displayHazardousGoods(stop.hazardousGoodsCode)) -}}
+        {{- tableCell(stop.cargoTypeCode) -}}
+        {{- tableCell(
+            ('common.weight.kilograms'|trans({value: stop.weightOfGoodsCarried})),
+            {numeric: true})
+        -}}
+        {{- tableCell(displayLimitedBy(stop)) -}}
+    {%- endif -%}
+
+    {%- if showActions ?? true -%}
+        {%- set editLinks = actionLinks({
+            (url(constant('App\\Controller\\Admin\\Domestic\\DayStopController::DELETE_ROUTE'), {stopId: stop.id})): {label: 'common.actions.delete', srHiddenSuffix: "Day #{stop.day.number}, stop #{stop.number}"},
+            (url(constant('App\\Controller\\Admin\\Domestic\\DayStopController::EDIT_ROUTE'), {stopId: stop.id})): {label: 'common.actions.edit', srHiddenSuffix: "Day #{stop.day.number}, stop #{stop.number}"},
+        }) -%}
+        {{- tableCell(editLinks, {actions: true}) -}}
+    {%- endif -%}
+</tr>

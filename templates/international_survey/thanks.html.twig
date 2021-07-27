@@ -1,0 +1,18 @@
+{% set translation_prefix = 'international.completed' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+        <div class="govuk-panel__body">
+            {{ (translation_prefix ~ '.reference-number')|trans }}<br>
+            <strong>{{ survey.referenceNumber }}</strong>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ (translation_prefix ~ '.download') | trans({url: path('app_internationalsurvey_completedpdf')}) | raw }}
+    </p>
+
+{% endblock %}

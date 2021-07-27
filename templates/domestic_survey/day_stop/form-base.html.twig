@@ -1,0 +1,42 @@
+{% extends 'domestic_survey/form-base.html.twig' %}
+
+{% block oneThirdColumnContent -%}
+    <h2 class="govuk-heading-m">
+    {%- set params = {
+        stageNumber: subject.number,
+        dayNumber: subject.day.number,
+        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('F j, Y')
+    }  -%}
+    {%- if subject.id is null -%}
+        {{ 'domestic.day-stop.sidebar-summary.adding' | trans(params) }}
+    {%- else -%}
+        {{ 'domestic.day-stop.sidebar-summary.editing' | trans(params) }}
+    {%- endif -%}
+    </h2>
+
+    {%- if subject.originLocation and subject.destinationLocation -%}
+        <p class="govuk-body">
+            {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                origin: subject.originLocation,
+                destination: subject.destinationLocation
+            }) -}}
+    {%- else -%}
+        {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
+        {%- if stops | length > 1 -%}
+            {%- set previousStage = stops[stops | length - 2] -%}
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+            <p class="govuk-body">
+                {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                    origin: previousStage.originLocation,
+                    destination: previousStage.destinationLocation
+                }) -}}
+        {% else %}
+            <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
+        {% endif %}
+    {% endif %}
+
+    {%- block wizardContext %}
+    {% endblock %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    {{ parent() }}
+{% endblock %}

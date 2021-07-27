@@ -1,0 +1,27 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    {%- from "admin/domestic/macros.html.twig" import dayStopTableHeadingAndCaption -%}
+
+    {%- with {stop: subject} -%}
+        {%- set survey = stop.day.response.survey -%}
+
+        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
+
+        <table class="govuk-table journeys-table">
+            {{- dayStopTableHeadingAndCaption(null, survey, stop.day) -}}
+            <tbody class="govuk-table__body">
+            {%- with {showActions: false, marginBottom: 4} -%}
+                {%- include "admin/domestic/includes/day-stop-individual.html.twig" -%}
+            {%- endwith -%}
+            </tbody>
+        </table>
+
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{%- endblock -%}

@@ -1,0 +1,45 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
+<h2 class="govuk-heading-m">Invitation/Reminder details</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
+    {{- row('Address', address | formatAddress(true)) -}}
+{#    {{- row('Email Address', survey.invitationEmail|default('-')) -}}#}
+
+    {{ _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponse(
+        constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
+        'App\\Messenger\\AlphagovNotify\\Letter',
+    ))) }}
+    {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponse(
+        constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
+        'App\\Messenger\\AlphagovNotify\\Letter',
+    ))) }}
+    {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponse(
+        constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
+        'App\\Messenger\\AlphagovNotify\\Letter',
+    ))) }}
+</dl>
+
+{%- macro row(key, value) -%}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ key }}</dt>
+        <dd class="govuk-summary-list__value">{{ value }}</dd>
+    </div>
+{%- endmacro -%}
+
+{%- macro notificationStatus(apiResponse) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- if apiResponse -%}
+        {%- set status = apiResponse[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
+        {{- tag({text: status, classes: ("admin.notify.status.#{status}" | trans)}) -}}
+        <span class="govuk-body-s">
+            {{ apiResponse['timestamp'] | date('Y-m-d H:i') -}}
+            {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
+                {%- for error in apiResponse.errors -%}
+                    <br>{{- error.error }}: {{ error.message | nl2br -}}
+                {%- endfor -%}
+            {%- endif -%}
+        </span>
+    {%- else -%}
+        -
+    {%- endif -%}
+{%- endmacro -%}

@@ -1,0 +1,64 @@
+{% set translation_prefix = 'international.trip.summary' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% set headingParams = {
+    date: trip.outboundDate
+} %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.heading'|trans(headingParams) }}</h1>
+
+    {%- with {marginBottom: 5} -%}
+        {%- include "international_survey/includes/trip.html.twig" -%}
+    {%- endwith -%}
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--warning" href="{{ path('app_internationalsurvey_trip_delete', {tripId: trip.id}) }}">Delete trip</a>
+    </div>
+
+    {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
+    {# -------------------------------------------------------------------------------- #}
+    {# Loading/Unloading Actions                                                        #}
+    {# -------------------------------------------------------------------------------- #}
+    {%- from 'international_survey/macros.html.twig' import consignmentActionHelp -%}
+    {%- if trip.actions is empty -%}
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
+        {{ consignmentActionHelp() }}
+    {%- else -%}
+        {%- set showReorderLink = trip.actions | length > 1 -%}
+
+        <h2 class="page-heading__heading govuk-heading-l">{{ 'international.trip.summary.action'|trans }}</a></h2>
+        {{ consignmentActionHelp() }}
+
+        {%- with {
+            marginBottom: showReorderLink ? '2' : '6',
+            trip: trip,
+        } -%}
+            {%- include "international_survey/includes/actions.html.twig" -%}
+        {%- endwith -%}
+
+        {%- if showReorderLink %}
+            <div class="govuk-!-margin-bottom-6 govuk-body">
+                {%- set reorderRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::REORDER_ROUTE') -%}
+                <a href="{{ url(reorderRoute, {tripId: trip.id}) }}"
+                   class="govuk-link">{{ 'common.actions.re-order-actions'|trans }}</a>
+            </div>
+        {% endif %}
+    {%- endif -%}
+    <div>
+        {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
+        {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
+        {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
+        <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
+    </div>
+
+    <hr class="govuk-!-margin-bottom-9">
+    <div>
+        {%- if trip.actions.count() > 0 -%}
+        <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+        {%- endif -%}
+        <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
+    </div>
+{% endblock %}

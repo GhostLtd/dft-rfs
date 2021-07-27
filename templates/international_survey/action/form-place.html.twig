@@ -1,0 +1,6 @@
+{%- set actionType = form.vars.actionType -%}
+{%- set translation_prefix = 'international.action.place' ~ (actionType ? "-#{actionType}" : '') -%}
+{%- extends 'international_survey/action/form-base.html.twig' -%}
+
+{%- form_theme form.place.country "themes/country.html.twig" -%}
+

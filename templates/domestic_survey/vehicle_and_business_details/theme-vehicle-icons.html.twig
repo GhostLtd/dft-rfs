@@ -1,0 +1,30 @@
+{%- block form_label_inner -%}
+    {%- if 'radio' in block_prefixes -%}
+        {%- set label_attr = label_attr | merge({
+            class: ('govuk-radios__label-with-icon ' ~ label_attr.class|default('')) | trim
+        }) -%}
+    {% endif %}
+
+    {% set hasIcon = not (value ends with '9') %}
+
+    <{{ element|default('label') }}{% if label_attr %}{% with {
+    attr: label_attr|merge({
+        class: ((hasIcon ? 'has-icon ' : '') ~ label_attr.class| default('')) | trim
+    })
+    } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+    {% set content = block('form_label_inner_content') %}
+    {%- if 'radio' in block_prefixes -%}
+        {% if hasIcon %}
+            <div aria-hidden="true">
+                {{ svgIcon("lorry-#{value}.svg") }}
+                {% if value == '130' %}
+                    <span class="or"> or </span>{{ svgIcon("lorry-#{value}v2.svg") }}
+                {% endif %}
+            </div>
+        {% endif %}
+        <span>{{- content -}}</span>
+    {% else %}
+        {{- content -}}
+    {% endif %}
+    </{{ element|default('label') }}>
+{%- endblock -%}

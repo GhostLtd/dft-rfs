@@ -1,0 +1,15 @@
+{% set translation_prefix = 'international.actions.re-order' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.actions.re-order.heading'|trans }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {%- include "international_survey/includes/form-action-reorder.html.twig" -%}
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% include "international_survey/includes/trip-summary.html.twig" %}
+        </div>
+    </div>
+{% endblock %}

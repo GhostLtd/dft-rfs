@@ -1,0 +1,12 @@
+@import "~govuk-frontend/govuk/base";
+
+.admin-surveys {
+  &__trip-header {
+    border-bottom: 4px solid govuk-colour('mid-grey');
+  }
+
+  &__back-to-top {
+    @include govuk-font(19);
+    float: right;
+  }
+}

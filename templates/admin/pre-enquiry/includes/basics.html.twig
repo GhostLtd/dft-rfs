@@ -1,0 +1,14 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.company-name', preEnquiry.company.businessName) -}}
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.reference-number', preEnquiry.referenceNumber) -}}
+
+    {%- if showStatus ?? true -%}
+        {{- actionlessSummaryListRow('admin.pre-enquiry.view.status', tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('admin.pre-enquiry.view.approved-by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d h:i')})") }}{% endif %}
+    {%- endif -%}
+    {%- if showUsername ?? true -%}
+        {{- actionlessSummaryListRow('admin.pre-enquiry.view.username', preEnquiry.passcodeUser.username) }}
+    {%- endif -%}
+</dl>

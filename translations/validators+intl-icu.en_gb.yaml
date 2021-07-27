@@ -1,0 +1,221 @@
+common:
+  address:
+    gov-notify-requires-3-lines: Enter at least 3 lines of the address
+    line-1:
+      not-blank: Enter a building and street name
+    postcode:
+      not-blank: Enter a postcode
+      invalid: Enter a valid postcode
+  cargo-type:
+    not-null: Choose how the goods were carried
+  choice:
+    invalid: Choose a valid option
+    not-null: Choose an option
+  country:
+    country: Choose a country
+    other: Specify the country
+  date:
+    not-null: Enter a date
+    greater-than: Enter a date after {compared_value}
+    greater-than-or-equal: Enter a date on or after {compared_value}
+    invalid: Enter a valid date
+  hazardous-goods:
+    not-null: Choose whether the goods being transported were classifed as dangerous or hazardous
+    type-not-null: Choose the code for the hazardous goods that were carried
+  number:
+    invalid: Enter a number
+    not-null: Enter a number
+    positive-or-zero: Enter a positive number or zero
+    positive: Enter a positive number
+    max: "Cannot be more than {limit}"
+  place:
+    place: Enter a place
+    country: Enter a country
+  trip-route:
+    not-blank: Choose a route
+  value-unit:
+    unit:
+      not-blank: Choose a unit
+    value:
+      not-blank: Enter a value
+      positive-or-zero: Enter a positive number or zero
+  email:
+    invalid: Enter a valid email address
+    not-blank: Enter an email address
+  telephone:
+    not-blank: Enter a phone number
+  string:
+    max-length: "This value must be {limit} characters or fewer"
+    not-blank: Enter a value
+  goods-description-other:
+    not-blank: Describe the goods
+    max-length: "Description must be {limit} characters or fewer"
+  survey-response:
+    name:
+      not-blank: Enter a name
+    business-nature:
+      not-blank: Enter the nature of your business
+  vehicle:
+    axle-configuration:
+      not-blank: Choose the axle configuration of the vehicle
+    body-type:
+      not-blank: Choose the type of body this vehicle has
+    carrying-capacity:
+      not-blank: Enter the vehicle's carrying capacity
+      not-more-than-gross-weight: Carrying capacity cannot be more than the vehicle's gross weight
+    gross-weight:
+      not-blank: Enter the vehicle's gross weight
+    operation-type:
+      not-blank: Choose how this vehicle was being operated during the survey period
+    trailer-configuration:
+      not-blank: Choose the type of vehicle
+    vehicle-registration:
+      not-blank: Enter the vehicle's registration mark
+      valid: Enter a valid registration mark
+      not-exists: You have already added this registration mark to your survey response
+
+international:
+  action:
+    add-another:
+      not-null: Choose whether you made any more stops on this trip
+    goods-type:
+      invalid: Choose the type of goods carried in this consignment
+    goods-weight:
+      not-blank: Enter the weight of the goods loaded in kilograms
+    loading-place:
+      not-null: Choose which goods you unloaded
+    load-or-unload:
+      not-null: Choose whether you loaded or unloaded goods
+    place:
+      not-blank: Enter where you loaded or unloaded goods
+    re-order:
+      invalid-order: >-
+        {number, plural,
+          one {Goods were unloaded at stop {list} before they were loaded}
+          other {Goods were unloaded at stops {list} before they were loaded}
+        }
+    unloaded:
+      all-not-null: Choose whether you unloaded all of the goods
+      cannot-unload-partial: Cannot unload all goods as some have already been unloaded
+      weight-not-blank: Enter the weight of goods unloaded in kilograms
+      weight-too-large: Enter a weight of goods unloaded in kilograms. This value must be less than the weight loaded
+      weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
+  add:
+    invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  survey-response:
+    annual-international-journey-count:
+      not-null: Estimate the number of trips
+      not-negative: Enter a positive number
+    fewer-than-ten-employees:
+      not-null: Choose an option
+    reason-for-empty-survey-other:
+      not-null: Specify the reason that no work was done during the survey period
+  trip:
+    cargo-state-how-at-capacity: Select how the vehicle was at capacity
+    dates:
+      not-return-before-departure: Return date must be the same as or after date of leaving
+      outside-period: Date must be within the survey period
+    destination:
+      not-blank: Enter where the trip ended
+    origin:
+      not-blank: Enter where the trip started
+    outbound:
+      at-capacity-not-null: Choose whether your vehicle was at capacity upon leaving the UK
+      date-not-null: Enter the date the vehicle left the UK
+      ports-not-null: Choose the ports that were used on your outbound trip
+      was-empty:
+        not-null: Choose whether the vehicle was empty
+        cannot-be-both: Vehicle cannot be both empty and full
+    return:
+      at-capacity-not-null: Choose whether your vehicle was at capacity upon returning to the UK
+      date-not-null: Enter the date the vehicle returned to the UK
+      ports-not-null: Choose the ports that were used on your return trip
+      was-empty:
+        not-null: Choose whether the vehicle was empty
+        cannot-be-both: Vehicle cannot be both empty and full
+    trailer-swap:
+      not-null: Choose whether the trailer's axle configuration changed for this trip
+    unloading:
+      cannot-unload: Cannot fully unload - goods already partially unloaded
+      bad-trip: Action must be linked to a persisted Trip
+      must-load-first: Goods must be loaded prior to unloading
+      weight-not-null: Enter a weight
+      weight-more-than-one: Enter a real weight
+      weight-of-goods: Enter a weight less than or equal to the loaded weight
+  vehicle:
+    confirm-dates:
+      not-null: Choose whether this vehicle departed from the UK during the survey period
+
+pre-enquiry:
+  pre-enquiry-response:
+    annual-journey-estimate: Enter your annual international journey estimate
+    contact-address: Enter a contact address
+    contact-email: Enter a contact email
+    contact-name: Enter a contact name
+    contact-telephone: Enter a contact telephone number
+    company-name: Enter your company name
+    international-journey-vehicle-count:
+      not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
+      not-blank: Enter the number of vehicles that will be used to make international journeys
+    is-correct-company-name:
+      not-blank: Choose whether this is the correct company name
+    number-of-employees: Choose the national number of employees your firm has
+    vehicle-count: Enter the number of vehicles
+
+domestic:
+  add:
+    invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  closing-details:
+    missing-days:
+      not-null: Choose whether the information listed on this page is correct or not
+  day:
+    border-crossing:
+      max-length: "Location must be less {limit} characters or fewer"
+    destination:
+      not-blank: Enter the location where the vehicle ended its journey
+      goods-unloaded: Choose whether goods were unloaded or not
+      goods-to: Choose which mode of transport the goods were transferred to, if any
+    furthest-point:
+      not-blank: Enter the furthest place that the vehicle reached on this day
+    location:
+      max-length: "Location must be less {limit} characters or fewer"
+    number-of-stops:
+      loading.not-null: Enter the number of stops where goods were only loaded onto the vehicle
+      unloading.not-null: Enter the number of stops where goods were only unloaded onto the vehicle
+      loading-and-unloading.not-null: Enter the number of stops where goods were both loaded and unloaded
+    origin:
+      not-blank: Enter the location where the vehicle started the day
+      goods-loaded: Choose whether goods were loaded or not
+      goods-from: Choose which mode of transport the goods were transferred from, if any
+    weight-loaded:
+      not-null: Enter the total weight of goods loaded in kilograms on this day
+    weight-unloaded:
+      not-null: Enter the total weight of goods unloaded in kilograms on this day
+  day-stop:
+    origin:
+      not-blank: Enter the location where the vehicle began this stage of its journey
+    destination:
+      not-blank: Enter the location where the vehicle finished this stage of its journey
+    goods-weight:
+      not-null: Enter the total weight of goods carried on this stage in kilograms
+    was-at-capacity:
+      invalid: Was your vehicle at capacity by weight, space, or both?
+      not-null: Choose whether your vehicle was at capacity
+  goods-carried:
+    not-blank: Choose the type of goods carried
+  number-of-stops:
+    choice: Choose how many times you stopped on the day
+  survey-response:
+    in-possession-of-vehicle:
+      choice: Choose whether you will be in possession of the vehicle during your survey week
+    initial-details:
+      contact-email-or-telephone-required: 'Provide a contact telephone number or an email address'
+    hiree-details:
+      contact-details-required: Prvoide at least one contact method for the hiree
+    number-of-employees:
+      choice: Choose the number of people your firm employees nationally
+    scrapped-details:
+      date: Enter the date when the vehicle was scrapped or stolen
+    sold-details:
+      date: Enter the date when the vehicle was sold
+      contact-details-required: Prvoide at least one contact method for the new owner

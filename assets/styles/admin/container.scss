@@ -1,0 +1,38 @@
+@import "~govuk-frontend/govuk/base";
+
+$gutter: 15px;
+$menuWidth: 200px;
+
+html.govuk-template {
+  background-color: #fff;
+}
+
+.govuk-width-container {
+  max-width: none;
+  margin-left: $gutter;
+  margin-right: $gutter;
+}
+
+.govuk-header__container,
+body .govuk-header{
+  border-color: govuk-colour('bright-purple');
+}
+
+body .govuk-header {
+  margin-bottom: $gutter;
+
+}
+
+.govuk-grid-row {
+  > .govuk-grid-column-menu,
+  > .govuk-grid-column-content {
+    float: left;
+    padding: 0 $gutter;
+  }
+  > .govuk-grid-column-menu {
+    width: $menuWidth;
+  }
+  > .govuk-grid-column-content {
+    width: calc(100% - #{$menuWidth} - (4 * #{$gutter}));
+  }
+}

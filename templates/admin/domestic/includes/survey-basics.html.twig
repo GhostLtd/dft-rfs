@@ -1,0 +1,7 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
+    {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
+    {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}
+</dl>

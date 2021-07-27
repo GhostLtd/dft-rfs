@@ -1,0 +1,32 @@
+{% set translation_prefix = 'international.action-delete' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% set headingParams = {
+    actionNumber: action.number
+} %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, warningText -%}
+
+    <h1 class="page-heading__heading govuk-heading-xl">
+        {{ "#{translation_prefix}.heading"|trans(headingParams) }}
+    </h1>
+
+    {%- if action.loading -%}
+        {%- set filter = [action.id]|merge(action.unloadingActions|map(a => a.id)) -%}
+    {%- else -%}
+        {%- set filter = [action.id] -%}
+    {%- endif -%}
+
+    {%- with {isAdmin: true, showActions: false, trip: action.trip, filter: filter} -%}
+        {%- include "international_survey/includes/actions.html.twig" -%}
+    {%- endwith -%}
+
+    {%- if action.loading -%}
+        {{ warningText("#{translation_prefix}.delete-loading"|trans) }}
+    {%- else -%}
+        {{ warningText("#{translation_prefix}.delete-unloading"|trans) }}
+    {%- endif -%}
+
+    {{ form(form) }}
+{% endblock %}

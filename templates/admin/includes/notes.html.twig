@@ -1,0 +1,16 @@
+{% from 'admin/macros/macros.html.twig' import displayNote %}
+<h2 class="govuk-heading-m">Notes</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }} govuk-summary-list-notes">
+    {%- for note in survey.notes -%}
+        {{- displayNote(note, deleteRoute, deleteParams) -}}
+    {%- else -%}
+        No notes
+    {%- endfor -%}
+</dl>
+{% if addNoteForm is defined and is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), survey) %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters-from-desktop govuk-grid-column-one-half-from-wide">
+        {{ form(addNoteForm) }}
+    </div>
+</div>
+{% endif %}

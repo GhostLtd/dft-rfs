@@ -1,0 +1,21 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = {
+    identifier: subject.preEnquiry.company.businessName
+} %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {%- with {user: subject} -%}
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {%- with {preEnquiry: subject.preEnquiry} -%}
+                {%- include "admin/pre-enquiry/reset_passcode/includes/survey-basics.html.twig" -%}
+            {%- endwith -%}
+        </dl>
+
+        {{- warningText("#{translation_prefix}.confirmation"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{%- endblock -%}

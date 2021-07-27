@@ -1,0 +1,125 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+imports:
+    - { resource: 'workflows/**/*' }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
+    admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
+    alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
+    google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
+    container.dumper.inline_factories: true
+    app_features_empty: none
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $appEnvironment: '%env(APP_ENV)%'
+            $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
+            $frontendHostname: '%frontend_hostname%'
+            $webRootDir: "%kernel.project_dir%/public"
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    ## for some reason the default declaration of this service is triggering a deprecation warning
+    # see https://stackoverflow.com/questions/64458501/symfony-doctrine-get-list-of-available-commands
+    doctrine.query_sql_command:
+        class: Doctrine\DBAL\Tools\Console\Command\RunSqlCommand
+        arguments:
+            - '@Doctrine\Bundle\DoctrineBundle\Dbal\ManagerRegistryAwareConnectionProvider'
+        tags:
+            - { name: console.command, command: doctrine:query:sql }
+
+    App\Features:
+        arguments:
+            $enableFeatures: '%env(csv:default:app_features_empty:APP_FEATURES)%'
+
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+            # If you get transaction issues (e.g. after login) uncomment the line below
+            - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_ADVISORY }
+
+    App\Security\FileUserProvider:
+        arguments:
+            $usersFile: '%env(resolve:ADMIN_USERS_PASSWORD_FILE)%'
+
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    _instanceof:
+        App\Utility\AuditEntityLogger\AuditEntityLogger:
+            tags: [ 'app.audit_entity_logger' ]
+        Doctrine\Common\EventSubscriber:
+            tags:
+                - { name: 'doctrine.event_subscriber' }
+
+    App\EventListener\InternationalSurvey\VehicleRegMarkChangedListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'preUpdate'
+                lazy: true
+
+    App\EventSubscriber\AdminMenuEventSubscriber:
+        arguments:
+            $hostname: '%admin_hostname%'
+
+    Alphagov\Notifications\Client:
+        factory: '@App\Utility\AlphagovNotify\ClientFactory'
+        arguments:
+            $apiKey: '%alphagov_notify_api_key%'
+
+    App\DataCollector\FeaturesCollector:
+        tags:
+            -
+                name:     data_collector
+                template: 'data_collector/features.html.twig'
+                id:       'app.features_collector'
+
+    App\ExpressionLanguage\FeatureExpressionProvider:
+        tags:
+            - { name: 'security.expression_language_provider' }
+            - { name: 'router.expression_language_provider' }
+            - { name: 'workflow.expression_language_provider' }
+            - { name: 'validator.expression_language_provider' }
+
+    App\ExpressionLanguage\GeneralExpressionProvider:
+        tags:
+            - { name: 'security.expression_language_provider' }
+            - { name: 'router.expression_language_provider' }
+            - { name: 'workflow.expression_language_provider' }
+            - { name: 'validator.expression_language_provider' }
+
+    App\Serializer\Encoder\SqlServerInsertEncoder:
+        calls:
+            - setTwig: ['@twig']
+
+    App\Utility\International\DataExporter:
+        lazy: true
+
+    Google\Cloud\Storage\StorageClient: ~
+
+    Google\Cloud\Storage\Bucket $exportBucket:
+        class: 'Google\Cloud\Storage\Bucket'
+        factory: ['@Google\Cloud\Storage\StorageClient', 'bucket']
+        arguments: ['%google_bucket_export%']

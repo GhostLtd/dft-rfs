@@ -1,0 +1,1668 @@
+service:
+  name: Road Haulage Surveys
+  domestic:
+    name: Domestic Road Haulage Survey
+  international:
+    name: International Road Haulage Survey
+
+format:
+  date:
+    long: 'l, jS F Y'
+    medium: 'jS M Y'
+    short: 'jS M'
+  time:
+    short: 'g:i a'
+
+common:
+  logout: Sign out
+  actions:
+    table-heading: '<span class="govuk-visually-hidden">Action links</span>'
+    add: Add
+    add-day-stop: Add stage
+    add-day-and-stop: Add stage
+    add-day-and-summary: Add summary
+    add-trip: Add trip
+    add-vehicle: Add vehicle
+    back-to-dashboard: Back to dashboard
+    cancel: Cancel
+    change: Change
+    continue: Continue
+    delete: Delete
+    delete-summary: Delete Day
+    delete-stop: Delete Stage {stopNumber}
+    edit: Edit
+    move-up: Move up
+    move-down: Move down
+    re-order-actions: Re-order actions
+    re-order-stops: Re-order stops
+    remove: Remove
+    save-and-continue: Save and continue
+    submit-survey: Submit survey
+    view: View
+  address:
+    line1: Building and street
+    line1-hidden: line 1 of 2
+    line2: ''
+    line2-hidden: Building and street line 2 of 2
+    line3: Town or city
+    line4: County
+    line5: Postcode
+  choices:
+    boolean:
+      yes: Yes
+      no: No
+    other: 'Other'
+  consignment:
+    cargo-type: Cargo type
+    goods: Goods
+    loaded-at: "Stop {number} — {name}, {country}"
+    place-of-loading: Loaded at
+    place-of-unloading: Unloaded at
+    weight: Weight
+  country:
+    country:
+      label: Country
+      help: ''
+    other:
+      label: Specify country
+      help: ''
+  error-summary:
+    problem: There is a problem
+  notification:
+    important: Important
+    success: Success
+    warning: Warning
+  action:
+    place: Place
+    type: Action
+    goods: Goods
+    weight: Weight
+    loading: Loaded
+    unloading: Unloaded
+    is-hazardous: Hazardous goods?
+    not-hazardous: Not hazardous
+    loaded-or-unloaded: Action type
+    from: From
+    cargo-type: Cargo type
+    place-name: "{name}, {country}"
+    goods-from-place: "{goods} from {number}. {name}, {country}"
+    loading-goods: "Loading {goods}"
+    unloading-goods: "Unloading {goods} from {number}. {name}, {country}"
+    loading-goods-at: "Loading {goods} at {name}, {country}"
+    unloading-goods-at: "Unloading {goods} at {name}, {country}"
+    loaded-at: "Loaded at {name}, {country}"
+    unloaded-at: "Unloaded at {name}, {country}"
+    unloaded-all: "All {value, number} kg"
+    fully-unloaded: "Fully unloaded - unavailable"
+    weight-none-unloaded: "None unloaded ({loaded, number} kg remaining)"
+    weight-partially-unloaded: "Partially unloaded - {unloaded, number} kg of {loaded, number} kg ({remaining, number} kg remaining)"
+    weight-fully-unloaded: "Fully unloaded - {unloaded, number} kg of {loaded, number} kg"
+    weight-status: "{unloaded, number} kg of {loaded, number} kg unloaded so far"
+  distance:
+    miles: >-
+      {value, plural,
+        one {1.0 mile}
+        other {{value, number} miles}
+      }
+    kilometers: >-
+      {value, plural,
+        one {1.0 kilometer}
+        other {{value, number} kilometers}
+      }
+  number:
+    plain: "{value, number}"
+  volume:
+    gallons: >-
+      {value, plural,
+        one {1.0 gallon}
+        other {{value, number} gallons}
+      }
+    litres: >-
+      {value, plural,
+        one {1.0 litre}
+        other {{value, number} litres}
+      }
+  weight:
+    kilograms: "{value, number} kg"
+  headings:
+    next-step: Next step
+    next-steps: Next steps
+  survey-period:
+    label: "Survey period"
+    one-day: "{start, date, medium} (1 day)"
+    many-days: "{start, date, medium}–{end, date, medium} ({days} days)"
+  limited-by:
+    choices:
+      space: At capacity by space
+      weight: At capacity by weight
+  number-of-employees:
+    1-9: '1 - 9'
+    10-49: '10 - 49'
+    50-249: '50 - 249'
+    250-499: '250 - 499'
+    500-10000: '500 - 10,000'
+    10001-30000: '10,001 - 30,000'
+    '>30000': 'More than 30,000'
+  value-unit:
+    unit: Unit
+  vehicle:
+    registration-mark: Registration mark
+    operation-type: Operation type
+    axle-configuration: Axle configuration
+    body-type: Vehicle/trailer body type
+    gross-weight: Gross vehicle weight
+    carrying-capacity: Carrying capacity
+  start-now: Start now
+  help:
+    summary: 'How can I get help?'
+    text:
+      call: 'For help with this survey, call'
+      office-hours: 'Office hours are 8am - 4pm Monday to Friday'
+
+unit:
+  distance:
+    miles: Miles
+    kilometers: Kilometers
+  volume:
+    litres: Litres
+    gallons: Gallons
+
+
+
+passcode:
+  login:
+    label: Enter your survey access codes
+    help: These codes are supplied in the letter you received
+    passcode:
+      0.label: First code
+      1.label: Second code
+
+admin:
+  audit:
+    table:
+      date: "Date"
+      event: "Event"
+      header: "Audit Logs"
+      user: "User"
+    survey-qa: "Flagged survey as QA checked"
+    survey-state: "Changed survey state from `{from}` to `{to}`"
+  login:
+    label: Login
+    help: ''
+    username.label: Username
+    password.label: Password
+  dashboard:
+    heading: Dashboard
+  reports:
+    dashboard:
+      heading: Reports
+    possession:
+      heading: Surveys by possession of vehicle
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    quality-assurance:
+      heading: Surveys by quality assurance
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    state:
+      heading: Surveys by state
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+  survey:
+    state:
+      in-progress: govuk-tag--yellow
+      new: govuk-tag--grey
+      'invitation pending': govuk-tag--yellow
+      'invitation failed': govuk-tag--red
+      invited: govuk-tag--grey
+      closed: govuk-tag--blue
+      approved: govuk-tag--green
+      rejected: govuk-tag--red
+      exporting: govuk-tag--green
+      exported: govuk-tag--green
+  notify:
+    status:
+      accepted: govuk-tag--green
+      failed: govuk-tag--red
+      waiting-for-retry: govuk-tag--yellow
+  domestic:
+    passcode-reset-success:
+      heading: Passcode changed
+    log:
+      heading: Log
+    survey-delete:
+      heading: Delete survey
+      warning: This will permanently delete the survey and all associated vehicle and journey data.
+    edit-business-details:
+      heading: Edit Business details
+    add-day-summary:
+      heading: Add Day summary
+    edit-day-summary:
+      heading: Edit Day summary
+    add-day-stop:
+      heading: Add Day stage
+    edit-day-stop:
+      heading: Edit Day stage
+    edit-initial-details:
+      heading: Edit Initial details
+    enter-initial-details:
+      heading: Enter Initial details
+    edit-final-details:
+      heading: Edit Final details
+    edit-business-and-vehicle-details:
+      heading: Edit Business and Vehicle details
+    edit-vehicle-details:
+      heading: Edit Vehicle details
+    survey-add:
+      heading: Add CSRGT survey
+    survey-add-success:
+      heading: CSRGT Survey created
+    import:
+      heading: CSRGT DVLA bulk import
+    import-review:
+      heading: CSRGT DVLA bulk import — Review data
+    import-summary:
+      heading: CSRGT DVLA bulk import — Summary
+    surveys:
+      type-ni:
+        heading: CSRGT (NI) Surveys
+      type-gb:
+        heading: CSRGT (GB) Surveys
+    survey:
+      type-ni:
+        heading: "CSRGT (NI) Survey — {registrationMark}"
+      type-gb:
+        heading: "CSRGT (GB) Survey — {registrationMark}"
+    add-survey:
+      registration-mark:
+        label: Registration mark
+        help: ''
+      start-date:
+        label: Survey period start
+        help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: ''
+      submit:
+        label: Add survey
+    survey-created:
+      registration-mark: Registration mark
+      type: Type
+      period-start: Survey period start
+      period-end: Survey period end
+      invitation-email: Invitation email
+      invitation-address: Invitation address
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
+    export:
+      heading: CSRGT export
+    export-confirm:
+      heading: CSRGT export - {year} Q{quarter}
+    export-success:
+      heading: CSRGT export - {year} Q{quarter} - Success
+    re-order-day-stops:
+      heading: Re-order stages
+  international:
+    export:
+      heading: IRHS export
+    export-confirm:
+      heading: IRHS export - week {week}
+      warning: Are you sure you want to export this week?
+    export-success:
+      heading: IRHS export - week {week} - Success
+      message: Export successfully generated for week {week}
+    add-loading-action:
+      heading: Add loading action
+    add-unloading-action:
+      heading: Add unloading action
+    edit-loading-action:
+      heading: Edit loading action
+    edit-unloading-action:
+      heading: Edit unloading action
+    re-order-actions:
+      heading: Re-order actions
+    add-trip:
+      heading: Add trip
+    edit-trip:
+      heading: "Edit trip — {date, date, short} from {origin} to {destination}"
+    delete-trip:
+      heading: "Delete trip — {date, date, short} from {origin} to {destination}"
+    add-vehicle:
+      heading: Add vehicle
+    edit-vehicle:
+      heading: "Edit vehicle — {registrationMark}"
+    delete-vehicle:
+      heading: "Delete vehicle — {registrationMark}"
+    passcode-reset-success:
+      heading: Passcode changed
+    survey-delete:
+      heading: Delete survey
+      warning: This will permanently delete this survey and all related vehicles, trips and consignment actions.
+    sample-import:
+      heading: IRHS Bulk sample import
+    sample-import-review:
+      heading: IRHS Bulk sample import — Review Data
+    sample-import-summary:
+      heading: IRHS Bulk sample import — Summary
+    edit-initial-details:
+      heading: Edit Initial details
+    edit-final-details:
+      heading: Edit Final details
+    edit-business-details:
+      heading: Edit Business Details
+    edit-correspondence-details:
+      heading: Edit Correspondence Details
+    survey-add:
+      heading: Add IRHS survey
+    survey-add-success:
+      heading: IRHS Survey created
+    company:
+      business-name:
+        label: Business name
+        help: ''
+    surveys:
+      heading: IRHS Surveys
+    survey:
+      heading: "IRHS Survey — {referenceNumber}"
+      reference-number:
+        label: 'Reference number'
+        help: ''
+      period-start:
+        label: 'Survey start date'
+        help: ''
+      period-end:
+        label: 'Survey end date'
+      period-days:
+        label: 'Survey period (days)'
+        help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: There is no need to add the business name to the invitation address
+      submit:
+        label: Add survey
+    survey-created:
+      invitation-email: Invitation email
+      invitation-address: Invitation address
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
+  passcode-reset:
+    heading: Reset passcode ({identifier})
+    confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
+    confirm.label: Yes, reset the passcode
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Passcode successfully reset
+      content: The passcode was successfully reset
+    cancelled-notification:
+      heading: Passcode not reset
+      content: The request to reset the passcode was cancelled
+  delete-survey-note:
+    heading: Delete note ({createdDate}, by {createdBy})
+    confirmation: "Are you sure you want to delete this note?"
+    confirm.label: Yes, delete the note
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Note successfully deleted
+      content: The note was successfully deleted
+    cancelled-notification:
+      heading: Note not deleted
+      content: The request to delete the note was cancelled
+  pre-enquiry:
+    add:
+      heading: Add pre-enquiry
+      reference-number:
+        label: Reference number
+        help: ''
+      invitation-email:
+        label: Invitation email
+        help: ''
+      invitation-address:
+        label: Invitation address
+        help: ''
+      submit:
+        label: Add
+    add-success:
+      heading: IRHS Pre-Enquiry created
+      company-name: Company name
+      invitation-email: Invitation email
+      access-code-1: "Access code #1"
+      access-code-2: "Access code #2"
+    edit-response:
+      heading: "Edit Pre-enquiry response — {companyName}"
+    enter-response:
+      heading: "Enter Pre-enquiry response — {companyName}"
+    list:
+      heading: "IRHS Pre-enquiries"
+    passcode-reset-success:
+      heading: Passcode changed
+    view:
+      approved-by: Approved by
+      company-name: Company name
+      heading: "IRHS Pre-enquiry — {companyName}"
+      reference-number: Reference number
+      status: Status
+      username: Username
+
+  maintenance-warning:
+    heading: Maintenance warnings
+    add.heading: Add maintenance warning
+    edit.heading: Edit maintenance warning
+    delete:
+      heading: 'Delete Maintenance Warning'
+      delete: 'Are you sure you want to delete this Maintenance Warning'
+      confirm.label: Yes, delete this warning
+      cancel.label: Cancel
+
+      confirmed-notification:
+        heading: 'Delete confirmed'
+        content: The Maintenance Warning for {start, date, medium} has been deleted
+      cancelled-notification:
+        heading: 'Delete cancelled'
+        content: The Maintenance Warning for {start, date, medium} was not deleted
+
+domestic:
+  transferred-port:
+    options:
+      0: Not applicable
+      1: Shipping port or docks
+      2: Rail depot / terminal
+      4: Airport
+
+  summary:
+    heading: Survey dashboard
+    vehicle: Vehicle
+    start-date: Start date
+    complete-week: Complete survey week
+    complete-vehicle-and-business-details: Complete vehicle and business details
+    change-contact-details: View/change the contact, business and vehicle details you have already entered
+    your-week: Your survey week
+    day-x-date: 'Day {dayNumber} ({date})'
+    day-x: 'Day {dayNumber}'
+
+  survey-response:
+    contact-and-business-details:
+      heading: Contact, business and vehicle details
+
+    introduction:
+      heading: Introduction
+
+    ## initial details wizard
+    contact-details:
+      heading: 'Contact details'
+      help: ''
+      contact-name:
+        label: 'Name'
+        help: ''
+      contact-email:
+        label: 'Email address'
+        help: ''
+      contact-telephone:
+        label: 'Telephone number'
+        help: ''
+
+    in-possession-of-vehicle:
+      is-in-possession-of-vehicle:
+        label: 'Will you be in possession of the vehicle during your survey week?'
+        help: 'We may need to ask you to supply evidence at the end of the survey period'
+      option:
+        yes: 'Yes'
+        scrapped-or-stolen: 'No - it has been scrapped or stolen'
+        sold: 'No - it has been sold'
+        on-hire: 'No - it is on hire to another person or company'
+        short:
+          yes: 'Yes'
+          scrapped-or-stolen: 'No - scrapped/stolen'
+          sold: 'No - sold'
+          on-hire: 'No - on hire'
+      change-link-sr-suffix: vehicle posession details
+    reason-for-empty-survey:
+      reason-for-empty-survey:
+        label: 'Why have you been unable to complete any journeys?'
+        help: 'You have not entered any journey information for your survey week. Why is that?'
+      option:
+        not-taxed: 'The vehicle was not taxed'
+        no-work: 'There was no work'
+        repair: 'The vehicle was being repaired'
+        site-work-only: 'The vehicle is used solely for site work'
+        holiday: 'Not used owing to holiday'
+        maintenance: 'The vehicle was having MOT / service'
+        no-driver: 'There was no driver available'
+        other: 'Other'
+
+    scrapped-details:
+      date:
+        label: 'When was the vehicle scrapped or stolen?'
+        help: ''
+
+    sold-details:
+      heading: 'Details of the sale'
+      help: 'Provide details for the sale, including contact details for the new owner'
+      date:
+        label: "When was the vehicle sold?"
+        help: ''
+      new-owner-name:
+        label: "What is the new owner's name?"
+        help: ''
+      new-owner-telephone:
+        label: "What is the new owner's phone number?"
+        help: ''
+      new-owner-email:
+        label: "What is the new owner's email address?"
+        help: ''
+      new-owner-address:
+        label: "What is the new owner's postal address?"
+        help: ''
+
+    sold-details-display:
+      heading: Sale details
+      date: Sale date
+      name: New owner name
+      email: New owner email
+      address: New owner address
+
+    hiree-details:
+      heading: "Hiree details"
+      help: "Provide details of the person or company who will be in possession of the vehicle during the survey week"
+      name:
+        label: "Full name"
+        help: ""
+      telephone:
+        label: "Phone number"
+        help: ""
+      email:
+        label: "Email address"
+        help: ""
+      address:
+        label: "Address"
+        help: ""
+
+
+    ## business and vehicle details wizard
+    business-details:
+      heading: Business Details
+      help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
+        help: ''
+      business-nature:
+        label: What is the nature of your business?
+        help: "For example: Haulage, wholesaler of electrical goods, furniture manufacturer, etc."
+      operation-type:
+        label: How was the vehicle being operated during the survey week?
+        help: ''
+
+    vehicle-weights:
+      heading: Vehicle weights
+      help: ''
+      gross-weight:
+        label: Gross vehicle weight
+        help: Total weight of the vehicle in kg including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
+      carrying-capacity:
+        label: Carrying capacity
+        help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
+
+    vehicle-fuel:
+      heading: Vehicle fuel
+      help: ''
+      fuel-quantity:
+        label: How much fuel in total was put into this vehicle during the survey week?
+        help: Enter 0 (zero) if you didn't add fuel during the survey week
+
+    vehicle-trailer-configuration:
+      heading: Vehicle type
+      help: ''
+      trailer-configuration:
+        label: Select the option that best describes the vehicle
+        help: ''
+      change-link-sr-suffix: trailer/body details
+
+    vehicle-axle-configuration:
+      heading: Vehicle axle configuration
+      help: ''
+      axle-configuration:
+        label: Select the option that best shows the axle configuration of the vehicle
+        help: ''
+
+    vehicle-body:
+      heading: Vehicle body type
+      help: ''
+      body-type:
+        label: Indicate the main type of body for the vehicle
+        help: ''
+
+  day-view:
+    heading: Day record ({date, date, long})
+    headings:
+      more-than-five-stops: Summary day (more than 5 stops)
+      five-stops-or-fewer: Detailed day (5 stops or fewer)
+    detailed-change-link-sr-suffix:
+      locations: 'stage {stopNumber} - locations'
+      distance-travelled: 'stage {stopNumber} - distance travelled'
+      goods-description: 'stage {stopNumber} - goods description and cargo type'
+      goods-weight: 'stage {stopNumber} - goods weight'
+      number-of-stops: 'stage {stopNumber} - number of stops'
+    summary-change-link-sr-suffix:
+      locations: locations
+      distance-travelled: distance travelled
+      goods-description: goods description and cargo type
+      goods-weight: goods weight
+      number-of-stops: number of stops
+    actions:
+      add-a-stage-for-this-journey: Add a stage for this journey
+      enter-information-for-this-journey: Enter information for this journey
+      complete: Day complete
+    stage: Stage {stage}
+    no-info: You haven't entered any information for this day yet
+    start-location: Start location
+    destination-location: Destination location
+    border-crossing: Border crossing
+    furthest-stop: Furthest stop
+    distance-travelled: Distance travelled
+    goods-carried: Goods carried
+    hazardous-goods: Hazardous goods
+    cargo-type: Cargo type
+    limited-by:
+      space: At capacity by space
+      weight: At capacity by weight
+      space-and-weight: At capacity by space and weight
+    weight-of-goods:
+      label: Weight of goods
+      loaded: "{value, number} kg loaded"
+      unloaded: "{value, number} kg unloaded"
+    number-of-stops:
+      label: Number of stops
+      loading: "{value} loading"
+      unloading: "{value} unloading"
+      loading-and-unloading: "{value} both loading and unloading"
+    loaded:
+      none: loaded
+      rail: loaded via rail
+      docks: loaded via docks
+      airport: loaded via airport
+    unloaded:
+      none: unloaded
+      rail: unloaded via rail
+      docks: unloaded via docks
+      airport: unloaded via airport
+    table:
+      origin: Origin
+      destination: Destination
+      distance: Distance
+      goods: Goods
+
+  ## summary day
+  day-summary:
+    sidebar-summary:
+      day: "Day {dayNumber} ({date})"
+      more-than-five: More than 5 stages
+      place-to-place: "{origin} to {destination}"
+
+    origin:
+      heading: Where did the vehicle start the day?
+      help: ''
+      origin-location:
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+      goods-loaded:
+        label: Were goods loaded?
+        help: ''
+
+    origin-ports:
+      goods-transferred-from:
+        label: Which mode of transport were the goods transferred from?
+        help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    destination:
+      heading: Where did the journey end?
+      help: ''
+      destination-location:
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+      goods-unloaded:
+        label: Were goods unloaded?
+        help: ''
+
+    destination-ports:
+      goods-transferred-to:
+        label: Which mode of transport were the goods transferred to?
+        help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    furthest-stop:
+      furthest-stop:
+        label: Furthest point on this day
+        help: "Record the furthest place from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nPlease provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+
+    border-crossing:
+      border-crossing-location:
+        label: 'Border crossing'
+        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
+               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
+               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
+               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel."
+
+    distance-travelled:
+      heading: How far did you travel?
+      help: "Tell us the total distance travelled for this day.\n\nInclude all empty mileage made during the journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ journey, include this empty mileage too."
+      distance-travelled-unloaded:
+        label: Distance travelled unloaded
+        help: Enter the distance you travelled while your vehicle was empty
+      distance-travelled-loaded:
+        label: Distance travelled loaded
+        help: Enter the distance you travelled with a partially or fully loaded vehicle
+
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this day. For mixed loads, the main type of goods should be recorded.
+
+    hazardous-goods:
+      heading: Dangerous or hazardous goods
+      help: ''
+      is-hazardous-goods:
+        label: 'Were the goods being transported classified as dangerous or hazardous?'
+        help: ''
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
+
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods carried?
+        help: Mixed loads should be recorded as "Other cargo type"
+
+    goods-weight:
+      heading: Weight of goods
+      help: "The weight of goods should include any packaging or containers. Journeys with a consignment of empty ‘Packaging’ are considered as loaded.\n\nIt is not unusual for the total weight loaded or unloaded on this day to be more than the vehicle's carrying capacity."
+      weight-of-goods-loaded:
+        label: Total weight of goods loaded on this day
+        help: Enter the weight in kg
+      weight-of-goods-unloaded:
+        label: Total weight of goods unloaded on this day
+        help: Enter the weight in kg
+
+    number-of-stops:
+      heading: Number of stops
+      help: If the vehicle made more than 100 stops during the journey or you are uncertain, enter your best estimate
+      number-of-stops-loading:
+        label: 'Goods loaded only'
+        help: 'The number of times goods were loaded onto the vehicle only. If goods were loaded at the start of your journey, it should be included in this number'
+      number-of-stops-unloading:
+        label: 'Goods unloaded only'
+        help: 'The number of stops where goods were unloaded from the vehicle only'
+      number-of-stops-both:
+        label: 'Goods both loaded and unloaded at the same stop'
+        help: 'The number of stops where goods were both loaded and unloaded'
+
+  ## detailed day stop
+  day-stop:
+    re-order:
+      save: Save order
+      heading: Re-order stages
+      button: Re-order stages
+      start: Start
+      destination: Destination
+      journey: "{origin} to {destination}"
+
+    sidebar-summary:
+      adding: "Adding a stage on day {dayNumber} ({date})"
+      editing: "Editing stage {stageNumber} on day {dayNumber} ({date})"
+      place-to-place: "{origin} to {destination}"
+      previous-stages: Previous stage on this day
+      first-stage: This is the first stage of the day
+
+    origin:
+      heading: Where did the vehicle begin this stage of the journey?
+      help: ''
+      origin-location:
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
+      goods-loaded:
+        label: Were goods loaded?
+        help: ''
+
+    origin-ports:
+      goods-transferred-from:
+        label: Which mode of transport were the goods transferred from?
+        help: Indicate which option best describes the start location. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    destination:
+      heading: Where did this stage of the journey end?
+      help: ''
+      destination-location:
+        label: Postcode or place-name
+        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
+      goods-unloaded:
+        label: Were goods unloaded?
+        help: ''
+
+    destination-ports:
+      goods-transferred-to:
+        label: Which mode of transport were the goods transferred to?
+        help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
+
+    border-crossing:
+      border-crossing-location:
+        label: 'Border crossing'
+        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
+               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
+               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
+               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel.\n\n
+               If you did not cross the border, leave this empty."
+
+    distance-travelled:
+      distance-travelled:
+        label: Distance travelled
+        help: Enter the distance you travelled on this stage
+
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried on this stage. For mixed loads, the main type of goods should be recorded.
+
+    hazardous-goods:
+      heading: Dangerous or hazardous goods
+      help: ''
+      is-hazardous-goods:
+        label: 'Were the goods being transported classified as dangerous or hazardous?'
+        help: ''
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods carried?
+        help: Mixed loads should be recorded as "Other cargo type"
+
+    goods-weight:
+      heading: Goods weight and vehicle capacity
+      help: ''
+      carrying-capacity: Vehicle carrying capacity
+      weight-of-goods-carried:
+        label: Weight of goods
+        help: Total weight of goods carried on this stage in kg
+      was-at-capacity:
+        label: Was your vehicle at full capacity?
+        help: ''
+      was-limited-by:
+        label: ''
+        help: Select the answers which best describe the load
+
+
+  # Day, create
+  day:
+    number-of-stops:
+      number-of-stops:
+        label: "How many times did you stop on day {dayNumber}?"
+        help: A stop is where you loaded or unloaded goods, or where you departed/returned to base.
+          <ul>
+          <li>Include stops where you loaded or unload goods</li>
+          <li>Include stops where you departed from or returned to base</li>
+          <li>Do not include meal/rest breaks, congestion</li>
+          </ul>
+
+        fewer-than-5: 5 stops or fewer
+        5-or-more: More than 5 stops
+
+  completed:
+    heading: Survey complete
+    reference-number: Your reference number
+    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
+
+  closing-details:
+    start:
+      heading: Final questions
+    missing-days:
+      heading: Missing days
+      help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
+      day-x: 'Day {dayNumber} ({date})'
+      missing-days:
+        label: Is this information correct?
+        help: ''
+    confirm-submission:
+      heading: Submit your survey
+      contact-details: Contact details
+      contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
+      confirm-and-submit: Confirm and submit
+
+  day-stop-delete:
+    heading: "Delete stage {stageNumber} (day {dayNumber})"
+    delete: Are you sure you want to delete this stage?
+    confirm.label: Yes, delete this stage
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Stage deleted successfully
+      content: The stage was successfully deleted
+    cancelled-notification:
+      heading: Stage not deleted
+      content: The request to delete the stage was cancelled
+  day-summary-delete:
+    heading: Delete day summary (day {dayNumber})
+    delete: Are you sure you want to delete this day summary?
+    confirm.label: Yes, delete this day summary
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Day summary deleted successfully
+      content: The day summary was successfully deleted
+    cancelled-notification:
+      heading: Day summary not deleted
+      content: The request to delete the day summary was cancelled
+  help:
+    text:
+      phone-number: '0207 944 8233'
+  general-help:
+    text.call: 'For help with a domestic survey, call'
+
+
+# Pre-Enquiry
+pre-enquiry:
+  completed:
+    heading: Pre-enquiry complete
+  sidebar-summary:
+    title: IRHS Pre-enquiry
+    reference-number: Reference number
+  summary:
+    heading: Pre-enquiry dashboard
+    title: ''
+    business-details: Business details
+    correspondence-details: Correspondence details
+    company-name: Company name
+    total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
+    international-journey-vehicle-count: Vehicles used to make international journeys
+    number-of-employees: Number of employees
+    annual-journey-estimate: "International journey estimate (Annual)"
+    name: Name
+    email: Email address
+    phone: Telephone number
+    address: Address
+    vehicle-details: Vehicle details
+    employee-count-and-international-journeys: Employee count and international journeys
+    correspondence-address: Correspondence address
+    submit:
+      label: Submit pre-enquiry
+
+  business-details:
+    heading: Business details
+    title: ''
+    help: ''
+    correct-company-name:
+      label: 'Is the name of your company "{expectedCompanyName}"?'
+      help: ''
+    company-name:
+      label: Company name
+      help: Please state the correct company name
+  correspondence-details:
+    heading: Correspondence details
+    title: ''
+    help: Provide contact details for correspondence about this survey
+    name:
+      label: Name
+      help: ''
+    phone:
+      label: Telephone number
+      help: ''
+    email:
+      label: Email address
+      help: ''
+  correspondence-address:
+    heading: Correspondence address
+    title: ''
+    help: ''
+    original-address: "The address we have on record for your company is:"
+    correct-address:
+      label: 'Is the above address where we should send correspondence?'
+      help: ''
+    address:
+      label: Address
+      help: Provide the address where correspondence about this survey should be sent
+  introduction:
+    title: Introduction
+    heading: International Pre-Enquiry
+  vehicle-questions:
+    heading: Vehicle details
+    title: ''
+    help: ''
+    total-vehicle-count:
+      label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
+      help: Disregard the weight of any trailers
+    international-journey-vehicle-count:
+      label: How many of these vehicles will be used to make international journeys?
+      help: ''
+  employees-and-international-journeys:
+    heading: Employee count and international journeys
+    title: ''
+    help: ''
+    number-of-employees:
+      label: How many people does the firm employee nationally?
+      help: ''
+    annual-journey-estimate:
+      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      help: ''
+
+# International
+international:
+  introduction:
+    heading: Introduction
+
+  closing-details:
+    confirm-submission:
+      heading: Submit your survey
+
+  completed:
+    heading: Survey complete
+    reference-number: Your reference number
+    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
+
+  buttons:
+    add-vehicles: Add Vehicles
+    submit-survey: Submit Survey
+  help:
+    text:
+      phone-number: '0207 944 8580'
+  general-help:
+    text.call: 'For help with an international survey, call'
+
+  correspondence-and-business-details:
+    title: Correspondence and Business Details
+    business-details: Business details
+    correspondence-details: Correspondence details
+    number-of-employees: Number of employees nationally
+    nature-of-business: Nature of business
+    number-of-trips: Estimated number of international trips over the next 12 months
+    still-active: Firm still performs international road haulage activities?
+  sidebar-summary:
+    title: International Survey
+    company: Company
+    period: Survey period
+    period-start: Survey period start
+    period-end: Survey period end
+    reference-number: Reference number
+    vehicle: Vehicle registration mark
+  summary:
+    heading: Survey dashboard
+    correspondence-and-business-details: Correspondence and Business Details
+    no-vehicles: No vehicles
+    registration: Registration
+    type-and-configuration: Type/configuration
+    status: Status
+    vehicles: Vehicles
+    view-business-and-correspondence-details: View/change the business and correspondence details you have already entered
+    view-vehicle-sr-suffix: details and trips for vehicle {regMark}
+
+  action-delete:
+    heading: Delete action {actionNumber}
+    delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
+    delete-unloading: Are you sure you want to delete this unloading action?
+    notification:
+      deleted:
+        heading: Action deleted successfully
+        content: The action was successfully deleted
+      cancelled:
+        heading: Action not deleted
+        content: The request to delete the action was cancelled
+
+  trip-delete:
+    heading: "Delete trip — {date, date, short}"
+    delete-multi: This will permanently delete this trip and all related actions (shown above)
+    delete: This will permanently delete this trip
+    confirm.label: Yes, delete this trip
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: 'Trip deleted successfully'
+      content: 'The trip was successfully deleted'
+    cancelled-notification:
+      heading: 'Trip not deleted'
+      content: 'The request to delete the trip was cancelled.'
+
+  vehicle-delete:
+    heading: "Delete vehicle — {regMark}"
+    delete: This will permanently delete this vehicle and all related trips and actions
+    notification:
+      deleted:
+        heading: Vehicle deleted successfully
+        content: The vehicle was successfully deleted
+      cancelled:
+        heading: Vehicle not deleted
+        content: The request to delete the vehicle was cancelled
+
+  vehicle-cant-edit-trailer-configs:
+    title: Edit cancelled
+    heading: Vehicle trailer configuration can't be changed
+    content: The trailer, axle and body configuration can't be changed for this vehicle because trips have been added.
+
+  thanks:
+    title: Thanks
+
+  survey-response:
+    reason-for-empty-survey:
+      heading: No international trips have been recorded
+      reason-for-empty-survey:
+        label: 'Why were no vehicles in your fleet used during the survey period?'
+        help: ''
+      reason-for-empty-survey-other:
+        label: 'Specify the reason'
+        help: ''
+      choices:
+        no-international-work: No international work during this period
+        on-holiday: Firm on holiday during this period
+        repair: All vehicles in repair
+        no-vehicles: No vehicles available for international work
+        other: Other
+    contact-details:
+      heading: Contact details
+      help: Who should the Department for Transport team contact about the survey?
+      contact-name:
+        label: Name
+        help: ''
+      contact-telephone:
+        label: Telephone
+        help: ''
+      contact-email:
+        label: Email
+        help: ''
+    number-of-trips:
+      heading: Annual international trips
+      annual-international-journey-count:
+        label: Estimate the number of international trips that will be made by your firm in the next 12 months
+        help: ''
+    activity-status:
+      choices:
+        ceased-trading: No - firm has ceased trading
+        only-domestic-work: No - firm only carries out domestic work
+        still-active: Yes
+      activity-status:
+        label: Does your firm still perform international road haulage activities?
+        help: ''
+      change-link-sr-suffix: activity status
+    business-details:
+      heading: Business details
+      help: ''
+      fewer-than-ten-employees:
+        label: Does your firm employ fewer than 10 people in total, nationally?
+        help: ''
+      number-of-employees:
+        label: How many people does your firm employ nationally?
+        help: ''
+      business-nature:
+        label: What is the nature of your business?
+        help: e.g. haulage; wholesaler of electrical goods; manufacturer of furniture
+
+  vehicle:
+    summary:
+      heading: "Vehicle details — {regMark}"
+      basic-details: Basic details
+      no-trips: No trips
+      trips: Trips
+      change-link-sr-suffix:
+        vehicle-details: 'vehicle details'
+        trailer-configuration: trailer/axle configuration
+        body: body type
+        weights: vehicle weights
+      view-trip-sr-link-suffix: '{tripDate, date, short} trip details'
+
+    vehicle-details:
+      heading: 'Vehicle Details'
+      help: ''
+      registration-mark:
+        label: Registration mark of vehicle
+        help: ''
+        changed-notification-content: "The registration mark of this vehicle has been changed from {oldValue} to {newValue}. Make sure that the other details of the vehicle are still correct."
+      operation-type:
+        label: How was the vehicle being operated during the survey period?
+        help: ''
+    confirm-dates:
+      heading: 'Survey period confirmation'
+      help: "We’re only interested in vehicles that made international trips where the date of departure from the UK was within survey period."
+      confirm:
+        label: 'Did this vehicle depart from the UK during the survey period?'
+        help: ''
+      notification-banner:
+        title: 'Information'
+        heading: 'The vehicle is not required in this survey'
+        content: 'You do not need to add the vehicle with registration mark {registrationMark} as you have indicated that it did not make any international trips where the date of departure from the UK was during the survey period'
+    vehicle-trailer-configuration:
+      heading: Vehicle type
+      help:
+      trailer-configuration:
+        label: 'Select the option that best describes the vehicle'
+        help: ''
+    vehicle-axle-configuration:
+      heading: Vehicle axle configuration
+      help: ''
+      axle-configuration:
+        label: 'Select the option that best shows the axle configuration of the vehicle'
+        help: ''
+    vehicle-body:
+      heading: Vehicle body type
+      help: ''
+      body-type:
+        label: 'Indicate the main type of body for the vehicle'
+        help: ''
+    vehicle-weight:
+      heading: Vehicle weight and capacity
+      help: ''
+      gross-weight:
+        label: Gross vehicle weight
+        help: Total weight of the vehicle in kg including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
+      carrying-capacity:
+        label: Carrying capacity
+        help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
+
+  actions:
+    re-order:
+      heading: Re-order actions
+    view-link-sr-suffix: 'loading/unloading action #{actionNumber}'
+
+  action:
+    re-order:
+      save: Save order
+    stop: '{goods} from stop {number} - {place}, {country}'
+    delete:
+      delete.label: Yes, delete this action
+      cancel.label: Cancel
+    summary:
+      heading-loading: Action {number} — goods loaded
+      heading-unloading: Action {number} — goods unloaded
+      actions:
+        back-to-trip-summary: Back to trip details
+        delete: Delete action
+    place-loading:
+      heading: Loading of goods
+      help: ''
+    place-unloading:
+      heading: Unloading of goods
+      help: ''
+    place:
+      heading: Loading or unloading of goods
+      help: ''
+      place:
+        label: Where did you load/unload goods?
+        label-load: Where did you load goods?
+        label-unload: Where did you unload goods?
+        help: ''
+      name:
+        label: Place name
+        help: ''
+      country:
+        label: Country
+        help: ''
+      loading:
+        label: Did you load or unload goods?
+        help: ''
+        no-goods-loaded: No goods yet loaded
+        all-goods-fully-loaded: All goods fully unloaded
+        choices:
+          load: Loaded goods
+          unload: Unloaded goods
+    unloading:
+      label: Which goods did you unload?
+      help: ''
+    goods-description:
+      goods-description:
+        label: Description of goods carried
+        help: Provide a basic description of the goods carried in this consignment. For mixed loads, the main type of goods should be recorded.
+    hazardous-goods:
+      heading: Dangerous or hazardous goods
+      help: ''
+      is-hazardous-goods:
+        label: 'Were the goods being transported classified as dangerous or hazardous?'
+        help: ''
+      hazardous-goods-code:
+        label: 'Select the code for the hazardous goods that were carried'
+        help: ''
+    cargo-type:
+      cargo-type-code:
+        label: How were the goods carried?
+        help: Mixed loads should be recorded as "Other cargo type"
+    goods-weight-loaded:
+      heading: Weight of goods loaded
+      weight-of-goods:
+        label: What was the weight of goods loaded in kg?
+        help: This should include any packaging or containers
+    goods-weight-unloaded:
+      heading: 'Weight unloaded'
+      help: ''
+      unloaded-all:
+        label: 'Did you unload all {weight, number} kg of {goods} from {place}, {country}?'
+        help: ''
+      weight-of-goods:
+        label: Weight of goods unloaded
+        help: Enter the weight in kg
+    add-another:
+      heading: Further loading or unloading of goods
+      confirm:
+        label: Did you make any more stops on this trip to load or unload goods?
+        help: You must tell us about every time you either loaded or unloaded goods
+
+  stop:
+    stop:
+      heading: Where did you stop?
+      help: Only add stops where you loaded or unloaded goods
+      name:
+        label: Place
+        help: ''
+      country:
+        label: Country
+        help: ''
+    summary:
+      stop: "{place}, {country}"
+      stops: Stops
+      add-another:
+        label: Do you need to add another stop?
+        help: ''
+    re-order:
+      heading: Re-order actions
+      save: Save order
+    remove:
+      heading: Remove stop?
+      are-you-sure: "Are you sure you want to remove {name} ({country}) from the list of stops?"
+      yes: "Yes, remove"
+      no: "No, cancel"
+  trip:
+    summary:
+      heading: Trip details — {date, date, short}
+      action: Loading and unloading of goods
+      actions:
+        add-action: Add loading or unloading action
+        add-loading-action: Add loading action
+        add-stops: Add stops
+        add-consignment: Add consignment
+        back-to-vehicle-summary: Back to vehicle details
+        trip-complete: Trip complete
+        vehicle-complete: Vehicle complete
+      consignments: Consignments
+      origin-to-destination: "{origin} to {destination}"
+      date-until-date: "{from} to {until}"
+      cargo-state:
+        empty: Empty
+        limited-by-space: At capacity by space
+        limited-by-weight: At capacity by weight
+        limited-by-space-and-weight: At capacity by space and weight
+        not-limited: Not at capacity
+      places: Start / end
+      dates: Dates
+      outbound-journey: Outbound journey
+      outbound: Outbound trip - from the UK
+      outbound-ports: "Ports"
+      outbound-cargo-state: "Cargo state"
+      return: Return trip - to the UK
+      return-journey: Return journey
+      return-ports: "Ports"
+      return-cargo-state: "Cargo state"
+      distance: Round trip distance
+      countries-transitted: Countries travelled through
+      from-to: From {source} to {destination}
+      stops: Stops
+      help:
+        actions: "Enter every occasion when you loaded or unloaded goods on your international trip.\nRecord these in the order that they occurred."
+      swapped-trailer: 'Trailer axle configuration changed?'
+      changed-body-type: 'Body type changed?'
+      gross-weight: 'Gross weight'
+      carrying-capacity: 'Carrying capacity'
+      change-link-sr-suffix:
+        swapped-trailer: 'trailer/body configurations'
+    vehicle-weights:
+      heading: Vehicle weights
+      original-vehicle-weight: Original vehicle weight/capacity
+      gross-weight: Original gross vehicle weight
+      carrying-capacity: Original vehicle carrying capacity
+
+    places:
+      heading: Where did trip start/end?
+      help: ''
+      origin:
+        label: Where did the trip start?
+        help: 'The postcode or place name, within the UK, where this trip first started.'
+      destination:
+        label: Where did the trip end?
+        help: "The postcode or place name, within the UK, where this trip finally ended. This might be the same place as where the trip first started."
+    dates:
+      heading: Dates of Trip
+      help: ''
+      outbound-date:
+        label: Date of leaving the UK
+        help: ''
+      return-date:
+        label: Date of return to the UK
+        help: ''
+    ports:
+      help:
+        ports-which: Which ports should I specify?
+        ports-explanation: "If your trip *only* included carrying goods to/from the Republic of Ireland, please state the ports you used to travel from GB to Ireland.\n\nOtherwise state the ports you used to travel to/from mainland Europe, even if you travelled through Ireland on your way."
+
+    outbound-ports:
+      heading: Outbound trip - from the UK
+      help: ''
+      ports:
+        label: UK port of departure and foreign port of arrival
+        help: ''
+        choice-placeholder: ""
+    outbound-cargo-state:
+      was-at-capacity:
+        label: On leaving the UK, was the vehicle at full capacity ?
+        help: ''
+      was-empty:
+        label: Was the vehicle empty?
+        help: ''
+      was-limited:
+        label: Was the vehicle at capacity by space, by weight or both?
+        help: Select the answers which best describe the load
+    return-ports:
+      heading: Return trip - to the UK
+      help: ''
+      ports:
+        label: Foreign port of departure and UK port of arrival
+        help: ''
+    return-cargo-state:
+      was-at-capacity:
+        label: On return to the UK, was the vehicle at full capacity?
+        help: ''
+      was-empty:
+        label: Was the vehicle empty?
+        help: ''
+      was-limited:
+        label: Was the vehicle at capacity by space, by weight or both?
+        help: Select the answers which best describe the load
+    distance:
+      heading: Trip distance
+      help: ''
+      distance:
+        label: Enter the total round trip distance
+        help: 'Enter distance driven only (do not include ferry mileage).'
+    countries-transitted:
+      heading: Which countries did you travel through?
+      help: 'List all of countries the vehicle travelled through during this trip. Include countries in which the vehicle did work and also transited countries used to access another country'
+      countries-transitted:
+        label: Choose from commonly travelled countries
+        help: ''
+      countries-transitted-other:
+        label: Enter any other countries separated by commas
+        help: e.g. Sweden, Denmark
+    start-date:
+      help:
+        summary: 'What date do you use to decide if a trip is relevant to the survey?'
+        text:
+          1: "If a vehicle left empty, use the date it left."
+          2: "If a vehicle left loaded, use the date it was loaded."
+        note: "Please note: If a vehicle was loaded before the survey period, you don’t need to enter the details for that trip."
+    swapped-trailer:
+      heading: Vehicle axle configuration
+      help: ''
+      original-axle-config: "Vehicle's original configuration"
+      is-swapped-trailer:
+        label: "Did the trailer's axle configuration change for this trip?"
+        help: ''
+      axle-configuration:
+        label: 'Select the new configuration'
+        help: ''
+    changed-body-type:
+      original-body-type: "Vehicle's original body type"
+      heading: Vehicle body type
+      help: ''
+      is-changed-body-type:
+        label: Did the trailer's body type change for this trip?
+        help: ''
+      body-type:
+        label: 'Select the new body type'
+        help: ''
+
+goods:
+  hazardous:
+    0: Goods were not classified as dangerous or hazardous
+    1: Explosive
+    '2.1': Flammable gas
+    '2.2': Non-flammable, non-toxic gas
+    '2.3': Toxic gas
+    3: Flammable liquid
+    '4.1': Flammable solid
+    '4.2': Spontaneously combustible substance
+    '4.3': Substance which, in contact with water, emits flammable gas
+    '5.1': Oxidising substance
+    '5.2': Organic peroxide
+    '6.1': Toxic substance
+    '6.2': Infectious substance
+    7: Radioactive material
+    8: Corrosive substance
+    9: Miscellaneous dangerous goods
+    group:
+      1: Explosives
+      2: Gases
+      3: Flammable liquids
+      4: Flammable solids
+      5: Oxidising substances
+      6: Toxic substances
+      7: Radioactive materials
+      8: Corrosive substances
+      9: Miscellaneous dangerous goods
+  cargo-type:
+    options:
+      LB: Liquid bulk
+      SB: Solid bulk
+      LFC: Large freight containers
+      OFC: Other freight containers
+      PL: Palletised goods
+      PS: Pre slung goods
+      NP: No packaging
+      RC: Roll cages and other mobile units
+      OT: Other cargo types
+      NS: Empty
+    help:
+      LB: ''
+      SB: ''
+      LFC: including ISO containers
+      OFC: including stillages
+      PL: ''
+      PS: ''
+      NP: for example livestock, cars, plant
+      RC: ''
+      OT: including swap bodies, boxes, crates and cylinders or mixed loads
+      NS: ''
+  description:
+    options:
+      packaging: Packaging
+      groupage: Groupage
+      empty: None - the vehicle was empty
+      other-goods: Specific goods / Other
+    short-options:
+      packaging: Packaging
+      groupage: Groupage
+      empty: Empty
+    help:
+      packaging: consignment was empty pallets, wire cages, roll cages or other packaging
+      groupage: mixed loads where there was no main type
+      empty: only if the vehicle carried nothing at all
+      other-goods: ''
+      # this help text key is intentionally different - see the form structure
+      other: Describe the goods. For example; Live animals, household waste, mail and/or parcels, raw milk, food products, quarrying material, plant hire equipment, building materials, steel, etc.
+
+
+
+vehicle:
+  operation-type:
+    for-hire-and-reward: For hire and reward
+    on-own-account: On own account
+
+  axle:
+    rigid:
+      label: Rigid
+      2:
+        0: 'Rigid 2 axle'
+      3:
+        0: 'Rigid 3 axle'
+      4:
+        0: 'Rigid 4 axle'
+      other: 'Other rigid'
+    rigid-and-trailer:
+      label: Rigid and trailer
+      2:
+        1: 'Rigid 2 axle + 1 axle trailer'
+        2: 'Rigid 2 axle + 2 axle trailer'
+        3: 'Rigid 2 axle + 3 axle trailer'
+      3:
+        2: 'Rigid 3 axle + 2 axle trailer'
+        3: 'Rigid 3 axle + 3 axle trailer'
+      other: 'Other rigid with trailer'
+    articulated:
+      label: Articulated
+      2:
+        1: 'Articulated 2 axle + 1 axle trailer'
+        2: 'Articulated 2 axle + 2 axle trailer'
+        3: 'Articulated 2 axle + 3 axle trailer'
+      3:
+        2: 'Articulated 3 axle + 2 axle trailer'
+        3: 'Articulated 3 axle + 3 axle trailer'
+      other: 'Other articulated'
+  body:
+    flat-drop: 'Flat/drop sided'
+    box: 'Box/non-specialised'
+    temperature-controlled: 'Temperature controlled'
+    curtain-sided: 'Curtain-sided'
+    liquid: 'Liquid tanker'
+    solid-bulk: 'Solid bulk tanker'
+    livestock: 'Livestock carrier'
+    car: 'Car transporter'
+    tipper: 'Tipper'
+    other: 'Other'
+
+errors:
+  http-not-found:
+    title: Page not found
+    heading: Page not found
+    copy: |-
+      If you typed the web address, check it is correct.
+
+      If you pasted the web address, check you copied the entire address.
+  internal-server-error:
+    title: Sorry, there is a problem with the service
+    heading: Sorry, there is a problem with the service
+    copy: |-
+      Try again later.
+  unavailable:
+    title: Sorry, the service is unavailable
+    heading: Sorry, the service is unavailable
+    copy: |-
+      Try again later.
+  forbidden:
+    title: Access denied
+    heading: Access denied
+    copy: |-
+      Sorry - you do not have permission to access this page
+  unauthorised:
+    title: Unauthorised
+    heading: Unauthorised
+    copy: |-
+      You need to be logged in to access this page
+
+  maintenance:
+    title: Scheduled maintenance - Service unavailable
+    heading: Scheduled maintenance - Service unavailable
+    copy: |-
+      The service is undergoing scheduled maintenance, and is not availble. Check back in 15 minutes.
+
+maintenance-warning:
+    banner:
+      title: Important
+      heading: Scheduled maintenance
+      content: This service will be unavailable between {startTime} and {endTime} on {date}

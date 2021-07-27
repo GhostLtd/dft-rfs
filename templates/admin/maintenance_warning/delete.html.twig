@@ -1,0 +1,17 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set headingParams = translation_parameters %}
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText, actionlessSummaryListRow -%}
+
+    {%- with {warning: subject} -%}
+
+        <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+            {{ actionlessSummaryListRow('Start', warning.start | format_datetime) }}
+            {{ actionlessSummaryListRow('End', warning.end | format_datetime) }}
+        </dl>
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{%- endblock -%}

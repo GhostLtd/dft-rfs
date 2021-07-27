@@ -1,0 +1,115 @@
+{% extends 'base-pdf.html.twig' %}
+
+{% block pageTitle -%}
+    CSRGT survey &ndash; {{ survey.registrationMark | formatRegMark }} ({{ survey.surveyPeriodStart | date ('Y-m-d') }})
+{%- endblock %}
+
+{%- block header -%}
+    {{- block('pageTitle') -}}
+{%- endblock -%}
+
+{% block footer -%}
+    Page {PAGE_NUM} of {PAGE_COUNT}
+{%- endblock %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
+
+    {%- set isInPossession = survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+
+    <h1 class="govuk-heading-xl">Survey details</h1>
+    <hr class="govuk-section-break govuk-section-break--xl">
+    <dl class="govuk-summary-list">
+        {%- set vehicle = survey.response.vehicle -%}
+        {{- row('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) -}}
+        {{- row('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) -}}
+
+        {{- row(
+            'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label',
+            (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans
+        ) -}}
+
+        {# Contact details have been left out intentionally, for data protection purposes #}
+    </dl>
+
+
+    {%- if isInPossession and survey.response -%}
+        <h1 class="govuk-heading-xl">Business details</h1>
+        <hr class="govuk-section-break govuk-section-break--xl">
+        {%- if not survey.isBusinessAndVehicleDetailsComplete -%}
+            <p class="govuk-body">Not completed</p>
+        {%- else -%}
+            <dl class="govuk-summary-list">
+                {{- row(
+                    'domestic.survey-response.business-details.number-of-employees.label',
+                    "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans) -}}
+                {{- row(
+                    'domestic.survey-response.business-details.business-nature.label',
+                    survey.response.businessNature) -}}
+                {{- row(
+                    'domestic.survey-response.business-details.operation-type.label',
+                    (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans) -}}
+            </dl>
+        {%- endif -%}
+
+        <h1 class="govuk-heading-xl">Vehicle details</h1>
+        <hr class="govuk-section-break govuk-section-break--xl">
+        {%- if not survey.isBusinessAndVehicleDetailsComplete -%}
+            <p class="govuk-body">Not completed</p>
+        {%- else -%}
+            {%- with {showActions: false, showHeading: false, showReasonForEmptySurvey: true, marginBottom: 0} -%}
+                {%- include "domestic_survey/includes/vehicle-details.html.twig" -%}
+            {%- endwith -%}
+
+            {%- for dayNumber in 1..7 -%}
+                {%- set day = survey.response.dayByNumber(dayNumber) -%}
+                {{- _self.dailyJourneys(day, dayNumber, (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber - 1) ~ ' day'))) -}}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock -%}
+
+{%- macro dailyJourneys(day, dayNumber, date) -%}
+    <div class="domestic-journeys" style="page-break-before: always">
+        <div class="domestic-day-header">
+            <span class="govuk-caption-xl">Day {{  dayNumber }}
+                {%- if day and day.isComplete %} &ndash;
+                    {%- if day.hasMoreThanFiveStops %} {{ 'domestic.day-view.headings.more-than-five-stops' | trans }}
+                    {%- else %} {{ 'domestic.day-view.headings.five-stops-or-fewer' | trans }}
+                    {%- endif -%}
+                {%- endif -%}
+            </span>
+            <h2 class="govuk-heading-xl">{{ date|date('jS F Y') }}</h2>
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        </div>
+        <div class="domestic-day">
+        {%- if day and day.isComplete -%}
+            {%- if day.hasMoreThanFiveStops -%}
+                {{- _self.summaryDay(day) -}}
+            {%- else -%}
+                {{- _self.detailedDay(day) -}}
+            {%- endif -%}
+        {%- else -%}
+            <p class="govuk-body">No journeys</p>
+        {%- endif -%}
+        </div>
+    </div>
+{%- endmacro -%}
+
+{%- macro summaryDay(day) -%}
+    {%- with {showActions: false} -%}
+        {%- include "domestic_survey/includes/day-summary.html.twig" -%}
+    {%- endwith -%}
+{%- endmacro -%}
+
+{%- macro detailedDay(day) -%}
+    {%- for stop in day.stops -%}
+        <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
+
+        <div class="domestic-day-stop">
+            {%- with {showActions: false} -%}
+                {%- include "/domestic_survey/includes/day-stop.html.twig" -%}
+            {%- endwith -%}
+        </div>
+    {%- endfor -%}
+{%- endmacro -%}

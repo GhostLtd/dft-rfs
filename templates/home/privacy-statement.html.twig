@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block metaDescription -%}
+Use this service to complete your domestic or international digital road haulage survey.
+DfT - GOV.UK
+{%- endblock %}
+
+{% block content %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import startNow %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds prose-scope">
+            {{ include('home/privacy-statement.md.twig')|markdown_to_html }}
+        </div>
+        <div class="govuk-grid-column-one-third">
+        </div>
+    </div>
+{% endblock %}

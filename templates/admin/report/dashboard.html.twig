@@ -1,0 +1,28 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.reports.dashboard" %}
+
+{% block adminContent %}
+    <h2 class="govuk-heading-m">Surveys by state</h2>
+    <ul class="govuk-list">
+        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'irhs'}) }}">IRHS</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-m">Possession of vehicle</h2>
+    <ul class="govuk-list">
+        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-m">Quality assurance</h2>
+    <ul class="govuk-list">
+        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'irhs'}) }}">IRHS</a></li>
+    </ul>
+{% endblock %}

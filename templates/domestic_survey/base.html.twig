@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle -%}
+    {%- include 'includes/form-page-title.html.twig' -%}
+    Domestic survey{% if app.user.domesticSurvey.isNorthernIreland %} (NI){% endif %}{{ ' - ' }}
+    {{- parent() -}}
+{%- endblock %}

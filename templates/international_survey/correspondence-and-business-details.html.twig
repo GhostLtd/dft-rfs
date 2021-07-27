@@ -1,0 +1,25 @@
+{% set translation_prefix = 'international.correspondence-and-business-details' %}
+{% extends 'international_survey/base.html.twig' %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.correspondence-and-business-details.title'|trans }}</h1>
+
+    {%- with {response: survey.response} -%}
+        {%- include "international_survey/includes/contact-details.html.twig" -%}
+        {%- include "international_survey/includes/business-details.html.twig" -%}
+    {%- endwith -%}
+
+    {%- if form -%}
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
+        <p class="govuk-body">
+            {{ form(form) }}
+        </p>
+    {%- else -%}
+        <p class="govuk-body">
+            {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE') -%}
+            <a href="{{ url(dashboardRoute) }}" class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
+        </p>
+    {%- endif -%}
+{% endblock %}

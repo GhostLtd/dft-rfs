@@ -1,0 +1,33 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) -}}
+    {{- actionlessSummaryListRow('admin.international.survey.reference-number.label', survey.referenceNumber) -}}
+    {{- actionlessSummaryListRow('common.survey-period.label', survey|formatSurveyPeriod) }}
+
+    {%- if showStatus ?? true -%}
+        {% set status -%}
+            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
+            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+        {%- endset %}
+        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+    {%- endif -%}
+    {%- if showUsername ?? true -%}
+        {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
+    {%- endif -%}
+    {%- if pdfs is defined and pdfs is not empty -%}
+        {%- set pdfContent -%}
+            {%- set multiplePdfs = pdfs|length > 1 ? true : false -%}
+            {%- for pdf in pdfs -%}
+                {%- set routeParams = {surveyId: pdf.survey.id} -%}
+                {%- if multiplePdfs -%}{% set routeParams = routeParams|merge({timestamp: pdf.timestamp}) -%}{%- endif -%}
+                <div><a href="{{ path('app_admin_international_surveypdf_pdf', routeParams) }}" target="_blank" rel="noopener noreferrer" class="govuk-link">
+                        {{- pdf.filename() -}}{% if multiplePdfs %} @ {{ pdf.date|date('Y-m-d H:i:s') }}{% endif -%}
+                    </a></div>
+            {%- endfor -%}
+        {%- endset -%}
+        {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
+    {%- endif -%}
+</dl>

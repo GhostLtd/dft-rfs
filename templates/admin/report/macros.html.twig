@@ -1,0 +1,13 @@
+{% macro displayRow(data, total, allZeros, fields) %}
+    {%- for field in fields -%}
+        <td class="govuk-table__cell">{{ _self.displayCell(data, total, allZeros, field) }}</td>
+    {%- endfor -%}
+    <td class="govuk-table__cell">{{- allZeros ? '-' : total -}}</td>
+{% endmacro %}
+
+{% macro displayCell(data, total, allZeros, field,) %}
+    {{ allZeros ? '-' : data[field] }}
+    {%- if not allZeros -%}
+        <span>{% if data[field] > 0 %}{{- ((data[field] / total) * 100) | number_format(1) -}}%{% endif %}</span>
+    {%- endif -%}
+{% endmacro %}

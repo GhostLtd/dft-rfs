@@ -1,0 +1,13 @@
+{% autoescape false %}
+INSERT INTO {{ table_name }} ("{{ fields | join('", "') }}") VALUES
+{% for dataRow in data %}
+{# twig doesn't want to escape empty strings, so we have to do it manually #}
+({{ dataRow | map(v =>
+    (v is same as '')
+        ? "''"
+        : (v | e('sql'))
+) | join(", ") }}){% if not loop.last %},
+{% else %};
+{% endif -%}
+{%- endfor %}
+{% endautoescape %}

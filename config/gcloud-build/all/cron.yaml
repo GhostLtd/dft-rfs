@@ -1,0 +1,8 @@
+cron:
+- description: "Messenger consumer"
+  url: "/cron/messenger/consume"
+  schedule: 'every 5 minutes synchronized'
+- description: "Reminder processor"
+  url: "/cron/reminders/process"
+  schedule: "every day 06:00"
+  timezone: "Europe/London"

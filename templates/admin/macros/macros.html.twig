@@ -1,0 +1,27 @@
+
+{% macro displayLimitedBy(entity) %}
+    {%- set limits = entity.wasLimitedBySpace ? ['space'] : [] -%}
+    {%- set limits = limits|merge(entity.wasLimitedByWeight ? ['weight'] : []) -%}
+    {% if limits is empty %}-{% else -%}
+        By {{ limits|join(', ') }}
+    {%- endif -%}
+{% endmacro %}
+
+{% macro displayNote(note, deleteRoute, deleteParams, options) %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks -%}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            {{- note.createdBy | removeEmailNamespacePrefix -}}
+            <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date.date-time' | trans([], 'admin')) -}}</div>
+        </dt>
+        <dd class="govuk-summary-list__value">{{ note.note | nl2br }}</dd>
+        {% if not (options.hideActions | default(false)) and is_granted(constant('\\App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), note.survey ?? note.preEnquiry) %}
+            <dd class="govuk-summary-list__actions">
+                {{ actionLinks({
+                    (path(deleteRoute, deleteParams|default([])|merge({note: note.id}))): 'delete'
+                }) }}
+                {# 'app_admin_domestic_surveyview_deletenote' #}
+            </dd>
+        {% endif %}
+    </div>
+{% endmacro %}

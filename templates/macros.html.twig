@@ -1,0 +1,64 @@
+{%- macro displayAxleConfiguration(axleConfiguration) -%}
+    {%- set hasIcon = not ('' ~ axleConfiguration ends with '99') -%}
+    {%- if hasIcon -%}
+        {{- svgIcon("lorry-#{axleConfiguration}.svg") }}<br>
+    {%- endif -%}
+    {{ (axleConfiguration | vehicleAxleConfigTransKey | trans) }}
+{%- endmacro -%}
+
+{% macro addToListRow(key, actions, options) -%}
+    <div class="govuk-add-to-list__row {{ options.row_class | default('') }}">
+        <div class="govuk-add-to-list__key">
+            {%- if options.noEscape | default(false) %}{{ key | raw }}{% else %}{{ key | nl2br }}{% endif %}
+        </div>
+        {% if not (options.hideActions | default(false)) %}
+            <div class="govuk-add-to-list__actions">
+                {{- _self.addToListActionLinks(actions) -}}
+            </div>
+        {% endif %}
+    </div>
+{%- endmacro %}
+
+{% macro addToListActionLinks(actionLinks) %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLink -%}
+    {%- if actionLinks | length == 1 -%}
+        {{- actionLink((actionLinks | keys) | first, actionLinks | first) -}}
+    {%- else -%}
+        <ul class="govuk-add-to-list__actions-list">
+            {%- for url, action in actionLinks -%}
+                <li class="govuk-add-to-list__actions-list-item">
+                    {{- actionLink(url, action) -}}
+                </li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{% endmacro %}
+
+{% macro generalUserAssitanceHelpBlock() %}
+{#
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">{{ 'common.help.summary'|trans }}</span>
+        </summary>
+        <div class="govuk-details__text">
+#}
+            <p class="govuk-body">{{ 'domestic.general-help.text.call'|trans }} <strong>{{ 'domestic.help.text.phone-number'|trans }}</strong></p>
+            <p class="govuk-body">{{ 'international.general-help.text.call'|trans }} <strong>{{ 'international.help.text.phone-number'|trans }}</strong></p>
+            <p class="govuk-body">{{ 'common.help.text.office-hours'|trans }}</p>
+{#
+        </div>
+    </details>
+#}
+{% endmacro %}
+
+{% macro displayHazardousGoods(code, notHazardousText) %}
+    {%- set hazardousGoodsChoices = constant('App\\Entity\\HazardousGoods::CHOICES') -%}
+    {%- if code|default(false) %}<em>{{ code }}</em> - {{ choiceLabel(flattenChoices(hazardousGoodsChoices), code) | trans }}
+    {%- else -%}
+        {%- if notHazardousText ?? false -%}
+            {{- notHazardousText | trans -}}
+        {%- else -%}
+            -
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}

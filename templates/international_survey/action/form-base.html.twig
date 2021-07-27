@@ -1,0 +1,7 @@
+{% extends 'international_survey/form-base.html.twig' %}
+
+{% set oneThirdColumnContent %}
+    {%- with {trip: subject.trip} -%}
+        {%- include "international_survey/includes/trip-summary.html.twig" -%}
+    {%- endwith -%}
+{% endset %}

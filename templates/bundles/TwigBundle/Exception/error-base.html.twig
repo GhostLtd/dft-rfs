@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}
+    {{ (prefix ~ 'title')|trans }}
+{% endblock %}
+
+{% block sessionWarning %}{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading govuk-heading-xl">{{ (prefix ~ 'heading')|trans }}</h1>
+
+            <p class="govuk-body">{{ (prefix ~ 'copy')|trans|nl2br }}</p>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {% from 'macros.html.twig' import generalUserAssitanceHelpBlock %}
+            {{ generalUserAssitanceHelpBlock() }}
+        </div>
+    </div>
+{% endblock %}

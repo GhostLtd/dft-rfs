@@ -1,0 +1,23 @@
+{% extends 'domestic_survey/form-base.html.twig' %}
+
+{% block oneThirdColumnContent -%}
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+        {{- 'domestic.day-summary.sidebar-summary.day'|trans({
+            dayNumber: subject.day.number,
+            date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number-1) ~ ' day') | date('F j, Y')
+        }) -}}</h2>
+    <h3 class="govuk-heading-s">{{- 'domestic.day-summary.sidebar-summary.more-than-five'|trans -}}</h3>
+    {% if subject.originLocation and subject.destinationLocation %}
+        <p class="govuk-body">
+            {{- 'domestic.day-summary.sidebar-summary.place-to-place'|trans({
+                origin: subject.originLocation,
+                destination: subject.destinationLocation,
+            }) -}}
+        </p>
+    {% endif %}
+
+    {%- block wizardContext %}
+    {% endblock %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}Sign in - {{ parent() }}{% endblock %}
+{% block metaDescription %}Sign in here to complete your international or domestic digital road haulage survey. You will need the passcodes you were sent.{% endblock %}
+
+{% block beforeContent %}
+{% endblock %}
+
+{% block content %}
+    {%- if maintenanceWarningBanner -%}
+        {% from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner %}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
+    <h1 class="govuk-heading-xl">Sign in</h1>
+    {{ form(form) }}
+{% endblock %}

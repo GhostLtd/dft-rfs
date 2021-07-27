@@ -1,0 +1,53 @@
+{% extends 'admin/report/report-base.html.twig' %}
+
+{% set translation_prefix = "admin.reports.state" %}
+
+{% block statsTable %}
+    {%- if type == 'irhs' -%}
+        {{- _self.displayIrhs(stats) -}}
+    {%- else -%}
+        {{- _self.displayCsrgt(stats) -}}
+    {%- endif -%}
+{% endblock %}
+
+{% macro displayCsrgt(stats) %}
+    {% for year, yearStats in stats %}
+        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro displayIrhs(stats) %}
+    {{ _self.displayTable(stats.data, stats.totals, stats.total) }}
+{% endmacro %}
+
+{% macro displayTable(stats, totals, totalOfTotals) %}
+    <table class="govuk-table rfs-admin-report-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Week</th>
+            <th scope="col" class="govuk-table__header">Invited</th>
+            <th scope="col" class="govuk-table__header">In progress</th>
+            <th scope="col" class="govuk-table__header">Closed</th>
+            <th scope="col" class="govuk-table__header">Approved</th>
+            <th scope="col" class="govuk-table__header">Rejected</th>
+            <th scope="col" class="govuk-table__header">Exported</th>
+            <th scope="col" class="govuk-table__header">Total</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        {% import "admin/report/macros.html.twig" as m %}
+        {% set fields = ['invited', 'in-progress', 'closed', 'approved', 'rejected', 'exported'] %}
+        {% for week, weekStats in stats %}
+            {%- set allZeros = weekStats.allZeros -%}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__header">{{ week }}</td>
+                {{ m.displayRow(weekStats.data, weekStats.total, weekStats.allZeros, fields) }}
+            </tr>
+        {% endfor %}
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header">Total</td>
+            {{ m.displayRow(totals, totalOfTotals, false, fields) }}
+        </tr>
+        </tbody>
+    </table>
+{% endmacro %}

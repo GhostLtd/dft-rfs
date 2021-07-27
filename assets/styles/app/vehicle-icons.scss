@@ -1,0 +1,28 @@
+$radioTopPadding: 15px;
+
+#vehicle_trailer_configuration_trailerConfiguration,
+#vehicle_axle_configuration_axleConfiguration {
+  label.has-icon {
+    line-height: 1.1;
+
+    &::before {
+      top: $radioTopPadding;
+    }
+
+    &::after {
+      top: $radioTopPadding + 10px;
+    }
+
+    svg {
+      width: auto;
+      height: 30px;
+    }
+
+    .or {
+      display: inline-block;
+      vertical-align: top;
+      margin: 4px 10px 0 5px;
+      font-size: 80%;
+    }
+  }
+}

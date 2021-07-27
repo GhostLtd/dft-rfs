@@ -1,0 +1,16 @@
+{% block form %}
+    {{ form_start(form) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.name) }}
+            {{ form_row(form.country) }}
+        </div>
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.goodsDescription) }}
+            {{ form_row(form.hazardousGoodsCode) }}
+            {{ form_row(form.cargoTypeCode) }}
+            {{ form_row(form.weightOfGoods) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+{% endblock %}

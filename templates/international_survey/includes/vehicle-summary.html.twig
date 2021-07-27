@@ -1,0 +1,11 @@
+{% set survey = app.user.internationalSurvey %}
+<h2 class="govuk-heading-m">{{ 'international.sidebar-summary.title'|trans }}</h2>
+
+<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period'|trans }}</h3>
+<p class="govuk-body">
+    <span class="nowrap">{{- survey.surveyPeriodStart | date('M j Y') -}}</span>
+    {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('M j Y') -}}</span>{% endif %}
+</p>
+
+<h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.vehicle'|trans }}</h3>
+<p class="govuk-body">{{ vehicle.registrationMark | formatRegMark }}</p>

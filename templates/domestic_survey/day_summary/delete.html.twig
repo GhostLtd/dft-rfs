@@ -1,0 +1,23 @@
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% set headingParams = {
+    dayNumber: subject.day.number
+} %}
+
+{% block content %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {%- with {summary: subject} -%}
+        {%- set survey = summary.day.response.survey -%}
+
+        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.heading"|trans(headingParams) }}</h1>
+
+        {%- with {showActions: false, marginBottom: 4, day: summary.day} -%}
+            {%- include "domestic_survey/includes/day-summary.html.twig" -%}
+        {%- endwith -%}
+
+        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+
+        {{- form(form) -}}
+    {%- endwith -%}
+{% endblock %}

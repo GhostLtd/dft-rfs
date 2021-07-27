@@ -1,0 +1,87 @@
+{% extends "base-common.html.twig" %}
+
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader, footer as govukFooter -%}
+
+{% block head -%}
+    {{ encore_entry_link_tags('app') }}
+    {% include 'includes/wisdom-tracking.html.twig' %}
+{%- endblock %}
+
+{% block headerBar %}
+    {{ govukHeader({
+        homepageUrl: 'https://www.gov.uk/',
+        serviceName: ('service.name' | trans),
+        serviceUrl: '/',
+        navigation: (is_granted('ROLE_SURVEY_USER')
+        ? [{href: path('app_logout'), text: 'common.logout' | trans}]
+        : false
+        ),
+    }) }}
+{% endblock %}
+
+{% block beforeMain %}
+    {% block sessionWarning %}
+    {%- if app.user -%}
+    <div data-warning="{{ sessionWarningTime() }}" data-expiry="{{ sessionExpiryTime() }}" class="{{ params.containerClasses | default('govuk-width-container') }}" id="session-reminder" style="display: none;">
+        <span class="extend">Your session will time out soon. <a href="#" class="govuk-link">Click here to extend your session.</a></span>
+        <span class="expired">Your session has expired. Any unsaved data will be lost. <a href="{{ path('app_login') }}" class="govuk-link">Click here to login.</a></span>
+    </div>
+    {%- endif -%}
+    {% endblock %}
+{% endblock %}
+
+{% block main %}
+    <div class="govuk-width-container {{ containerClasses | default('') }}">
+        {% block beforeContent -%}
+            {{ parent() }}
+        {%- endblock %}
+        <main class="govuk-main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
+            {%- from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners -%}
+            {{ flashNotificationBanners() }}
+
+            {{ _self.errorSummary(_context) }}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
+
+{% block bodyEnd %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% macro errorSummary(context) %}
+    {%- set erroringForms = context | filter(item => not (item.vars.errors.form.getErrors(true) ?? []) is empty) -%}
+    {%- if not erroringForms is empty -%}
+        <div class="govuk-error-summary govuk-visually-hidden-when-larger-than-mobile" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                {{ 'common.error-summary.problem'|trans }}
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% for form in erroringForms %}
+                        {{ _self.traverseFormShowErrors(form) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro traverseFormShowErrors(formView) %}
+    {%- for error in formView.vars.errors | default([]) -%}
+        <li><a href="#{{ formView.vars.id }}">{{ error.message }}</a></li>
+    {%- endfor -%}
+    {%- for child in formView.children -%}
+        {{- _self.traverseFormShowErrors(child) -}}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{% block footer %}
+    {{ govukFooter({
+        meta: {items: [
+            {href: path('app_home_accessibilitystatement'), text: 'Accessibility'},
+            {href: path('app_home_privacystatement'), text: 'Privacy'},
+        ]}
+    }) }}
+{% endblock %}

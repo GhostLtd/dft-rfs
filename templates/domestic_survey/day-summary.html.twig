@@ -1,0 +1,22 @@
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% set translation_prefix = 'domestic.day-view' %}
+
+{% set headingParams = {
+    date: day.response.survey.surveyPeriodStartModifiedBy('+' ~ (day.number-1) ~ ' days')
+} %}
+
+{% block content %}
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.day-view.heading' | trans(headingParams) }}</h1>
+
+    {%- if day.hasMoreThanFiveStops -%}
+        {%- include "domestic_survey/includes/view-summary-day.html.twig" -%}
+    {%- else -%}
+        {%- include "domestic_survey/includes/view-detailed-day.html.twig" -%}
+    {%- endif -%}
+
+    <p class="govuk-body">
+        {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+        <a class="govuk-link" href="{{ path(summaryRoute) }}">{{ 'common.actions.back-to-dashboard' | trans }}</a>
+    </p>
+{% endblock %}

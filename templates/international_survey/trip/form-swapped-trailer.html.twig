@@ -1,0 +1,11 @@
+{% set translation_prefix = 'international.trip.swapped-trailer' %}
+{% form_theme form.axleConfiguration 'domestic_survey/vehicle_and_business_details/theme-vehicle-icons.html.twig' %}
+{% extends 'international_survey/trip/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <h2 class="govuk-heading-s">{{ "#{translation_prefix}.original-axle-config"|trans }}</h2>
+    <p class="govuk-body govuk-!-margin-bottom-9">
+        {%- from 'macros.html.twig' import displayAxleConfiguration -%}
+        {{ displayAxleConfiguration(subject.vehicle.axleConfiguration) }}
+    </p>
+{% endset %}

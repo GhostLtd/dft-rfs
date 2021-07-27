@@ -1,0 +1,69 @@
+{%- extends 'base-pdf.html.twig' %}
+
+{%- block pageTitle -%}
+    IRHS survey &ndash; {{ survey.surveyPeriodStart | date ('Y-m-d') }}
+{%- endblock -%}
+
+{%- block header -%}
+    {{- block('pageTitle') -}}
+{%- endblock -%}
+
+{% block footer -%}
+    Page {PAGE_NUM} of {PAGE_COUNT}
+{%- endblock %}
+
+{%- block content -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
+
+    <h1 class="govuk-heading-xl">Survey details</h1>
+    <hr class="govuk-section-break govuk-section-break--xl">
+    <dl class="govuk-summary-list">
+        {{- row('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) -}}
+    </dl>
+
+    <div class="international-business-details">
+        <h1 class="govuk-heading-xl">Business details</h1>
+        <hr class="govuk-section-break govuk-section-break--xl">
+        {%- with {showActions: false, showTitle: false, response: survey.response} -%}
+            {%- include "international_survey/includes/business-details.html.twig" -%}
+        {%- endwith -%}
+    </div>
+
+    {%- if survey.response and (survey.response.vehicles is not empty) -%}
+        {%- for vehicle in survey.response.vehicles -%}
+            <div class="international-vehicle-details" style="page-break-before: always;">
+                <h1 class="govuk-heading-xl international-vehicle-header">Vehicle — {{ vehicle.registrationMark|formatRegMark }}</h1>
+                <hr class="govuk-section-break govuk-section-break--xl international-section-break">
+
+                <h2 class="govuk-heading-l">Vehicle details</h2>
+                {%- with {vehicle: vehicle, showActions: false} -%}
+                    {%- include "international_survey/includes/vehicle.html.twig" -%}
+                {%- endwith -%}
+
+                {%- for trip in vehicle.trips -%}
+                    {%- set srTripIdentifier = trip.outboundDate | date('d/m/Y') -%}
+                    <h2 class="govuk-heading-l admin-surveys__trip-header">
+                        Trip #{{ loop.index }} &mdash; {{ trip.outboundDate | date('d/m/Y') -}}
+                    </h2>
+                    {%- with {showActions: false, trip: trip} -%}
+                        {%- include "international_survey/includes/trip.html.twig" -%}
+                    {%- endwith -%}
+
+                    <div class="international-loading-unloading-places">
+                        <h3 class="govuk-heading-m">Places where goods were loaded or unloaded</h3>
+                        {%- if trip.actions is not empty -%}
+                            {%- with {trip: trip, isAdmin: true, showActions: false} -%}
+                                {%- include "international_survey/includes/actions.html.twig" -%}
+                            {%- endwith -%}
+                        {%- else -%}
+                            <div class="govuk-body">No loading or unloading places</div>
+                        {%- endif -%}
+                    </div>
+                {%- else -%}
+                    <p class="govuk-body">No trips</p>
+                {%- endfor -%}
+            </div>
+        {%- endfor -%}
+    {%- endif -%}
+{%-  endblock -%}
+

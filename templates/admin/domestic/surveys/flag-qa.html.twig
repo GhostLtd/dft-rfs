@@ -1,0 +1,12 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{%- set headingDomain = translation_domain %}
+{%- set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- with {showActions: false, survey: subject, response: subject.response, marginBottom: 4} -%}
+        {%- include "admin/domestic/includes/survey-basics.html.twig" -%}
+    {%- endwith -%}
+
+    {{ form(form) }}
+{%- endblock -%}
