@@ -64,4 +64,13 @@ class HomeController extends AbstractController
     {
         return [];
     }
+
+    /**
+     * @Route("/privacy-statement")
+     * @Template("home/privacy-statement.html.twig")
+     */
+    public function privacyStatement()
+    {
+        return [];
+    }
 }
