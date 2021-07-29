@@ -155,11 +155,13 @@ class ReportsController extends AbstractController
                 break;
         }
 
+        $isDomestic = $type !== ReportFilterType::TYPE_IRHS;
+
         return $this->render('admin/report/state.html.twig', array_merge($form->getData(), [
             'stats' => $stats ?? null,
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
-            'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn(),
+            'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn($isDomestic),
         ]));
     }
 

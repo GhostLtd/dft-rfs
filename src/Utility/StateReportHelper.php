@@ -2,21 +2,28 @@
 
 namespace App\Utility;
 
+use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\SurveyInterface;
 
 class StateReportHelper
 {
-    public function getStateReportMappingsByColumn(): array {
+    public function getStateReportMappingsByColumn(bool $isDomestic): array {
         $mappings = [];
 
-        foreach([
-                    SurveyInterface::STATE_INVITATION_SENT,
-                    SurveyInterface::STATE_IN_PROGRESS,
-                    SurveyInterface::STATE_CLOSED,
-                    SurveyInterface::STATE_REJECTED,
-                    SurveyInterface::STATE_EXPORTED,
-                    SurveyInterface::STATE_APPROVED,
-                ] as $column) {
+        $columns = [
+            SurveyInterface::STATE_INVITATION_SENT,
+            SurveyInterface::STATE_IN_PROGRESS,
+            SurveyInterface::STATE_CLOSED,
+            SurveyInterface::STATE_REJECTED,
+            SurveyInterface::STATE_EXPORTED,
+            SurveyInterface::STATE_APPROVED,
+        ];
+
+        if ($isDomestic) {
+            $columns[] = DomesticSurvey::STATE_REISSUED;
+        }
+
+        foreach($columns as $column) {
             $mappings[$column] = [$column];
         }
 

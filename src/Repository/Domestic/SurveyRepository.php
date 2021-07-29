@@ -150,6 +150,7 @@ class SurveyRepository extends ServiceEntityRepository
                         SurveyInterface::STATE_REJECTED => 0,
                         SurveyInterface::STATE_EXPORTED => 0,
                         SurveyInterface::STATE_APPROVED => 0,
+                        Survey::STATE_REISSUED => 0,
                     ],
                 ];
             }
@@ -239,9 +240,9 @@ class SurveyRepository extends ServiceEntityRepository
             ->setParameter('closedStates', [
                 SurveyInterface::STATE_CLOSED,
                 SurveyInterface::STATE_APPROVED,
-                SurveyInterface::STATE_REJECTED,
                 SurveyInterface::STATE_EXPORTING,
                 SurveyInterface::STATE_EXPORTED,
+                Survey::STATE_REISSUED,
             ]);
 
         $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);

@@ -52,6 +52,7 @@
             <th scope="col" class="govuk-table__header">Invited</th>
             <th scope="col" class="govuk-table__header">In progress</th>
             <th scope="col" class="govuk-table__header">Closed</th>
+            <th scope="col" class="govuk-table__header">Reissued</th>
             <th scope="col" class="govuk-table__header">Approved</th>
             <th scope="col" class="govuk-table__header">Rejected</th>
             <th scope="col" class="govuk-table__header">Exported</th>
@@ -60,7 +61,7 @@
         </thead>
         <tbody class="govuk-table__body">
         {% import "admin/report/macros.html.twig" as m %}
-        {% set fields = ['invited', 'in-progress', 'closed', 'approved', 'rejected', 'exported'] %}
+        {% set fields = ['invited', 'in-progress', 'closed', 'reissued', 'approved', 'rejected', 'exported'] %}
         {% for week, weekStats in stats %}
             {%- set allZeros = weekStats.allZeros -%}
             <tr class="govuk-table__row">
