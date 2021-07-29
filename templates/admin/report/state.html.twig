@@ -4,23 +4,23 @@
 
 {% block statsTable %}
     {%- if type == 'irhs' -%}
-        {{- _self.displayIrhs(stateMappings, stats) -}}
+        {{- _self.displayIrhs(stateMappings, stats, excludeFromTotals) -}}
     {%- else -%}
-        {{- _self.displayCsrgt(stateMappings, stats) -}}
+        {{- _self.displayCsrgt(stateMappings, stats, excludeFromTotals) -}}
     {%- endif -%}
 {% endblock %}
 
-{% macro displayCsrgt(stateMappings, stats) %}
+{% macro displayCsrgt(stateMappings, stats, excludeFromTotals) %}
     {% for year, yearStats in stats %}
-        {{ _self.displayTable(stateMappings, yearStats.data, yearStats.totals, yearStats.total) }}
+        {{ _self.displayTable(stateMappings, yearStats.data, yearStats.totals, yearStats.total, excludeFromTotals) }}
     {% endfor %}
 {% endmacro %}
 
-{% macro displayIrhs(stateMappings, stats) %}
-    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total) }}
+{% macro displayIrhs(stateMappings, stats, excludeFromTotals) %}
+    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals) }}
 {% endmacro %}
 
-{% macro displayTable(stateMappings, stats, totals, totalOfTotals) %}
+{% macro displayTable(stateMappings, stats, totals, totalOfTotals, excludeFromTotals) %}
     <details class="govuk-details" data-module="govuk-details">
         <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
@@ -45,6 +45,9 @@
             </table>
         </div>
     </details>
+    <p class="govuk-body">
+        N.B. Reissued surveys are not included in row totals.
+    </p>
     <table class="govuk-table rfs-admin-report-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
@@ -62,12 +65,12 @@
             {%- set allZeros = weekStats.allZeros -%}
             <tr class="govuk-table__row">
                 <td class="govuk-table__header">{{ week }}</td>
-                {{ m.displayRow(weekStats.data, weekStats.total, weekStats.allZeros, fields) }}
+                {{ m.displayRow(weekStats.data, weekStats.total, weekStats.allZeros, fields, excludeFromTotals) }}
             </tr>
         {% endfor %}
         <tr class="govuk-table__row">
             <td class="govuk-table__header">Total</td>
-            {{ m.displayRow(totals, totalOfTotals, false, fields) }}
+            {{ m.displayRow(totals, totalOfTotals, false, fields, excludeFromTotals) }}
         </tr>
         </tbody>
     </table>

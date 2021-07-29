@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Form\Admin\ReportFilterType;
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
@@ -140,15 +141,19 @@ class ReportsController extends AbstractController
             return new RedirectResponse($this->generateUrl('admin_reports_state_full', $form->getData()));
         }
 
+        $excludeFromTotals = [
+            DomesticSurvey::STATE_REISSUED,
+        ];
+
         switch($type) {
             case ReportFilterType::TYPE_CSRGT:
-                $stats = $this->domesticRepo->getStateReportStats(null, $start, $end);
+                $stats = $this->domesticRepo->getStateReportStats(null, $start, $end, $excludeFromTotals);
                 break;
             case ReportFilterType::TYPE_CSRGT_GB:
-                $stats = $this->domesticRepo->getStateReportStats(false, $start, $end);
+                $stats = $this->domesticRepo->getStateReportStats(false, $start, $end, $excludeFromTotals);
                 break;
             case ReportFilterType::TYPE_CSRGT_NI:
-                $stats = $this->domesticRepo->getStateReportStats(true, $start, $end);
+                $stats = $this->domesticRepo->getStateReportStats(true, $start, $end, $excludeFromTotals);
                 break;
             case ReportFilterType::TYPE_IRHS:
                 $stats = $this->internationalRepo->getStateReportStats($start, $end);
@@ -162,6 +167,7 @@ class ReportsController extends AbstractController
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
             'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn($isDomestic),
+            'excludeFromTotals' => $excludeFromTotals,
         ]));
     }
 

@@ -121,7 +121,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, array $excludeFromTotals = []): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart) AS surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
@@ -168,7 +168,7 @@ class SurveyRepository extends ServiceEntityRepository
             $stats[$year]['data'][$week]['data'][$state] = $result['count'];
         }
 
-        return $this->addTotalsAndFlags($stats);
+        return $this->addTotalsAndFlags($stats, $excludeFromTotals);
     }
 
     public function getMinimumAndMaximumYear(): array
@@ -324,7 +324,7 @@ class SurveyRepository extends ServiceEntityRepository
         return [$firstWeek, $firstYear, $lastWeek, $lastYear];
     }
 
-    protected function addTotalsAndFlags(array $stats): array
+    protected function addTotalsAndFlags(array $stats, array $excludeFromTotals=[]): array
     {
         foreach ($stats as $year => $yearsStats) {
             $totals = [];
@@ -333,7 +333,10 @@ class SurveyRepository extends ServiceEntityRepository
                 $allZeros = true;
                 $total = 0;
                 foreach ($weekStats['data'] as $name => $data) {
-                    $total += $data;
+                    if (!in_array($name, $excludeFromTotals)) {
+                        $total += $data;
+                    }
+
                     if ($data > 0) {
                         $allZeros = false;
                     }
