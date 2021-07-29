@@ -74,7 +74,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
-            'validation_groups' => 'add_survey',
+            'validation_groups' => ['add_survey', 'notify_api'],
         ]);
     }
 
