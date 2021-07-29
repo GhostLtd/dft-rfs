@@ -49,19 +49,16 @@
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Week</th>
-            <th scope="col" class="govuk-table__header">Invited</th>
-            <th scope="col" class="govuk-table__header">In progress</th>
-            <th scope="col" class="govuk-table__header">Closed</th>
-            <th scope="col" class="govuk-table__header">Reissued</th>
-            <th scope="col" class="govuk-table__header">Approved</th>
-            <th scope="col" class="govuk-table__header">Rejected</th>
-            <th scope="col" class="govuk-table__header">Exported</th>
+            {% for state in stateMappings|keys %}
+            <th scope="col" class="govuk-table__header">{{ state|capitalize }}</th>
+            {% endfor %}
             <th scope="col" class="govuk-table__header">Total</th>
         </tr>
         </thead>
         <tbody class="govuk-table__body">
         {% import "admin/report/macros.html.twig" as m %}
-        {% set fields = ['invited', 'in-progress', 'closed', 'reissued', 'approved', 'rejected', 'exported'] %}
+        {% dump stateMappings %}
+        {% set fields = stateMappings|keys %}
         {% for week, weekStats in stats %}
             {%- set allZeros = weekStats.allZeros -%}
             <tr class="govuk-table__row">
