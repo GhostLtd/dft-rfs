@@ -57,7 +57,6 @@
         </thead>
         <tbody class="govuk-table__body">
         {% import "admin/report/macros.html.twig" as m %}
-        {% dump stateMappings %}
         {% set fields = stateMappings|keys %}
         {% for week, weekStats in stats %}
             {%- set allZeros = weekStats.allZeros -%}
