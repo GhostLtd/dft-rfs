@@ -15,12 +15,13 @@ class AdminSurveyVoter extends Voter
     const EDIT_NOTES = 'EDIT_NOTES';
     const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
     const FLAG_QA = 'FLAG_QA';
+    const RESEND = 'RESEND';
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
 
     protected function supports($attribute, $subject)
     {
-        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES])
+        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES, self::RESEND])
             && $subject instanceof SurveyInterface;
 
         $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA])
@@ -54,6 +55,8 @@ class AdminSurveyVoter extends Voter
                 return in_array($state, $openStatusesOrClosed) && (!is_null($subject->getPasscodeUser()));
             case self::RESET_PASSCODE:
                 return in_array($state, $openStatuses) && (!is_null($subject->getPasscodeUser()));
+            case self::RESEND:
+                return $state === SurveyInterface::STATE_INVITATION_FAILED;
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);

@@ -254,6 +254,10 @@ admin:
       heading: Add CSRGT survey
     survey-add-success:
       heading: CSRGT Survey created
+    survey-resend:
+      heading: Resend CSRGT survey
+    survey-resend-success:
+      heading: CSRGT Survey resent
     import:
       heading: CSRGT DVLA bulk import
     import-review:
@@ -285,6 +289,7 @@ admin:
         help: ''
       submit:
         label: Add survey
+        resend-label: Resend survey
     survey-created:
       registration-mark: Registration mark
       type: Type
@@ -356,6 +361,10 @@ admin:
       heading: Add IRHS survey
     survey-add-success:
       heading: IRHS Survey created
+    survey-resend:
+      heading: Resend IRHS survey
+    survey-resend-success:
+      heading: IRHS Survey resent
     company:
       business-name:
         label: Business name
@@ -383,6 +392,7 @@ admin:
         help: There is no need to add the business name to the invitation address
       submit:
         label: Add survey
+        resend-label: Resend survey
     survey-created:
       invitation-email: Invitation email
       invitation-address: Invitation address

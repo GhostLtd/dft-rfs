@@ -21,12 +21,14 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ->addModelTransformer($this)
             ->add('company', CompanyType::class, [
                 'label' => false,
+                'disabled' => $options['is_resend'],
             ])
             ->add('referenceNumber', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.reference-number.label",
                 'help' => "{$translationKeyPrefix}.reference-number.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'disabled' => $options['is_resend'],
             ])
             ->add('surveyPeriodStart', Gds\DateType::class, [
                 'label' => "{$translationKeyPrefix}.period-start.label",
@@ -61,7 +63,9 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
-                'label' => "{$translationKeyPrefix}.submit.label",
+                'label' => $options['is_resend'] ?
+                        "{$translationKeyPrefix}.submit.resend-label" :
+                        "{$translationKeyPrefix}.submit.label",
             ])
             ->add('cancel', Gds\ButtonType::class, [
                 'type' => 'submit',
@@ -75,6 +79,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
         $resolver->setDefaults([
             'data_class' => Survey::class,
             'validation_groups' => 'add_survey',
+            'is_resend' => false,
         ]);
     }
 

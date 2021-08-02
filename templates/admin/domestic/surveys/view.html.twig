@@ -10,6 +10,7 @@
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canEnterVehicleAndBusinessDetails = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::ENTER_BUSINESS_AND_VEHICLE_DETAILS'), survey) -%}
+    {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
@@ -87,6 +88,9 @@
         {%- endif -%}
         {%- if canResetPasscode -%}
         <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+        {%- endif -%}
+        {%- if canResend -%}
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
         {%- endif -%}
     </div>
 
