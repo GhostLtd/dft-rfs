@@ -37,6 +37,7 @@ class AddSurveyType extends AbstractType
                 'label' => "{$translationKeyPrefix}.start-date.label",
                 'help' => "{$translationKeyPrefix}.start-date.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'disabled' => $options['is_resend'],
             ])
             ->add('invitationEmail', Gds\EmailType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-email.label",

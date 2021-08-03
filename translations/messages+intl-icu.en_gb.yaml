@@ -422,7 +422,7 @@ admin:
       content: The request to delete the note was cancelled
   pre-enquiry:
     add:
-      heading: Add pre-enquiry
+      heading: Add Pre-enquiry
       reference-number:
         label: Reference number
         help: ''
@@ -434,10 +434,17 @@ admin:
         help: ''
       submit:
         label: Add
+        resend-label: Resend pre-enquiry
     add-success:
-      heading: IRHS Pre-Enquiry created
+      heading: IRHS Pre-enquiry created
+    resend:
+      heading: Resend IRHS Pre-enquiry
+    resend-success:
+      heading: IRHS Pre-enquiry resent
+    created:
       company-name: Company name
       invitation-email: Invitation email
+      invitation-address: Invitation address
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
     edit-response:
