@@ -8,14 +8,17 @@
     {{ _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponse(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
         'App\\Messenger\\AlphagovNotify\\Letter',
+        true
     ))) }}
     {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponse(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
         'App\\Messenger\\AlphagovNotify\\Letter',
+        true
     ))) }}
     {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponse(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
         'App\\Messenger\\AlphagovNotify\\Letter',
+        true
     ))) }}
 </dl>
 
@@ -26,19 +29,23 @@
     </div>
 {%- endmacro -%}
 
-{%- macro notificationStatus(apiResponse) -%}
+{%- macro notificationStatus(apiResponses) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
-    {%- if apiResponse -%}
-        {%- set status = apiResponse[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
-        {{- tag({text: status, classes: ("admin.notify.status.#{status}" | trans)}) -}}
-        <span class="govuk-body-s">
-            {{ apiResponse['timestamp'] | date('Y-m-d H:i') -}}
-            {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
-                {%- for error in apiResponse.errors -%}
-                    <br>{{- error.error }}: {{ error.message | nl2br -}}
-                {%- endfor -%}
-            {%- endif -%}
-        </span>
+    {%- if apiResponses -%}
+        {% for response in apiResponses %}
+            <div class="api-response">
+                {%- set status = response[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
+                {{- tag({text: status, classes: ("admin.notify.status.#{status}" | trans)}) -}}
+                <span class="govuk-body-s">
+                    {{ response['timestamp'] | date('Y-m-d H:i') -}}
+                    {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
+                        {%- for error in response.errors -%}
+                            <br>{{- error.error }}: {{ error.message | nl2br -}}
+                        {%- endfor -%}
+                    {%- endif -%}
+                </span>
+            </div>
+        {% endfor %}
     {%- else -%}
         -
     {%- endif -%}

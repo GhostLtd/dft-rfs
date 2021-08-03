@@ -22,8 +22,8 @@
                 <a href="{{ mailLink }}">email link</a>
             </dd>
         </div>
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.invitation-address', survey.invitationAddress.isFilled ?
-            (survey.invitationAddress | formatAddress(true)) :
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.invitation-address', preEnquiry.invitationAddress.isFilled ?
+            (preEnquiry.invitationAddress | formatAddress(true)) :
         '-', null) }}
         {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
         {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', preEnquiry.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
