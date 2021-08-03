@@ -29,5 +29,7 @@
         {{ actionlessSummaryListRow('admin.international.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
         {{ actionlessSummaryListRow('admin.international.survey-created.access-code-2', survey.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
     </dl>
+
+    <a class="govuk-button" href="{{ path('admin_international_survey_view', {surveyId: survey.id}) }}">View survey</a>
 {% endblock %}
 
