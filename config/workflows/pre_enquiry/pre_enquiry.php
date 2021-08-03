@@ -41,7 +41,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_INVITATION_FAILED,
                     ],
                     'started' => [
-                        'from' => [StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_PENDING, StateObject::STATE_NEW],
+                        'from' => [StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_PENDING, StateObject::STATE_NEW, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [
