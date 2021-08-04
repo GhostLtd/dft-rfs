@@ -73,20 +73,21 @@
     </caption>
 {%- endmacro -%}
 
-{%- macro locationAndStatus(location, loaded, port, isOrigin) -%}
+{%- macro locationAndStatus(location, loaded, showLoaded, port, isOrigin) -%}
     {{- location|formatPotentialPostcode -}}
     {%- set type = _self.transfer(port) %}
     {%- if loaded -%}
-        {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
+        {%- if showLoaded -%}
+            <br><span>{{ (isOrigin ?? true) ? 'Loaded' : 'Unloaded' }}
+            {%- if type != '' %} ({{ type }}){% endif -%}</span>
+        {%- else -%}
+            {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
+        {%- endif -%}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro transfer(xfer) -%}
-    {%- if xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_AIR') -%}
-        Airport
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_PORT') -%}
-        Ports/docks
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_RAIL') -%}
-        Rail siding/terminal
+    {%- if xfer != constant('App\\Entity\\Domestic\\Day::TRANSFERRED_NONE') -%}
+        {{- "domestic.transferred-port.options.#{xfer}" | trans -}}
     {%- endif -%}
 {%- endmacro -%}

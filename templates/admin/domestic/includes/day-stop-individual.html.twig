@@ -6,8 +6,8 @@
 {%- set isNorthernIreland = stop.day.response.survey.isNorthernIreland -%}
 
 <tr class="govuk-table__row" id="{{ stop.id }}">
-    {{- tableCell(locationAndStatus(stop.originLocation, stop.goodsLoaded, stop.goodsTransferredFrom), {class: 'journeys-table__load-status'}) -}}
-    {{- tableCell(locationAndStatus(stop.destinationLocation, stop.goodsUnloaded, stop.goodsTransferredTo, false), {class: 'journeys-table__load-status'}) -}}
+    {{- tableCell(locationAndStatus(stop.originLocation, stop.goodsLoaded, true, stop.goodsTransferredFrom), {class: 'journeys-table__load-status'}) -}}
+    {{- tableCell(locationAndStatus(stop.destinationLocation, stop.goodsUnloaded, true, stop.goodsTransferredTo, false), {class: 'journeys-table__load-status'}) -}}
 
     {%- if isNorthernIreland -%}
         {{- tableCell(stop.borderCrossingLocation | default('-')) -}}
