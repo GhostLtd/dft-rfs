@@ -247,10 +247,10 @@
 {%- block gds_choice_widget_expanded -%}
     {%- set blockPrefix = multiple ? 'gds_checkbox' : 'gds_radio' -%}
     {%- set classPrefix = multiple ? 'govuk-checkboxes' : 'govuk-radios' -%}
-    {%- set attr = attr|merge({
-        class: (classPrefix ~ ' ' ~
-        attr.class|default(''))|trim
-    }) -%}
+    {%- set dataModuleAttr = multiple ? {'data-module': 'govuk-checkboxes'} : {} -%}
+    {%- set attr = attr | merge({
+        class: (classPrefix ~ ' ' ~ attr.class|default(''))|trim
+    }) | merge(dataModuleAttr) -%}
     <div {{ block('widget_container_attributes') }}>
 
         {%- set isGrouped = (form.vars.choices | first).choices is defined -%}
