@@ -63,6 +63,7 @@ trait SurveyTrait
     /**
      * @ORM\Embedded(class=LongAddress::class)
      * @AppAssert\ValidAddress(groups={"add_survey", "import_survey"}, validatePostcode=true, allowBlank=true)
+     * @Assert\Valid(groups={"add_srvuey", "import_survey", "notify_api"})
      *
      * @var LongAddress|null
      */

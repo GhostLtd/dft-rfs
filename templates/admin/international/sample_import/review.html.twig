@@ -18,9 +18,8 @@
             {% for failed in invalidData %}
                 <kbd>{{ failed[4] }}</kbd><br>
             {% endfor %}
-            {% for failed in invalidSurveys %}
-                <kbd>{{ failed.company.businessName }}</kbd><br>
-            {% endfor %}
+            {% from "admin/macros/notify.html.twig" import showValidationFailures %}
+            {{ showValidationFailures(invalidSurveys, 'company.businessName') }}
         </p>
     {% endif %}
 
