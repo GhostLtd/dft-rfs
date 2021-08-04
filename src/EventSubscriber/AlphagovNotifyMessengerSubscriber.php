@@ -90,7 +90,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 
         if ($entity) {
             $workflow = $this->workflowRegistry->get($entity);
-            $entity->setNotifyApiResponse($message->getEventName(), get_class($message), $notifyApiResponse);
+            $entity->addNotifyApiResponse($message->getEventName(), get_class($message), $notifyApiResponse);
             if ($notifyApiResponse[self::STATUS_KEY] === Reference::STATUS_ACCEPTED) {
                 if ($workflow->can($entity, 'invitation_sent')) {
                     $workflow->apply($entity, 'invitation_sent');

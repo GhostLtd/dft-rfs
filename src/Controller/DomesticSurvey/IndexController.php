@@ -76,7 +76,7 @@ class IndexController extends AbstractController
             return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
         }
 
-        return $this->render('domestic_survey/completed.html.twig', [
+        return $this->render('domestic_survey/thanks.html.twig', [
             'survey' => $survey,
         ]);
     }

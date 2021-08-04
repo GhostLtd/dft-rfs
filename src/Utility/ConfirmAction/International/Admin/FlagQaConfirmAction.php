@@ -40,7 +40,7 @@ class FlagQaConfirmAction extends AbstractConfirmAction
         return "common.survey.flag-qa";
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $survey = $this->getSubject();
 

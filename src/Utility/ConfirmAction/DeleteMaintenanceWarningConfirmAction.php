@@ -2,10 +2,7 @@
 
 namespace App\Utility\ConfirmAction;
 
-use App\Entity\Domestic\DayStop;
 use App\Entity\Utility\MaintenanceWarning;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\Domestic\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -45,7 +42,7 @@ class DeleteMaintenanceWarningConfirmAction extends AbstractConfirmAction
         return 'admin.maintenance-warning.delete';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

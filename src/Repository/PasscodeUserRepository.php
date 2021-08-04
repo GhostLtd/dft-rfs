@@ -37,15 +37,15 @@ class PasscodeUserRepository extends ServiceEntityRepository implements Password
         $this->appEnvironment = $appEnvironment;
     }
 
-    /**
-     * @return PasscodeUser
-     */
-    public function createNewPasscodeUser()
+    public function createNewPasscodeUser(): PasscodeUser
     {
-        return (new PasscodeUser())
-            ->setUsername($this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode())
-            ;
+        $passcodeUser = (new PasscodeUser())->setUsername($this->passcodeGenerator->generatePasscode());
+        return $this->generateAndSetNewPassword($passcodeUser);
+    }
+
+    public function generateAndSetNewPassword(PasscodeUser $passcodeUser): PasscodeUser
+    {
+        return $passcodeUser->setPlainPassword($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode());
     }
 
     /**

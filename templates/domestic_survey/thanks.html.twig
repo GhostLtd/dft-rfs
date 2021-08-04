@@ -7,7 +7,7 @@
         <h1 class="govuk-panel__title">{{ (translation_prefix ~ '.heading')|trans }}</h1>
         <div class="govuk-panel__body">
             {{ (translation_prefix ~ '.reference-number')|trans }}<br>
-            <strong>{{ survey.surveyPeriodStart | date('Y') }}-{{ survey.registrationMark }}</strong>
+            <strong>{{ survey.referenceNumber }}</strong>
         </div>
     </div>
     <p class="govuk-body">

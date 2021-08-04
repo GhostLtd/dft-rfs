@@ -37,7 +37,7 @@ class DeleteTripConfirmAction extends AbstractConfirmAction
         return 'international.trip-delete';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->deleteHelper->deleteTrip($this->subject);
     }

@@ -56,7 +56,7 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
         return "common.survey.workflow-transition";
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->preEnquiryStateMachine->apply($this->getSubject(), $this->transition);
         $this->entityManager->flush();

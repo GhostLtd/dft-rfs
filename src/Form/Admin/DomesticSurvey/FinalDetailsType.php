@@ -54,8 +54,9 @@ class FinalDetailsType extends AbstractType
                 }
 
                 $form
-                    ->add('submit', Gds\ButtonType::class, [
-                        'label' => 'Save changes',
+                    ->add($options['submit_name'], Gds\ButtonType::class, [
+                        'label' => $options['submit_label'],
+                        'translation_domain' => $options['label_translation_domain']
                     ])
                     ->add('cancel', Gds\ButtonType::class, [
                         'label' => 'Cancel',
@@ -68,6 +69,9 @@ class FinalDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
+            'submit_name' => 'submit',
+            'submit_label' => 'Save changes',
+            'label_translation_domain' => null,
         ]);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {

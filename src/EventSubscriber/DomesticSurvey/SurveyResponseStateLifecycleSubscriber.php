@@ -3,9 +3,7 @@
 namespace App\EventSubscriber\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Repository\PasscodeUserRepository;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events as OrmEvents;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -13,17 +11,9 @@ use Symfony\Component\Workflow\WorkflowInterface;
 class SurveyResponseStateLifecycleSubscriber implements EventSubscriber
 {
     private WorkflowInterface $domesticSurveyStateMachine;
-    private EntityManagerInterface $entityManager;
-    private PasscodeUserRepository $passcodeUserRepository;
 
-    public function __construct(
-        WorkflowInterface $domesticSurveyStateMachine,
-        EntityManagerInterface $entityManager,
-        PasscodeUserRepository $passcodeUserRepository
-    ) {
+    public function __construct(WorkflowInterface $domesticSurveyStateMachine) {
         $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
-        $this->entityManager = $entityManager;
-        $this->passcodeUserRepository = $passcodeUserRepository;
     }
 
     public function prePersist(LifecycleEventArgs $args)

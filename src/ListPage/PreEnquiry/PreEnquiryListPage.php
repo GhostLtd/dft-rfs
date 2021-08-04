@@ -24,7 +24,7 @@ class PreEnquiryListPage extends AbstractListPage
 
     protected function getFieldsDefinition(): array
     {
-        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
+        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
             (new TextFilter('Company name', 'company.businessName'))->sortable(),

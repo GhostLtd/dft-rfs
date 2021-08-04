@@ -18,6 +18,19 @@ class PreEnquiry implements SurveyInterface
 {
     use SurveyTrait;
 
+    const STATE_FILTER_CHOICES = [
+        self::STATE_NEW,
+        self::STATE_INVITATION_PENDING,
+        self::STATE_INVITATION_SENT,
+        self::STATE_INVITATION_FAILED,
+        self::STATE_IN_PROGRESS,
+        self::STATE_CLOSED,
+        self::STATE_APPROVED,
+        self::STATE_REJECTED,
+        self::STATE_EXPORTING,
+        self::STATE_EXPORTED,
+    ];
+
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
      */

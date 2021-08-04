@@ -15,25 +15,25 @@
 {% block content %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
 
-    {%- set isInPossession = survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
-
     <h1 class="govuk-heading-xl">Survey details</h1>
     <hr class="govuk-section-break govuk-section-break--xl">
     <dl class="govuk-summary-list">
-        {%- set vehicle = survey.response.vehicle -%}
         {{- row('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) -}}
         {{- row('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) -}}
 
-        {{- row(
-            'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label',
-            (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans
-        ) -}}
+        {% if survey.response %}
+            {{- row(
+                'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label',
+                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans
+            ) -}}
+        {% endif %}
 
         {# Contact details have been left out intentionally, for data protection purposes #}
     </dl>
 
+    {%- set isInPossession = (survey.response.isInPossessionOfVehicle ?? false) == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
 
-    {%- if isInPossession and survey.response -%}
+    {%- if isInPossession -%}
         <h1 class="govuk-heading-xl">Business details</h1>
         <hr class="govuk-section-break govuk-section-break--xl">
         {%- if not survey.isBusinessAndVehicleDetailsComplete -%}

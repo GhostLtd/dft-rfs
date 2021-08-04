@@ -189,15 +189,25 @@ trait SurveyTrait
         return $this->notifyApiResponses;
     }
 
-    public function getNotifyApiResponse(string $eventName, string $notificationClass): ?array
+    public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array
     {
-        return $this->notifyApiResponses["{$eventName}::{$notificationClass}"] ?? null;
+        $response = $this->notifyApiResponses["{$eventName}::{$notificationClass}"] ?? null;
+
+        if ($sorted && is_array($response)) {
+            usort($response, fn($a, $b) => ($b['timestamp'] ?? null) <=> ($a['timestamp'] ?? null));
+        }
+
+        return $response;
     }
 
-    public function setNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self
+    public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self
     {
-        if (!is_array($this->notifyApiResponses)) $this->notifyApiResponses = [];
-        $this->notifyApiResponses["{$eventName}::{$notificationClass}"] = $notifyApiResponse;
+        if (!is_array($this->notifyApiResponses)) {
+            $this->notifyApiResponses = [];
+        }
+
+        $key = "{$eventName}::{$notificationClass}";
+        $this->notifyApiResponses[$key] = array_merge($this->notifyApiResponses[$key] ?? [], [$notifyApiResponse]);
         return $this;
     }
 

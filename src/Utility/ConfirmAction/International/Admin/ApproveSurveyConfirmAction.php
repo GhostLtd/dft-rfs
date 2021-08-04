@@ -33,7 +33,7 @@ class ApproveSurveyConfirmAction extends AbstractConfirmAction
         return 'international.approve-survey';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->internationalSurveyStateMachine->apply($this->getSubject(), 'approve');
     }

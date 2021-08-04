@@ -27,7 +27,7 @@ class SurveyListPage extends AbstractListPage
 
     protected function getFieldsDefinition(): array
     {
-        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_CHOICES), Survey::STATE_CHOICES);
+        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Ref. no.', 'survey.referenceNumber'))->sortable(),
             (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),

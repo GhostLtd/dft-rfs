@@ -10,3 +10,7 @@
     float: right;
   }
 }
+
+.api-response + .api-response {
+  @include govuk-responsive-margin(4, "top");
+}
