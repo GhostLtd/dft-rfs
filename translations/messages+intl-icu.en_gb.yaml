@@ -535,14 +535,14 @@ domestic:
     scrapped-details:
       date:
         label: 'When was the vehicle scrapped or stolen?'
-        help: ''
+        help: 'If the vehicle was scrapped or stolen after the end of the survey period, this would be classed as being in possession of the vehicle'
 
     sold-details:
       heading: 'Details of the sale'
       help: 'Provide details for the sale, including contact details for the new owner'
       date:
         label: "When was the vehicle sold?"
-        help: ''
+        help: 'If the vehicle was sold after the end of the survey period, this would be classed as being in possession of the vehicle'
       new-owner-name:
         label: "What is the new owner's name?"
         help: ''

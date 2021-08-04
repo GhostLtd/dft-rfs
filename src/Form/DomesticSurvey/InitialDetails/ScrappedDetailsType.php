@@ -15,6 +15,7 @@ class ScrappedDetailsType extends AbstractType
         $builder
             ->add('scrappedDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.scrapped-details.date.label',
+                'help' => 'domestic.survey-response.scrapped-details.date.help',
                 'label_attr' => ['class' => ($options['is_child_form'] ? 'govuk-fieldset__legend--s' : 'govuk-fieldset__legend--xl')],
                 'property_path' => $options['date_property_path'],
             ])
