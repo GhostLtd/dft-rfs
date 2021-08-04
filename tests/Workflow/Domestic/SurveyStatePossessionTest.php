@@ -93,6 +93,23 @@ class SurveyStatePossessionTest extends WebTestCase
                 ['reissue', 're_open', 'reject', 'start_export', 'approve', 'un_approve'],
             ],
 
+            [ // no response from haulier - invited
+                (new Survey())->setState(Survey::STATE_INVITATION_SENT),
+                ['complete'],
+                ['re_open', 'reissue', 'reject', 'start_export', 'un_approve', 'approve'],
+            ],
+
+            [ // no response from haulier - closed
+                (new Survey())->setState(Survey::STATE_CLOSED),
+                ['approve', 're_open', 'reject'],
+                ['reissue', 'start_export', 'un_approve'],
+            ],
+
+            [ // invitation failed
+                (new Survey())->setState(Survey::STATE_INVITATION_FAILED),
+                ['reject', 'complete'],
+                ['re_open', 'reissue', 'start_export', 'un_approve', 'approve'],
+            ],
 
         ];
     }
