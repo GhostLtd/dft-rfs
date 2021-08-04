@@ -7,6 +7,7 @@ use App\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\WeekYearFilter;
 use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\Simple;
+use App\ListPage\Field\SpaceStrippingTextFilter;
 use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -44,11 +45,11 @@ class SurveyListPage extends AbstractListPage
             (new WeekYearFilter('Week', 'survey.surveyPeriodStart')),
             (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
             (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
-            (new TextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
+            (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new ChoiceFilter("QA'd?", 'survey.qualityAssured', [
                 'Yes' => true,
-                'No' => false,
+                'No' => null,
             ]))->sortable(),
             (new Simple('In possession', 'response.isInPossessionOfVehicle'))->sortable(),
             (new Simple('Reminders')),

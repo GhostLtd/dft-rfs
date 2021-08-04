@@ -36,7 +36,7 @@ class SurveyListPage extends AbstractListPage
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new ChoiceFilter("QA'd?", 'survey.qualityAssured', [
                 'Yes' => true,
-                'No' => false,
+                'No' => null,
             ]))->sortable(),
             (new Simple('Reminders')),
             (new Simple('# Vehicles')),
