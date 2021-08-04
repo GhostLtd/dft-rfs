@@ -288,6 +288,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         $response = $this->getResponse();
 
         return $this->isBusinessAndVehicleDetailsComplete() &&
+            $response &&
             $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
             !$response->hasJourneys();
     }

@@ -18,6 +18,7 @@ class AdminSurveyVoter extends Voter
     const RESEND = 'RESEND';
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
+    const VIEW_UNFILLED_REASON = 'VIEW_UNFILLED_REASON';
 
     protected function supports($attribute, $subject)
     {
@@ -27,7 +28,7 @@ class AdminSurveyVoter extends Voter
         $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA])
             && $subject instanceof HaulageSurveyInterface;
 
-        $domesticOnlySupport = in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS])
+        $domesticOnlySupport = in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS, self::VIEW_UNFILLED_REASON])
             && $subject instanceof DomesticSurvey;
 
         return $surveyInterfaceSupport || $haulageInterfaceSupport || $domesticOnlySupport;
@@ -47,6 +48,12 @@ class AdminSurveyVoter extends Voter
             SurveyInterface::STATE_CLOSED
         ]);
 
+        $closedStatuses = [
+            SurveyInterface::STATE_APPROVED,
+            SurveyInterface::STATE_EXPORTING,
+            SurveyInterface::STATE_EXPORTED,
+        ];
+
         /** @var $subject SurveyInterface */
         $state = $subject->getState();
 
@@ -57,6 +64,8 @@ class AdminSurveyVoter extends Voter
                 return in_array($state, $openStatuses) && (!is_null($subject->getPasscodeUser()));
             case self::RESEND:
                 return $state === SurveyInterface::STATE_INVITATION_FAILED;
+            case self::VIEW_UNFILLED_REASON:
+                return in_array($state, $closedStatuses);
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);

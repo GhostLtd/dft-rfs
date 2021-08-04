@@ -12,6 +12,8 @@
     {%- set canEnterVehicleAndBusinessDetails = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::ENTER_BUSINESS_AND_VEHICLE_DETAILS'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
+
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {#- "vehicle" gets created when the initial-details wizard is complete, although at that stage it only contains regMark -#}
@@ -60,6 +62,12 @@
         {{ actionlessSummaryListRow('Status', status, {html: true}) }}
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
         {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+
+        {%- if canViewUnfilledReason and survey.reasonForUnfilledSurvey -%}
+            {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\Survey::UNFILLED_SURVEY_REASON_CHOICES'), survey.reasonForUnfilledSurvey) -%}
+            {{- actionlessSummaryListRow('Reason for unfilled survey', reason ? reason|trans : '-') -}}
+        {%- endif -%}
+
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) }}

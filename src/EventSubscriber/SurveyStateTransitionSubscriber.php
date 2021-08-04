@@ -126,11 +126,11 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             if (!$survey->shouldAskWhyUnfilled()) {
                 // ReasonForUnfilledSurvey should be NULL, because the survey *is* filled
                 $survey->setReasonForUnfilledSurvey(null);
-            }
 
-            if (!$survey->shouldAskWhyNoJourneys()) {
-                // ReasonForEmptyJourney should be NULL, because journeys *have* been entered
-                $survey->getResponse()->setReasonForEmptySurvey(null);
+                if (!$survey->shouldAskWhyNoJourneys()) {
+                    // ReasonForEmptyJourney should be NULL, because journeys *have* been entered
+                    $survey->getResponse()->setReasonForEmptySurvey(null);
+                }
             }
         }
     }
