@@ -23,8 +23,8 @@ steps:
       args: ['-c', 'yarn install --frozen-lockfile && yarn run deploy-build && yarn run build-env-subs']
       env:
           - 'APP_ENV=prod'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
-          - 'ADMIN_HOSTNAME=admin.${_BASE_HOSTNAME}'
+          - 'FRONTEND_HOSTNAME=${_FRONTEND_HOSTNAME:-$_BASE_HOSTNAME}'
+          - 'ADMIN_HOSTNAME=${_ADMIN_HOSTNAME:-admin.$_BASE_HOSTNAME}'
           - 'DATABASE_URL=${_DATABASE_URL}'
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
           - 'APP_SECRET=${_APP_SECRET}'

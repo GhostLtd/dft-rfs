@@ -141,7 +141,7 @@ class SampleImporterTest extends WebTestCase
         self::assertCount(0, $result['surveys']);
         self::assertCount(1, $result['invalidSurveys']);
         self::assertCount(0, $result['invalidData']);
-        self::assertInstanceOf(Survey::class, $result['invalidSurveys'][0]);
+        self::assertInstanceOf(Survey::class, $result['invalidSurveys'][0]['survey']);
     }
 
 }
