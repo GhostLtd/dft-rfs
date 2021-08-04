@@ -40,8 +40,10 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->runAsyncNotifyMessengerConsumer();
 
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponse = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
-        self::assertSame(Reference::STATUS_ACCEPTED, $apiResponse[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        $apiResponses = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
+        $response = current($apiResponses);
+
+        self::assertSame(Reference::STATUS_ACCEPTED, $response[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     public function testSendLetterValidationError()
@@ -52,8 +54,10 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->runAsyncNotifyMessengerConsumer();
 
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponse = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
-        self::assertSame(Reference::STATUS_FAILED, $apiResponse[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        $apiResponses = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
+        $response = current($apiResponses);
+
+        self::assertSame(Reference::STATUS_FAILED, $response[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     protected function runAsyncNotifyMessengerConsumer()
