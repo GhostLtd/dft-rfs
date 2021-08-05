@@ -58,6 +58,7 @@ TIMESTAMP=`date +%s`
 HASH=`echo  -n "$ACTION:$TIMESTAMP" | openssl sha256 -hmac "$APP_SECRET"`
 HASH=${HASH#*= }
 URL=https://${FRONTEND_HOSTNAME}/_util/${ACTION}
+echo $URL
 
 # If testing from dev environment with self-signed certs, add the "-k" option to curl
 HTTP_STATUS=$(curl ${URL} -w "%{http_code}" -G -d timestamp=${TIMESTAMP} -d hmac=${HASH} -s -o remote-action-response-${ACTION}.txt)
@@ -75,7 +76,7 @@ if [ $? == 7 ]; then
 fi
 
 # 404? Assume fresh install or first deployment after adding script
-if [ $HTTP_STATUS == "404" -o $HTTP_STATUS == "000" ]; then
+if [ $HTTP_STATUS == "404" ]; then
   echo "Remote script not found. Stopping gracefully."
   success_exit
 fi
