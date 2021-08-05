@@ -54,7 +54,7 @@ steps:
       waitFor: ['deploy-default-service', 'deploy-admin-service']
       env:
           - 'APP_SECRET=${_APP_SECRET}'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
+          - 'FRONTEND_HOSTNAME=${_FRONTEND_HOSTNAME:-$_BASE_HOSTNAME}'
 
 
     ## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
