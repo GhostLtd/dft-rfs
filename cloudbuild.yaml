@@ -7,7 +7,7 @@ steps:
       waitFor: ['-']
       env:
           - 'APP_SECRET=${_APP_SECRET}'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
+          - 'FRONTEND_HOSTNAME=${_FRONTEND_HOSTNAME:-$_BASE_HOSTNAME}'
 
     # Copy depoyment config files in to root directory (alpine required for gsutil)
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
