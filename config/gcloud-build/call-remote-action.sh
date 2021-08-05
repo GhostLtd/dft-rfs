@@ -68,8 +68,14 @@ if [ $? == 6 ]; then
   success_exit
 fi
 
+# Connection refused? Assume fresh install
+if [ $? == 7 ]; then
+  echo "Host not resolved. Stopping gracefully."
+  success_exit
+fi
+
 # 404? Assume fresh install or first deployment after adding script
-if [ $HTTP_STATUS == "404" ]; then
+if [ $HTTP_STATUS == "404" -o $HTTP_STATUS == "000" ]; then
   echo "Remote script not found. Stopping gracefully."
   success_exit
 fi
