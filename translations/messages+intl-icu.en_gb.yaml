@@ -381,6 +381,7 @@ admin:
         help: ''
       period-end:
         label: 'Survey end date'
+        help: ''
       period-days:
         label: 'Survey period (days)'
         help: ''

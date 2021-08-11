@@ -32,10 +32,6 @@ class SurveyAddController extends AbstractController
             if ($form->isValid()) {
                 /** @var Survey $survey */
                 $survey = $form->getData();
-                $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
-                $periodDays = $form->get('surveyPeriodInDays')->getData() - 1;
-                $surveyPeriodEnd->add(new DateInterval("P{$periodDays}D"));
-                $survey->setSurveyPeriodEnd($surveyPeriodEnd);
 
                 $entityManager->persist($survey->getCompany());
                 $entityManager->persist($survey);

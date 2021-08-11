@@ -50,6 +50,9 @@ common:
   goods-description-other:
     not-blank: Describe the goods
     max-length: "Description must be {limit} characters or fewer"
+  survey:
+    period-end:
+      after-start: Enter a date that is the same as, or after, the start date
   survey-response:
     name:
       not-blank: Enter a name
