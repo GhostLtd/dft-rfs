@@ -6,6 +6,7 @@
 } %}
 
 {%- block adminContent -%}
+    {% dump survey %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
