@@ -125,13 +125,7 @@ abstract class AbstractListPage
             $id = $field->getId();
             $fieldData = $this->formData[$id] ?? null;
 
-            dump($id, $fieldData);
-
             if ($field instanceof FilterableInterface && $fieldData !== null) {
-
-                if ($id === 'qad') {
-                    dump('YES');
-                }
                 $field->addFilterCondition($qb, $fieldData);
             }
         }
