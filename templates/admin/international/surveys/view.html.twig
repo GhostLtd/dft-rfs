@@ -6,12 +6,13 @@
 } %}
 
 {%- block adminContent -%}
-    {% dump survey %}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
+
     {%- set hasAuditLogs = auditLogs is not empty -%}
 
     {%- set tabs = {} -%}
@@ -26,12 +27,11 @@
             'Correspondence details': 'tab-correspondence',
             'Business details': 'tab-business-details',
         }) -%}
-
-        {%- if not survey.response.isFilledOut() -%}
-            {%- set tabs = tabs | merge({
-                'Final details': 'tab-final-details',
-            }) -%}
-        {%- endif -%}
+    {%- endif -%}
+    {%- if canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() -%}
+        {%- set tabs = tabs | merge({
+            'Final details': 'tab-final-details',
+        }) -%}
     {%- endif -%}
     {%- set tabs = tabs | merge({
         ("Notes (#{ survey.notes | length })"): 'tab-notes',

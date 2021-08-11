@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\Domestic\SurveyResponse as DomesticResponse;
 use App\Entity\HaulageSurveyInterface;
+use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -25,10 +26,10 @@ class AdminSurveyVoter extends Voter
         $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES, self::RESEND])
             && $subject instanceof SurveyInterface;
 
-        $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA])
+        $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA, self::VIEW_UNFILLED_REASON])
             && $subject instanceof HaulageSurveyInterface;
 
-        $domesticOnlySupport = in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS, self::VIEW_UNFILLED_REASON])
+        $domesticOnlySupport = in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS])
             && $subject instanceof DomesticSurvey;
 
         return $surveyInterfaceSupport || $haulageInterfaceSupport || $domesticOnlySupport;
@@ -48,7 +49,7 @@ class AdminSurveyVoter extends Voter
             SurveyInterface::STATE_CLOSED
         ]);
 
-        $closedStatuses = [
+        $approvedOrExportedStatuses = [
             SurveyInterface::STATE_APPROVED,
             SurveyInterface::STATE_EXPORTING,
             SurveyInterface::STATE_EXPORTED,
@@ -65,7 +66,12 @@ class AdminSurveyVoter extends Voter
             case self::RESEND:
                 return $state === SurveyInterface::STATE_INVITATION_FAILED;
             case self::VIEW_UNFILLED_REASON:
-                return in_array($state, $closedStatuses);
+                if ($subject instanceof DomesticSurvey) {
+                    return in_array($state, $approvedOrExportedStatuses);
+                } else if ($subject instanceof InternationalSurvey) {
+                    return in_array($state, array_merge($approvedOrExportedStatuses, [SurveyInterface::STATE_CLOSED]));
+                }
+                break;
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);

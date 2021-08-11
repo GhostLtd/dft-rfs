@@ -60,8 +60,8 @@ class SurveyController extends AbstractController
      */
     public function enterInitialDetails(Survey $survey): Response
     {
-        $response = (new SurveyResponse())
-            ->setSurvey($survey);
+        $response = (new SurveyResponse());
+        $survey->setResponse($response);
 
         $this->entityManager->persist($response);
 

@@ -201,7 +201,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function shouldAskWhyEmptySurvey(): bool
     {
         $response = $this->getResponse();
-        return !$response || !$response->isFilledOut();
+        return !$response || ($response->getTotalNumberOfTrips() === 0 && !$response->isNoLongerActive());
     }
 
     public function mergeClosingDetails(Survey $survey)

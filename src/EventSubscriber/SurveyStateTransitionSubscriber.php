@@ -133,6 +133,15 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
                 }
             }
         }
+
+        if ($survey instanceof InternationalSurvey) {
+            if (!$survey->shouldAskWhyEmptySurvey()) {
+                // ReasonForEmptySurvey (+Other) should be NULL, because the survey *is* filled
+                $survey
+                    ->setReasonForEmptySurvey(null)
+                    ->setReasonForEmptySurveyOther(null);
+            }
+        }
     }
 
     protected function getSurvey(Event $event): SurveyInterface
@@ -164,6 +173,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
+            'workflow.international_survey.transition.approve' => 'transitionApprove',
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
             'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
 

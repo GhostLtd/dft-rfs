@@ -46,8 +46,9 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
                 }
 
                 $form
-                    ->add('submit', Gds\ButtonType::class, [
-                        'label' => 'Save changes',
+                    ->add($options['submit_name'], Gds\ButtonType::class, [
+                        'label' => $options['submit_label'],
+                        'translation_domain' => $options['label_translation_domain']
                     ])
                     ->add('cancel', Gds\ButtonType::class, [
                         'label' => 'Cancel',
@@ -60,6 +61,9 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
+            'submit_name' => 'submit',
+            'submit_label' => 'Save changes',
+            'label_translation_domain' => null,
         ]);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
