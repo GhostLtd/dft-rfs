@@ -36,19 +36,10 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'disabled' => $options['is_resend'],
             ])
-            ->add('surveyPeriodInDays', Gds\ChoiceType::class, [
-                'label' => "{$translationKeyPrefix}.period-days.label",
-                'help' => "{$translationKeyPrefix}.period-days.help",
+            ->add('surveyPeriodEnd', Gds\DateType::class, [
+                'label' => "{$translationKeyPrefix}.period-end.label",
+                'help' => "{$translationKeyPrefix}.period-end.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-radios--inline'],
-                'mapped' => false,
-                'constraints' => new NotNull(['message' => 'common.choice.not-null', 'groups' => ['add_survey']]),
-                'choices' => [
-                    '1 day' => 1,
-                    '7 days' => 7,
-                    '14 days' => 14,
-                    '28 days' => 28,
-                ],
                 'disabled' => $options['is_resend'],
             ])
             ->add('invitationEmail', Gds\EmailType::class, [

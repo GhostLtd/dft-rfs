@@ -2,9 +2,7 @@
 
 namespace App\Form\Admin\InternationalSurvey;
 
-use App\Entity\Domestic\Survey;
-use App\Entity\International\SurveyResponse;
-use App\Entity\International\Trip;
+use App\Entity\International\Survey;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -14,30 +12,27 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class FinalDetailsType extends AbstractType implements DataMapperInterface
 {
-    protected bool $isMissingDays;
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->setDataMapper($this)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-                /** @var SurveyResponse $response */
-                $response = $event->getData();
+                /** @var Survey $survey */
+                $survey = $event->getData();
                 $form = $event->getForm();
 
-                if (!$response->isFilledOut()) {
+                if ($survey->shouldAskWhyEmptySurvey()) {
                     $translationKeyPrefix = 'international.survey-response.reason-for-empty-survey';
                     $form
                         ->add('reasonForEmptySurvey', Gds\ChoiceType::class, [
-                            'choices' => SurveyResponse::REASON_FOR_EMPTY_SURVEY_CHOICES,
+                            'choices' => Survey::REASON_FOR_EMPTY_SURVEY_CHOICES,
                             'label' => "{$translationKeyPrefix}.reason-for-empty-survey.label",
                             'label_attr' => ['class' => 'govuk-label--s'],
                             'choice_options' => [
-                                SurveyResponse::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX.SurveyResponse::REASON_FOR_EMPTY_SURVEY_OTHER => [
+                                Survey::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX.Survey::REASON_FOR_EMPTY_SURVEY_OTHER => [
                                     'conditional_form_name' => 'reasonForEmptySurveyOther',
                                 ],
                             ],
@@ -51,8 +46,9 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
                 }
 
                 $form
-                    ->add('submit', Gds\ButtonType::class, [
-                        'label' => 'Save changes',
+                    ->add($options['submit_name'], Gds\ButtonType::class, [
+                        'label' => $options['submit_label'],
+                        'translation_domain' => $options['label_translation_domain']
                     ])
                     ->add('cancel', Gds\ButtonType::class, [
                         'label' => 'Cancel',
@@ -64,14 +60,17 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => SurveyResponse::class,
+            'data_class' => Survey::class,
+            'submit_name' => 'submit',
+            'submit_label' => 'Save changes',
+            'label_translation_domain' => null,
         ]);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
-            /** @var SurveyResponse $response */
-            $response = $form->getData();
+            /** @var Survey $survey */
+            $survey = $form->getData();
 
-            return $response->isFilledOut() ? [] : ['admin_reason_for_empty_survey'];
+            return $survey->shouldAskWhyEmptySurvey() ? ['admin_reason_for_empty_survey'] : [];
         });
     }
 
@@ -81,8 +80,8 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
             return;
         }
 
-        if (!$viewData instanceof SurveyResponse) {
-            throw new Exception\UnexpectedTypeException($viewData, Trip::class);
+        if (!$viewData instanceof Survey) {
+            throw new Exception\UnexpectedTypeException($viewData, Survey::class);
         }
 
         $forms = iterator_to_array($forms);
@@ -98,14 +97,14 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
         $forms = iterator_to_array($forms);
 
         /** @var FormInterface[] $forms */
-        if (!$viewData instanceof SurveyResponse) {
-            throw new Exception\UnexpectedTypeException($viewData, Trip::class);
+        if (!$viewData instanceof Survey) {
+            throw new Exception\UnexpectedTypeException($viewData, Survey::class);
         }
 
         if ($forms['reasonForEmptySurvey'] ?? false) {
             $viewData->setReasonForEmptySurvey($forms['reasonForEmptySurvey']->getData());
             $viewData->setReasonForEmptySurveyOther(
-                $forms['reasonForEmptySurvey']->getData() === SurveyResponse::REASON_FOR_EMPTY_SURVEY_OTHER
+                $forms['reasonForEmptySurvey']->getData() === Survey::REASON_FOR_EMPTY_SURVEY_OTHER
                     ? $forms['reasonForEmptySurveyOther']->getData()
                     : null
             );

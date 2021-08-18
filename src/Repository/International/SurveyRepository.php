@@ -107,13 +107,13 @@ class SurveyRepository extends ServiceEntityRepository
     public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart) as surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
+            ->select('s.state, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year');
 
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.state, week')
-            ->orderBy('week, s.state')
+            ->groupBy('year, week, s.state, week, surveyPeriodStart')
+            ->orderBy('year, week, s.state')
             ->getQuery()
             ->execute();
 
@@ -136,15 +136,18 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            $dateTime = new \DateTime($result['surveyPeriodStart']);
-            $week = WeekNumberHelper::getWeekNumber($dateTime);
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
             $state = $result['state'];
 
             if (array_key_exists($state, $mergeStates)) {
                 $state = $mergeStates[$state];
             }
 
-            $stats['data'][$week]['data'][$state] = $result['count'];
+            if (!isset($stats['data'][$week]['data'][$state])) {
+                $stats['data'][$week]['data'][$state] = 0;
+            }
+
+            $stats['data'][$week]['data'][$state] += $result['count'];
         }
 
         return $this->addTotalsAndFlags($stats);
@@ -154,7 +157,7 @@ class SurveyRepository extends ServiceEntityRepository
     public function getQualityAssuranceReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.qualityAssured, count(s) AS count, MIN(s.surveyPeriodStart), WEEK(s.surveyPeriodStart) AS week')
+            ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
                 SurveyInterface::STATE_APPROVED,
@@ -165,8 +168,8 @@ class SurveyRepository extends ServiceEntityRepository
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.qualityAssured, week')
-            ->orderBy('week')
+            ->groupBy('s.qualityAssured, s.surveyPeriodStart, year, week')
+            ->orderBy('year, week')
             ->getQuery()
             ->execute();
 
@@ -184,11 +187,14 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            $dateTime = new \DateTime($result['surveyPeriodStart']);
-            $week = WeekNumberHelper::getWeekNumber($dateTime);
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
             $qualityAssured = $result['qualityAssured'] == 1 ? 'quality-assured' : 'not-quality-assured';
 
-            $stats['data'][$week]['data'][$qualityAssured] = $result['count'];
+            if (!isset($stats['data'][$week]['data'][$qualityAssured])) {
+                $stats['data'][$week]['data'][$qualityAssured] = 0;
+            }
+
+            $stats['data'][$week]['data'][$qualityAssured] += $result['count'];
         }
 
         return $this->addTotalsAndFlags($stats);

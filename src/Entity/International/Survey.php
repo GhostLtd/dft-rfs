@@ -32,6 +32,22 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         self::STATE_EXPORTED,
     ];
 
+    const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
+    const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
+    const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
+    const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
+
+    const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
+    const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
+    const REASON_FOR_EMPTY_SURVEY_CHOICES = [
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK => self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE => self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_OTHER => self::REASON_FOR_EMPTY_SURVEY_OTHER,
+    ];
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
@@ -61,6 +77,19 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
     private $notes;
+
+    /**
+     * @ORM\Column(type="string", length=24, nullable=true)
+     * @Assert\NotNull(groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"}, message="common.choice.invalid")
+     */
+    private ?string $reasonForEmptySurvey;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')) || value != null", message="international.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     */
+    private ?string $reasonForEmptySurveyOther;
 
     public function getReferenceNumber(): ?string
     {
@@ -144,5 +173,40 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         }
 
         return $this;
+    }
+
+    public function getReasonForEmptySurvey(): ?string
+    {
+        return $this->reasonForEmptySurvey;
+    }
+
+    public function setReasonForEmptySurvey(?string $reasonForEmptySurvey): self
+    {
+        $this->reasonForEmptySurvey = $reasonForEmptySurvey;
+
+        return $this;
+    }
+
+    public function getReasonForEmptySurveyOther(): ?string
+    {
+        return $this->reasonForEmptySurveyOther;
+    }
+
+    public function setReasonForEmptySurveyOther(?string $reasonForEmptySurveyOther): self
+    {
+        $this->reasonForEmptySurveyOther = $reasonForEmptySurveyOther;
+        return $this;
+    }
+
+    public function shouldAskWhyEmptySurvey(): bool
+    {
+        $response = $this->getResponse();
+        return !$response || ($response->getTotalNumberOfTrips() === 0 && !$response->isNoLongerActive());
+    }
+
+    public function mergeClosingDetails(Survey $survey)
+    {
+        $this->setReasonForEmptySurvey($survey->getReasonForEmptySurvey());
+        $this->setReasonForEmptySurveyOther($survey->getReasonForEmptySurveyOther());
     }
 }

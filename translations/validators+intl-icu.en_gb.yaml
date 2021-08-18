@@ -50,6 +50,9 @@ common:
   goods-description-other:
     not-blank: Describe the goods
     max-length: "Description must be {limit} characters or fewer"
+  survey:
+    period-end:
+      after-start: Enter a date that is the same as, or after, the start date
   survey-response:
     name:
       not-blank: Enter a name
@@ -157,8 +160,8 @@ pre-enquiry:
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
       not-blank: Enter the number of vehicles that will be used to make international journeys
-    is-correct-company-name:
-      not-blank: Choose whether this is the correct company name
+    is-correct-address: Choose whether this is the correct correspondence address
+    is-correct-company-name: Choose whether this is the correct company name
     number-of-employees: Choose the national number of employees your firm has
     vehicle-count: Enter the number of vehicles
 

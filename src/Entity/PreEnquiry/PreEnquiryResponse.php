@@ -29,7 +29,7 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(groups={"correspondence_address"})
+     * @Assert\NotNull(groups={"correspondence_address", "is_correct_address"}, message="pre-enquiry.pre-enquiry-response.is-correct-address")
      */
     private $isCorrectAddress;
 
@@ -119,13 +119,13 @@ class PreEnquiryResponse
     {
         if ($this->isCorrectCompanyName === null) {
             $context
-                ->buildViolation('pre-enquiry.pre-enquiry-response.is-correct-company-name.not-blank')
+                ->buildViolation('pre-enquiry.pre-enquiry-response.is-correct-company-name')
                 ->atPath('isCorrectCompanyName')
                 ->addViolation();
         } else {
             if ($this->companyName === null) {
                 $context
-                    ->buildViolation('pre-enquiry.pre-enquiry-response.company-name.not-blank')
+                    ->buildViolation('pre-enquiry.pre-enquiry-response.company-name')
                     ->atPath('companyName')
                     ->addViolation();
             }

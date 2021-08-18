@@ -155,7 +155,18 @@ class ResponseType extends AbstractType implements DataMapperInterface
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
-            'validation_groups' => ['company_name', 'correspondence_address', 'correspondence_details', 'employees_and_international_journeys', 'vehicle_questions'],
+            'validation_groups' => function(FormInterface $form) {
+                $data = $form->getData();
+                $groups = ['company_name', 'correspondence_details', 'employees_and_international_journeys', 'is_correct_address', 'vehicle_questions'];
+
+                if ($data instanceof PreEnquiryResponse) {
+                    if ($data->getIsCorrectAddress() === false) {
+                        $groups[] = 'correspondence_address';
+                    }
+                }
+
+                return $groups;
+            }
         ]);
     }
 
@@ -227,8 +238,15 @@ class ResponseType extends AbstractType implements DataMapperInterface
             $viewData->setIsCorrectCompanyName(null);
         }
 
-        $isCorrectAddress = isset($forms['isCorrectAddress']) &&
-            $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES];
+        if (isset($forms['isCorrectAddress'])) {
+            $isCorrectAddress = $forms['isCorrectAddress']->getData();
+
+            if ($isCorrectAddress !== null) {
+                $isCorrectAddress = $isCorrectAddress === self::CHOICES[self::CHOICE_YES];
+            }
+        } else {
+            $isCorrectAddress = false;
+        }
 
         $address = $isCorrectAddress ?
             (clone $viewData->getPreEnquiry()->getInvitationAddress()) :

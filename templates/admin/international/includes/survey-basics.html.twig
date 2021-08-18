@@ -1,4 +1,5 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+{%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) -}}
@@ -13,6 +14,15 @@
         {{ actionlessSummaryListRow('Status', status, {html: true}) }}
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
         {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+    {%- endif -%}
+    {%- if showReasonForEmptySurvey ?? false and canViewUnfilledReason and survey.reasonForEmptySurvey -%}
+        {%- set reason = choiceLabel(constant('App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_CHOICES'), survey.reasonForEmptySurvey) -%}
+        {{- actionlessSummaryListRow(
+            'Reason for unfilled survey',
+            (reason ? reason|trans : '-')
+        ~ (survey.reasonForEmptySurvey == constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')
+        ? " - #{survey.reasonForEmptySurveyOther}" : '')
+        ) -}}
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}

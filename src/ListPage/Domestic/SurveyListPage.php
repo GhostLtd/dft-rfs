@@ -7,6 +7,7 @@ use App\Entity\Domestic\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\WeekYearFilter;
 use App\ListPage\Field\ChoiceFilter;
+use App\ListPage\Field\QaChoiceFilter;
 use App\ListPage\Field\Simple;
 use App\ListPage\Field\SpaceStrippingTextFilter;
 use App\ListPage\Field\TextFilter;
@@ -50,9 +51,9 @@ class SurveyListPage extends AbstractListPage
             (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
             (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
-            (new ChoiceFilter("QA'd?", 'survey.qualityAssured', [
+            (new QaChoiceFilter("QA'd?", 'survey.qualityAssured', [
                 'Yes' => true,
-                'No' => null,
+                'No' => false,
             ]))->sortable(),
             (new ChoiceFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),

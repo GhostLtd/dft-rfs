@@ -100,6 +100,8 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
                     'label_translation_parameters' => $this->getTranslationParameters(),
                 ];
                 break;
+            default:
+                throw new \InvalidArgumentException('Invalid formClass');
         }
 
         return $this->formFactory->create($formClass, $data, $formOptions);

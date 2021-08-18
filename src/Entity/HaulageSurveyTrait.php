@@ -7,6 +7,7 @@ use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait HaulageSurveyTrait {
     use SurveyTrait;
@@ -23,12 +24,13 @@ trait HaulageSurveyTrait {
      * @AppAssert\GreaterThanOrEqualDate("midnight", groups={"import_survey"})
      * @Assert\NotNull(message="common.date.not-null", groups={"add_survey", "import_survey"})
      */
-    private ?DateTime $surveyPeriodStart;
+    private ?DateTime $surveyPeriodStart = null;
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Assert\Expression("this.getSurveyPeriodEnd() >= this.getSurveyPeriodStart()", groups={"add_survey"}, message="common.survey.period-end.after-start")
      */
-    private ?DateTime $surveyPeriodEnd;
+    private ?DateTime $surveyPeriodEnd = null;
 
     public function getSurveyPeriodStart(): ?DateTime
     {
