@@ -13,6 +13,12 @@ class ContactDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('contactBusinessName', Gds\InputType::class, [
+                'label' => 'domestic.survey-response.contact-details.business-name.label',
+                'help' => 'domestic.survey-response.contact-details.business-name.help',
+                'attr' => ['class' => 'govuk-input--width-20'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
             ->add('contactName', Gds\InputType::class, [
                 'label' => 'domestic.survey-response.contact-details.contact-name.label',
                 'help' => 'domestic.survey-response.contact-details.contact-name.help',

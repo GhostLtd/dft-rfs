@@ -493,6 +493,9 @@ domestic:
     contact-details:
       heading: 'Contact details'
       help: ''
+      business-name:
+        label: 'Business name'
+        help: 'The name of the business that owns the vehicle. If you are a sole trader, this is your operating name.'
       contact-name:
         label: 'Name'
         help: ''
