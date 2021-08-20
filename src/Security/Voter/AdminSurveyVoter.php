@@ -28,22 +28,14 @@ class AdminSurveyVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $openStatuses = [
-            SurveyInterface::STATE_IN_PROGRESS,
-            SurveyInterface::STATE_INVITATION_FAILED,
-            SurveyInterface::STATE_INVITATION_PENDING,
-            SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_NEW,
-        ];
-
         /** @var $subject SurveyInterface */
         $state = $subject->getState();
 
         switch ($attribute) {
             case self::EDIT:
-                return in_array($state, array_merge($openStatuses, [SurveyInterface::STATE_CLOSED])) && (!is_null($subject->getPasscodeUser()));
+                return in_array($state, array_merge(SurveyInterface::ACTIVE_STATES, [SurveyInterface::STATE_CLOSED])) && (!is_null($subject->getPasscodeUser()));
             case self::RESET_PASSCODE:
-                return in_array($state, $openStatuses) && (!is_null($subject->getPasscodeUser()));
+                return in_array($state, SurveyInterface::ACTIVE_STATES) && (!is_null($subject->getPasscodeUser()));
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);

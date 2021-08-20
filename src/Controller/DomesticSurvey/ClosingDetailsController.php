@@ -3,6 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\Domestic\DriverAvailability;
 use App\Entity\Domestic\SurveyResponse;
 use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardStateInterface;
@@ -40,7 +41,14 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
             $formWizard->setSubject($response);
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
+        $formWizardDriverAvailability = $formWizard->getSubject()->getSurvey()->getDriverAvailability();
+        if (!$formWizardDriverAvailability) {
+            $formWizardDriverAvailability = new DriverAvailability();
+            $this->entityManager->persist($formWizardDriverAvailability);
+            $this->entityManager->flush();
+        }
         $formWizard->getSubject()->setSurvey($survey);
+        $formWizard->getSubject()->getSurvey()->setDriverAvailability($this->entityManager->merge($formWizardDriverAvailability));
         $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
         $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
 

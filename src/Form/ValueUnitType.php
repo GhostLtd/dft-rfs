@@ -36,6 +36,7 @@ class ValueUnitType extends AbstractType
     {
         parent::buildView($view, $form, $options);
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
+        $view->vars['fieldset_attr'] = ['id' => $view->vars['id']];
     }
 
     public function configureOptions(OptionsResolver $resolver)

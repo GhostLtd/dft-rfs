@@ -1,0 +1,72 @@
+<?php
+
+
+namespace App\Form\DomesticSurvey\DriverAvailability;
+
+
+use App\Entity\CurrencyOrPercentage;
+use App\Entity\Domestic\DriverAvailability;
+use App\Form\ValueUnitType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\FormBuilderInterface;
+use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+
+class DeliveriesType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $translationKeyPrefix = "domestic.driver-availability.deliveries";
+
+        $builder
+            ->setDataMapper(new DeliveriesTypeMapper())
+
+            ->add('numberOfLorriesOperated', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.numberOfLorriesOperated',
+                'label' => "{$translationKeyPrefix}.number-of-lorries-operated.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.number-of-lorries-operated.help",
+                'attr' => ['class' => 'govuk-input--width-5'],
+            ])
+            ->add('numberOfParkedLorries', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.numberOfParkedLorries',
+                'label' => "{$translationKeyPrefix}.number-of-parked-lorries.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.number-of-parked-lorries.help",
+                'attr' => ['class' => 'govuk-input--width-5'],
+            ])
+            ->add('hasMissedDeliveries', Gds\ChoiceType::class, [
+                'property_path' => 'survey.driverAvailability.hasMissedDeliveries',
+                'label' => "{$translationKeyPrefix}.has-missed-deliveries.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.has-missed-deliveries.help",
+                'choices' => [
+                    'common.choices.boolean.yes' => true,
+                    'common.choices.boolean.no' => false,
+                ],
+                'choice_options' => [
+                    'common.choices.boolean.yes' => ['conditional_form_name' => 'numberOfMissedDeliveries'],
+                    'common.choices.boolean.no' => ['conditional_form_name' => 'hasFoundAlternativesToAvoidMissingDeliveries'],
+                ],
+            ])
+            ->add('hasFoundAlternativesToAvoidMissingDeliveries', Gds\ChoiceType::class, [
+                'property_path' => 'survey.driverAvailability.hasFoundAlternativesToAvoidMissingDeliveries',
+                'label' => "{$translationKeyPrefix}.has-found-alternatives-to-avoid-missing-deliveries.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.has-found-alternatives-to-avoid-missing-deliveries.help",
+                'choices' => [
+                    'common.choices.boolean.yes' => true,
+                    'common.choices.boolean.no' => false,
+                ],
+            ])
+            ->add('numberOfMissedDeliveries', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.numberOfMissedDeliveries',
+                'label' => "{$translationKeyPrefix}.number-of-missed-deliveries.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.number-of-missed-deliveries.help",
+                'attr' => ['class' => 'govuk-input--width-5'],
+            ])
+        ;
+
+    }
+}

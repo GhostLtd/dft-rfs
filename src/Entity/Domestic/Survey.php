@@ -51,6 +51,11 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      */
     private $notes;
 
+    /**
+     * @ORM\OneToOne(targetEntity=DriverAvailability::class, inversedBy="survey", fetch="EAGER")
+     */
+    private ?DriverAvailability $driverAvailability;
+
     public function isInitialDetailsComplete()
     {
         return (
@@ -67,6 +72,11 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             && !empty($this->getResponse()->getVehicle()->getCarryingCapacity())
             && !empty($this->getResponse()->getVehicle()->getAxleConfiguration())
         );
+    }
+
+    public function isInActiveState(): bool
+    {
+        return in_array($this->state, self::ACTIVE_STATES);
     }
 
     public function getIsNorthernIreland(): ?bool
@@ -145,6 +155,18 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             $note->setSurvey($this);
             $this->notes[] = $note;
         }
+
+        return $this;
+    }
+
+    public function getDriverAvailability(): ?DriverAvailability
+    {
+        return $this->driverAvailability;
+    }
+
+    public function setDriverAvailability(?DriverAvailability $driverAvailability): self
+    {
+        $this->driverAvailability = $driverAvailability;
 
         return $this;
     }
