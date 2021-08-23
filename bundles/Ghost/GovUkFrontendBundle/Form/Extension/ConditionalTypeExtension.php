@@ -3,17 +3,19 @@
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RadioTypeExtension extends AbstractTypeExtension
+class ConditionalTypeExtension extends AbstractTypeExtension
 {
     public static function getExtendedTypes()
     {
         return [
             RadioType::class,
+            CheckboxType::class,
         ];
     }
 

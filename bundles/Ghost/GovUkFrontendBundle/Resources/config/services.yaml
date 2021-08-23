@@ -17,4 +17,4 @@ services:
         class: Ghost\GovUkFrontendBundle\Form\Extension\LabelIsPageHeadingExtension
 
     ghost_govukfrontend.form_extension.radio_type_extension:
-        class: Ghost\GovUkFrontendBundle\Form\Extension\RadioTypeExtension
+        class: Ghost\GovUkFrontendBundle\Form\Extension\ConditionalTypeExtension
