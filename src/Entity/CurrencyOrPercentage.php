@@ -22,12 +22,12 @@ class CurrencyOrPercentage implements ValueUnitInterface
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $value;
+    private ?int $value = null;
 
     /**
      * @ORM\Column(type="string", length=12, nullable=true)
      */
-    private ?string $unit;
+    private ?string $unit = null;
 
     public function getValue(): ?string
     {

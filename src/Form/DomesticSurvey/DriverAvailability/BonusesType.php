@@ -10,6 +10,7 @@ use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BonusesType extends AbstractType
 {
@@ -49,5 +50,12 @@ class BonusesType extends AbstractType
             ])
         ;
 
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'validation_groups' => ['driver-availability.bonuses']
+        ]);
     }
 }

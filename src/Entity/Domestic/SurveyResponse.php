@@ -154,6 +154,7 @@ class SurveyResponse extends AbstractSurveyResponse
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
     private $survey;
 

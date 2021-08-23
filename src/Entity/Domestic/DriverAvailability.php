@@ -5,6 +5,7 @@ namespace App\Entity\Domestic;
 use App\Entity\CurrencyOrPercentage;
 use App\Repository\Domestic\DriverAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Form\Validator as AppAssert;
 
 /**
  * @ORM\Entity(repositoryClass=DriverAvailabilityRepository::class)
@@ -49,17 +50,17 @@ class DriverAvailability
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfDriversEmployed;
+    private ?int $numberOfDriversEmployed = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $hasVacancies;
+    private ?bool $hasVacancies = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfDriverVacancies;
+    private ?int $numberOfDriverVacancies = null;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -69,17 +70,18 @@ class DriverAvailability
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfDriversThatHaveLeft;
+    private ?int $numberOfDriversThatHaveLeft = null;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private ?string $haveWagesIncreased;
+    private ?string $haveWagesIncreased = null;
 
     /**
      * @ORM\Embedded(class=CurrencyOrPercentage::class)
+     * @AppAssert\ValidValueUnit(groups={"driver-availability.wages"}, allowBlank=true)
      */
-    private ?CurrencyOrPercentage $averageWageIncrease;
+    private ?CurrencyOrPercentage $averageWageIncrease = null;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -89,42 +91,43 @@ class DriverAvailability
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private ?string $hasPaidBonus;
+    private ?string $hasPaidBonus = null;
 
     /**
      * @ORM\Embedded(class=CurrencyOrPercentage::class)
+     * @AppAssert\ValidValueUnit(groups={"driver-availability.bonuses"}, allowBlank=true)
      */
-    private ?CurrencyOrPercentage $averageBonus;
+    private ?CurrencyOrPercentage $averageBonus = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfLorriesOperated;
+    private ?int $numberOfLorriesOperated = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfParkedLorries;
+    private ?int $numberOfParkedLorries = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $hasMissedDeliveries;
+    private ?bool $hasMissedDeliveries = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $hasFoundAlternativesToAvoidMissingDeliveries;
+    private ?bool $hasFoundAlternativesToAvoidMissingDeliveries = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $numberOfMissedDeliveries;
+    private ?int $numberOfMissedDeliveries = null;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="driverAvailability", cascade={"persist", "remove"})
      */
-    private ?Survey $survey;
+    private ?Survey $survey = null;
 
     public function getId(): ?int
     {

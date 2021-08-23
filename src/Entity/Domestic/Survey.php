@@ -53,6 +53,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     /**
      * @ORM\OneToOne(targetEntity=DriverAvailability::class, inversedBy="survey", fetch="EAGER")
+     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
     private ?DriverAvailability $driverAvailability;
 
