@@ -34,7 +34,7 @@
                 'Final details': 'tab-final-details',
             }) -%}
         {%- endif -%}
-        {%- if not survey.inActiveState -%}
+        {%- if not survey.inActiveState and survey.driverAvailability ?? false -%}
             {%- set tabs = tabs | merge({
                 'Driver availability': 'tab-driver-availability',
             }) -%}
