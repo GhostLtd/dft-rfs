@@ -973,13 +973,13 @@ domestic:
         label: How many HGVs does your company operate?
         help: ''
       number-of-parked-lorries:
-        label: On an average day during the survey period week, how many HGVs were not operating due to drivers not being available?
+        label: On an average day in the last week, how many HGVs were not operating due to drivers not being available?
         help: ''
       has-missed-deliveries:
-        label: Have you experienced any missed deliveries during the survey period week due to drivers not being available?
+        label: Have you experienced any missed deliveries in the last week due to drivers not being available?
         help: ''
       number-of-missed-deliveries:
-        label: How many missed deliveries have there been during the survey period week?
+        label: How many missed deliveries have there been in the last week?
         help: ''
       has-found-alternatives-to-avoid-missing-deliveries:
         label: Have you had to change suppliers or find alternative solutions in order to avoid missing deliveries?
@@ -1004,7 +1004,7 @@ domestic:
         label: ''
         help: 'Give details of the other reason(s) for increasing wages'
     bonuses:
-      heading: Driver bonuses
+      heading: Driver incentives
       has-paid-bonus:
         label: Has your company paid an incentive to recruit or retain drivers in the last 3 months?
         help: ''
