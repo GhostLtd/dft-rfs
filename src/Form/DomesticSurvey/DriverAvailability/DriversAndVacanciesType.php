@@ -68,6 +68,15 @@ class DriversAndVacanciesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-vacancies.help",
                 'choices' => DriverAvailability::VACANCY_REASON_CHOICES,
+                'choice_options' => [
+                    DriverAvailability::VACANCY_REASON_TRANSLATION_PREFIX . 'other' => ['conditional_form_name' => 'reasonsForDriverVacanciesOther'],
+                ],
+            ])
+            ->add('reasonsForDriverVacanciesOther', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.reasonsForDriverVacanciesOther',
+                'label' => "{$translationKeyPrefix}.reasons-for-vacancies-other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.reasons-for-vacancies-other.help",
             ])
         ;
     }

@@ -55,6 +55,15 @@ class WagesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-wage-increase.help",
                 'choices' => DriverAvailability::WAGE_INCREASE_REASON_CHOICES,
+                'choice_options' => [
+                    DriverAvailability::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'other' => ['conditional_form_name' => 'reasonsForWageIncreaseOther'],
+                ],
+            ])
+            ->add('reasonsForWageIncreaseOther', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.reasonsForWageIncrease',
+                'label' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.help",
             ])
         ;
 

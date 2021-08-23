@@ -961,6 +961,9 @@ domestic:
 #          no-qual-drivers: Lack of qualified drivers
           ir35-changes: Off-payroll (IR35) rule changes
           other: Other
+      reasons-for-vacancies-other:
+        label: ''
+        help: 'Give details of the other reason(s) for your vacancies'
       number-of-drivers-that-have-left:
         label: How many HGV drivers have left your company in the last 3 months?
         help: ''
@@ -997,6 +1000,9 @@ domestic:
           retain-existing: To retain existing drivers
           attract-new: To attract new drivers
           other: Other
+      reasons-for-wage-increase-other:
+        label: ''
+        help: 'Give details of the other reason(s) for increasing wages'
     bonuses:
       heading: Driver bonuses
       has-paid-bonus:

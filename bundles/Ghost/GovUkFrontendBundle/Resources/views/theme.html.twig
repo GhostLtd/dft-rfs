@@ -280,7 +280,6 @@
 {% block gds_choice_widget_expanded_item %}
     {%- set conditionalFormItem = child.vars.conditional_form_name | default(false) -%}
     {%- set conditionalHideFormItems = namesToIds(form, child.vars.conditional_hide_form_names | default(null)) -%}
-{% dump(conditionalFormItem) %}
     <div class="{{ classPrefix }}__item">
         {%- with child.vars|merge({
             'label_is_page_heading': false,

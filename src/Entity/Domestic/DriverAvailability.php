@@ -68,6 +68,11 @@ class DriverAvailability
     private ?array $reasonsForDriverVacancies = [];
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $reasonsForDriverVacanciesOther = null;
+
+    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private ?int $numberOfDriversThatHaveLeft = null;
@@ -87,6 +92,11 @@ class DriverAvailability
      * @ORM\Column(type="array", nullable=true)
      */
     private ?array $reasonsForWageIncrease = [];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $reasonsForWageIncreaseOther = null;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
@@ -332,6 +342,30 @@ class DriverAvailability
     public function setNumberOfLorriesOperated(?int $numberOfLorriesOperated): self
     {
         $this->numberOfLorriesOperated = $numberOfLorriesOperated;
+
+        return $this;
+    }
+
+    public function getReasonsForDriverVacanciesOther(): ?string
+    {
+        return $this->reasonsForDriverVacanciesOther;
+    }
+
+    public function setReasonsForDriverVacanciesOther(?string $reasonsForDriverVacanciesOther): self
+    {
+        $this->reasonsForDriverVacanciesOther = $reasonsForDriverVacanciesOther;
+
+        return $this;
+    }
+
+    public function getReasonsForWageIncreaseOther(): ?string
+    {
+        return $this->reasonsForWageIncreaseOther;
+    }
+
+    public function setReasonsForWageIncreaseOther(?string $reasonsForWageIncreaseOther): self
+    {
+        $this->reasonsForWageIncreaseOther = $reasonsForWageIncreaseOther;
 
         return $this;
     }
