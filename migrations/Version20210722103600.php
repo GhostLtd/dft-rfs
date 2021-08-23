@@ -7,7 +7,7 @@ namespace DoctrineMigrations;
 use App\Entity\Domestic\Survey;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\Console\Input\ArgvInput;
+use Google\Cloud\Storage\Bucket;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,6 +17,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class Version20210722103600 extends AbstractMigration
 {
+    private Bucket $exportBucket;
+
     public function getDescription(): string
     {
         return '';
@@ -47,7 +49,16 @@ final class Version20210722103600 extends AbstractMigration
                 $reissued = $result[0];
                 $this->addSql("UPDATE domestic_survey SET state = :state WHERE id = :id", ['state' => Survey::STATE_REISSUED, 'id' => $originalDiscard['id']]);
                 $this->addSql("UPDATE domestic_survey SET original_survey_id = :originalId WHERE id = :id", ['originalId' => $originalDiscard['id'], 'id' => $reissued['id']]);
-                $reissues[] = $originalDiscard['registration_mark'];
+
+                $iterator = $this->exportBucket->objects([
+                    'delimiter' => '/',
+                    'prefix' => "csrgt-pdf/{$originalDiscard['registration_mark']}",
+                ]);
+
+                $reissues[] = [
+                    "Reg mark" => $originalDiscard['registration_mark'],
+                    "Pdf count" => count(iterator_to_array($iterator)),
+                ];
             }
         }
         sort($reissues);
@@ -61,7 +72,7 @@ final class Version20210722103600 extends AbstractMigration
         $style->listing($multiple);
 
         $style->section("Matched reissues (rename PDFS)");
-        $style->listing($reissues);
+        $style->table(['Reg mark', 'PDF count'], $reissues);
     }
 
     public function down(Schema $schema): void
@@ -72,5 +83,10 @@ final class Version20210722103600 extends AbstractMigration
         $this->addSql('ALTER TABLE domestic_survey DROP original_survey_id');
 
         $this->addSql("UPDATE domestic_survey SET state = :rejected WHERE state = :reissued", ['rejected' => Survey::STATE_REJECTED, 'reissued' => Survey::STATE_REISSUED]);
+    }
+
+    public function setExportBucket(Bucket $exportBucket)
+    {
+        $this->exportBucket = $exportBucket;
     }
 }
