@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DeliveriesType extends AbstractType
 {
@@ -68,5 +69,12 @@ class DeliveriesType extends AbstractType
             ])
         ;
 
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'validation_groups' => ['driver-availability.deliveries']
+        ]);
     }
 }
