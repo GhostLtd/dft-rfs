@@ -480,7 +480,7 @@
             ) | trim
         })
         } %}{{ block('attributes') }}{% endwith %}>
-        <fieldset class="govuk-fieldset {{ attr.class | default('') }}" role="group"{% if fieldsetDescribedBy is not empty %} aria-describedby="{{ fieldsetDescribedBy }}"{% endif %}>
+        <fieldset {% with {attr: fieldset_attr ?? {}} %}{{ block('attributes') }}{% endwith %} class="govuk-fieldset {{ attr.class | default('') }}" role="group"{% if fieldsetDescribedBy is not empty %} aria-describedby="{{ fieldsetDescribedBy }}"{% endif %}>
             {{- form_label(form, null, {element: 'legend'}) }}
             {{- form_help(form) -}}
             {{- form_errors(form) -}}

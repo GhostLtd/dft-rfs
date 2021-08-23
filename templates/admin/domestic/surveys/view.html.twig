@@ -38,6 +38,11 @@
                 'Final details': 'tab-final-details',
             }) -%}
         {%- endif -%}
+        {%- if not survey.inActiveState -%}
+            {%- set tabs = tabs | merge({
+                'Driver availability': 'tab-driver-availability',
+            }) -%}
+        {%- endif -%}
     {%- endif -%}
     {%- set tabs = tabs | merge({
         ("Notes (#{ survey.notes | length })"): 'tab-notes',
@@ -156,6 +161,14 @@
                         <a class="govuk-button" href="{{ path('admin_domestic_survey_final_details_edit', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> final details</span></a>
                     </div>
                     {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            {%- if 'Driver availability' in tabs | keys -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-driver-availability">
+                    {%- with {availability: survey.driverAvailability} -%}
+                        {%- include 'admin/domestic/includes/driver-availability.html.twig' -%}
+                    {%- endwith -%}
                 </div>
             {%- endif -%}
 

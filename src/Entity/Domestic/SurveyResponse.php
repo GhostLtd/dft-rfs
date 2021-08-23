@@ -70,6 +70,13 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="domestic.survey-response.initial-details.business-name-required", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
+     */
+    private ?string $contactBusinessName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      */
@@ -148,6 +155,7 @@ class SurveyResponse extends AbstractSurveyResponse
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
     private $survey;
 
@@ -525,5 +533,16 @@ class SurveyResponse extends AbstractSurveyResponse
             + (empty($this->getNewOwnerTelephone()) ? 0 : 1)
             + ((is_null($this->getNewOwnerAddress()) || !$this->getNewOwnerAddress()->isFilled()) ? 0 : 1)
             ;
+    }
+
+    public function getContactBusinessName(): ?string
+    {
+        return $this->contactBusinessName;
+    }
+
+    public function setContactBusinessName(?string $contactBusinessName): self
+    {
+        $this->contactBusinessName = $contactBusinessName;
+        return $this;
     }
 }

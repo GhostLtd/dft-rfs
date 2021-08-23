@@ -1,0 +1,89 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow as row -%}
+
+<h2 class="govuk-heading-m">{{ 'domestic.driver-availability.drivers.heading' | trans }}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- row('domestic.driver-availability.drivers.number-of-drivers-employed.label' | trans, _self.intOrNull(availability.numberOfDriversEmployed)) -}}
+    {{- row('domestic.driver-availability.drivers.has-vacancies.label' | trans, _self.boolOrNull(availability.hasVacancies)) -}}
+    {%- if availability.hasVacancies -%}
+        {{- row('domestic.driver-availability.drivers.number-of-driver-vacancies.label' | trans, _self.intOrNull(availability.numberOfDriverVacancies)) -}}
+        {{- row('domestic.driver-availability.drivers.reasons-for-vacancies.label' | trans, _self.listOrNull(availability.reasonsForDriverVacancies, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices')) -}}
+    {%- endif -%}
+    {{- row('domestic.driver-availability.drivers.number-of-drivers-that-have-left.label' | trans, _self.intOrNull(availability.numberOfDriversThatHaveLeft)) -}}
+</dl>
+
+{%- if availability.hasVacancies -%}
+    <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.deliveries.heading' | trans }}</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+        {{- row('domestic.driver-availability.deliveries.number-of-lorries-operated.label' | trans, _self.intOrNull(availability.numberOfLorriesOperated)) -}}
+        {{- row('domestic.driver-availability.deliveries.number-of-parked-lorries.label' | trans, _self.intOrNull(availability.numberOfParkedLorries)) -}}
+        {{- row('domestic.driver-availability.deliveries.has-missed-deliveries.label' | trans, _self.boolOrNull(availability.hasMissedDeliveries)) -}}
+        {% if availability.hasMissedDeliveries is same as false %}
+            {{- row('domestic.driver-availability.deliveries.has-found-alternatives-to-avoid-missing-deliveries.label' | trans, _self.boolOrNull(availability.hasFoundAlternativesToAvoidMissingDeliveries)) -}}
+        {% elseif availability.hasMissedDeliveries is same as true %}
+            {{- row('domestic.driver-availability.deliveries.number-of-missed-deliveries.label' | trans, _self.intOrNull(availability.numberOfMissedDeliveries)) -}}
+        {%- endif -%}
+    </dl>
+{%- endif -%}
+
+
+<h2 class="govuk-heading-m">{{ 'domestic.driver-availability.wages.heading' | trans }}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- row('domestic.driver-availability.wages.have-wages-increased.label' | trans, _self.choiceOrNull(availability.haveWagesIncreased, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
+    {% if availability.haveWagesIncreased != 'no' %}
+        {{- row('domestic.driver-availability.wages.average-wage-increase.label' | trans, _self.valueUnitOrNull(availability.averageWageIncrease)) -}}
+        {{- row('domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans, _self.listOrNull(availability.reasonsForWageIncrease, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')) -}}
+    {% endif %}
+</dl>
+
+<h2 class="govuk-heading-m">{{ 'domestic.driver-availability.bonuses.heading' | trans }}</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- row('domestic.driver-availability.bonuses.has-paid-bonus.label' | trans, _self.choiceOrNull(availability.hasPaidBonus, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
+    {% if availability.hasPaidBonus != 'no' %}
+        {{- row('domestic.driver-availability.bonuses.average-bonus.label' | trans, _self.valueUnitOrNull(availability.averageBonus)) -}}
+    {% endif %}
+</dl>
+
+
+{%- macro boolOrNull(value) -%}
+    {%- if value is same as null -%}
+        -
+    {%- elseif value is same as true -%}
+        Yes
+    {%- elseif value is same as false -%}
+        No
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro intOrNull(value) -%}
+    {%- if value is same as null -%}
+        -
+    {%- else -%}
+        {{ value | format_number }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{% macro choiceOrNull(value, translationPrefix) %}
+    {%- if value is same as null -%}
+        -
+    {%- else -%}
+        {{ "#{translationPrefix}.#{value}" | trans }}
+    {%- endif -%}
+{% endmacro %}
+
+{%- macro listOrNull(value, translationPrefix) -%}
+    {%- if value is same as null -%}
+        -
+    {%- else -%}
+        {{ value | map(s => "#{translationPrefix}.#{s}" | trans) | join('<br>') | raw }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valueUnitOrNull(value) -%}
+    {% dump(value) %}
+    {%- if value is same as null or value.value is same as null -%}
+        -
+    {%- else -%}
+        {{- value.value | number_format }} {{ "domestic.driver-availability.currency-or-percentage.#{value.unit}" | trans -}}
+    {%- endif -%}
+{%- endmacro -%}
+

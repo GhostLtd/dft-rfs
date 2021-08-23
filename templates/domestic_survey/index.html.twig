@@ -54,7 +54,7 @@
             <a class="govuk-button" data-module="govuk-button" href="{{
                 survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')
                     ? url('app_domesticsurvey_closingdetails_start')
-                    : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::STATE_CONFIRM')})
+                    : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE')})
             }}">{{ 'domestic.summary.complete-week'|trans }}</a>
         </p>
 

@@ -511,6 +511,9 @@ domestic:
     contact-details:
       heading: 'Contact details'
       help: ''
+      business-name:
+        label: 'Business name'
+        help: 'The name of the business that owns the vehicle. If you are a sole trader, this is your operating name.'
       contact-name:
         label: 'Name'
         help: ''
@@ -953,6 +956,86 @@ domestic:
       contact-details: Contact details
       contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
       confirm-and-submit: Confirm and submit
+  driver-availability:
+    currency-or-percentage:
+      percentage: "% (percent)"
+      currency: "£ (GBP)"
+    yes-no-plan-to:
+      choices:
+        yes: Yes
+        no: No
+        plan-to: Planning to
+    drivers:
+      heading: Driver vacancies
+      number-of-drivers-employed:
+        label: How many HGV drivers does your company currently employ?
+        help: Do not include any unfilled vacancies in this number.
+      has-vacancies:
+        label: Do you currently have any HGV driver vacancies?
+        help: ''
+      number-of-driver-vacancies:
+        label: How many HGV driver vacancies do you currently have?
+        help: ''
+      reasons-for-vacancies:
+        label: Which (if any) of the following reasons are why you have vacancies. Select all that apply.
+        help: ''
+        choices:
+          covid: COVID related
+          retirement: Driver retirement
+          lured-away: Better pay or benefits elsewhere
+          new-work: Increase in workload
+          working-conditions: Working hours or conditions
+#          no-qual-drivers: Lack of qualified drivers
+          ir35-changes: Off-payroll (IR35) rule changes
+          other: Other
+      number-of-drivers-that-have-left:
+        label: How many HGV drivers have left your company in the last 3 months?
+        help: ''
+    deliveries:
+      heading: HGVs and deliveries
+      number-of-lorries-operated:
+        label: How many HGVs does your company operate?
+        help: ''
+      number-of-parked-lorries:
+        label: On an average day in the last week, how many HGVs were not operating due to drivers not being available?
+        help: ''
+      has-missed-deliveries:
+        label: Have you experienced any missed deliveries in the last week due to drivers not being available?
+        help: ''
+      number-of-missed-deliveries:
+        label: How many missed deliveries have there been in the last week?
+        help: ''
+      has-found-alternatives-to-avoid-missing-deliveries:
+        label: Have you had to change suppliers or find alternative solutions in order to avoid missing deliveries?
+        help: ''
+    wages:
+      heading: Driver wages
+      have-wages-increased:
+        label: Has your company increased wages (not including bonuses) for HGV drivers in the last 3 months?
+        help: ''
+      average-wage-increase:
+        label: What was the average wage increase in the last 3 months?
+        help: ''
+      reasons-for-wage-increase:
+        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months? Select all that apply.
+        help: ''
+        choices:
+          planned: Planned pay rise
+          retain-existing: To retain existing drivers
+          attract-new: To attract new drivers
+          other: Other
+    bonuses:
+      heading: Driver bonuses
+      has-paid-bonus:
+        label: Has your company paid a bonus to recruit or retain drivers in the last 3 months?
+        help: ''
+      average-bonus:
+        label: What was the average bonus paid in the last 3 months?
+        help: ''
+
+
+
+
 
   day-stop-delete:
     heading: "Delete stage {stageNumber} (day {dayNumber})"

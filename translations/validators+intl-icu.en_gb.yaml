@@ -213,6 +213,7 @@ domestic:
       choice: Choose whether you will be in possession of the vehicle during your survey week
     initial-details:
       contact-email-or-telephone-required: 'Provide a contact telephone number or an email address'
+      business-name-required: 'Provide the name of your business'
     hiree-details:
       contact-details-required: Prvoide at least one contact method for the hiree
     number-of-employees:

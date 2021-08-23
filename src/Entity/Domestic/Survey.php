@@ -107,6 +107,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      */
     private ?string $reasonForUnfilledSurvey;
 
+    /**
+     * @ORM\OneToOne(targetEntity=DriverAvailability::class, inversedBy="survey", fetch="EAGER")
+     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
+     */
+    private ?DriverAvailability $driverAvailability;
+
     public function isInitialDetailsComplete(): bool
     {
         return (
@@ -131,6 +137,11 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         $reissue = $this->getOriginalSurvey() ? '-R' : '';
         $region = $this->getIsNorthernIreland() ? 'NI' : 'GB';
         return "{$this->getRegistrationMark()}-{$year}{$reissue}-{$region}";
+    }
+
+    public function isInActiveState(): bool
+    {
+        return in_array($this->state, self::ACTIVE_STATES);
     }
 
     public function getIsNorthernIreland(): ?bool
@@ -209,6 +220,18 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             $note->setSurvey($this);
             $this->notes[] = $note;
         }
+
+        return $this;
+    }
+
+    public function getDriverAvailability(): ?DriverAvailability
+    {
+        return $this->driverAvailability;
+    }
+
+    public function setDriverAvailability(?DriverAvailability $driverAvailability): self
+    {
+        $this->driverAvailability = $driverAvailability;
 
         return $this;
     }
