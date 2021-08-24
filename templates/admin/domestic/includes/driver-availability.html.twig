@@ -6,12 +6,12 @@
     {{- row('domestic.driver-availability.drivers.has-vacancies.label' | trans, _self.boolOrNull(availability.hasVacancies)) -}}
     {%- if availability.hasVacancies -%}
         {{- row('domestic.driver-availability.drivers.number-of-driver-vacancies.label' | trans, _self.intOrNull(availability.numberOfDriverVacancies)) -}}
-        {{- row('domestic.driver-availability.drivers.reasons-for-vacancies.label' | trans, _self.listOrNull(availability.reasonsForDriverVacancies, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices')) -}}
+        {{- row('domestic.driver-availability.drivers.reasons-for-vacancies.label' | trans, _self.listOrNull(availability.reasonsForDriverVacancies, availability.reasonsForDriverVacanciesOther, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices')) -}}
     {%- endif -%}
     {{- row('domestic.driver-availability.drivers.number-of-drivers-that-have-left.label' | trans, _self.intOrNull(availability.numberOfDriversThatHaveLeft)) -}}
 </dl>
 
-{%- if availability.hasVacancies -%}
+{%- if availability.hasVacancies == 'yes' -%}
     <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.deliveries.heading' | trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
         {{- row('domestic.driver-availability.deliveries.number-of-lorries-operated.label' | trans, _self.intOrNull(availability.numberOfLorriesOperated)) -}}
@@ -29,16 +29,16 @@
 <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.wages.heading' | trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.wages.have-wages-increased.label' | trans, _self.choiceOrNull(availability.haveWagesIncreased, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
-    {% if availability.haveWagesIncreased != 'no' %}
+    {% if availability.haveWagesIncreased == 'yes' %}
         {{- row('domestic.driver-availability.wages.average-wage-increase.label' | trans, _self.valueUnitOrNull(availability.averageWageIncrease)) -}}
-        {{- row('domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans, _self.listOrNull(availability.reasonsForWageIncrease, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')) -}}
+        {{- row('domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans, _self.listOrNull(availability.reasonsForWageIncrease, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')) -}}
     {% endif %}
 </dl>
 
 <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.bonuses.heading' | trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.bonuses.has-paid-bonus.label' | trans, _self.choiceOrNull(availability.hasPaidBonus, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
-    {% if availability.hasPaidBonus != 'no' %}
+    {% if availability.hasPaidBonus == 'yes' %}
         {{- row('domestic.driver-availability.bonuses.average-bonus.label' | trans, _self.valueUnitOrNull(availability.averageBonus)) -}}
     {% endif %}
 </dl>
@@ -72,11 +72,12 @@
     {%- endif -%}
 {% endmacro %}
 
-{%- macro listOrNull(value, translationPrefix) -%}
+{%- macro listOrNull(value, otherValue, translationPrefix) -%}
     {%- if value is same as null -%}
         -
     {%- else -%}
-        {{ value | map(s => "#{translationPrefix}.#{s}" | trans) | join('<br>') | raw }}
+        {{- value | map(s => "#{translationPrefix}.#{s}" | trans) | join('<br>') | raw -}}
+        {{- (("other" in value) and (otherValue ?? false)) ? ": \"#{otherValue}\"" : '' -}}
     {%- endif -%}
 {%- endmacro -%}
 
