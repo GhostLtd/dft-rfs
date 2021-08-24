@@ -84,7 +84,7 @@ return static function (ContainerConfigurator $container) {
                     'driver_availability_has_vacancies' => [
                         'from' => StateObject::STATE_DRIVER_AVAILABILITY_DRIVERS,
                         'to' => StateObject::STATE_DRIVER_AVAILABILITY_DELIVERIES,
-                        'guard' => 'subject.getSubject().getSurvey().getDriverAvailability().getHasVacancies()'
+                        'guard' => 'subject.getSubject().getSurvey().getDriverAvailability().getHasVacancies() === "yes"'
                     ],
                     'driver_availability_has_vacancies_done' => [
                         'from' => StateObject::STATE_DRIVER_AVAILABILITY_DELIVERIES,
@@ -93,7 +93,7 @@ return static function (ContainerConfigurator $container) {
                     'driver_availability_no_vacancies' => [
                         'from' => StateObject::STATE_DRIVER_AVAILABILITY_DRIVERS,
                         'to' => StateObject::STATE_DRIVER_AVAILABILITY_WAGES,
-                        'guard' => '! subject.getSubject().getSurvey().getDriverAvailability().getHasVacancies()'
+                        'guard' => 'subject.getSubject().getSurvey().getDriverAvailability().getHasVacancies() !== "yes"'
                     ],
                     'driver_availability_wages_done' => [
                         'from' => StateObject::STATE_DRIVER_AVAILABILITY_WAGES,

@@ -20,8 +20,7 @@ class BonusesTypeMapper extends PropertyPathMapper
         parent::mapFormsToData($forms, $data);
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
-        if ($driverAvailability->getHasPaidBonus() === 'no') {
-            dump('clearing bonuses');
+        if ($driverAvailability->getHasPaidBonus() !== 'yes') {
             $driverAvailability->setAverageBonus(null);
         }
     }

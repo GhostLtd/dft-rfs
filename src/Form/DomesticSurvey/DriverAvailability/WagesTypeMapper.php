@@ -20,7 +20,7 @@ class WagesTypeMapper extends PropertyPathMapper
         parent::mapFormsToData($forms, $data);
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
-        if ($driverAvailability->getHaveWagesIncreased() === 'no') {
+        if ($driverAvailability->getHaveWagesIncreased() !== 'yes') {
             $driverAvailability->setAverageWageIncrease(null);
             $driverAvailability->setReasonsForWageIncrease(null);
         }

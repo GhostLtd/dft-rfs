@@ -47,10 +47,12 @@
 {%- macro boolOrNull(value) -%}
     {%- if value is same as null -%}
         -
-    {%- elseif value is same as true -%}
+    {%- elseif value is same as "yes" -%}
         Yes
-    {%- elseif value is same as false -%}
+    {%- elseif value is same as "no" -%}
         No
+    {%- elseif value is same as "do-not-know" -%}
+        Don't know
     {%- endif -%}
 {%- endmacro -%}
 

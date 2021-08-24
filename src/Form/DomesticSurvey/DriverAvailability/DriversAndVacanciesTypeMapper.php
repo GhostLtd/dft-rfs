@@ -18,7 +18,7 @@ class DriversAndVacanciesTypeMapper extends PropertyPathMapper
         parent::mapFormsToData($forms, $data);
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
-        if ($driverAvailability->getHasVacancies() !== true) {
+        if ($driverAvailability->getHasVacancies() !== 'yes') {
             // conditional fields on this form
             $driverAvailability->setNumberOfDriverVacancies(null);
             $driverAvailability->setReasonsForDriverVacancies(null);

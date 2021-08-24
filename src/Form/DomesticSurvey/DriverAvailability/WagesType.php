@@ -67,7 +67,7 @@ class WagesType extends AbstractType
                 ],
             ])
             ->add('reasonsForWageIncreaseOther', Gds\InputType::class, [
-                'property_path' => 'survey.driverAvailability.reasonsForWageIncrease',
+                'property_path' => 'survey.driverAvailability.reasonsForWageIncreaseOther',
                 'label' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.help",

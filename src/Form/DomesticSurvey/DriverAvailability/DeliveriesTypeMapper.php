@@ -18,7 +18,7 @@ class DeliveriesTypeMapper extends PropertyPathMapper
         parent::mapFormsToData($forms, $data);
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
-        if ($driverAvailability->getHasMissedDeliveries() !== true) {
+        if ($driverAvailability->getHasMissedDeliveries() !== 'yes') {
             $driverAvailability->setNumberOfMissedDeliveries(null);
         }
     }
