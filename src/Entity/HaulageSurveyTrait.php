@@ -28,7 +28,7 @@ trait HaulageSurveyTrait {
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Assert\Expression("this.getSurveyPeriodEnd() >= this.getSurveyPeriodStart()", groups={"add_survey"}, message="common.survey.period-end.after-start")
+     * @Assert\Expression("this.getSurveyPeriodEnd() >= this.getSurveyPeriodStart()", groups={"add_international_survey"}, message="common.survey.period-end.after-start")
      */
     private ?DateTime $surveyPeriodEnd = null;
 
