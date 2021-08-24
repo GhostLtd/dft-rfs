@@ -51,7 +51,7 @@ class FinalQuestionsData
                     new FormTestCase([
                         'vehicle_fuel' => [
                             'fuelQuantity' => [
-                                'value' => 30,
+                                'value' => '30',
                                 'unit' => 'litres',
                             ],
                         ],
@@ -59,6 +59,62 @@ class FinalQuestionsData
                 ]),
             ]);
         }
+
+        // It is currently valid to leave ALL of these forms empty
+        $data = array_merge($data, [
+            new WizardStepTestCase("Driver vacancies", "drivers_and_vacancies_continue", [
+                new FormTestCase([
+                    'drivers_and_vacancies' => [
+                        'numberOfDriversEmployed' => '100',
+                        'hasVacancies' => '1',
+                        'vacancy_details' => [
+                            'numberOfDriverVacancies' => '10',
+                            'reasonsForDriverVacancies' => [
+                                1 => 'covid',
+                                3 => 'new-work',
+                            ],
+                        ],
+                        'numberOfDriversThatHaveLeft' => '5',
+                    ],
+                ]),
+            ]),
+            new WizardStepTestCase("HGVs and deliveries", "deliveries_continue", [
+                new FormTestCase([
+                    'deliveries' => [
+                        'numberOfLorriesOperated' => '10',
+                        'numberOfParkedLorries' => '2',
+                        'hasMissedDeliveries' => '1',
+                        'numberOfMissedDeliveries' => '2',
+                    ],
+                ]),
+            ]),
+            new WizardStepTestCase("Driver wages", "wages_continue", [
+                new FormTestCase([
+                    'wages' => [
+                        'haveWagesIncreased' => 'yes',
+                        'averageWageIncrease' => [
+                            'value' => '10',
+                            'unit' => 'percentage',
+                        ],
+                        'reasonsForWageIncrease' => [
+                            0 => 'planned',
+                            2 => 'attract-new',
+                        ],
+                    ],
+                ]),
+            ]),
+            new WizardStepTestCase("Driver bonuses", "bonuses_continue", [
+                new FormTestCase([
+                    'bonuses' => [
+                        'hasPaidBonus' => 'yes',
+                        'averageBonus' => [
+                            'value' => '10',
+                            'unit' => 'percentage',
+                        ],
+                    ],
+                ]),
+            ]),
+        ]);
 
         return array_merge($data, [
             new WizardStepTestCase("Submit your survey", "form_continue", [

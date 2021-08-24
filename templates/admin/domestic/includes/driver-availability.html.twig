@@ -79,7 +79,6 @@
 {%- endmacro -%}
 
 {%- macro valueUnitOrNull(value) -%}
-    {% dump(value) %}
     {%- if value is same as null or value.value is same as null -%}
         -
     {%- else -%}

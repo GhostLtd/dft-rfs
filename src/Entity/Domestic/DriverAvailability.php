@@ -19,8 +19,8 @@ class DriverAvailability
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'covid' => 'covid',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'retirement' => 'retirement',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'new-work' => 'new-work',
-//        self::VACANCY_REASON_TRANSLATION_PREFIX . 'no-qual-drivers' => 'no-qual-drivers',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'ir35-changes' => 'ir35-changes',
+        self::VACANCY_REASON_TRANSLATION_PREFIX . 'unavailable-tests' => 'unavailable-tests',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'working-conditions' => 'working-conditions',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'other' => 'other',
     ];
@@ -30,6 +30,7 @@ class DriverAvailability
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'yes' => 'yes',
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'no' => 'no',
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'plan-to' => 'plan-to',
+        self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'do-not-know' => 'do-not-know',
     ];
 
     const WAGE_INCREASE_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.reasons-for-wage-increase.choices.';
@@ -38,6 +39,21 @@ class DriverAvailability
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'retain-existing' => 'retain-existing',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'attract-new' => 'attract-new',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'other' => 'other',
+    ];
+
+    const TRISTATE_TRANSLATION_PREFIX = 'common.choices.boolean.';
+    const TRISTATE_CHOICES = [
+        self::TRISTATE_TRANSLATION_PREFIX.'yes' => 'yes',
+        self::TRISTATE_TRANSLATION_PREFIX.'no' => 'no',
+        self::TRISTATE_TRANSLATION_PREFIX.'do-not-know' => 'do-not-know',
+    ];
+
+    const MISSING_DELIVERY_TRANSLATION_PREFIX = 'domestic.driver-availability.deliveries.missed-deliveries.';
+    const MISSING_DELIVERY_CHOICES = [
+        self::MISSING_DELIVERY_TRANSLATION_PREFIX.'no' => 'no',
+        self::MISSING_DELIVERY_TRANSLATION_PREFIX.'no-with-workarounds' => 'no-with-workarounds',
+        self::MISSING_DELIVERY_TRANSLATION_PREFIX.'yes' => 'yes',
+        self::MISSING_DELIVERY_TRANSLATION_PREFIX.'do-not-know' => 'do-not-know',
     ];
 
     /**
@@ -53,9 +69,9 @@ class DriverAvailability
     private ?int $numberOfDriversEmployed = null;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private ?bool $hasVacancies = null;
+    private ?string $hasVacancies = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -66,6 +82,11 @@ class DriverAvailability
      * @ORM\Column(type="array", nullable=true)
      */
     private ?array $reasonsForDriverVacancies = [];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $reasonsForDriverVacanciesOther = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -89,6 +110,11 @@ class DriverAvailability
     private ?array $reasonsForWageIncrease = [];
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $reasonsForWageIncreaseOther = null;
+
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private ?string $hasPaidBonus = null;
@@ -110,14 +136,9 @@ class DriverAvailability
     private ?int $numberOfParkedLorries = null;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private ?bool $hasMissedDeliveries = null;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $hasFoundAlternativesToAvoidMissingDeliveries = null;
+    private ?string $hasMissedDeliveries = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -146,12 +167,12 @@ class DriverAvailability
         return $this;
     }
 
-    public function getHasVacancies(): ?bool
+    public function getHasVacancies(): ?string
     {
         return $this->hasVacancies;
     }
 
-    public function setHasVacancies(?bool $hasVacancies): self
+    public function setHasVacancies(?string $hasVacancies): self
     {
         $this->hasVacancies = $hasVacancies;
 
@@ -300,26 +321,14 @@ class DriverAvailability
         return $this;
     }
 
-    public function getHasMissedDeliveries(): ?bool
+    public function getHasMissedDeliveries(): ?string
     {
         return $this->hasMissedDeliveries;
     }
 
-    public function setHasMissedDeliveries(?bool $hasMissedDeliveries): self
+    public function setHasMissedDeliveries(?string $hasMissedDeliveries): self
     {
         $this->hasMissedDeliveries = $hasMissedDeliveries;
-
-        return $this;
-    }
-
-    public function getHasFoundAlternativesToAvoidMissingDeliveries(): ?bool
-    {
-        return $this->hasFoundAlternativesToAvoidMissingDeliveries;
-    }
-
-    public function setHasFoundAlternativesToAvoidMissingDeliveries(?bool $hasFoundAlternativesToAvoidMissingDeliveries): self
-    {
-        $this->hasFoundAlternativesToAvoidMissingDeliveries = $hasFoundAlternativesToAvoidMissingDeliveries;
 
         return $this;
     }
@@ -332,6 +341,30 @@ class DriverAvailability
     public function setNumberOfLorriesOperated(?int $numberOfLorriesOperated): self
     {
         $this->numberOfLorriesOperated = $numberOfLorriesOperated;
+
+        return $this;
+    }
+
+    public function getReasonsForDriverVacanciesOther(): ?string
+    {
+        return $this->reasonsForDriverVacanciesOther;
+    }
+
+    public function setReasonsForDriverVacanciesOther(?string $reasonsForDriverVacanciesOther): self
+    {
+        $this->reasonsForDriverVacanciesOther = $reasonsForDriverVacanciesOther;
+
+        return $this;
+    }
+
+    public function getReasonsForWageIncreaseOther(): ?string
+    {
+        return $this->reasonsForWageIncreaseOther;
+    }
+
+    public function setReasonsForWageIncreaseOther(?string $reasonsForWageIncreaseOther): self
+    {
+        $this->reasonsForWageIncreaseOther = $reasonsForWageIncreaseOther;
 
         return $this;
     }

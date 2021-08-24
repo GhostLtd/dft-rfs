@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
-
 
 use App\Entity\Domestic\DriverAvailability;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -32,10 +30,7 @@ class DriversAndVacanciesType extends AbstractType
                 'label' => "{$translationKeyPrefix}.has-vacancies.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.has-vacancies.help",
-                'choices' => [
-                    'common.choices.boolean.yes' => true,
-                    'common.choices.boolean.no' => false,
-                ],
+                'choices' => DriverAvailability::TRISTATE_CHOICES,
                 'choice_options' => [
                     'common.choices.boolean.yes' => ['conditional_form_name' => 'vacancy_details'],
                 ],
@@ -68,6 +63,15 @@ class DriversAndVacanciesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-vacancies.help",
                 'choices' => DriverAvailability::VACANCY_REASON_CHOICES,
+                'choice_options' => [
+                    DriverAvailability::VACANCY_REASON_TRANSLATION_PREFIX . 'other' => ['conditional_form_name' => 'reasonsForDriverVacanciesOther'],
+                ],
+            ])
+            ->add('reasonsForDriverVacanciesOther', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.reasonsForDriverVacanciesOther',
+                'label' => "{$translationKeyPrefix}.reasons-for-vacancies-other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.reasons-for-vacancies-other.help",
             ])
         ;
     }

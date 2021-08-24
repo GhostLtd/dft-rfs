@@ -51,6 +51,7 @@ common:
     boolean:
       yes: Yes
       no: No
+      do-not-know: "Don't know"
     other: 'Other'
   consignment:
     cargo-type: Cargo type
@@ -965,57 +966,63 @@ domestic:
         yes: Yes
         no: No
         plan-to: Planning to
+        do-not-know: "Don't know"
     drivers:
       heading: Driver vacancies
       number-of-drivers-employed:
-        label: How many HGV drivers does your company currently employ?
-        help: Do not include any unfilled vacancies in this number.
+        label: How many Heavy Goods Vehicle (HGV) drivers does your company currently employ?
+        help: "Do not include any unfilled vacancies in this number. If you don't know the answer, leave it blank."
       has-vacancies:
         label: Do you currently have any HGV driver vacancies?
         help: ''
       number-of-driver-vacancies:
         label: How many HGV driver vacancies do you currently have?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       reasons-for-vacancies:
-        label: Which (if any) of the following reasons are why you have vacancies. Select all that apply.
+        label: Which of the following (if any) have contributed to your HGV driver vacancies? Select all the reasons that apply. Select all that apply.
         help: ''
         choices:
+          lured-away: Better pay or benefits elsewhere
           covid: COVID related
           retirement: Driver retirement
-          lured-away: Better pay or benefits elsewhere
           new-work: Increase in workload
-          working-conditions: Working hours or conditions
-#          no-qual-drivers: Lack of qualified drivers
           ir35-changes: Off-payroll (IR35) rule changes
+          unavailable-tests: Unavailable HGV driver tests
+          working-conditions: Working hours or conditions
           other: Other
+      reasons-for-vacancies-other:
+        label: ''
+        help: 'Give details of the other reason(s) for your vacancies'
       number-of-drivers-that-have-left:
         label: How many HGV drivers have left your company in the last 3 months?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
     deliveries:
       heading: HGVs and deliveries
       number-of-lorries-operated:
         label: How many HGVs does your company operate?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       number-of-parked-lorries:
         label: On an average day in the last week, how many HGVs were not operating due to drivers not being available?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       has-missed-deliveries:
         label: Have you experienced any missed deliveries in the last week due to drivers not being available?
         help: ''
       number-of-missed-deliveries:
         label: How many missed deliveries have there been in the last week?
-        help: ''
-      has-found-alternatives-to-avoid-missing-deliveries:
-        label: Have you had to change suppliers or find alternative solutions in order to avoid missing deliveries?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
+      missed-deliveries:
+        yes: Yes
+        no: No
+        no-with-workarounds: No, but had to change suppliers / find alternative solutions
+        do-not-know: "Don't know"
     wages:
       heading: Driver wages
       have-wages-increased:
-        label: Has your company increased wages (not including bonuses) for HGV drivers in the last 3 months?
+        label: Has your company increased wages (not including incentives) for HGV drivers in the last 3 months?
         help: ''
       average-wage-increase:
         label: What was the average wage increase in the last 3 months?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       reasons-for-wage-increase:
         label: Which (if any) of the following are reasons why you have increased wages in the last 3 months? Select all that apply.
         help: ''
@@ -1024,14 +1031,17 @@ domestic:
           retain-existing: To retain existing drivers
           attract-new: To attract new drivers
           other: Other
+      reasons-for-wage-increase-other:
+        label: ''
+        help: 'Give details of the other reason(s) for increasing wages'
     bonuses:
-      heading: Driver bonuses
+      heading: Driver incentives
       has-paid-bonus:
-        label: Has your company paid a bonus to recruit or retain drivers in the last 3 months?
+        label: Has your company paid an incentive to recruit or retain drivers in the last 3 months?
         help: ''
       average-bonus:
-        label: What was the average bonus paid in the last 3 months?
-        help: ''
+        label: What was the average incentive paid in the last 3 months?
+        help: "If you don't know the answer, leave it blank."
 
 
 

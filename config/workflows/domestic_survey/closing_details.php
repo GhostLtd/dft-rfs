@@ -33,7 +33,7 @@ return static function (ContainerConfigurator $container) {
                     'missing_days' => [
                         'from' =>  StateObject::STATE_START,
                         'to' => StateObject::STATE_MISSING_DAYS,
-                        'guard' => 'subject.getSubject().getDays().count() !== 7',
+                        'guard' => 'subject.getSubject().getDays().count() !== 7 && subject.getSubject().getIsInPossessionOfVehicle() === "yes"',
                     ],
                     'back_to_dashboard' => [
                         'from' => StateObject::STATE_MISSING_DAYS,
@@ -67,6 +67,12 @@ return static function (ContainerConfigurator $container) {
 
 
                     // Driver availability
+                    'driver_availability_not_in_possession' => [
+                        'from' =>  StateObject::STATE_START,
+                        'to' => StateObject::STATE_DRIVER_AVAILABILITY_DRIVERS,
+                        'guard' => 'subject.getSubject().getIsInPossessionOfVehicle() !== "yes"',
+                    ],
+
                     'driver_availability' => [
                         'from' => [StateObject::STATE_REASON_EMPTY_SURVEY, StateObject::STATE_VEHICLE_FUEL],
                         'to' => StateObject::STATE_DRIVER_AVAILABILITY_DRIVERS,

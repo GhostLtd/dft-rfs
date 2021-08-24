@@ -8,6 +8,7 @@ use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\DriverAvailability;
 use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,11 +29,17 @@ class WagesType extends AbstractType
                 'help' => "{$translationKeyPrefix}.have-wages-increased.help",
                 'choices' => DriverAvailability::YES_NO_PLAN_TO_CHOICES,
                 'choice_options' => [
-                    DriverAvailability::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'no' => [
-                        'conditional_hide_form_names' => ['reasonsForWageIncrease', 'averageWageIncrease'],
+                    DriverAvailability::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'yes' => [
+                        'conditional_form_name' => 'increased_wages_yes',
                     ],
                 ],
             ])
+            ->add('increased_wages_yes', FormType::class, [
+                'inherit_data' => true,
+                'label' => false,
+            ])
+            ;
+        $builder->get('increased_wages_yes')
             ->add('averageWageIncrease', ValueUnitType::class, [
                 'property_path' => 'survey.driverAvailability.averageWageIncrease',
                 'label' => "{$translationKeyPrefix}.average-wage-increase.label",
@@ -55,6 +62,15 @@ class WagesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-wage-increase.help",
                 'choices' => DriverAvailability::WAGE_INCREASE_REASON_CHOICES,
+                'choice_options' => [
+                    DriverAvailability::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'other' => ['conditional_form_name' => 'reasonsForWageIncreaseOther'],
+                ],
+            ])
+            ->add('reasonsForWageIncreaseOther', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.reasonsForWageIncrease',
+                'label' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.help",
             ])
         ;
 

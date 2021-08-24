@@ -52,6 +52,11 @@ class DeleteHelper extends AbstractDeleteHelper
                 }
             }
 
+            $availability = $survey->getDriverAvailability();
+            if ($availability) {
+                $this->entityManager->remove($availability);
+            }
+
             $this->entityManager->remove($response->getVehicle());
             $this->entityManager->remove($response);
         }

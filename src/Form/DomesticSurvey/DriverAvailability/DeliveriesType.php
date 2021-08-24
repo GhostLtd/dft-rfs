@@ -1,14 +1,9 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
 
-
-use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\DriverAvailability;
-use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,23 +36,9 @@ class DeliveriesType extends AbstractType
                 'label' => "{$translationKeyPrefix}.has-missed-deliveries.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.has-missed-deliveries.help",
-                'choices' => [
-                    'common.choices.boolean.yes' => true,
-                    'common.choices.boolean.no' => false,
-                ],
+                'choices' => DriverAvailability::MISSING_DELIVERY_CHOICES,
                 'choice_options' => [
-                    'common.choices.boolean.yes' => ['conditional_form_name' => 'numberOfMissedDeliveries'],
-                    'common.choices.boolean.no' => ['conditional_form_name' => 'hasFoundAlternativesToAvoidMissingDeliveries'],
-                ],
-            ])
-            ->add('hasFoundAlternativesToAvoidMissingDeliveries', Gds\ChoiceType::class, [
-                'property_path' => 'survey.driverAvailability.hasFoundAlternativesToAvoidMissingDeliveries',
-                'label' => "{$translationKeyPrefix}.has-found-alternatives-to-avoid-missing-deliveries.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => "{$translationKeyPrefix}.has-found-alternatives-to-avoid-missing-deliveries.help",
-                'choices' => [
-                    'common.choices.boolean.yes' => true,
-                    'common.choices.boolean.no' => false,
+                    DriverAvailability::MISSING_DELIVERY_TRANSLATION_PREFIX.'yes' => ['conditional_form_name' => 'numberOfMissedDeliveries'],
                 ],
             ])
             ->add('numberOfMissedDeliveries', Gds\InputType::class, [
@@ -68,7 +49,6 @@ class DeliveriesType extends AbstractType
                 'attr' => ['class' => 'govuk-input--width-5'],
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
