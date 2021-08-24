@@ -51,6 +51,7 @@ common:
     boolean:
       yes: Yes
       no: No
+      do-not-know: "Don't know"
     other: 'Other'
   consignment:
     cargo-type: Cargo type
@@ -938,6 +939,7 @@ domestic:
         yes: Yes
         no: No
         plan-to: Planning to
+        do-not-know: "Don't know"
     drivers:
       heading: Driver vacancies
       number-of-drivers-employed:
@@ -981,9 +983,11 @@ domestic:
       number-of-missed-deliveries:
         label: How many missed deliveries have there been in the last week?
         help: ''
-      has-found-alternatives-to-avoid-missing-deliveries:
-        label: Have you had to change suppliers or find alternative solutions in order to avoid missing deliveries?
-        help: ''
+      missed-deliveries:
+        yes: Yes
+        no: No
+        no-with-workarounds: No, but had to change suppliers / find alternative solutions
+        do-not-know: "Don't know"
     wages:
       heading: Driver wages
       have-wages-increased:

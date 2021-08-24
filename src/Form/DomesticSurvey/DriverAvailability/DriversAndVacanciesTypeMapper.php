@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
-
 
 use App\Entity\Domestic\SurveyResponse;
 use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
@@ -30,7 +28,6 @@ class DriversAndVacanciesTypeMapper extends PropertyPathMapper
             $driverAvailability->setNumberOfParkedLorries(null);
             $driverAvailability->setHasMissedDeliveries(null);
             $driverAvailability->setNumberOfMissedDeliveries(null);
-            $driverAvailability->setHasFoundAlternativesToAvoidMissingDeliveries(null);
         }
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
-
 
 use App\Entity\Domestic\SurveyResponse;
 use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
@@ -22,9 +20,6 @@ class DeliveriesTypeMapper extends PropertyPathMapper
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
         if ($driverAvailability->getHasMissedDeliveries() !== true) {
             $driverAvailability->setNumberOfMissedDeliveries(null);
-        }
-        if ($driverAvailability->getHasMissedDeliveries() !== false) {
-            $driverAvailability->setHasFoundAlternativesToAvoidMissingDeliveries(null);
         }
     }
 }
