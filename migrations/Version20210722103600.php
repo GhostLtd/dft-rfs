@@ -40,7 +40,9 @@ final class Version20210722103600 extends AbstractMigration
         $originalDiscards = $this->connection->fetchAllAssociative("SELECT domestic_survey.id, domestic_survey.is_northern_ireland, domestic_survey.survey_period_start, domestic_survey.registration_mark, domestic_survey.state, domestic_survey_response.is_in_possession_of_vehicle FROM domestic_survey LEFT JOIN domestic_survey_response ON domestic_survey.id = domestic_survey_response.survey_id WHERE domestic_survey_response.is_in_possession_of_vehicle IN('on-hire', 'sold')");
         foreach ($originalDiscards as $k=>$originalDiscard) {
             // missing check for start date, as there's one that has the wrong date!!
-            $result = $this->connection->fetchAllAssociative("SELECT domestic_survey.id, domestic_survey.is_northern_ireland, domestic_survey.survey_period_start, domestic_survey.registration_mark, domestic_survey.state, domestic_survey_response.is_in_possession_of_vehicle FROM domestic_survey LEFT JOIN domestic_survey_response ON domestic_survey.id = domestic_survey_response.survey_id WHERE domestic_survey.is_northern_ireland = :is_northern_ireland AND domestic_survey.registration_mark = :registration_mark AND (domestic_survey_response.is_in_possession_of_vehicle NOT IN ('on-hire', 'sold') OR domestic_survey_response.is_in_possession_of_vehicle IS NULL)" , $originalDiscard);
+            // remove check for region (NI/GB), as some were reissued in wrong region
+            // simpler just to find surveys with same reg, but not the same ID - some duplication (for multi-hires), but not a problem
+            $result = $this->connection->fetchAllAssociative("SELECT domestic_survey.id, domestic_survey.is_northern_ireland, domestic_survey.survey_period_start, domestic_survey.registration_mark, domestic_survey.state, domestic_survey_response.is_in_possession_of_vehicle FROM domestic_survey LEFT JOIN domestic_survey_response ON domestic_survey.id = domestic_survey_response.survey_id WHERE domestic_survey.id <> :id AND domestic_survey.registration_mark = :registration_mark" , $originalDiscard);
             if (empty($result)) {
                 $missing[] = "{$originalDiscard['registration_mark']} ({$originalDiscard['is_in_possession_of_vehicle']})";
             } else if (count($result) > 1) {
@@ -61,9 +63,9 @@ final class Version20210722103600 extends AbstractMigration
                 ];
             }
         }
-        sort($reissues);
         sort($missing);
         sort($multiple);
+        usort($reissues, function ($a, $b) {return $a['Pdf count'] > $b['Pdf count'];});
 
         $style->section("Missing reissues");
         $style->listing($missing);
