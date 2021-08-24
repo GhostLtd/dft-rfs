@@ -1,25 +1,25 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow as row -%}
 
+{% set showAll = true %}
+
 <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.drivers.heading' | trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.drivers.number-of-drivers-employed.label' | trans, _self.intOrNull(availability.numberOfDriversEmployed)) -}}
     {{- row('domestic.driver-availability.drivers.has-vacancies.label' | trans, _self.boolOrNull(availability.hasVacancies)) -}}
-    {%- if availability.hasVacancies -%}
+    {%- if showAll or availability.hasVacancies == 'yes' -%}
         {{- row('domestic.driver-availability.drivers.number-of-driver-vacancies.label' | trans, _self.intOrNull(availability.numberOfDriverVacancies)) -}}
         {{- row('domestic.driver-availability.drivers.reasons-for-vacancies.label' | trans, _self.listOrNull(availability.reasonsForDriverVacancies, availability.reasonsForDriverVacanciesOther, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices')) -}}
     {%- endif -%}
     {{- row('domestic.driver-availability.drivers.number-of-drivers-that-have-left.label' | trans, _self.intOrNull(availability.numberOfDriversThatHaveLeft)) -}}
 </dl>
 
-{%- if availability.hasVacancies == 'yes' -%}
+{%- if showAll or availability.hasVacancies == 'yes' -%}
     <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.deliveries.heading' | trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
         {{- row('domestic.driver-availability.deliveries.number-of-lorries-operated.label' | trans, _self.intOrNull(availability.numberOfLorriesOperated)) -}}
         {{- row('domestic.driver-availability.deliveries.number-of-parked-lorries.label' | trans, _self.intOrNull(availability.numberOfParkedLorries)) -}}
         {{- row('domestic.driver-availability.deliveries.has-missed-deliveries.label' | trans, _self.boolOrNull(availability.hasMissedDeliveries)) -}}
-        {% if availability.hasMissedDeliveries is same as false %}
-            {{- row('domestic.driver-availability.deliveries.has-found-alternatives-to-avoid-missing-deliveries.label' | trans, _self.boolOrNull(availability.hasFoundAlternativesToAvoidMissingDeliveries)) -}}
-        {% elseif availability.hasMissedDeliveries is same as true %}
+        {% if showAll or availability.hasMissedDeliveries == 'yes' %}
             {{- row('domestic.driver-availability.deliveries.number-of-missed-deliveries.label' | trans, _self.intOrNull(availability.numberOfMissedDeliveries)) -}}
         {%- endif -%}
     </dl>
@@ -29,7 +29,7 @@
 <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.wages.heading' | trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.wages.have-wages-increased.label' | trans, _self.choiceOrNull(availability.haveWagesIncreased, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
-    {% if availability.haveWagesIncreased == 'yes' %}
+    {% if showAll or availability.haveWagesIncreased == 'yes' %}
         {{- row('domestic.driver-availability.wages.average-wage-increase.label' | trans, _self.valueUnitOrNull(availability.averageWageIncrease)) -}}
         {{- row('domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans, _self.listOrNull(availability.reasonsForWageIncrease, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')) -}}
     {% endif %}
@@ -38,7 +38,7 @@
 <h2 class="govuk-heading-m">{{ 'domestic.driver-availability.bonuses.heading' | trans }}</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.bonuses.has-paid-bonus.label' | trans, _self.choiceOrNull(availability.hasPaidBonus, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
-    {% if availability.hasPaidBonus == 'yes' %}
+    {% if showAll or availability.hasPaidBonus == 'yes' %}
         {{- row('domestic.driver-availability.bonuses.average-bonus.label' | trans, _self.valueUnitOrNull(availability.averageBonus)) -}}
     {% endif %}
 </dl>
