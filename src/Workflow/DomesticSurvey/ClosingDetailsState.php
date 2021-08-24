@@ -30,7 +30,7 @@ class ClosingDetailsState extends AbstractFormWizardState implements FormWizardS
     const STATE_CONFIRM = 'confirm';
     const STATE_END = 'end';
 
-    const IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE = self::STATE_DRIVER_AVAILABILITY_DRIVERS;
+    const IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE = self::STATE_START;
 
     private const FORM_MAP = [
         self::STATE_MISSING_DAYS => MissingDaysType::class,
