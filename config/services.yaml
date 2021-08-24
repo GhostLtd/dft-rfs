@@ -123,3 +123,10 @@ services:
         class: 'Google\Cloud\Storage\Bucket'
         factory: ['@Google\Cloud\Storage\StorageClient', 'bucket']
         arguments: ['%google_bucket_export%']
+
+    App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner:
+        class: Doctrine\Migrations\Version\DbalMigrationFactory
+        factory: ['@doctrine.migrations.dependency_factory', 'getMigrationFactory']
+
+    App\Doctrine\Migrations\Version\ProjectMigrationFactory:
+        arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
