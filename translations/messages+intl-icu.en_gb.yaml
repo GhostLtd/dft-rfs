@@ -944,13 +944,13 @@ domestic:
       heading: Driver vacancies
       number-of-drivers-employed:
         label: How many Heavy Goods Vehicle (HGV) drivers does your company currently employ?
-        help: Do not include any unfilled vacancies in this number.
+        help: "Do not include any unfilled vacancies in this number. If you don't know the answer, leave it blank."
       has-vacancies:
         label: Do you currently have any HGV driver vacancies?
         help: ''
       number-of-driver-vacancies:
         label: How many HGV driver vacancies do you currently have?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       reasons-for-vacancies:
         label: Which (if any) of the following reasons are why you have vacancies. Select all that apply.
         help: ''
@@ -968,21 +968,21 @@ domestic:
         help: 'Give details of the other reason(s) for your vacancies'
       number-of-drivers-that-have-left:
         label: How many HGV drivers have left your company in the last 3 months?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
     deliveries:
       heading: HGVs and deliveries
       number-of-lorries-operated:
         label: How many HGVs does your company operate?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       number-of-parked-lorries:
         label: On an average day in the last week, how many HGVs were not operating due to drivers not being available?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       has-missed-deliveries:
         label: Have you experienced any missed deliveries in the last week due to drivers not being available?
         help: ''
       number-of-missed-deliveries:
         label: How many missed deliveries have there been in the last week?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       missed-deliveries:
         yes: Yes
         no: No
@@ -995,7 +995,7 @@ domestic:
         help: ''
       average-wage-increase:
         label: What was the average wage increase in the last 3 months?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
       reasons-for-wage-increase:
         label: Which (if any) of the following are reasons why you have increased wages in the last 3 months? Select all that apply.
         help: ''
@@ -1014,7 +1014,7 @@ domestic:
         help: ''
       average-bonus:
         label: What was the average incentive paid in the last 3 months?
-        help: ''
+        help: "If you don't know the answer, leave it blank."
 
 
 
