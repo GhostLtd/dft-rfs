@@ -28,8 +28,8 @@ class BonusesType extends AbstractType
                 'help' => "{$translationKeyPrefix}.has-paid-bonus.help",
                 'choices' => DriverAvailability::YES_NO_PLAN_TO_CHOICES,
                 'choice_options' => [
-                    DriverAvailability::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'no' => [
-                        'conditional_hide_form_names' => ['averageBonus'],
+                    DriverAvailability::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'yes' => [
+                        'conditional_form_name' => 'averageBonus',
                     ],
                 ],
             ])
