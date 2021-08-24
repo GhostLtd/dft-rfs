@@ -66,7 +66,7 @@ class FinalQuestionsData
                 new FormTestCase([
                     'drivers_and_vacancies' => [
                         'numberOfDriversEmployed' => '100',
-                        'hasVacancies' => '1',
+                        'hasVacancies' => 'yes',
                         'vacancy_details' => [
                             'numberOfDriverVacancies' => '10',
                             'reasonsForDriverVacancies' => [
@@ -83,7 +83,7 @@ class FinalQuestionsData
                     'deliveries' => [
                         'numberOfLorriesOperated' => '10',
                         'numberOfParkedLorries' => '2',
-                        'hasMissedDeliveries' => '1',
+                        'hasMissedDeliveries' => 'yes',
                         'numberOfMissedDeliveries' => '2',
                     ],
                 ]),
@@ -92,18 +92,20 @@ class FinalQuestionsData
                 new FormTestCase([
                     'wages' => [
                         'haveWagesIncreased' => 'yes',
-                        'averageWageIncrease' => [
-                            'value' => '10',
-                            'unit' => 'percentage',
-                        ],
-                        'reasonsForWageIncrease' => [
-                            0 => 'planned',
-                            2 => 'attract-new',
+                        'increased_wages_yes' => [
+                            'averageWageIncrease' => [
+                                'value' => '10',
+                                'unit' => 'percentage',
+                            ],
+                            'reasonsForWageIncrease' => [
+                                0 => 'planned',
+                                2 => 'attract-new',
+                            ],
                         ],
                     ],
                 ]),
             ]),
-            new WizardStepTestCase("Driver bonuses", "bonuses_continue", [
+            new WizardStepTestCase("Driver incentives", "bonuses_continue", [
                 new FormTestCase([
                     'bonuses' => [
                         'hasPaidBonus' => 'yes',
