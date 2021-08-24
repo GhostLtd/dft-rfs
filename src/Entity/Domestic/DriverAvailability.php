@@ -19,8 +19,8 @@ class DriverAvailability
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'covid' => 'covid',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'retirement' => 'retirement',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'new-work' => 'new-work',
-//        self::VACANCY_REASON_TRANSLATION_PREFIX . 'no-qual-drivers' => 'no-qual-drivers',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'ir35-changes' => 'ir35-changes',
+        self::VACANCY_REASON_TRANSLATION_PREFIX . 'unavailable-tests' => 'unavailable-tests',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'working-conditions' => 'working-conditions',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'other' => 'other',
     ];

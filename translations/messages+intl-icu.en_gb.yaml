@@ -955,13 +955,13 @@ domestic:
         label: Which (if any) of the following reasons are why you have vacancies. Select all that apply.
         help: ''
         choices:
+          lured-away: Better pay or benefits elsewhere
           covid: COVID related
           retirement: Driver retirement
-          lured-away: Better pay or benefits elsewhere
           new-work: Increase in workload
-          working-conditions: Working hours or conditions
-#          no-qual-drivers: Lack of qualified drivers
           ir35-changes: Off-payroll (IR35) rule changes
+          unavailable-tests: Unavailable HGV driver tests
+          working-conditions: Working hours or conditions
           other: Other
       reasons-for-vacancies-other:
         label: ''
