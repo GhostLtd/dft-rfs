@@ -82,7 +82,7 @@ class DriverAvailability
     private ?int $numberOfDriverVacancies = null;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      */
     private ?array $reasonsForDriverVacancies = [];
 
@@ -110,7 +110,7 @@ class DriverAvailability
     private ?CurrencyOrPercentage $averageWageIncrease = null;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      */
     private ?array $reasonsForWageIncrease = [];
 
@@ -207,7 +207,7 @@ class DriverAvailability
 
     public function setReasonsForDriverVacancies(?array $reasonsForDriverVacancies): self
     {
-        $this->reasonsForDriverVacancies = $reasonsForDriverVacancies;
+        $this->reasonsForDriverVacancies = array_values($reasonsForDriverVacancies);
 
         return $this;
     }
@@ -255,7 +255,7 @@ class DriverAvailability
 
     public function setReasonsForWageIncrease(?array $reasonsForWageIncrease): self
     {
-        $this->reasonsForWageIncrease = $reasonsForWageIncrease;
+        $this->reasonsForWageIncrease = array_values($reasonsForWageIncrease);
 
         return $this;
     }
