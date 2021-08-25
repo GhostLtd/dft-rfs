@@ -44,6 +44,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         $formWizardDriverAvailability = $formWizard->getSubject()->getSurvey()->getDriverAvailability();
         if (!$formWizardDriverAvailability) {
             $formWizardDriverAvailability = new DriverAvailability();
+            $formWizardDriverAvailability->setSurvey($survey);
             $this->entityManager->persist($formWizardDriverAvailability);
             $this->entityManager->flush();
         }
