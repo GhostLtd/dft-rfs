@@ -18,5 +18,5 @@
 
     <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.confirm-and-submit')|trans }}</h2>
     {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
-    <p class="govuk-body">Please confirm that all the information you have entered in the survey is correct and complete before submitting it. You can <a href="{{ url(summaryRoute) }}" class="govuk-link">go back to the dashboard</a> and check if you're unsure.</p>
+    <p class="govuk-body">Please confirm that all the information you have entered in the survey is correct and complete before submitting it. To check that your journey information is correct, you can <a href="{{ url(summaryRoute) }}" class="govuk-link">go back to the dashboard</a>.</p>
 {% endblock %}
