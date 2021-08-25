@@ -77,6 +77,5 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
             $viewData['isNorthernIreland'] = $forms['isNorthernIreland']->getData();
             $viewData['surveyPeriodStart'] = $forms['surveyPeriodStart']->getData();
         }
-        dump($viewData);
     }
 }
