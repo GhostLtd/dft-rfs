@@ -6,6 +6,7 @@ use App\Entity\CurrencyOrPercentage;
 use App\Repository\Domestic\DriverAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Form\Validator as AppAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=DriverAvailabilityRepository::class)
@@ -65,6 +66,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
      */
     private ?int $numberOfDriversEmployed = null;
 
@@ -75,6 +77,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
      */
     private ?int $numberOfDriverVacancies = null;
 
@@ -85,11 +88,13 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.drivers-and-vacancies"})
      */
     private ?string $reasonsForDriverVacanciesOther = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
      */
     private ?int $numberOfDriversThatHaveLeft = null;
 
@@ -111,6 +116,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
      */
     private ?string $reasonsForWageIncreaseOther = null;
 
@@ -127,11 +133,13 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
      */
     private ?int $numberOfLorriesOperated = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
      */
     private ?int $numberOfParkedLorries = null;
 
@@ -142,6 +150,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
      */
     private ?int $numberOfMissedDeliveries = null;
 
