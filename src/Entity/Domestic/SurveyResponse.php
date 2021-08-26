@@ -73,7 +73,7 @@ class SurveyResponse extends AbstractSurveyResponse
      * @Assert\NotBlank(message="domestic.survey-response.initial-details.business-name-required", groups={"contact_details", "admin_correspondence"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
      */
-    private ?string $contactBusinessName;
+    private ?string $contactBusinessName = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -463,6 +463,7 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
         $this->setContactTelephone($response->getContactTelephone());
+        $this->setContactBusinessName($response->getContactBusinessName());
 
         $this->setIsInPossessionOfVehicle($response->getIsInPossessionOfVehicle());
 

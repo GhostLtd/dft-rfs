@@ -106,7 +106,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         $forms = iterator_to_array($forms);
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        foreach(['contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
+        foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
             $forms[$field]->setData($accessor->getValue($viewData, $field));
         }
 
@@ -140,7 +140,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         $accessor = PropertyAccess::createPropertyAccessor();
         $isInPossession = $forms['isInPossessionOfVehicle']->getData();
 
-        foreach(['contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
+        foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
         }
 
