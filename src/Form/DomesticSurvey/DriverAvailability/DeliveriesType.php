@@ -17,14 +17,14 @@ class DeliveriesType extends AbstractType
         $builder
             ->setDataMapper(new DeliveriesTypeMapper())
 
-            ->add('numberOfLorriesOperated', Gds\InputType::class, [
+            ->add('numberOfLorriesOperated', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfLorriesOperated',
                 'label' => "{$translationKeyPrefix}.number-of-lorries-operated.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.number-of-lorries-operated.help",
                 'attr' => ['class' => 'govuk-input--width-5'],
             ])
-            ->add('numberOfParkedLorries', Gds\InputType::class, [
+            ->add('numberOfParkedLorries', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfParkedLorries',
                 'label' => "{$translationKeyPrefix}.number-of-parked-lorries.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -41,7 +41,7 @@ class DeliveriesType extends AbstractType
                     DriverAvailability::MISSING_DELIVERY_TRANSLATION_PREFIX.'yes' => ['conditional_form_name' => 'numberOfMissedDeliveries'],
                 ],
             ])
-            ->add('numberOfMissedDeliveries', Gds\InputType::class, [
+            ->add('numberOfMissedDeliveries', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfMissedDeliveries',
                 'label' => "{$translationKeyPrefix}.number-of-missed-deliveries.label",
                 'label_attr' => ['class' => 'govuk-label--s'],

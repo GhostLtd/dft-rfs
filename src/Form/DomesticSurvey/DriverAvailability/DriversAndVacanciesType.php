@@ -18,7 +18,7 @@ class DriversAndVacanciesType extends AbstractType
         $builder
             ->setDataMapper(new DriversAndVacanciesTypeMapper())
 
-            ->add('numberOfDriversEmployed', Gds\InputType::class, [
+            ->add('numberOfDriversEmployed', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriversEmployed',
                 'label' => "{$translationKeyPrefix}.number-of-drivers-employed.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -39,7 +39,7 @@ class DriversAndVacanciesType extends AbstractType
                 'inherit_data' => true,
                 'label' => false,
             ])
-            ->add('numberOfDriversThatHaveLeft', Gds\InputType::class, [
+            ->add('numberOfDriversThatHaveLeft', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriversThatHaveLeft',
                 'label' => "{$translationKeyPrefix}.number-of-drivers-that-have-left.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -49,7 +49,7 @@ class DriversAndVacanciesType extends AbstractType
         ;
 
         $builder->get('vacancy_details')
-            ->add('numberOfDriverVacancies', Gds\InputType::class, [
+            ->add('numberOfDriverVacancies', Gds\NumberType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriverVacancies',
                 'label' => "{$translationKeyPrefix}.number-of-driver-vacancies.label",
                 'label_attr' => ['class' => 'govuk-label--s'],

@@ -72,6 +72,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
+     * @Assert\NotNull(groups={"driver-availability.drivers-and-vacancies"}, message="common.choice.not-null")
      */
     private ?string $hasVacancies = null;
 
@@ -207,7 +208,9 @@ class DriverAvailability
 
     public function setReasonsForDriverVacancies(?array $reasonsForDriverVacancies): self
     {
-        $this->reasonsForDriverVacancies = array_values($reasonsForDriverVacancies);
+        $this->reasonsForDriverVacancies = ($reasonsForDriverVacancies === null) ?
+            null :
+            array_values($reasonsForDriverVacancies);
 
         return $this;
     }
