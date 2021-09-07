@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Domestic\DriverAvailability;
+use App\Entity\SurveyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,12 @@ class RfsExportDriverAvailabilityDataCommand extends Command
             ->leftJoin('d.survey', 's')
             ->leftJoin('s.response', 'r')
             ->select('
+                s.registrationMark,
+                s.state,
+                s.submissionDate,
                 r.contactBusinessName,
+                r.businessNature,
+                r.numberOfEmployees,
                 d.numberOfDriversEmployed,
                 d.hasVacancies,
                 d.numberOfDriverVacancies,
@@ -58,10 +64,50 @@ class RfsExportDriverAvailabilityDataCommand extends Command
                 d.averageBonus.value,
                 d.averageBonus.unit')
             ->where('r.contactBusinessName IS NOT NULL')
+            ->andWhere('s.state NOT IN (:unwantedStates)')
             ->getQuery()
+            ->setParameters([
+                'unwantedStates' => [
+                    SurveyInterface::STATE_INVITATION_FAILED,
+                    SurveyInterface::STATE_INVITATION_PENDING,
+                    SurveyInterface::STATE_INVITATION_SENT,
+                    SurveyInterface::STATE_IN_PROGRESS,
+                    SurveyInterface::STATE_REJECTED,
+                ],
+            ])
             ->getArrayResult();
 
         $handle = fopen('php://output', 'w');
+
+        $arrayColumns = [
+            'reasonsForDriverVacancies' => DriverAvailability::VACANCY_REASON_CHOICES,
+            'reasonsForWageIncrease' => DriverAvailability::WAGE_INCREASE_REASON_CHOICES,
+        ];
+
+        $responses = array_map(function($row) use ($arrayColumns) {
+            $expandedRow = [];
+            foreach($row as $key=>$value) {
+                if ($arrayColumns[$key] ?? null) {
+                    foreach($arrayColumns[$key] as $reason) {
+                        if ($reason === 'other') {
+                            $reason = 'isOther';
+                        }
+
+                        $camelCaseReason = join('', array_map('ucfirst', explode('-', $reason)));
+                        $expandedRow[$key.' - '.$camelCaseReason] =
+                            in_array($reason, $value ?? []) ? 1 : 0;
+                    }
+                } else {
+                    if ($value instanceof \DateTime) {
+                        $value = $value->format('Y-m-d H:i:s');
+                    }
+
+                    $expandedRow[$key] = $value;
+                }
+            }
+
+            return $expandedRow;
+        }, $responses);
 
         $headers = array_map(function($name) {
             if ($name === 'contactBusinessName') {
