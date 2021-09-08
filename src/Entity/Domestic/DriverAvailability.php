@@ -258,7 +258,9 @@ class DriverAvailability
 
     public function setReasonsForWageIncrease(?array $reasonsForWageIncrease): self
     {
-        $this->reasonsForWageIncrease = array_values($reasonsForWageIncrease);
+        $this->reasonsForWageIncrease = ($reasonsForWageIncrease === null) ?
+            null :
+            array_values($reasonsForWageIncrease);
 
         return $this;
     }
