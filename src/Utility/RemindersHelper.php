@@ -106,11 +106,12 @@ class RemindersHelper
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->setParameter('surveyEndDate', (new \DateTime())->modify('-7 days')->modify('+12 hours'));
+        $queryBuilder->setParameter('sevenDaysAgo', (new \DateTime())->modify('-7 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(
             'survey.firstReminderSentDate IS NULL',
             'survey.secondReminderSentDate IS NULL',
-            'survey.surveyPeriodEnd <= :surveyEndDate'
+            'survey.surveyPeriodEnd <= :sevenDaysAgo',
+            'survey.notifiedDate <= :sevenDaysAgo'
         );
     }
 
