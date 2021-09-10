@@ -667,7 +667,7 @@ domestic:
   day-view:
     heading: Day record ({date, date, long})
     headings:
-      more-than-five-stops: Summary day (more than 5 stops)
+      more-than-five-stops: Summary day (6 stops or more)
       five-stops-or-fewer: Detailed day (5 stops or fewer)
     detailed-change-link-sr-suffix:
       locations: 'stage {stopNumber} - locations'
