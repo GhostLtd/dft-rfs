@@ -31,6 +31,7 @@ class DriverAvailabilityExportController extends AbstractController
     {
         return [
             'existingExportDates' => $this->driverAvailabilityExportHelper->getExistingDates(),
+            'hasNewResponses' => $this->driverAvailabilityExportHelper->hasAnyResponsesReadyForNewExport(),
         ];
     }
 

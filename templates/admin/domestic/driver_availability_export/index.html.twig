@@ -29,13 +29,15 @@
                 {{- tableCell(actions, {actions: true}) -}}
             </tr>
         {%- endfor -%}
-        <tr class="govuk-table__row">
-            {{- tableCell('Latest') -}}
-            {%- set actions -%}
-                <a href="{{ url('admin_domestic_driveravailabilityexport_new') }}" class="govuk-!-margin-bottom-0">Download</a>
-            {%- endset -%}
-            {{- tableCell(actions, {actions: true}) -}}
-        </tr>
+        {% if hasNewResponses %}
+            <tr class="govuk-table__row">
+                {{- tableCell('Latest') -}}
+                {%- set actions -%}
+                    <a href="{{ url('admin_domestic_driveravailabilityexport_new') }}" class="govuk-!-margin-bottom-0">Download</a>
+                {%- endset -%}
+                {{- tableCell(actions, {actions: true}) -}}
+            </tr>
+        {% endif %}
         </tbody>
     </table>
 {%- endblock -%}

@@ -123,6 +123,16 @@ class DriverAvailabilityExportHelper
         return array_map(fn($v) => ($v['exportedDate'] ?? $v), $results);
     }
 
+    public function hasAnyResponsesReadyForNewExport(): bool
+    {
+        // get the ones with no exported date
+        $query = $this->getQueryBuilder()
+            ->andWhere('d.exportedDate IS NULL')
+            ->getQuery();
+        $responses = $this->setParametersAndGetArrayResult($query);
+        return !empty($responses);
+    }
+
     protected function getQueryBuilder(): QueryBuilder
     {
         return $this->entityManager
