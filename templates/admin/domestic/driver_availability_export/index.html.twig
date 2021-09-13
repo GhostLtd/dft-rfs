@@ -37,6 +37,11 @@
                 {%- endset -%}
                 {{- tableCell(actions, {actions: true}) -}}
             </tr>
+        {% else %}
+            <tr>
+                {{- tableCell('There have been no new responses since the last export') -}}
+                {{- tableCell('') -}}
+            </tr>
         {% endif %}
         </tbody>
     </table>
