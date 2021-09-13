@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Domestic\DriverAvailability;
 use App\Entity\SurveyInterface;
+use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,27 +43,34 @@ class RfsExportDriverAvailabilityDataCommand extends Command
                 s.registrationMark,
                 s.state,
                 s.submissionDate,
+                s.surveyPeriodStart,
+                
+                s.isNorthernIreland,
+                
                 r.contactBusinessName,
                 r.businessNature,
                 r.numberOfEmployees,
                 d.numberOfDriversEmployed,
+                d.numberOfLorriesOperated,
+                                
                 d.hasVacancies,
-                d.numberOfDriverVacancies,
+                d.numberOfDriverVacancies,               
                 d.reasonsForDriverVacancies,
                 d.reasonsForDriverVacanciesOther,
+                
                 d.numberOfDriversThatHaveLeft,
                 d.haveWagesIncreased,
-                d.reasonsForWageIncrease,
-                d.reasonsForWageIncreaseOther,
-                d.hasPaidBonus,
-                d.numberOfLorriesOperated,
-                d.numberOfParkedLorries,
-                d.hasMissedDeliveries,
-                d.numberOfMissedDeliveries,
                 d.averageWageIncrease.value,
                 d.averageWageIncrease.unit,
+                d.reasonsForWageIncrease,
+                d.reasonsForWageIncreaseOther,
+                
+                d.hasPaidBonus,
                 d.averageBonus.value,
-                d.averageBonus.unit')
+                d.averageBonus.unit,
+                d.numberOfParkedLorries,
+                d.hasMissedDeliveries,
+                d.numberOfMissedDeliveries')
             ->where('r.contactBusinessName IS NOT NULL')
             ->andWhere('s.state NOT IN (:unwantedStates)')
             ->getQuery()
@@ -98,7 +106,12 @@ class RfsExportDriverAvailabilityDataCommand extends Command
                             in_array($reason, $value ?? []) ? 1 : 0;
                     }
                 } else {
-                    if ($value instanceof \DateTime) {
+                    if ($key === 'surveyPeriodStart') {
+                        [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($value);
+                        $expandedRow['yearNumber'] = $year;
+                        $expandedRow['weekNumber'] = $week;
+                        continue;
+                    } else if ($value instanceof \DateTime) {
                         $value = $value->format('Y-m-d H:i:s');
                     }
 
