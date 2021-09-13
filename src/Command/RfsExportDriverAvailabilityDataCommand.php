@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Utility\DriverAvailabilityExportHelper;
+use App\Utility\Domestic\DriverAvailabilityExportHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,7 +29,7 @@ class RfsExportDriverAvailabilityDataCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->exportHelper->export('php://output');
+        $this->exportHelper->exportAll('php://output');
         return 0;
     }
 }

@@ -12,6 +12,8 @@ format:
     short: 'jS M'
   time:
     short: 'g:i a'
+  date-time:
+    medium: 'jS M Y, g:i a'
 
 common:
   logout: Sign out

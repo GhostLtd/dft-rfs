@@ -9,6 +9,7 @@ menu:
     reports: Reports
     export: Export
     dvla-import: DVLA bulk import
+    driver-availability-export: Driver availability
   international:
     root: IRHS
     surveys: Surveys
@@ -53,6 +54,8 @@ domestic:
     heading: 'Export failed'
     content: 'The export failed'
     title: ''
+  driver-availability-export:
+    heading: Driver availability export
 
 international:
   action:

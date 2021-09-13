@@ -160,6 +160,11 @@ class DriverAvailability
      */
     private ?Survey $survey = null;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $exportedDate = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -379,6 +384,18 @@ class DriverAvailability
     public function setReasonsForWageIncreaseOther(?string $reasonsForWageIncreaseOther): self
     {
         $this->reasonsForWageIncreaseOther = $reasonsForWageIncreaseOther;
+
+        return $this;
+    }
+
+    public function getExportedDate(): ?\DateTime
+    {
+        return $this->exportedDate;
+    }
+
+    public function setExportedDate(?\DateTime $exportedDate): self
+    {
+        $this->exportedDate = $exportedDate;
 
         return $this;
     }

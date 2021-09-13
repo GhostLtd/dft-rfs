@@ -1,25 +1,80 @@
 <?php
 
-namespace App\Utility;
+namespace App\Utility\Domestic;
 
 use App\Entity\Domestic\DriverAvailability;
 use App\Entity\SurveyInterface;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class DriverAvailabilityExportHelper
 {
     protected EntityManagerInterface $entityManager;
+
+    private const UNWANTED_STATES = [
+        SurveyInterface::STATE_INVITATION_FAILED,
+        SurveyInterface::STATE_INVITATION_PENDING,
+        SurveyInterface::STATE_INVITATION_SENT,
+        SurveyInterface::STATE_IN_PROGRESS,
+        SurveyInterface::STATE_REJECTED,
+    ];
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    public function export(string $exportPath)
+    public function exportAll(string $exportPath = 'php://output')
     {
-        $responses = $this->getResponses();
+        $responses = $this->setParametersAndGetArrayResult($this->getQueryBuilder()->getQuery());
+        $this->exportResponses($responses, $exportPath);
+    }
 
+    public function exportExisting(\DateTime $date, $exportPath = 'php://output')
+    {
+        $query = $this->getQueryBuilder()
+            ->andWhere('d.exportedDate = :exportedDate')
+            ->getQuery();
+        $responses = $this->setParametersAndGetArrayResult($query, [
+            'exportedDate' => $date
+        ]);
+        if (empty($responses)) {
+            throw new BadRequestHttpException('no availability responses found for given date');
+        }
+        $this->exportResponses($responses, $exportPath);
+    }
+
+    public function exportNew(\DateTime $exportDate, $exportPath = 'php://output')
+    {
+        // get the ones with no exported date
+        $query = $this->getQueryBuilder()
+            ->andWhere('d.exportedDate IS NULL')
+            ->getQuery();
+        $responses = $this->setParametersAndGetArrayResult($query);
+
+        // get all the IDs - set exported date
+        $ids = array_map(fn($v) => $v['id'], $responses);
+        $this->entityManager
+            ->createQueryBuilder()
+            ->update(DriverAvailability::class, 'd')
+            ->set('d.exportedDate', ':exportedDate')
+            ->where('d.id in (:ids)')
+            ->getQuery()
+            ->setParameters([
+                'exportedDate' => $exportDate,
+                'ids' => $ids,
+            ])
+            ->execute();
+
+        // export
+        $this->exportResponses($responses, $exportPath);
+    }
+
+    protected function exportResponses($responses, $exportPath)
+    {
         $handle = fopen($exportPath, 'w');
 
         $arrayColumns = [
@@ -40,7 +95,35 @@ class DriverAvailabilityExportHelper
         fclose($handle);
     }
 
-    public function getResponses(): array
+    protected function setParametersAndGetArrayResult(Query $query, $additionalParameters = [])
+    {
+        return $query->setParameters(array_merge($additionalParameters, [
+            'unwantedStates' => self::UNWANTED_STATES
+        ]))
+            ->getArrayResult()
+        ;
+    }
+
+    public function getExistingDates(): array
+    {
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->from(DriverAvailability::class, 'd')
+            ->leftJoin('d.survey', 's')
+            ->leftJoin('s.response', 'r')
+            ->select('
+                    d.exportedDate
+                ')
+            ->where('r.contactBusinessName IS NOT NULL')
+            ->andWhere('d.exportedDate IS NOT NULL')
+            ->andWhere('s.state NOT IN (:unwantedStates)')
+            ->groupBy('d.exportedDate')
+            ->getQuery();
+        $results = $this->setParametersAndGetArrayResult($query);
+        return array_map(fn($v) => ($v['exportedDate'] ?? $v), $results);
+    }
+
+    protected function getQueryBuilder(): QueryBuilder
     {
         return $this->entityManager
             ->createQueryBuilder()
@@ -48,6 +131,7 @@ class DriverAvailabilityExportHelper
             ->leftJoin('d.survey', 's')
             ->leftJoin('s.response', 'r')
             ->select('
+                d.id,
                 s.registrationMark,
                 s.state,
                 s.submissionDate,
@@ -81,17 +165,7 @@ class DriverAvailabilityExportHelper
                 d.numberOfMissedDeliveries')
             ->where('r.contactBusinessName IS NOT NULL')
             ->andWhere('s.state NOT IN (:unwantedStates)')
-            ->getQuery()
-            ->setParameters([
-                'unwantedStates' => [
-                    SurveyInterface::STATE_INVITATION_FAILED,
-                    SurveyInterface::STATE_INVITATION_PENDING,
-                    SurveyInterface::STATE_INVITATION_SENT,
-                    SurveyInterface::STATE_IN_PROGRESS,
-                    SurveyInterface::STATE_REJECTED,
-                ],
-            ])
-            ->getArrayResult();
+        ;
     }
 
     public function expandColumns(array $arrayColumns, $responses): array
@@ -103,7 +177,10 @@ class DriverAvailabilityExportHelper
                     // Expand a JSON array column into individual bitwise columns
                     $this->expandArrayColumn($arrayColumns[$key], $key, $value, $expandedRow);
                 } else {
-                    if ($key === 'surveyPeriodStart') {
+                    if ($key === 'id') {
+                        // ID is needed for some scenarios, but we want to exclude it from the export.
+                        continue;
+                    } else if ($key === 'surveyPeriodStart') {
                         // Expand surveyPeriodStart into survey year/week number
                         [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($value);
                         $expandedRow['yearNumber'] = $year;
