@@ -50,6 +50,7 @@ class DriverAvailability
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'hourly' => 'hourly',
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'weekly' => 'weekly',
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'monthly' => 'monthly',
+        self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'do-not-know' => 'do-not-know',
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'other' => 'other',
     ];
 

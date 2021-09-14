@@ -981,8 +981,8 @@ domestic:
         label: How many HGV driver vacancies do you currently have?
         help: "If you don't know the answer, leave it blank."
       reasons-for-vacancies:
-        label: Which of the following (if any) have contributed to your HGV driver vacancies? Select all the reasons that apply. Select all that apply.
-        help: ''
+        label: Which of the following (if any) have contributed to your HGV driver vacancies?"
+        help: 'Select all that apply.'
         choices:
           lured-away: Better pay or benefits elsewhere
           covid: COVID related
@@ -1029,8 +1029,8 @@ domestic:
         label: What was the average wage increase in the last 3 months?
         help: "If you don't know the answer, leave it blank."
       reasons-for-wage-increase:
-        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months? Select all that apply.
-        help: ''
+        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months?
+        help: 'Select all that apply.'
         choices:
           planned: Planned pay rise
           retain-existing: To retain existing drivers
@@ -1043,6 +1043,7 @@ domestic:
           hourly: Hourly
           weekly: Weekly
           monthly: Monthly
+          do-not-know: "Don't know"
           other: Other
       wage-increase-period-other:
         label: ''
@@ -1060,7 +1061,7 @@ domestic:
         help: "If you don't know the answer, leave it blank."
       reasons-for-bonuses:
         label: 'What was the reason for these incentives?'
-        help: "If you don't know the answer, leave it blank."
+        help: "Select all that apply. If you don't know the answer, leave it blank."
         choices:
           recruit: To recruit drivers
           retain: To retain drivers
