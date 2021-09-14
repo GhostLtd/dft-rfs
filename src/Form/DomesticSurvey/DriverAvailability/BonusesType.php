@@ -48,22 +48,13 @@ class BonusesType extends AbstractType
                 'choices' => DriverAvailability::BONUS_REASON_CHOICES,
                 'multiple' => true,
             ])
-            ->add('averageBonus', ValueUnitType::class, [
+            ->add('averageBonus', Gds\MoneyType::class, [
                 'property_path' => 'survey.driverAvailability.averageBonus',
                 'label' => "{$translationKeyPrefix}.average-bonus.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.average-bonus.help",
-                'data_class' => CurrencyOrPercentage::class,
-                'value_options' => [
-                    'label' => 'Amount',
-                    'attr' => ['class' => 'govuk-input--width-5']
-                ],
-                'unit_options' => [
-                    'label' => 'Amount type',
-                    'choices' => [
-                        CurrencyOrPercentage::UNIT_TRANSLATION_PREFIX . CurrencyOrPercentage::UNIT_CURRENCY => CurrencyOrPercentage::UNIT_CURRENCY,
-                    ],
-                ],
+                'attr' => ['class' => 'govuk-input--width-5'],
+                'divisor' => 1,
             ])
         ;
 

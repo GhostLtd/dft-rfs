@@ -157,10 +157,9 @@ class DriverAvailability
     private ?string $hasPaidBonus = null;
 
     /**
-     * @ORM\Embedded(class=CurrencyOrPercentage::class)
-     * @AppAssert\ValidValueUnit(groups={"driver-availability.bonuses"}, allowBlank=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private ?CurrencyOrPercentage $averageBonus = null;
+    private ?int $averageBonus = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -345,12 +344,12 @@ class DriverAvailability
         return $this;
     }
 
-    public function getAverageBonus(): ?CurrencyOrPercentage
+    public function getAverageBonus(): ?int
     {
         return $this->averageBonus;
     }
 
-    public function setAverageBonus(?CurrencyOrPercentage $averageBonus): self
+    public function setAverageBonus(?int $averageBonus): self
     {
         $this->averageBonus = $averageBonus;
 
