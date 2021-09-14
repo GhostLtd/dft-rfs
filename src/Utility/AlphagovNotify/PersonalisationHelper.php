@@ -44,6 +44,7 @@ class PersonalisationHelper
         return [
             'passcode1' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getUsername() : 'unknown',
             'passcode2' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getPlainPassword() : 'unknown',
+            'surveyReference' => $preEnquiry->getReferenceNumber(),
         ];
     }
 
