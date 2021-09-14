@@ -20,6 +20,8 @@ class DriverAvailability
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'covid' => 'covid',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'retirement' => 'retirement',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'new-work' => 'new-work',
+        self::VACANCY_REASON_TRANSLATION_PREFIX . 'lack-of-eu-drivers' => 'lack-of-eu-drivers',
+        self::VACANCY_REASON_TRANSLATION_PREFIX . 'no-new-drivers' => 'no-new-drivers',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'ir35-changes' => 'ir35-changes',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'unavailable-tests' => 'unavailable-tests',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'working-conditions' => 'working-conditions',
@@ -40,6 +42,20 @@ class DriverAvailability
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'retain-existing' => 'retain-existing',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'attract-new' => 'attract-new',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'other' => 'other',
+    ];
+
+    const WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.wage-increase-period.choices.';
+    const WAGE_INCREASE_PERIOD_CHOICES = [
+        self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'hourly' => 'hourly',
+        self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'weekly' => 'weekly',
+        self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'monthly' => 'monthly',
+        self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'other' => 'other',
+    ];
+
+    const BONUS_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.bonuses.reasons-for-bonuses.choices.';
+    const BONUS_REASON_CHOICES = [
+        self::BONUS_REASON_TRANSLATION_PREFIX . 'recruit' => 'recruit',
+        self::BONUS_REASON_TRANSLATION_PREFIX . 'retain' => 'retain',
     ];
 
     const TRISTATE_TRANSLATION_PREFIX = 'common.choices.boolean.';
@@ -111,6 +127,18 @@ class DriverAvailability
     private ?CurrencyOrPercentage $averageWageIncrease = null;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
+     */
+    private ?string $wageIncreasePeriod = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
+     */
+    private ?string $wageIncreasePeriodOther = null;
+
+    /**
      * @ORM\Column(type="json", nullable=true)
      */
     private ?array $reasonsForWageIncrease = [];
@@ -131,6 +159,11 @@ class DriverAvailability
      * @AppAssert\ValidValueUnit(groups={"driver-availability.bonuses"}, allowBlank=true)
      */
     private ?CurrencyOrPercentage $averageBonus = null;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $reasonsForBonuses = [];
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -270,6 +303,34 @@ class DriverAvailability
         return $this;
     }
 
+    public function getWageIncreasePeriod(): ?string
+    {
+        return $this->wageIncreasePeriod;
+    }
+
+    public function setWageIncreasePeriod(?string $wageIncreasePeriod): self
+    {
+        $this->wageIncreasePeriod = $wageIncreasePeriod;
+
+        if ($wageIncreasePeriod === 'other') {
+            $this->wageIncreasePeriodOther = null;
+        }
+
+        return $this;
+    }
+
+    public function getWageIncreasePeriodOther(): ?string
+    {
+        return $this->wageIncreasePeriodOther;
+    }
+
+    public function setWageIncreasePeriodOther(?string $wageIncreasePeriodOther): self
+    {
+        $this->wageIncreasePeriodOther = $wageIncreasePeriodOther;
+
+        return $this;
+    }
+
     public function getHasPaidBonus(): ?string
     {
         return $this->hasPaidBonus;
@@ -290,6 +351,20 @@ class DriverAvailability
     public function setAverageBonus(?CurrencyOrPercentage $averageBonus): self
     {
         $this->averageBonus = $averageBonus;
+
+        return $this;
+    }
+
+    public function getReasonsForBonuses(): ?array
+    {
+        return $this->reasonsForBonuses;
+    }
+
+    public function setReasonsForBonuses(?array $reasonsForBonuses): self
+    {
+        $this->reasonsForBonuses = ($reasonsForBonuses === null) ?
+            null :
+            array_values($reasonsForBonuses);
 
         return $this;
     }
