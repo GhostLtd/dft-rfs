@@ -19,6 +19,7 @@ class DriverAvailability
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'lured-away' => 'lured-away',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'covid' => 'covid',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'retirement' => 'retirement',
+        self::VACANCY_REASON_TRANSLATION_PREFIX . 'existing-drivers-leaving' => 'existing-drivers-leaving',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'new-work' => 'new-work',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'lack-of-eu-drivers' => 'lack-of-eu-drivers',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'no-new-drivers' => 'no-new-drivers',

@@ -987,9 +987,10 @@ domestic:
           lured-away: Better pay or benefits elsewhere
           covid: COVID related
           retirement: Driver retirement
+          existing-drivers-leaving: Existing drivers leaving industry
           new-work: Increase in workload
           lack-of-eu-drivers: Lack of European drivers
-          no-new-drivers: New drivings not entering profession / Existing drivers leaving industry
+          no-new-drivers: New drivings not entering profession
           ir35-changes: Off-payroll (IR35) rule changes
           unavailable-tests: Unavailable HGV driver tests
           working-conditions: Working hours or conditions
@@ -1036,11 +1037,16 @@ domestic:
           attract-new: To attract new drivers
           other: Other
       wage-increase-period:
+        label: What was the period for this wage increase
+        help: Was this wage increase per-hour, per-week, per-month or something else?
         choices:
           hourly: Hourly
           weekly: Weekly
           monthly: Monthly
           other: Other
+      wage-increase-period-other:
+        label: ''
+        help: 'What was the period for this wage increase?'
       reasons-for-wage-increase-other:
         label: ''
         help: 'Give details of the other reason(s) for increasing wages'
@@ -1053,8 +1059,11 @@ domestic:
         label: What was the average incentive paid in the last 3 months?
         help: "If you don't know the answer, leave it blank."
       reasons-for-bonuses:
-        recruit: To recruit drivers
-        retain: To retain drivers
+        label: 'What was the reason for these incentives?'
+        help: "If you don't know the answer, leave it blank."
+        choices:
+          recruit: To recruit drivers
+          retain: To retain drivers
 
 
 

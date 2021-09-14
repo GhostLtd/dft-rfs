@@ -21,7 +21,9 @@ class BonusesTypeMapper extends PropertyPathMapper
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
         if ($driverAvailability->getHasPaidBonus() !== 'yes') {
-            $driverAvailability->setAverageBonus(null);
+            $driverAvailability
+                ->setAverageBonus(null)
+                ->setReasonsForBonuses(null);
         }
     }
 }

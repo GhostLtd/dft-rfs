@@ -55,6 +55,24 @@ class WagesType extends AbstractType
                     'choices' => CurrencyOrPercentage::UNIT_CHOICES,
                 ],
             ])
+            ->add('wageIncreasePeriod', Gds\ChoiceType::class, [
+                'property_path' => 'survey.driverAvailability.wageIncreasePeriod',
+                'label' => "{$translationKeyPrefix}.wage-increase-period.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.wage-increase-period.help",
+                'choices' => DriverAvailability::WAGE_INCREASE_PERIOD_CHOICES,
+                'choice_options' => [
+                    DriverAvailability::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'other' => [
+                        'conditional_form_name' => 'wageIncreasePeriodOther',
+                    ],
+                ],
+            ])
+            ->add('wageIncreasePeriodOther', Gds\InputType::class, [
+                'property_path' => 'survey.driverAvailability.wageIncreasePeriodOther',
+                'label' => "{$translationKeyPrefix}.wage-increase-period-other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.wage-increase-period-other.help",
+            ])
             ->add('reasonsForWageIncrease', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.reasonsForWageIncrease',
                 'multiple' => true,
@@ -73,7 +91,6 @@ class WagesType extends AbstractType
                 'help' => "{$translationKeyPrefix}.reasons-for-wage-increase-other.help",
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
