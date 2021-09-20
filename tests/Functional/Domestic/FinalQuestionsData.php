@@ -71,7 +71,7 @@ class FinalQuestionsData
                             'numberOfDriverVacancies' => '10',
                             'reasonsForDriverVacancies' => [
                                 1 => 'covid',
-                                3 => 'new-work',
+                                4 => 'new-work',
                             ],
                         ],
                         'numberOfDriversThatHaveLeft' => '5',
@@ -97,6 +97,7 @@ class FinalQuestionsData
                                 'value' => '10',
                                 'unit' => 'percentage',
                             ],
+                            'wageIncreasePeriod' => 'weekly',
                             'reasonsForWageIncrease' => [
                                 0 => 'planned',
                                 2 => 'attract-new',
@@ -109,9 +110,8 @@ class FinalQuestionsData
                 new FormTestCase([
                     'bonuses' => [
                         'hasPaidBonus' => 'yes',
-                        'averageBonus' => [
-                            'value' => '10',
-                            'unit' => 'percentage',
+                        'paid_bonus_yes' => [
+                            'averageBonus' => '10',
                         ],
                     ],
                 ]),

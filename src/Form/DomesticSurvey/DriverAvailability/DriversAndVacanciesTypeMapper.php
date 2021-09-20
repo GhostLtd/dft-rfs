@@ -20,14 +20,21 @@ class DriversAndVacanciesTypeMapper extends PropertyPathMapper
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
         if ($driverAvailability->getHasVacancies() !== 'yes') {
             // conditional fields on this form
-            $driverAvailability->setNumberOfDriverVacancies(null);
-            $driverAvailability->setReasonsForDriverVacancies(null);
+            $driverAvailability
+                ->setNumberOfDriverVacancies(null)
+                ->setReasonsForDriverVacancies(null);
 
             // fields on conditional deliveries form
-            $driverAvailability->setNumberOfLorriesOperated(null);
-            $driverAvailability->setNumberOfParkedLorries(null);
-            $driverAvailability->setHasMissedDeliveries(null);
-            $driverAvailability->setNumberOfMissedDeliveries(null);
+            $driverAvailability
+                ->setNumberOfLorriesOperated(null)
+                ->setNumberOfParkedLorries(null)
+                ->setHasMissedDeliveries(null)
+                ->setNumberOfMissedDeliveries(null);
+        }
+
+        $reasonsForDriverVacancies = $driverAvailability->getReasonsForDriverVacancies();
+        if ($reasonsForDriverVacancies === null || !in_array('other', $reasonsForDriverVacancies)) {
+            $driverAvailability->setReasonsForDriverVacanciesOther(null);
         }
     }
 }

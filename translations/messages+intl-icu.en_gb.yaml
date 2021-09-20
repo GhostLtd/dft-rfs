@@ -981,13 +981,16 @@ domestic:
         label: How many HGV driver vacancies do you currently have?
         help: "If you don't know the answer, leave it blank."
       reasons-for-vacancies:
-        label: Which of the following (if any) have contributed to your HGV driver vacancies? Select all the reasons that apply. Select all that apply.
-        help: ''
+        label: Which of the following (if any) have contributed to your HGV driver vacancies?
+        help: 'Select all that apply.'
         choices:
           lured-away: Better pay or benefits elsewhere
           covid: COVID related
           retirement: Driver retirement
+          existing-drivers-leaving: Existing drivers leaving industry
           new-work: Increase in workload
+          lack-of-eu-drivers: Lack of European drivers
+          no-new-drivers: New drivings not entering profession
           ir35-changes: Off-payroll (IR35) rule changes
           unavailable-tests: Unavailable HGV driver tests
           working-conditions: Working hours or conditions
@@ -1026,13 +1029,25 @@ domestic:
         label: What was the average wage increase in the last 3 months?
         help: "If you don't know the answer, leave it blank."
       reasons-for-wage-increase:
-        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months? Select all that apply.
-        help: ''
+        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months?
+        help: 'Select all that apply.'
         choices:
           planned: Planned pay rise
           retain-existing: To retain existing drivers
           attract-new: To attract new drivers
           other: Other
+      wage-increase-period:
+        label: What was the period of this wage increase
+        help: Was this wage increase per-hour, per-week, per-month or something else?
+        choices:
+          hourly: Hourly
+          weekly: Weekly
+          monthly: Monthly
+          do-not-know: "Don't know"
+          other: Other
+      wage-increase-period-other:
+        label: ''
+        help: 'What was the period of this wage increase?'
       reasons-for-wage-increase-other:
         label: ''
         help: 'Give details of the other reason(s) for increasing wages'
@@ -1044,6 +1059,12 @@ domestic:
       average-bonus:
         label: What was the average incentive paid in the last 3 months?
         help: "If you don't know the answer, leave it blank."
+      reasons-for-bonuses:
+        label: 'What was the reason for these incentives?'
+        help: "Select all that apply. If you don't know the answer, leave it blank."
+        choices:
+          recruit: To recruit drivers
+          retain: To retain drivers
 
 
 
