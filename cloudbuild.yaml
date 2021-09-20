@@ -62,4 +62,4 @@ steps:
       args: ["app", "deploy", "cron.yaml"]
       waitFor: ['deploy-default-service', 'deploy-admin-service']
 
-timeout: "900s"
+timeout: "1800s"
