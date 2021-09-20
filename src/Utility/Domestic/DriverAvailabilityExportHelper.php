@@ -38,12 +38,15 @@ class DriverAvailabilityExportHelper
         $query = $this->getQueryBuilder()
             ->andWhere('d.exportedDate = :exportedDate')
             ->getQuery();
+
         $responses = $this->setParametersAndGetArrayResult($query, [
             'exportedDate' => $date
         ]);
+
         if (empty($responses)) {
             throw new BadRequestHttpException('no availability responses found for given date');
         }
+
         $this->exportResponses($responses, $exportPath);
     }
 
@@ -80,6 +83,7 @@ class DriverAvailabilityExportHelper
         $arrayColumns = [
             'reasonsForDriverVacancies' => DriverAvailability::VACANCY_REASON_CHOICES,
             'reasonsForWageIncrease' => DriverAvailability::WAGE_INCREASE_REASON_CHOICES,
+            'reasonsForBonuses' => DriverAvailability::BONUS_REASON_CHOICES,
         ];
 
         $responses = $this->expandColumns($arrayColumns, $responses);
@@ -90,6 +94,7 @@ class DriverAvailabilityExportHelper
         foreach($responses as $r) {
             $r['reasonsForDriverVacancies'] = join(', ', $r['reasonsForDriverVacancies'] ?? []);
             $r['reasonsForWageIncrease'] = join(', ', $r['reasonsForWageIncrease'] ?? []);
+            $r['reasonsForBonuses'] = join(', ', $r['reasonsForBonuses'] ?? []);
             fputcsv($handle, $r);
         }
         fclose($handle);
@@ -164,12 +169,14 @@ class DriverAvailabilityExportHelper
                 d.haveWagesIncreased,
                 d.averageWageIncrease.value,
                 d.averageWageIncrease.unit,
+                d.wageIncreasePeriod,
+                d.wageIncreasePeriodOther,
                 d.reasonsForWageIncrease,
                 d.reasonsForWageIncreaseOther,
                 
                 d.hasPaidBonus,
-                d.averageBonus.value,
-                d.averageBonus.unit,
+                d.averageBonus,
+                d.reasonsForBonuses,
                 d.numberOfParkedLorries,
                 d.hasMissedDeliveries,
                 d.numberOfMissedDeliveries')
@@ -238,7 +245,7 @@ class DriverAvailabilityExportHelper
             }
 
             $camelCaseReason = join('', array_map('ucfirst', explode('-', $choice)));
-            $expandedRow[$columnName . ' - ' . $camelCaseReason] =
+            $expandedRow[$columnName . ' -' . $camelCaseReason] =
                 in_array($choice, $value ?? []) ? 1 : 0;
         }
     }
