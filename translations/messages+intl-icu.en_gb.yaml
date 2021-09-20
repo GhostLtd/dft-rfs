@@ -1037,7 +1037,7 @@ domestic:
           attract-new: To attract new drivers
           other: Other
       wage-increase-period:
-        label: What was the period for this wage increase
+        label: What was the period of this wage increase
         help: Was this wage increase per-hour, per-week, per-month or something else?
         choices:
           hourly: Hourly
@@ -1047,7 +1047,7 @@ domestic:
           other: Other
       wage-increase-period-other:
         label: ''
-        help: 'What was the period for this wage increase?'
+        help: 'What was the period of this wage increase?'
       reasons-for-wage-increase-other:
         label: ''
         help: 'Give details of the other reason(s) for increasing wages'

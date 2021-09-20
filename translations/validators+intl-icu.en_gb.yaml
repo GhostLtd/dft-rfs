@@ -230,6 +230,7 @@ driver-availability:
   reasons-for-driver-vacancies:
     other: Enter details of the other reason(s) for your vacancies
   wages:
+    increase-period: Choose the period of this wage increase
     increase-reason:
       other: Enter the reason(s) for the wage increases
     period:
