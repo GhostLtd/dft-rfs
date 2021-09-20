@@ -11,6 +11,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=DriverAvailabilityRepository::class)
  * @ORM\Table("domestic_driver_availablity")
+ * @AppAssert\OtherNotBlank(
+ *     selectField="reasonsForDriverVacancies",
+ *     groups={"driver-availability.drivers-and-vacancies"},
+ *     message="driver-availability.reasons-for-driver-vacancies.other"
+ * )
+ * @AppAssert\OtherNotBlank(
+ *     selectField="wageIncreasePeriod",
+ *     groups={"driver-availability.wages"},
+ *     message="driver-availability.wages.period.other"
+ * )
+ *
+ * @AppAssert\OtherNotBlank(
+ *     selectField="reasonsForWageIncrease",
+ *     groups={"driver-availability.wages"},
+ *     message="driver-availability.wages.increase-reason.other"
+ * )
  */
 class DriverAvailability
 {

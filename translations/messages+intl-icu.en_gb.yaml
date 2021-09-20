@@ -981,7 +981,7 @@ domestic:
         label: How many HGV driver vacancies do you currently have?
         help: "If you don't know the answer, leave it blank."
       reasons-for-vacancies:
-        label: Which of the following (if any) have contributed to your HGV driver vacancies?"
+        label: Which of the following (if any) have contributed to your HGV driver vacancies?
         help: 'Select all that apply.'
         choices:
           lured-away: Better pay or benefits elsewhere

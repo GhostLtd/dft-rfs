@@ -225,3 +225,12 @@ domestic:
       date: Enter the date when the vehicle was sold
       date-max: Enter a date before the end of survey period
       contact-details-required: Prvoide at least one contact method for the new owner
+
+driver-availability:
+  reasons-for-driver-vacancies:
+    other: Enter details of the other reason(s) for your vacancies
+  wages:
+    increase-reason:
+      other: Enter the reason(s) for the wage increases
+    period:
+      other: Enter the period of this wage increase
