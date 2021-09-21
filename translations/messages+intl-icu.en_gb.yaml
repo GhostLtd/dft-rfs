@@ -547,6 +547,9 @@ domestic:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
         help: 'You have not entered any journey information for your survey week. Why is that?'
+      other:
+        label: ''
+        help: Give details of why no journeys were carried out
       option:
         not-taxed: 'The vehicle was not taxed'
         no-work: 'There was no work'

@@ -153,6 +153,13 @@ class SurveyResponse extends AbstractSurveyResponse
     private $reasonForEmptySurvey;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\Domestic\\SurveyResponse::REASON_OTHER')) || value != null", message="domestic.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     */
+    private ?string $reasonForEmptySurveyOther = null;
+
+    /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
@@ -446,6 +453,17 @@ class SurveyResponse extends AbstractSurveyResponse
     public function getReasonForEmptySurveyExportId()
     {
         return self::EMPTY_SURVEY_REASON_EXPORT_IDS[$this->reasonForEmptySurvey] ?? null;
+    }
+
+    public function getReasonForEmptySurveyOther(): ?string
+    {
+        return $this->reasonForEmptySurveyOther;
+    }
+
+    public function setReasonForEmptySurveyOther(?string $reasonForEmptySurveyOther): self
+    {
+        $this->reasonForEmptySurveyOther = $reasonForEmptySurveyOther;
+        return $this;
     }
 
     public function hasJourneys()

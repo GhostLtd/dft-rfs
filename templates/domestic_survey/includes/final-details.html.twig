@@ -10,7 +10,9 @@
         {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
         {{- row(showActions,
             'Reason for empty survey',
-            reason ? reason|trans : '-'
+            (reason ? reason|trans : '-')
+                ~ (survey.response.reasonForEmptySurvey == constant('\\App\\Entity\\Domestic\\SurveyResponse::REASON_OTHER')
+                    ? ": #{survey.response.reasonForEmptySurveyOther}" : '')
         ) -}}
     {%- else -%}
         {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
