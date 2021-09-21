@@ -1,4 +1,4 @@
 dispatch:
     # Default service serves simple hostname request.
-    - url: "admin-dot-dft-sres-rfs-dev.ew.r.appspot.com/*"
+    - url: "admin.dev.roadhaulagesurveys.dft.gov.uk/*"
       service: admin
