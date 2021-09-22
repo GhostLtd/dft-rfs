@@ -39,8 +39,8 @@ class WeekYearFilter extends Simple implements FilterableInterface
         }
 
         if (isset($formData['week']) && is_numeric($formData['year'])) {
-            $start = WeekNumberHelper::getDate($formData['year'], $formData['week']);
-            $end = WeekNumberHelper::getDate($formData['year'], $formData['week']);
+            $start = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
+            $end = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
             $end->modify('+7 days');
 
         } else {

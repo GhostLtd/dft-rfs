@@ -53,8 +53,8 @@ class DataExporter extends AbstractDataExporter
     }
 
     public function uploadExportData(int $weekNumber): bool {
-        $weekStart = WeekNumberHelper::getDate($weekNumber);
-        $weekEnd = WeekNumberHelper::getDate($weekNumber + 1);
+        $weekStart = WeekNumberHelper::getDateForWeekNumber($weekNumber);
+        $weekEnd = WeekNumberHelper::getDateForWeekNumber($weekNumber + 1);
         $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
 
         try {

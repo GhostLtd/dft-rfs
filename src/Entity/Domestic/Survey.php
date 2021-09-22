@@ -206,7 +206,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     public function getWeekNumberAndYear(): array
     {
-        return WeekNumberHelper::getWeekNumberAndYear($this->getSurveyPeriodStart());
+        return WeekNumberHelper::getYearlyWeekNumberAndYear($this->getSurveyPeriodStart());
     }
 
     public function getNotes()
