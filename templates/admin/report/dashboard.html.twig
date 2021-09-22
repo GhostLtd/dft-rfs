@@ -25,4 +25,12 @@
         <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
         <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'irhs'}) }}">IRHS</a></li>
     </ul>
+
+    <h2 class="govuk-heading-m">Approvals</h2>
+    <ul class="govuk-list">
+        <li><a class="govuk-link" href="{{ path('admin_reports_approvals_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_approvals_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_approvals_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
+        <li><a class="govuk-link" href="{{ path('admin_reports_approvals_type', {type: 'irhs'}) }}">IRHS</a></li>
+    </ul>
 {% endblock %}

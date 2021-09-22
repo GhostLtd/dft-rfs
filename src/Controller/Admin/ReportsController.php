@@ -3,7 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\International\Survey as InternationalSurvey;
 use App\Form\Admin\ReportFilterType;
+use App\Repository\AuditLog\AuditLogRepository;
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
@@ -22,11 +24,13 @@ class ReportsController extends AbstractController
 {
     protected DomesticSurveyRepository $domesticRepo;
     protected InternationalSurveyRepository $internationalRepo;
+    protected AuditLogRepository $auditLogRepository;
 
-    public function __construct(DomesticSurveyRepository $domesticRepo, InternationalSurveyRepository $internationalRepo)
+    public function __construct(DomesticSurveyRepository $domesticRepo, InternationalSurveyRepository $internationalRepo, AuditLogRepository $auditLogRepository)
     {
         $this->domesticRepo = $domesticRepo;
         $this->internationalRepo = $internationalRepo;
+        $this->auditLogRepository = $auditLogRepository;
     }
 
     /**
@@ -59,6 +63,14 @@ class ReportsController extends AbstractController
     public function qualityAssuranceReportsDefaults(string $type): Response
     {
         return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_qa_full');
+    }
+
+    /**
+     * @Route("/approvals/{type}", name="approvals_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
+     */
+    public function approvalsReportsDefaults(string $type): Response
+    {
+        return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_approvals_full');
     }
 
     /**
@@ -170,6 +182,47 @@ class ReportsController extends AbstractController
             'excludeFromTotals' => $excludeFromTotals,
         ]));
     }
+
+
+    /**
+     * @Route("/approvals/{type}/{year}/{quarter}", name="approvals_full",
+     *     requirements={"type": "csrgt|csrgt-ni|csrgt-gb", "year": "\d{4}", "quarter": "1|2|3|4"}
+     * )
+     */
+    public function approvalsReport(Request $request, string $type, int $year, int $quarter): Response
+    {
+        // TODO: use international week number helper for international report
+        [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS]);
+
+        if ($form->isSubmitted()) {
+            return new RedirectResponse($this->generateUrl('admin_reports_approvals_full', $form->getData()));
+        }
+
+        switch($type) {
+            case ReportFilterType::TYPE_CSRGT:
+                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end);
+                break;
+            case ReportFilterType::TYPE_CSRGT_GB:
+                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end, false);
+                break;
+            case ReportFilterType::TYPE_CSRGT_NI:
+                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end, true);
+                break;
+            case ReportFilterType::TYPE_IRHS:
+                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(InternationalSurvey::class, $start, $end);
+                break;
+        }
+
+        return $this->render('admin/report/approvals.html.twig', array_merge($form->getData(), [
+            'usernames' => $users ?? null,
+            'stats' => $stats ?? null,
+            'form' => $form->createView(),
+            'typeLabel' => $this->getTypeLabel($type),
+        ]));
+    }
+
 
     protected function getTypeLabel(string $type): string
     {
