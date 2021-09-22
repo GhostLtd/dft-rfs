@@ -36,6 +36,11 @@
                 <a href="{{ params.serviceUrl }}" class="govuk-header__link govuk-header__link--service-name">
                     {{ params.serviceName }}
                 </a>
+                {% if params.serviceNameEnv %}
+                    <span class="govuk-header__service-name-env" style="{% if env_label_colour|default(false) %}color: {{ env_label_colour }};{% endif %}{% if env_label_background|default(false) %}background: {{ env_label_background }};{% endif %}">
+                        {{- params.serviceNameEnv -}}
+                    </span>
+                {% endif %}
             {% endif %}
             {% if params.navigation %}
                 <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
