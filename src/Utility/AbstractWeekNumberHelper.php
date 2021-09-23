@@ -10,7 +10,7 @@ use DateTimeInterface;
  *   weekNumber [IRHS only] - a number uniquely representing a week (e.g. 1547)
  *   yearlyWeekNumber       - a number (1-53) representing a week in a given year
  */
-abstract class AbstractWeekNumberHelper
+abstract class AbstractWeekNumberHelper implements ReportQuarterHelperInterface
 {
     const QUARTERS = [
         1 => 1,
@@ -31,7 +31,7 @@ abstract class AbstractWeekNumberHelper
             $dateTime->modify('last '.static::getFirstDayOfWeek(false));
     }
 
-    protected static function getFirstDayOfYearForDate(DateTimeInterface $dateTime): DateTime
+    public static function getFirstDayOfYearForDate(DateTimeInterface $dateTime): DateTime
     {
         $thisYear = intval($dateTime->format('Y'));
         $nextYear = $thisYear + 1;

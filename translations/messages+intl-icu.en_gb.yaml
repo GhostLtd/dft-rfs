@@ -309,19 +309,21 @@ admin:
       heading: CSRGT export
     export-confirm:
       heading: CSRGT export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
       heading: CSRGT export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     re-order-day-stops:
       heading: Re-order stages
   international:
     export:
       heading: IRHS export
     export-confirm:
-      heading: IRHS export - week {week}
-      warning: Are you sure you want to export this week?
+      heading: IRHS export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
-      heading: IRHS export - week {week} - Success
-      message: Export successfully generated for week {week}
+      heading: IRHS export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     add-loading-action:
       heading: Add loading action
     add-unloading-action:
