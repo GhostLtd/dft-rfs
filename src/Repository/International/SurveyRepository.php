@@ -200,6 +200,53 @@ class SurveyRepository extends ServiceEntityRepository
         return $this->addTotalsAndFlags($stats);
     }
 
+    public function getActivityStatusReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null)
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('r.activityStatus, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
+            ->where('s.state in (:approvedStates)')
+            ->setParameter('approvedStates', [
+                SurveyInterface::STATE_APPROVED,
+                SurveyInterface::STATE_EXPORTING,
+                SurveyInterface::STATE_EXPORTED,
+            ]);
+
+        $this->addTimeBounds($qb, $minStart, $maxStart);
+
+        $results = $qb
+            ->leftJoin('s.response', 'r')
+            ->groupBy('r.activityStatus, year, week')
+            ->orderBy('year, week')
+            ->getQuery()
+            ->execute();
+
+        [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
+
+        $stats = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $stats['data'][$week] = [
+                'data' => [
+                    'still-active' => 0,
+                    'ceased-trading' => 0,
+                    'only-domestic-work' => 0,
+                ],
+            ];
+        }
+
+        foreach ($results as $result) {
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
+            $activityStatus = $result['activityStatus'];
+
+            if (!isset($stats['data'][$week]['data'][$activityStatus])) {
+                $stats['data'][$week]['data'][$activityStatus] = 0;
+            }
+
+            $stats['data'][$week]['data'][$activityStatus] += $result['count'];
+        }
+
+        return $this->addTotalsAndFlags($stats);
+    }
+
     public function getMinimumAndMaximumYear()
     {
         $result = $this->createQueryBuilder('s')

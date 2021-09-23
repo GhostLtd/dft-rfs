@@ -199,7 +199,7 @@ class DriverAvailabilityExportHelper
                         continue;
                     } else if ($key === 'surveyPeriodStart') {
                         // Expand surveyPeriodStart into survey year/week number
-                        [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($value);
+                        [$week, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear($value);
                         $expandedRow['yearNumber'] = $year;
                         $expandedRow['weekNumber'] = $week;
                         continue;

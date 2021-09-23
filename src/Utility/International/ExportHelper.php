@@ -51,7 +51,7 @@ class ExportHelper
         $exports = [];
         foreach(iterator_to_array($iterator) as $obj) {
             $week = $this->getWeek($obj->name());
-            $exportObject = new ExportObject($obj, $week, $this->weekNumberHelper->getDate($week), $this->weekNumberHelper->getDate($week + 1));
+            $exportObject = new ExportObject($obj, $week, $this->weekNumberHelper->getDateForWeekNumber($week), $this->weekNumberHelper->getDateForWeekNumber($week + 1));
             $exports[$exportObject->getComparator()] = $exportObject;
         }
 
@@ -68,7 +68,7 @@ class ExportHelper
         $earliestWeek = $currentWeek - 26;
 
         for($week=$currentWeek-1; $week>=$earliestWeek; $week--) {
-            $possibilities['W'.$week] = new ExportObject(null, $week, $this->weekNumberHelper->getDate($week), $this->weekNumberHelper->getDate($week + 1));
+            $possibilities['W'.$week] = new ExportObject(null, $week, $this->weekNumberHelper->getDateForWeekNumber($week), $this->weekNumberHelper->getDateForWeekNumber($week + 1));
         }
 
         return $possibilities;

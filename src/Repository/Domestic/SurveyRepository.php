@@ -157,7 +157,7 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear($result['surveyPeriodStart']);
             $state = $result['state'];
 
             if (array_key_exists($state, $mergeStates)) {
@@ -224,7 +224,7 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear($result['surveyPeriodStart']);
 
             $qualityAssured = $result['qualityAssured'] == 1 ? 'quality-assured' : 'not-quality-assured';
 
@@ -278,7 +278,7 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($result['surveyPeriodStart']);
+            [$week, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear($result['surveyPeriodStart']);
             $possessionMode = $result['isInPossessionOfVehicle'];
 
             if (!isset($stats[$year]['data'][$week]['data'][$possessionMode])) {
@@ -317,8 +317,8 @@ class SurveyRepository extends ServiceEntityRepository
     protected function getWeekAndYearRange($results, ?\DateTime $minStart, ?\DateTime $maxStart): array
     {
         if ($minStart !== null && $maxStart !== null) {
-            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($minStart);
-            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($maxStart);
+            [$firstWeek, $firstYear] = WeekNumberHelper::getYearlyWeekNumberAndYear($minStart);
+            [$lastWeek, $lastYear] = WeekNumberHelper::getYearlyWeekNumberAndYear($maxStart);
 
             if ($lastWeek === 1) {
                 $lastWeek = 53;
@@ -327,8 +327,8 @@ class SurveyRepository extends ServiceEntityRepository
                 $lastWeek--;
             }
         } else {
-            [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($results[0]['surveyPeriodStart']);
-            [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($results[count($results) - 1]['surveyPeriodStart']);
+            [$firstWeek, $firstYear] = WeekNumberHelper::getYearlyWeekNumberAndYear($results[0]['surveyPeriodStart']);
+            [$lastWeek, $lastYear] = WeekNumberHelper::getYearlyWeekNumberAndYear($results[count($results) - 1]['surveyPeriodStart']);
         }
 
         return [$firstWeek, $firstYear, $lastWeek, $lastYear];

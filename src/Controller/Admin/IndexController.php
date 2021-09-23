@@ -20,7 +20,7 @@ class IndexController extends AbstractController
     {
         $now = new \DateTime();
 
-        [$domesticWeek, $domesticYear] = DomesticWeekNumberHelper::getWeekNumberAndYear($now);
+        [$domesticWeek, $domesticYear] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($now);
         $internationalWeek = InternationalWeekNumberHelper::getWeekNumber($now);
 
         return $this->render('admin/index/index.html.twig', [
