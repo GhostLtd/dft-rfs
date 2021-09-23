@@ -9,7 +9,9 @@ use App\Repository\AuditLog\AuditLogRepository;
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
+use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use App\Utility\StateReportHelper;
+use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -58,6 +60,14 @@ class ReportsController extends AbstractController
     }
 
     /**
+     * @Route("/activity-status/irhs", name="activity_status_type", requirements={"type": "irhs"})
+     */
+    public function activityStatusDefaults(): Response
+    {
+        return $this->redirectToCurrentQuarterAndYear('irhs', 'admin_reports_activity_status_full');
+    }
+
+    /**
      * @Route("/quality-assurance/{type}", name="qa_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
      */
     public function qualityAssuranceReportsDefaults(string $type): Response
@@ -78,7 +88,7 @@ class ReportsController extends AbstractController
      */
     public function qualityAssuranceReports(Request $request, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
 
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
 
@@ -113,7 +123,7 @@ class ReportsController extends AbstractController
      */
     public function possessionReports(Request $request, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
 
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS]);
 
@@ -145,7 +155,7 @@ class ReportsController extends AbstractController
      */
     public function stateReports(Request $request, StateReportHelper $stateReportHelper, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
 
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
 
@@ -180,6 +190,32 @@ class ReportsController extends AbstractController
             'typeLabel' => $this->getTypeLabel($type),
             'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn($isDomestic),
             'excludeFromTotals' => $excludeFromTotals,
+        ]));
+    }
+
+    /**
+     * @Route("/activity-status/{type}/{year}/{quarter}", name="activity_status_full", requirements={"type": "irhs", "year": "\d{4}", "quarter": "1|2|3|4"})
+     */
+    public function activityStatusReports(Request $request, string $type, int $year, int $quarter): Response
+    {
+        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
+
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_CSRGT, ReportFilterType::TYPE_CSRGT_GB, ReportFilterType::TYPE_CSRGT_NI]);
+
+        if ($form->isSubmitted()) {
+            return new RedirectResponse($this->generateUrl('admin_reports_activity_status_full', $form->getData()));
+        }
+
+        switch($type) {
+            case ReportFilterType::TYPE_IRHS:
+                $stats = $this->internationalRepo->getActivityStatusReportStats($start, $end);
+                break;
+        }
+
+        return $this->render('admin/report/activity-status.html.twig', array_merge($form->getData(), [
+            'stats' => $stats ?? null,
+            'form' => $form->createView(),
+            'typeLabel' => $this->getTypeLabel($type),
         ]));
     }
 
@@ -229,9 +265,10 @@ class ReportsController extends AbstractController
         return array_flip(ReportFilterType::CHOICE_TYPES)[$type];
     }
 
+
     protected function redirectToCurrentQuarterAndYear(string $type, string $routeName): RedirectResponse
     {
-        [$quarter, $year] = DomesticWeekNumberHelper::getQuarterAndYear(new \DateTime());
+        [$quarter, $year] = self::getQuarterAndYear($type, new \DateTime());
 
         return new RedirectResponse($this->generateUrl($routeName, [
             'type' => $type,
@@ -239,7 +276,6 @@ class ReportsController extends AbstractController
             'quarter' => $quarter
         ]));
     }
-
 
     protected function getReportsFilterForm(Request $request, int $year, int $quarter, string $type, array $excludeChoices=[]): FormInterface
     {
@@ -263,5 +299,19 @@ class ReportsController extends AbstractController
         }
 
         return $form;
+    }
+
+    protected static function getDateRangeForYearAndQuarter(string $type, int $year, int $quarter): array
+    {
+        return ($type === 'irhs') ?
+            InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter) :
+            DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+    }
+
+    protected static function getQuarterAndYear(string $type, DateTimeInterface $dateTime): array
+    {
+        return ($type === 'irhs') ?
+            InternationalWeekNumberHelper::getQuarterAndYear($dateTime) :
+            DomesticWeekNumberHelper::getQuarterAndYear($dateTime);
     }
 }
