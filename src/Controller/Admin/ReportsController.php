@@ -186,7 +186,7 @@ class ReportsController extends AbstractController
 
     /**
      * @Route("/approvals/{type}/{year}/{quarter}", name="approvals_full",
-     *     requirements={"type": "csrgt|csrgt-ni|csrgt-gb", "year": "\d{4}", "quarter": "1|2|3|4"}
+     *     requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs", "year": "\d{4}", "quarter": "1|2|3|4"}
      * )
      */
     public function approvalsReport(Request $request, string $type, int $year, int $quarter): Response
@@ -194,7 +194,7 @@ class ReportsController extends AbstractController
         // TODO: use international week number helper for international report
         [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS]);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_approvals_full', $form->getData()));
