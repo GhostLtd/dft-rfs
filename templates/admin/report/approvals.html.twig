@@ -3,10 +3,22 @@
 {% set translation_prefix = "admin.reports.possession" %}
 
 {% block statsTable %}
+    {%- if type == 'irhs' -%}
+        {{- _self.displayIrhs(usernames, stats) -}}
+    {%- else -%}
+        {{- _self.displayCsrgt(usernames, stats) -}}
+    {%- endif -%}
+{% endblock %}
+
+{% macro displayCsrgt(usernames, stats) %}
     {% for year, yearStats in stats %}
         {{ _self.displayTable(usernames, yearStats.data) }}
     {% endfor %}
-{% endblock %}
+{% endmacro %}
+
+{% macro displayIrhs(usernames, stats) %}
+    {{ _self.displayTable(usernames, stats.data) }}
+{% endmacro %}
 
 {% macro displayTable(usernames, stats) %}
     <p class="govuk-body">

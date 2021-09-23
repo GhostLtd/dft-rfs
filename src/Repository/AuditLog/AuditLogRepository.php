@@ -3,10 +3,11 @@
 namespace App\Repository\AuditLog;
 
 use App\Entity\AuditLog\AuditLog;
-use App\Entity\Domestic\Survey;
-use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
-use App\Utility\Domestic\WeekNumberHelper;
+use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
+use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -90,7 +91,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ;
     }
 
-    public function getApprovalReportStats(string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
+    protected function getApprovalUsernamesAndData(string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
     {
         $addConditions = function(QueryBuilder $queryBuilder) use ($surveyClass, $minStart, $maxStart, $isNorthernIreland) {
             $queryBuilder
@@ -98,7 +99,7 @@ class AuditLogRepository extends ServiceEntityRepository
                 ->andWhere('a.timestamp < :maxStart')
                 ->setParameter('minStart', $minStart)
                 ->setParameter('maxStart', $maxStart);
-            if ($surveyClass === Survey::class && $isNorthernIreland !== null) {
+            if ($surveyClass === DomesticSurvey::class && $isNorthernIreland !== null) {
                 $queryBuilder
                     ->andWhere('s.isNorthernIreland = :isNorthernIreland')
                     ->setParameter('isNorthernIreland', $isNorthernIreland);
@@ -131,6 +132,13 @@ class AuditLogRepository extends ServiceEntityRepository
         $addConditions($approvalsQb);
         $approvalsResults = $approvalsQb->getQuery()->getArrayResult();
 
+        return [$usernames, $approvalsResults];
+    }
+
+    public function getDomesticApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
+    {
+        [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(DomesticSurvey::class, $minStart, $maxStart, $isNorthernIreland);
+
         [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($minStart, $maxStart);
         $stats = [];
         for ($year = $firstYear; $year <= $lastYear; $year++) {
@@ -143,7 +151,7 @@ class AuditLogRepository extends ServiceEntityRepository
         }
 
         foreach ($approvalsResults as $result) {
-            [$week, $year] = WeekNumberHelper::getWeekNumberAndYear($result['timestamp']);
+            [$week, $year] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($result['timestamp']);
             $approver = $result['username'];
 
             $stats[$year]['data'][$week]['data'][$approver]++;
@@ -152,10 +160,34 @@ class AuditLogRepository extends ServiceEntityRepository
         return [$usernames, $stats];
     }
 
+    public function getInternationalApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(InternationalSurvey::class, $minStart, $maxStart);
+
+        $firstWeek = InternationalWeekNumberHelper::getWeekNumber($minStart);
+        $lastWeek = InternationalWeekNumberHelper::getWeekNumber($maxStart) - 1;
+
+        $stats = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $stats['data'][$week] = [
+                'data' => array_combine($usernames, array_fill(0, count($usernames), 0)),
+            ];
+        }
+
+        foreach ($approvalsResults as $result) {
+            $week = InternationalWeekNumberHelper::getWeekNumber($result['timestamp']);
+            $approver = $result['username'];
+
+            $stats['data'][$week]['data'][$approver]++;
+        }
+
+        return [$usernames, $stats];
+    }
+
     protected function getWeekAndYearRange(?\DateTime $minDate, ?\DateTime $maxDate): array
     {
-        [$firstWeek, $firstYear] = WeekNumberHelper::getWeekNumberAndYear($minDate);
-        [$lastWeek, $lastYear] = WeekNumberHelper::getWeekNumberAndYear($maxDate);
+        [$firstWeek, $firstYear] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($minDate);
+        [$lastWeek, $lastYear] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($maxDate);
 
         if ($lastWeek === 1) {
             $lastWeek = 53;

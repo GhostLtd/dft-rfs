@@ -227,8 +227,9 @@ class ReportsController extends AbstractController
      */
     public function approvalsReport(Request $request, string $type, int $year, int $quarter): Response
     {
-        // TODO: use international week number helper for international report
-        [$start, $end] = DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        [$start, $end] = $type === 'irhs'
+            ? InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter)
+            : DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
 
@@ -238,16 +239,16 @@ class ReportsController extends AbstractController
 
         switch($type) {
             case ReportFilterType::TYPE_CSRGT:
-                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end);
+                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_GB:
-                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end, false);
+                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, false);
                 break;
             case ReportFilterType::TYPE_CSRGT_NI:
-                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(DomesticSurvey::class, $start, $end, true);
+                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, true);
                 break;
             case ReportFilterType::TYPE_IRHS:
-                [$users, $stats] = $this->auditLogRepository->getApprovalReportStats(InternationalSurvey::class, $start, $end);
+                [$users, $stats] = $this->auditLogRepository->getInternationalApprovalReportStats($start, $end);
                 break;
         }
 
