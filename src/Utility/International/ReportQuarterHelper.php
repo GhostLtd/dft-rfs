@@ -7,20 +7,44 @@ use DateTimeInterface;
 
 class ReportQuarterHelper implements ReportQuarterHelperInterface
 {
+    public static function getQuarterBoundaries(int $year): array
+    {
+        return [
+            1 => $year . "-04-01",
+            2 => $year . "-07-01",
+            3 => $year . "-10-01",
+            4 => ($year + 1) . "-01-01",
+        ];
+    }
+
     public static function getQuarterAndYear(DateTimeInterface $dateTime): array
     {
-        $year = (int) $dateTime->format('Y');
+        $year = (int)$dateTime->format('Y');
 
-        if ($dateTime < new \DateTime("{$year}-04-01")) {
-            $quarter = 1;
-        } else if ($dateTime < new \DateTime("{$year}-07-01")) {
-            $quarter = 2;
-        } else if ($dateTime < new \DateTime("{$year}-10-01")) {
-            $quarter = 3;
-        } else {
-            $quarter = 4;
-        }
+        try {
+            foreach (self::getQuarterBoundaries($year) as $quarter => $boundary) {
+                if ($dateTime < new \DateTime($boundary)) {
+                    return [$quarter, $year];
+                }
+            }
+        } catch (\Exception $e) {}
+        throw new \RuntimeException('Unable to convert datetime to quarter and year');
+    }
 
-        return [$quarter, $year];
+    public static function getDateRangeForYearAndQuarter(int $year, int $quarter): array
+    {
+        $quarterBoundaries = self::getQuarterBoundaries($year);
+
+        try {
+            $upperBounds = $quarterBoundaries[$quarter] ?? null;
+            if ($upperBounds) {
+                return [
+                    (new \DateTime($upperBounds))->modify('-3 months'),
+                    (new \DateTime($upperBounds)),
+                ];
+            }
+        } catch(\Exception $e) {}
+
+        throw new \RuntimeException('Unable to convert quarter and year to datetime');
     }
 }

@@ -7,9 +7,10 @@ use App\Entity\International\Trip;
 use App\Repository\International\SurveyRepository;
 use App\Repository\International\TripRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
-use App\Serializer\Normalizer\International\SurveyActionsNormalizer;
+use App\Serializer\Normalizer\International\TripActionsExportNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
 use App\Utility\Export\AbstractDataExporter;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -21,26 +22,26 @@ class DataExporter extends AbstractDataExporter
 {
     protected SerializerInterface $serializer;
     protected SurveyRepository $surveyRepository;
-    protected SurveyActionsNormalizer $surveyActionsNormalizer;
+    protected TripActionsExportNormalizer $tripActionsExportNormalizer;
     protected TripRepository $tripRepository;
     protected ExportHelper $exportHelper;
     protected LoggerInterface $logger;
 
     public function __construct(
-        SqlServerInsertEncoder $sqlServerInsertEncoder,
-        SurveyActionsNormalizer $surveyActionsNormalizer,
-        TripNormalizer $tripNormalizer,
-        WorkflowInterface $internationalSurveyStateMachine,
-        EntityManagerInterface $entityManager,
-        ExportHelper $exportHelper,
-        LoggerInterface $logger
+        SqlServerInsertEncoder      $sqlServerInsertEncoder,
+        TripActionsExportNormalizer $tripActionsExportNormalizer,
+        TripNormalizer              $tripNormalizer,
+        WorkflowInterface           $internationalSurveyStateMachine,
+        EntityManagerInterface      $entityManager,
+        ExportHelper                $exportHelper,
+        LoggerInterface             $logger
     )
     {
         parent::__construct($internationalSurveyStateMachine, $entityManager);
 
         $this->surveyRepository = $entityManager->getRepository(Survey::class);
         $this->tripRepository = $entityManager->getRepository(Trip::class);
-        $this->surveyActionsNormalizer = $surveyActionsNormalizer;
+        $this->tripActionsExportNormalizer = $tripActionsExportNormalizer;
 
         $this->serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
@@ -52,17 +53,27 @@ class DataExporter extends AbstractDataExporter
         $this->logger = $logger;
     }
 
-    public function uploadExportData(int $weekNumber): bool {
-        $weekStart = WeekNumberHelper::getDateForWeekNumber($weekNumber);
-        $weekEnd = WeekNumberHelper::getDateForWeekNumber($weekNumber + 1);
-        $surveys = $this->surveyRepository->getSurveysForExport($weekStart, $weekEnd);
+    public function uploadExportData(int $year, int $quarter): bool {
+        [$startDate, $endDate] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
+
+        $trips = $this->tripRepository->getTripsForExport($startDate, $endDate);
+        $surveys = $this->getSurveysForTrips($trips);
+        $now = new \DateTime();
 
         try {
             $this->startExport($surveys);
-            $sql = $this->getTripsSQL($surveys).
+
+            $sql =
+                $this->getTripsSQL($trips).
                 "\n\n".
-                $this->getActionsSQL($surveys);
-            $this->exportHelper->upload($sql, $weekNumber);
+                $this->getActionsSQL($trips);
+
+            $this->exportHelper->upload($sql, $year, $quarter);
+
+            foreach($trips as $trip) {
+                $trip->setExportDate($now);
+            }
+
             $this->confirmExport($surveys);
             return true;
         } catch (\Throwable $e) {
@@ -72,15 +83,55 @@ class DataExporter extends AbstractDataExporter
         }
     }
 
-    protected function getTripsSQL($surveys): string
+    /**
+     * @param Survey[] | Collection $surveys
+     */
+    protected function confirmExport($surveys)
     {
-        $trips = $this->tripRepository->getTripsForExport($surveys);
+        $transitionName = 'confirm_export';
+
+        foreach ($surveys as $survey)
+        {
+            if ($this->isSurveyFullyExported($survey) && $this->workflow->can($survey, $transitionName)) {
+                $this->workflow->apply($survey, $transitionName);
+            }
+        }
+        $this->entityManager->flush();
+    }
+
+    protected function isSurveyFullyExported(Survey $survey): bool
+    {
+        foreach($survey->getResponse()->getVehicles() as $vehicle) {
+            foreach ($vehicle->getTrips() as $trip) {
+                if ($trip->getExportDate() === null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysForTrips($trips): array
+    {
+        $surveys = [];
+        foreach ($trips as $trip) {
+            $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
+            $surveys[$survey->getId()] = $survey;
+        }
+        return $surveys;
+    }
+
+    protected function getTripsSQL(array $trips): string
+    {
         return $this->serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]);
     }
 
     protected function getActionsSQL($surveys): string
     {
-        $normalized = $this->surveyActionsNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
+        $normalized = $this->tripActionsExportNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
         return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]);
     }
 }

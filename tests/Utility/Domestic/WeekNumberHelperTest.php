@@ -3,7 +3,6 @@
 namespace App\Tests\Utility\Domestic;
 
 use App\Utility\Domestic\WeekNumberHelper;
-use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class WeekNumberHelperTest extends TestCase
@@ -31,7 +30,7 @@ class WeekNumberHelperTest extends TestCase
      */
     public function testWeekNumber(string $date, int $expectedWeekNumber, int $expectedYear)
     {
-        [$weekNumber, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear(new DateTime($date));
+        [$weekNumber, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear(new \DateTime($date));
 
         $this->assertEquals($expectedWeekNumber, $weekNumber);
         $this->assertEquals($expectedYear, $year);
@@ -74,7 +73,7 @@ class WeekNumberHelperTest extends TestCase
         if ($expectedDate === null) {
             $this->assertEquals($expectedDate, $date);
         } else {
-            $this->assertEquals(new DateTime($expectedDate), $date);
+            $this->assertEquals(new \DateTime($expectedDate), $date);
         }
     }
 
@@ -93,7 +92,7 @@ class WeekNumberHelperTest extends TestCase
      */
     public function testYearForWeekNumberAndGenDate(int $weekNumber, string $genDate, int $expectedYear)
     {
-        $genYear = WeekNumberHelper::getYearForWeekNumberAndGenDate($weekNumber, new DateTime($genDate));
+        $genYear = WeekNumberHelper::getYearForWeekNumberAndGenDate($weekNumber, new \DateTime($genDate));
         $this->assertEquals($expectedYear, $genYear);
     }
 

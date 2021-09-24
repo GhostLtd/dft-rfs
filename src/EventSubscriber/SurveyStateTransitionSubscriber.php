@@ -115,7 +115,11 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionConfirmExport(Event $event)
     {
         $survey = $this->getSurvey($event);
-        $this->entityManager->remove($survey->getPasscodeUser());
+        $passcodeUser = $survey->getPasscodeUser();
+
+        if ($passcodeUser) {
+            $this->entityManager->remove($passcodeUser);
+        }
     }
 
     public function transitionApprove(Event $event)

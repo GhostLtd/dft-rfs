@@ -11,7 +11,6 @@ interface WeekNumberHelperInterface extends ReportQuarterHelperInterface
     public static function getFirstDayOfYear(int $year): DateTime;
     public static function getFirstDayOfYearForDate(DateTimeInterface $dateTime): DateTime;
     public static function getDateForYearAndWeek(int $year, int $yearlyWeekNumber): ?DateTime;
-    public static function getDateRangeForYearAndQuarter(int $year, int $quarter): array;
     public static function getYearlyWeekNumberAndYear(DateTimeInterface $dateTime): array;
     public static function getLastDayOfYear(int $year): DateTime;
 }
