@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 class SampleImporter extends AbstractBulkSurveyImporter
 {
     const COL_FIRM_REF = 0;
-    const COL_DISPATCH_WEEK = 1;
+    const COL_DISPATCH_DATE = 1;
     const COL_FIRM_NAME = 2;
     const COL_ADDRESS_1 = 3;
     const COL_ADDRESS_2 = 4;
@@ -45,9 +45,11 @@ class SampleImporter extends AbstractBulkSurveyImporter
             return (new PreEnquiry())
                 ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
                 ->setReferenceNumber($surveyData[self::COL_FIRM_REF])
+                ->setDispatchDate(new \DateTime($surveyData[self::COL_DISPATCH_DATE]))
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
         } catch (\Throwable $e) {
+            dump($e);
             return false;
         }
     }

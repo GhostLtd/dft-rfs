@@ -30,6 +30,13 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'disabled' => $options['is_resend'],
             ])
+            ->add('dispatchDate', Gds\DateType::class, [
+                'label' => "{$translationKeyPrefix}.dispatch-date.label",
+                'help' => "{$translationKeyPrefix}.dispatch-date.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'disabled' => $options['is_resend'],
+                'data' => new \DateTime(),
+            ])
             ->add('invitationEmail', Gds\EmailType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-email.label",
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
