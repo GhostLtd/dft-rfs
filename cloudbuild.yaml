@@ -43,7 +43,7 @@ steps:
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
       args: ["app", "deploy", "app.admin.yaml", "--ignore-file=.gcloudignore", "--no-cache"]
-      waitFor: ['yarn-build']
+      waitFor: ['deploy-default-service']
 
 
     # Finish up by calling the post-install-script
@@ -62,4 +62,4 @@ steps:
       args: ["app", "deploy", "cron.yaml"]
       waitFor: ['deploy-default-service', 'deploy-admin-service']
 
-timeout: "900s"
+timeout: "1800s"
