@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PreEnquiryAddController extends AbstractController
 {
     /**
-     * @Route("/irhs/pre-enquiry/add/", name=PreEnquiryController::ADD_ROUTE)
+     * @Route("/pre-enquiry/add/", name=PreEnquiryController::ADD_ROUTE)
      */
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -36,13 +36,13 @@ class PreEnquiryAddController extends AbstractController
                 $entityManager->persist($preEnquiry);
                 $entityManager->flush();
 
-                return $this->render("admin/pre-enquiry/add-success.html.twig", [
+                return $this->render("admin/pre_enquiry/add-success.html.twig", [
                     'preEnquiry' => $preEnquiry,
                 ]);
             }
         }
 
-        return $this->render("admin/pre-enquiry/add.html.twig", [
+        return $this->render("admin/pre_enquiry/add.html.twig", [
             'form' => $form->createView(),
         ]);
     }

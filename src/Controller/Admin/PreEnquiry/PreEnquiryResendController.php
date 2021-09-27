@@ -23,11 +23,11 @@ class PreEnquiryResendController extends AbstractSurveyResendController
     }
 
     /**
-     * @Route("/irhs/pre-enquiry/resend/{id}", name="admin_pre_enquiry_resend")
+     * @Route("/pre-enquiry/resend/{id}", name="admin_pre_enquiry_resend")
      * @IsGranted(AdminSurveyVoter::RESEND, subject="preEnquiry")
      */
     public function resend(Request $request, PreEnquiry $preEnquiry): Response
     {
-        return $this->doResend($request, $preEnquiry, AddSurveyType::class, 'admin/pre-enquiry/');
+        return $this->doResend($request, $preEnquiry, AddSurveyType::class, 'admin/pre_enquiry/');
     }
 }

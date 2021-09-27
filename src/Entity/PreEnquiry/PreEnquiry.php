@@ -44,7 +44,7 @@ class PreEnquiry implements SurveyInterface
     private $referenceNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries")
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"add_survey", "import_survey"})
      */

@@ -471,6 +471,12 @@ admin:
       reference-number: Reference number
       status: Status
       username: Username
+    sample-import:
+      heading: Pre-Enquiry Bulk sample import
+    sample-import-review:
+      heading: Pre-Enquiry Bulk sample import — Review Data
+    sample-import-summary:
+      heading: Pre-Enquiry Bulk sample import — Summary
 
   maintenance-warning:
     heading: Maintenance warnings
