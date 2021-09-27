@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
+use App\Tests\DataFixtures\Domestic\AbstractDaySummaryFixture;
+use App\Tests\DataFixtures\Domestic\VehicleFixtures;
 use Doctrine\Persistence\ObjectManager;
 
 class DayFullOfSummaryFixtures extends AbstractDaySummaryFixture

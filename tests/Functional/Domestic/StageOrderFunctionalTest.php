@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Tests\DataFixtures\DayStopFixtures;
+use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 
 class StageOrderFunctionalTest extends AbstractStageFunctionalTest
 {

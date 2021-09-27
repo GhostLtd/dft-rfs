@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
@@ -9,6 +9,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\HazardousGoods;
+use App\Tests\DataFixtures\Domestic\VehicleFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

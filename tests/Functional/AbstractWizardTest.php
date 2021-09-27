@@ -5,6 +5,7 @@ namespace App\Tests\Functional;
 use App\Tests\Functional\Wizard\DatabaseTestCase;
 use App\Tests\Functional\Wizard\WizardEndTestCase;
 use App\Tests\Functional\Wizard\WizardStepTestCase;
+use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 use App\Tests\Functional\Wizard\WizardTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
@@ -30,12 +31,19 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
             if ($wizardTestCase instanceof WizardStepTestCase) {
                 // A step in a wizard...
                 $expectedTitle = $wizardTestCase->getExpectedTitle();
-
                 if ($expectedTitle !== null) {
                     $actualTitle = $this->getTitle($crawler);
                     $this->assertEquals($expectedTitle, $actualTitle, 'Page title as expected');
                 }
+            } else if ($wizardTestCase instanceof WizardStepUrlTestCase) {
+                $expectedUrl = $wizardTestCase->getExpectedUrl();
+                if ($expectedUrl !== null) {
+                    $actualUrl = $this->getUrl($crawler);
+                    $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
+                }
+            }
 
+            if ($wizardTestCase instanceof WizardStepTestCase || $wizardTestCase instanceof WizardStepUrlTestCase) {
                 $submitButtonId = $wizardTestCase->getSubmitButtonId();
                 if ($submitButtonId !== null) {
                     foreach ($wizardTestCase->getFormTestCases() as $formTestCase) {
@@ -126,5 +134,15 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
 
         $actualTitle = $node->text();
         return $actualTitle;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return string
+     */
+    protected function getUrl(Crawler $crawler): string
+    {
+        $url = parse_url($crawler->getUri());
+        return $url["path"];
     }
 }

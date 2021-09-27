@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Tests\DataFixtures\BusinessFixtures;
+use App\Tests\DataFixtures\Domestic\BusinessFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 
 class DayStopTest extends AbstractWizardTest

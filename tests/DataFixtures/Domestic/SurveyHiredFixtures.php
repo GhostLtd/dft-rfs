@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
+use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
