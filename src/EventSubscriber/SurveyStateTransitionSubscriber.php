@@ -115,11 +115,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionConfirmExport(Event $event)
     {
         $survey = $this->getSurvey($event);
-        $passcodeUser = $survey->getPasscodeUser();
+        $this->deletePasscodeUser($survey);
+    }
 
-        if ($passcodeUser) {
-            $this->entityManager->remove($passcodeUser);
-        }
+    public function transitionReissue(Event $event)
+    {
+        $survey = $this->getSurvey($event);
+        $this->deletePasscodeUser($survey);
     }
 
     public function transitionApprove(Event $event)
@@ -172,6 +174,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             // Transitions
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
+            'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
             'workflow.domestic_survey.transition.approve' => 'transitionApprove',
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
@@ -188,5 +191,17 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.international_survey.guard.invite_user' => 'guardInviteUser',
             'workflow.pre_enquiry.guard.invite_user' => 'guardInviteUser',
         ];
+    }
+
+    /**
+     * @param SurveyInterface $survey
+     */
+    public function deletePasscodeUser(SurveyInterface $survey): void
+    {
+        $passcodeUser = $survey->getPasscodeUser();
+
+        if ($passcodeUser) {
+            $this->entityManager->remove($passcodeUser);
+        }
     }
 }
