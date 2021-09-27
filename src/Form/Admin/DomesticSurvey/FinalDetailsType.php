@@ -44,12 +44,23 @@ class FinalDetailsType extends AbstractType
                             ],
                         ]);
                     } else {
-                        $form->add('reasonForEmptySurvey', Gds\ChoiceType::class, [
-                            'choices' => ['' => null] + SurveyResponse::EMPTY_SURVEY_REASON_CHOICES,
-                            'label' => "domestic.survey-response.reason-for-empty-survey.reason-for-empty-survey.label",
-                            'label_attr' => ['class' => 'govuk-label--s'],
-                            'expanded' => false,
-                        ]);
+                        $translationKeyPrefix = 'domestic.survey-response.reason-for-empty-survey';
+                        $form
+                            ->add('reasonForEmptySurvey', Gds\ChoiceType::class, [
+                                'choices' => SurveyResponse::EMPTY_SURVEY_REASON_CHOICES,
+                                'label' => "{$translationKeyPrefix}.reason-for-empty-survey.label",
+                                'label_attr' => ['class' => 'govuk-label--s'],
+                                'expanded' => true,
+                                'choice_options' => [
+                                    SurveyResponse::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX.SurveyResponse::REASON_OTHER => [
+                                        'conditional_form_name' => 'reasonForEmptySurveyOther',
+                                    ]
+                                ],
+                            ])
+                            ->add('reasonForEmptySurveyOther', Gds\InputType::class, [
+                                'label' => "{$translationKeyPrefix}.other.help",
+                                'label_attr' => ['class' => 'govuk-label--s'],
+                            ]);
                     }
                 }
 
