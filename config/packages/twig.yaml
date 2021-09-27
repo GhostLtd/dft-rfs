@@ -9,3 +9,7 @@ twig:
     globals:
         admin_hostname: '%admin_hostname%'
         frontend_hostname: '%frontend_hostname%'
+        env_label_admin: '%env_label_admin%'
+        env_label_frontend: '%env_label_frontend%'
+        env_label_colour: '%env_label_colour%'
+        env_label_background: '%env_label_background%'

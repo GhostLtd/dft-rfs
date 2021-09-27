@@ -6,8 +6,14 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
+    frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
+
+    env_label_admin: '%env(string:APP_ENV_LABEL_ADMIN)%'
+    env_label_frontend: '%env(string:APP_ENV_LABEL_FRONTEND)%'
+    env_label_colour: '%env(string:APP_ENV_LABEL_COLOUR)%'
+    env_label_background: '%env(string:APP_ENV_LABEL_BACKGROUND)%'
+
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     container.dumper.inline_factories: true
