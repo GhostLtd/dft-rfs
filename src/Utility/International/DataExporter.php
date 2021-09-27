@@ -60,8 +60,9 @@ class DataExporter extends AbstractDataExporter
         $surveys = $this->getSurveysForTrips($trips);
         $now = new \DateTime();
 
+        $transitionedIds = [];
         try {
-            $this->startExport($surveys);
+            $transitionedIds = $this->startExport($surveys);
 
             $sql =
                 $this->getTripsSQL($trips).
@@ -77,7 +78,7 @@ class DataExporter extends AbstractDataExporter
             $this->confirmExport($surveys);
             return true;
         } catch (\Throwable $e) {
-            $this->cancelExport($surveys);
+            $this->cancelExport($surveys, $transitionedIds);
             $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
             return false;
         }
@@ -86,17 +87,21 @@ class DataExporter extends AbstractDataExporter
     /**
      * @param Survey[] | Collection $surveys
      */
-    protected function confirmExport($surveys)
+    protected function confirmExport($surveys): array
     {
         $transitionName = 'confirm_export';
+        $transitionIds = [];
 
         foreach ($surveys as $survey)
         {
             if ($this->isSurveyFullyExported($survey) && $this->workflow->can($survey, $transitionName)) {
                 $this->workflow->apply($survey, $transitionName);
+                $transitionIds[] = $survey->getId();
             }
         }
         $this->entityManager->flush();
+
+        return $transitionIds;
     }
 
     protected function isSurveyFullyExported(Survey $survey): bool

@@ -23,39 +23,45 @@ abstract class AbstractDataExporter
     /**
      * @param SurveyInterface[] | Collection $surveys
      */
-    protected function startExport($surveys)
+    protected function startExport($surveys): array
     {
-        $this->attemptTransition('start_export', $surveys);
+        return $this->attemptTransition('start_export', $surveys);
     }
 
     /**
      * @param SurveyInterface[] | Collection $surveys
      */
-    protected function confirmExport($surveys)
+    protected function confirmExport($surveys): array
     {
-        $this->attemptTransition('confirm_export', $surveys);
+        return $this->attemptTransition('confirm_export', $surveys);
     }
 
     /**
      * @param SurveyInterface[] | Collection $surveys
      */
-    protected function cancelExport($surveys)
+    protected function cancelExport($surveys, ?array $onlyFor = null): array
     {
-        $this->attemptTransition('cancel_export', $surveys);
+        return $this->attemptTransition('cancel_export', $surveys, $onlyFor);
     }
 
     /**
-     * @param string $transitionName
      * @param SurveyInterface[] | Collection $surveys
      */
-    private function attemptTransition(string $transitionName, $surveys)
+    private function attemptTransition(string $transitionName, $surveys, ?array $onlyFor = null): array
     {
+        $transitionedIds = [];
         foreach ($surveys as $survey)
         {
+            if ($onlyFor !== null && !in_array($survey->getId(), $onlyFor)) {
+                continue;
+            }
+
             if ($this->workflow->can($survey, $transitionName)) {
                 $this->workflow->apply($survey, $transitionName);
+                $transitionedIds[] = $survey->getId();
             }
         }
         $this->entityManager->flush();
+        return $transitionedIds;
     }
 }

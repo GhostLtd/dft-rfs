@@ -76,14 +76,15 @@ class TripRepository extends ServiceEntityRepository
             ->leftJoin('r.survey', 's')
             ->leftJoin('t.actions', 'a')
             ->leftJoin('a.loadingAction', 'la')
-            ->where('s.state = :state')
+            ->where('s.state IN (:states)')
+            ->andWhere('t.exportDate IS NULL')
             ->andWhere('t.outboundDate >= :minDate')
             ->andWhere('t.outboundDate < :maxDate')
             ->orderBy('s.surveyPeriodStart', 'ASC')
             ->addOrderBy('v.registrationMark', 'ASC')
             ->getQuery()
             ->setParameters([
-                'state' => SurveyInterface::STATE_APPROVED,
+                'states' => [SurveyInterface::STATE_APPROVED, SurveyInterface::STATE_EXPORTING],
                 'minDate' => $minDate,
                 'maxDate' => $maxDate,
             ])
