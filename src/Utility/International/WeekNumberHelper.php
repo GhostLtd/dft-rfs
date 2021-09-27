@@ -2,19 +2,25 @@
 
 namespace App\Utility\International;
 
+use App\Utility\AbstractWeekNumberHelper;
 use DateTime;
 
-class WeekNumberHelper
+class WeekNumberHelper extends AbstractWeekNumberHelper
 {
-    protected const WEEK_ONE = '1991-09-22';
+    protected const WEEK_ZERO = '1991-09-22';
 
-    public static function getWeekNumber(DateTime $date)
+    public static function getFirstDayOfWeek(bool $shortName): string
     {
-        return intval(floor($date->diff(new DateTime(self::WEEK_ONE))->days / 7));
+        return $shortName ? 'Sun' : 'Sunday';
     }
 
-    public static function getDate(int $weekNumber)
+    public static function getWeekNumber(DateTime $date): int
     {
-        return (new DateTime(self::WEEK_ONE))->modify("+{$weekNumber} weeks");
+        return intval(floor($date->diff(new DateTime(self::WEEK_ZERO))->days / 7));
+    }
+
+    public static function getDateForWeekNumber(int $weekNumber): DateTime
+    {
+        return (new DateTime(self::WEEK_ZERO))->modify("+{$weekNumber} weeks");
     }
 }

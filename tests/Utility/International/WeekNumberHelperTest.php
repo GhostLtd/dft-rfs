@@ -41,7 +41,7 @@ class WeekNumberHelperTest extends TestCase
      */
     public function testDateFromWeekAndYear(int $weekNumber, ?string $expectedDate)
     {
-        $date = WeekNumberHelper::getDate($weekNumber);
+        $date = WeekNumberHelper::getDateForWeekNumber($weekNumber);
 
         if ($expectedDate === null) {
             $this->assertEquals($expectedDate, $date);

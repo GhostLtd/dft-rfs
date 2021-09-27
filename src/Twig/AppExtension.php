@@ -84,7 +84,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('formatPotentialPostcode', fn(?string $a) => PostcodeHelper::formatIfPostcode($a, true)),
             new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
             new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
-                return $date ? WeekNumberHelper::getWeekNumberAndYear($date) : [null, null];
+                return $date ? WeekNumberHelper::getYearlyWeekNumberAndYear($date) : [null, null];
             }),
             new TwigFilter('removeEmailNamespacePrefix', function($username) {
                 preg_match('/^(?:[^:"]+\:)?(?<email>.*)$/', $username, $matches);

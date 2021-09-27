@@ -199,6 +199,9 @@ admin:
   reports:
     dashboard:
       heading: Reports
+    activity-status:
+      heading: Surveys by activity state
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
     possession:
       heading: Surveys by possession of vehicle
       sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
