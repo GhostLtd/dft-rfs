@@ -1,7 +1,7 @@
 {% extends 'base-pdf.html.twig' %}
 
 {% block pageTitle -%}
-    CSRGT survey &ndash; {{ survey.registrationMark | formatRegMark }} ({{ survey.surveyPeriodStart | date ('Y-m-d') }})
+    CSRGT survey &ndash; {{ survey.registrationMark | formatRegMark }} ({{ survey.surveyPeriodStart | date ('format.date.default' | trans) }})
 {%- endblock %}
 
 {%- block header -%}
@@ -20,7 +20,7 @@
     <hr class="govuk-section-break govuk-section-break--xl">
     <dl class="govuk-summary-list">
         {{- row('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) -}}
-        {{- row('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) -}}
+        {{- row('Survey period start', survey.surveyPeriodStart | date ('format.date.default' | trans)) -}}
 
         {% if survey.response %}
             {{- row(
@@ -92,7 +92,7 @@
                     {%- endif -%}
                 {%- endif -%}
             </span>
-            <h2 class="govuk-heading-xl">{{ date|date('jS F Y') }}</h2>
+            <h2 class="govuk-heading-xl">{{ date|date('format.date.written-with-year' | trans) }}</h2>
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         </div>
         <div class="domestic-day">

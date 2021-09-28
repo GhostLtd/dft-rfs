@@ -11,8 +11,8 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark|formatRegMark) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y')) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y')) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('format.date.default' | trans)) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('format.date.default' | trans)) }}
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'admin.domestic.survey-created.invitation-email' | trans | nl2br }}</dt>

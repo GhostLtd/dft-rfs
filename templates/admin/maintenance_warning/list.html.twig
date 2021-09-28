@@ -12,9 +12,9 @@
     {{ listTableStart(data, form) }}
     {% for warning in data.entities %}
         <tr class="govuk-table__row">
-            {{ tableCell(warning.start | date ('Y-m-d'), {}) }}
-            {{ tableCell(warning.start | date ('g:i a'), {}) }}
-            {{ tableCell(warning.end | date ('g:i a'), {}) }}
+            {{ tableCell(warning.start | date ('format.date.default' | trans), {}) }}
+            {{ tableCell(warning.start | date ('format.time.default' | trans), {}) }}
+            {{ tableCell(warning.end | date ('format.time.default' | trans), {}) }}
             {{ tableCell(actionLinks({
                 (path('admin_maintenance_warning_delete', {id: warning.id})): {label: 'Delete'},
                 (path('admin_maintenance_warning_edit', {id: warning.id})): {label: 'Edit'},

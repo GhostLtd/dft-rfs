@@ -12,8 +12,8 @@
         <tr class="govuk-table__row">
             {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
             {{ tableCell("#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}", {}) }}
-            {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
-            {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d'), {}) }}
+            {{ tableCell(survey.surveyPeriodStart | date ('format.date.default' | trans), {}) }}
+            {{ tableCell(survey.surveyPeriodEnd | date ('format.date.default' | trans), {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
@@ -24,7 +24,7 @@
             {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
             {{- countField(survey, 'summaryDayCount') -}}
             {{- countField(survey, 'stopDayCount') -}}
-            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('d/m/Y') }"} }), {}) }}
+            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }"} }), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

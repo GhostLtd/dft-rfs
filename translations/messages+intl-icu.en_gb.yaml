@@ -7,13 +7,14 @@ service:
 
 format:
   date:
-    long: 'l, jS F Y'
-    medium: 'jS M Y'
-    short: 'jS M'
+    written-with-year: 'jS F Y'
+    full-with-year: 'l, jS F Y'
+    full: 'l, jS F'
+    default: 'd/m/Y'
   time:
-    short: 'g:i a'
+    default: 'g:i a'
   date-time:
-    medium: 'jS M Y, g:i a'
+    default: 'd/m/Y g:i a'
 
 common:
   logout: Sign out

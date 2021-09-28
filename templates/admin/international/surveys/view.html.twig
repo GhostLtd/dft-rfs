@@ -167,9 +167,9 @@
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}
-                    {% set srTripIdentifier = trip.outboundDate | date('d/m/Y') %}
+                    {% set srTripIdentifier = trip.outboundDate | date('format.date.default' | trans) %}
                     <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">
-                        Trip #{{ loop.index }}&mdash;{{ trip.outboundDate | date('d/m/Y') }}
+                        Trip #{{ loop.index }}&mdash;{{ trip.outboundDate | date('format.date.default' | trans) }}
                     </h3>
                     {%- with {showActions: false, trip: trip, marginBottom: canEdit ? 5 : 9} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}

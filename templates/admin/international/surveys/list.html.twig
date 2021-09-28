@@ -11,8 +11,8 @@
     {% for survey in data.entities %}
         <tr class="govuk-table__row">
             {{ tableCell(survey.referenceNumber) }}
-            {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d')) }}
-            {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d')) }}
+            {{ tableCell(survey.surveyPeriodStart | date ('format.date.default' | trans)) }}
+            {{ tableCell(survey.surveyPeriodEnd | date ('format.date.default' | trans)) }}
             {{ tableCell(survey.company.businessName) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}

@@ -8,8 +8,8 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) }}
         {{ actionlessSummaryListRow('admin.international.survey.reference-number.label', survey.referenceNumber) }}
-        {{ actionlessSummaryListRow('admin.international.survey.period-start.label', survey.surveyPeriodStart | date('d/m/Y')) }}
-        {{ actionlessSummaryListRow('admin.international.survey.period-end.label', survey.surveyPeriodEnd | date('d/m/Y')) }}
+        {{ actionlessSummaryListRow('admin.international.survey.period-start.label', survey.surveyPeriodStart | date('format.date.default' | trans)) }}
+        {{ actionlessSummaryListRow('admin.international.survey.period-end.label', survey.surveyPeriodEnd | date('format.date.default' | trans)) }}
         {{ actionlessSummaryListRow('admin.international.survey.period-days.label', survey.surveyPeriodInDays) }}
 
         <div class="govuk-summary-list__row">

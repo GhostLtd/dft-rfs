@@ -103,8 +103,8 @@
                 }) -%}
 
                 {{ tableCell('international.trip.summary.date-until-date'|trans({
-                    'from': trip.outboundDate|date('d/m/Y'),
-                    'until': trip.returnDate|date('d/m/Y'),
+                    'from': trip.outboundDate|date('format.date.default' | trans),
+                    'until': trip.returnDate|date('format.date.default' | trans),
                 })
                 ) }}
 

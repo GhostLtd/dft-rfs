@@ -67,7 +67,7 @@
         {%- set dayNumber = day.number -%}
     {%- endif -%}
     <caption class="govuk-table__caption">
-        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M') }}</div>
+        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
         {%- if day|default(false) %}
             <div class="journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
     </caption>
