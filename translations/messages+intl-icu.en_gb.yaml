@@ -10,6 +10,7 @@ format:
     written-with-year: 'jS F Y'
     full-with-year: 'l, jS F Y'
     full: 'l, jS F'
+    side-bar: 'M j Y'
     default: 'd/m/Y'
   time:
     default: 'g:i a'

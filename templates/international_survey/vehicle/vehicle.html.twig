@@ -20,8 +20,8 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'international.sidebar-summary.period'|trans }}</dt>
             <dd class="govuk-summary-list__value">
-                <span class="nowrap">{{- survey.surveyPeriodStart | date('M j Y') -}}</span>
-                {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('M j Y') -}}</span>{% endif -%}
+                <span class="nowrap">{{- survey.surveyPeriodStart | date('format.date.side-bar' | trans) -}}</span>
+                {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('format.date.side-bar' | trans) -}}</span>{% endif -%}
             </dd>
         </div>
     </dl>
