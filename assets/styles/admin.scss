@@ -12,6 +12,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/pagination";
 @import "admin/report-table";
 @import "admin/surveys";
+@import "admin/vertical-text";
 
 .govuk-summary-list__row.access-code .govuk-summary-list__value {
   font-family: monospace;

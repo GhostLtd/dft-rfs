@@ -29,7 +29,7 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Week</th>
             {% for username in usernames %}
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric"><span style="writing-mode: vertical-rl;text-orientation: mixed;">{{ username | removeEmailNamespacePrefix }}</span></th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric"><span class="govuk-vertical">{{ username | removeEmailNamespacePrefix }}</span></th>
             {% endfor %}
             <th scope="col" class="govuk-table__header">Total</th>
         </tr>
