@@ -201,6 +201,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $passcodeUser = $survey->getPasscodeUser();
 
         if ($passcodeUser) {
+            $survey->setPasscodeUser(null);
             $this->entityManager->remove($passcodeUser);
         }
     }

@@ -196,9 +196,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         $this->passcodeUser = $passcodeUser;
 
         // set (or unset) the owning side of the relation if necessary
-        $newDomesticSurvey = null === $passcodeUser ? null : $this;
-        if ($passcodeUser->getDomesticSurvey() !== $newDomesticSurvey) {
-            $passcodeUser->setDomesticSurvey($newDomesticSurvey);
+        if ($passcodeUser && $passcodeUser->getDomesticSurvey() !== $this) {
+            $passcodeUser->setDomesticSurvey($this);
         }
 
         return $this;
