@@ -5,7 +5,7 @@
     {%- set params = {
         stageNumber: subject.number,
         dayNumber: subject.day.number,
-        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('F j, Y')
+        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('format.date.written-with-year' | trans)
     }  -%}
     {%- if subject.id is null -%}
         {{ 'domestic.day-stop.sidebar-summary.adding' | trans(params) }}
