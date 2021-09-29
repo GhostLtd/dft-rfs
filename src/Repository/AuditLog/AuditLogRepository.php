@@ -10,6 +10,7 @@ use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
 use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr;
 
@@ -91,21 +92,22 @@ class AuditLogRepository extends ServiceEntityRepository
             ;
     }
 
+    protected function addApprovalQueryBuilderConditions(QueryBuilder $queryBuilder, string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null)
+    {
+        $queryBuilder
+            ->andWhere('a.timestamp >= :minStart')
+            ->andWhere('a.timestamp < :maxStart')
+            ->setParameter('minStart', $minStart)
+            ->setParameter('maxStart', $maxStart);
+        if ($surveyClass === DomesticSurvey::class && $isNorthernIreland !== null) {
+            $queryBuilder
+                ->andWhere('s.isNorthernIreland = :isNorthernIreland')
+                ->setParameter('isNorthernIreland', $isNorthernIreland);
+        }
+    }
+
     protected function getApprovalUsernamesAndData(string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
     {
-        $addConditions = function(QueryBuilder $queryBuilder) use ($surveyClass, $minStart, $maxStart, $isNorthernIreland) {
-            $queryBuilder
-                ->andWhere('a.timestamp >= :minStart')
-                ->andWhere('a.timestamp < :maxStart')
-                ->setParameter('minStart', $minStart)
-                ->setParameter('maxStart', $maxStart);
-            if ($surveyClass === DomesticSurvey::class && $isNorthernIreland !== null) {
-                $queryBuilder
-                    ->andWhere('s.isNorthernIreland = :isNorthernIreland')
-                    ->setParameter('isNorthernIreland', $isNorthernIreland);
-            }
-        };
-
         // get list of all relevant usernames, for survey/dates
         $userQb = $this->createQueryBuilder('a')
             ->select('a.username')
@@ -115,7 +117,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
             ->orderBy('a.username', 'ASC')
         ;
-        $addConditions($userQb);
+        $this->addApprovalQueryBuilderConditions($userQb, $surveyClass, $minStart, $maxStart, $isNorthernIreland);
         $usernames = $userQb->getQuery()->getArrayResult();
         $usernames = array_map(fn($u) => $u['username'], $usernames);
         if (!$usernames) {
@@ -129,35 +131,32 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
             ->orderBy('a.timestamp', 'ASC')
         ;
-        $addConditions($approvalsQb);
+        $this->addApprovalQueryBuilderConditions($approvalsQb, $surveyClass, $minStart, $maxStart, $isNorthernIreland);
         $approvalsResults = $approvalsQb->getQuery()->getArrayResult();
 
         return [$usernames, $approvalsResults];
     }
 
+    /**
+     * @throws UnexpectedResultException
+     */
     public function getDomesticApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
     {
         [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(DomesticSurvey::class, $minStart, $maxStart, $isNorthernIreland);
 
-        [$firstWeek, $firstYear, $lastWeek, $lastYear] = $this->getWeekAndYearRange($minStart, $maxStart);
-        $stats = [];
-        for ($year = $firstYear; $year <= $lastYear; $year++) {
-            $stats[$year] = ['data' => []];
-            for ($week = $firstWeek; $week <= $lastWeek; $week++) {
-                $stats[$year]['data'][$week] = [
-                    'data' => array_combine($usernames, array_fill(0, count($usernames), 0)),
-                ];
-            }
-        }
+        [$firstWeek, $lastWeek] = $this->getDomesticWeekRange($minStart, $maxStart);
+        $stats = [
+            'usernames' => $usernames,
+            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek)
+        ];
 
         foreach ($approvalsResults as $result) {
             [$week, $year] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($result['timestamp']);
             $approver = $result['username'];
-
-            $stats[$year]['data'][$week]['data'][$approver]++;
+            $stats['data'][$week]['data'][$approver]++;
         }
 
-        return [$usernames, $stats];
+        return $stats;
     }
 
     public function getInternationalApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
@@ -166,25 +165,35 @@ class AuditLogRepository extends ServiceEntityRepository
 
         $firstWeek = InternationalWeekNumberHelper::getWeekNumber($minStart);
         $lastWeek = InternationalWeekNumberHelper::getWeekNumber($maxStart) - 1;
-
-        $stats = [];
-        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
-            $stats['data'][$week] = [
-                'data' => array_combine($usernames, array_fill(0, count($usernames), 0)),
-            ];
-        }
+        $stats = [
+            'usernames' => $usernames,
+            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek)
+        ];
 
         foreach ($approvalsResults as $result) {
             $week = InternationalWeekNumberHelper::getWeekNumber($result['timestamp']);
             $approver = $result['username'];
-
             $stats['data'][$week]['data'][$approver]++;
         }
 
-        return [$usernames, $stats];
+        return $stats;
     }
 
-    protected function getWeekAndYearRange(?\DateTime $minDate, ?\DateTime $maxDate): array
+    protected function getEmptyApprovalQuarterData(array $usernames, $firstWeek, $lastWeek): array
+    {
+        $emptyApprovalReportData = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $emptyApprovalReportData[$week] = [
+                'data' => array_combine($usernames, array_fill(0, count($usernames), 0)),
+            ];
+        }
+        return $emptyApprovalReportData;
+    }
+
+    /**
+     * @throws UnexpectedResultException
+     */
+    protected function getDomesticWeekRange(?\DateTime $minDate, ?\DateTime $maxDate): array
     {
         [$firstWeek, $firstYear] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($minDate);
         [$lastWeek, $lastYear] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($maxDate);
@@ -196,7 +205,11 @@ class AuditLogRepository extends ServiceEntityRepository
             $lastWeek--;
         }
 
-        return [$firstWeek, $firstYear, $lastWeek, $lastYear];
+        if ($lastYear !== $firstYear) {
+            throw new UnexpectedResultException('Query meant for quarterly results. Years should match.');
+        }
+
+        return [$firstWeek, $lastWeek];
     }
 
 }

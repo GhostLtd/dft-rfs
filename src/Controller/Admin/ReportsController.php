@@ -239,21 +239,20 @@ class ReportsController extends AbstractController
 
         switch($type) {
             case ReportFilterType::TYPE_CSRGT:
-                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end);
+                $stats = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_GB:
-                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, false);
+                $stats = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, false);
                 break;
             case ReportFilterType::TYPE_CSRGT_NI:
-                [$users, $stats] = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, true);
+                $stats = $this->auditLogRepository->getDomesticApprovalReportStats($start, $end, true);
                 break;
             case ReportFilterType::TYPE_IRHS:
-                [$users, $stats] = $this->auditLogRepository->getInternationalApprovalReportStats($start, $end);
+                $stats = $this->auditLogRepository->getInternationalApprovalReportStats($start, $end);
                 break;
         }
 
         return $this->render('admin/report/approvals.html.twig', array_merge($form->getData(), [
-            'usernames' => $users ?? null,
             'stats' => $stats ?? null,
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
