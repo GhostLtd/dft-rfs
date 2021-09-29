@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -66,6 +67,9 @@ class ScreenshotsCommand extends Command
         if ($this->appEnvironment !== 'staging') {
             throw new RuntimeException('must be running in "staging" app environment');
         }
+
+        $io = new SymfonyStyle($input, $output);
+        $io->warning('If taking screenshots for documentation, check that code is at same commit as deployed on PRODUCTION');
 
         $mode = $input->getArgument('mode');
 
