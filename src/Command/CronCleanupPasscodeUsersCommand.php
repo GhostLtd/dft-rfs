@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
+use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\SurveyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,23 +39,50 @@ class CronCleanupPasscodeUsersCommand extends Command
 
         $count = 0;
 
-        $domesticRepo = $this->entityManager->getRepository(DomesticSurvey::class);
-        foreach($domesticRepo->getRejectedSurveysThatHaveUsersBefore($rejectedBefore) as $survey) {
-            $this->entityManager->remove($survey->getPasscodeUser());
-            $survey->setPasscodeUser(null);
-            $count++;
+        $matchingDomesticSurveys = $this->entityManager->getRepository(DomesticSurvey::class)
+            ->getSurveysRequiringPasscodeUserCleanup($rejectedBefore);
+
+        $matchingInternationalSurveys = $this->entityManager->getRepository(InternationalSurvey::class)
+            ->getSurveysRequiringPasscodeUserCleanup($rejectedBefore);
+
+        $this->entityManager->beginTransaction();
+        try {
+            foreach ($matchingDomesticSurveys as $survey) {
+                $this->entityManager->remove($survey->getPasscodeUser());
+                $survey->setPasscodeUser(null);
+                $this->entityManager->persist($this->getAuditLogEntry($survey));
+                $count++;
+            }
+
+            foreach ($matchingInternationalSurveys as $survey) {
+                $this->entityManager->remove($survey->getPasscodeUser());
+                $survey->setPasscodeUser(null);
+                $this->entityManager->persist($this->getAuditLogEntry($survey));
+                $count++;
+            }
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        }
+        catch(\Exception $e) {
+            $this->entityManager->rollback();
+            $io->error($e->getMessage());
+            return 1;
         }
 
-        $internationalRepo = $this->entityManager->getRepository(InternationalSurvey::class);
-        foreach($internationalRepo->getRejectedSurveysThatHaveUsersBefore($rejectedBefore) as $survey) {
-            $this->entityManager->remove($survey->getPasscodeUser());
-            $survey->setPasscodeUser(null);
-            $count++;
-        }
 
-        $this->entityManager->flush();
         $io->success(sprintf("Success - cleared %d passcode user(s)", $count));
 
         return 0;
+    }
+
+    protected function getAuditLogEntry(SurveyInterface $survey): AuditLog {
+        return (new AuditLog())
+            ->setCategory('cleanup-passcode')
+            ->setUsername('-')
+            ->setEntityId($survey->getId())
+            ->setEntityClass(get_class($survey))
+            ->setTimestamp(new \DateTime())
+            ->setData([]);
     }
 }

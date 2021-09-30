@@ -370,8 +370,16 @@ class SurveyRepository extends AbstractSurveyRepository
     /**
      * @return Survey[]|array
      */
-    public function getRejectedSurveysThatHaveUsersBefore(\DateTime $rejectedBefore): array
+    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
     {
-        return $this->doGetRejectedSurveysThatHaveUsersBefore($rejectedBefore, 'domestic_survey');
+        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'domestic_survey');
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
+        $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
+        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
     }
 }

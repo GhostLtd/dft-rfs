@@ -314,4 +314,29 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
             !$response->hasJourneys();
     }
+
+    public function clearPersonalData(): self
+    {
+        $this
+            ->setInvitationEmail(null)
+            ->setInvitationAddress(null);
+
+        $response = $this->getResponse();
+        if ($response) {
+            $response
+                ->setContactName(null)
+                ->setContactTelephone(null)
+                ->setContactEmail(null)
+                ->setHireeName(null)
+                ->setHireeTelephone(null)
+                ->setHireeEmail(null)
+                ->setHireeAddress(null)
+                ->setNewOwnerName(null)
+                ->setNewOwnerTelephone(null)
+                ->setNewOwnerEmail(null)
+                ->setNewOwnerAddress(null);
+        }
+
+        return $this;
+    }
 }

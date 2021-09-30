@@ -143,7 +143,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
         // set (or unset) the owning side of the relation if necessary
         $newInternationalSurvey = null === $passcodeUser ? null : $this;
-        if ($passcodeUser->getInternationalSurvey() !== $newInternationalSurvey) {
+        if ($passcodeUser && $passcodeUser->getInternationalSurvey() !== $newInternationalSurvey) {
             $passcodeUser->setInternationalSurvey($newInternationalSurvey);
         }
 
@@ -208,5 +208,22 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         $this->setReasonForEmptySurvey($survey->getReasonForEmptySurvey());
         $this->setReasonForEmptySurveyOther($survey->getReasonForEmptySurveyOther());
+    }
+
+    public function clearPersonalData(): self
+    {
+        $this
+            ->setInvitationEmail(null)
+            ->setInvitationAddress(null);
+
+        $response = $this->getResponse();
+        if ($response) {
+            $response
+                ->setContactName(null)
+                ->setContactTelephone(null)
+                ->setContactEmail(null);
+        }
+
+        return $this;
     }
 }
