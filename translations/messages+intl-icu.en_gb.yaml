@@ -216,6 +216,9 @@ admin:
     approvals:
       heading: Approvals by username
       sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    unapprovals:
+      heading: Un-approvals by username
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow

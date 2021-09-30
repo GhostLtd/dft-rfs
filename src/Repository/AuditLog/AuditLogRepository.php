@@ -6,6 +6,7 @@ use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
+use App\Utility\AuditEntityLogger\SurveyStateLogger;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
 use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -94,11 +95,16 @@ class AuditLogRepository extends ServiceEntityRepository
 
     protected function addApprovalQueryBuilderConditions(QueryBuilder $queryBuilder, string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null)
     {
-        $queryBuilder
-            ->andWhere('a.timestamp >= :minStart')
-            ->andWhere('a.timestamp < :maxStart')
-            ->setParameter('minStart', $minStart)
-            ->setParameter('maxStart', $maxStart);
+        if ($minStart !== null) {
+            $queryBuilder
+                ->andWhere('a.timestamp >= :minStart')
+                ->setParameter('minStart', $minStart);
+        }
+        if ($maxStart !== null) {
+            $queryBuilder
+                ->andWhere('a.timestamp < :maxStart')
+                ->setParameter('maxStart', $maxStart);
+        }
         if ($surveyClass === DomesticSurvey::class && $isNorthernIreland !== null) {
             $queryBuilder
                 ->andWhere('s.isNorthernIreland = :isNorthernIreland')
@@ -114,7 +120,9 @@ class AuditLogRepository extends ServiceEntityRepository
             ->distinct()
             ->innerJoin($surveyClass, 's', Expr\Join::WITH, 'a.entityId = s.id')
             ->where('a.data LIKE :data')
+            ->andWhere('a.category = :category')
             ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
+            ->setParameter('category', SurveyStateLogger::CATEGORY)
             ->orderBy('a.username', 'ASC')
         ;
         $this->addApprovalQueryBuilderConditions($userQb, $surveyClass, $minStart, $maxStart, $isNorthernIreland);
@@ -128,7 +136,9 @@ class AuditLogRepository extends ServiceEntityRepository
             ->select('a.username, a.timestamp')
             ->innerJoin($surveyClass, 's', Expr\Join::WITH, 'a.entityId = s.id')
             ->where('a.data LIKE :data')
+            ->andWhere('a.category = :category')
             ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
+            ->setParameter('category', SurveyStateLogger::CATEGORY)
             ->orderBy('a.timestamp', 'ASC')
         ;
         $this->addApprovalQueryBuilderConditions($approvalsQb, $surveyClass, $minStart, $maxStart, $isNorthernIreland);
@@ -177,6 +187,34 @@ class AuditLogRepository extends ServiceEntityRepository
         }
 
         return $stats;
+    }
+
+    public function getUnapprovalReportStats(string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
+    {
+        $unapprovedSurveys = $this->createQueryBuilder('a2')
+            ->select('a2.entityId')
+            ->where('a2.data = :a2_data')
+            ->andWhere('a2.category = :category')
+            ->andWhere('a2.timestamp >= a.timestamp');
+
+        $unapprovalCounts = $this->createQueryBuilder('a');
+        $unapprovalCounts->select("a.username, GROUP_CONCAT(DISTINCT a.entityId SEPARATOR '\n') as ids, COUNT(a.id) as rejectedApprovalCount")
+            ->where($unapprovalCounts->expr()->in('a.entityId', $unapprovedSurveys->getDQL()))
+            ->andWhere('a.data = :a_data')
+            ->andWhere('a.category = :category')
+            ->andWhere('a.entityClass = :class')
+            ->setParameters([
+                'a_data' => '{"from":"closed","to":"approved"}',
+                'a2_data' => '{"from":"approved","to":"closed"}',
+                'category' => SurveyStateLogger::CATEGORY,
+                'class' => $surveyClass,
+            ])
+            ->groupBy('a.username')
+            ->orderBy('a.username')
+        ;
+        $this->addApprovalQueryBuilderConditions($unapprovalCounts, $surveyClass, $minStart, $maxStart, $isNorthernIreland);
+
+        return $unapprovalCounts->getQuery()->getScalarResult();
     }
 
     protected function getEmptyApprovalQuarterData(array $usernames, $firstWeek, $lastWeek): array
