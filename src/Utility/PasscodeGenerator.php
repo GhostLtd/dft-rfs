@@ -10,10 +10,10 @@ use Exception;
 
 class PasscodeGenerator
 {
-    private PasscodeUserRepository $passcodeUserRepository;
-    private string $appEnvironment;
+    private ?PasscodeUserRepository $passcodeUserRepository;
+    private ?string $appEnvironment;
 
-    public function __construct(PasscodeUserRepository $passcodeUserRepository, string $appEnvironment)
+    public function __construct(?string $appEnvironment = null, ?PasscodeUserRepository $passcodeUserRepository = null)
     {
         $this->passcodeUserRepository = $passcodeUserRepository;
         $this->appEnvironment = $appEnvironment;
