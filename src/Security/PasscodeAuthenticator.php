@@ -116,6 +116,9 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
     {
         /** @var PasscodeUser $user */
         $user = $token->getUser();
+        $user->setLastLogin(new \DateTime());
+        $this->entityManager->flush();
+
         switch (true)
         {
             case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER):

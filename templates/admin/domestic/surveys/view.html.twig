@@ -74,6 +74,7 @@
         {%- endif -%}
 
         {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
+        {{ actionlessSummaryListRow('Last logged in', (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
         {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
         {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('format.date.default' | trans)) }}
         {%- if pdfs is not empty -%}

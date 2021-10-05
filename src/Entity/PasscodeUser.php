@@ -57,6 +57,11 @@ class PasscodeUser implements UserInterface
      */
     private $preEnquiry;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastLogin;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -193,6 +198,18 @@ class PasscodeUser implements UserInterface
     public function setPreEnquiry($preEnquiry): self
     {
         $this->preEnquiry = $preEnquiry;
+        return $this;
+    }
+
+    public function getLastLogin(): ?\DateTimeInterface
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(?\DateTimeInterface $lastLogin): self
+    {
+        $this->lastLogin = $lastLogin;
+
         return $this;
     }
 }
