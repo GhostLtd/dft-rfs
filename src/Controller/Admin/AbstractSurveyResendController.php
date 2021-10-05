@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\SurveyInterface;
-use App\Repository\PasscodeUserRepository;
+use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,14 +13,14 @@ use Symfony\Component\Workflow\WorkflowInterface;
 abstract class AbstractSurveyResendController extends AbstractController
 {
     protected EntityManagerInterface $entityManager;
-    protected PasscodeUserRepository $passcodeUserRepository;
     protected WorkflowInterface $stateMachine;
+    private PasscodeGenerator $passcodeGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager, PasscodeUserRepository $passcodeUserRepository, WorkflowInterface $stateMachine)
+    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, WorkflowInterface $stateMachine)
     {
         $this->entityManager = $entityManager;
-        $this->passcodeUserRepository = $passcodeUserRepository;
         $this->stateMachine = $stateMachine;
+        $this->passcodeGenerator = $passcodeGenerator;
     }
 
     protected function doResend(Request $request, SurveyInterface $survey, string $formClass, string $templatePath)
@@ -38,7 +38,7 @@ abstract class AbstractSurveyResendController extends AbstractController
                 }
 
                 $survey->setState(SurveyInterface::STATE_NEW);
-                $this->passcodeUserRepository->generateAndSetNewPassword($survey->getPasscodeUser());
+                $survey->getPasscodeUser()->setPlainPassword($this->passcodeGenerator->generatePasswordCode());
 
                 $this->stateMachine->apply($survey, 'invite_user');
                 $this->entityManager->flush();
