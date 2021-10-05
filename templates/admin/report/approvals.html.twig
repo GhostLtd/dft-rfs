@@ -3,10 +3,10 @@
 {% set translation_prefix = "admin.reports.approvals" %}
 
 {% block statsTable %}
-    {{ _self.displayTable(stats.usernames, stats.data) }}
+    {{ _self.displayTable(stats.usernames, stats.data, stats.totals) }}
 {% endblock %}
 
-{% macro displayTable(usernames, stats) %}
+{% macro displayTable(usernames, stats, totals) %}
     <p class="govuk-body">
         Stats shown for all approvals by username
     </p>
@@ -32,10 +32,13 @@
                 <td class="govuk-table__header">{{ weekStats.data | reduce((carry, v) => carry + v) }}</td>
             </tr>
         {% endfor %}
-{#        <tr class="govuk-table__row">#}
-{#            <td class="govuk-table__header">Total</td>#}
-{#            {{ m.displayRow(totals, totalOfTotals, false, fields) }}#}
-{#        </tr>#}
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header">Total</td>
+            {% for stat in totals %}
+                <td class="govuk-table__header govuk-table__header--numeric">{{ stat }}</td>
+            {% endfor %}
+            <td class="govuk-table__header govuk-table__header--numeric"></td>
+        </tr>
         </tbody>
     </table>
 {% endmacro %}

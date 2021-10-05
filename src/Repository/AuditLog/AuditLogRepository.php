@@ -157,13 +157,15 @@ class AuditLogRepository extends ServiceEntityRepository
         [$firstWeek, $lastWeek] = $this->getDomesticWeekRange($minStart, $maxStart);
         $stats = [
             'usernames' => $usernames,
-            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek)
+            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek),
+            'totals' => array_combine($usernames, array_fill(0, count($usernames), 0)),
         ];
 
         foreach ($approvalsResults as $result) {
             [$week, $year] = DomesticWeekNumberHelper::getYearlyWeekNumberAndYear($result['timestamp']);
             $approver = $result['username'];
             $stats['data'][$week]['data'][$approver]++;
+            $stats['totals'][$approver]++;
         }
 
         return $stats;
@@ -177,13 +179,15 @@ class AuditLogRepository extends ServiceEntityRepository
         $lastWeek = InternationalWeekNumberHelper::getWeekNumber($maxStart) - 1;
         $stats = [
             'usernames' => $usernames,
-            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek)
+            'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek),
+            'totals' => array_combine($usernames, array_fill(0, count($usernames), 0)),
         ];
 
         foreach ($approvalsResults as $result) {
             $week = InternationalWeekNumberHelper::getWeekNumber($result['timestamp']);
             $approver = $result['username'];
             $stats['data'][$week]['data'][$approver]++;
+            $stats['totals'][$approver]++;
         }
 
         return $stats;
