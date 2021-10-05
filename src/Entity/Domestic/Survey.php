@@ -8,6 +8,7 @@ use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
+use App\Utility\NotifyApiResponseCleaner;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
@@ -336,6 +337,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
                 ->setNewOwnerEmail(null)
                 ->setNewOwnerAddress(null);
         }
+
+        NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
 
         return $this;
     }

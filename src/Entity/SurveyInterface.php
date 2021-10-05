@@ -42,4 +42,9 @@ interface SurveyInterface
     public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self;
     public function getSecondReminderSentDate(): ?\DateTime;
     public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self;
+
+    public function getNotifyApiResponses(): ?array;
+    public function setNotifyApiResponse(?array $notifyApiResponses): self;
+    public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self;
+    public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array;
 }

@@ -8,6 +8,7 @@ use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
+use App\Utility\NotifyApiResponseCleaner;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -223,6 +224,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
                 ->setContactTelephone(null)
                 ->setContactEmail(null);
         }
+
+        NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
 
         return $this;
     }
