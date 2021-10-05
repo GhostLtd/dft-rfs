@@ -11,7 +11,7 @@ front_end:
 admin:
     resource: '../../src/Controller/Admin/**/*'
     exclude:
-        - '../src/Controller/Admin/Reports'
+        - '../../src/Controller/Admin/Reports/'
     type: annotation
     host: '%admin_hostname%'
 
