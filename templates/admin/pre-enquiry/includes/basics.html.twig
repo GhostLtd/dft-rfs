@@ -10,5 +10,6 @@
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('admin.pre-enquiry.view.username', preEnquiry.passcodeUser.username) }}
+        {{ actionlessSummaryListRow('Last logged in', preEnquiry.passcodeUser.lastLogin ? preEnquiry.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
     {%- endif -%}
 </dl>
