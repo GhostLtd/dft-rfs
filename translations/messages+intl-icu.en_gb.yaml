@@ -749,6 +749,10 @@ domestic:
       more-than-five: More than 5 stages
       place-to-place: "{origin} to {destination}"
 
+    intro:
+      heading: Introduction to summary day
+      help: ''
+
     origin:
       heading: Where did the vehicle start the day?
       help: ''
@@ -862,6 +866,10 @@ domestic:
       previous-stages: Previous stage on this day
       first-stage: This is the first stage of the day
 
+    intro:
+      heading: Introduction to detailed day
+      help: ''
+
     origin:
       heading: Where did the vehicle begin this stage of the journey?
       help: ''
@@ -952,8 +960,12 @@ domestic:
           <li>Do not include meal/rest breaks, congestion</li>
           </ul>
 
-        fewer-than-5: 5 stops or fewer
-        5-or-more: 6 stops or more
+        fewer-than-5:
+          label: 5 stops or fewer
+          help: ''
+        5-or-more:
+          label: 6 stops or more
+          help: ''
 
   completed:
     heading: Survey complete

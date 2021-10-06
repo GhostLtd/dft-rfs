@@ -17,8 +17,16 @@ class NumberOfStopsType extends AbstractType
         $builder
             ->add('hasMoreThanFiveStops', ChoiceType::class, [
                 'choices' => [
-                    "{$translationKeyPrefix}.number-of-stops.fewer-than-5" => false,
-                    "{$translationKeyPrefix}.number-of-stops.5-or-more" => true,
+                    "{$translationKeyPrefix}.number-of-stops.fewer-than-5.label" => false,
+                    "{$translationKeyPrefix}.number-of-stops.5-or-more.label" => true,
+                ],
+                'choice_options' => [
+                    "{$translationKeyPrefix}.number-of-stops.fewer-than-5.label" => [
+                        'help' => "{$translationKeyPrefix}.number-of-stops.fewer-than-5.help",
+                    ],
+                    "{$translationKeyPrefix}.number-of-stops.5-or-more.label" => [
+                        'help' => "{$translationKeyPrefix}.number-of-stops.5-or-more.help",
+                    ],
                 ],
                 'label' => "{$translationKeyPrefix}.number-of-stops.label",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],

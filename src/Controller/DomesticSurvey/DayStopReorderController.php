@@ -27,7 +27,7 @@ class DayStopReorderController extends AbstractDayStopReorderController
     /**
      * @Route("/domestic-survey/day-{dayNumber}/reorder-stops",
      *   requirements={"dayNumber"="[1-7]"},
-     *   name=DayStopController::REORDER_ROUTE)
+     *   name="app_domesticsurvey_daystop_reorder")
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
     public function reorderStops(string $dayNumber, Request $request): Response

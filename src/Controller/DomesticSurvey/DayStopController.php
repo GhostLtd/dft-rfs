@@ -19,18 +19,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"}, name="app_domesticsurvey_daystop_")
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DayStopController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_PREFIX = 'app_domesticsurvey_daystop_';
-
-    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
-    public const START_ROUTE = self::ROUTE_PREFIX.'start';
-    public const REORDER_ROUTE = self::ROUTE_PREFIX.'reorder';
-    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
-
     protected string $dayNumber;
     protected string $stopNumber;
 
@@ -41,12 +34,12 @@ class DayStopController extends AbstractSessionStateWorkflowController
     /**
      * @Route(
      *     "/stop-{stopNumber}/start",
-     *     name=self::START_ROUTE,
+     *     name="start",
      *     requirements={"stopNumber"="\d+|(add)"}
      * )
      * @Route(
      *     "/stop-{stopNumber}/{state}",
-     *     name=self::WIZARD_ROUTE,
+     *     name="wizard",
      *     requirements={"stopNumber"="\d+|(add)"}
      * )
      */
@@ -96,7 +89,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
+        return $this->redirectToRoute('app_domesticsurvey_daystop_wizard', ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
     }
 
     protected function getCancelUrl(): ?Response
@@ -110,7 +103,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/delete-day-stop-{stopNumber}", name=self::DELETE_ROUTE)
+     * @Route("/delete-day-stop-{stopNumber}", name="delete")
      * @Template("domestic_survey/day_stop/delete.html.twig")
      */
     public function delete(string $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request)

@@ -22,6 +22,9 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
+            new WizardStepTestCase("Introduction to detailed day", "form_continue", [
+                new FormTestCase([], []),
+            ]),
             new WizardStepTestCase("Where did the vehicle begin this stage of the journey?", "origin_continue", $originTests),
         ];
 

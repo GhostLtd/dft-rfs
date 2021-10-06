@@ -20,17 +20,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"}, name="app_domesticsurvey_daysummary_")
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DaySummaryController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_PREFIX = 'app_domesticsurvey_daysummary_';
-
-    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
-    public const START_ROUTE = self::ROUTE_PREFIX.'start';
-    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
-
     protected int $dayNumber;
 
     use SurveyHelperTrait;
@@ -38,8 +32,8 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     private DaySummary $daySummary;
 
     /**
-     * @Route("/summary/start", name=self::START_ROUTE)
-     * @Route("/summary/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/summary/start", name="start")
+     * @Route("/summary/{state}", name="wizard")
      */
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {
@@ -86,7 +80,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'state' => $state]);
+        return $this->redirectToRoute('app_domesticsurvey_daysummary_wizard', ['dayNumber' => $this->dayNumber, 'state' => $state]);
     }
 
     protected function getCancelUrl(): ?Response
@@ -99,7 +93,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/delete-summary-day", name=self::DELETE_ROUTE)
+     * @Route("/delete-summary-day", name="delete")
      * @Template("domestic_survey/day_summary/delete.html.twig")
      */
     public function delete(string $dayNumber, DeleteDaySummaryConfirmAction $confirmAction, Request $request)

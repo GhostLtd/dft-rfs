@@ -21,8 +21,9 @@ use App\Workflow\FormWizardStateInterface;
 
 class DayStopState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_ORIGIN = 'origin';
-    const STATE_DESTINATION = 'destination';
+    const STATE_INTRO = 'introduction';
+    const STATE_ORIGIN = 'stage-start';
+    const STATE_DESTINATION = 'stage-end';
     const STATE_BORDER_CROSSING = 'border-crossing';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
     const STATE_GOODS_DESCRIPTION = 'goods-description';
@@ -43,6 +44,7 @@ class DayStopState extends AbstractFormWizardState implements FormWizardStateInt
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_INTRO => 'domestic_survey/day_stop/intro.html.twig',
         self::STATE_ORIGIN => 'domestic_survey/day_stop/form-origin.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_stop/form-destination.html.twig',
         self::STATE_BORDER_CROSSING => 'domestic_survey/day_stop/form-border-crossing.html.twig',
@@ -95,6 +97,8 @@ class DayStopState extends AbstractFormWizardState implements FormWizardStateInt
                 case self::STATE_GOODS_WEIGHT :
                     return $this->subject->getGoodsDescription() !== AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY;
             }
+        } else if ($state === self::STATE_INTRO) {
+            return true;
         }
         return parent::isValidAlternativeStartState($state);
     }
