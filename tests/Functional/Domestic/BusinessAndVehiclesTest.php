@@ -6,7 +6,6 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\FormTestCase;
-use App\Tests\Functional\Wizard\WizardStepTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 
 class BusinessAndVehiclesTest extends AbstractWizardTest
