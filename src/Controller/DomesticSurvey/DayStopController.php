@@ -3,6 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Repository\Domestic\DayRepository;
@@ -48,7 +49,44 @@ class DayStopController extends AbstractSessionStateWorkflowController
         $this->stopNumber = $stopNumber;
         $this->dayNumber = $dayNumber;
 
-        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);
+        $additionalViewData = [];
+        if ($state === DayStopState::STATE_INTRO) {
+            $additionalViewData['exampleDayStops'] = $this->getExampleDayStops();
+        }
+
+        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+    }
+
+    protected function getExampleDayStops(): array
+    {
+        return [
+            (new DayStop())
+                ->setNumber(1)
+                ->setOriginLocation('HD1 3LE')
+                ->setDestinationLocation('Coventry, CV3 2NT')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER)
+                ->setGoodsDescriptionOther('Building materials')
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(2)
+                ->setOriginLocation('Coventry, CV3 2NT')
+                ->setDestinationLocation('S20 3FF')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(3)
+                ->setOriginLocation('S20 3FF')
+                ->setDestinationLocation('S20 8GN')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(4)
+                ->setOriginLocation('S20 8GN')
+                ->setDestinationLocation('HD1 3LE')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY),
+        ];
     }
 
     protected function getFormWizard(): FormWizardStateInterface
