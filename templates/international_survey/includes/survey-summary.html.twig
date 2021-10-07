@@ -6,6 +6,6 @@
 
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'international.sidebar-summary.period'|trans }}</h3>
 <p class="govuk-body">
-    <span class="nowrap">{{- survey.surveyPeriodStart | date('M j Y') -}}</span>
-    {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('M j Y') -}}</span>{% endif %}
+    <span class="nowrap">{{- survey.surveyPeriodStart | date('format.date.side-bar' | trans) -}}</span>
+    {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('format.date.side-bar' | trans) -}}</span>{% endif %}
 </p>

@@ -1,7 +1,11 @@
 {% extends 'admin/base-with-nav.html.twig' %}
 
 {% set translation_prefix = "admin.international.export-confirm" %}
-{% set headingParams = {week: week} %}
+{% set headingParams = {
+    year: year,
+    quarter: quarter
+} %}
+
 
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}

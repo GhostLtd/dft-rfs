@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utility\Domestic;
+namespace App\Utility;
 
 use Google\Cloud\Storage\StorageObject;
 

@@ -12,7 +12,7 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
             {{- note.createdBy | removeEmailNamespacePrefix -}}
-            <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date.date-time' | trans([], 'admin')) -}}</div>
+            <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date-time.default' | trans) -}}</div>
         </dt>
         <dd class="govuk-summary-list__value">{{ note.note | nl2br }}</dd>
         {% if not (options.hideActions | default(false)) and is_granted(constant('\\App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), note.survey ?? note.preEnquiry) %}

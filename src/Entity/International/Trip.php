@@ -36,6 +36,11 @@ class Trip
     private $id;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $exportDate;
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="international.trip.origin.not-blank", groups={"trip_places", "admin_trip"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
@@ -653,6 +658,17 @@ class Trip
     {
         $this->isChangedBodyType = $isChangedBodyType;
 
+        return $this;
+    }
+
+    public function getExportDate(): ?\DateTime
+    {
+        return $this->exportDate;
+    }
+
+    public function setExportDate(?\DateTime $exportDate): self
+    {
+        $this->exportDate = $exportDate;
         return $this;
     }
 

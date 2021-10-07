@@ -37,7 +37,7 @@
                 {%- set status = response[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
                 {{- tag({text: status, classes: ("admin.notify.status.#{status}" | trans)}) -}}
                 <span class="govuk-body-s">
-                    {{ response['timestamp'] | date('Y-m-d H:i') -}}
+                    {{ response['timestamp'] | date('format.date-time.default' | trans) -}}
                     {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
                         {%- for error in response.errors -%}
                             <br>{{- error.error }}: {{ error.message | nl2br -}}

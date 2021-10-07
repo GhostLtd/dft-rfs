@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,20 +23,20 @@ class ExportController extends AbstractController
     private const ROUTE_PREFIX = 'admin_international_export_';
     public const EXPORT_ROUTE = self::ROUTE_PREFIX . 'list';
     public const SUCCESS_ROUTE = self::ROUTE_PREFIX . 'success';
-    public const EXPORT_WEEK_ROUTE = self::ROUTE_PREFIX . 'week';
+    public const EXPORT_QUARTER_ROUTE = self::ROUTE_PREFIX . 'quarter';
     public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
 
     protected ExportHelper $exportHelper;
 
-    public function __construct(ExportHelper $storageHelper)
+    public function __construct(ExportHelper $exportHelper)
     {
-        $this->exportHelper = $storageHelper;
+        $this->exportHelper = $exportHelper;
     }
 
     /**
      * @Route("", name=self::EXPORT_ROUTE)
      */
-    public function list()
+    public function list(): Response
     {
         return $this->render('admin/international/export/list.html.twig', [
             'exports' => $this->exportHelper->getExportsExistingAndPossible(),
@@ -43,11 +44,11 @@ class ExportController extends AbstractController
     }
 
     /**
-     * @Route("/{week}", name=self::EXPORT_WEEK_ROUTE, requirements={"week": "\d+"})
+     * @Route("/{year}/{quarter}", name=self::EXPORT_QUARTER_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function exportWeek(Request $request, string $week, DataExporter $dataExporter, TranslatorInterface $translator)
+    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $dataExporter, TranslatorInterface $translator): Response
     {
-        if ($this->objectExists($week)) {
+        if ($this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
         }
 
@@ -64,8 +65,8 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                if ($dataExporter->uploadExportData($week)) {
-                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+                if ($dataExporter->uploadExportData($year, $quarter)) {
+                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
                 } else {
                     $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                         $translator->trans('international.export-failed-notification.title', [], 'admin'),
@@ -78,31 +79,33 @@ class ExportController extends AbstractController
         }
 
         return $this->render('admin/international/export/confirm.html.twig', [
-            'week' => $week,
+            'quarter' => $quarter,
+            'year' => $year,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/{week}/success", name=self::SUCCESS_ROUTE, requirements={"week": "\d+"})
+     * @Route("/{year}/{quarter}/success", name=self::SUCCESS_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function success(string $week)
+    public function success(string $year, string $quarter): Response
     {
-        if (!$this->objectExists($week)) {
+        if (!$this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
         }
 
         return $this->render('admin/international/export/success.html.twig', [
-            'week' => $week,
+            'quarter' => $quarter,
+            'year' => $year,
         ]);
     }
 
     /**
-     * @Route("/{week}/download", name=self::DOWNLOAD_ROUTE, requirements={"week": "\d+"})
+     * @Route("/{year}/{quarter}/download", name=self::DOWNLOAD_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function download(string $week)
+    public function download(string $year, string $quarter): Response
     {
-        $signedUrl = $this->exportHelper->getSignedUrl($week);
+        $signedUrl = $this->exportHelper->getSignedUrl($year, $quarter);
 
         if (!$signedUrl) {
             throw new NotFoundHttpException();
@@ -111,8 +114,8 @@ class ExportController extends AbstractController
         return new RedirectResponse($signedUrl);
     }
 
-    protected function objectExists(string $week)
+    protected function objectExists(string $year, string $quarter): bool
     {
-        return !!$this->exportHelper->getStorageObjectIfExists($week);
+        return !!$this->exportHelper->getStorageObjectIfExists($year, $quarter);
     }
 }

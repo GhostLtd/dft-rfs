@@ -218,6 +218,8 @@ domestic:
       contact-details-required: Prvoide at least one contact method for the hiree
     number-of-employees:
       choice: Choose the number of people your firm employees nationally
+    reason-for-empty-survey-other:
+      not-null: Specify the reason that no journeys were made during the survey week
     scrapped-details:
       date: Enter the date when the vehicle was scrapped or stolen
       date-max: Enter a date before the end of survey period

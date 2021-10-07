@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,27 +26,27 @@ class ExportController extends AbstractController
     public const EXPORT_QUARTER_ROUTE = self::ROUTE_PREFIX . 'quarter';
     public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
 
-    protected ExportHelper $storageHelper;
+    protected ExportHelper $exportHelper;
 
-    public function __construct(ExportHelper $storageHelper)
+    public function __construct(ExportHelper $exportHelper)
     {
-        $this->storageHelper = $storageHelper;
+        $this->exportHelper = $exportHelper;
     }
 
     /**
      * @Route("", name=self::EXPORT_ROUTE)
      */
-    public function list()
+    public function list(): Response
     {
         return $this->render('admin/domestic/export/list.html.twig', [
-            'exports' => $this->storageHelper->getExportsExistingAndPossible(),
+            'exports' => $this->exportHelper->getExportsExistingAndPossible(),
         ]);
     }
 
     /**
      * @Route("/{year}/{quarter}", name=self::EXPORT_QUARTER_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter, TranslatorInterface $translator)
+    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter, TranslatorInterface $translator): Response
     {
         if ($this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
@@ -87,7 +88,7 @@ class ExportController extends AbstractController
     /**
      * @Route("/{year}/{quarter}/success", name=self::SUCCESS_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function success(string $year, string $quarter)
+    public function success(string $year, string $quarter): Response
     {
         if (!$this->objectExists($year, $quarter)) {
             throw new NotFoundHttpException();
@@ -102,9 +103,9 @@ class ExportController extends AbstractController
     /**
      * @Route("/{year}/{quarter}/download", name=self::DOWNLOAD_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function download(string $year, string $quarter)
+    public function download(string $year, string $quarter): Response
     {
-        $signedUrl = $this->storageHelper->getSignedUrl($year, $quarter);
+        $signedUrl = $this->exportHelper->getSignedUrl($year, $quarter);
 
         if (!$signedUrl) {
             throw new NotFoundHttpException();
@@ -113,8 +114,8 @@ class ExportController extends AbstractController
         return new RedirectResponse($signedUrl);
     }
 
-    protected function objectExists(string $year, string $quarter)
+    protected function objectExists(string $year, string $quarter): bool
     {
-        return !!$this->storageHelper->getStorageObjectIfExists($year, $quarter);
+        return !!$this->exportHelper->getStorageObjectIfExists($year, $quarter);
     }
 }

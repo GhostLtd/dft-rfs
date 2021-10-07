@@ -3,12 +3,12 @@
 namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Action;
-use App\Entity\International\Survey;
+use App\Entity\International\Trip;
 use App\Form\CountryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Intl\Countries;
 
-class SurveyActionsNormalizer
+class TripActionsExportNormalizer
 {
     protected array $normalized;
     protected EntityManagerInterface $entityManager;
@@ -18,60 +18,59 @@ class SurveyActionsNormalizer
         $this->entityManager = $entityManager;
     }
 
-    public function normalize(array $surveys): array
+    /**
+     * @param Trip[]|array $trips
+     */
+    public function normalize(array $trips): array
     {
         $this->normalized = [];
 
-        foreach($surveys as $survey) {
-            $this->normalizeSurvey($survey);
-        }
+        $rowNumber = 1;
+        $previousVehicle = null;
 
-        return $this->normalized;
-    }
+        foreach($trips as $trip) {
+            $vehicle = $trip->getVehicle();
+            if ($previousVehicle !== $vehicle) {
+                $previousVehicle = $vehicle;
+                $rowNumber = 1;
+            }
 
-    protected function normalizeSurvey(Survey $survey): void
-    {
-        $response = $survey->getResponse();
+            $actions = $trip->getActions();
 
-        foreach($response->getVehicles() as $vehicle)
-        {
-            $rowNumber = 1;
-            foreach($vehicle->getTrips() as $trip) {
-                $actions = $trip->getActions();
+            if ($actions->count() === 0) {
+                continue;
+            }
 
-                if ($actions->count() === 0) {
+            $firstAction = $actions->first();
+            $lastAction = $actions->last();
+
+            if ($this->normalizeName($trip->getOrigin()) !== $this->normalizeName($firstAction->getName())) {
+                $this->normalized[] = $this->getOutboundEmptyData($firstAction, $rowNumber);
+                $numberOffset = 2;
+                $rowNumber++;
+            } else {
+                $numberOffset = 0;
+            }
+
+            foreach ($trip->getActions() as $action) {
+                if ($action->getLoading()) {
+                    if ($action->getUnloadingActions()->count() === 0) {
+                        // TODO: Do we care about loadings with no corresponding unloading?
+                        //       There don't seem to be any such examples in the sample output data
+                    }
                     continue;
                 }
 
-                $firstAction = $actions->first();
-                $lastAction = $actions->last();
+                $this->normalized[] = $this->getActionData($action, $numberOffset, $rowNumber);
+                $rowNumber++;
+            }
 
-                if ($this->normalizeName($trip->getOrigin()) !== $this->normalizeName($firstAction->getName())) {
-                    $this->normalized[] = $this->getOutboundEmptyData($firstAction, $rowNumber);
-                    $numberOffset = 2;
-                    $rowNumber++;
-                } else {
-                    $numberOffset = 0;
-                }
-
-                foreach ($trip->getActions() as $action) {
-                    if ($action->getLoading()) {
-                        if ($action->getUnloadingActions()->count() === 0) {
-                            // TODO: Do we care about loadings with no corresponding unloading?
-                            //       There don't seem to be any such examples in the sample output data
-                        }
-                        continue;
-                    }
-
-                    $this->normalized[] = $this->getActionData($action, $numberOffset, $rowNumber);
-                    $rowNumber++;
-                }
-
-                if ($this->normalizeName($trip->getDestination()) !== $this->normalizeName($lastAction->getName())) {
-                    $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset, $rowNumber);
-                }
+            if ($this->normalizeName($trip->getDestination()) !== $this->normalizeName($lastAction->getName())) {
+                $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset, $rowNumber);
             }
         }
+
+        return $this->normalized;
     }
 
     protected function getActionData(Action $action, int $numberOffset, int $rowNumber): array
@@ -98,7 +97,7 @@ class SurveyActionsNormalizer
         ];
     }
 
-    protected function getPlaceName(Action $action)
+    protected function getPlaceName(Action $action): string
     {
         $name = $action->getName();
         $country = $action->getCountry();
@@ -167,7 +166,7 @@ class SurveyActionsNormalizer
         return $connection->executeQuery("SELECT {$expression} as guid")->fetchOne();
     }
 
-    protected function normalizeName(string $name)
+    protected function normalizeName(string $name): string
     {
         return str_replace(' ', '', strtoupper($name));
     }

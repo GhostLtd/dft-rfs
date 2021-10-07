@@ -40,20 +40,13 @@ class WagesType extends AbstractType
             ])
             ;
         $builder->get('increased_wages_yes')
-            ->add('averageWageIncrease', ValueUnitType::class, [
+            ->add('averageWageIncrease', Gds\MoneyType::class, [
                 'property_path' => 'survey.driverAvailability.averageWageIncrease',
                 'label' => "{$translationKeyPrefix}.average-wage-increase.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.average-wage-increase.help",
-                'data_class' => CurrencyOrPercentage::class,
-                'value_options' => [
-                    'label' => 'Amount',
-                    'attr' => ['class' => 'govuk-input--width-5']
-                ],
-                'unit_options' => [
-                    'label' => 'Amount type',
-                    'choices' => CurrencyOrPercentage::UNIT_CHOICES,
-                ],
+                'attr' => ['class' => 'govuk-input--width-5'],
+                'divisor' => 1,
             ])
             ->add('wageIncreasePeriod', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.wageIncreasePeriod',

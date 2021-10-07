@@ -3,7 +3,7 @@
 namespace App\EventSubscriber\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Repository\PasscodeUserRepository;
+use App\Utility\PasscodeGenerator;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -14,16 +14,16 @@ class PreEnquiryStateLifecycleSubscriber implements EventSubscriber
 {
     private WorkflowInterface $preEnquiryStateMachine;
     private EntityManagerInterface $entityManager;
-    private PasscodeUserRepository $passcodeUserRepository;
+    private PasscodeGenerator $passcodeGenerator;
 
     public function __construct(
         WorkflowInterface $preEnquiryStateMachine,
         EntityManagerInterface $entityManager,
-        PasscodeUserRepository $passcodeUserRepository
+        PasscodeGenerator $passcodeGenerator
     ) {
         $this->preEnquiryStateMachine = $preEnquiryStateMachine;
         $this->entityManager = $entityManager;
-        $this->passcodeUserRepository = $passcodeUserRepository;
+        $this->passcodeGenerator = $passcodeGenerator;
     }
 
     public function prePersist(LifecycleEventArgs $args)
@@ -36,7 +36,7 @@ class PreEnquiryStateLifecycleSubscriber implements EventSubscriber
         // it's a new survey
         $entity->setState(PreEnquiry::STATE_NEW);
         if (!$entity->getPasscodeUser()) {
-            $entity->setPasscodeUser($this->passcodeUserRepository->createNewPasscodeUser());
+            $entity->setPasscodeUser($this->passcodeGenerator->createNewPasscodeUser());
         }
     }
 

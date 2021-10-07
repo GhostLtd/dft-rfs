@@ -7,13 +7,15 @@ service:
 
 format:
   date:
-    long: 'l, jS F Y'
-    medium: 'jS M Y'
-    short: 'jS M'
+    written-with-year: 'jS F Y'
+    full-with-year: 'l, jS F Y'
+    full: 'l, jS F'
+    side-bar: 'j M Y'
+    default: 'd/m/Y'
   time:
-    short: 'g:i a'
+    default: 'g:i a'
   date-time:
-    medium: 'jS M Y, g:i a'
+    default: 'd/m/Y g:i a'
 
 common:
   logout: Sign out
@@ -211,6 +213,12 @@ admin:
     state:
       heading: Surveys by state
       sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    approvals:
+      heading: Approvals by username
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+    unapprovals:
+      heading: Un-approvals
+      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
   survey:
     state:
       in-progress: govuk-tag--yellow
@@ -309,19 +317,21 @@ admin:
       heading: CSRGT export
     export-confirm:
       heading: CSRGT export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
       heading: CSRGT export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     re-order-day-stops:
       heading: Re-order stages
   international:
     export:
       heading: IRHS export
     export-confirm:
-      heading: IRHS export - week {week}
-      warning: Are you sure you want to export this week?
+      heading: IRHS export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
-      heading: IRHS export - week {week} - Success
-      message: Export successfully generated for week {week}
+      heading: IRHS export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     add-loading-action:
       heading: Add loading action
     add-unloading-action:
@@ -550,6 +560,9 @@ domestic:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
         help: 'You have not entered any journey information for your survey week. Why is that?'
+      other:
+        label: ''
+        help: Give details of why no journeys were carried out
       option:
         not-taxed: 'The vehicle was not taxed'
         no-work: 'There was no work'

@@ -20,7 +20,7 @@
         </tr>
         {% for exportDate in existingExportDates %}
             <tr class="govuk-table__row">
-                {{- tableCell(exportDate | date('format.date-time.medium' | trans)) -}}
+                {{- tableCell(exportDate | date('format.date-time.default' | trans)) -}}
 
                 {%- set actions -%}
                     <a href="{{ url('admin_domestic_driveravailabilityexport_existing', {date: exportDate | date('c')}) }}" class="govuk-!-margin-bottom-0">Download</a>

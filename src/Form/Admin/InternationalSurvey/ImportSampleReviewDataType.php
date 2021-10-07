@@ -22,8 +22,8 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
 
     protected function choiceLabel($data) {
         /** @var Survey $data */
-        $startDate = $data->getSurveyPeriodStart()->format($this->translator->trans('format.date.short'));
-        $endDate = $data->getSurveyPeriodEnd()->format($this->translator->trans('format.date.short'));
+        $startDate = $data->getSurveyPeriodStart()->format($this->translator->trans('format.date.default'));
+        $endDate = $data->getSurveyPeriodEnd()->format($this->translator->trans('format.date.default'));
         $diff = $data->getSurveyPeriodEnd()->diff($data->getSurveyPeriodStart());
         $diff = $diff->days + 1;
         $address1 = ucwords(strtolower($data->getCompany()->getBusinessName()));

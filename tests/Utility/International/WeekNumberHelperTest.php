@@ -3,7 +3,6 @@
 namespace App\Tests\Utility\International;
 
 use App\Utility\International\WeekNumberHelper;
-use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class WeekNumberHelperTest extends TestCase
@@ -23,7 +22,7 @@ class WeekNumberHelperTest extends TestCase
      */
     public function testWeekNumber(string $date, int $expectedWeekNumber)
     {
-        $weekNumber = WeekNumberHelper::getWeekNumber(new DateTime($date));
+        $weekNumber = WeekNumberHelper::getWeekNumber(new \DateTime($date));
 
         $this->assertEquals($expectedWeekNumber, $weekNumber);
     }
@@ -46,7 +45,7 @@ class WeekNumberHelperTest extends TestCase
         if ($expectedDate === null) {
             $this->assertEquals($expectedDate, $date);
         } else {
-            $this->assertEquals(new DateTime($expectedDate), $date);
+            $this->assertEquals(new \DateTime($expectedDate), $date);
         }
     }
 }
