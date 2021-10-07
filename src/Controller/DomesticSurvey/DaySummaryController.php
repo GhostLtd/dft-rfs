@@ -3,11 +3,15 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\AbstractGoodsDescription;
+use App\Entity\CargoType;
+use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
+use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -38,7 +42,37 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {
         $this->dayNumber = intval($dayNumber);
-        return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state);
+
+        $additionalViewData = [];
+        if ($state === DayStopState::STATE_INTRO) {
+            $additionalViewData['exampleSummaryDay'] = $this->getExampleDay();
+        }
+
+        return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state, $additionalViewData);
+    }
+
+    protected function getExampleDay(): Day
+    {
+        return (new Day())
+            ->setSummary((new DaySummary())
+                ->setOriginLocation('HD1 3LE')
+                ->setDestinationLocation('HD1 3LE')
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true)
+                ->setFurthestStop('CV3 2NT')
+                ->setDistanceTravelledLoaded((new Distance())->setValue(192)->setUnit(Distance::UNIT_MILES))
+                ->setDistanceTravelledUnloaded((new Distance())->setValue(35)->setUnit(Distance::UNIT_MILES))
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setCargoTypeCode(CargoType::CODE_PL_PALLETISED_GOODS)
+                ->setWeightOfGoodsLoaded(50000)
+                ->setWeightOfGoodsLoaded(50000)
+                ->setNumberOfStopsLoading(1)
+                ->setNumberOfStopsUnloading(2)
+                ->setNumberOfStopsLoadingAndUnloading(2)
+            )
+            ->setNumber(1)
+            ->setHasMoreThanFiveStops(true)
+            ;
     }
 
     protected function getFormWizard(): FormWizardStateInterface

@@ -2,8 +2,9 @@
 {% from 'macros.html.twig' import displayHazardousGoods %}
 
 {%- set showActions = showActions ?? true -%}
+{%- set elementClass = elementClass | default('govuk-!-margin-bottom-9') -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+<dl class="govuk-summary-list {{ elementClass }}">
     {% set locationsChangeLink = {(url('app_domesticsurvey_daysummary_start', {dayNumber: day.number})):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.summary-change-link-sr-suffix.locations'}
     } %}
@@ -19,7 +20,7 @@
     {{ row(showActions, 'domestic.day-view.furthest-stop', day.summary.furthestStop | formatPotentialPostcode | default('-'),
         locationsChangeLink
     )}}
-    {% if day.response.survey.isNorthernIreland %}
+    {% if day.response.survey.isNorthernIreland ?? false %}
         {{ row(showActions, 'domestic.day-view.border-crossing', day.summary.borderCrossingLocation | formatPotentialPostcode | default('-'),
             locationsChangeLink
         )}}

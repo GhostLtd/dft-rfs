@@ -1,7 +1,7 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell %}
 {% set linkRowNumbers = linkRowNumbers | default(false) %}
 <table class="govuk-table rfs-admin-report-table">
-    {{ tableHeadComplex('Overview of stages', {
+    {{ tableHeadComplex(false, {
         '#': {},
         'From': {},
         'To': {},
