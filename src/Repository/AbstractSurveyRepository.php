@@ -26,7 +26,7 @@ WHERE NOT EXISTS (
     WHERE a2.category = "cleanup-passcode"
     AND a2.entity_id = s.id
 )
-AND a.data LIKE "%\"to\":\"rejected\"%" 
+AND a.data LIKE "%""to"":""rejected""%" 
 AND s.state = "rejected"
 AND a.timestamp < :rejected_before
 EOQ

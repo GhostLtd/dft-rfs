@@ -136,3 +136,7 @@ services:
 
     App\Doctrine\Migrations\Version\ProjectMigrationFactory:
         arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
+
+    # Need to be public to allow testing
+    App\Utility\Cleanup\PasscodeUserCleanupUtility:
+        public: true
