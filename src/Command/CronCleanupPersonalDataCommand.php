@@ -2,11 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\AuditLog\AuditLog;
-use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\SurveyInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Utility\Cleanup\PersonalDataCleanupUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,12 +12,12 @@ class CronCleanupPersonalDataCommand extends Command
 {
     protected static $defaultName = 'app:cron:cleanup:personal-data';
 
-    protected EntityManagerInterface $entityManager;
+    protected PersonalDataCleanupUtility $cleanupUtility;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(PersonalDataCleanupUtility $cleanupUtility)
     {
         parent::__construct();
-        $this->entityManager = $entityManager;
+        $this->cleanupUtility = $cleanupUtility;
     }
 
     protected function configure()
@@ -35,52 +31,15 @@ class CronCleanupPersonalDataCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $before = new \DateTime('6 months ago');
-
-        $count = 0;
-
-        $matchingDomesticSurveys  = $this->entityManager
-            ->getRepository(DomesticSurvey::class)
-            ->getSurveysRequiringPersonalDataCleanup($before);
-
-        $matchingInternationalSurveys = $this->entityManager
-            ->getRepository(InternationalSurvey::class)
-            ->getSurveysRequiringPersonalDataCleanup($before);
-
-        $this->entityManager->beginTransaction();
         try {
-            foreach ($matchingDomesticSurveys as $survey) {
-                $survey->clearPersonalData();
-                $this->entityManager->persist($this->getAuditLogEntry($survey));
-                $count++;
-            }
-
-            foreach ($matchingInternationalSurveys as $survey) {
-                $survey->clearPersonalData();
-                $this->entityManager->persist($this->getAuditLogEntry($survey));
-                $count++;
-            }
-
-            $this->entityManager->flush();
-            $this->entityManager->commit();
+            $count = $this->cleanupUtility->cleanupPersonalDataBefore(new \DateTime('6 months ago'));
         }
         catch(\Exception $e) {
-            $this->entityManager->rollback();
             $io->error($e->getMessage());
             return 1;
         }
 
         $io->success(sprintf("Success - cleared personal data from %d survey(s)", $count));
         return 0;
-    }
-
-    protected function getAuditLogEntry(SurveyInterface $survey): AuditLog {
-        return (new AuditLog())
-            ->setCategory('cleanup-personal')
-            ->setUsername('-')
-            ->setEntityId($survey->getId())
-            ->setEntityClass(get_class($survey))
-            ->setTimestamp(new \DateTime())
-            ->setData([]);
     }
 }
