@@ -34,9 +34,10 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
                     $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
                 }
 
-                $submitButtonId = $wizardTestCase->getSubmitButtonId();
-                if ($submitButtonId !== null) {
+                $wizardSubmitButtonId = $wizardTestCase->getSubmitButtonId();
+                if ($wizardSubmitButtonId !== null) {
                     foreach ($wizardTestCase->getFormTestCases() as $formTestCase) {
+                        $submitButtonId = $formTestCase->getSubmitButtonId() ?? $wizardSubmitButtonId;
                         $this->submitForm($submitButtonId, $browser, $formTestCase->getFormData());
                         $this->checkErrors($browser->getCrawler(), array_flip($formTestCase->getExpectedErrorIds()));
                     }
