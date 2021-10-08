@@ -1,4 +1,5 @@
 {% set translation_prefix = 'domestic.day-stop.intro' %}
+{% set show_sidebar_stage_details = false %}
 {% extends 'domestic_survey/day_stop/form-base.html.twig' %}
 
 {% set preFormContent %}
@@ -7,5 +8,5 @@
     {% with {stops: exampleDayStops} %}
         {% include "/domestic_survey/includes/day-stops-table.html.twig" %}
     {% endwith %}
-    <p class="govuk-body">Continue to enter the first stage of the journey.</p>
+    <p class="govuk-body">Continue to enter the first stage on this day.</p>
 {% endset %}

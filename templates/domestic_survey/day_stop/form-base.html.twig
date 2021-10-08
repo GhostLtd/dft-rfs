@@ -10,24 +10,26 @@
     </h2>
     <h3 class="govuk-heading-s">{{- 'domestic.day-stop.sidebar-summary.five-or-fewer'|trans -}}</h3>
 
-    {%- if subject.originLocation and subject.destinationLocation -%}
-        <p class="govuk-body">
-            {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
-                origin: subject.originLocation,
-                destination: subject.destinationLocation
-            }) -}}
-    {%- else -%}
-        {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
-        {%- if stops | length > 1 -%}
-            {%- set previousStage = stops[stops | length - 2] -%}
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+    {% if show_sidebar_stage_details ?? true %}
+        {%- if subject.originLocation and subject.destinationLocation -%}
             <p class="govuk-body">
                 {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
-                    origin: previousStage.originLocation | formatPotentialPostcode,
-                    destination: previousStage.destinationLocation | formatPotentialPostcode
+                    origin: subject.originLocation,
+                    destination: subject.destinationLocation
                 }) -}}
-        {% else %}
-            <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
+        {%- else -%}
+            {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
+            {%- if stops | length > 1 -%}
+                {%- set previousStage = stops[stops | length - 2] -%}
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+                <p class="govuk-body">
+                    {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                        origin: previousStage.originLocation | formatPotentialPostcode,
+                        destination: previousStage.destinationLocation | formatPotentialPostcode
+                    }) -}}
+            {% else %}
+                <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
+            {% endif %}
         {% endif %}
     {% endif %}
 
