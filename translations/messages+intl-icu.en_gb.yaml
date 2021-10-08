@@ -745,12 +745,12 @@ domestic:
   ## summary day
   day-summary:
     sidebar-summary:
-      day: "Day {dayNumber} ({date})"
-      more-than-five: More than 5 stages
+      day: "Day {dayNumber}\n({date})"
+      more-than-five: 6 stops or more
       place-to-place: "{origin} to {destination}"
 
     intro:
-      heading: Introduction to summary day
+      heading: "Introduction to summary day\n(6 stops or more)"
       help: ''
 
     origin:
@@ -860,14 +860,14 @@ domestic:
       journey: "{origin} to {destination}"
 
     sidebar-summary:
-      adding: "Adding a stage on day {dayNumber} ({date})"
-      editing: "Editing stage {stageNumber} on day {dayNumber} ({date})"
+      day: "Day {dayNumber}, stage {stageNumber}\n({date})"
       place-to-place: "{origin} to {destination}"
       previous-stages: Previous stage on this day
       first-stage: This is the first stage of the day
+      five-or-fewer: 5 stops or fewer
 
     intro:
-      heading: Introduction to detailed day
+      heading: "Introduction to detailed day\n(5 stops or fewer)"
       help: ''
 
     origin:

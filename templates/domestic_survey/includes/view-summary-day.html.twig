@@ -1,6 +1,6 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
 
-<h2 class="govuk-heading-m">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
+<h2 class="govuk-heading-l">{{ 'domestic.day-view.headings.more-than-five-stops' | trans }}</h2>
 {% if day.summary | default(false) %}
     {% include "domestic_survey/includes/day-summary.html.twig" %}
     <p class="govuk-body">
