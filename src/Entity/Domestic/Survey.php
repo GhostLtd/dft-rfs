@@ -8,6 +8,7 @@ use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
+use App\Utility\NotifyApiResponseCleaner;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
@@ -196,9 +197,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         $this->passcodeUser = $passcodeUser;
 
         // set (or unset) the owning side of the relation if necessary
-        $newDomesticSurvey = null === $passcodeUser ? null : $this;
-        if ($passcodeUser->getDomesticSurvey() !== $newDomesticSurvey) {
-            $passcodeUser->setDomesticSurvey($newDomesticSurvey);
+        if ($passcodeUser && $passcodeUser->getDomesticSurvey() !== $this) {
+            $passcodeUser->setDomesticSurvey($this);
         }
 
         return $this;
@@ -314,5 +314,55 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
             $response &&
             $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
             !$response->hasJourneys();
+    }
+
+    public function clearPersonalData(): self
+    {
+        $this
+            ->setInvitationEmail(null)
+            ->setInvitationAddress(null);
+
+        $response = $this->getResponse();
+        if ($response) {
+            $response
+                ->setContactName(null)
+                ->setContactTelephone(null)
+                ->setContactEmail(null)
+                ->setHireeName(null)
+                ->setHireeTelephone(null)
+                ->setHireeEmail(null)
+                ->setHireeAddress(null)
+                ->setNewOwnerName(null)
+                ->setNewOwnerTelephone(null)
+                ->setNewOwnerEmail(null)
+                ->setNewOwnerAddress(null);
+        }
+
+        NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
+
+        return $this;
+    }
+
+    public function isPersonalDataCleared(): bool
+    {
+        $isCleared = $this->invitationEmail === null && $this->invitationAddress === null;
+
+        $response = $this->getResponse();
+        if ($response) {
+            $isCleared = $isCleared &&
+                $response->getContactName() === null &&
+                $response->getContactTelephone() === null &&
+                $response->getContactEmail() === null &&
+                $response->getHireeName() === null &&
+                $response->getHireeTelephone() === null &&
+                $response->getHireeEmail() === null &&
+                $response->getHireeAddress() === null &&
+                $response->getNewOwnerName() === null &&
+                $response->getNewOwnerTelephone() === null &&
+                $response->getNewOwnerEmail() === null &&
+                $response->getNewOwnerAddress() === null;
+        }
+
+        return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
     }
 }

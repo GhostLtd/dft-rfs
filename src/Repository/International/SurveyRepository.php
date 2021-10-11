@@ -5,12 +5,11 @@ namespace App\Repository\International;
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
+use App\Repository\AbstractSurveyRepository;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\International\WeekNumberHelper;
 use App\Utility\StateReportHelper;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,7 +20,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends AbstractSurveyRepository
 {
     protected CompanyRepository $companyRepo;
     protected EntityManagerInterface $entityManager;
@@ -292,5 +291,21 @@ class SurveyRepository extends ServiceEntityRepository
         $stats['totals'] = $totals;
         $stats['total'] = $sumOfTotals;
         return $stats;
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
+    {
+        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'international_survey');
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
+        $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED];
+        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'international_survey');
     }
 }

@@ -189,6 +189,12 @@ trait SurveyTrait
         return $this->notifyApiResponses;
     }
 
+    public function setNotifyApiResponse(?array $notifyApiResponses): self
+    {
+        $this->notifyApiResponses = $notifyApiResponses;
+        return $this;
+    }
+
     public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array
     {
         $response = $this->notifyApiResponses["{$eventName}::{$notificationClass}"] ?? null;

@@ -8,18 +8,10 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Class CronController
- * @package App\Controller
- * @Route("/cron",
- *      condition="(request.headers.get('X-Appengine-Cron') === 'true') or (request.headers.get('X-Cloudscheduler') === 'true')"
- * )
- */
 abstract class AbstractCronController extends AbstractController
 {
-    protected function runCommand(KernelInterface $kernel, $command, $options)
+    protected function runCommand(KernelInterface $kernel, $command, $options): Response
     {
         $application = new Application($kernel);
         $application->setAutoExit(false);

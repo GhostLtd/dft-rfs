@@ -8,6 +8,7 @@ use App\Entity\HaulageSurveyTrait;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
+use App\Utility\NotifyApiResponseCleaner;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -143,7 +144,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
         // set (or unset) the owning side of the relation if necessary
         $newInternationalSurvey = null === $passcodeUser ? null : $this;
-        if ($passcodeUser->getInternationalSurvey() !== $newInternationalSurvey) {
+        if ($passcodeUser && $passcodeUser->getInternationalSurvey() !== $newInternationalSurvey) {
             $passcodeUser->setInternationalSurvey($newInternationalSurvey);
         }
 
@@ -208,5 +209,39 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         $this->setReasonForEmptySurvey($survey->getReasonForEmptySurvey());
         $this->setReasonForEmptySurveyOther($survey->getReasonForEmptySurveyOther());
+    }
+
+    public function clearPersonalData(): self
+    {
+        $this
+            ->setInvitationEmail(null)
+            ->setInvitationAddress(null);
+
+        $response = $this->getResponse();
+        if ($response) {
+            $response
+                ->setContactName(null)
+                ->setContactTelephone(null)
+                ->setContactEmail(null);
+        }
+
+        NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
+
+        return $this;
+    }
+
+    public function isPersonalDataCleared(): bool
+    {
+        $isCleared = $this->invitationEmail === null && $this->invitationAddress === null;
+
+        $response = $this->getResponse();
+        if ($response) {
+            $isCleared = $isCleared &&
+                $response->getContactName() === null &&
+                $response->getContactTelephone() === null &&
+                $response->getContactEmail() === null;
+        }
+
+        return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
     }
 }

@@ -6,9 +6,9 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyInterface;
 use App\Repository\DashboardStatsTrait;
+use App\Repository\AbstractSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper;
 use App\Utility\StateReportHelper;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,7 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends AbstractSurveyRepository
 {
     use DashboardStatsTrait;
     protected StateReportHelper $stateReportHelper;
@@ -41,7 +41,6 @@ class SurveyRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
 
     /**
      * @param bool $isNorthernIreland
@@ -366,5 +365,21 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         return $stats;
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
+    {
+        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'domestic_survey');
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
+        $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
+        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
     }
 }
