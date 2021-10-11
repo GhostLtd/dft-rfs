@@ -19,7 +19,7 @@ class PersonalDataCleanupTest extends AbstractCleanupTest
         $this->cleanupUtility = $container->get(PersonalDataCleanupUtility::class);
     }
 
-    public function testData(): array
+    public function dataCleanup(): array
     {
         return [
             ['-7 months', SurveyInterface::STATE_APPROVED, false],
@@ -49,7 +49,7 @@ class PersonalDataCleanupTest extends AbstractCleanupTest
     }
 
     /**
-     * @dataProvider testData
+     * @dataProvider dataCleanup
      */
     public function testCleanup(string $auditOffset, string $state, bool $expectedPersonalDataDeleted)
     {
