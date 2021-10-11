@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Domestic;
 
 use App\Entity\Address;
 use App\Entity\Domestic\SurveyResponse;
-use App\Tests\DataFixtures\SurveyFixtures;
+use App\Tests\DataFixtures\Domestic\SurveyFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\InitialDetailsDatabaseTestCase;
 

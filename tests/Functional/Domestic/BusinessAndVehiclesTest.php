@@ -2,17 +2,20 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Tests\DataFixtures\ResponseFixtures;
+use App\Entity\Domestic\SurveyResponse;
+use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\FormTestCase;
-use App\Tests\Functional\Wizard\WizardStepTestCase;
+use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 
 class BusinessAndVehiclesTest extends AbstractWizardTest
 {
+    protected string $baseUrl = "/domestic-survey/vehicle-and-business-details";
+
     protected function businessAndVehiclesData(string $trailerConfiguration, string $axleConfiguration): array
     {
         return [
-            new WizardStepTestCase("Business Details", "business_details_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/business-details", "business_details_continue", [
                 new FormTestCase([], [
                     "#business_details_numberOfEmployees",
                     "#business_details_businessNature",
@@ -20,13 +23,13 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                 ]),
                 new FormTestCase([
                     "business_details" => [
-                        "numberOfEmployees" => "10-49",
+                        "numberOfEmployees" => SurveyResponse::EMPLOYEES_10_TO_49,
                         "businessNature" => "Haulage",
                         "operationType" => "for-hire-and-reward",
                     ]
                 ]),
             ]),
-            new WizardStepTestCase("Vehicle type","vehicle_trailer_configuration_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-trailer-configuration","vehicle_trailer_configuration_continue", [
                 new FormTestCase([], [
                     "#vehicle_trailer_configuration_trailerConfiguration",
                 ]),
@@ -36,7 +39,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepTestCase("Vehicle axle configuration","vehicle_axle_configuration_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-axle-configuration","vehicle_axle_configuration_continue", [
                 new FormTestCase([], [
                     "#vehicle_axle_configuration_axleConfiguration",
                 ]),
@@ -46,7 +49,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepTestCase("Vehicle body type","vehicle_body_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-body","vehicle_body_continue", [
                 new FormTestCase([], [
                     "#vehicle_body_bodyType",
                 ]),
@@ -56,7 +59,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepTestCase("Vehicle weights","vehicle_weights_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-weights","vehicle_weights_continue", [
                 new FormTestCase([], [
                     "#vehicle_weights_grossWeight",
                     "#vehicle_weights_carryingCapacity",
@@ -86,7 +89,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
     public function testBusinessAndVehiclesWizard($wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin([ResponseFixtures::class]);
-        $browser->request('GET', '/domestic-survey/vehicle-and-business-details/business-details');
+        $browser->request('GET', "{$this->baseUrl}/business-details");
 
         $this->doWizardTest($browser, $wizardData);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\SurveyResponse;
+use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -16,7 +17,7 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
 
 
         $response
-            ->setNumberOfEmployees(10)
+            ->setNumberOfEmployees(SurveyResponse::EMPLOYEES_10_TO_49)
             ->setBusinessNature('Haulage');
 
         $manager->persist($response);

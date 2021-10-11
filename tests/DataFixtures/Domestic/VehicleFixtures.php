@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Tests\DataFixtures;
+namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Vehicle as VehicleBase;
+use App\Tests\DataFixtures\Domestic\BusinessFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

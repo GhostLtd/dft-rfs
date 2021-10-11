@@ -2,13 +2,13 @@
 
 namespace App\Tests\Functional\Admin\Domestic;
 
-use App\Tests\DataFixtures\DayStopFixtures;
-use App\Tests\DataFixtures\ResponseFixtures;
-use App\Tests\DataFixtures\ResponseOnMultiHireFixtures;
-use App\Tests\DataFixtures\ResponseScrappedFixtures;
-use App\Tests\DataFixtures\ResponseSoldFixtures;
-use App\Tests\DataFixtures\SurveyClosedFixtures;
-use App\Tests\DataFixtures\VehicleFixtures;
+use App\Tests\DataFixtures\Domestic\DayStopFixtures;
+use App\Tests\DataFixtures\Domestic\ResponseFixtures;
+use App\Tests\DataFixtures\Domestic\ResponseOnMultiHireFixtures;
+use App\Tests\DataFixtures\Domestic\ResponseScrappedFixtures;
+use App\Tests\DataFixtures\Domestic\ResponseSoldFixtures;
+use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
+use App\Tests\DataFixtures\Domestic\VehicleFixtures;
 use App\Tests\Functional\AbstractAdminFunctionalTest;
 
 class ApproveSurveyTest extends AbstractAdminFunctionalTest
