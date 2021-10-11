@@ -24,13 +24,13 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Introduction to detailed day (5 stops or fewer)", "form_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/introduction", "form_continue", [
                 new FormTestCase([], []),
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/stop-add/origin", "origin_continue", $originTests),
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/stage-start", "origin_continue", $originTests),
         ];
 
-        $destinationUrl = "{$baseUrl}/stop-add/destination";
+        $destinationUrl = "{$baseUrl}/stop-add/stage-end";
         $borderCrossingUrl = "{$baseUrl}/stop-add/border-crossing";
         $hazardousGoodsUrl = "{$baseUrl}/stop-add/hazardous-goods";
         $goodsWeightUrl = "{$baseUrl}/stop-add/goods-weight";

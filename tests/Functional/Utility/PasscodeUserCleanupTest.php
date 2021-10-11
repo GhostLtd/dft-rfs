@@ -4,12 +4,12 @@ namespace App\Tests\Functional\Utility;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\SurveyInterface;
-use App\Tests\DataFixtures\SurveyFixtures;
+use App\Tests\DataFixtures\Domestic\SurveyFixtures;
 use App\Utility\Cleanup\PasscodeUserCleanupUtility;
 
 class PasscodeUserCleanupTest extends AbstractCleanupTest
 {
-    protected PasscodeUserCleanupUtility $cleanupUtility;
+    protected ?PasscodeUserCleanupUtility $cleanupUtility = null;
 
     public function setUp()
     {
@@ -19,7 +19,7 @@ class PasscodeUserCleanupTest extends AbstractCleanupTest
         $this->cleanupUtility = $container->get(PasscodeUserCleanupUtility::class);
     }
 
-    public function cleanupData(): array
+    public function testData(): array
     {
         return [
             ['-7 months', SurveyInterface::STATE_APPROVED, false],
@@ -49,7 +49,7 @@ class PasscodeUserCleanupTest extends AbstractCleanupTest
     }
 
     /**
-     * @dataProvider cleanupData
+     * @dataProvider testData
      */
     public function testCleanup(string $auditOffset, string $state, bool $expectedPasscodeUserDeleted)
     {
