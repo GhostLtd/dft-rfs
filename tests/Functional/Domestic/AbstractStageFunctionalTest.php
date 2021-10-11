@@ -10,7 +10,7 @@ abstract class AbstractStageFunctionalTest extends AbstractFrontendFunctionalTes
 {
     protected function getStageStartingLocation(KernelBrowser $browser, string $stage): string
     {
-        return $this->startingLocations($browser, $stage)->text();
+        return $this->startingLocations($browser, $stage)->text('', true);
     }
 
     protected function countStages(KernelBrowser $browser): int

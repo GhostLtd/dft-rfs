@@ -124,7 +124,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
             $node = $crawler->filterXPath("//legend[contains(concat(' ',normalize-space(@class),' '),' govuk-fieldset__legend ')]")->first();
         }
 
-        $actualTitle = $node->text();
+        $actualTitle = $node->text('', true);
         return $actualTitle;
     }
 }
