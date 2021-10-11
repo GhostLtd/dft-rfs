@@ -229,4 +229,19 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
         return $this;
     }
+
+    public function isPersonalDataCleared(): bool
+    {
+        $isCleared = $this->invitationEmail === null && $this->invitationAddress === null;
+
+        $response = $this->getResponse();
+        if ($response) {
+            $isCleared = $isCleared &&
+                $response->getContactName() === null &&
+                $response->getContactTelephone() === null &&
+                $response->getContactEmail() === null;
+        }
+
+        return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
+    }
 }

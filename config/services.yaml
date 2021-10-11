@@ -140,3 +140,6 @@ services:
     # Need to be public to allow testing
     App\Utility\Cleanup\PasscodeUserCleanupUtility:
         public: true
+
+    App\Utility\Cleanup\PersonalDataCleanupUtility:
+        public: true

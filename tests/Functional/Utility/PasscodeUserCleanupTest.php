@@ -2,18 +2,14 @@
 
 namespace App\Tests\Functional\Utility;
 
-use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey;
 use App\Entity\SurveyInterface;
 use App\Tests\DataFixtures\SurveyFixtures;
-use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\Cleanup\PasscodeUserCleanupUtility;
-use Doctrine\ORM\EntityManagerInterface;
 
-class PasscodeUserCleanupTest extends AbstractFunctionalTest
+class PasscodeUserCleanupTest extends AbstractCleanupTest
 {
     protected PasscodeUserCleanupUtility $cleanupUtility;
-    protected EntityManagerInterface $entityManager;
 
     public function setUp()
     {
@@ -21,7 +17,6 @@ class PasscodeUserCleanupTest extends AbstractFunctionalTest
 
         $container = self::$kernel->getContainer();
         $this->cleanupUtility = $container->get(PasscodeUserCleanupUtility::class);
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
     }
 
     public function cleanupData(): array
@@ -67,41 +62,5 @@ class PasscodeUserCleanupTest extends AbstractFunctionalTest
             $expectedPasscodeUserDeleted,
             $survey->getPasscodeUser() === null,
             "Passcode user".($expectedPasscodeUserDeleted ? "" : " not")." deleted");
-    }
-
-    protected function getSurveyAndSetState(string $auditOffset, string $state): Survey
-    {
-        /** @var Survey $survey */
-        $survey = $this->entityManager
-            ->getRepository(Survey::class)
-            ->findOneBy([]);
-
-        $this->entityManager->flush();
-
-        $survey->setState($state);
-
-        // So that the "new" -> "invitation pending" state change doesn't have the exact same timestamp as the
-        // "invitation pending" -> $state one
-        sleep(1);
-
-        $this->entityManager->flush();
-
-        /**
-         * @var AuditLog[] $auditLogs
-         */
-        $auditLogs = $this->entityManager
-            ->getRepository(AuditLog::class)
-            ->findBy(['entityId' => $survey->getId()]);
-
-        // We need the auditLog state change timestamps to be in the past, so we artificially modify them here so
-        // that we can test various scenarios
-        foreach($auditLogs as $auditLog) {
-            $modifiedTimestamp = (clone $auditLog->getTimestamp())->modify($auditOffset);
-            $auditLog->setTimestamp($modifiedTimestamp);
-        }
-
-        $this->entityManager->flush();
-
-        return $survey;
     }
 }

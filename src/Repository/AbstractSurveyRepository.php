@@ -56,7 +56,7 @@ EOQ
 
         $stateParts = [];
         foreach($states as $i => $state) {
-            $stateParts[] = '(a.data LIKE CONCAT("%\"to\"\:\"", :state'.$i.', "\"%") AND s.state=:state'.$i.')';
+            $stateParts[] = '(a.data LIKE :stateLike'.$i.' AND s.state=:state'.$i.')';
         }
 
         $statesPart = 'AND ('.join(' OR ', $stateParts).')';
@@ -87,6 +87,7 @@ EOQ;
         $statement->bindValue('timestamp', $before->format('Y-m-d H:i:s'));
 
         foreach($states as $i => $state) {
+            $statement->bindValue("stateLike{$i}", '%"to":"'.$state.'"%');
             $statement->bindValue("state{$i}", $state);
         }
 
