@@ -8,10 +8,10 @@
     <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {%- include "admin/pre-enquiry/reset_passcode/includes/survey-basics.html.twig" -%}
+        {%- include "admin/pre_enquiry/reset_passcode/includes/survey-basics.html.twig" -%}
 
-        {{ actionlessSummaryListRow('admin.pre-enquiry.add-success.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.pre-enquiry.add-success.access-code-2', code, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-2', code, {'row_class': 'access-code'}) }}
     </dl>
 {% endblock %}
 

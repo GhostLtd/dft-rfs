@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/irhs/pre-enquiry/{preEnquiryId}")
+ * @Route("/pre-enquiry/view/{preEnquiryId}")
  * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
  */
 class PreEnquiryViewController extends AbstractController
@@ -39,7 +39,7 @@ class PreEnquiryViewController extends AbstractController
     {
         $addNoteForm = $this->getAddNoteForm($preEnquiry);
 
-        return $this->render('admin/pre-enquiry/view.html.twig', array_merge(
+        return $this->render('admin/pre_enquiry/view.html.twig', array_merge(
             $this->getPreEnquiryViewData($preEnquiry),
             [
                 'preEnquiry' => $preEnquiry,
@@ -60,7 +60,7 @@ class PreEnquiryViewController extends AbstractController
             'addNoteForm' => $addNoteForm,
             'viewSurveyRoute' => PreEnquiryController::VIEW_ROUTE,
             'viewSurveyRouteParams' => ['preEnquiryId' => $preEnquiry->getId()],
-            'viewSurveyTemplate' => 'admin/pre-enquiry/view.html.twig',
+            'viewSurveyTemplate' => 'admin/pre_enquiry/view.html.twig',
             'additionalViewData' => $this->getPreEnquiryViewData($preEnquiry),
         ]);
     }

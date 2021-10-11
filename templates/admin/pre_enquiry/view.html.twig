@@ -31,7 +31,7 @@
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
-            {%- include "admin/pre-enquiry/includes/basics.html.twig" -%}
+            {%- include "admin/pre_enquiry/includes/basics.html.twig" -%}
         {%- endwith -%}
 
         {%- if canEdit and not hasInitialDetails -%}
@@ -54,7 +54,7 @@
                     <h2 class="govuk-heading-m">Response</h2>
 
                     {%- with {marginBottom: 5} -%}
-                        {%- include 'admin/pre-enquiry/includes/response.html.twig' -%}
+                        {%- include 'admin/pre_enquiry/includes/response.html.twig' -%}
                     {%- endwith -%}
 
                     {%- if canEdit -%}

@@ -445,6 +445,9 @@ admin:
       reference-number:
         label: Reference number
         help: ''
+      dispatch-date:
+        label: Dispatch date
+        help: ''
       invitation-email:
         label: Invitation email
         help: ''
@@ -481,6 +484,13 @@ admin:
       reference-number: Reference number
       status: Status
       username: Username
+      dispatch-date: Dispatch date
+    sample-import:
+      heading: Pre-Enquiry Bulk sample import
+    sample-import-review:
+      heading: Pre-Enquiry Bulk sample import — Review Data
+    sample-import-summary:
+      heading: Pre-Enquiry Bulk sample import — Summary
 
   maintenance-warning:
     heading: Maintenance warnings

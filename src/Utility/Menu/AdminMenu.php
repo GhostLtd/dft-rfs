@@ -65,6 +65,7 @@ class AdminMenu implements MenuInterface
 
             new RoleMenuItem('pre-enquiry', 'menu.pre-enquiry.root', null, [
                 new RoleMenuItem('list', 'menu.pre-enquiry.pre-enquiries', $this->router->generate(PreEnquiryController::LIST_ROUTE), [], []),
+                new RoleMenuItem('sample-import', 'menu.pre-enquiry.sample-import', $this->router->generate('admin_preenquiry_sampleimport_start'), [], []),
                 new RoleMenuItem('add', 'menu.pre-enquiry.add', $this->router->generate('admin_pre_enquiry_add'), [], []),
             ]),
             new MenuDivider(),

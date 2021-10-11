@@ -54,7 +54,7 @@ class PreEnquiryController extends AbstractController
     public function enterResponse(PreEnquiry $preEnquiry): Response
     {
         $redirectUrl = $this->getRedirectUrl($preEnquiry, 'tab-response');
-        return $this->handleRequest($this->getResponse($preEnquiry), ResponseType::class, 'admin/pre-enquiry/edit-response.html.twig', $redirectUrl);
+        return $this->handleRequest($this->getResponse($preEnquiry), ResponseType::class, 'admin/pre_enquiry/edit-response.html.twig', $redirectUrl);
     }
 
     /**
@@ -68,7 +68,7 @@ class PreEnquiryController extends AbstractController
 
         $this->entityManager->persist($response);
 
-        return $this->handleRequest($response, ResponseType::class, 'admin/pre-enquiry/enter-response.html.twig', $redirectUrl);
+        return $this->handleRequest($response, ResponseType::class, 'admin/pre_enquiry/enter-response.html.twig', $redirectUrl);
     }
 
     protected function handleRequest(PreEnquiryResponse $response, string $formClass, string $templateName, string $redirectUrl)

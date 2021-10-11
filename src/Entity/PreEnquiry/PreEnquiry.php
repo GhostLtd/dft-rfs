@@ -34,32 +34,37 @@ class PreEnquiry implements SurveyInterface
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
      */
-    private $response;
+    private ?PreEnquiryResponse $response = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
      * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private $referenceNumber;
+    private ?string $referenceNumber = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries")
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"add_survey", "import_survey"})
      */
-    private $company;
+    private ?Company $company = null;
 
     /**
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="preEnquiry", cascade={"persist", "remove"})
      */
-    private $passcodeUser;
+    private ?PasscodeUser $passcodeUser = null;
 
     /**
      * @ORM\OneToMany(targetEntity=PreEnquiryNote::class, mappedBy="preEnquiry")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
     private $notes;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private ?\DateTime $dispatchDate = null;
 
 
     public function getResponse(): ?PreEnquiryResponse
@@ -131,6 +136,18 @@ class PreEnquiry implements SurveyInterface
         if ($passcodeUser->getPreEnquiry() !== $newPreEnquiry) {
             $passcodeUser->setPreEnquiry($newPreEnquiry);
         }
+
+        return $this;
+    }
+
+    public function getDispatchDate(): ?\DateTime
+    {
+        return $this->dispatchDate;
+    }
+
+    public function setDispatchDate(?\DateTime $dispatchDate): self
+    {
+        $this->dispatchDate = $dispatchDate;
 
         return $this;
     }

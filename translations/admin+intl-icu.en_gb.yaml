@@ -21,6 +21,7 @@ menu:
     root: Pre-enquiry
     pre-enquiries: Pre-enquiries
     add: Add
+    sample-import: Bulk sample import
 
 format:
   date:
@@ -70,3 +71,4 @@ international:
     heading: 'Export failed'
     content: 'The export failed'
     title: ''
+

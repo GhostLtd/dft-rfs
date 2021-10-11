@@ -15,14 +15,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/irhs/pre-enquiry/{preEnquiryId}/reset-passcode")
+ * @Route("/pre-enquiry/view/{preEnquiryId}/reset-passcode")
  * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
  */
 class PreEnquiryPasscodeController extends AbstractController
 {
     /**
      * @Route("", name=PreEnquiryController::RESET_PASSCODE_ROUTE)
-     * @Template("admin/pre-enquiry/reset_passcode/reset.html.twig")
+     * @Template("admin/pre_enquiry/reset_passcode/reset.html.twig")
      * @IsGranted(AdminSurveyVoter::RESET_PASSCODE, subject="preEnquiry")
      */
     public function resetPasscode(ResetPasscodeConfirmAction $confirmAction, Request $request, PreEnquiry $preEnquiry, SessionInterface $session)
@@ -41,7 +41,7 @@ class PreEnquiryPasscodeController extends AbstractController
 
     /**
      * @Route("/success", name=PreEnquiryController::RESET_PASSCODE_SUCCESS_ROUTE)
-     * @Template("admin/pre-enquiry/reset_passcode/success.html.twig")
+     * @Template("admin/pre_enquiry/reset_passcode/success.html.twig")
      */
     public function resetPasscodeSuccess(SessionInterface $session, PreEnquiry $preEnquiry): array
     {

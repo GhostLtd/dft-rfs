@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PreEnquiryListController extends AbstractController
 {
     /**
-     * @Route("/irhs/pre-enquiry", name=PreEnquiryController::LIST_ROUTE)
+     * @Route("/pre-enquiry", name=PreEnquiryController::LIST_ROUTE)
      */
     public function list(PreEnquiryListPage $listPage, Request $request): Response
     {
@@ -23,7 +23,7 @@ class PreEnquiryListController extends AbstractController
             return new RedirectResponse($listPage->getClearUrl());
         }
 
-        return $this->render('admin/pre-enquiry/list.html.twig', [
+        return $this->render('admin/pre_enquiry/list.html.twig', [
             'data' => $listPage->getData(),
             'form' => $listPage->getFiltersForm()->createView(),
         ]);

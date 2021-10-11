@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class PreEnquiryTransitionController extends AbstractController
 {
     /**
-     * @Route("/irhs/pre-enquiry/{preEnquiryId}/transition/{transition}", name=PreEnquiryController::TRANSITION_ROUTE,
+     * @Route("/pre-enquiry/{preEnquiryId}/transition/{transition}", name=PreEnquiryController::TRANSITION_ROUTE,
      *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
      * )
      * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
      * @IsGranted(AdminSurveyVoter::TRANSITION, subject="preEnquiry")
-     * @Template("admin/pre-enquiry/workflow-action.html.twig")
+     * @Template("admin/pre_enquiry/workflow-action.html.twig")
      */
     public function complete(PreEnquiryWorkflowConfirmAction $surveyWorkflowConfirmAction, Request $request, PreEnquiry $preEnquiry, $transition)
     {
