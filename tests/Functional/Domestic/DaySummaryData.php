@@ -22,7 +22,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Introduction to summary day", "form_continue", [
+            new WizardStepTestCase("Introduction to summary day (6 stops or more)", "form_continue", [
                 new FormTestCase([], []),
             ]),
             new WizardStepTestCase("Where did the vehicle start the day?", "origin_continue", $originTests),
