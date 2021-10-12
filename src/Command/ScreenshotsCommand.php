@@ -27,6 +27,7 @@ use Symfony\Component\Process\Process;
 
 class ScreenshotsCommand extends Command
 {
+    const MODE_ALL = 'all';
     const MODE_DOMESTIC = 'domestic';
     const MODE_INTERNATIONAL = 'international';
     const MODE_PRE_ENQUIRY = 'pre-enquiry';
@@ -57,7 +58,7 @@ class ScreenshotsCommand extends Command
     protected function configure()
     {
         $this->setDescription('Execute the (external) screenshots utility')
-            ->addArgument('mode', InputArgument::REQUIRED, 'domestic|international|pre-enquiry')
+            ->addArgument('mode', InputArgument::REQUIRED, 'all|domestic|international|pre-enquiry')
             ->addArgument('path', InputArgument::REQUIRED, 'Path to the screenshots command')
             ->addOption('protocol', null, InputOption::VALUE_OPTIONAL, 'http or https', 'https');
     }
@@ -72,13 +73,85 @@ class ScreenshotsCommand extends Command
         $io->warning('If taking screenshots for documentation, check that code is at same commit as deployed on PRODUCTION');
 
         $mode = $input->getArgument('mode');
+        $path = $input->getArgument('path');
 
-        if (!in_array($mode, [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY])) {
-            throw new RuntimeException('mode must be either domestic, international or pre-enquiry');
+        if (!in_array($mode, [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY, self::MODE_ALL])) {
+            throw new RuntimeException('mode must be either all, domestic, international or pre-enquiry');
         }
 
         $this->deleteExistingUser();
 
+        $modes = ($mode === self::MODE_ALL) ?
+            [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY] :
+            [$mode];
+
+        $outputBaseDir = dirname($path) . "/screenshots-".(new \DateTime())->format('Ymd-His');
+
+        foreach($modes as $activeMode) {
+            $this->createUserAndSurvey($activeMode);
+
+            $protocol = $input->getOption('protocol');
+            $process = new Process([
+                $path,
+                $activeMode,
+                "{$protocol}:/{$this->frontendHostname}/",
+                "{$outputBaseDir}/{$activeMode}/",
+                "--username={$this->userId}",
+                "--password={$this->userPassword}"
+            ]);
+            $process->setTimeout(3600);
+
+            try {
+                $process->mustRun();
+
+                echo $process->getOutput();
+            } catch (ProcessFailedException $exception) {
+                echo $exception->getMessage();
+            }
+
+            $this->deleteExistingUser();
+        }
+
+        return 0;
+    }
+
+    protected function deleteExistingUser()
+    {
+        /** @var PasscodeUserRepository $repo */
+        $userRepo = $this->entityManager->getRepository(PasscodeUser::class);
+
+        $this->entityManager->clear();
+        $user = $userRepo->findOneBy(['username' => $this->userId]);
+
+        if ($user && $user instanceof PasscodeUser) {
+            $domesticSurvey = $user->getDomesticSurvey();
+            $internationSurvey = $user->getInternationalSurvey();
+            $preEnquiry = $user->getPreEnquiry();
+
+            $domesticSurvey && $this->domDeleteHelper->deleteSurvey($domesticSurvey);
+
+            if ($internationSurvey) {
+                $company = $internationSurvey->getCompany();
+                $this->intDeleteHelper->deleteSurvey($internationSurvey);
+                $this->entityManager->remove($company);
+            }
+
+            if ($preEnquiry) {
+                $company = $preEnquiry->getCompany();
+                $this->preEnquiryDeleteHelper->deletePreEnquiry($preEnquiry);
+                $this->entityManager->remove($company);
+            }
+
+            $this->entityManager->remove($user);
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * @param $mode
+     */
+    protected function createUserAndSurvey($mode): void
+    {
         $user = (new PasscodeUser())
             ->setUsername($this->userId)
             ->setPlainPassword($this->userPassword);
@@ -130,53 +203,5 @@ class ScreenshotsCommand extends Command
         $this->entityManager->persist($survey);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-
-        $protocol = $input->getOption('protocol');
-        $process = new Process([$input->getArgument('path'), $mode, "{$protocol}:/{$this->frontendHostname}/", "--username={$this->userId}", "--password={$this->userPassword}"]);
-        $process->setTimeout(3600);
-
-        try {
-            $process->mustRun();
-
-            echo $process->getOutput();
-        } catch (ProcessFailedException $exception) {
-            echo $exception->getMessage();
-        }
-
-        $this->deleteExistingUser();
-
-        return 0;
-    }
-
-    protected function deleteExistingUser()
-    {
-        /** @var PasscodeUserRepository $repo */
-        $userRepo = $this->entityManager->getRepository(PasscodeUser::class);
-
-        $this->entityManager->clear();
-        $user = $userRepo->findOneBy(['username' => $this->userId]);
-
-        if ($user && $user instanceof PasscodeUser) {
-            $domesticSurvey = $user->getDomesticSurvey();
-            $internationSurvey = $user->getInternationalSurvey();
-            $preEnquiry = $user->getPreEnquiry();
-
-            $domesticSurvey && $this->domDeleteHelper->deleteSurvey($domesticSurvey);
-
-            if ($internationSurvey) {
-                $company = $internationSurvey->getCompany();
-                $this->intDeleteHelper->deleteSurvey($internationSurvey);
-                $this->entityManager->remove($company);
-            }
-
-            if ($preEnquiry) {
-                $company = $preEnquiry->getCompany();
-                $this->preEnquiryDeleteHelper->deletePreEnquiry($preEnquiry);
-                $this->entityManager->remove($company);
-            }
-
-            $this->entityManager->remove($user);
-            $this->entityManager->flush();
-        }
     }
 }
