@@ -33,11 +33,15 @@ final class Version20210929101841 extends AbstractMigration implements Container
         $rows = $conn->query(<<<EOQ
 SELECT s.id, s.state, a.timestamp, a.data FROM audit_log a
 INNER JOIN domestic_survey s ON a.entity_id = s.id
+INNER JOIN (
+    SELECT entity_id, MAX(timestamp) AS timestamp
+    FROM audit_log
+    WHERE category = "survey-state"
+    GROUP BY entity_id
+) m ON m.entity_id = a.entity_id AND m.timestamp = a.timestamp
 WHERE a.category = "survey-state"
 AND s.state = "reissued"
-GROUP BY a.entity_id
-HAVING a.timestamp = MAX(a.timestamp)
-AND a.data LIKE "%\"to\":\"rejected\"%"
+AND a.data LIKE "%""to"":""rejected""%"
 EOQ, \PDO::FETCH_ASSOC);
 
         $problematicMigrationDate = '2021-08-26 13:25:06';
