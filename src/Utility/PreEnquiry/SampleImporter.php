@@ -49,7 +49,6 @@ class SampleImporter extends AbstractBulkSurveyImporter
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
         } catch (\Throwable $e) {
-            dump($e);
             return false;
         }
     }
