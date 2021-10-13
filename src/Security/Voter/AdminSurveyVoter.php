@@ -8,6 +8,7 @@ use App\Entity\HaulageSurveyInterface;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AdminSurveyVoter extends Voter
@@ -20,6 +21,13 @@ class AdminSurveyVoter extends Voter
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
     const VIEW_UNFILLED_REASON = 'VIEW_UNFILLED_REASON';
+
+    private AuthorizationCheckerInterface $authorizationChecker;
+
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
 
     protected function supports($attribute, $subject)
     {
@@ -37,6 +45,10 @@ class AdminSurveyVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        if (!$this->authorizationChecker->isGranted('ROLE_ADMIN_USER')) {
+            return false;
+        }
+
         $openStatusesOrClosed = array_merge(SurveyInterface::ACTIVE_STATES, [
             SurveyInterface::STATE_CLOSED
         ]);
