@@ -79,7 +79,7 @@ class SurveyRepository extends AbstractSurveyRepository
     public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year');
+            ->select('s.state, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 0) AS week, YEAR(s.surveyPeriodStart) AS year');
 
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
@@ -129,7 +129,7 @@ class SurveyRepository extends AbstractSurveyRepository
     public function getQualityAssuranceReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
+            ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 0) AS week, YEAR(s.surveyPeriodStart) AS year')
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
                 SurveyInterface::STATE_APPROVED,
@@ -175,7 +175,13 @@ class SurveyRepository extends AbstractSurveyRepository
     public function getActivityStatusReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null)
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('r.activityStatus, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
+            ->select(<<<EOQ
+    r.activityStatus, count(s) AS count, 
+    s.surveyPeriodStart AS surveyPeriodStart, 
+    WEEK(s.surveyPeriodStart, 0) AS week, 
+    YEAR(s.surveyPeriodStart) AS year
+EOQ
+)
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
                 SurveyInterface::STATE_APPROVED,
