@@ -172,18 +172,20 @@ class SurveyRepository extends AbstractSurveyRepository
         return $this->addTotalsAndFlags($stats);
     }
 
-    public function getActivityStatusReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null)
+    public function getActivityStatusReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select(<<<EOQ
-    r.activityStatus, count(s) AS count, 
-    s.surveyPeriodStart AS surveyPeriodStart, 
+    r.activityStatus, 
+    count(s) AS count, 
+    MIN(s.surveyPeriodStart) AS surveyPeriodStart, 
     WEEK(s.surveyPeriodStart, 0) AS week, 
     YEAR(s.surveyPeriodStart) AS year
 EOQ
 )
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
+                SurveyInterface::STATE_CLOSED,
                 SurveyInterface::STATE_APPROVED,
                 SurveyInterface::STATE_EXPORTING,
                 SurveyInterface::STATE_EXPORTED,
@@ -192,7 +194,7 @@ EOQ
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->leftJoin('s.response', 'r')
+            ->innerJoin('s.response', 'r') // Ignore surveys that haven't had a response - e.g. Licence revoked
             ->groupBy('r.activityStatus, year, week')
             ->orderBy('year, week')
             ->getQuery()
@@ -212,7 +214,7 @@ EOQ
         }
 
         foreach ($results as $result) {
-            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
+            $week = WeekNumberHelper::getWeekNumber(new \DateTime($result['surveyPeriodStart']));
             $activityStatus = $result['activityStatus'];
 
             if (!isset($stats['data'][$week]['data'][$activityStatus])) {
