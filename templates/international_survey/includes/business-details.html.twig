@@ -24,16 +24,17 @@
         ('common.number.plain'|trans({value: response.annualInternationalJourneyCount})),
         numberOfTripsChangeLink
     ) -}}
-    {%- if response.isNoLongerActive -%}
-        {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
-        {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
+    {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
+    {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
 
-        {{- row(showActions,
-            'international.correspondence-and-business-details.still-active',
-            activityStatus,
-            activityStatusChangeLink
-        ) -}}
-    {%- else -%}
+    {%- if response.isNoLongerActive or response.annualInternationalJourneyCount == 0 -%}
+    {{- row(showActions,
+        'international.correspondence-and-business-details.still-active',
+        activityStatus,
+        activityStatusChangeLink
+    ) -}}
+    {%- endif -%}
+    {%- if not response.isNoLongerActive -%}
         {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
         {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
 

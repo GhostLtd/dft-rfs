@@ -86,19 +86,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setAnnualInternationalJourneyCount(?int $annualInternationalJourneyCount): self
     {
         $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
-
-        if ($annualInternationalJourneyCount !== null) {
-            if ($annualInternationalJourneyCount > 0) {
-                $this->setActivityStatus(self::ACTIVITY_STATUS_STILL_ACTIVE);
-            } else if ($annualInternationalJourneyCount === 0) {
-                // If the journey count has just been set to 0, and we were previously still performing international
-                // journeys, then the activity question needs to be a asked again
-                if (!$this->isNoLongerActive()) {
-                    $this->setActivityStatus(null);
-                }
-            }
-        }
-
         return $this;
     }
 
