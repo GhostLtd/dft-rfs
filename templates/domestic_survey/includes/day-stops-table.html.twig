@@ -13,8 +13,8 @@
             {% set link %}<a href="#stop-{{ stop.number }}">{{ stop.number }}</a>{% endset %}
             {{ tableRowComplex({
                 'link': {html: linkRowNumbers, content: linkRowNumbers ? link : stop.number},
-                (stop.originLocation): {},
-                (stop.destinationLocation): {},
+                ((stop.originLocation | formatPotentialPostcode) ~ (stop | formatGoodsTransferDetails('loading', ' — '))): {},
+                ((stop.destinationLocation | formatPotentialPostcode) ~ (stop | formatGoodsTransferDetails('unloading', ' — '))): {},
                 (stop | formatGoodsDescription(true) ): {}
             }) }}
         {% endfor %}
