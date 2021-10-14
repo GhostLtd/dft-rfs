@@ -29,7 +29,7 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
             ->orderBy('maintenanceWarning.start', 'DESC')
             ->setMaxResults(1)
             ->setParameters([
-                'now' => new \DateTime(),
+                'now' => (new \DateTime())->modify('-15 minutes'),
                 'future' => (new \DateTime())->modify($warningPeriodDateModifier)
             ])
             ->getQuery()

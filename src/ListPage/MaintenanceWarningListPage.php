@@ -35,7 +35,7 @@ class MaintenanceWarningListPage extends AbstractListPage
         return $queryBuilder
             ->select('maintenance_warning')
             ->andWhere('maintenance_warning.start >= :now')
-            ->setParameter('now', new \DateTime());
+            ->setParameter('now', new \DateTime('-2 hours'));
     }
 
     protected function getDefaultOrder(): array
