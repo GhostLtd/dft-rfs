@@ -32,7 +32,7 @@ class PasscodeGenerator
             $password = (($password + hexdec($hash[$i])) * 16) % 100000000;
         }
 
-        return $password;
+        return str_pad($password, 8, '0', STR_PAD_LEFT);
     }
 
     public function generateUsernameCode(): string

@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\AddSurveyType;
+use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +18,7 @@ class SurveyAddController extends AbstractController
     /**
      * @Route("/irhs/survey-add/", name=SurveyController::ADD_ROUTE)
      */
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -39,6 +40,7 @@ class SurveyAddController extends AbstractController
 
                 return $this->render("admin/international/surveys/add-success.html.twig", [
                     'survey' => $survey,
+                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
                 ]);
             }
         }

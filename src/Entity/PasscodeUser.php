@@ -45,17 +45,17 @@ class PasscodeUser implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $domesticSurvey;
+    private ?DomesticSurvey $domesticSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $internationalSurvey;
+    private ?InternationalSurvey $internationalSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $preEnquiry;
+    private ?PreEnquiry $preEnquiry = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -210,5 +210,18 @@ class PasscodeUser implements UserInterface
         $this->lastLogin = $lastLogin;
 
         return $this;
+    }
+
+    public function getSurveyId(): ?string
+    {
+        if ($this->domesticSurvey) {
+            return $this->domesticSurvey->getId();
+        } else if ($this->internationalSurvey) {
+            return $this->internationalSurvey->getId();
+        } else if ($this->preEnquiry) {
+            return $this->preEnquiry->getId();
+        }
+
+        return null;
     }
 }

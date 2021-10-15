@@ -16,7 +16,7 @@
             <dd class="govuk-summary-list__value">
                 {%- set bodyText -%}
                     Access code 1: {{ preEnquiry.passcodeUser.username }}
-                    Access code 2: {{ preEnquiry.passcodeUser.plainPassword }}
+                    Access code 2: {{ password }}
                 {%- endset -%}
                 {%- set mailLink = "mailto:?subject=DfT International Road Haulage Pre Enquiry - Access codes&body=" ~ (bodyText|trim|url_encode) -%}
                 <a href="{{ mailLink }}">email link</a>
@@ -26,7 +26,7 @@
             (preEnquiry.invitationAddress | formatAddress(true)) :
         '-', null) }}
         {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', preEnquiry.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 
     <a class="govuk-button" href="{{ path('admin_pre_enquiry_view', {preEnquiryId: preEnquiry.id}) }}">View pre-enquiry</a>
