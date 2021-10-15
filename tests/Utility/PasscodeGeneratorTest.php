@@ -1,17 +1,14 @@
 <?php
 
-
 namespace App\Tests\Utility;
-
 
 use App\Utility\PasscodeGenerator;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use ReflectionException;
 
 class PasscodeGeneratorTest extends TestCase
 {
-    public function repeatingFixtureProvider()
+    public function repeatingFixtureProvider() : array
     {
         return [
             [true, "01235555", 4],
@@ -30,7 +27,7 @@ class PasscodeGeneratorTest extends TestCase
         ];
     }
 
-    public function sequentialFixtureProvider()
+    public function sequentialFixtureProvider() : array
     {
         return [
             [true, "12349797", 4],
@@ -50,7 +47,7 @@ class PasscodeGeneratorTest extends TestCase
         ];
     }
 
-    public function passcodesFixtureProvider()
+    public function passcodesFixtureProvider() : array
     {
         return [
             [true, "12312312"],
@@ -75,43 +72,36 @@ class PasscodeGeneratorTest extends TestCase
 
     /**
      * @dataProvider repeatingFixtureProvider
-     * @param $passcode
-     * @param $repeatCount
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
-    public function testRepeatingDigits($isRepeating, $passcode, $repeatCount)
+    public function testRepeatingDigits(bool $isRepeating, string $passcode, int $repeatCount)
     {
-        $pc = new ReflectionClass(new PasscodeGenerator());
+        $pc = new ReflectionClass(new PasscodeGenerator(null, 'secret'));
         $method = $pc->getMethod('hasRepeatingDigits');
         $method->setAccessible(true);
 
-        $this->assertEquals($isRepeating, $method->invoke(new PasscodeGenerator(), $passcode, $repeatCount));
+        $this->assertEquals($isRepeating, $method->invoke(new PasscodeGenerator(null, 'secret'), $passcode, $repeatCount));
     }
 
     /**
      * @dataProvider sequentialFixtureProvider
-     * @param $isSequential
-     * @param $passcode
-     * @param $repeatCount
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
-    public function testSequentialDigits($isSequential, $passcode, $repeatCount)
+    public function testSequentialDigits(bool $isSequential, string $passcode, int $repeatCount)
     {
-        $pc = new ReflectionClass(new PasscodeGenerator());
+        $pc = new ReflectionClass(new PasscodeGenerator(null, 'secret'));
         $method = $pc->getMethod('hasSequentialDigits');
         $method->setAccessible(true);
 
-        $this->assertEquals($isSequential, $method->invoke(new PasscodeGenerator(), $passcode, $repeatCount));
+        $this->assertEquals($isSequential, $method->invoke(new PasscodeGenerator(null, 'secret'), $passcode, $repeatCount));
     }
 
     /**
-     * @param $isValid
-     * @param $passcode
      * @dataProvider passcodesFixtureProvider
      */
-    public function testPasscodeValidator($isValid, $passcode)
+    public function testPasscodeValidator(bool $isValid, string $passcode)
     {
-        $pc = new PasscodeGenerator();
+        $pc = new PasscodeGenerator(null, 'secret');
         $this->assertEquals($isValid, $pc->isValidPasscode($passcode));
     }
 
