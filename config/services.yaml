@@ -28,6 +28,7 @@ services:
             $appEnvironment: '%env(APP_ENV)%'
             $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
             $frontendHostname: '%frontend_hostname%'
+            $secret: '%env(APP_SECRET)%'
             $webRootDir: "%kernel.project_dir%/public"
 
     # makes classes in src/ available to be used as services

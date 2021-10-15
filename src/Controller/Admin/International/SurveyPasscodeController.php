@@ -5,13 +5,13 @@ namespace App\Controller\Admin\International;
 use App\Entity\International\Survey;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Common\Admin\ResetPasscodeConfirmAction;
+use App\Utility\PasscodeGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -32,7 +32,6 @@ class SurveyPasscodeController extends AbstractController
             ->controller(
                 $request,
                 function() use ($confirmAction, $survey, $session) {
-                    $session->set("reset-passcode.{$survey->getId()}", $confirmAction->getPasscode());
                     return $this->generateUrl(SurveyController::RESET_PASSCODE_SUCCESS_ROUTE, ['surveyId' => $survey->getId()]);
                 },
                 fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
@@ -44,18 +43,11 @@ class SurveyPasscodeController extends AbstractController
      * @Route("/success", name=SurveyController::RESET_PASSCODE_SUCCESS_ROUTE)
      * @Template("admin/international/reset_passcode/success.html.twig")
      */
-    public function resetPasscodeSuccess(SessionInterface $session, Survey $survey): array
+    public function resetPasscodeSuccess(PasscodeGenerator $passcodeGenerator, Survey $survey): array
     {
-        $key = "reset-passcode.{$survey->getId()}";
-        $code = $session->remove($key);
-
-        if (!$code) {
-            throw new NotFoundHttpException();
-        }
-
         return [
             'survey' => $survey,
-            'code' => $code,
+            'code' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
         ];
     }
 }

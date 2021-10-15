@@ -1,65 +1,63 @@
 <?php
 
-
 namespace App\Utility;
-
 
 use App\Entity\PasscodeUser;
 use App\Repository\PasscodeUserRepository;
-use Exception;
 
 class PasscodeGenerator
 {
-    private ?PasscodeUserRepository $passcodeUserRepository;
-    private ?string $appEnvironment;
+    protected PasscodeUserRepository $passcodeUserRepository;
+    protected string $secret;
 
-    public function __construct(?string $appEnvironment = null, ?PasscodeUserRepository $passcodeUserRepository = null)
+    public function __construct(PasscodeUserRepository $passcodeUserRepository, string $secret)
     {
         $this->passcodeUserRepository = $passcodeUserRepository;
-        $this->appEnvironment = $appEnvironment;
+        $this->secret = $secret;
     }
 
     public function createNewPasscodeUser(): PasscodeUser
     {
         return (new PasscodeUser())
             ->setUsername($this->generateUsernameCode())
-            ->setPlainPassword($this->generatePasswordCode());
+            ->setPassword(null);
+    }
+
+    public function getPasswordForUser(PasscodeUser $user): string
+    {
+        $hash = hash('sha256', $this->secret.$user->getId());
+
+        $password = 1;
+        for($i=0; $i<strlen($hash); $i++) {
+            $password = (($password + hexdec($hash[$i])) * 16) % 100000000;
+        }
+
+        return $password;
     }
 
     public function generateUsernameCode(): string
     {
-        return $this->generatePasscode(true);
-    }
-
-    public function generatePasswordCode(): string
-    {
-        return $this->appEnvironment === 'dev'
-            ? 'dev'
-            : $this->generatePasscode(false);
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function generatePasscode(bool $enforceUniqueUsername = false)
-    {
-        while(($passcode = $this->checkPasscode($this->generateUntestedCode(), $enforceUniqueUsername)) === false) null;
+        while(($passcode = $this->checkPasscode($this->generateUntestedCode(), true)) === null) {};
         return $passcode;
     }
 
-    protected function generateUntestedCode()
+    protected function generateUntestedCode(): string
     {
         return str_pad(random_int(1, 99999999), 8, '0', STR_PAD_LEFT);
     }
 
-    protected function checkPasscode($passcode, $enforceUniqueUsername = false)
+    protected function checkPasscode($passcode, $enforceUniqueUsername = false): ?string
     {
-        if (!$this->isValidPasscode($passcode)) return false;
+        if (!$this->isValidPasscode($passcode)) {
+            return null;
+        }
+
         if ($enforceUniqueUsername) {
             if ($this->usernameExistsInDatabase($passcode)) {
-                return false;
+                return null;
             }
         }
+
         return $passcode;
     }
 
@@ -88,12 +86,12 @@ class PasscodeGenerator
         return (!empty($result));
     }
 
-    protected function hasRepeatingDigits($passcode, $preventRepeating = 4)
+    protected function hasRepeatingDigits($passcode, $preventRepeating = 4): bool
     {
         return preg_match('/(\d)\1{' . ($preventRepeating - 1) . '}/', $passcode) === 1;
     }
 
-    protected function hasSequentialDigits($passcode, $sequentialCount = 4)
+    protected function hasSequentialDigits($passcode, $sequentialCount = 4): bool
     {
         $positionLimit = strlen($passcode) - $sequentialCount;
         if ($positionLimit < 0) {
