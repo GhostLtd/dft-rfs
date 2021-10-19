@@ -16,11 +16,13 @@ class RemindersHelper
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
+    private PersonalisationHelper $personalisationHelper;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, PersonalisationHelper $personalisationHelper)
     {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
+        $this->personalisationHelper = $personalisationHelper;
     }
 
     public function sendReminders()
@@ -46,7 +48,7 @@ class RemindersHelper
                 $survey->getId(),
                 $address,
                 $templateReference,
-                PersonalisationHelper::getForEntity($survey),
+                $this->personalisationHelper->getForEntity($survey),
             ));
         }
     }

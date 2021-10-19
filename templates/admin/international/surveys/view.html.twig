@@ -52,7 +52,7 @@
             <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
         {%- endif -%}
         {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reveal_passcode', {surveyId: survey.id}) }}">Reveal passcode</a>
         {%- endif -%}
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>

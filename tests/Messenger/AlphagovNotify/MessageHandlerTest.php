@@ -22,6 +22,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
 {
     protected MessageBusInterface $bus;
     private EntityManagerInterface $entityManager;
+    private PersonalisationHelper $personalisationHelper;
 
     protected function setUp(): void
     {
@@ -29,6 +30,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $container = self::$kernel->getContainer()->get('test.service_container');
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
+        $this->personalisationHelper = $container->get(PersonalisationHelper::class);
         self::ensureKernelShutdown();
     }
 
@@ -99,7 +101,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
             $survey->getId(),
             $address,
             Reference::LETTER_DOMESTIC_SURVEY_INVITE,
-            PersonalisationHelper::getForDomesticSurvey($survey)
+            $this->personalisationHelper->getForEntity($survey)
         );
     }
 

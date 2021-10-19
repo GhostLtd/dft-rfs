@@ -239,8 +239,8 @@ admin:
       failed: govuk-tag--red
       waiting-for-retry: govuk-tag--yellow
   domestic:
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     log:
       heading: Log
     survey-delete:
@@ -356,8 +356,8 @@ admin:
       heading: "Edit vehicle — {registrationMark}"
     delete-vehicle:
       heading: "Delete vehicle — {registrationMark}"
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     survey-delete:
       heading: Delete survey
       warning: This will permanently delete this survey and all related vehicles, trips and consignment actions.
@@ -475,8 +475,8 @@ admin:
       heading: "Enter Pre-enquiry response — {companyName}"
     list:
       heading: "IRHS Pre-enquiries"
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     view:
       approved-by: Approved by
       company-name: Company name

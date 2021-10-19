@@ -38,9 +38,6 @@ class SurveyController extends AbstractController
     public const DELETE_NOTE_ROUTE = self::ROUTE_PREFIX.'deletenote';
     public const FLAG_QA_ROUTE = self::ROUTE_PREFIX.'flag_qa';
 
-    public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
-    public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
-
     public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_enter';
     public const EDIT_CORRESPONDENCE_ROUTE = self::ROUTE_PREFIX.'correspondence_edit';
     public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX.'business_edit';

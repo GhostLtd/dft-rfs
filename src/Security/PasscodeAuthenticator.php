@@ -101,9 +101,8 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
             return false;
         }
 
-        return $user->getPassword() !== null ?
-            $this->passwordEncoder->isPasswordValid($user, $password) :
-            hash_equals($this->passcodeGenerator->getPasswordForUser($user), $password);
+        return hash_equals($this->passcodeGenerator->getPasswordForUser($user), $password)
+            || $this->passwordEncoder->isPasswordValid($user, $password);
     }
 
     /**

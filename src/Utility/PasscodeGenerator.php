@@ -26,13 +26,9 @@ class PasscodeGenerator
     public function getPasswordForUser(PasscodeUser $user): string
     {
         $hash = hash('sha256', $this->secret.$user->getId());
-
-        $password = 1;
-        for($i=0; $i<strlen($hash); $i++) {
-            $password = (($password + hexdec($hash[$i])) * 16) % 100000000;
-        }
-
-        return str_pad($password, 8, '0', STR_PAD_LEFT);
+        srand(hexdec(substr($hash, -8, 8)));
+        while(($passcode = $this->checkPasscode($this->generateUntestedCode(true))) === null) {};
+        return $passcode;
     }
 
     public function generateUsernameCode(): string
@@ -41,9 +37,10 @@ class PasscodeGenerator
         return $passcode;
     }
 
-    protected function generateUntestedCode(): string
+    protected function generateUntestedCode(bool $seeded = false): string
     {
-        return str_pad(random_int(1, 99999999), 8, '0', STR_PAD_LEFT);
+        $randFunc = $seeded ? 'rand' : 'random_int';
+        return str_pad($randFunc(1, 99999999), 8, '0', STR_PAD_LEFT);
     }
 
     protected function checkPasscode($passcode, $enforceUniqueUsername = false): ?string

@@ -101,7 +101,7 @@
             {%- endif -%}
         {%- endif -%}
         {%- if canResetPasscode -%}
-        <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+        <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_reveal_passcode', {surveyId: survey.id}) }}">Reveal passcode</a>
         {%- endif -%}
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
