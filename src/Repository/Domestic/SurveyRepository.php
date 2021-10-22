@@ -122,6 +122,9 @@ class SurveyRepository extends AbstractSurveyRepository
 
     public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, array $excludeFromTotals = []): array
     {
+        // N.B. Although we use the WEEK() function here, we're not relying upon it to generate week numbers, as those
+        //      are generated later via a call to a WeekNumberHelper method. The WEEK() here purely serves to make sure
+        //      data is  grouped into batches of weeks that start on a Monday.
         $qb = $this->createQueryBuilder('s')
             ->select('s.state, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year');
 
