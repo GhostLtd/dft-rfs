@@ -3,6 +3,7 @@
 namespace App\Form\InternationalSurvey\InitialDetails;
 
 use App\Entity\International\SurveyResponse;
+use App\Form\InternationalSurvey\InitialDetails\DataMapper\NumberOfTripsDataMapper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,6 +13,7 @@ class NumberOfTripsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        dump('yes0');
         $builder
             ->add('annualInternationalJourneyCount', Gds\NumberType::class, [
                 'label' => 'international.survey-response.number-of-trips.annual-international-journey-count.label',
@@ -20,6 +22,7 @@ class NumberOfTripsType extends AbstractType
                     'class' => 'govuk-input--width-5',
                 ],
             ])
+            ->setDataMapper(new NumberOfTripsDataMapper())
         ;
     }
 
