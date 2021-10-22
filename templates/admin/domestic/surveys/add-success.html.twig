@@ -20,7 +20,7 @@
                 {%- if survey.invitationEmail -%}
 {%- set bodyText -%}
 Access code 1: {{ survey.passcodeUser.username }}
-Access code 2: {{ survey.passcodeUser.plainPassword }}
+Access code 2: {{ password }}
 {%- endset -%}
                     {%- set mailLink = "mailto:#{survey.invitationEmail}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
                     <a href="{{ mailLink }}">{{ survey.invitationEmail }}</a>
@@ -32,7 +32,7 @@ Access code 2: {{ survey.passcodeUser.plainPassword }}
             (survey.invitationAddress | formatAddress(true)) :
             '-', null) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', survey.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 
     <a class="govuk-button" href="{{ path('admin_domestic_survey_view', {surveyId: survey.id}) }}">View survey</a>

@@ -27,6 +27,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     private DomesticPdfHelper $domesticPdfHelper;
     private InternationalPdfHelper $internationalPdfHelper;
     private AuditLogRepository $auditLogRepository;
+    private PersonalisationHelper $personalisationHelper;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -45,12 +46,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository) {
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository, PersonalisationHelper $personalisationHelper) {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
         $this->domesticPdfHelper = $domesticPdfHelper;
         $this->internationalPdfHelper = $internationalPdfHelper;
         $this->auditLogRepository = $auditLogRepository;
+        $this->personalisationHelper = $personalisationHelper;
     }
 
     public function guardInviteUser(GuardEvent $event)
@@ -65,7 +67,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionInviteUser(Event $event)
     {
         $survey = $this->getSurvey($event);
-        $personalisation = PersonalisationHelper::getForEntity($survey);
+        $personalisation = $this->personalisationHelper->getForEntity($survey);
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();

@@ -38,7 +38,7 @@ abstract class AbstractSurveyResendController extends AbstractController
                 }
 
                 $survey->setState(SurveyInterface::STATE_NEW);
-                $survey->getPasscodeUser()->setPlainPassword($this->passcodeGenerator->generatePasswordCode());
+                $survey->getPasscodeUser()->setPassword(null);
 
                 $this->stateMachine->apply($survey, 'invite_user');
                 $this->entityManager->flush();

@@ -38,7 +38,7 @@
             <a class="govuk-button" href="{{ path('admin_pre_enquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
         {%- endif -%}
         {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_reset_passcode', {preEnquiryId: preEnquiry.id}) }}">Reset passcode</a>
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_reveal_passcode', {preEnquiryId: preEnquiry.id}) }}">Reveal passcode</a>
         {%- endif -%}
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_resend', {id: preEnquiry.id}) }}">Change invitation details and resend survey</a>

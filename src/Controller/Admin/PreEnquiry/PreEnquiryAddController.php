@@ -4,6 +4,7 @@ namespace App\Controller\Admin\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Form\Admin\PreEnquiry\AddSurveyType;
+use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
@@ -16,7 +17,7 @@ class PreEnquiryAddController extends AbstractController
     /**
      * @Route("/pre-enquiry/add/", name=PreEnquiryController::ADD_ROUTE)
      */
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -38,6 +39,7 @@ class PreEnquiryAddController extends AbstractController
 
                 return $this->render("admin/pre_enquiry/add-success.html.twig", [
                     'preEnquiry' => $preEnquiry,
+                    'password' => $passcodeGenerator->getPasswordForUser($preEnquiry->getPasscodeUser()),
                 ]);
             }
         }

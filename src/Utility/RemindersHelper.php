@@ -4,11 +4,13 @@ namespace App\Utility;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -16,11 +18,13 @@ class RemindersHelper
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
+    private PersonalisationHelper $personalisationHelper;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, PersonalisationHelper $personalisationHelper)
     {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
+        $this->personalisationHelper = $personalisationHelper;
     }
 
     public function sendReminders()
@@ -46,7 +50,7 @@ class RemindersHelper
                 $survey->getId(),
                 $address,
                 $templateReference,
-                PersonalisationHelper::getForEntity($survey),
+                $this->personalisationHelper->getForEntity($survey),
             ));
         }
     }
@@ -60,10 +64,12 @@ class RemindersHelper
             1 => [
                 Reference::LETTER_DOMESTIC_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(DomesticSurvey::class),
                 Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_1 => $this->getSurveysForReminder1(InternationalSurvey::class),
+                Reference::LETTER_PRE_ENQUIRY_REMINDER_1 => $this->getPreEnquiriesForReminder1(),
             ],
             2 => [
                 Reference::LETTER_DOMESTIC_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(DomesticSurvey::class),
                 Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_2 => $this->getSurveysForReminder2(InternationalSurvey::class),
+                Reference::LETTER_PRE_ENQUIRY_REMINDER_2 => $this->getSurveysForReminder2(PreEnquiry::class),
             ],
         ];
     }
@@ -77,6 +83,15 @@ class RemindersHelper
             ->execute();
     }
 
+    protected function getPreEnquiriesForReminder1()
+    {
+        $qb = $this->getSurveyQueryBuilder(PreEnquiry::class);
+        return $qb
+            ->andWhere($this->getPreEnquiryFirstReminderExpression($qb))
+            ->getQuery()
+            ->execute();
+    }
+
     protected function getSurveysForReminder2(string $surveyClass)
     {
         $qb = $this->getSurveyQueryBuilder($surveyClass);
@@ -86,7 +101,7 @@ class RemindersHelper
             ->execute();
     }
 
-    protected function getSurveyQueryBuilder(string $surveyClass)
+    protected function getSurveyQueryBuilder(string $surveyClass): QueryBuilder
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->from($surveyClass, 'survey')
@@ -95,7 +110,7 @@ class RemindersHelper
         return $queryBuilder->andWhere($this->getSurveyStateExpression($queryBuilder));
     }
 
-    protected function getSurveyStateExpression(QueryBuilder $queryBuilder)
+    protected function getSurveyStateExpression(QueryBuilder $queryBuilder): Expr\Base
     {
         // $queryBuilder->expr()->isNull('survey.submissionDate'),
         return $queryBuilder->expr()->andX(
@@ -104,7 +119,7 @@ class RemindersHelper
         );
     }
 
-    protected function getFirstReminderExpression(QueryBuilder $queryBuilder)
+    protected function getFirstReminderExpression(QueryBuilder $queryBuilder): Expr\Base
     {
         $queryBuilder->setParameter('sevenDaysAgo', (new \DateTime())->modify('-7 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(
@@ -115,7 +130,17 @@ class RemindersHelper
         );
     }
 
-    protected function getSecondReminderExpression(QueryBuilder $queryBuilder)
+    protected function getPreEnquiryFirstReminderExpression(QueryBuilder $queryBuilder): Expr\Base
+    {
+        $queryBuilder->setParameter('fourteenDaysAgo', (new \DateTime())->modify('-14 days')->modify('+12 hours'));
+        return $queryBuilder->expr()->andX(
+            'survey.firstReminderSentDate IS NULL',
+            'survey.secondReminderSentDate IS NULL',
+            'survey.notifiedDate <= :fourteenDaysAgo'
+        );
+    }
+
+    protected function getSecondReminderExpression(QueryBuilder $queryBuilder): Expr\Base
     {
         $queryBuilder->setParameter('firstReminderDate', (new \DateTime())->modify('-14 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(

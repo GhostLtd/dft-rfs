@@ -33,7 +33,7 @@ class PasscodeUser implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -45,17 +45,17 @@ class PasscodeUser implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $domesticSurvey;
+    private ?DomesticSurvey $domesticSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $internationalSurvey;
+    private ?InternationalSurvey $internationalSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $preEnquiry;
+    private ?PreEnquiry $preEnquiry = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -116,15 +116,14 @@ class PasscodeUser implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -211,5 +210,18 @@ class PasscodeUser implements UserInterface
         $this->lastLogin = $lastLogin;
 
         return $this;
+    }
+
+    public function getSurveyId(): ?string
+    {
+        if ($this->domesticSurvey) {
+            return $this->domesticSurvey->getId();
+        } else if ($this->internationalSurvey) {
+            return $this->internationalSurvey->getId();
+        } else if ($this->preEnquiry) {
+            return $this->preEnquiry->getId();
+        }
+
+        return null;
     }
 }

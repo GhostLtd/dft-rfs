@@ -17,7 +17,7 @@
             <dd class="govuk-summary-list__value">
                 {%- set bodyText -%}
                     Access code 1: {{ survey.passcodeUser.username }}
-                    Access code 2: {{ survey.passcodeUser.plainPassword }}
+                    Access code 2: {{ password }}
                 {%- endset -%}
                 {%- set mailLink = "mailto:?subject=DfT International Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
                 <a href="{{ mailLink }}">email link</a>
@@ -27,7 +27,7 @@
             (survey.invitationAddress | formatAddress(true)) :
         '-', null) }}
         {{ actionlessSummaryListRow('admin.international.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-2', survey.passcodeUser.plainPassword, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 
     <a class="govuk-button" href="{{ path('admin_international_survey_view', {surveyId: survey.id}) }}">View survey</a>

@@ -8,6 +8,7 @@ use App\Entity\LongAddress;
 use App\Entity\SurveyInterface;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Repository\Domestic\SurveyRepository;
+use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +33,7 @@ class SurveyAddController extends AbstractController
      * @Route("/csrgt/survey-add/", name=SurveyController::ADD_ROUTE)
      * @Route("/csrgt/survey-reissue/{originalSurveyId}", name="admin_domestic_survey_reissue")
      */
-    public function add(Request $request, EntityManagerInterface $entityManager, SurveyRepository $surveyRepository, string $originalSurveyId = null): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, string $originalSurveyId = null): Response
     {
         if ($originalSurveyId) {
             $originalSurvey = $this->surveyRepository->find($originalSurveyId);
@@ -70,6 +71,7 @@ class SurveyAddController extends AbstractController
 
                 return $this->render('admin/domestic/surveys/add-success.html.twig', [
                     'survey' => $survey,
+                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
                 ]);
             }
         }
