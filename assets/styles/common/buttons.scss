@@ -1,8 +1,10 @@
 @import "~govuk-frontend/govuk/components/button";
 
-form[data-previously-submitted='true'] {
-  .govuk-button {
+form[data-prevent-double-click-submission='true'] {
+  .govuk-button[data-prevent-double-click="true"] {
     @extend .govuk-button--disabled;
+    pointer-events: none;
+    user-select: none;
   }
 
   /**
