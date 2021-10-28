@@ -49,7 +49,6 @@ class RedirectAnnotationSubscriber implements EventSubscriberInterface
      */
     public function handleRedirectAnnotations(ControllerArgumentsEvent $event)
     {
-        dump($event);
         $request = $event->getRequest();
         if (!$configurations = $request->attributes->get('_redirect')) {
             return;
