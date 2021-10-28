@@ -2,6 +2,7 @@
 
 namespace App\Controller\DomesticSurvey;
 
+use App\Annotation\Redirect;
 use App\Security\Voter\SurveyVoter;
 use App\Utility\Domestic\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -26,15 +27,12 @@ class IndexController extends AbstractController
 
     /**
      * @Route(name=self::SUMMARY_ROUTE)
+     * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())", )
      */
     public function index(): Response
     {
         $survey = $this->getSurvey();
-
-        if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
-            return $this->redirectToRoute(self::COMPLETED_ROUTE);
-        }
-        $this->denyAccessUnlessGranted(SurveyVoter::EDIT, $survey);
 
         if (!$survey->isInitialDetailsComplete()) {
             return $this->redirectToRoute("app_domesticsurvey_initialdetails_start");
@@ -47,6 +45,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/contact-and-business-details", name=self::CONTACT_AND_BUSINESS_ROUTE)
+     * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
     public function contactAndBusinessDetails(): Response
@@ -66,6 +65,7 @@ class IndexController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())")
      * @Route("/completed", name=self::COMPLETED_ROUTE)
      */
     public function completed(): Response

@@ -2,6 +2,7 @@
 
 namespace App\Controller\DomesticSurvey;
 
+use App\Annotation\Redirect;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\DriverAvailability;
 use App\Entity\Domestic\SurveyResponse;
@@ -23,7 +24,8 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
      * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
+     * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())", )
      */
     public function index(WorkflowInterface $domesticSurveyClosingDetailsStateMachine, Request $request, $state = null): Response
     {
