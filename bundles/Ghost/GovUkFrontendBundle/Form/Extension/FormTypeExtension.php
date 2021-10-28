@@ -29,6 +29,7 @@ class FormTypeExtension extends AbstractTypeExtension
             'attr' => [
                 'novalidate' => 'novalidate',
             ],
+            'prevent_double_submit' => true,
         ]);
         $resolver->setAllowedTypes('label_html', ['bool']);
     }
@@ -37,5 +38,9 @@ class FormTypeExtension extends AbstractTypeExtension
     {
         parent::buildView($view, $form, $options);
         $view->vars['label_html'] = $options['label_html'];
+
+        if ($options['prevent_double_submit']) {
+            $view->vars['attr']['data-prevent-double-submit'] = "true";
+        }
     }
 }

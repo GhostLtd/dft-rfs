@@ -14,7 +14,6 @@ class ButtonType extends ExtendedButtonType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'prevent_double_click' => true,
             'type' => null,
             'label_html' => false,
         ]);
@@ -31,10 +30,6 @@ class ButtonType extends ExtendedButtonType
         if ($view->vars['type'] === 'submit')
         {
             $view->vars['clicked'] = $form->isClicked();
-        }
-
-        if ($options['prevent_double_click']) {
-            $view->vars['attr']['data-prevent-double-click'] = "true";
         }
 
         if ($options['disabled'] ?? false) {

@@ -6,15 +6,15 @@ import nodeListForEach from "./node-list";
  * data, and symfony couldn't work out which button had been clicked.
  */
 function doubleSubmitPrevention() {
-    let $forms = document.querySelectorAll('form[data-prevent-double-click="true"]');
+    let $forms = document.querySelectorAll('form[data-prevent-double-submit="true"]');
     nodeListForEach($forms, function ($form) {
         $form.addEventListener('submit', function(event) {
-            if (true === $form.getAttribute('data-previously-submitted')) {
+            if ($form.getAttribute('data-previously-submitted')) {
                 // previously submitted
                 event.preventDefault();
             } else {
                 // not previously submitted
-                $form.setAttribute('data-previously-submitted', true)
+                $form.setAttribute('data-previously-submitted', 'true');
             }
         })
     });
