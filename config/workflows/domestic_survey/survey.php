@@ -24,8 +24,8 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_CLOSED,
                     StateObject::STATE_APPROVED,
                     StateObject::STATE_REJECTED,
-                    StateObject::STATE_EXPORTING,
-                    StateObject::STATE_EXPORTED,
+//                    StateObject::STATE_EXPORTING,
+//                    StateObject::STATE_EXPORTED,
                     StateObject::STATE_REISSUED,
                 ],
                 'transitions' => [
@@ -71,18 +71,18 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_APPROVED,
                         'to' => StateObject::STATE_CLOSED,
                     ],
-                    'start_export' => [
-                        'from' => StateObject::STATE_APPROVED,
-                        'to' => StateObject::STATE_EXPORTING,
-                    ],
-                    'cancel_export' => [
-                        'from' => StateObject::STATE_EXPORTING,
-                        'to' => StateObject::STATE_APPROVED,
-                    ],
-                    'confirm_export' => [
-                        'from' => StateObject::STATE_EXPORTING,
-                        'to' => StateObject::STATE_EXPORTED,
-                    ],
+//                    'start_export' => [
+//                        'from' => StateObject::STATE_APPROVED,
+//                        'to' => StateObject::STATE_EXPORTING,
+//                    ],
+//                    'cancel_export' => [
+//                        'from' => StateObject::STATE_EXPORTING,
+//                        'to' => StateObject::STATE_APPROVED,
+//                    ],
+//                    'confirm_export' => [
+//                        'from' => StateObject::STATE_EXPORTING,
+//                        'to' => StateObject::STATE_EXPORTED,
+//                    ],
                     'reject' => [
                         'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_REJECTED,

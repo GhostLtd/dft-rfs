@@ -6,6 +6,9 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    # see https://symfony.com/doc/current/performance.html#dump-the-service-container-into-a-single-file
+    container.dumper.inline_factories: true
+
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
     frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
 
@@ -16,7 +19,6 @@ parameters:
 
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
-    container.dumper.inline_factories: true
     app_features_empty: none
 
 services:

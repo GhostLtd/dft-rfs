@@ -25,7 +25,7 @@ abstract class AbstractExportHelper
         return $this->bucket;
     }
 
-    public function upload(string $data, string $year, string $quarter): StorageObject
+    public function upload($data, string $year, string $quarter): StorageObject
     {
         return $this->bucket->upload($data, [
             'resumable' => true,

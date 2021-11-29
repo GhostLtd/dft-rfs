@@ -5,6 +5,7 @@ namespace App\Tests\Functional;
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\DataFixtures\MaintenanceLockWithWhitelistFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
 class MaintenanceLockTest extends AbstractFrontendFunctionalTest
@@ -13,7 +14,7 @@ class MaintenanceLockTest extends AbstractFrontendFunctionalTest
     {
         // we have to load no fixtures to get an empty database
         $this->loadFixtures([]);
-        $this->verifyAccessNormal($this->browser);
+        $this->verifyAccessNormal();
     }
 
     public function testMaintenanceLockActive()
@@ -30,15 +31,15 @@ class MaintenanceLockTest extends AbstractFrontendFunctionalTest
     public function testMaintenanceLockActiveWhitelist()
     {
         $this->loadFixtures([MaintenanceLockWithWhitelistFixtures::class]);
-        $this->verifyAccessNormal($this->browser);
+        $this->verifyAccessNormal();
     }
 
-    protected function verifyAccessNormal(KernelBrowser $browser)
+    protected function verifyAccessNormal()
     {
-        $response = $browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/");
+        $response = $this->browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/");
         self::assertStringContainsString('To complete the survey', $response->outerHtml());
 
-        $response = $browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
+        $response = $this->browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
         self::assertStringContainsString('Enter your survey access codes', $response->outerHtml());
     }
 }

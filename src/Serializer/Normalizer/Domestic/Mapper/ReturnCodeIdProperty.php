@@ -11,6 +11,6 @@ class ReturnCodeIdProperty implements Mapper
     {
         /** @var Survey $sourceData */
 
-        return $sourceData->getResponse()->hasJourneys() ? 21 : null;
+        return $sourceData->getResponse() ? ($sourceData->getResponse()->hasJourneys() ? 21 : null) : null;
     }
 }

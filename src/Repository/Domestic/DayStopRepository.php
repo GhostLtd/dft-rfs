@@ -50,15 +50,16 @@ class DayStopRepository extends ServiceEntityRepository
         return $dayStop;
     }
 
-    public function findForExport($surveys)
+    public function findForExport($surveyIDs)
     {
         return $this->createQueryBuilder('day_stop')
-            ->select('day_stop, day, response')
+            ->select('day_stop, day, summary')
             ->leftJoin('day_stop.day', 'day')
             ->leftJoin('day.response', 'response')
+            ->leftJoin('day.summary', 'summary')
             ->leftJoin('response.survey', 'survey')
-            ->where('survey in (:surveys)')
-            ->setParameter('surveys', $surveys)
+            ->where('survey.id in (:surveyIDs)')
+            ->setParameter('surveyIDs', $surveyIDs)
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')
             ->addOrderBy('day.number', 'ASC')
@@ -66,7 +67,8 @@ class DayStopRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
-        // /**
+
+    // /**
     //  * @return DayStop[] Returns an array of DayStop objects
     //  */
     /*

@@ -49,7 +49,7 @@ class SqlServerInsertEncoder implements EncoderInterface
         }
 
         return $this->twig->render('serializer/encoder/sql-server-encode.sql.twig', [
-            'fields' => array_keys($data[0]),
+            'fields' => array_keys($data[array_key_first($data)]),
             'data' => $data,
             'table_name' => $context[self::TABLE_NAME_KEY] ?? $this->defaultContext[self::TABLE_NAME_KEY],
         ]) . "\n";

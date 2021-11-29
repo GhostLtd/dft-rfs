@@ -5,9 +5,11 @@ namespace App\Controller\Admin\Domestic;
 use App\Form\ConfirmationType;
 use App\Utility\Domestic\DataExporter;
 use App\Utility\Domestic\ExportHelper;
+use DateTime;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,8 +67,11 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                if ($exporter->uploadExportData($year, $quarter)) {
-                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+                if ($filename = $exporter->generateExportData($year, $quarter)) {
+                    $now = new DateTime();
+                    return $this
+                        ->file(new File($filename), "CSRGT_export_{$year}_Q{$quarter}_{$now->format('Ymd_Hi')}.sql")
+                        ->deleteFileAfterSend(true);
                 } else {
                     $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                         $translator->trans('domestic.export-failed-notification.title', [], 'admin'),

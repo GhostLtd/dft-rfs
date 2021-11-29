@@ -68,6 +68,9 @@ class SurveyResponse extends AbstractSurveyResponse
 
     use SurveyResponseTrait;
 
+    public ?int $_summaryCountForExport;
+    public ?int $_stopCountForExport;
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="domestic.survey-response.initial-details.business-name-required", groups={"contact_details", "admin_correspondence"})
@@ -466,8 +469,12 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
-    public function hasJourneys()
+    public function hasJourneys(): bool
     {
+        if (isset($this->_stopCountForExport) && isset($this->_summaryCountForExport)) {
+            return ($this->_stopCountForExport !== 0 || $this->_summaryCountForExport !== 0);
+        }
+
         foreach ($this->getDays() as $day)
         {
             $summaryOrStops = $day->getHasMoreThanFiveStops() ? $day->getSummary() : $day->getStops();

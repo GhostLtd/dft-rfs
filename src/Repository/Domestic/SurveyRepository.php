@@ -2,6 +2,7 @@
 
 namespace App\Repository\Domestic;
 
+use App\Doctrine\Hydrators\ColumnHydrator;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyInterface;
@@ -9,8 +10,11 @@ use App\Repository\DashboardStatsTrait;
 use App\Repository\AbstractSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper;
 use App\Utility\StateReportHelper;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 /**
  * @method Survey|null find($id, $lockMode = null, $lockVersion = null)
@@ -59,35 +63,86 @@ class SurveyRepository extends AbstractSurveyRepository
             ->execute();
     }
 
-    /**
-     * @return Survey[]
-     */
-    public function findForExport($year, $quarter): array
+    public function getSurveyIDsForExport($year, $quarter): array
     {
         $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
         return $this->createQueryBuilder('survey')
-            ->select('survey, passcode_user, response, vehicle, days, stops, summary')
-            ->leftJoin('survey.passcodeUser', 'passcode_user')
+            ->select('survey.id')
             ->leftJoin('survey.response', 'response')
-            ->leftJoin('response.vehicle', 'vehicle')
-            ->leftJoin('response.days', 'days')
-            ->leftJoin('days.stops', 'stops')
-            ->leftJoin('days.summary', 'summary')
             ->where('survey.surveyPeriodStart >= :quarterStart')
             ->andWhere('survey.surveyPeriodStart < :quarterEnd')
-            ->andWhere('survey.state = :state')
-            ->andWhere('response.isInPossessionOfVehicle IN (:inPossessionCodes)')
+            ->andWhere('survey.state IN (:states)')
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')
             ->setParameters([
                 'quarterStart' => $dateRange[0],
                 'quarterEnd' => $dateRange[1],
-                'state' => Survey::STATE_APPROVED,
-                'inPossessionCodes' => [SurveyResponse::IN_POSSESSION_YES, SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN]
+                'states' => [
+                    Survey::STATE_NEW, Survey::STATE_INVITATION_PENDING, Survey::STATE_INVITATION_FAILED,
+                    Survey::STATE_INVITATION_SENT, Survey::STATE_IN_PROGRESS, Survey::STATE_CLOSED,
+                    Survey::STATE_APPROVED,
+                ],
             ])
             ->getQuery()
+            ->getResult(ColumnHydrator::class);
+    }
+
+    /**
+     * @return Survey[] | ArrayCollection
+     */
+    public function findForExport($surveyIDs)
+    {
+        $counts = $this->createQueryBuilder('survey')
+            ->select('survey.id, COUNT(summary) as summaryCount, COUNT(stops) as stopCount')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.days', 'days')
+            ->leftJoin('days.stops', 'stops')
+            ->leftJoin('days.summary', 'summary')
+            ->groupBy('survey.id')
+            ->orderBy('survey.surveyPeriodStart', 'ASC')
+            ->addOrderBy('survey.id', 'ASC')
+            ->where('survey.id IN (:surveyIDs)')
+            ->setParameter('surveyIDs', $surveyIDs)
+            ->getQuery()
             ->execute();
+
+        $surveys = $this->createQueryBuilder('survey', 'survey.id')
+            ->select('survey, passcode_user, response, vehicle, reissued')
+            ->leftJoin('survey.passcodeUser', 'passcode_user')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.vehicle', 'vehicle')
+            ->leftJoin('survey.reissuedSurvey', 'reissued')
+            ->where('survey.id IN (:surveyIDs)')
+            ->orderBy('survey.surveyPeriodStart', 'ASC')
+            ->addOrderBy('survey.id', 'ASC')
+            ->setParameters([
+                'surveyIDs' => $surveyIDs,
+            ])
+            ->getQuery()
+            ->getResult();
+
+        if (count($surveyIDs) !== count($counts)) {
+            throw new RuntimeException("survey count mismatch");
+        }
+        if (count($surveyIDs) !== count($surveys)) {
+            throw new RuntimeException("survey count mismatch");
+        }
+
+        /** @var Survey $survey */
+        foreach ($counts as $count) {
+            if (!isset($surveys[$count['id']])) {
+                throw new RuntimeException("Survey not found: {$survey->getId()}");
+            }
+            if ($surveys[$count['id']]->getResponse()) {
+                $surveys[$count['id']]->getResponse()->_summaryCountForExport = $count['summaryCount'];
+                $surveys[$count['id']]->getResponse()->_stopCountForExport = $count['stopCount'];
+            }
+        }
+
+//        $this->_em->clear();
+
+        return $surveys;
     }
 
     public function getOverdueCount(bool $isNortherIreland): int
@@ -98,7 +153,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->andWhere('s.surveyPeriodEnd < :now')
             ->andWhere('s.state IN (:activeStates)')
             ->setParameters([
-                'now' => new \DateTime(),
+                'now' => new DateTime(),
                 'activeStates' => SurveyInterface::ACTIVE_STATES,
                 'isNorthernIreland' => $isNortherIreland,
             ])
@@ -120,7 +175,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->getSingleScalarResult();
     }
 
-    public function getStateReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, array $excludeFromTotals = []): array
+    public function getStateReportStats(?bool $isNorthernIreland = null, ?DateTime $minStart = null, ?DateTime $maxStart = null, array $excludeFromTotals = []): array
     {
         // N.B. Although we use the WEEK() function here, we're not relying upon it to generate week numbers, as those
         //      are generated later via a call to a WeekNumberHelper method. The WEEK() here purely serves to make sure
@@ -184,14 +239,14 @@ class SurveyRepository extends AbstractSurveyRepository
             ->getArrayResult();
 
         if (count($result) === 0) {
-            $year = (new \DateTime())->format('Y');
+            $year = (new DateTime())->format('Y');
             return [$year, $year];
         } else {
             return array_values(current($result));
         }
     }
 
-    public function getQualityAssuranceReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    public function getQualityAssuranceReportStats(?bool $isNorthernIreland = null, ?DateTime $minStart = null, ?DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
@@ -240,7 +295,7 @@ class SurveyRepository extends AbstractSurveyRepository
         return $this->addTotalsAndFlags($stats);
     }
 
-    public function getPossessionReportStats(?bool $isNorthernIreland = null, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    public function getPossessionReportStats(?bool $isNorthernIreland = null, ?DateTime $minStart = null, ?DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
         ->select('r.isInPossessionOfVehicle, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
@@ -293,7 +348,7 @@ class SurveyRepository extends AbstractSurveyRepository
         return $this->addTotalsAndFlags($stats);
     }
 
-    protected function addTimeAndLocationBounds(QueryBuilder $qb, ?bool $isNorthernIreland, ?\DateTime $minStart, ?\DateTime $maxStart): QueryBuilder
+    protected function addTimeAndLocationBounds(QueryBuilder $qb, ?bool $isNorthernIreland, ?DateTime $minStart, ?DateTime $maxStart): QueryBuilder
     {
         if ($isNorthernIreland !== null) {
             $qb
@@ -316,7 +371,7 @@ class SurveyRepository extends AbstractSurveyRepository
         return $qb;
     }
 
-    protected function getWeekAndYearRange($results, ?\DateTime $minStart, ?\DateTime $maxStart): array
+    protected function getWeekAndYearRange($results, ?DateTime $minStart, ?DateTime $maxStart): array
     {
         if ($minStart !== null && $maxStart !== null) {
             [$firstWeek, $firstYear] = WeekNumberHelper::getYearlyWeekNumberAndYear($minStart);
@@ -373,7 +428,7 @@ class SurveyRepository extends AbstractSurveyRepository
     /**
      * @return Survey[]|array
      */
-    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
+    public function getSurveysRequiringPasscodeUserCleanup(DateTime $before): array
     {
         return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'domestic_survey');
     }
@@ -381,7 +436,7 @@ class SurveyRepository extends AbstractSurveyRepository
     /**
      * @return Survey[]|array
      */
-    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
+    public function getSurveysRequiringPersonalDataCleanup(DateTime $before): array {
         $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
         return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
     }
