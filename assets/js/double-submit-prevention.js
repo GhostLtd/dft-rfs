@@ -18,8 +18,14 @@ function doubleSubmitPrevention() {
 
     let $forms = document.querySelectorAll('form');
     nodeListForEach($forms, function ($form) {
-        $form.addEventListener('submit', function(event) {
+        $form.addEventListener('submit', function() {
             $form.setAttribute('data-prevent-double-click-submission', 'true');
+        });
+    });
+
+    window.addEventListener('pageshow', function() {
+        nodeListForEach($forms, function ($form) {
+            $form.removeAttribute('data-prevent-double-click-submission', 'false');
         });
     });
 }
