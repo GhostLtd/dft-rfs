@@ -128,13 +128,13 @@ class TripDataMapper implements DataMapperInterface
         $viewData->setDestination($forms['destination']->getData());
 
         $viewData->setIsSwappedTrailer($forms['axle_config']->getData() !== false);
-        $viewData->setAxleConfiguration($forms['axle_config']->getData() ?? null);
+        $viewData->setAxleConfiguration($forms['axle_config']->getData() ? : null);
 
         if ($forms['body_type'] ?? false) {
             $viewData->setIsChangedBodyType($forms['body_type']->getData() !== false);
-            $viewData->setBodyType($forms['body_type']->getData() ?? null);
+            $viewData->setBodyType($forms['body_type']->getData() ? : null);
         }
-        $viewData->setGrossWeight($forms['gross_weight']->getData() ?? null);
-        $viewData->setCarryingCapacity($forms['carrying_capacity']->getData() ?? null);
+        $viewData->setGrossWeight($forms['gross_weight']->getData() ? : null);
+        $viewData->setCarryingCapacity($forms['carrying_capacity']->getData() ? : null);
     }
 }

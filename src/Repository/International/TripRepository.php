@@ -5,6 +5,7 @@ namespace App\Repository\International;
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use App\Entity\SurveyInterface;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -67,7 +68,7 @@ class TripRepository extends ServiceEntityRepository
     /**
      * @return Trip[]|Collection
      */
-    public function getTripsForExport(\DateTime $minDate, \DateTime $maxDate): array
+    public function getTripsForExport(DateTime $minDate, DateTime $maxDate): array
     {
         return $this->createQueryBuilder('t')
             ->select('t,v,r,s,a,la')
@@ -77,14 +78,13 @@ class TripRepository extends ServiceEntityRepository
             ->leftJoin('t.actions', 'a')
             ->leftJoin('a.loadingAction', 'la')
             ->where('s.state IN (:states)')
-            ->andWhere('t.exportDate IS NULL')
             ->andWhere('t.outboundDate >= :minDate')
             ->andWhere('t.outboundDate < :maxDate')
             ->orderBy('s.surveyPeriodStart', 'ASC')
             ->addOrderBy('v.registrationMark', 'ASC')
             ->getQuery()
             ->setParameters([
-                'states' => [SurveyInterface::STATE_APPROVED, SurveyInterface::STATE_EXPORTING],
+                'states' => [SurveyInterface::STATE_APPROVED],
                 'minDate' => $minDate,
                 'maxDate' => $maxDate,
             ])

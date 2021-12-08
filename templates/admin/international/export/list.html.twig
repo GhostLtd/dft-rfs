@@ -4,7 +4,7 @@
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
-    {%- set headers = ['Year', 'Quarter', 'State', ''] -%}
+    {%- set headers = ['Year', 'Quarter', ''] -%}
 
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- tableHead(false, headers) -}}
@@ -13,7 +13,6 @@
         <tr class="govuk-table__row">
             {{- tableCell(export.year) -}}
             {{- tableCell('Q' ~ export.quarter) -}}
-            {{- tableCell(export.storageObject ? 'Exported' : 'Not exported') -}}
 
             {%- set actions -%}
                 {%- if export.storageObject -%}

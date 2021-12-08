@@ -25,15 +25,8 @@ class TripActionsExportNormalizer
     {
         $this->normalized = [];
 
-        $rowNumber = 1;
-        $previousVehicle = null;
-
         foreach($trips as $trip) {
-            $vehicle = $trip->getVehicle();
-            if ($previousVehicle !== $vehicle) {
-                $previousVehicle = $vehicle;
-                $rowNumber = 1;
-            }
+            $rowNumber = 1;
 
             $actions = $trip->getActions();
 
@@ -44,7 +37,7 @@ class TripActionsExportNormalizer
             $firstAction = $actions->first();
             $lastAction = $actions->last();
 
-            if ($this->normalizeName($trip->getOrigin()) !== $this->normalizeName($firstAction->getName())) {
+            if ($this->getCountry($firstAction) !== 'GB') {
                 $this->normalized[] = $this->getOutboundEmptyData($firstAction, $rowNumber);
                 $numberOffset = 2;
                 $rowNumber++;
@@ -65,7 +58,7 @@ class TripActionsExportNormalizer
                 $rowNumber++;
             }
 
-            if ($this->normalizeName($trip->getDestination()) !== $this->normalizeName($lastAction->getName())) {
+            if ($this->getCountry($lastAction) !== 'GB') {
                 $this->normalized[] = $this->getReturnEmptyData($lastAction, $numberOffset, $rowNumber);
             }
         }
@@ -87,9 +80,11 @@ class TripActionsExportNormalizer
             'TypeOfGoods' => $loadingAction->getGoodsDescriptionNormalized(),
             'DangerousGoods' => $hazardousGoodsCode === '0' ? null : $hazardousGoodsCode,
             'WeightOfGoodsCarriedKG' => $action->getWeightUnloadedAll() ? $loadingAction->getWeightOfGoods() : $action->getWeightOfGoods(),
-            'Origin' => $this->getPlaceName($loadingAction),
+            'OriginPlace' => $loadingAction->getName(),
+            'OriginCountry' => $this->getCountry($loadingAction),
             'LoadedOrder' => $loadingAction->getNumber() + $numberOffset,
-            'Destination' => $this->getPlaceName($action),
+            'DestinationPlace' => $action->getName(),
+            'DestinationCountry' => $this->getCountry($action),
             'UnloadedOrder' => $action->getNumber() + $numberOffset,
             'RowNumber' => $rowNumber,
             // DateInput - ??
@@ -97,9 +92,8 @@ class TripActionsExportNormalizer
         ];
     }
 
-    protected function getPlaceName(Action $action): string
+    protected function getCountry(Action $action): string
     {
-        $name = $action->getName();
         $country = $action->getCountry();
         $countryOther = $action->getCountryOther();
 
@@ -112,10 +106,17 @@ class TripActionsExportNormalizer
             }
         }
 
-        return $country === CountryType::OTHER ?
-            "{$name}, {$countryOther}" :
-            "{$name}, {$country}";
+        return $country === CountryType::OTHER
+            ? $countryOther
+            : $country;
     }
+
+//    protected function getPlaceName(Action $action): string
+//    {
+//        $name = $action->getName();
+//        $country = $this->getCountry($action);
+//        return "$name, $country";
+//    }
 
     protected function getOutboundEmptyData(Action $firstAction, int $rowNumber): array
     {
@@ -128,9 +129,11 @@ class TripActionsExportNormalizer
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
             'WeightOfGoodsCarriedKG' => 0,
-            'Origin' => $trip->getOrigin().", GB",
+            'OriginPlace' => $trip->getOrigin(),
+            'OriginCountry' => "GB",
             'LoadedOrder' => 1,
-            'Destination' => $this->getPlaceName($firstAction),
+            'DestinationPlace' => $firstAction->getName(),
+            'DestinationCountry' => $this->getCountry($firstAction),
             'UnloadedOrder' => 2,
             'RowNumber' => $rowNumber,
             // DateInput - ??
@@ -149,9 +152,11 @@ class TripActionsExportNormalizer
             'TypeOfGoods' => 'Empty',
             'DangerousGoods' => null,
             'WeightOfGoodsCarriedKG' => 0,
-            'Origin' => $this->getPlaceName($lastAction),
+            'OriginPlace' => $lastAction->getName(),
+            'OriginCountry' => $this->getCountry($lastAction),
             'LoadedOrder' => $lastAction->getNumber() + $numberOffset + 1,
-            'Destination' => $trip->getDestination().", GB",
+            'DestinationPlace' => $trip->getDestination(),
+            'DestinationCountry' => "GB",
             'UnloadedOrder' => $lastAction->getNumber() + $numberOffset + 2,
             'RowNumber' => $rowNumber,
             // DateInput - ??

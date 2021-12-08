@@ -98,7 +98,7 @@ class TripType extends AbstractType
             $trip = $event->getData();
             $event->getForm()->get('otherDetails')
                 ->add('axle_config', Gds\ChoiceType::class, [
-                    'choices' => array_merge(['Unchanged' => false], $trip->getTrailerSwapChoices()),
+                    'choices' => array_merge(['Unchanged' => null], $trip->getTrailerSwapChoices()),
                     'expanded' => false,
                     'label' => "New trailer axle configuration",
                     'label_attr' => ['class' => 'govuk-label--s'],

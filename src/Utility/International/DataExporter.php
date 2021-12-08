@@ -10,6 +10,7 @@ use App\Serializer\Encoder\SqlServerInsertEncoder;
 use App\Serializer\Normalizer\International\TripActionsExportNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
 use App\Utility\Export\AbstractDataExporter;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Throwable;
 
 class DataExporter extends AbstractDataExporter
 {
@@ -53,32 +55,29 @@ class DataExporter extends AbstractDataExporter
         $this->logger = $logger;
     }
 
-    public function uploadExportData(int $year, int $quarter): bool {
+    public function generateExportData(int $year, int $quarter, bool $uploadToBucket = false) {
         [$startDate, $endDate] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
         $trips = $this->tripRepository->getTripsForExport($startDate, $endDate);
-        $surveys = $this->getSurveysForTrips($trips);
-        $now = new \DateTime();
+        $now = new DateTime();
 
-        $transitionedIds = [];
         try {
-            $transitionedIds = $this->startExport($surveys);
+            $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-irhs-');
 
-            $sql =
-                $this->getTripsSQL($trips).
-                "\n\n".
-                $this->getActionsSQL($trips);
+            $this->getTripsSQL($trips, $sqlFilename);
+            file_put_contents($sqlFilename, "\n\n", FILE_APPEND);
+            $this->getActionsSQL($trips, $sqlFilename);
 
-            $this->exportHelper->upload($sql, $year, $quarter);
+            if ($uploadToBucket) {
+                $this->exportHelper->upload(file_get_contents($sqlFilename), $year, $quarter);
+            }
 
             foreach($trips as $trip) {
                 $trip->setExportDate($now);
             }
 
-            $this->confirmExport($surveys);
-            return true;
-        } catch (\Throwable $e) {
-            $this->cancelExport($surveys, $transitionedIds);
+            return $sqlFilename;
+        } catch (Throwable $e) {
             $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
             return false;
         }
@@ -129,14 +128,24 @@ class DataExporter extends AbstractDataExporter
         return $surveys;
     }
 
-    protected function getTripsSQL(array $trips): string
+    protected function getTripsSQL(array $trips, $outputFilename)
     {
-        return $this->serializer->serialize($trips, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]);
+        // This needs to be done in two parts, as the TripNormalizer doesn't normalize dates
+        $tripNormData = $this->serializer->normalize($trips);
+        file_put_contents(
+            $outputFilename,
+            $this->serializer->serialize($tripNormData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]),
+            FILE_APPEND
+        );
     }
 
-    protected function getActionsSQL($surveys): string
+    protected function getActionsSQL($surveys, $outputFilename)
     {
         $normalized = $this->tripActionsExportNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
-        return $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]);
+        file_put_contents(
+            $outputFilename,
+            $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]),
+            FILE_APPEND
+        );
     }
 }

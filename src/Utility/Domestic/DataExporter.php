@@ -60,7 +60,7 @@ class DataExporter extends AbstractDataExporter
     {
         $surveyIDs = $this->surveyRepository->getSurveyIDsForExport($year, $quarter);
         try {
-            $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-');
+            $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-csrgt-');
 
             $this->getVehiclesSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")."\n";
             $this->getDetailedDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")."\n";

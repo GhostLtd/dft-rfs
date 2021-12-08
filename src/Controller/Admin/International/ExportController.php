@@ -5,9 +5,11 @@ namespace App\Controller\Admin\International;
 use App\Form\ConfirmationType;
 use App\Utility\International\ExportHelper;
 use App\Utility\International\DataExporter;
+use DateTime;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,8 +67,11 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                if ($dataExporter->uploadExportData($year, $quarter)) {
-                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['quarter' => $quarter, 'year' => $year]));
+                if ($filename = $dataExporter->generateExportData($year, $quarter)) {
+                    $now = new DateTime();
+                    return $this
+                        ->file(new File($filename), "IRHS_export_{$year}_Q{$quarter}_{$now->format('Ymd_Hi')}.sql")
+                        ->deleteFileAfterSend(true);
                 } else {
                     $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                         $translator->trans('international.export-failed-notification.title', [], 'admin'),

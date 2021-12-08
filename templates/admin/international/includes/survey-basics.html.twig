@@ -26,7 +26,7 @@
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
-        {{ actionlessSummaryListRow('Last logged in', survey.passcodeUser.lastLogin ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
+        {{ actionlessSummaryListRow('Last logged in', (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
     {%- endif -%}
     {%- if pdfs is defined and pdfs is not empty -%}
         {%- set pdfContent -%}
