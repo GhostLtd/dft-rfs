@@ -60,7 +60,7 @@ class ReportFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'maxYear' => intval((new \DateTime())->format('Y')),
+            'maxYear' => intval((new \DateTime())->format('Y')) + 1,
             'excludeChoices' => [],
         ]);
 
