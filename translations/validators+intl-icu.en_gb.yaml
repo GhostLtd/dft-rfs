@@ -115,11 +115,13 @@ international:
       not-null: Specify the reason that no work was done during the survey period
   trip:
     cargo-state-how-at-capacity: Select how the vehicle was at capacity
+    carrying-capacity: Enter the carrying capacity
     dates:
       not-return-before-departure: Return date must be the same as or after date of leaving
       outside-period: Date must be within the survey period
     destination:
       not-blank: Enter where the trip ended
+    gross-weight: Enter the gross weight
     origin:
       not-blank: Enter where the trip started
     outbound:

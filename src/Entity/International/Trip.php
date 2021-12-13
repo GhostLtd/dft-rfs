@@ -234,13 +234,13 @@ class Trip
         }
 
         if (empty($this->carryingCapacity)) {
-            $context->buildViolation('international.trip.dates.outside-period')
+            $context->buildViolation('international.trip.carrying-capacity')
                 ->atPath('carrying_capacity')
                 ->addViolation();
         }
 
         if (empty($this->grossWeight)) {
-            $context->buildViolation('international.trip.dates.outside-period')
+            $context->buildViolation('international.trip.gross-weight')
                 ->atPath('gross_weight')
                 ->addViolation();
         }
