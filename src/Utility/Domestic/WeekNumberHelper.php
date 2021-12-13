@@ -13,7 +13,7 @@ class WeekNumberHelper extends AbstractWeekNumberHelper
         return $shortName ? 'Mon' : 'Monday';
     }
 
-    public static function getDateForWeekNumberAndGenDate(int $weekNumber, DateTimeInterface $genDate): DateTime
+    public static function getDateForWeekNumberAndGenDate(int $weekNumber, DateTimeInterface $genDate): ?DateTime
     {
         $year = self::getYearForWeekNumberAndGenDate($weekNumber, $genDate);
         return self::getDateForYearAndWeek($year, $weekNumber);
