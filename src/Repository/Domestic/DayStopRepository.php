@@ -68,32 +68,21 @@ class DayStopRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    // /**
-    //  * @return DayStop[] Returns an array of DayStop objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findOneForDelete(string $stopId): ?DayStop
     {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        try {
+            return $this->createQueryBuilder('ds')
+                ->select('ds, day, stops')
+                ->leftJoin('ds.day', 'day')
+                ->leftJoin('day.stops', 'stops')
+                ->where('ds.id = :stopId')
+                ->setParameters([
+                    'stopId' => $stopId,
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?DayStop
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
