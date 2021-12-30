@@ -1842,7 +1842,7 @@ errors:
     title: Scheduled maintenance - Service unavailable
     heading: Scheduled maintenance - Service unavailable
     copy: |-
-      The service is undergoing scheduled maintenance, and is not availble. Check back in 15 minutes.
+      The service is undergoing scheduled maintenance, and is not available. Check back in 15 minutes.
 
 maintenance-warning:
     banner:
