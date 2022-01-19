@@ -92,7 +92,7 @@ class TripNormalizer extends AbstractExportNormalizer
                 return join(', ', array_unique($countries));
             }),
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
-            'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
+            'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETRES),
             'MilesYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_MILES),
             'DatesNotEntered' => new BooleanLiteral(false),
             'OutwardJourneyNotEntered' => new BooleanLiteral(false),

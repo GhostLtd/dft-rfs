@@ -109,10 +109,10 @@ common:
         one {1.0 mile}
         other {{value, number} miles}
       }
-    kilometers: >-
+    kilometres: >-
       {value, plural,
-        one {1.0 kilometer}
-        other {{value, number} kilometers}
+        one {1.0 kilometre}
+        other {{value, number} kilometres}
       }
   number:
     plain: "{value, number}"
@@ -167,12 +167,10 @@ common:
 unit:
   distance:
     miles: Miles
-    kilometers: Kilometers
+    kilometres: Kilometres
   volume:
     litres: Litres
     gallons: Gallons
-
-
 
 passcode:
   login:

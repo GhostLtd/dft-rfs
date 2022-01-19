@@ -36,13 +36,13 @@ class DetailedDayNormalizer extends AbstractExportNormalizer
                 if ($stop->getGoodsDescription() === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
                     return 0;
                 }
-                return $stop->getDistanceTravelled()->getValueNormalized(Distance::UNIT_KILOMETERS);
+                return $stop->getDistanceTravelled()->getValueNormalized(Distance::UNIT_KILOMETRES);
             }),
             'Empty' => new Callback(function(DayStop $stop){
                 if ($stop->getGoodsDescription() !== AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
                     return 0;
                 }
-                return $stop->getDistanceTravelled()->getValueNormalized(Distance::UNIT_KILOMETERS);
+                return $stop->getDistanceTravelled()->getValueNormalized(Distance::UNIT_KILOMETRES);
             }),
             'WeightOfGoodsCarriedKG' => new NullIsZeroProperty('weightOfGoodsCarried'),
             'RowNumber' => new Property('number'),

@@ -30,7 +30,7 @@ class DaySummaryTestExtended extends AbstractWizardTest
                         10,
                         Distance::UNIT_MILES,
                         16,
-                        Distance::UNIT_KILOMETERS,
+                        Distance::UNIT_KILOMETRES,
                         AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
                         'Bread',
                         'RC',

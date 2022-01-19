@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Domestic;
 
+use App\Entity\Distance;
 use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
@@ -74,11 +75,11 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     "distance_travelled" => [
                         "distanceTravelledLoaded" => [
                             "value" => 10,
-                            "unit" => "miles",
+                            "unit" => Distance::UNIT_MILES,
                         ],
                         "distanceTravelledUnloaded" => [
                             "value" => 16,
-                            "unit" => "kilometers",
+                            "unit" => Distance::UNIT_KILOMETRES,
                         ],
                     ]
                 ])
