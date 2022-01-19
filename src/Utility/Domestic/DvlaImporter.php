@@ -43,8 +43,9 @@ class DvlaImporter extends AbstractBulkSurveyImporter
     ];
 
     private $regex;
+    private NotificationInterceptionService $notificationInterception;
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
     {
         parent::__construct($validator);
 
@@ -53,6 +54,8 @@ class DvlaImporter extends AbstractBulkSurveyImporter
             $this->regex .= "(?<$name>.{{$length}})";
         }
         $this->regex .= "/";
+
+        $this->notificationInterception = $notificationInterception;
     }
 
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)
@@ -122,11 +125,13 @@ class DvlaImporter extends AbstractBulkSurveyImporter
         $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
         $surveyPeriodEnd->add(new DateInterval('P6D'));
 
-        return $survey
+        $survey
             ->setSurveyPeriodEnd($surveyPeriodEnd)
             ->setRegistrationMark($surveyData[self::COL_REG_MARK])
             ->setInvitationAddress($this->createAddress($surveyData))
             ;
+
+        return $this->notificationInterception->checkAndInterceptSurvey($survey);
     }
 
     protected function createAddress($surveyData)

@@ -9,7 +9,9 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {% for survey in surveys %}
-            {{ actionlessSummaryListRow(survey.registrationMark | formatRegMark, survey.invitationAddress | formatAddress) }}
+            {# @var survey \App\Entity\Domestic\Survey #}
+            {% set email = survey.invitationEmail ? " (#{survey.invitationEmail})" : "" %}
+            {{ actionlessSummaryListRow(survey.registrationMark | formatRegMark, (survey.invitationAddress | formatAddress) ~ email) }}
         {% endfor %}
     </dl>
 {% endblock %}

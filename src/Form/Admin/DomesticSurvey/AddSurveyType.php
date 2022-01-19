@@ -43,7 +43,6 @@ class AddSurveyType extends AbstractType
                 'label' => "{$translationKeyPrefix}.invitation-email.label",
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'disabled' => true,
             ])
             ->add('invitationAddress', LongAddressType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-address.label",

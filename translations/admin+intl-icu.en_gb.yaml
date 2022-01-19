@@ -10,6 +10,7 @@ menu:
     export: Export
     dvla-import: DVLA bulk import
     driver-availability-export: Driver availability
+    notification-interception: LCNI
   international:
     root: IRHS
     surveys: Surveys

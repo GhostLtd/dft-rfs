@@ -1,0 +1,32 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.domestic.notification-interception" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd, pagination -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    {{ listTableStart(data, form) }}
+    {% for ni in data.entities %}
+        <tr class="govuk-table__row">
+            {{ tableCell(ni.addressLine) }}
+            {{ tableCell(ni.email) }}
+            {%- set srHiddenSuffix = "#{translation_prefix}.sr-hidden-suffix" -%}
+            {%- set srHiddenSuffixParams = {
+                addressLine: ni.addressLine
+            } -%}
+            {{ tableCell(actionLinks({
+                (url('admin_domestic_notification_interception_edit', {id: ni.id})): {label: 'common.actions.edit', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams},
+                (url('admin_domestic_notification_interception_delete', {id: ni.id})): {label: 'common.actions.delete', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams},
+            }), {}) }}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No entries": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form, false) }}
+
+    <a class="govuk-button" href="{{ url('admin_domestic_notification_interception_add') }}">{{ "#{translation_prefix}.button.add" | trans }}</a>
+
+    {{ pagination(data) }}
+{% endblock %}

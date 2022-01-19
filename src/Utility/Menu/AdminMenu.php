@@ -52,6 +52,7 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('export', 'menu.domestic.export', $this->router->generate(DomExportControllerAlias::EXPORT_ROUTE), [], []),
                 new RoleMenuItem('add-survey', 'menu.domestic.survey-add', $this->router->generate('admin_domestic_survey_add'), [], []),
                 new RoleMenuItem('driver-availability-export', 'menu.domestic.driver-availability-export', $this->router->generate('admin_domestic_driveravailabilityexport_index'), [], []),
+                new RoleMenuItem('notification-interception', 'menu.domestic.notification-interception', $this->router->generate('admin_domestic_notification_interception_list'), [], []),
             ]),
             new MenuDivider(),
 

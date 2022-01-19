@@ -264,6 +264,36 @@ admin:
       heading: Edit Business and Vehicle details
     edit-vehicle-details:
       heading: Edit Vehicle details
+    notification-interception:
+      add:
+        heading: Add LCNI
+        confirmed-notification:
+          heading: LCNI added
+          content: The LCNI was successfully added
+      button.add: Add LCNI
+      delete:
+        heading: "Delete LCNI: {addressLine}"
+        cancel.label: Cancel
+        confirm.label: Yes, delete
+        warning: Are you sure you wish to delete this item?
+        confirmed-notification:
+          heading: LCNI deleted
+          content: The LCNI was successfully deleted
+        cancelled-notification:
+          heading: LCNI not deleted
+          content: The request to delete the LCNI was cancelled
+      edit.heading: Edit LCNI
+      form:
+        address-line:
+          label: Address line
+          help: ''
+        cancel: Cancel
+        email:
+          label: Email
+          help: ''
+        submit: Save changes
+      heading: Large company notify interceptions
+      sr-hidden-suffix: "large company notify interception with address line: {addressLine}"
     survey-add:
       heading: Add CSRGT survey
     survey-add-success:

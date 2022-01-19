@@ -69,8 +69,8 @@ class PersonalisationHelper
 
     private function getForHaulageSurveys(HaulageSurveyInterface $survey): array
     {
-        $periodStart = $survey->getSurveyPeriodStart()->format('l, jS F Y');
-        $periodEnd = $survey->getSurveyPeriodEnd()->format('l, jS F Y');
+        $periodStart = $survey->getSurveyPeriodStart()->format('l jS F Y');
+        $periodEnd = $survey->getSurveyPeriodEnd()->format('l jS F Y');
         return [
             'surveyPeriodStart' => $periodStart,
             'surveyPeriodEnd' => $periodEnd,
