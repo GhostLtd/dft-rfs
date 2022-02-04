@@ -28,7 +28,7 @@ class IndexController extends AbstractController
     /**
      * @Route(name=self::SUMMARY_ROUTE)
      * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())", )
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
     public function index(): Response
     {
@@ -65,19 +65,13 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())")
+     * @Redirect("!is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_summary")
      * @Route("/completed", name=self::COMPLETED_ROUTE)
      */
     public function completed(): Response
     {
-        $survey = $this->getSurvey();
-
-        if (!$this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
-            return new RedirectResponse($this->generateUrl(self::SUMMARY_ROUTE));
-        }
-
         return $this->render('domestic_survey/thanks.html.twig', [
-            'survey' => $survey,
+            'survey' => $this->getSurvey(),
         ]);
     }
 
