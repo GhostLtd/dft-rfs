@@ -31,7 +31,12 @@
     {{- row('domestic.driver-availability.wages.have-wages-increased.label' | trans, _self.choiceOrNull(availability.haveWagesIncreased, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
     {% if showAll or availability.haveWagesIncreased == 'yes' %}
         {{- row('domestic.driver-availability.wages.wage-increase-period.label' | trans, _self.choiceOrNull(availability.wageIncreasePeriod, 'domestic.driver-availability.wages.wage-increase-period.choices', availability.wageIncreasePeriodOther)) -}}
-        {{- row('domestic.driver-availability.wages.average-wage-increase.label' | trans, _self.valueUnitOrNull(availability.averageWageIncrease)) -}}
+
+        {% set averageWageIncrease = availability.averageWageIncrease != null ?
+            _self.money(availability.averageWageIncrease) :
+            (availability.legacyAverageWageIncreasePercentage ? (availability.legacyAverageWageIncreasePercentage ~ "%") : '-')
+        %}
+        {{- row('domestic.driver-availability.wages.average-wage-increase.label' | trans, averageWageIncrease) -}}
         {{- row('domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans, _self.listOrNull(availability.reasonsForWageIncrease, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')) -}}
     {% endif %}
 </dl>
@@ -40,11 +45,18 @@
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- row('domestic.driver-availability.bonuses.has-paid-bonus.label' | trans, _self.choiceOrNull(availability.hasPaidBonus, 'domestic.driver-availability.yes-no-plan-to.choices')) -}}
     {% if showAll or availability.hasPaidBonus == 'yes' %}
-        {{- row('domestic.driver-availability.bonuses.average-bonus.label' | trans, _self.intOrNull(availability.averageBonus, " GBP")) -}}
+        {{- row('domestic.driver-availability.bonuses.average-bonus.label' | trans, _self.money(availability.averageBonus)) -}}
         {{- row('domestic.driver-availability.bonuses.reasons-for-bonuses.label' | trans, _self.listOrNull(availability.reasonsForBonuses, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.bonuses.reasons-for-bonuses.choices')) -}}
     {% endif %}
 </dl>
 
+{%- macro money(value) -%}
+    {%- if value is null -%}
+        {{ '-' }}
+    {%- else -%}
+        {{ (value/100) | number_format(2) }} GBP
+    {%- endif -%}
+{%- endmacro -%}
 
 {%- macro boolOrNull(value) -%}
     {%- if value is same as null -%}

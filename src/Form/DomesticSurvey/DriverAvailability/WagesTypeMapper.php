@@ -23,15 +23,8 @@ class WagesTypeMapper extends PropertyPathMapper
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
 
         if ($driverAvailability && isset($forms['haveWagesIncreased'])) {
-            $wageIncrease = $driverAvailability->getAverageWageIncrease();
-            $wageIncreaseValue = $wageIncrease ? $wageIncrease->getValue() : null;
-
-            if ($wageIncrease && $wageIncrease->getUnit() === CurrencyOrPercentage::UNIT_PERCENTAGE) {
-                $wageIncreaseValue = null; // This option is no longer allowed
-            }
-
             $forms['haveWagesIncreased']->setData($driverAvailability->getHaveWagesIncreased());
-            $forms['averageWageIncrease']->setData($wageIncreaseValue);
+            $forms['averageWageIncrease']->setData($driverAvailability->getAverageWageIncrease());
             $forms['wageIncreasePeriod']->setData($driverAvailability->getWageIncreasePeriod());
             $forms['wageIncreasePeriodOther']->setData($driverAvailability->getWageIncreasePeriodOther());
             $forms['reasonsForWageIncrease']->setData($driverAvailability->getReasonsForWageIncrease());
@@ -54,20 +47,16 @@ class WagesTypeMapper extends PropertyPathMapper
 
         $driverAvailability = $data->getSurvey()->getDriverAvailability();
 
-        $wageIncreaseValue = $forms['averageWageIncrease']->getData();
-        $wageIncrease = $wageIncreaseValue ?
-            (new CurrencyOrPercentage())
-                ->setUnit(CurrencyOrPercentage::UNIT_CURRENCY)
-                ->setValue($wageIncreaseValue) :
-            null;
-
         $driverAvailability
             ->setHaveWagesIncreased($forms['haveWagesIncreased']->getData())
-            ->setAverageWageIncrease($wageIncrease)
+            ->setAverageWageIncrease($forms['averageWageIncrease']->getData())
             ->setWageIncreasePeriod($forms['wageIncreasePeriod']->getData())
             ->setWageIncreasePeriodOther($forms['wageIncreasePeriodOther']->getData())
             ->setReasonsForWageIncrease($forms['reasonsForWageIncrease']->getData())
             ->setReasonsForWageIncreaseOther($forms['reasonsForWageIncreaseOther']->getData());
+
+        // Clear legacy field
+        $driverAvailability->setLegacyAverageWageIncreasePercentage(null);
 
         if ($driverAvailability->getHaveWagesIncreased() !== 'yes') {
             $driverAvailability

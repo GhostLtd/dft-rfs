@@ -95,6 +95,10 @@ class DriverAvailabilityExportHelper
             $r['reasonsForDriverVacancies'] = join(', ', $r['reasonsForDriverVacancies'] ?? []);
             $r['reasonsForWageIncrease'] = join(', ', $r['reasonsForWageIncrease'] ?? []);
             $r['reasonsForBonuses'] = join(', ', $r['reasonsForBonuses'] ?? []);
+
+            $r['averageWageIncrease'] = $r['averageWageIncrease'] === null ? null : number_format($r['averageWageIncrease'] / 100, 2);
+            $r['averageBonus'] = $r['averageBonus'] === null ? null : number_format($r['averageBonus'] / 100, 2);
+
             fputcsv($handle, $r);
         }
         fclose($handle);
@@ -167,8 +171,7 @@ class DriverAvailabilityExportHelper
                 
                 d.numberOfDriversThatHaveLeft,
                 d.haveWagesIncreased,
-                d.averageWageIncrease.value,
-                d.averageWageIncrease.unit,
+                d.averageWageIncrease,
                 d.wageIncreasePeriod,
                 d.wageIncreasePeriodOther,
                 d.reasonsForWageIncrease,

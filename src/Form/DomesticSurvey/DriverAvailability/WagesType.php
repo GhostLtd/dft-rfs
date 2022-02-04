@@ -46,7 +46,7 @@ class WagesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.average-wage-increase.help",
                 'attr' => ['class' => 'govuk-input--width-5'],
-                'divisor' => 1,
+                'divisor' => 100,
             ])
             ->add('wageIncreasePeriod', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.wageIncreasePeriod',

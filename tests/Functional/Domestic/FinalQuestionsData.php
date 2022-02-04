@@ -95,7 +95,7 @@ class FinalQuestionsData
                     'wages' => [
                         'haveWagesIncreased' => 'yes',
                         'increased_wages_yes' => [
-                            'averageWageIncrease' => '10',
+                            'averageWageIncrease' => '10.23',
                             'wageIncreasePeriod' => 'weekly',
                             'reasonsForWageIncrease' => [
                                 0 => 'planned',
@@ -110,7 +110,7 @@ class FinalQuestionsData
                     'bonuses' => [
                         'hasPaidBonus' => 'yes',
                         'paid_bonus_yes' => [
-                            'averageBonus' => '10',
+                            'averageBonus' => '11.23',
                         ],
                     ],
                 ]),

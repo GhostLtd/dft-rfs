@@ -54,7 +54,7 @@ class BonusesType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.average-bonus.help",
                 'attr' => ['class' => 'govuk-input--width-5'],
-                'divisor' => 1,
+                'divisor' => 100,
             ])
         ;
 

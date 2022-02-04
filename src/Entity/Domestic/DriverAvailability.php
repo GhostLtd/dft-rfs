@@ -148,10 +148,15 @@ class DriverAvailability
     private ?string $haveWagesIncreased = null;
 
     /**
-     * @ORM\Embedded(class=CurrencyOrPercentage::class)
-     * @AppAssert\ValidValueUnit(groups={"driver-availability.wages"}, allowBlank=true)
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.wages"})
      */
-    private ?CurrencyOrPercentage $averageWageIncrease = null;
+    private ?string $averageWageIncrease = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?string $legacyAverageWageIncreasePercentage = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -183,6 +188,7 @@ class DriverAvailability
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\PositiveOrZero(groups={"driver-availability.bonuses"})
      */
     private ?int $averageBonus = null;
 
@@ -299,18 +305,6 @@ class DriverAvailability
     public function setHaveWagesIncreased(?string $haveWagesIncreased): self
     {
         $this->haveWagesIncreased = $haveWagesIncreased;
-
-        return $this;
-    }
-
-    public function getAverageWageIncrease(): ?CurrencyOrPercentage
-    {
-        return $this->averageWageIncrease;
-    }
-
-    public function setAverageWageIncrease(?CurrencyOrPercentage $averageWageIncrease): self
-    {
-        $this->averageWageIncrease = $averageWageIncrease;
 
         return $this;
     }
@@ -498,6 +492,28 @@ class DriverAvailability
     {
         $this->exportedDate = $exportedDate;
 
+        return $this;
+    }
+
+    public function getAverageWageIncrease(): ?string
+    {
+        return $this->averageWageIncrease;
+    }
+
+    public function setAverageWageIncrease(?string $averageWageIncrease): self
+    {
+        $this->averageWageIncrease = $averageWageIncrease;
+        return $this;
+    }
+
+    public function getLegacyAverageWageIncreasePercentage(): ?string
+    {
+        return $this->legacyAverageWageIncreasePercentage;
+    }
+
+    public function setLegacyAverageWageIncreasePercentage(?string $legacyAverageWageIncreasePercentage): self
+    {
+        $this->legacyAverageWageIncreasePercentage = $legacyAverageWageIncreasePercentage;
         return $this;
     }
 }
