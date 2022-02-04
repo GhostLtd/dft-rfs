@@ -515,6 +515,11 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this->days->filter(fn(Day $day) => $day->getStops()->count() !== 0)->count();
     }
 
+    public function getTotalDayCount(): int
+    {
+        return $this->getSummaryDayCount() + $this->getStopDayCount();
+    }
+
     public function getHireeTelephone(): ?string
     {
         return $this->hireeTelephone;
