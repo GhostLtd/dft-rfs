@@ -127,7 +127,7 @@ trait SurveyTrait
         return $this;
     }
 
-    public function getState(): string
+    public function getState(): ?string
     {
         return $this->state;
     }

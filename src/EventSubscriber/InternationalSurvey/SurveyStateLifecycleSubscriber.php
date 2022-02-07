@@ -36,7 +36,10 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
         }
 
         // it's a new survey
-        $entity->setState(Survey::STATE_NEW);
+        if (!$entity->getState()) {
+            $entity->setState(Survey::STATE_NEW);
+        }
+
         if (!$entity->getPasscodeUser()) {
             $entity->setPasscodeUser($this->passcodeGenerator->createNewPasscodeUser());
         }

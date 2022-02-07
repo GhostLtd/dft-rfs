@@ -33,7 +33,7 @@ interface SurveyInterface
     public function getResponseStartDate(): ?DateTime;
     public function getSubmissionDate(): ?DateTime;
     public function setSubmissionDate(?DateTime $submissionDate): self;
-    public function getState(): string;
+    public function getState(): ?string;
     public function setState($state): self;
     public function getInvitationEmail(): ?string;
     public function getInvitationAddress(): ?LongAddress;
