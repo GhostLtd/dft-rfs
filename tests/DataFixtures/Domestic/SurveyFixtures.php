@@ -21,7 +21,6 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
             ->setSurveyPeriodEnd(new \DateTime('2021-05-10'))
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
-            ->setInvitationEmail('test@example.com')
             ->setPasscodeUser($user)
             ->setState(Survey::STATE_NEW);
 

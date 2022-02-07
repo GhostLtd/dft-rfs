@@ -29,7 +29,6 @@ class SurveyHiredFixtures extends Fixture implements DependentFixtureInterface
             ->setSurveyPeriodEnd(new \DateTime('2021-04-10'))
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
-            ->setInvitationEmail('second@example.com')
             ->setPasscodeUser($user)
             ->setResponse($response)
             ->setState(Survey::STATE_CLOSED);

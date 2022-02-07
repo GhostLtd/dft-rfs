@@ -5,6 +5,7 @@ namespace App\Messenger\AlphagovNotify;
 
 use App\Messenger\AbstractAsyncMessage;
 use App\Utility\AlphagovNotify\Reference;
+use Doctrine\Common\Util\ClassUtils;
 
 abstract class AbstractMessage extends AbstractAsyncMessage
 {
@@ -17,12 +18,12 @@ abstract class AbstractMessage extends AbstractAsyncMessage
 
     public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $templateId, $personalisation = [], ?string $reference = null)
     {
-        $this->originatingEntityClass = $originatingEntityClass;
+        $this->originatingEntityClass = ClassUtils::getRealClass($originatingEntityClass);
         $this->originatingEntityId = $originatingEntityId;
         $this->templateId = $templateId;
         $this->personalisation = $personalisation;
         if (empty($reference)) {
-            $this->reference = "{$originatingEntityClass}::{$originatingEntityId}";
+            $this->reference = "{$this->originatingEntityClass}::{$this->originatingEntityId}";
         } else {
             $this->reference = $reference;
         }

@@ -24,7 +24,6 @@ class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
             ->setSurveyPeriodEnd(new \DateTime('2021-05-10'))
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 XYZ')
-            ->setInvitationEmail('test-null-pw@example.com')
             ->setPasscodeUser($user)
             ->setState(Survey::STATE_NEW);
 
