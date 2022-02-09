@@ -29,8 +29,9 @@ class TextFilter extends Simple implements FilterableInterface
 
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
+        $trimmed = trim($formData);
         return $queryBuilder
             ->andWhere("{$this->getPropertyPath()} LIKE :{$this->getId()}")
-            ->setParameter($this->getId(), "%{$formData}%");
+            ->setParameter($this->getId(), "%{$trimmed}%");
     }
 }

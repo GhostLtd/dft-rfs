@@ -11,6 +11,7 @@ use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\QaChoiceFilter;
 use App\ListPage\Field\Simple;
 use App\ListPage\Field\SpaceStrippingTextFilter;
+use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -47,9 +48,7 @@ class SurveyListPage extends AbstractListPage
 
         return [
             (new WeekYearFilter('Week', 'survey.surveyPeriodStart'))->sortable(),
-//            (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
-//            (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
-            (new SpaceStrippingTextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
+            (new TextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
             (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new QaChoiceFilter("QA'd?", 'survey.qualityAssured', [

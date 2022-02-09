@@ -4,7 +4,7 @@ namespace App\ListPage\Domestic;
 
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\Simple;
-use App\ListPage\Field\SpaceStrippingTextFilter;
+use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\NotificationInterceptionRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -25,8 +25,8 @@ class NotificationInterceptionListPage extends AbstractListPage
     protected function getFieldsDefinition(): array
     {
         return [
-            (new SpaceStrippingTextFilter('Address line', 'ni.addressLine'))->sortable(),
-            (new SpaceStrippingTextFilter('Email', 'ni.email'))->sortable(),
+            (new TextFilter('Address line', 'ni.addressLine'))->sortable(),
+            (new TextFilter('Email', 'ni.email'))->sortable(),
         ];
     }
 

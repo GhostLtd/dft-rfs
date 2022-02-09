@@ -4,11 +4,13 @@ namespace App\Entity\Domestic;
 
 use App\Repository\Domestic\NotificationInterceptionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=NotificationInterceptionRepository::class)
  * @ORM\Table("domestic_notification_interception")
+ * @UniqueEntity("addressLine", groups={"notification_interception"})
  */
 class NotificationInterception
 {
@@ -20,7 +22,7 @@ class NotificationInterception
     private ?int $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(groups={"notification_interception"}, message="Address line must not be empty")
      * @Assert\Regex(groups={"notification_interception"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"notification_interception"})
