@@ -15,7 +15,7 @@
             {{ tableCell(preEnquiry.company.businessName) }}
             {{ tableCell(tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
             {{ tableCell(reminderDate(preEnquiry.firstReminderSentDate, preEnquiry.secondReminderSentDate)) }}
-            {{ tableCell(actionLinks({(url('admin_pre_enquiry_view', {preEnquiryId: preEnquiry.id})): {label: 'view', srHiddenSuffix: "pre-enquiry for #{preEnquiry.company.businessName}"}}), {}) }}
+            {{ tableCell(actionLinks({(url('admin_preenquiry_view', {preEnquiryId: preEnquiry.id})): {label: 'view', srHiddenSuffix: "pre-enquiry for #{preEnquiry.company.businessName}"}}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

@@ -29,6 +29,14 @@ class VehicleQuestionsType extends AbstractType
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
+            ->add('annualJourneyEstimate', Gds\NumberType::class, [
+                'label' => "pre-enquiry.vehicle-questions.annual-journey-estimate.label",
+                'help' => "pre-enquiry.vehicle-questions.annual-journey-estimate.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => [
+                    'class' => 'govuk-input--width-3',
+                ],
+            ])
         ;
     }
 

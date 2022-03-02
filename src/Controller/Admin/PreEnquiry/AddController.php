@@ -12,10 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PreEnquiryAddController extends AbstractController
+class AddController extends AbstractController
 {
     /**
-     * @Route("/pre-enquiry/add/", name=PreEnquiryController::ADD_ROUTE)
+     * @Route("/pre-enquiry/add/", name=EditController::ADD_ROUTE)
      */
     public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator): Response
     {

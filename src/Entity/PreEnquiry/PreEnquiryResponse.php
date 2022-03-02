@@ -79,15 +79,15 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
-     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"business_details"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
+     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details"})
      */
     private $numberOfEmployees;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
-     * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
+     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $annualJourneyEstimate;
 

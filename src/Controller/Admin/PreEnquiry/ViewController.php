@@ -20,10 +20,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/pre-enquiry/view/{preEnquiryId}")
+ * @Route("/pre-enquiry/{preEnquiryId}/view")
  * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
  */
-class PreEnquiryViewController extends AbstractController
+class ViewController extends AbstractController
 {
     private AuditLogRepository $logRepository;
 
@@ -33,7 +33,7 @@ class PreEnquiryViewController extends AbstractController
     }
 
     /**
-     * @Route("", name=PreEnquiryController::VIEW_ROUTE)
+     * @Route("", name=EditController::VIEW_ROUTE)
      */
     public function view(PreEnquiry $preEnquiry): Response
     {
@@ -49,7 +49,7 @@ class PreEnquiryViewController extends AbstractController
     }
 
     /**
-     * @Route("/add-note", name=PreEnquiryController::ADD_NOTE_ROUTE)
+     * @Route("/add-note", name=EditController::ADD_NOTE_ROUTE)
      * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="preEnquiry")
      */
     public function addNote(PreEnquiry $preEnquiry)
@@ -58,7 +58,7 @@ class PreEnquiryViewController extends AbstractController
         return $this->forward(SurveyAddNoteController::class . '::addNotePostAction', [
             'survey' => $preEnquiry,
             'addNoteForm' => $addNoteForm,
-            'viewSurveyRoute' => PreEnquiryController::VIEW_ROUTE,
+            'viewSurveyRoute' => EditController::VIEW_ROUTE,
             'viewSurveyRouteParams' => ['preEnquiryId' => $preEnquiry->getId()],
             'viewSurveyTemplate' => 'admin/pre_enquiry/view.html.twig',
             'additionalViewData' => $this->getPreEnquiryViewData($preEnquiry),
@@ -84,12 +84,12 @@ class PreEnquiryViewController extends AbstractController
     protected function getAddNoteForm(SurveyInterface $preEnquiry)
     {
         return $this->createForm(NoteType::class, new PreEnquiryNote(), [
-            'action' => SurveyAddNoteController::addNotesTabAnchor($this->generateUrl(PreEnquiryController::ADD_NOTE_ROUTE, ['preEnquiryId' => $preEnquiry->getId()])),
+            'action' => SurveyAddNoteController::addNotesTabAnchor($this->generateUrl(EditController::ADD_NOTE_ROUTE, ['preEnquiryId' => $preEnquiry->getId()])),
         ]);
     }
 
     /**
-     * @Route("/notes/{note}/delete", name=PreEnquiryController::DELETE_NOTE_ROUTE)
+     * @Route("/notes/{note}/delete", name=EditController::DELETE_NOTE_ROUTE)
      * @Template("admin/notes/delete.html.twig")
      * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="preEnquiry")
      */
@@ -102,12 +102,12 @@ class PreEnquiryViewController extends AbstractController
         return $deleteSurveyNoteConfirmAction
             ->setSubject($note)
             ->setExtraViewData([
-                'deleteRoute' => PreEnquiryController::DELETE_NOTE_ROUTE,
+                'deleteRoute' => EditController::DELETE_NOTE_ROUTE,
                 'deleteParams' => ['preEnquiryId' => $preEnquiry->getId()],
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(PreEnquiryController::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()])."#tab-notes"
+                fn() => $this->generateUrl(EditController::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()])."#tab-notes"
             );
     }
 }

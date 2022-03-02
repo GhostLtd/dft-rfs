@@ -33,7 +33,7 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
                 assert($data instanceof PreEnquiryResponse);
                 $expectedCompanyName = $data->getPreEnquiry()->getCompany()->getBusinessName();
 
-                $translationPrefix = 'pre-enquiry.business-details';
+                $translationPrefix = 'pre-enquiry.company-name';
                 $correctNamePrefix = "{$translationPrefix}.correct-company-name";
                 $companyNamePrefix = "{$translationPrefix}.company-name";
 

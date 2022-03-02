@@ -153,18 +153,18 @@ international:
 
 pre-enquiry:
   pre-enquiry-response:
-    annual-journey-estimate: Enter your annual international journey estimate
+    annual-journey-estimate: Enter an estimate of the number of international journeys in the next 12 months
     contact-address: Enter a contact address
     contact-email: Enter a contact email
     contact-name: Enter a contact name
     contact-telephone: Enter a contact telephone number
-    company-name: Enter your company name
+    company-name: Enter the company name
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
       not-blank: Enter the number of vehicles that will be used to make international journeys
     is-correct-address: Choose whether this is the correct correspondence address
     is-correct-company-name: Choose whether this is the correct company name
-    number-of-employees: Choose the national number of employees your firm has
+    number-of-employees: Choose the number of employees employed nationally
     vehicle-count: Enter the number of vehicles
 
 domestic:

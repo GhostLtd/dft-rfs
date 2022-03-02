@@ -29,15 +29,15 @@ class ResponseType extends AbstractType implements DataMapperInterface
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $businessDetailsPrefix = 'pre-enquiry.business-details';
+        $companyNamePrefix = 'pre-enquiry.company-name';
         $correspondenceDetailsPrefix = "pre-enquiry.correspondence-details";
         $correspondenceAddressPrefix = "pre-enquiry.correspondence-address";
-        $employeesAndJourneysPrefix = "pre-enquiry.employees-and-international-journeys";
+        $businessDetailsPrefix = "pre-enquiry.business-details";
         $vehicleQuestionsPrefix = "pre-enquiry.vehicle-questions";
 
         $builder
             ->setDataMapper($this)
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $formEvent) use ($businessDetailsPrefix, $correspondenceAddressPrefix) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $formEvent) use ($companyNamePrefix, $correspondenceAddressPrefix) {
                 $form = $formEvent->getForm();
                 $data = $formEvent->getData();
 
@@ -64,14 +64,14 @@ class ResponseType extends AbstractType implements DataMapperInterface
 
                 $form
                     ->add('isCorrectCompanyName', Gds\ChoiceType::class, [
-                        'label' => "{$businessDetailsPrefix}.correct-company-name.label",
+                        'label' => "{$companyNamePrefix}.correct-company-name.label",
                         'label_attr' => [
                             'class' => 'govuk-label--s',
                         ],
                         'label_translation_parameters' => [
                             'expectedCompanyName' => $expectedCompanyName,
                         ],
-                        'help' => "{$businessDetailsPrefix}.correct-company-name.help",
+                        'help' => "{$companyNamePrefix}.correct-company-name.help",
                         'choices' => self::CHOICES,
                         'choice_options' => [
                             self::CHOICE_NO => [
@@ -81,8 +81,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
                         'validation_groups' => ['Default'],
                     ])
                     ->add('companyName', Gds\InputType::class, [
-                        'label' => "{$businessDetailsPrefix}.company-name.label",
-                        'help' => "{$businessDetailsPrefix}.company-name.help",
+                        'label' => "{$companyNamePrefix}.company-name.label",
+                        'help' => "{$companyNamePrefix}.company-name.help",
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ])
                     ->add('contactAddress', LongAddressType::class, [
@@ -125,22 +125,22 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('numberOfEmployees', Gds\ChoiceType::class, [
-                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
-                'placeholder' => '',
-                'label' => "{$employeesAndJourneysPrefix}.number-of-employees.label",
-                'help' => "{$employeesAndJourneysPrefix}.number-of-employees.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-select--width-15'],
-                'expanded' => false,
-            ])
             ->add('annualJourneyEstimate', Gds\NumberType::class, [
-                'label' => "{$employeesAndJourneysPrefix}.annual-journey-estimate.label",
-                'help' => "{$employeesAndJourneysPrefix}.annual-journey-estimate.help",
+                'label' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.label",
+                'help' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.help",
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+            ->add('numberOfEmployees', Gds\ChoiceType::class, [
+                'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
+                'placeholder' => '',
+                'label' => "{$businessDetailsPrefix}.number-of-employees.label",
+                'help' => "{$businessDetailsPrefix}.number-of-employees.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-select--width-15'],
+                'expanded' => false,
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',

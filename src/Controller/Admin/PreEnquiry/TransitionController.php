@@ -12,10 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PreEnquiryTransitionController extends AbstractController
+class TransitionController extends AbstractController
 {
     /**
-     * @Route("/pre-enquiry/{preEnquiryId}/transition/{transition}", name=PreEnquiryController::TRANSITION_ROUTE,
+     * @Route("/pre-enquiry/{preEnquiryId}/transition/{transition}", name=EditController::TRANSITION_ROUTE,
      *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
      * )
      * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
@@ -32,7 +32,7 @@ class PreEnquiryTransitionController extends AbstractController
             $request,
             function() use ($preEnquiry) {
                 return $this->generateUrl(
-                    PreEnquiryController::VIEW_ROUTE,
+                    EditController::VIEW_ROUTE,
                     ['preEnquiryId' => $preEnquiry->getId()]
                 );
             });

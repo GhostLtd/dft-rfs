@@ -519,6 +519,8 @@ admin:
       heading: Pre-Enquiry Bulk sample import — Review Data
     sample-import-summary:
       heading: Pre-Enquiry Bulk sample import — Summary
+    export:
+      heading: Pre-Enquiry Export
 
   maintenance-warning:
     heading: Maintenance warnings
@@ -1194,16 +1196,16 @@ pre-enquiry:
     submit:
       label: Submit pre-enquiry
 
-  business-details:
-    heading: Business details
+  company-name:
+    heading: Company name
     title: ''
     help: ''
     correct-company-name:
-      label: 'Is the name of your company "{expectedCompanyName}"?'
+      label: 'Is the trading name of the company "{expectedCompanyName}"?'
       help: ''
     company-name:
       label: Company name
-      help: Please state the correct company name
+      help: Please state the correct trading name of the company
   correspondence-details:
     heading: Correspondence details
     title: ''
@@ -1241,15 +1243,15 @@ pre-enquiry:
     international-journey-vehicle-count:
       label: How many of these vehicles will be used to make international journeys?
       help: ''
-  employees-and-international-journeys:
-    heading: Employee count and international journeys
+    annual-journey-estimate:
+      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      help: ''
+  business-details:
+    heading: Business details
     title: ''
     help: ''
     number-of-employees:
-      label: How many people does the firm employee nationally?
-      help: ''
-    annual-journey-estimate:
-      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      label: How many people does the company employ nationally?
       help: ''
 
 # International

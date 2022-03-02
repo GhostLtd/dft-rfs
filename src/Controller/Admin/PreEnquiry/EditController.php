@@ -19,13 +19,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/irhs/pre-enquiry/{preEnquiryId}")
+ * @Route("/pre-enquiry/{preEnquiryId}")
  * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
  * @IsGranted(AdminSurveyVoter::EDIT, subject="preEnquiry")
  */
-class PreEnquiryController extends AbstractController
+class EditController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_pre_enquiry_';
+    private const ROUTE_PREFIX = 'admin_preenquiry_';
     public const ADD_ROUTE = self::ROUTE_PREFIX.'add';
     public const ADD_NOTE_ROUTE = self::ROUTE_PREFIX.'addnote';
     public const DELETE_NOTE_ROUTE = self::ROUTE_PREFIX.'deletenote';

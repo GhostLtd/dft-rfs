@@ -35,13 +35,13 @@
         {%- endwith -%}
 
         {%- if canEdit and not hasInitialDetails -%}
-            <a class="govuk-button" href="{{ path('admin_pre_enquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
+            <a class="govuk-button" href="{{ path('admin_preenquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
         {%- endif -%}
         {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_reveal_passcode', {preEnquiryId: preEnquiry.id}) }}">Reveal passcode</a>
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_reveal_passcode', {preEnquiryId: preEnquiry.id}) }}">Reveal passcode</a>
         {%- endif -%}
         {%- if canResend -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_pre_enquiry_resend', {id: preEnquiry.id}) }}">Change invitation details and resend survey</a>
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_resend', {id: preEnquiry.id}) }}">Change invitation details and resend survey</a>
         {%- endif -%}
     </div>
 
@@ -59,7 +59,7 @@
 
                     {%- if canEdit -%}
                     <div>
-                        <a class="govuk-button" href="{{ path('admin_pre_enquiry_edit_response', {preEnquiryId: preEnquiry.id}) }}">Edit<span class="govuk-visually-hidden"> response</span></a>
+                        <a class="govuk-button" href="{{ path('admin_preenquiry_edit_response', {preEnquiryId: preEnquiry.id}) }}">Edit<span class="govuk-visually-hidden"> response</span></a>
                     </div>
                     {%- endif -%}
                 </div>
@@ -72,7 +72,7 @@
             </div>
 
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
-                {%- with {marginBottom: 5, survey: preEnquiry, deleteRoute: 'admin_pre_enquiry_deletenote', deleteParams: {preEnquiryId: preEnquiry.id}} -%}
+                {%- with {marginBottom: 5, survey: preEnquiry, deleteRoute: 'admin_preenquiry_deletenote', deleteParams: {preEnquiryId: preEnquiry.id}} -%}
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
@@ -108,7 +108,7 @@
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
-            href: path('admin_pre_enquiry_transition', {preEnquiryId: preEnquiry.id, transition: transitionName}),
+            href: path('admin_preenquiry_transition', {preEnquiryId: preEnquiry.id, transition: transitionName}),
             class: ('govuk-button ' ~ (options.class | default('')) ) | trim
         })
     } -%}

@@ -23,6 +23,7 @@ menu:
     pre-enquiries: Pre-enquiries
     add: Add
     sample-import: Bulk sample import
+    export: Export
 
 format:
   date:

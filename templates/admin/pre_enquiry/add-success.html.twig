@@ -29,6 +29,6 @@
         {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 
-    <a class="govuk-button" href="{{ path('admin_pre_enquiry_view', {preEnquiryId: preEnquiry.id}) }}">View pre-enquiry</a>
+    <a class="govuk-button" href="{{ path('admin_preenquiry_view', {preEnquiryId: preEnquiry.id}) }}">View pre-enquiry</a>
 {% endblock %}
 

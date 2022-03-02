@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PreEnquiryListController extends AbstractController
+class ListController extends AbstractController
 {
     /**
-     * @Route("/pre-enquiry", name=PreEnquiryController::LIST_ROUTE)
+     * @Route("/pre-enquiry", name=EditController::LIST_ROUTE)
      */
     public function list(PreEnquiryListPage $listPage, Request $request): Response
     {

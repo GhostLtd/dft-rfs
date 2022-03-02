@@ -11,10 +11,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PreEnquiryPasscodeController extends AbstractController
+class PasscodeController extends AbstractController
 {
     /**
-     * @Route("/pre-enquiry/view/{preEnquiryId}/reveal-passcode", name="admin_pre_enquiry_reveal_passcode")
+     * @Route("/pre-enquiry/{preEnquiryId}/reveal-passcode", name="admin_preenquiry_reveal_passcode")
      * @Template("admin/pre_enquiry/reveal_passcode/index.html.twig")
      * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
      * @IsGranted(AdminSurveyVoter::RESET_PASSCODE, subject="preEnquiry")
