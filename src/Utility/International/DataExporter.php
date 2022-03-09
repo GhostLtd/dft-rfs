@@ -134,7 +134,10 @@ class DataExporter extends AbstractDataExporter
         $tripNormData = $this->serializer->normalize($trips);
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($tripNormData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails"]),
+            $this->serializer->serialize($tripNormData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails",
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => [],
+            ]),
             FILE_APPEND
         );
     }
@@ -144,7 +147,10 @@ class DataExporter extends AbstractDataExporter
         $normalized = $this->tripActionsExportNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($normalized, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails"]),
+            $this->serializer->serialize($normalized, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails",
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['DestinationPlace', 'OriginPlace'],
+            ]),
             FILE_APPEND
         );
     }

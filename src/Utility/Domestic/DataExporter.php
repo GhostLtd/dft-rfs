@@ -82,7 +82,10 @@ class DataExporter extends AbstractDataExporter
         $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs));
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]),
+            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination'],
+            ]),
             FILE_APPEND
         );
         $this->entityManager->clear();
@@ -93,7 +96,10 @@ class DataExporter extends AbstractDataExporter
         $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs));
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]),
+            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination'],
+            ]),
             FILE_APPEND
         );
         $this->entityManager->clear();
@@ -105,7 +111,10 @@ class DataExporter extends AbstractDataExporter
         $surveyArrayData = $this->surveySerializer->normalize($surveys);
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]),
+            $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['ContactTelNo'],
+            ]),
             FILE_APPEND
         );
         $this->entityManager->clear();
