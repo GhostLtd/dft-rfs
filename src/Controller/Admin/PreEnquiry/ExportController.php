@@ -44,9 +44,9 @@ class ExportController extends AbstractController
     public function month(SerializerInterface $serializer, EntityManagerInterface $em, int $year, int $month): Response
     {
         // select pre-enquiries that were completed in given month
-        $preEnquiries = dump($em
+        $preEnquiries = $em
             ->getRepository(PreEnquiry::class)
-            ->findForExportMonth($year, $month));
+            ->findForExportMonth($year, $month);
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'rfs-preenquiry-export-');
         file_put_contents($tmpFile, $serializer->serialize($preEnquiries, 'sql-server-insert', [
