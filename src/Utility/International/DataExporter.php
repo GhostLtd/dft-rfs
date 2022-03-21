@@ -136,7 +136,7 @@ class DataExporter extends AbstractDataExporter
             $outputFilename,
             $this->serializer->serialize($tripNormData, 'sql-server-insert', [
                 SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRVehicleDetails",
-                SqlServerInsertEncoder::FORCE_STRING_FIELDS => [],
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['VehicleOrigin', 'VehicleDestination'],
             ]),
             FILE_APPEND
         );
