@@ -90,6 +90,10 @@
             {%- endset -%}
             {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
         {%- endif -%}
+        {% if survey.invitationAddress.line1 ?? false %}
+            {% set businessLink %}<a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">{{ survey.invitationAddress.line1 }}</a>{% endset %}
+            {{- actionlessSummaryListRow('Business name', businessLink) -}}
+        {% endif %}
     </dl>
 
     <div class="govuk-!-margin-bottom-9">
