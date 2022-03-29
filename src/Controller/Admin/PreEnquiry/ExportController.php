@@ -28,7 +28,7 @@ class ExportController extends AbstractController
         // list last 12 months from last month
         $months = [];
         foreach (range(1, 12) as $m) {
-            $months[] = (new \DateTime())->modify("-{$m} months");
+            $months[] = (new \DateTime('first day of this month'))->modify("-{$m} months");
         }
 
         return [
