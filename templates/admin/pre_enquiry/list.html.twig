@@ -11,7 +11,7 @@
     {% for preEnquiry in data.entities %}
         <tr class="govuk-table__row">
             {{ tableCell(preEnquiry.referenceNumber|default('-')) }}
-            {{ tableCell(preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('Y-m-d') : '-') }}
+            {{ tableCell(preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-') }}
             {{ tableCell(preEnquiry.company.businessName) }}
             {{ tableCell(tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
             {{ tableCell(reminderDate(preEnquiry.firstReminderSentDate, preEnquiry.secondReminderSentDate)) }}

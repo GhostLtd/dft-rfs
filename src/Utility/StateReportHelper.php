@@ -20,7 +20,7 @@ class StateReportHelper
             [
                 SurveyInterface::STATE_APPROVED,
                 SurveyInterface::STATE_REJECTED,
-                SurveyInterface::STATE_EXPORTED,
+//                SurveyInterface::STATE_EXPORTED,
             ]);
 
         foreach($columns as $column) {
@@ -38,7 +38,7 @@ class StateReportHelper
         return [
             SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
             SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
+//            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
             SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
         ];
     }

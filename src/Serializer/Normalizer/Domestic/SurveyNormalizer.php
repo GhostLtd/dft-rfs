@@ -86,8 +86,11 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyAddressLine4' => new Property('invitationAddress.line5'),
             'SurveyAddressLine5' => new Property('invitationAddress.line6'),
             'SurveyPostcode' => new Property('invitationAddress.postcode'),
-//            'SurveyEmail' => '', // invitation email - not needed for our export
+            'SurveyEmail' => new Property('invitationEmail'),
+            'ContactName' => new Property('response.contactName'),
             'ContactTelNo' => new IntegerProperty('response.contactTelephone'),
+            'ContactEmail' => new IntegerProperty('response.contactEmail'),
+            'EmployeeCount' => new Property('response.numberOfEmployees'),
 // DVLA import data --->
 //            'FuelTypePropulsionCode' => '',
 //            'WheelPlanCode' => '',
@@ -115,7 +118,6 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'NotUsed' => new BooleanProperty('response.hasJourneys', false),
             'DisableReminders' => $false,
             'TickBoxForSortingRecords' => $false,
-            'ContactName' => new Property('response.contactName'),
             'SendEMail' => $false,
             'ReturnCodeID' => new ReturnCodeIdProperty(),
             'ArticOrRigidID' => new BooleanProperty('response.vehicle.trailerConfiguration', Vehicle::TRAILER_CONFIGURATION_ARTICULATED),

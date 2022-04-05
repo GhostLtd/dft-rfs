@@ -123,7 +123,7 @@ class TripActionsExportNormalizer
         $trip = $firstAction->getTrip();
 
         return [
-            'IHRConsignmentDetailsID' => $this->getGuid(),
+            'IHRConsignmentDetailsID' => $this->getGuid($trip->getId(), 'outbound'),
             'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
@@ -146,7 +146,7 @@ class TripActionsExportNormalizer
         $trip = $lastAction->getTrip();
 
         return [
-            'IHRConsignmentDetailsID' => $this->getGuid(),
+            'IHRConsignmentDetailsID' => $this->getGuid($trip->getId(), 'return'),
             'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => 'NS',
             'TypeOfGoods' => 'Empty',
@@ -164,11 +164,20 @@ class TripActionsExportNormalizer
         ];
     }
 
-    protected function getGuid(): string
+    /**
+     * We need reproducible UUIDs, so they are the same each time an export is run
+     */
+    protected function getGuid(string $seedGuid, string $context): string
     {
-        $connection = $this->entityManager->getConnection();
-        $expression = $connection->getDriver()->getDatabasePlatform()->getGuidExpression();
-        return $connection->executeQuery("SELECT {$expression} as guid")->fetchOne();
+        $data = md5($context . $seedGuid, true);
+
+        // Set version to 0100
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        // Set bits 6-7 to 10
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+        // Output the 36 character UUID.
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
     protected function normalizeName(string $name): string

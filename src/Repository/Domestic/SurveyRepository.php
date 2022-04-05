@@ -205,7 +205,7 @@ class SurveyRepository extends AbstractSurveyRepository
                         SurveyInterface::STATE_IN_PROGRESS => 0,
                         SurveyInterface::STATE_CLOSED => 0,
                         SurveyInterface::STATE_REJECTED => 0,
-                        SurveyInterface::STATE_EXPORTED => 0,
+//                        SurveyInterface::STATE_EXPORTED => 0,
                         SurveyInterface::STATE_APPROVED => 0,
                         Survey::STATE_REISSUED => 0,
                     ],
