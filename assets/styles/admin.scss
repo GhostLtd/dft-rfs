@@ -13,6 +13,7 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/report-table";
 @import "admin/surveys";
 @import "admin/vertical-text";
+@import "admin/feedback";
 
 .govuk-header__service-name-env {
   @include govuk-font(24, "bold");

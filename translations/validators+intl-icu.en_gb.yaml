@@ -239,3 +239,12 @@ driver-availability:
       other: Enter the reason(s) for the wage increases
     period:
       other: Enter the period of this wage increase
+
+survey-feedback:
+  experience-rating.not-null: Rate your experience
+  has-completed-paper.not-null: Choose whether you previously completed the survey on paper
+  comparison-rating.not-null: Rate the digital service in comparison to the paper survey
+  time-to-complete.not-null: Choose how long it took
+  had-issues.not-null: Choose whether you have had issues submitting your survey
+  issue-details.not-null: Provide details of the issues
+

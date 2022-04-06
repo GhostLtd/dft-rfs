@@ -1,0 +1,45 @@
+{# @var feedback \App\Entity\Feedback #}
+
+{% from _self import choices %}
+{% set indentClass = "govuk-!-margin-left-7 govuk-!-margin-bottom-7" %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters-from-desktop govuk-grid-column-one-half-from-wide">
+        <h3 class="govuk-heading-s">{{ "survey-feedback.experience-rating.label" | trans }}</h3>
+        {{ choices(constant('App\\Form\\FeedbackType::EXPERIENCE_CHOICES'), "experience-rating", feedback.experienceRating) }}
+
+        <h3 class="govuk-heading-s">{{ "survey-feedback.has-completed-paper-survey.label" | trans }}</h3>
+        <p class="govuk-body">{{ "common.choices.boolean.#{feedback.hasCompletedPaperSurvey ? 'yes' : 'no'}" | trans }}</p>
+
+        {% if feedback.hasCompletedPaperSurvey %}
+            <div class="{{ indentClass }}">
+                <h3 class="govuk-heading-s">{{ "survey-feedback.comparison-rating.label" | trans }}</h3>
+                {{ choices(constant('App\\Form\\FeedbackType::COMPARISON_CHOICES'), "comparison-rating", feedback.comparisonRating) }}
+
+                <h3 class="govuk-heading-s">{{ "survey-feedback.time-to-complete.label" | trans }}</h3>
+                {{ choices(constant('App\\Form\\FeedbackType::TIME_CHOICES'), "time-to-complete", feedback.timeToComplete) }}
+            </div>
+        {% endif %}
+
+        <h3 class="govuk-heading-s">{{ "survey-feedback.had-issues.label" | trans }}</h3>
+        {{ choices(constant('App\\Form\\FeedbackType::ISSUES_CHOICES'), "had-issues", feedback.hadIssues) }}
+
+        {% if feedback.hadIssues == constant('App\\Form\\FeedbackType::ISSUES_UNSOLVED') %}
+            <div class="{{ indentClass }}">
+                <h3 class="govuk-heading-s">{{ "survey-feedback.issue-details.label" | trans }}</h3>
+                <p class="govuk-body">{{ feedback.issueDetails | nl2br }}</p>
+            </div>
+        {% endif %}
+
+        <h3 class="govuk-heading-s">{{ "survey-feedback.comments.label" | trans }}</h3>
+        <p class="govuk-body">{{ feedback.comments | default('[no comments]') | nl2br }}</p>
+    </div>
+</div>
+
+{% macro choices(choices, transPart, value) %}
+    <ul class="govuk-list govuk-survey-feedback-response">
+        {% for opt in choices %}
+            <li {% if value == opt %}class="govuk-survey-feedback-selected"{% endif %}>{{ "survey-feedback.#{transPart}.choices.#{opt}" | trans }}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}

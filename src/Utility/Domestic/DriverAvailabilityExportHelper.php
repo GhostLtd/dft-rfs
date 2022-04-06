@@ -127,6 +127,7 @@ class DriverAvailabilityExportHelper
             ->andWhere('d.exportedDate IS NOT NULL')
             ->andWhere('s.state NOT IN (:unwantedStates)')
             ->groupBy('d.exportedDate')
+            ->orderBy('d.exportedDate', 'DESC')
             ->getQuery();
         $results = $this->setParametersAndGetArrayResult($query);
         return array_map(fn($v) => ($v['exportedDate'] ?? $v), $results);

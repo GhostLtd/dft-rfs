@@ -12,22 +12,17 @@
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), preEnquiry) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), preEnquiry) -%}
     {%- set hasAuditLogs = auditLogs is not empty -%}
+    {%- set hasFeedback = preEnquiry.feedback is not empty -%}
 
-    {%- set tabs = {} -%}
-    {%- if hasInitialDetails -%}
-        {%- set tabs = tabs|merge({
-            'Response': 'tab-response',
-        }) -%}
-    {%- endif -%}
-    {%- set tabs = tabs | merge({
-        ("Notes (#{ preEnquiry.notes | length })"): 'tab-notes',
-        'Invitation/reminders': 'tab-invitation-details',
-    }) -%}
-    {%- if hasAuditLogs -%}
-        {%- set tabs = tabs | merge({
-            'Audit logs': 'tab-audit-logs',
-        }) -%}
-    {%- endif -%}
+    {%- set tabs = {}
+        | merge(hasInitialDetails ? {'Response': 'tab-response'}: {})
+        | merge({
+            ("Notes (#{ preEnquiry.notes | length })"): 'tab-notes',
+            'Invitation/reminders': 'tab-invitation-details',
+        })
+        | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
+        | merge(hasAuditLogs ? {'Audit logs': 'tab-audit-logs'} : {})
+    -%}
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -77,6 +72,14 @@
                 {%- endwith -%}
             </div>
 
+            {%- if hasFeedback -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                    {%- with {feedback: preEnquiry.feedback} -%}
+                        {%- include 'admin/includes/feedback.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
+
             {%- if hasAuditLogs -%}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
@@ -92,7 +95,7 @@
     %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
-            <h2 class="govuk-heading--l">Pre-enquiry actions</h2>
+            <h2 class="govuk-heading-m">Pre-enquiry actions</h2>
             {{ _self.workflow_link(preEnquiry, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
             {{ _self.workflow_link(preEnquiry, 'complete', 'Complete') }}
             {{ _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}

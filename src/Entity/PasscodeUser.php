@@ -212,16 +212,22 @@ class PasscodeUser implements UserInterface
         return $this;
     }
 
-    public function getSurveyId(): ?string
+    public function getSurvey(): ?SurveyInterface
     {
         if ($this->domesticSurvey) {
-            return $this->domesticSurvey->getId();
+            return $this->domesticSurvey;
         } else if ($this->internationalSurvey) {
-            return $this->internationalSurvey->getId();
+            return $this->internationalSurvey;
         } else if ($this->preEnquiry) {
-            return $this->preEnquiry->getId();
+            return $this->preEnquiry;
         }
 
         return null;
+    }
+
+    public function getSurveyId(): ?string
+    {
+        $survey = $this->getSurvey();
+        return $survey ? $survey->getId() : null;
     }
 }

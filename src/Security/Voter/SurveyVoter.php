@@ -12,6 +12,8 @@ class SurveyVoter extends Voter
 {
     const EDIT = 'EDIT';
     const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
+    const PROVIDE_FEEDBACK = "PROVIDE_FEEDBACK";
+    const VIEW_FEEDBACK_SUMMARY = "VIEW_FEEDBACK_SUMMARY";
 
     private AuthorizationCheckerInterface $authorizationChecker;
 
@@ -22,7 +24,7 @@ class SurveyVoter extends Voter
 
     protected function supports($attribute, $subject)
     {
-        return in_array($attribute, [self::EDIT, self::VIEW_SUBMISSION_SUMMARY])
+        return in_array($attribute, [self::EDIT, self::VIEW_SUBMISSION_SUMMARY, self::PROVIDE_FEEDBACK, self::VIEW_FEEDBACK_SUMMARY])
             && $subject instanceof SurveyInterface;
     }
 
@@ -38,6 +40,8 @@ class SurveyVoter extends Voter
             return false;
         }
 
+        $hasFeedback = fn(SurveyInterface $s) => $s->getFeedback() && $s->getFeedback()->getId();
+
         switch ($attribute) {
             case self::EDIT:
                 return in_array($subject->getState(), [
@@ -48,6 +52,12 @@ class SurveyVoter extends Voter
 
             case self::VIEW_SUBMISSION_SUMMARY:
                 return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]);
+
+            case self::PROVIDE_FEEDBACK:
+                return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && !$hasFeedback($subject);
+
+            case self::VIEW_FEEDBACK_SUMMARY:
+                return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && $hasFeedback($subject);
         }
 
         return false;

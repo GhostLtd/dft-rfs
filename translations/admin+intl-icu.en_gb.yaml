@@ -1,12 +1,13 @@
 menu:
   dashboard: Home
   logout: Sign out
+  reports: Reports
+  feedback: Feedback
   domestic:
     root: CSRGT
     surveys-gb: Surveys (GB)
     surveys-ni: Surveys (NI)
     survey-add: Add Survey
-    reports: Reports
     export: Export
     dvla-import: DVLA bulk import
     driver-availability-export: Driver availability
@@ -14,7 +15,6 @@ menu:
   international:
     root: IRHS
     surveys: Surveys
-    reports: Reports
     survey-add: Add Survey
     export: Export
     sample-import: Bulk sample import
@@ -51,6 +51,10 @@ common:
       confirmed-notification:
         heading: '{transitionTitleUcfirst} survey'
         content: 'The requested {transitionTitle} survey transition was completed.'
+
+survey-feedback:
+  export:
+    heading: Survey feedback export
 
 domestic:
   export-failed-notification:

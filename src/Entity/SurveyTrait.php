@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\LongAddress; // PHPstorm indicates this isn't needed, but it is
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -68,6 +69,11 @@ trait SurveyTrait
      * @var LongAddress|null
      */
     private $invitationAddress;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Feedback::class, cascade={"persist", "remove"})
+     */
+    private ?Feedback $feedback;
 
     /**
      * @Assert\Callback(groups={"add_survey.not-enabled"})
@@ -232,5 +238,17 @@ trait SurveyTrait
         // check if it has 'code' or 'errors' (indicating an error)
         // check if the error was recoverable
         return 'something';
+    }
+
+    public function getFeedback(): ?Feedback
+    {
+        return $this->feedback ?? null;
+    }
+
+    public function setFeedback(?Feedback $feedback): self
+    {
+        $this->feedback = $feedback;
+
+        return $this;
     }
 }

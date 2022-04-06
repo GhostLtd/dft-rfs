@@ -14,34 +14,28 @@
     {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
     {%- set hasAuditLogs = auditLogs is not empty -%}
+    {%- set hasFeedback = survey.feedback is not empty -%}
 
     {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
-        {%- if survey.response.noLongerActive == false -%}
-            {%- set tabs = tabs|merge({
-                'Vehicles': 'tab-vehicles',
-            }) -%}
-        {%- endif -%}
+        {%- set tabs = tabs
+            | merge(survey.response.noLongerActive == false ? {'Vehicles': 'tab-vehicles'} : {})
+            | merge({
+                'Correspondence details': 'tab-correspondence',
+                'Business details': 'tab-business-details',
+            })
+        -%}
+    {%- endif -%}
+    {%- set tabs = tabs
+        | merge(canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() ? {'Final details': 'tab-final-details'} : {})
+        | merge({
+            ("Notes (#{ survey.notes | length })"): 'tab-notes',
+            'Invitation/reminders': 'tab-invitation-details',
+        })
+        | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
+        | merge(hasAuditLogs ? {'Audit logs': 'tab-audit-logs'} : {})
+    -%}
 
-        {%- set tabs = tabs|merge({
-            'Correspondence details': 'tab-correspondence',
-            'Business details': 'tab-business-details',
-        }) -%}
-    {%- endif -%}
-    {%- if canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() -%}
-        {%- set tabs = tabs | merge({
-            'Final details': 'tab-final-details',
-        }) -%}
-    {%- endif -%}
-    {%- set tabs = tabs | merge({
-        ("Notes (#{ survey.notes | length })"): 'tab-notes',
-        'Invitation/reminders': 'tab-invitation-details',
-    }) -%}
-    {%- if hasAuditLogs -%}
-        {%- set tabs = tabs | merge({
-            'Audit logs': 'tab-audit-logs',
-        }) -%}
-    {%- endif -%}
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -132,6 +126,14 @@
                 {%- endwith -%}
             </div>
 
+            {%- if hasFeedback -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                    {%- with {feedback: survey.feedback} -%}
+                        {%- include 'admin/includes/feedback.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
+
             {%- if hasAuditLogs -%}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
@@ -213,7 +215,7 @@
     %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
-            <h2 class="govuk-heading--l">Survey actions</h2>
+            <h2 class="govuk-heading-m">Survey actions</h2>
             {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
             {{ _self.workflow_link(survey, 'complete', 'Complete') }}
             {{ _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}

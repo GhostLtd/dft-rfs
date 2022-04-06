@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% set translation_prefix = "survey-feedback" %}
+
+{% block content -%}
+    <h1 class="govuk-heading-l">{{ 'survey-feedback.thanks-page.heading' | trans }}</h1>
+    <p class="govuk-body">{{ 'survey-feedback.thanks-page.copy' | trans }}</p>
+{%- endblock %}

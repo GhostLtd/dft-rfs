@@ -25,7 +25,7 @@ class DriverAvailabilityExportController extends AbstractController
 
     /**
      * @Route("", name="index")
-     * @Template
+     * @Template("admin/domestic/driver_availability_export/index.html.twig")
      */
     public function index(): array
     {

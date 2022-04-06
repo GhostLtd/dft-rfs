@@ -13,4 +13,5 @@
     <p class="govuk-body">
         {{ (translation_prefix ~ '.download') | trans({url: path('app_domesticsurvey_completedpdf')}) | raw }}
     </p>
+    {% include "feedback/survey-summary-include.html.twig" %}
 {% endblock %}

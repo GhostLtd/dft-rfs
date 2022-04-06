@@ -47,4 +47,7 @@ interface SurveyInterface
     public function setNotifyApiResponse(?array $notifyApiResponses): self;
     public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self;
     public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array;
+
+    public function getFeedback(): ?Feedback;
+    public function setFeedback(?Feedback $feedback): self;
 }

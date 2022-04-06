@@ -2,13 +2,13 @@
 
 namespace App\Entity\PreEnquiry;
 
-use App\Entity\International\Company;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
 use App\Entity\PasscodeUser;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 /**
  * @ORM\Entity(repositoryClass=PreEnquiryRepository::class)

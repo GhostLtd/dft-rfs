@@ -1886,3 +1886,48 @@ maintenance-warning:
       title: Important
       heading: Scheduled maintenance
       content: This service will be unavailable between {startTime} and {endTime} on {date}
+
+
+survey-feedback:
+  heading: Survey Feedback
+  help: The answers you give us to this short survey will help us to make improvements to the service.
+  confirm.label: Submit feedback
+  cancel.label: Cancel
+  thanks-page:
+    heading: Survey feedback received
+    copy: Thank you for your feedback. Your answers will help us improve the service.
+  experience-rating:
+    label: What was your experience of completing the digital survey?
+    choices:
+      5-very-good: Very good
+      4-good: Good
+      3-neutral: Neither good nor bad
+      2-bad: Bad
+      1-very-bad: Very bad
+  has-completed-paper-survey:
+    label: Have you ever completed the survey on paper?
+  comparison-rating:
+    label: Overall, how does this digital service compare to the paper survey?
+    choices:
+      5-much-better: Much better
+      4-better: Slightly better
+      3-same: Same
+      2-worse: Slightly worse
+      1-much-worse: Much worse
+  time-to-complete:
+    label: How long does it take you to submit your data using the new digital service?
+    choices:
+      5-less-time: Less time than the paper survey
+      3-same: About the same time as the paper survey
+      1-more-time: More time than the paper survey
+  had-issues:
+    label: In the past three months, have you had any issues submitting your survey information via this service?
+    choices:
+      no: No
+      yes-solved: Yes, but the problem is now solved
+      yes-unsolved: Yes, and the problem still exists
+  issue-details:
+    label: Provide details of the issues you have faced
+  comments:
+    label: Do you have any other comments or feedback?
+

@@ -13,6 +13,7 @@ use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)

@@ -43,7 +43,8 @@ class AdminMenu implements MenuInterface
     {
         return $this->filterMenuItemsByRole($this->security, [
             new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
-            new RoleMenuItem('reports', 'menu.domestic.reports', $this->router->generate('admin_reports_dashboard'), [], []),
+            new RoleMenuItem('reports', 'menu.reports', $this->router->generate('admin_reports_dashboard'), [], []),
+            new RoleMenuItem('feedback', 'menu.feedback', $this->router->generate('admin_surveyfeedback_export_index'), [], []),
             new MenuDivider(),
             new RoleMenuItem('domestic', 'menu.domestic.root', null, [
                 new RoleMenuItem('surveys-gb', 'menu.domestic.surveys-gb', $this->router->generate(DomSurveyController::LIST_ROUTE, ['type' => 'gb']), [], []),
