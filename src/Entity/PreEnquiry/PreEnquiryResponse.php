@@ -2,6 +2,7 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\IdTrait;
 use App\Entity\LongAddress;
 use App\Form\Validator as AppAssert;
 use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
@@ -15,12 +16,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class PreEnquiryResponse
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="boolean")
@@ -46,7 +42,7 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true, includeAddressee=false)
      */
     private $contactAddress;
 
@@ -130,11 +126,6 @@ class PreEnquiryResponse
                     ->addViolation();
             }
         }
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
     }
 
     public function getIsCorrectCompanyName(): ?bool

@@ -35,15 +35,17 @@ class ValidAddressValidator extends ConstraintValidator
 
         if (!$constraint->allowBlank || $value->isFilled()) {
             // If it's a long postcode (for submission to notify, or import from DVLA), we need a minimum of 3 lines
-            if ($value instanceof LongAddress && $value->getFilledLinesCount() < 3) {
+            if ($constraint->includeAddressee && $value instanceof LongAddress && $value->getFilledLinesCount() < 3) {
                 $this->context->buildViolation('common.address.gov-notify-requires-3-lines')
                     ->addViolation();
             }
 
-            $validator->atPath('line1')->validate($value->getLine1(), [
-                new NotBlank(['message' => $constraint->line1BlankMessage]),
-                $lengthValidator,
-            ], ['Default']);
+            $validator->atPath($constraint->includeAddressee ? 'line1' : 'line2')
+                ->validate($constraint->includeAddressee ? $value->getLine1() : $value->getLine2(), [
+                    new NotBlank(['message' => $constraint->line1BlankMessage]),
+                    $lengthValidator,
+                ], ['Default']
+            );
 
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             foreach(['line2', 'line3', 'line4'] as $line) {

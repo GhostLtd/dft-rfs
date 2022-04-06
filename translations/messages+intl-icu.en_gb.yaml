@@ -470,6 +470,9 @@ admin:
   pre-enquiry:
     add:
       heading: Add Pre-enquiry
+      company-name:
+        label: Company name
+        help: ''
       reference-number:
         label: Reference number
         help: ''

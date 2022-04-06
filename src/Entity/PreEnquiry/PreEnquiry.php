@@ -44,11 +44,11 @@ class PreEnquiry implements SurveyInterface
     private ?string $referenceNumber = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\Valid(groups={"add_survey", "import_survey"})
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
+     * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private ?Company $company = null;
+    private ?string $companyName;
 
     /**
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="preEnquiry", cascade={"persist", "remove"})
@@ -95,14 +95,15 @@ class PreEnquiry implements SurveyInterface
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getCompanyName(): ?string
     {
-        return $this->company;
+        if (!isset($this->companyName)) return null;
+        return $this->companyName;
     }
 
-    public function setCompany(?Company $company): self
+    public function setCompanyName(?string $companyName): self
     {
-        $this->company = $company;
+        $this->companyName = $companyName;
 
         return $this;
     }

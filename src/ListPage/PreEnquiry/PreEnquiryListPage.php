@@ -28,7 +28,7 @@ class PreEnquiryListPage extends AbstractListPage
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
             (new TextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
-            (new TextFilter('Company name', 'company.businessName'))->sortable(),
+            (new TextFilter('Company name', 'companyName'))->sortable(),
             (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
         ];
@@ -38,10 +38,9 @@ class PreEnquiryListPage extends AbstractListPage
     {
         $queryBuilder = $this->repository->createQueryBuilder('preEnquiry');
         return $queryBuilder
-            ->select('preEnquiry, response, user, company')
+            ->select('preEnquiry, response, user')
             ->leftJoin('preEnquiry.response', 'response')
-            ->leftJoin('preEnquiry.passcodeUser', 'user')
-            ->leftJoin('preEnquiry.company', 'company');
+            ->leftJoin('preEnquiry.passcodeUser', 'user');
     }
 
     protected function getDefaultOrder(): array

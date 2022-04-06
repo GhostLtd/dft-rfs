@@ -12,10 +12,10 @@
         <tr class="govuk-table__row">
             {{ tableCell(preEnquiry.referenceNumber|default('-')) }}
             {{ tableCell(preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-') }}
-            {{ tableCell(preEnquiry.company.businessName) }}
+            {{ tableCell(preEnquiry.companyName) }}
             {{ tableCell(tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
             {{ tableCell(reminderDate(preEnquiry.firstReminderSentDate, preEnquiry.secondReminderSentDate)) }}
-            {{ tableCell(actionLinks({(url('admin_preenquiry_view', {preEnquiryId: preEnquiry.id})): {label: 'view', srHiddenSuffix: "pre-enquiry for #{preEnquiry.company.businessName}"}}), {}) }}
+            {{ tableCell(actionLinks({(url('admin_preenquiry_view', {preEnquiryId: preEnquiry.id})): {label: 'view', srHiddenSuffix: "pre-enquiry for #{preEnquiry.companyName}"}}), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

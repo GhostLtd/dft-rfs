@@ -42,7 +42,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 $data = $formEvent->getData();
 
                 assert($data instanceof PreEnquiryResponse);
-                $expectedCompanyName = $data->getPreEnquiry()->getCompany()->getBusinessName();
+                $expectedCompanyName = $data->getPreEnquiry()->getCompanyName();
 
                 if ($data->getPreEnquiry()->hasInvitationAddress()) {
                     $form
@@ -157,7 +157,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
             'data_class' => PreEnquiryResponse::class,
             'validation_groups' => function(FormInterface $form) {
                 $data = $form->getData();
-                $groups = ['company_name', 'correspondence_details', 'employees_and_international_journeys', 'is_correct_address', 'vehicle_questions'];
+                $groups = ['company_name', 'correspondence_details', 'employees_and_international_journeys', 'is_correct_address', 'vehicle_questions', 'business_details'];
 
                 if ($data instanceof PreEnquiryResponse) {
                     if ($data->getIsCorrectAddress() === false) {
@@ -228,7 +228,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         $isCorrectCompanyName = $forms['isCorrectCompanyName']->getData();
 
         if ($isCorrectCompanyName === self::CHOICES[self::CHOICE_YES]) {
-            $viewData->setCompanyName($viewData->getPreEnquiry()->getCompany()->getBusinessName());
+            $viewData->setCompanyName($viewData->getPreEnquiry()->getCompanyName());
             $viewData->setIsCorrectCompanyName(true);
         } else if ($isCorrectCompanyName === self::CHOICES[self::CHOICE_NO]) {
             $viewData->setCompanyName($forms['companyName']->getData());

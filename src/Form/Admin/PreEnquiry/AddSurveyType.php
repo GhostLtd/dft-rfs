@@ -15,45 +15,46 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $translationKeyPrefix = "admin.pre-enquiry.add";
-
         $builder
             ->addModelTransformer($this)
-            ->add('company', CompanyType::class, [
-                'label' => false,
+            ->add('companyName', Gds\InputType::class, [
+                'label' => "admin.pre-enquiry.add.company-name.label",
+                'help' => "admin.pre-enquiry.add.company-name.help",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => ['class' => 'govuk-input--width-20'],
                 'disabled' => $options['is_resend'],
             ])
             ->add('referenceNumber', Gds\InputType::class, [
-                'label' => "{$translationKeyPrefix}.reference-number.label",
-                'help' => "{$translationKeyPrefix}.reference-number.help",
+                'label' => "admin.pre-enquiry.add.reference-number.label",
+                'help' => "admin.pre-enquiry.add.reference-number.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'disabled' => $options['is_resend'],
             ])
             ->add('dispatchDate', Gds\DateType::class, [
-                'label' => "{$translationKeyPrefix}.dispatch-date.label",
-                'help' => "{$translationKeyPrefix}.dispatch-date.help",
+                'label' => "admin.pre-enquiry.add.dispatch-date.label",
+                'help' => "admin.pre-enquiry.add.dispatch-date.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'disabled' => $options['is_resend'],
                 'data' => new \DateTime(),
             ])
             ->add('invitationEmail', Gds\EmailType::class, [
-                'label' => "{$translationKeyPrefix}.invitation-email.label",
-                'help' => "{$translationKeyPrefix}.invitation-email.help",
+                'label' => "admin.pre-enquiry.add.invitation-email.label",
+                'help' => "admin.pre-enquiry.add.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'disabled' => true,
             ])
             ->add('invitationAddress', LongAddressType::class, [
-                'label' => "{$translationKeyPrefix}.invitation-address.label",
-                'help' => "{$translationKeyPrefix}.invitation-address.help",
+                'label' => "admin.pre-enquiry.add.invitation-address.label",
+                'help' => "admin.pre-enquiry.add.invitation-address.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'include_addressee' => false,
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => $options['is_resend'] ?
-                    "{$translationKeyPrefix}.submit.resend-label" :
-                    "{$translationKeyPrefix}.submit.label",
+                    "admin.pre-enquiry.add.submit.resend-label" :
+                    "admin.pre-enquiry.add.submit.label",
             ])
             ->add('cancel', Gds\ButtonType::class, [
                 'type' => 'submit',
@@ -79,7 +80,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
     public function reverseTransform($value)
     {
         if ($value instanceof PreEnquiry) {
-            $businessName = $value->getCompany()->getBusinessName();
+            $businessName = $value->getCompanyName();
             $invitationAddress = $value->getInvitationAddress();
 
             if ($businessName && $invitationAddress && $invitationAddress->isFilled()) {

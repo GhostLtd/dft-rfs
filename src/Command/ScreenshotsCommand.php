@@ -137,9 +137,7 @@ class ScreenshotsCommand extends Command
             }
 
             if ($preEnquiry) {
-                $company = $preEnquiry->getCompany();
                 $this->preEnquiryDeleteHelper->deletePreEnquiry($preEnquiry);
-                $this->entityManager->remove($company);
             }
 
             $this->entityManager->remove($user);
@@ -181,11 +179,6 @@ class ScreenshotsCommand extends Command
                 ->setReferenceNumber('screenshots-test')
                 ->setInvitationAddress(new LongAddress());
         } else {
-            $company = (new Company())
-                ->setBusinessName('Screenshot Tests Ltd');
-
-            $this->entityManager->persist($company);
-
             $invitationAddress = (new LongAddress())
                 ->setLine1('Screenshot Tests Ltd')
                 ->setLine2('123 Fictional Road')
@@ -195,7 +188,7 @@ class ScreenshotsCommand extends Command
 
             $survey = (new PreEnquiry())
                 ->setInvitationAddress($invitationAddress)
-                ->setCompany($company)
+                ->setCompanyName('Screenshot Tests Ltd')
                 ->setPasscodeUser($user)
                 ->setReferenceNumber('screenshots-test');
         }

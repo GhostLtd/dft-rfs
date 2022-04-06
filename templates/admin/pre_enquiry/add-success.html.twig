@@ -7,9 +7,8 @@
 
     {% set body_translation_prefix = "admin.pre-enquiry.created" %}
 
-    <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.company-name', preEnquiry.company.businessName) }}
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.company-name', preEnquiry.companyName) }}
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ (body_translation_prefix ~ '.invitation-email') | trans | nl2br }}</dt>

@@ -50,7 +50,7 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
     protected function preEnquiryChoiceLabel($data): string
     {
         /** @var PreEnquiry $data */
-        $address1 = ucwords(strtolower($data->getCompany()->getBusinessName()));
+        $address1 = ucwords(strtolower($data->getCompanyName()));
 
         $safeLabel = htmlspecialchars(
             "{$address1}, {$data->getInvitationAddress()->getPostcode()}",

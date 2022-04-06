@@ -33,7 +33,6 @@ class AddController extends AbstractController
                 /** @var PreEnquiry $preEnquiry */
                 $preEnquiry = $form->getData();
 
-                $entityManager->persist($preEnquiry->getCompany());
                 $entityManager->persist($preEnquiry);
                 $entityManager->flush();
 

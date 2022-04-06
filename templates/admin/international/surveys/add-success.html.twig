@@ -4,7 +4,6 @@
 
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
-    <p class="govuk-body">This is the <strong>one and only time</strong> that you will be able to view the access code.</p>
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) }}
         {{ actionlessSummaryListRow('admin.international.survey.reference-number.label', survey.referenceNumber) }}

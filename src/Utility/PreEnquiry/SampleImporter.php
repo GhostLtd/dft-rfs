@@ -4,7 +4,6 @@
 namespace App\Utility\PreEnquiry;
 
 
-use App\Entity\International\Company;
 use App\Entity\LongAddress;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Utility\AbstractBulkSurveyImporter;
@@ -43,7 +42,7 @@ class SampleImporter extends AbstractBulkSurveyImporter
     {
         try {
             return (new PreEnquiry())
-                ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
+                ->setCompanyName($surveyData[self::COL_FIRM_NAME])
                 ->setReferenceNumber($surveyData[self::COL_FIRM_REF])
                 ->setDispatchDate(new \DateTime($surveyData[self::COL_DISPATCH_DATE]))
                 ->setInvitationAddress($this->createAddress($surveyData))
