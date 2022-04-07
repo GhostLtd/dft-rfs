@@ -46,9 +46,8 @@ class PreEnquiryRepository extends ServiceEntityRepository
         $monthEnd = $monthStart->modify('+1 month');
 
         return $this->createQueryBuilder('pe')
-            ->select('pe, per, c')
+            ->select('pe, per')
             ->leftJoin('pe.response', 'per')
-            ->leftJoin('pe.company', 'c')
             ->where('pe.state = :state')
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
