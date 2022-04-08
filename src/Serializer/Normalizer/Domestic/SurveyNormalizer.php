@@ -16,6 +16,7 @@ use App\Serializer\Normalizer\Domestic\Mapper\EpochWeekNumberProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\ReturnCodeIdProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\YearlyWeekNumberProperty;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
@@ -74,6 +75,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
 //            'CaryingCapacityAdjusted' => '', // will all be null, not required - lucy doesn't know
             'BusinessType' => new Property('response.businessNature'),
             'SurveyID' => new EpochWeekNumberProperty('surveyPeriodStart'),
+            'SurveyWeek' => new YearlyWeekNumberProperty('surveyPeriodStart'),
 //            'VehicleOwnerID' => '', // not needed
             'DateSurveySent' => new Property('notifiedDate'),
 //            'DateSurveyReturned' => '',
