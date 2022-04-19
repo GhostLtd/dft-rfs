@@ -3,7 +3,7 @@
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- actionlessSummaryListRow('admin.pre-enquiry.view.company-name', preEnquiry.companyName) -}}
     {{- actionlessSummaryListRow('admin.pre-enquiry.view.reference-number', preEnquiry.referenceNumber) -}}
-    {{- actionlessSummaryListRow('admin.pre-enquiry.view.dispatch-date', preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('Y-m-d') : '-') -}}
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.dispatch-date', preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-') -}}
 
     {%- if showStatus ?? true -%}
         {{- actionlessSummaryListRow('admin.pre-enquiry.view.status', tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
