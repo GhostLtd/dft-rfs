@@ -33,7 +33,7 @@ class SummaryDayNormalizer extends AbstractExportNormalizer
             'TypeOfGoods' => new Property('goodsDescriptionNormalized'),
             'Loaded' => new DistanceProperty('distanceTravelledLoaded', Distance::UNIT_KILOMETRES),
             'Empty' => new DistanceProperty('distanceTravelledUnloaded', Distance::UNIT_KILOMETRES),
-            'WeightOfGoodsDelivered' => new NullIsZeroProperty('weightOfGoodsLoaded'),
+            'WeightOfGoodsDelivered' => new NullIsZeroProperty('weightOfGoodsUnloaded'),
             'WeightOfGoodsCollected' => new NullIsZeroProperty('weightOfGoodsLoaded'),
             'NumberOfStopsForDelivery' => new Property('numberOfStopsUnloading'),
             'NumberOfStopsForCollection' => new Property('numberOfStopsLoading'),
