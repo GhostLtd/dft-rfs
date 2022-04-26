@@ -48,13 +48,13 @@ class TripActionsExportNormalizer
             foreach ($trip->getActions() as $action) {
                 if ($action->getLoading()) {
                     if ($action->getUnloadingActions()->count() === 0) {
-                        // TODO: Do we care about loadings with no corresponding unloading?
-                        //       There don't seem to be any such examples in the sample output data
+                        $this->normalized[] = $this->getActionData($action, null, $numberOffset, $rowNumber);
+                        $rowNumber++;
                     }
                     continue;
                 }
 
-                $this->normalized[] = $this->getActionData($action, $numberOffset, $rowNumber);
+                $this->normalized[] = $this->getActionData($action->getLoadingAction(), $action, $numberOffset, $rowNumber);
                 $rowNumber++;
             }
 
@@ -66,26 +66,27 @@ class TripActionsExportNormalizer
         return $this->normalized;
     }
 
-    protected function getActionData(Action $action, int $numberOffset, int $rowNumber): array
+    protected function getActionData(Action $loadingAction, ?Action $unloadingAction, int $numberOffset, int $rowNumber): array
     {
-        $trip = $action->getTrip();
-        $loadingAction = $action->getLoadingAction();
+        $trip = $loadingAction->getTrip();
 
         $hazardousGoodsCode = $loadingAction->getHazardousGoodsCode();
 
         return [
-            'IHRConsignmentDetailsID' => $action->getId(),
+            'IHRConsignmentDetailsID' => $unloadingAction ? $unloadingAction->getId() : $loadingAction->getId(),
             'IHRVehicleDetailsID' => $trip->getId(),
             'MOA' => $loadingAction->getCargoTypeCode(),
             'TypeOfGoods' => $loadingAction->getGoodsDescriptionNormalized(),
             'DangerousGoods' => $hazardousGoodsCode === '0' ? null : $hazardousGoodsCode,
-            'WeightOfGoodsCarriedKG' => $action->getWeightUnloadedAll() ? $loadingAction->getWeightOfGoods() : $action->getWeightOfGoods(),
+            'WeightOfGoodsCarriedKG' => !$unloadingAction || $unloadingAction->getWeightUnloadedAll()
+                ? $loadingAction->getWeightOfGoods()
+                : $unloadingAction->getWeightOfGoods(),
             'OriginPlace' => $loadingAction->getName(),
             'OriginCountry' => $this->getCountry($loadingAction),
             'LoadedOrder' => $loadingAction->getNumber() + $numberOffset,
-            'DestinationPlace' => $action->getName(),
-            'DestinationCountry' => $this->getCountry($action),
-            'UnloadedOrder' => $action->getNumber() + $numberOffset,
+            'DestinationPlace' => $unloadingAction ? $unloadingAction->getName() : null,
+            'DestinationCountry' => $unloadingAction ? $this->getCountry($unloadingAction) : null,
+            'UnloadedOrder' => $unloadingAction ? $unloadingAction->getNumber() + $numberOffset : null,
             'RowNumber' => $rowNumber,
             // DateInput - ??
             // MOACode - ??
