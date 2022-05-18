@@ -203,22 +203,26 @@ admin:
       heading: Reports
     activity-status:
       heading: Surveys by activity state
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: &subHeading >-
+        {mode, select, 
+          quarterly {{typeLabel} — Quarter {quarter}, {year}}
+          other     {{typeLabel} — {year}}
+        }
     possession:
       heading: Surveys by possession of vehicle
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     quality-assurance:
       heading: Surveys by quality assurance
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     state:
       heading: Surveys by state
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     approvals:
       heading: Approvals by username
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     unapprovals:
       heading: Un-approvals
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
   survey:
     state:
       in-progress: govuk-tag--yellow

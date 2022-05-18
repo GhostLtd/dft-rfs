@@ -13,10 +13,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class StateController extends AbstractReportsController
 {
     /**
-     * @Route("/state/{type}", name="state_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
+     * @Route("/state/{type}", name="state_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry"})
      */
     public function stateReportsDefaults(string $type): Response
     {
+        if ($type === ReportFilterType::TYPE_PRE_ENQUIRY) {
+            return new RedirectResponse('admin_reports_state_pre_enquiry_full');
+        }
+
         return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_state_full');
     }
 
@@ -30,7 +34,7 @@ class StateController extends AbstractReportsController
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
 
         if ($form->isSubmitted()) {
-            return new RedirectResponse($this->generateUrl('admin_reports_state_full', $form->getData()));
+            return $stateReportHelper->getFullRedirect($form->getData());
         }
 
         $excludeFromTotals = [
@@ -52,13 +56,11 @@ class StateController extends AbstractReportsController
                 break;
         }
 
-        $isDomestic = $type !== ReportFilterType::TYPE_IRHS;
-
         return $this->render('admin/report/state.html.twig', array_merge($form->getData(), [
             'stats' => $stats ?? null,
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
-            'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn($isDomestic),
+            'stateMappings' => $stateReportHelper->getStateReportMappingsByColumn($type),
             'excludeFromTotals' => $excludeFromTotals,
         ]));
     }
