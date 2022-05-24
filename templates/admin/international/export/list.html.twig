@@ -15,11 +15,7 @@
             {{- tableCell('Q' ~ export.quarter) -}}
 
             {%- set actions -%}
-                {%- if export.storageObject -%}
-                    <a href="{{ url('admin_international_export_download', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Download</a>
-                {%- else -%}
-                    <a href="{{ url('admin_international_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Export</a>
-                {%- endif -%}
+                <a href="{{ url('admin_international_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Export</a>
             {%- endset -%}
 
             {{- tableCell(actions, {actions: true}) -}}

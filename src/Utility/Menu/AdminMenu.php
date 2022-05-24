@@ -3,9 +3,7 @@
 namespace App\Utility\Menu;
 
 use App\Controller\Admin\Domestic\SurveyController as DomSurveyController;
-use App\Controller\Admin\Domestic\ExportController as DomExportControllerAlias;
 use App\Controller\Admin\International\SurveyController as IntSurveyController;
-use App\Controller\Admin\International\ExportController as IntExportControllerAlias;
 use App\Controller\Admin\PreEnquiry\EditController;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -50,7 +48,7 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('surveys-gb', 'menu.domestic.surveys-gb', $this->router->generate(DomSurveyController::LIST_ROUTE, ['type' => 'gb']), [], []),
                 new RoleMenuItem('surveys-ni', 'menu.domestic.surveys-ni', $this->router->generate(DomSurveyController::LIST_ROUTE, ['type' => 'ni']), [], []),
                 new RoleMenuItem('dvla-import', 'menu.domestic.dvla-import', $this->router->generate('admin_domestic_importdvla_index'), [], []),
-                new RoleMenuItem('export', 'menu.domestic.export', $this->router->generate(DomExportControllerAlias::EXPORT_ROUTE), [], []),
+                new RoleMenuItem('export', 'menu.domestic.export', $this->router->generate('admin_domestic_export_list'), [], []),
                 new RoleMenuItem('add-survey', 'menu.domestic.survey-add', $this->router->generate('admin_domestic_survey_add'), [], []),
                 new RoleMenuItem('driver-availability-export', 'menu.domestic.driver-availability-export', $this->router->generate('admin_domestic_driveravailabilityexport_index'), [], []),
                 new RoleMenuItem('notification-interception', 'menu.domestic.notification-interception', $this->router->generate('admin_domestic_notification_interception_list'), [], []),
@@ -60,7 +58,7 @@ class AdminMenu implements MenuInterface
             new RoleMenuItem('international', 'menu.international.root', null, [
                 new RoleMenuItem('survey', 'menu.international.surveys', $this->router->generate(IntSurveyController::LIST_ROUTE), [], []),
                 new RoleMenuItem('sample-import', 'menu.international.sample-import', $this->router->generate('admin_international_sampleimport_start'), [], []),
-                new RoleMenuItem('export', 'menu.international.export', $this->router->generate(IntExportControllerAlias::EXPORT_ROUTE), [], []),
+                new RoleMenuItem('export', 'menu.international.export', $this->router->generate('admin_international_export_list'), [], []),
                 new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('admin_international_survey_add'), [], []),
             ]),
             new MenuDivider(),

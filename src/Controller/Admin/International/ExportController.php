@@ -18,16 +18,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/irhs/export")
+ * @Route("/irhs/export", name="admin_international_export_")
  */
 class ExportController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_international_export_';
-    public const EXPORT_ROUTE = self::ROUTE_PREFIX . 'list';
-    public const SUCCESS_ROUTE = self::ROUTE_PREFIX . 'success';
-    public const EXPORT_QUARTER_ROUTE = self::ROUTE_PREFIX . 'quarter';
-    public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
-
     protected ExportHelper $exportHelper;
 
     public function __construct(ExportHelper $exportHelper)
@@ -36,24 +30,20 @@ class ExportController extends AbstractController
     }
 
     /**
-     * @Route("", name=self::EXPORT_ROUTE)
+     * @Route("", name="list")
      */
     public function list(): Response
     {
         return $this->render('admin/international/export/list.html.twig', [
-            'exports' => $this->exportHelper->getExportsExistingAndPossible(),
+            'exports' => $this->exportHelper->getPossibleYearsAndQuarters(true),
         ]);
     }
 
     /**
-     * @Route("/{year}/{quarter}", name=self::EXPORT_QUARTER_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
+     * @Route("/{year}/{quarter}", name="quarter", requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
     public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $dataExporter, TranslatorInterface $translator): Response
     {
-        if ($this->objectExists($year, $quarter)) {
-            throw new NotFoundHttpException();
-        }
-
         $form = $this->createForm(ConfirmationType::class, null, [
             'yes_label' => 'Export',
         ]);
@@ -65,7 +55,7 @@ class ExportController extends AbstractController
             $export = $form->get('yes');
 
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
-                return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
+                return new RedirectResponse($this->generateUrl('admin_international_export_list'));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
                 if ($filename = $dataExporter->generateExportData($year, $quarter)) {
                     $now = new DateTime();
@@ -78,7 +68,7 @@ class ExportController extends AbstractController
                         $translator->trans('international.export-failed-notification.heading', [], 'admin'),
                         $translator->trans('international.export-failed-notification.content', [], 'admin')
                     ));
-                    return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
+                    return new RedirectResponse($this->generateUrl('admin_international_export_list'));
                 }
             }
         }
@@ -88,39 +78,5 @@ class ExportController extends AbstractController
             'year' => $year,
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/{year}/{quarter}/success", name=self::SUCCESS_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
-     */
-    public function success(string $year, string $quarter): Response
-    {
-        if (!$this->objectExists($year, $quarter)) {
-            throw new NotFoundHttpException();
-        }
-
-        return $this->render('admin/international/export/success.html.twig', [
-            'quarter' => $quarter,
-            'year' => $year,
-        ]);
-    }
-
-    /**
-     * @Route("/{year}/{quarter}/download", name=self::DOWNLOAD_ROUTE, requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
-     */
-    public function download(string $year, string $quarter): Response
-    {
-        $signedUrl = $this->exportHelper->getSignedUrl($year, $quarter);
-
-        if (!$signedUrl) {
-            throw new NotFoundHttpException();
-        }
-
-        return new RedirectResponse($signedUrl);
-    }
-
-    protected function objectExists(string $year, string $quarter): bool
-    {
-        return !!$this->exportHelper->getStorageObjectIfExists($year, $quarter);
     }
 }
