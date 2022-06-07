@@ -28,8 +28,8 @@ class SurveyFeedbackExportHelper
     public function exportExisting(\DateTime $date, $exportPath = 'php://output')
     {
         $query = $this->getQueryBuilder()
-            ->andWhere('f.exportedDate = :exportedDate')
-            ->setParameter('exportedDate', $date)
+            ->andWhere('f.exportedAt = :exportedAt')
+            ->setParameter('exportedAt', $date)
             ->getQuery();
 
         $feedback = $query->execute();
