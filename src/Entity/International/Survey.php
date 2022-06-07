@@ -70,7 +70,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     private $response;
 
     /**
-     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"}, fetch="LAZY")
      */
     private $passcodeUser;
 
@@ -198,6 +198,14 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         $this->reasonForEmptySurveyOther = $reasonForEmptySurveyOther;
         return $this;
+    }
+
+    public function getReasonForEmptySurveyNormalized(): ?string
+    {
+        if (is_null($this->getReasonForEmptySurvey())) return null;
+        return $this->getReasonForEmptySurvey() === self::REASON_FOR_EMPTY_SURVEY_OTHER
+            ? $this->getReasonForEmptySurvey()
+            : 'Other: ' . $this->getReasonForEmptySurveyOther();
     }
 
     public function shouldAskWhyEmptySurvey(): bool

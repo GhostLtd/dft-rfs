@@ -71,14 +71,15 @@ class TripRepository extends ServiceEntityRepository
     public function getTripsForExport(DateTime $minDate, DateTime $maxDate): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t,v,r,s,a')
+            ->select('t,v,r,s,a,p')
             ->leftJoin('t.vehicle', 'v')
             ->leftJoin('v.surveyResponse', 'r')
             ->leftJoin('r.survey', 's')
+            ->leftJoin('s.passcodeUser', 'p')
             ->leftJoin('t.actions', 'a')
                 // Do not link to loadingAction, as this was limiting the query (actions that had not been unloaded)
                 // They will be added by doctrine anyway, as they are included in the actions relationship
-            // ->leftJoin('a.loadingAction', 'la')
+                // Even adding and outer join caused problems... we'll just have to live with N+1 queries.
             ->where('s.state IN (:states)')
             ->andWhere('t.outboundDate >= :minDate')
             ->andWhere('t.outboundDate < :maxDate')

@@ -7,6 +7,7 @@ use App\Entity\International\Trip;
 use App\Repository\International\SurveyRepository;
 use App\Repository\International\TripRepository;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
+use App\Serializer\Normalizer\International\SurveyNormalizer;
 use App\Serializer\Normalizer\International\TripActionsExportNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
 use App\Utility\Export\AbstractDataExporter;
@@ -29,6 +30,9 @@ class DataExporter extends AbstractDataExporter
     protected ExportHelper $exportHelper;
     protected LoggerInterface $logger;
 
+    // TODO: we should be using this for all our normalization/serialization, rather than creating them manually.
+    private SerializerInterface $symfonySerializer;
+
     public function __construct(
         SqlServerInsertEncoder      $sqlServerInsertEncoder,
         TripActionsExportNormalizer $tripActionsExportNormalizer,
@@ -36,7 +40,8 @@ class DataExporter extends AbstractDataExporter
         WorkflowInterface           $internationalSurveyStateMachine,
         EntityManagerInterface      $entityManager,
         ExportHelper                $exportHelper,
-        LoggerInterface             $logger
+        LoggerInterface             $logger,
+        SerializerInterface         $symfonySerializer
     )
     {
         parent::__construct($internationalSurveyStateMachine, $entityManager);
@@ -53,24 +58,26 @@ class DataExporter extends AbstractDataExporter
         ]);
         $this->exportHelper = $exportHelper;
         $this->logger = $logger;
+        $this->symfonySerializer = $symfonySerializer;
     }
 
-    public function generateExportData(int $year, int $quarter, bool $uploadToBucket = false) {
+    public function generateExportData(int $year, int $quarter) {
         [$startDate, $endDate] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
-        $trips = $this->tripRepository->getTripsForExport($startDate, $endDate);
         $now = new DateTime();
 
         try {
             $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-irhs-');
 
+            $surveys = $this->surveyRepository->getSurveysForExport($startDate, $endDate);
+            $this->getFirmsSQL($surveys, $sqlFilename);
+            file_put_contents($sqlFilename, "\n\n", FILE_APPEND);
+            $this->entityManager->clear();
+
+            $trips = $this->tripRepository->getTripsForExport($startDate, $endDate);
             $this->getTripsSQL($trips, $sqlFilename);
             file_put_contents($sqlFilename, "\n\n", FILE_APPEND);
             $this->getActionsSQL($trips, $sqlFilename);
-
-            if ($uploadToBucket) {
-                $this->exportHelper->upload(file_get_contents($sqlFilename), $year, $quarter);
-            }
 
             foreach($trips as $trip) {
                 $trip->setExportDate($now);
@@ -128,6 +135,20 @@ class DataExporter extends AbstractDataExporter
         return $surveys;
     }
 
+    protected function getFirmsSQL(array $firms, $outputFilename)
+    {
+        file_put_contents(
+            $outputFilename,
+            $this->symfonySerializer->serialize($firms, 'sql-server-insert', [
+                SurveyNormalizer::CONTEXT_KEY => true,
+                SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRFirmDetails",
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RefNumber', 'ContactTelephone', 'NumberOfEmployees',
+                    'BusinessNature', 'ReasonForEmptySurvey', 'ActivityStatus', 'ContactEmail', 'ContactName'],
+            ]),
+            FILE_APPEND
+        );
+    }
+
     protected function getTripsSQL(array $trips, $outputFilename)
     {
         // This needs to be done in two parts, as the TripNormalizer doesn't normalize dates
@@ -147,7 +168,7 @@ class DataExporter extends AbstractDataExporter
         $normalized = $this->tripActionsExportNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
         file_put_contents(
             $outputFilename,
-            $this->serializer->serialize($normalized, 'sql-server-insert', [
+            $this->serializer->serialize($normalized, SqlServerInsertEncoder::FORMAT, [
                 SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRConsignmentDetails",
                 SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['DestinationPlace', 'OriginPlace'],
             ]),

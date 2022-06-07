@@ -316,4 +316,23 @@ EOQ
         $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED];
         return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'international_survey');
     }
+
+    public function getSurveysForExport(DateTime $minDate, DateTime $maxDate): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s, r, v, t, p')
+            ->leftJoin('s.response', 'r')
+            ->leftJoin('r.vehicles', 'v')
+            ->leftJoin('v.trips', 't')
+            // If we don't join on user, it does n+1 queries
+            ->leftJoin('s.passcodeUser', 'p')
+            ->andWhere('s.surveyPeriodEnd >= :minDate')
+            ->andWhere('s.surveyPeriodEnd < :maxDate')
+            ->getQuery()
+            ->setParameters([
+                'minDate' => $minDate,
+                'maxDate' => $maxDate,
+            ])
+            ->execute();
+    }
 }
