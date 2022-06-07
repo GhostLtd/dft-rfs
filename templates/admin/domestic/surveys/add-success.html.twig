@@ -15,13 +15,13 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ 'admin.domestic.survey-created.invitation-email' | trans | nl2br }}</dt>
             <dd class="govuk-summary-list__value">
-                {%- if survey.invitationEmail -%}
+                {%- if survey.invitationEmails -%}
 {%- set bodyText -%}
 Access code 1: {{ survey.passcodeUser.username }}
 Access code 2: {{ password }}
 {%- endset -%}
-                    {%- set mailLink = "mailto:#{survey.invitationEmail}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
-                    <a href="{{ mailLink }}">{{ survey.invitationEmail }}</a>
+                    {%- set mailLink = "mailto:#{survey.invitationEmails}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
+                    <a href="{{ mailLink }}">{{ survey.invitationEmails }}</a>
                 {%- else -%}-
                 {%- endif %}
             </dd>

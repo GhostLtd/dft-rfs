@@ -4,17 +4,17 @@
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
     {{- row('Address', address | formatAddress(true) | default('-')) -}}
 
-    {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponse(
+    {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
         'App\\Messenger\\AlphagovNotify\\Letter',
         true
     ))) -}}
-    {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponse(
+    {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
         'App\\Messenger\\AlphagovNotify\\Letter',
         true
     ))) -}}
-    {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponse(
+    {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
         'App\\Messenger\\AlphagovNotify\\Letter',
         true
@@ -23,22 +23,22 @@
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
 
-    {{- row('Email Address', survey.invitationEmail|default('-')) -}}
-    {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponse(
+    {{- row('Email Address', '') -}}
+    {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
         'App\\Messenger\\AlphagovNotify\\Email',
         true
-    ))) -}}
-    {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponse(
+    ), true)) -}}
+    {{- _self.row('Reminder 1', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
         'App\\Messenger\\AlphagovNotify\\Email',
         true
-    ))) -}}
-    {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponse(
+    ), true)) -}}
+    {{- _self.row('Reminder 2', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
         'App\\Messenger\\AlphagovNotify\\Email',
         true
-    ))) -}}
+    ), true)) -}}
 
 </dl>
 
@@ -49,17 +49,18 @@
     </div>
 {%- endmacro -%}
 
-{%- macro notificationStatus(apiResponses) -%}
+{%- macro notificationStatus(apiResponses, displayRecipient) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
     {%- if apiResponses -%}
         {% for response in apiResponses %}
             <div class="api-response">
-                {%- set status = response[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
+                {%- set status = response.data[constant('App\\EventSubscriber\\AlphagovNotifyMessengerSubscriber::STATUS_KEY')] -%}
                 {{- tag({text: status, classes: ("admin.notify.status.#{status}" | trans)}) -}}
                 <span class="govuk-body-s">
-                    {{ response['timestamp'] | date('format.date-time.default' | trans) -}}
+                    <span class="api-response__timestamp">{{ response.timestamp | date('format.date-time.default' | trans) -}}</span>
+                    {%- if displayRecipient | default(false) -%}<span class="api-response__recipient">{{ response.recipient }}</span>{% endif %}
                     {%- if status != constant('App\\Utility\\AlphagovNotify\\Reference::STATUS_ACCEPTED') -%}
-                        {%- for error in response.errors -%}
+                        {%- for error in response.data.errors -%}
                             <br>{{- error.error }}: {{ error.message | nl2br -}}
                         {%- endfor -%}
                     {%- endif -%}

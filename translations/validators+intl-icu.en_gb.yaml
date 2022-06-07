@@ -42,6 +42,7 @@ common:
   email:
     invalid: Enter a valid email address
     not-blank: Enter an email address
+    list-contains-invalid: Enter a comma-separated list of valid email addresses
   telephone:
     not-blank: Enter a phone number
   string:

@@ -1,11 +1,18 @@
 <?php
 
-
 namespace App\Messenger\AlphagovNotify;
+
+use App\Entity\NotifyApiResponse;
+use Doctrine\Common\Collections\Collection;
 
 interface ApiResponseInterface
 {
-    public function getNotifyApiResponses(): ?array;
-    public function getNotifyApiResponse(string $eventName, string $notificationClass): ?array;
-    public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): ?Object;
+    /**
+     * @return Collection|NotifyApiResponse[]
+     */
+    public function getNotifyApiResponses(): Collection;
+    public function addNotifyApiResponse(NotifyApiResponse $notifyApiResponse): object;
+
+    // Used in the templates
+    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass): ?array;
 }

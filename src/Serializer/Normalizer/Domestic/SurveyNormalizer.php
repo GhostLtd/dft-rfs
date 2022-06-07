@@ -88,7 +88,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyAddressLine4' => new Property('invitationAddress.line5'),
             'SurveyAddressLine5' => new Property('invitationAddress.line6'),
             'SurveyPostcode' => new Property('invitationAddress.postcode'),
-            'SurveyEmail' => new Property('invitationEmail'),
+            'SurveyEmail' => new Property('invitationEmails'),
             'ContactName' => new Property('response.contactName'),
             'ContactTelNo' => new IntegerProperty('response.contactTelephone'),
             'ContactEmail' => new IntegerProperty('response.contactEmail'),

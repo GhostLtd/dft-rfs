@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Tests\Messenger\AlphagovNotify;
-
 
 use App\Entity\Address;
 use App\Entity\Domestic\Survey;
+use App\Entity\NotifyApiResponse;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Tests\DataFixtures\AlphagovNotify\MessageHandlerSurveyFixtures;
@@ -31,7 +30,6 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->personalisationHelper = $container->get(PersonalisationHelper::class);
-        self::ensureKernelShutdown();
     }
 
     public function testSendLetterAccepted()
@@ -41,11 +39,14 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getValidTestAddress()));
         $this->runAsyncNotifyMessengerConsumer();
 
+        /** @var Survey $survey */
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponses = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
+        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+
+        /** @var NotifyApiResponse $response */
         $response = current($apiResponses);
 
-        self::assertSame(Reference::STATUS_ACCEPTED, $response[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        self::assertSame(Reference::STATUS_ACCEPTED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     public function testSendLetterValidationError()
@@ -55,11 +56,14 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getInvalidTestAddress()));
         $this->runAsyncNotifyMessengerConsumer();
 
+        /** @var Survey $survey */
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponses = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
+        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+
+        /** @var NotifyApiResponse $response */
         $response = current($apiResponses);
 
-        self::assertSame(Reference::STATUS_FAILED, $response[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        self::assertSame(Reference::STATUS_FAILED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     protected function runAsyncNotifyMessengerConsumer()

@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\NotifyApiResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
@@ -9,6 +10,8 @@ use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
 use App\Utility\NotifyApiResponseCleaner;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
@@ -92,6 +95,21 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')) || value != null", message="international.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
      */
     private ?string $reasonForEmptySurveyOther;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
+     * @ORM\JoinTable(
+     *     name="international_survey_notify_api_responses",
+     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
+     * )
+     */
+    private Collection $apiResponses;
+
+    public function __construct()
+    {
+        $this->apiResponses = new ArrayCollection();
+    }
 
     public function getReferenceNumber(): ?string
     {
@@ -223,7 +241,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function clearPersonalData(): self
     {
         $this
-            ->setInvitationEmail(null)
+            ->setInvitationEmails(null)
             ->setInvitationAddress(null);
 
         $response = $this->getResponse();
@@ -241,7 +259,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     public function isPersonalDataCleared(): bool
     {
-        $isCleared = $this->invitationEmail === null && $this->invitationAddress === null;
+        $isCleared = $this->invitationEmails === null && $this->invitationAddress === null;
 
         $response = $this->getResponse();
         if ($response) {

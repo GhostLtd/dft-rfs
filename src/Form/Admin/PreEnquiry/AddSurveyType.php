@@ -38,7 +38,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'disabled' => $options['is_resend'],
                 'data' => new \DateTime(),
             ])
-            ->add('invitationEmail', Gds\EmailType::class, [
+            ->add('invitationEmails', Gds\EmailType::class, [
                 'label' => "admin.pre-enquiry.add.invitation-email.label",
                 'help' => "admin.pre-enquiry.add.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],

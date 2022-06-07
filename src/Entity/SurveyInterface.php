@@ -35,18 +35,13 @@ interface SurveyInterface
     public function setSubmissionDate(?DateTime $submissionDate): self;
     public function getState(): ?string;
     public function setState($state): self;
-    public function getInvitationEmail(): ?string;
+    public function getInvitationEmails(): ?string;
     public function getInvitationAddress(): ?LongAddress;
 
     public function getFirstReminderSentDate(): ?\DateTime;
     public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self;
     public function getSecondReminderSentDate(): ?\DateTime;
     public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self;
-
-    public function getNotifyApiResponses(): ?array;
-    public function setNotifyApiResponse(?array $notifyApiResponses): self;
-    public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self;
-    public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array;
 
     public function getFeedback(): ?Feedback;
     public function setFeedback(?Feedback $feedback): self;

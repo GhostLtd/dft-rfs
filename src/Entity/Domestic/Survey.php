@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\NotifyApiResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
@@ -11,6 +12,8 @@ use App\Form\Validator as AppAssert;
 use App\Utility\NotifyApiResponseCleaner;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
@@ -114,6 +117,21 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
     private ?DriverAvailability $driverAvailability;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
+     * @ORM\JoinTable(
+     *     name="domestic_survey_notify_api_responses",
+     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
+     * )
+     */
+    private Collection $apiResponses;
+
+    public function __construct()
+    {
+        $this->apiResponses = new ArrayCollection();
+    }
 
     public function isInitialDetailsComplete(): bool
     {
@@ -320,7 +338,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function clearPersonalData(): self
     {
         $this
-            ->setInvitationEmail(null)
+            ->setInvitationEmails(null)
             ->setInvitationAddress(null);
 
         $response = $this->getResponse();
@@ -346,7 +364,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     public function isPersonalDataCleared(): bool
     {
-        $isCleared = $this->invitationEmail === null && $this->invitationAddress === null;
+        $isCleared = $this->invitationEmails === null && $this->invitationAddress === null;
 
         $response = $this->getResponse();
         if ($response) {

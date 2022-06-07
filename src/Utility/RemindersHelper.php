@@ -92,13 +92,13 @@ class RemindersHelper
         }
 
         $emailTemplateReference = $templateReferences[self::TYPE_EMAIL] ?? false;
-        if ($survey->getInvitationEmail() && $emailTemplateReference)
+        if ($survey->getInvitationEmails() && $emailTemplateReference)
         {
             $this->messageBus->dispatch(new Email(
                 $eventType,
                 get_class($survey),
                 $survey->getId(),
-                $survey->getInvitationEmail(),
+                $survey->getInvitationEmails(),
                 $emailTemplateReference,
                 $this->personalisationHelper->getForEntity($survey),
             ));

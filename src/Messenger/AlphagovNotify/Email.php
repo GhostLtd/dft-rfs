@@ -1,35 +1,16 @@
 <?php
 
-
 namespace App\Messenger\AlphagovNotify;
 
-
-class Email extends AbstractMessage
+class Email extends AbstractSendMessage
 {
-    /**
-     * @var string
-     */
-    protected $emailAddress;
+    protected string $emailAddress;
+    protected ?string $emailReplyToId;
 
-    /**
-     * @var string
-     */
-    protected $emailReplyToId;
-
-    /**
-     * Email constructor.
-     * @param $originatingEntityClass
-     * @param $originatingEntityId
-     * @param $address
-     * @param $templateId
-     * @param array $personalisation
-     * @param null $reference
-     * @param null $senderId
-     */
-    public function __construct($eventName, $originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null, $senderId = null)
+    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $emailAddress, string $templateId, array $personalisation = [], ?string $reference = null, ?string $senderId = null)
     {
-        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
-        $this->emailAddress = $address;
+        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $emailAddress, $personalisation, $reference);
+        $this->emailAddress = $emailAddress;
         $this->emailReplyToId = $senderId;
     }
 
@@ -44,37 +25,18 @@ class Email extends AbstractMessage
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getEmailAddress(): ?string
+    public function getEndpoint(): string
+    {
+        return '/v2/notifications/email';
+    }
+
+    public function getEmailAddress(): string
     {
         return $this->emailAddress;
     }
 
-    /**
-     * @param string|null $emailAddress
-     * @return self
-     */
-    public function setEmailAddress(?string $emailAddress): self
-    {
-        $this->emailAddress = $emailAddress;
-    }
-
-    /**
-     * @return string
-     */
     public function getEmailReplyToId(): ?string
     {
         return $this->emailReplyToId;
-    }
-
-    /**
-     * @param string|null $emailReplyToId
-     * @return self
-     */
-    public function setEmailReplyToId(?string $emailReplyToId): self
-    {
-        $this->emailReplyToId = $emailReplyToId;
     }
 }

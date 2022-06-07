@@ -59,7 +59,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     {
         $survey = $this->getSurvey($event);
         $address = $survey->getInvitationAddress();
-        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmail()) {
+        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmails()) {
             $event->setBlocked(true);
         }
     }
@@ -82,15 +82,20 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
-            $this->messageBus->dispatch(new Email(
-                Reference::EVENT_INVITE,
-                get_class($survey),
-                $survey->getId(),
-                $survey->getInvitationEmail(),
-                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
-                $personalisation,
-            ));
+        if ($survey->getInvitationEmails() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
+
+            $invitationEmails = array_map('trim', explode(',', $survey->getInvitationEmails()));
+
+            foreach($invitationEmails as $invitationEmail) {
+                $this->messageBus->dispatch(new Email(
+                    Reference::EVENT_INVITE,
+                    get_class($survey),
+                    $survey->getId(),
+                    $invitationEmail,
+                    self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
+                    $personalisation,
+                ));
+            }
         }
     }
 

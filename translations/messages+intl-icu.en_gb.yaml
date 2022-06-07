@@ -292,9 +292,9 @@ admin:
           label: Address line
           help: ''
         cancel: Cancel
-        email:
-          label: Email
-          help: ''
+        emails:
+          label: Emails
+          help: 'Multiple email addresses can be added as a comma-separated list'
         submit: Save changes
       heading: Large company notify interceptions
       sr-hidden-suffix: "large company notify interception with address line: {addressLine}"

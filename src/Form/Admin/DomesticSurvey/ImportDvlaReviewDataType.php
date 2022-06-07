@@ -14,7 +14,7 @@ class ImportDvlaReviewDataType extends AbstractImportReviewDataType
         /** @var Survey $data */
         $regMark = new RegistrationMarkHelper($data->getRegistrationMark());
         $address1 = ucwords(strtolower($data->getInvitationAddress()->getLine1()));
-        $email = strtolower($data->getInvitationEmail());
+        $email = strtolower($data->getInvitationEmails());
 
         $safeLabel = htmlspecialchars(
             "{$address1}, {$data->getInvitationAddress()->getPostcode()}",

@@ -2,10 +2,13 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\NotifyApiResponse;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
 use App\Entity\PasscodeUser;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
@@ -66,6 +69,20 @@ class PreEnquiry implements SurveyInterface
      */
     private ?\DateTime $dispatchDate = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
+     * @ORM\JoinTable(
+     *     name="pre_enquiry_notify_api_responses",
+     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
+     * )
+     */
+    private Collection $apiResponses;
+
+    public function __construct()
+    {
+        $this->apiResponses = new ArrayCollection();
+    }
 
     public function getResponse(): ?PreEnquiryResponse
     {

@@ -1,33 +1,16 @@
 <?php
 
-
 namespace App\Messenger\AlphagovNotify;
 
-
 use App\Entity\Address;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
-class Letter extends AbstractMessage
+class Letter extends AbstractSendMessage
 {
-    /**
-     * @var Address
-     */
-    protected $address;
+    protected Address $address;
 
-    /**
-     * Email constructor.
-     * @param $originatingEntityClass
-     * @param $originatingEntityId
-     * @param $address
-     * @param $templateId
-     * @param array $personalisation
-     * @param null $reference
-     */
-    public function __construct($eventName, $originatingEntityClass, $originatingEntityId, $address, $templateId, $personalisation = [], $reference = null)
+    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, Address $address, string $templateId, array $personalisation = [], ?string $reference = null)
     {
-        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $personalisation, $reference);
+        parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $address, $personalisation, $reference);
         $this->address = $address;
     }
 
@@ -40,20 +23,22 @@ class Letter extends AbstractMessage
         ];
     }
 
+    public function getEndpoint(): string
+    {
+        return '/v2/notifications/letter';
+    }
+
     public function getPersonalisation(): ?array
     {
         return array_merge(parent::getPersonalisation(), $this->getAddressForPersonalisation());
     }
 
-    /**
-     * @return string
-     */
-    public function getAddress(): ?string
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function getAddressForPersonalisation()
+    public function getAddressForPersonalisation(): array
     {
         $address = array_values(array_filter($this->address->toArray()));
         $notifyAddressFields = ['address_line_1', 'address_line_2', 'address_line_3', 'address_line_4', 'address_line_5', 'address_line_6', 'address_line_7'];
@@ -64,14 +49,5 @@ class Letter extends AbstractMessage
             $notifyAddressFields,
             $address
         );
-    }
-
-    /**
-     * @param string|null $address
-     * @return self
-     */
-    public function setAddress(?string $address): self
-    {
-        $this->address = $address;
     }
 }

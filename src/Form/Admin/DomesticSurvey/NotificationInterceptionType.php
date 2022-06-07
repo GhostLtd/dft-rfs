@@ -21,9 +21,9 @@ class NotificationInterceptionType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-30']
             ])
-            ->add('email', Gds\EmailType::class, [
-                'label' => "{$translationKeyPrefix}.email.label",
-                'help' => "{$translationKeyPrefix}.email.help",
+            ->add('emails', Gds\InputType::class, [
+                'label' => "{$translationKeyPrefix}.emails.label",
+                'help' => "{$translationKeyPrefix}.emails.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
 

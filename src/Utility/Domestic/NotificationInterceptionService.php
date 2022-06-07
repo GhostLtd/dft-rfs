@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Utility\Domestic;
-
 
 use App\Entity\Domestic\NotificationInterception;
 use App\Entity\Domestic\Survey;
@@ -22,7 +20,7 @@ class NotificationInterceptionService
 
     public function checkAndInterceptSurvey(Survey $survey)
     {
-        if ($survey->getInvitationEmail()) {
+        if ($survey->getInvitationEmails()) {
             return $survey;
         }
         if (!$survey->getInvitationAddress()) {
@@ -30,7 +28,7 @@ class NotificationInterceptionService
         }
 
         if ($interception = $this->findInterception($survey)) {
-            $survey->setInvitationEmail($interception->getEmail());
+            $survey->setInvitationEmails($interception->getEmails());
         }
 
         return $survey;

@@ -11,7 +11,7 @@
     {% for ni in data.entities %}
         <tr class="govuk-table__row">
             {{ tableCell(ni.addressLine) }}
-            {{ tableCell(ni.email) }}
+            {{ tableCell(ni.emails) }}
             {%- set srHiddenSuffix = "#{translation_prefix}.sr-hidden-suffix" -%}
             {%- set srHiddenSuffixParams = {
                 addressLine: ni.addressLine

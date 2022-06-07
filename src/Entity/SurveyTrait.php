@@ -6,6 +6,7 @@ use App\Entity\LongAddress; // PHPstorm indicates this isn't needed, but it is
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -35,11 +36,6 @@ trait SurveyTrait
     private ?\DateTime $secondReminderSentDate;
 
     /**
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $notifyApiResponses = [];
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $responseStartDate;
@@ -55,11 +51,11 @@ trait SurveyTrait
     private $state;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Email(groups={"add_survey", "import_survey"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
+     * @ORM\Column(type="string", length=1024, nullable=true)
+     * @AppAssert\CommaSeparatedEmails(groups={"add_survey", "import_survey"}, message="common.email.list-contains-invalid")
+     * @Assert\Length(max=1024, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private $invitationEmail;
+    private $invitationEmails;
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
@@ -79,10 +75,10 @@ trait SurveyTrait
      * @Assert\Callback(groups={"add_survey.not-enabled"})
      */
     public function validInvitationDetails(ExecutionContextInterface $context) {
-        if (!$this->invitationEmail && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
+        if (!$this->invitationEmails && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
             $context
                 ->buildViolation('international.add.invitation-email-or-address')
-                ->atPath('invitationEmail')
+                ->atPath('invitationEmails')
                 ->addViolation();
             // need to add the context to both, because email address is disabled (and therefore won't trip the form->isValid check)
             $context
@@ -144,14 +140,14 @@ trait SurveyTrait
         return $this;
     }
 
-    public function getInvitationEmail(): ?string
+    public function getInvitationEmails(): ?string
     {
-        return $this->invitationEmail;
+        return $this->invitationEmails;
     }
 
-    public function setInvitationEmail(?string $invitationEmail): self
+    public function setInvitationEmails(?string $invitationEmails): self
     {
-        $this->invitationEmail = $invitationEmail;
+        $this->invitationEmails = $invitationEmails;
 
         return $this;
     }
@@ -190,39 +186,6 @@ trait SurveyTrait
         return $this->secondReminderSentDate;
     }
 
-    public function getNotifyApiResponses(): ?array
-    {
-        return $this->notifyApiResponses;
-    }
-
-    public function setNotifyApiResponse(?array $notifyApiResponses): self
-    {
-        $this->notifyApiResponses = $notifyApiResponses;
-        return $this;
-    }
-
-    public function getNotifyApiResponse(string $eventName, string $notificationClass, bool $sorted = false): ?array
-    {
-        $response = $this->notifyApiResponses["{$eventName}::{$notificationClass}"] ?? null;
-
-        if ($sorted && is_array($response)) {
-            usort($response, fn($a, $b) => ($b['timestamp'] ?? null) <=> ($a['timestamp'] ?? null));
-        }
-
-        return $response;
-    }
-
-    public function addNotifyApiResponse(string $eventName, string $notificationClass, array $notifyApiResponse): self
-    {
-        if (!is_array($this->notifyApiResponses)) {
-            $this->notifyApiResponses = [];
-        }
-
-        $key = "{$eventName}::{$notificationClass}";
-        $this->notifyApiResponses[$key] = array_merge($this->notifyApiResponses[$key] ?? [], [$notifyApiResponse]);
-        return $this;
-    }
-
     public function hasInvitationAddress(): bool
     {
         return $this->invitationAddress instanceof LongAddress && $this->invitationAddress->isFilled();
@@ -248,7 +211,43 @@ trait SurveyTrait
     public function setFeedback(?Feedback $feedback): self
     {
         $this->feedback = $feedback;
+        return $this;
+    }
 
+    public function getNotifyApiResponses(): Collection
+    {
+        return $this->apiResponses;
+    }
+
+    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false): array
+    {
+        $responses = $this->apiResponses
+            ->filter(fn(NotifyApiResponse $r) =>
+                $r->getEventName() === $eventName &&
+                $r->getMessageClass() === $notificationClass
+            )
+            ->toArray();
+
+        if ($sorted) {
+            usort($responses,
+                fn(NotifyApiResponse $a, NotifyApiResponse $b) => $b->getTimestamp() <=> $a->getTimestamp()
+            );
+        }
+
+        return $responses;
+    }
+
+    public function addNotifyApiResponse(NotifyApiResponse $apiResponse): self {
+        if (!$this->apiResponses->contains($apiResponse)) {
+            $this->apiResponses[] = $apiResponse;
+        }
+
+        return $this;
+    }
+
+    public function removeNotifyApiResponse(NotifyApiResponse $apiResponse): self
+    {
+        $this->apiResponses->removeElement($apiResponse);
         return $this;
     }
 }

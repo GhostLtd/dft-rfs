@@ -116,4 +116,9 @@ class Address
     public function isFilled(): bool {
         return $this->line1 || $this->line2 || $this->line3 || $this->line4 || $this->postcode;
     }
+
+    public function __toString(): string {
+        $nonEmptyLines = array_filter($this->toArray(), fn(?string $line) => $line && trim($line) !== '');
+        return join(', ', $nonEmptyLines);
+    }
 }

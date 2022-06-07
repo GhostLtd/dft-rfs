@@ -3,6 +3,7 @@
 namespace App\Entity\Domestic;
 
 use App\Repository\Domestic\NotificationInterceptionRepository;
+use App\Form\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,12 +31,12 @@ class NotificationInterception
     private ?string $addressLine;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=1024)
      * @Assert\NotBlank (groups={"notification_interception"})
-     * @Assert\Email(groups={"notification_interception"})
+     * @AppAssert\CommaSeparatedEmails(groups={"notification_interception"}, message="common.email.list-contains-invalid")
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"notification_interception"})
      */
-    private ?string $email;
+    private ?string $emails;
 
     public function getId(): ?int
     {
@@ -53,14 +54,14 @@ class NotificationInterception
         return $this;
     }
 
-    public function getEmail()
+    public function getEmails()
     {
-        return $this->email;
+        return $this->emails;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmails(?string $emails): self
     {
-        $this->email = $email;
+        $this->emails = $emails;
         return $this;
     }
 }
