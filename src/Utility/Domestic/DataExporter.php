@@ -56,7 +56,7 @@ class DataExporter extends AbstractDataExporter
         $this->logger = $logger;
     }
 
-    public function generateExportData(int $year, int $quarter, bool $uploadToBucket = false)
+    public function generateExportData(int $year, int $quarter)
     {
         $surveyIDs = $this->surveyRepository->getSurveyIDsForExport($year, $quarter);
         try {
@@ -65,10 +65,6 @@ class DataExporter extends AbstractDataExporter
             $this->getVehiclesSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")."\n";
             $this->getDetailedDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")."\n";
             $this->getSummaryDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys")."\n";
-
-            if ($uploadToBucket) {
-                $this->exportHelper->upload(file_get_contents($sqlFilename), $year, $quarter);
-            }
 
             return $sqlFilename;
         } catch (Throwable $e) {
@@ -84,7 +80,8 @@ class DataExporter extends AbstractDataExporter
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
                 SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
-                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination'],
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination', 'TypeOfGoods',
+                    'MOA', 'WhereBorderCrossed', 'DayOfWeek'],
             ]),
             FILE_APPEND
         );
@@ -98,7 +95,9 @@ class DataExporter extends AbstractDataExporter
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
                 SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
-                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination'],
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RegMark', 'Origin', 'Destination', 'TypeOfGoods',
+                    'WeightOfGoodsDelivered', 'WeightOfGoodsCollected', 'FurthestStop', 'MOA',
+                    'WhereBorderCrossed', 'DayOfWeek'],
             ]),
             FILE_APPEND
         );
@@ -113,7 +112,10 @@ class DataExporter extends AbstractDataExporter
             $outputFilename,
             $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [
                 SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
-                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['ContactTelNo'],
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RegMark', 'BusinessType', 'SurveyAddressLine1',
+                    'SurveyAddressLine2', 'SurveyAddressLine3', 'SurveyAddressLine4', 'SurveyAddressLine5',
+                    'SurveyPostcode', 'SurveyEmail', 'ContactName', 'ContactTelNo', 'ContactEmail', 'RegisteredKeeper',
+                    'HireCompany'],
             ]),
             FILE_APPEND
         );

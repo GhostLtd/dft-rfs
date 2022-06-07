@@ -142,8 +142,8 @@ class DataExporter extends AbstractDataExporter
             $this->symfonySerializer->serialize($firms, 'sql-server-insert', [
                 SurveyNormalizer::CONTEXT_KEY => true,
                 SqlServerInsertEncoder::TABLE_NAME_KEY => "tblIHRFirmDetails",
-                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RefNumber', 'ContactTelephone', 'NumberOfEmployees',
-                    'BusinessNature', 'ReasonForEmptySurvey', 'ActivityStatus', 'ContactEmail', 'ContactName'],
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['refNumber', 'contactPhone', 'businessSize',
+                    'businessNature', 'reasonForEmptySurvey', 'activityStatus', 'contactEmail', 'contactName'],
             ]),
             FILE_APPEND
         );
