@@ -5,11 +5,10 @@ namespace App\Controller\Admin\Domestic;
 use App\Entity\Domestic\NotificationInterception;
 use App\Form\Admin\DomesticSurvey\NotificationInterceptionType;
 use App\ListPage\Domestic\NotificationInterceptionListPage;
-use App\Utility\ConfirmAction\Domestic\Admin\DeleteNotificationInterceptionConfirmAction;
+use App\Utility\ConfirmAction\DeleteNotificationInterceptionConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +48,10 @@ class NotificationInterceptionController extends AbstractController
             return new RedirectResponse($listPage->getClearUrl());
         }
 
-        return $this->render('admin/domestic/notification_interception/list.html.twig', [
+        return $this->render('admin/notification_interception/list.html.twig', [
+            'add_route' => 'admin_domestic_notification_interception_add',
+            'edit_route' => 'admin_domestic_notification_interception_edit',
+            'delete_route' => 'admin_domestic_notification_interception_delete',
             'data' => $listPage->getData(),
             'form' => $listPage->getFiltersForm()->createView(),
         ]);
@@ -71,29 +73,18 @@ class NotificationInterceptionController extends AbstractController
             return $data;
         }
 
-        return $this->render("admin/domestic/notification_interception/delete.html.twig", $data);
+        return $this->render("admin/notification_interception/delete.html.twig", $data);
     }
 
     /**
      * @Route("/edit/{id}", name="edit")
-     */
-    public function edit(Request $request, NotificationInterception $notificationInterception): Response
-    {
-        $form = $this->createForm(NotificationInterceptionType::class, $notificationInterception);
-        return $this->addOrEdit($request, $form, self::TYPE_EDIT);
-    }
-
-    /**
      * @Route("/add", name="add")
      */
-    public function add(Request $request): Response
+    public function edit(Request $request, ?NotificationInterception $notificationInterception = null): Response
     {
-        $form = $this->createForm(NotificationInterceptionType::class);
-        return $this->addOrEdit($request, $form, self::TYPE_ADD);
-    }
+        $type = is_null($notificationInterception) ? self::TYPE_ADD : self::TYPE_EDIT;
 
-    protected function addOrEdit(Request $request, FormInterface $form, string $type): Response
-    {
+        $form = $this->createForm(NotificationInterceptionType::class, $notificationInterception);
         $form->handleRequest($request);
         $successUrl = $this->generateUrl('admin_domestic_notification_interception_list');
 
@@ -110,11 +101,10 @@ class NotificationInterceptionController extends AbstractController
                 $this->entityManager->flush();
 
                 if ($type === self::TYPE_ADD) {
-                    $translationPrefix = 'admin.domestic.notification-interception.add';
                     $banner = new NotificationBanner(
                         $this->translator->trans('common.notification.success'),
-                        $this->translator->trans("{$translationPrefix}.confirmed-notification.heading"),
-                        $this->translator->trans("{$translationPrefix}.confirmed-notification.content"),
+                        $this->translator->trans("notification-interception.add.confirmed-notification.heading", [], 'admin'),
+                        $this->translator->trans("notification-interception.add.confirmed-notification.content", [], 'admin'),
                         ['style' => NotificationBanner::STYLE_SUCCESS]
                     );
 
@@ -125,7 +115,7 @@ class NotificationInterceptionController extends AbstractController
             }
         }
 
-        return $this->render('admin/domestic/notification_interception/edit.html.twig', [
+        return $this->render('admin/notification_interception/edit.html.twig', [
             'form' => $form->createView(),
             'type' => $type,
         ]);

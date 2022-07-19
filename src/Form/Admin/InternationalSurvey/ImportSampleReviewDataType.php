@@ -30,13 +30,14 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
             case PreEnquiry::class:
                 return $this->preEnquiryChoiceLabel($data);
         }
+        return '';
     }
 
     protected function internationalChoiceLabel($data): string
     {
         /** @var Survey $data */
         $startDate = $data->getSurveyPeriodStart()->format($this->translator->trans('format.date.default'));
-        $endDate = $data->getSurveyPeriodEnd()->format($this->translator->trans('format.date.default'));
+//        $endDate = $data->getSurveyPeriodEnd()->format($this->translator->trans('format.date.default'));
         $diff = $data->getSurveyPeriodEnd()->diff($data->getSurveyPeriodStart());
         $diff = $diff->days + 1;
         $address1 = ucwords(strtolower($data->getCompany()->getBusinessName()));
@@ -44,7 +45,7 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
         $safeLabel = htmlspecialchars(
             "{$address1}, {$data->getInvitationAddress()->getPostcode()}",
             ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}";
+        return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}" . ($data->getInvitationEmails() ? '<strong class="govuk-tag">LCNI</strong>' : '');
     }
 
     protected function preEnquiryChoiceLabel($data): string

@@ -36,7 +36,9 @@ interface SurveyInterface
     public function getState(): ?string;
     public function setState($state): self;
     public function getInvitationEmails(): ?string;
+    public function setInvitationEmails(?string $invitationEmails): self;
     public function getInvitationAddress(): ?LongAddress;
+    public function setInvitationAddress(?LongAddress $invitationAddress): self;
 
     public function getFirstReminderSentDate(): ?\DateTime;
     public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self;

@@ -1,6 +1,9 @@
 .govuk-bulk-import-review {
     label b {
         display: inline-block;
-        width: 150px;
+        width: 160px;
+    }
+    label .govuk-tag {
+        margin-left: 10px;
     }
 }

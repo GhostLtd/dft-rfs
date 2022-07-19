@@ -44,13 +44,14 @@ class SampleImporter extends AbstractBulkSurveyImporter
     public function createSurvey($surveyData, $surveyOptions = null)
     {
         try {
-            return (new Survey())
+            $survey = (new Survey())
                 ->setSurveyPeriodStart(new \DateTime($surveyData[self::COL_START_DATE]))
                 ->setSurveyPeriodEnd(new \DateTime($surveyData[self::COL_END_DATE]))
                 ->setCompany((new Company())->setBusinessName($surveyData[self::COL_FIRM_NAME]))
                 ->setReferenceNumber("{$surveyData[self::COL_FIRM_REF]}-{$surveyData[self::COL_DISPATCH_WEEK]}")
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
+            return $this->notificationInterception->checkAndInterceptSurvey($survey);
         } catch (\Throwable $e) {
             return false;
         }

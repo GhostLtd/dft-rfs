@@ -2,18 +2,17 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\NotificationInterceptionInterface;
 use App\Repository\Domestic\NotificationInterceptionRepository;
 use App\Form\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=NotificationInterceptionRepository::class)
  * @ORM\Table("domestic_notification_interception")
- * @UniqueEntity("addressLine", groups={"notification_interception"})
  */
-class NotificationInterception
+class NotificationInterception implements NotificationInterceptionInterface
 {
     /**
      * @ORM\Id
@@ -54,7 +53,7 @@ class NotificationInterception
         return $this;
     }
 
-    public function getEmails()
+    public function getEmails(): ?string
     {
         return $this->emails;
     }
@@ -63,5 +62,10 @@ class NotificationInterception
     {
         $this->emails = $emails;
         return $this;
+    }
+
+    public function getPrimaryName(): ?string
+    {
+        return $this->getAddressLine();
     }
 }

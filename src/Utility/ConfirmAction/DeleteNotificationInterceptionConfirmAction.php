@@ -1,11 +1,7 @@
 <?php
 
-namespace App\Utility\ConfirmAction\Domestic\Admin;
+namespace App\Utility\ConfirmAction;
 
-use App\Entity\Domestic\DayStop;
-use App\Entity\Domestic\NotificationInterception;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\Domestic\DeleteHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -13,7 +9,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteNotificationInterceptionConfirmAction extends AbstractConfirmAction
 {
-    /** @var NotificationInterception */
     protected $subject;
     protected EntityManagerInterface $entityManager;
 
@@ -32,15 +27,14 @@ class DeleteNotificationInterceptionConfirmAction extends AbstractConfirmAction
         ]);
     }
 
-    public function getTranslationParameters(): array
+    public function getTranslationDomain(): ?string
     {
-        return [
-        ];
+        return 'admin';
     }
 
     public function getTranslationKeyPrefix(): string
     {
-        return 'admin.domestic.notification-interception.delete';
+        return 'notification-interception.delete';
     }
 
     public function doConfirmedAction($formData)

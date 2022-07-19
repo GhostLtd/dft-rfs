@@ -46,7 +46,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'label' => "{$translationKeyPrefix}.invitation-email.label",
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'disabled' => true,
+//                'disabled' => true,
             ])
             ->add('invitationAddress', LongAddressType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-address.label",

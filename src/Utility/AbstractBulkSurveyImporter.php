@@ -12,14 +12,16 @@ use Vfs\FileSystem;
 abstract class AbstractBulkSurveyImporter
 {
     private $validator;
+    protected NotificationInterceptionService $notificationInterception;
 
     abstract protected function parseLine($line);
     abstract public function createSurvey($surveyData, $surveyOptions = null);
     abstract protected function getAggregateSurveyOptionsAndValidate(FormInterface $form);
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
     {
         $this->validator = $validator;
+        $this->notificationInterception = $notificationInterception;
     }
 
     public function getSurveys(FormInterface $form)

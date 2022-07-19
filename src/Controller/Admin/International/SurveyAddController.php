@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\AddSurveyType;
+use App\Utility\NotificationInterceptionService;
 use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,7 +19,7 @@ class SurveyAddController extends AbstractController
     /**
      * @Route("/irhs/survey-add/", name=SurveyController::ADD_ROUTE)
      */
-    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -33,6 +34,8 @@ class SurveyAddController extends AbstractController
             if ($form->isValid()) {
                 /** @var Survey $survey */
                 $survey = $form->getData();
+
+                $notificationInterception->checkAndInterceptSurvey($survey);
 
                 $entityManager->persist($survey->getCompany());
                 $entityManager->persist($survey);

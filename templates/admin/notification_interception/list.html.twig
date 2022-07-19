@@ -1,0 +1,37 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% trans_default_domain 'admin' %}
+{% set headingDomain = 'admin' %}
+{% set translation_prefix = "notification-interception" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd, pagination -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    {{ listTableStart(data, form) }}
+    {% for ni in data.entities %}
+        <tr class="govuk-table__row">
+            {{ tableCell(ni.primaryName) }}
+            {% if ("other_names" in form.children | keys) %}
+                {{ tableCell(ni.additionalNames | map(n => n.name) | join(', ')) }}
+            {% endif %}
+            {{ tableCell(ni.emails) }}
+            {%- set srHiddenSuffix = "notification-interception.sr-hidden-suffix" -%}
+            {%- set srHiddenSuffixParams = {
+                primaryName: ni.primaryName
+            } -%}
+            {{ tableCell(actionLinks({
+                (url(edit_route, {id: ni.id})): {label: 'common.actions.edit', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
+                (url(delete_route, {id: ni.id})): {label: 'common.actions.delete', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
+            }), {}) }}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No entries": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form, false) }}
+
+    <a class="govuk-button" href="{{ url(add_route) }}">{{ "#{translation_prefix}.button.add" | trans }}</a>
+
+    {{ pagination(data) }}
+{% endblock %}

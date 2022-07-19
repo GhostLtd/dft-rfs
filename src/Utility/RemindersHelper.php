@@ -32,9 +32,11 @@ class RemindersHelper
             ],
             InternationalSurvey::class => [
                 self::TYPE_LETTER => Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_1,
+                self::TYPE_EMAIL => Reference::EMAIL_INTERNATIONAL_SURVEY_REMINDER_1,
             ],
             PreEnquiry::class => [
                 self::TYPE_LETTER => Reference::LETTER_PRE_ENQUIRY_REMINDER_1,
+                self::TYPE_EMAIL => Reference::EMAIL_PRE_ENQUIRY_REMINDER_1,
             ],
         ],
         2 => [
@@ -44,9 +46,11 @@ class RemindersHelper
             ],
             InternationalSurvey::class => [
                 self::TYPE_LETTER => Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_2,
+                self::TYPE_EMAIL => Reference::EMAIL_INTERNATIONAL_SURVEY_REMINDER_2,
             ],
             PreEnquiry::class => [
                 self::TYPE_LETTER => Reference::LETTER_PRE_ENQUIRY_REMINDER_2,
+                self::TYPE_EMAIL => Reference::EMAIL_PRE_ENQUIRY_REMINDER_2,
             ],
         ],
     ];
@@ -94,14 +98,17 @@ class RemindersHelper
         $emailTemplateReference = $templateReferences[self::TYPE_EMAIL] ?? false;
         if ($survey->getInvitationEmails() && $emailTemplateReference)
         {
-            $this->messageBus->dispatch(new Email(
-                $eventType,
-                get_class($survey),
-                $survey->getId(),
-                $survey->getInvitationEmails(),
-                $emailTemplateReference,
-                $this->personalisationHelper->getForEntity($survey),
-            ));
+            $invitationEmails = array_map('trim', explode(',', $survey->getInvitationEmails()));
+            foreach($invitationEmails as $invitationEmail) {
+                $this->messageBus->dispatch(new Email(
+                    $eventType,
+                    get_class($survey),
+                    $survey->getId(),
+                    $invitationEmail,
+                    $emailTemplateReference,
+                    $this->personalisationHelper->getForEntity($survey),
+                ));
+            }
         }
 
     }

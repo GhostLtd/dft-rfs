@@ -5,6 +5,7 @@ namespace App\Utility\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Entity\LongAddress;
 use App\Utility\AbstractBulkSurveyImporter;
+use App\Utility\NotificationInterceptionService;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Form\FormError;
@@ -43,19 +44,16 @@ class DvlaImporter extends AbstractBulkSurveyImporter
     ];
 
     private $regex;
-    private NotificationInterceptionService $notificationInterception;
 
     public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
     {
-        parent::__construct($validator);
+        parent::__construct($validator, $notificationInterception);
 
         $this->regex = "/^";
         foreach (self::COLUMN_WIDTHS as $name => $length) {
             $this->regex .= "(?<$name>.{{$length}})";
         }
         $this->regex .= "/";
-
-        $this->notificationInterception = $notificationInterception;
     }
 
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)

@@ -60,6 +60,7 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('sample-import', 'menu.international.sample-import', $this->router->generate('admin_international_sampleimport_start'), [], []),
                 new RoleMenuItem('export', 'menu.international.export', $this->router->generate('admin_international_export_list'), [], []),
                 new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('admin_international_survey_add'), [], []),
+                new RoleMenuItem('notification-interception', 'menu.international.notification-interception', $this->router->generate('admin_international_notification_interception_list'), [], []),
             ]),
             new MenuDivider(),
 
