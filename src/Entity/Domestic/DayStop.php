@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=DayStopRepository::class)
  * @ORM\Table("domestic_day_stop")
  */
-class DayStop implements GoodsDescriptionInterface
+class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
 {
     use StopTrait {
         setGoodsDescription as traitSetGoodsDescription;

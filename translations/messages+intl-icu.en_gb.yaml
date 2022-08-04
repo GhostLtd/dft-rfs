@@ -837,9 +837,12 @@ domestic:
         label: Furthest point on this day
         help: "Record the furthest place from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nPlease provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
 
-    border-crossing:
+    border-crossing: &border-crossing
+      border-crossed:
+        label: 'Did you cross an international border?'
+        help: ''
       border-crossing-location:
-        label: 'Border crossing'
+        label: 'Where did you cross a border?'
         help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
                state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
                For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
@@ -949,14 +952,7 @@ domestic:
         label: Which mode of transport were the goods transferred to?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
-    border-crossing:
-      border-crossing-location:
-        label: 'Border crossing'
-        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
-               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
-               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
-               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel.\n\n
-               If you did not cross the border, leave this empty."
+    border-crossing: *border-crossing
 
     distance-travelled:
       distance-travelled:

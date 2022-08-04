@@ -177,8 +177,11 @@ domestic:
     missing-days:
       not-null: Choose whether the information listed on this page is correct or not
   day:
+    border-crossed:
+      not-null: Choose whether you crossed an international border or not
     border-crossing:
       max-length: "Location must be {limit, number} characters or fewer"
+      not-null: Enter the location when you crossed the international border
     destination:
       not-blank: Enter the location where the vehicle ended its journey
       goods-unloaded: Choose whether goods were unloaded or not
