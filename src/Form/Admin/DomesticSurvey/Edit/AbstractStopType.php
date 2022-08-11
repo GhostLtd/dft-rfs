@@ -225,7 +225,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
     public function mapDataToForms($viewData, $forms)
     {
         if ($viewData === null || !$viewData instanceof $this->dataClass) {
-            return false;
+            return;
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -263,6 +263,11 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                 case 'goodsTransferredTo':
                     $viewData->setGoodsUnloaded($field->getData() !== false);
                     $viewData->setGoodsTransferredTo($field->getData() !== false ? $field->getData() : null);
+                    break;
+                case 'borderCrossingLocation':
+                    $borderCrossingLocation = $field->getData();
+                    $viewData->setBorderCrossed(!!$borderCrossingLocation);
+                    $viewData->setBorderCrossingLocation($borderCrossingLocation);
                     break;
                 case 'wasAtCapacity':
                 case 'wasLimitedBy':

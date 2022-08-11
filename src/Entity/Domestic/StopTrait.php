@@ -59,7 +59,7 @@ trait StopTrait
     private $goodsTransferredTo;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Assert\NotNull(message="domestic.day.border-crossed.not-null", groups={"border-crossing"})
      */
     private $borderCrossed;
