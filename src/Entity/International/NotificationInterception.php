@@ -82,7 +82,7 @@ class NotificationInterception implements NotificationInterceptionAdvancedInterf
 
     public function getPrimaryName(): ?string
     {
-        return $this->primaryName;
+        return $this->primaryName ?? null;
     }
 
     public function setPrimaryName(?string $primaryName): self
