@@ -11,7 +11,7 @@ class CanBeUnloaded extends Constraint
 {
     public $message = "international.action.unloading.must-load-first";
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 

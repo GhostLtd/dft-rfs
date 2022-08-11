@@ -6,116 +6,76 @@ use App\Controller\DomesticSurvey\IndexController as DomesticIndexController;
 use App\Controller\InternationalSurvey\IndexController as InternationalIndexController;
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Entity\PasscodeUser;
+use App\Form\PasscodeLoginType;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
-use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
-use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
-class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
+class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
 {
-    use TargetPathTrait;
-
     public const LOGIN_ROUTE = 'app_login';
 
-    private EntityManagerInterface $entityManager;
-    private UrlGeneratorInterface $urlGenerator;
-    private CsrfTokenManagerInterface $csrfTokenManager;
-    private UserPasswordEncoderInterface $passwordEncoder;
-    private FormFactoryInterface $formFactory;
-    private PasscodeGenerator $passcodeGenerator;
+    protected EntityManagerInterface $entityManager;
+    protected FormFactoryInterface $formFactory;
+    protected PasscodeGenerator $passcodeGenerator;
+    protected UserPasswordHasherInterface $passwordHasher;
+    protected UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
-        CsrfTokenManagerInterface $csrfTokenManager,
-        UserPasswordEncoderInterface $passwordEncoder,
-        FormFactoryInterface $formFactory,
-        PasscodeGenerator $passcodeGenerator
-    ) {
+    public function __construct(EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, PasscodeGenerator $passcodeGenerator, UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $urlGenerator)
+    {
         $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
         $this->formFactory = $formFactory;
         $this->passcodeGenerator = $passcodeGenerator;
+        $this->passwordHasher = $passwordHasher;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    public function supports(Request $request): bool
+    protected function getLoginUrl(Request $request): string
     {
-        return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST')
-            && $request->request->has('passcode_login');
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 
-    public function getCredentials(Request $request)
+    public function authenticate(Request $request): Passport
     {
-        return $request->request->get('passcode_login');
+        $form = $this->formFactory->create(PasscodeLoginType::class, []);
+        $form->handleRequest($request);
+
+        $data = $form->getData();
+        $csrfTokenId = $form->getConfig()->getOption('csrf_token_id');
+
+        return new Passport(
+            new UserBadge($data['0'] ?? ''),
+            new CustomCredentials(function($credentials, UserInterface $user) {
+                if (!$user instanceof PasscodeUser) {
+                    return false;
+                }
+
+                // TODO: PasswordHasher looks to be a historical artifact since we now generate our passcodes,
+                //       however, it is used in functional tests to verify the "test" password. Remove it.
+                return
+                    hash_equals($credentials, $this->passcodeGenerator->getPasswordForUser($user)) ||
+                    $this->passwordHasher->isPasswordValid($user, $credentials);
+            }, $data['1'] ?? ''),
+            [
+                new CsrfTokenBadge($csrfTokenId, $data['token'] ?? ''),
+            ]
+        );
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider): PasscodeUser
-    {
-        $token = new CsrfToken('authenticate.passcode', $credentials['_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
-
-        $user = $this->entityManager->getRepository(PasscodeUser::class)->findOneBy(['username' => $credentials['passcode'][0]]);
-
-        if (!$user instanceof PasscodeUser) {
-            try {
-                // Fake the password checking - so that attackers can't detect the difference
-                $this->passwordEncoder->isPasswordValid(new PasscodeUser(), random_bytes(8));
-            } catch(\Exception $e) {}
-
-            throw new BadCredentialsException();
-        }
-
-        return $user;
-    }
-
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        return is_array($credentials) &&
-            isset($credentials['passcode'][1]) &&
-            $this->checkPassword($user, $credentials['passcode'][1]);
-    }
-
-    protected function checkPassword(UserInterface $user, string $password): bool
-    {
-        if (!$user instanceof PasscodeUser) {
-            return false;
-        }
-
-        return hash_equals($this->passcodeGenerator->getPasswordForUser($user), $password)
-            || $this->passwordEncoder->isPasswordValid($user, $password);
-    }
-
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     * @param $credentials
-     * @return string|null
-     */
-    public function getPassword($credentials): ?string
-    {
-        return $credentials['passcode'][1];
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         /** @var PasscodeUser $user */
         $user = $token->getUser();
@@ -135,10 +95,5 @@ class PasscodeAuthenticator extends AbstractFormLoginAuthenticator implements Pa
         }
 
         throw new AuthenticationException();
-    }
-
-    protected function getLoginUrl(): string
-    {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }

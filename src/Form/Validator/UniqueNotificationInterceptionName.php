@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class UniqueNotificationInterceptionName extends Constraint
 {
-    public string $message = "Company name '{{ value }}' has already been used";
+    public $message = "Company name '{{ value }}' has already been used";
 
     public function validatedBy(): string {
         return static::class.'Validator';

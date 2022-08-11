@@ -14,7 +14,7 @@ class ValidValueUnit extends Constraint
     public $valuePositiveMessage = "common.value-unit.value.positive-or-zero";
     public $allowBlank = false;
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 }

@@ -1,10 +1,7 @@
 <?php
 
-
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
 
-
-use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
@@ -13,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormTypeExtension extends AbstractTypeExtension
 {
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         return [
             FormType::class,
@@ -31,6 +28,9 @@ class FormTypeExtension extends AbstractTypeExtension
             ],
         ]);
         $resolver->setAllowedTypes('label_html', ['bool']);
+
+        // Since symfony/form 5.2: Setting the "legacy_error_messages" option to "true" is deprecated. It will be disabled in Symfony 6.0.
+        $resolver->setDefault('legacy_error_messages', false);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)

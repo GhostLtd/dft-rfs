@@ -19,9 +19,9 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractWorkflowController extends AbstractController
 {
-    protected $entityManager;
-    private $log;
-    private $formWizardManager;
+    protected EntityManagerInterface $entityManager;
+    protected FormWizardManager $formWizardManager;
+    protected LoggerInterface $log;
 
     abstract protected function getFormWizard(): FormWizardStateInterface;
     abstract protected function setFormWizard(FormWizardStateInterface $formWizard);

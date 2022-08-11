@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends BaseKernel implements CompilerPassInterface
 {
@@ -55,16 +55,16 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $confDir = $this->getProjectDir().'/config';
 
-        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS);
+        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS);
+        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
             return sys_get_temp_dir();
@@ -72,7 +72,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         return parent::getCacheDir();
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
             return sys_get_temp_dir();

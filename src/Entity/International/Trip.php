@@ -30,8 +30,9 @@ class Trip
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
+     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      */
     private $id;
 

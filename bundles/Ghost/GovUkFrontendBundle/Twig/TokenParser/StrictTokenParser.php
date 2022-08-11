@@ -4,12 +4,13 @@ namespace Ghost\GovUkFrontendBundle\Twig\TokenParser;
 
 use Ghost\GovUkFrontendBundle\Twig\Node\StrictNode;
 use Twig\Error\SyntaxError;
+use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
 class StrictTokenParser extends AbstractTokenParser
 {
-    public function parse(Token $token)
+    public function parse(Token $token): Node
     {
         $lineno = $token->getLine();
         $stream = $this->parser->getStream();
@@ -37,7 +38,7 @@ class StrictTokenParser extends AbstractTokenParser
         return $token->test('endstrict');
     }
 
-    public function getTag()
+    public function getTag(): string
     {
         return 'strict';
     }

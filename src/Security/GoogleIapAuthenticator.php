@@ -2,81 +2,94 @@
 
 namespace App\Security;
 
+use App\Features;
+use App\PreKernelFeatures;
+use Exception;
 use Google\Auth\AccessToken;
 use Google\Cloud\Core\Compute\Metadata;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
-class GoogleIapAuthenticator extends AbstractGuardAuthenticator
+class GoogleIapAuthenticator extends AbstractAuthenticator
 {
     const EXTRA_FIELD_USER_ID = 'IAPid';
-    private $appEnvironment;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
+    private bool $isGaeEnvironment;
 
-    public function __construct($appEnvironment, UrlGeneratorInterface $urlGenerator)
+    public function __construct()
     {
-        $this->appEnvironment = $appEnvironment;
-        $this->urlGenerator = $urlGenerator;
+        $this->isGaeEnvironment = PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT);
     }
 
-    public function supports(Request $request)
+    protected function getUserEmail(Request $request): string
+    {
+        return $request->headers->get('X-Goog-Authenticated-User-Email', 'no-email');
+    }
+
+    protected function getJwtAssertion(Request $request): ?string
+    {
+        return $request->headers->get('X-Goog-Iap-Jwt-Assertion', null);
+    }
+
+    protected function getUserId(Request $request): string
+    {
+        return $request->headers->get('X-Goog-Authenticated-User-Id', 'no-id');
+    }
+
+    public function supports(Request $request): ?bool
     {
         return $request->headers->has('X-Goog-Iap-Jwt-Assertion');
     }
 
-    public function getCredentials(Request $request)
+    public function authenticate(Request $request): Passport
     {
-        return [
-            'emailAddress' => $request->headers->get('X-Goog-Authenticated-User-Email', 'no-email'),
-            'userId' => $request->headers->get('X-Goog-Authenticated-User-Id', 'no-id'),
-            'assertion' => $request->headers->get('X-Goog-Iap-Jwt-Assertion', false),
+        $credentials = [
+            'emailAddress' => $this->getUserEmail($request),
+            'userId' => $this->getUserId($request),
+            'assertion' => $this->getJwtAssertion($request),
         ];
-    }
-
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        return new User(
-            $credentials['emailAddress'],
-            $credentials['assertion'],
-            ['ROLE_ADMIN_IAP_USER'],
-            true, true, true, true,
-            [self::EXTRA_FIELD_USER_ID => $credentials['userId']]
+        return new Passport(
+            new UserBadge('', fn() => new InMemoryUser(
+                $credentials['emailAddress'],
+                $credentials['assertion'],
+                ['ROLE_ADMIN'],
+            )),
+            new CustomCredentials(
+                [$this, 'customAuthenticator'],
+                $credentials
+            ),
         );
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
+    public function customAuthenticator($credentials, UserInterface $user): bool
     {
         if ($user->getPassword() === false) {
             return false;
         }
 
-        /** @var User $user */
+        if (!$this->isGaeEnvironment) {
+            return false;
+        }
+
+        /** @var InMemoryUser $user */
         try {
             $metadata = new Metadata();
-            $audience = sprintf(
-                '/projects/%s/apps/%s',
-                $metadata->getNumericProjectId(),
-                $metadata->getProjectId()
-            );
-            list($assertionEmailAddress, $assertionId) = $this->validateAssertion($user->getPassword(), $audience);
-            return $assertionId === $user->getExtraFields()[self::EXTRA_FIELD_USER_ID];
-        } catch (\Exception $e) {
+            $audience = "/projects/{$metadata->getNumericProjectId()}/apps/{$metadata->getProjectId()}";
+            $assertionId = $this->validateAssertion($user->getPassword(), $audience);
+            return $assertionId === $credentials['userId'];
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    private function validateAssertion(string $idToken, string $audience) : array
+    private function validateAssertion(string $idToken, string $audience): string
     {
         $auth = new AccessToken();
         $info = $auth->verify($idToken, [
@@ -85,44 +98,31 @@ class GoogleIapAuthenticator extends AbstractGuardAuthenticator
         ]);
 
         if ($info === false) {
-            throw new \Exception('Google token verification failed');
+            throw new Exception('Google token verification failed');
         }
 
         if ($audience != $info['aud'] ?? '') {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Audience %s did not match expected %s', $info['aud'], $audience
             ));
         }
 
         if (empty($info['email']) || empty($info['sub'])) {
-            throw new \Exception('Google token verification does not contain email/sub.');
+            throw new Exception('Google token verification does not contain email/sub.');
         }
 
         // The email address returned is the plain email address (without namespace)
-        return [$info['email'], $info['sub']];
+        return $info['sub'];
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return null;
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        if ($request->attributes->get('_route') === 'admin_index') {
-            $message = $authException->getMessage() ?? 'Token missing or invalid';
-            throw new UnauthorizedHttpException('OAuth', $message);
-        }
-        return new RedirectResponse($this->urlGenerator->generate('admin_index'));
-    }
-
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-    {
-        // doing nothing allows fallback to other auth methods
-    }
-
-    public function supportsRememberMe()
-    {
-        return false;
+        return null;
     }
 }

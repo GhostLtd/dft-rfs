@@ -12,8 +12,9 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
 
     /**
      * @param ?Collection $value
+     * @return mixed
      */
-    public function transform($value): ?string
+    public function transform($value)
     {
         $this->transformValue = $value;
         return $value
@@ -21,6 +22,9 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
             : null;
     }
 
+    /**
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         $data = explode("\r\n", $value);

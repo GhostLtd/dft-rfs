@@ -43,6 +43,11 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    # TODO: This is to avoid a deprecation warning relating to the use of ContainerInterface, the only usage of which
+    #       is in ProjectMigrationFactory. If we can remove the need for container injection into migrations
+    #       (see Version20210929101841.php), then we can remove this line too.
+    Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
+
     ## for some reason the default declaration of this service is triggering a deprecation warning
     # see https://stackoverflow.com/questions/64458501/symfony-doctrine-get-list-of-available-commands
     doctrine.query_sql_command:
@@ -58,7 +63,7 @@ services:
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
-            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+            - !service { class: PDO, factory: ['@database_connection', 'getNativeConnection'] }
             # If you get transaction issues (e.g. after login) uncomment the line below
             - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_ADVISORY }
 

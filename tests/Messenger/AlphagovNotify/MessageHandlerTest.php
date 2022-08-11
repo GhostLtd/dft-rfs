@@ -25,8 +25,8 @@ class MessageHandlerTest extends AbstractFunctionalTest
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $container = self::$kernel->getContainer()->get('test.service_container');
+        parent::setUp();
+        $container = static::getContainer()->get('test.service_container');
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->personalisationHelper = $container->get(PersonalisationHelper::class);

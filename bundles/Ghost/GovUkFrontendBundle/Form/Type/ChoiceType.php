@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoiceType extends ExtendedChoiceType
 {
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_choice';
     }

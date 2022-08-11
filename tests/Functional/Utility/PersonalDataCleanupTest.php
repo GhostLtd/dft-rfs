@@ -11,12 +11,10 @@ class PersonalDataCleanupTest extends AbstractCleanupTest
 {
     protected ?PersonalDataCleanupUtility $cleanupUtility;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-
-        $container = self::$kernel->getContainer();
-        $this->cleanupUtility = $container->get(PersonalDataCleanupUtility::class);
+        $this->cleanupUtility = static::getContainer()->get(PersonalDataCleanupUtility::class);
     }
 
     public function dataCleanup(): array

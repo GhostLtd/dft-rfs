@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Workflow;
-
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,7 +8,7 @@ use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
@@ -23,22 +21,22 @@ class FormWizardManager
 {
     const NOTIFICATION_BANNER_NORMALIZER_GROUP = 'form-wizard.notification-banner';
 
-    private $formFactory;
-    private $router;
-    private $entityManager;
-    private $session;
-    private $translator;
+    private FormFactoryInterface $formFactory;
+    private RouterInterface $router;
+    private EntityManagerInterface $entityManager;
+    private RequestStack $requestStack;
+    private TranslatorInterface $translator;
 
-    public function __construct(FormFactoryInterface $formFactory, RouterInterface $router, EntityManagerInterface $entityManager, SessionInterface $session, TranslatorInterface $translator)
+    public function __construct(FormFactoryInterface $formFactory, RouterInterface $router, EntityManagerInterface $entityManager, RequestStack $requestStack, TranslatorInterface $translator)
     {
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->entityManager = $entityManager;
         $this->translator = $translator;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
-    public function getFilteredTransitions(WorkflowInterface $stateMachine, FormWizardStateInterface $formWizard, FormInterface $form)
+    public function getFilteredTransitions(WorkflowInterface $stateMachine, FormWizardStateInterface $formWizard, FormInterface $form): array
     {
         $transitions = $stateMachine->getEnabledTransitions($formWizard);
 
@@ -59,7 +57,7 @@ class FormWizardManager
         return array_values($transitions);
     }
 
-    public function createForm(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine, $showCancelButton = true)
+    public function createForm(FormWizardStateInterface $formWizard, WorkflowInterface $stateMachine, $showCancelButton = true): FormInterface
     {
         $state = $formWizard->getState();
         $formMap = $formWizard->getStateFormMap();
@@ -106,7 +104,7 @@ class FormWizardManager
         return $form;
     }
 
-    public function processTransitionMetadata(array $transitionMetadata, $subject)
+    public function processTransitionMetadata(array $transitionMetadata, $subject): ?string
     {
         if ($transitionMetadata['persist'] ?? false)
         {
@@ -125,7 +123,7 @@ class FormWizardManager
         return $redirectUrl;
     }
 
-    protected function persistSubject($subject)
+    protected function persistSubject($subject): void
     {
         if (!$this->entityManager->contains($subject)) {
             $this->entityManager->persist($subject);
@@ -133,14 +131,15 @@ class FormWizardManager
         $this->entityManager->flush();
     }
 
-    protected function handleNotificationBanners($notificationBanner, $subject)
+    protected function handleNotificationBanners($notificationBanner, $subject): void
     {
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $normalizer = new ObjectNormalizer($classMetadataFactory);
 
         if (($notificationBanner['title'] ?? false) && ($notificationBanner['heading'] ?? false) && ($notificationBanner['content'] ?? false)) {
             $transArgs = $normalizer->normalize($subject, null, ['groups' => self::NOTIFICATION_BANNER_NORMALIZER_GROUP]);
-            $this->session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+            $session = $this->requestStack->getSession();
+            $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                 $this->translator->trans($notificationBanner['title'], $transArgs),
                 $this->translator->trans($notificationBanner['heading'], $transArgs),
                 $this->translator->trans($notificationBanner['content'], $transArgs),
@@ -149,7 +148,7 @@ class FormWizardManager
         }
     }
 
-    protected function resolveRedirectRouteForTransition($redirectRoute, $subject)
+    protected function resolveRedirectRouteForTransition($redirectRoute, $subject): string
     {
         if (is_array($redirectRoute)) {
             $propertyAccessor = PropertyAccess::createPropertyAccessor();

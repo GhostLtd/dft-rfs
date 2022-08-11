@@ -18,7 +18,7 @@ use App\Serializer\Normalizer\Mapper\ZeroIsNullProperty;
 
 class DetailedDayNormalizer extends AbstractExportNormalizer
 {
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof DayStop;
     }

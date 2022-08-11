@@ -10,7 +10,7 @@ abstract class AbstractSurveyRepository extends ServiceEntityRepository
     protected function doGetSurveysRequiringPasscodeUserCleanup(\DateTime $before, string $tableName): array {
         $statement = $this->getEntityManager()
             ->getConnection()
-            ->getWrappedConnection()
+            ->getNativeConnection()
             ->prepare(<<<EOQ
 SELECT s.id FROM audit_log a
 INNER JOIN (
@@ -81,7 +81,7 @@ EOQ;
 
         $statement = $this->getEntityManager()
             ->getConnection()
-            ->getWrappedConnection()
+            ->getNativeConnection()
             ->prepare($sql);
 
         $statement->bindValue('timestamp', $before->format('Y-m-d H:i:s'));

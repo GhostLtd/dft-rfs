@@ -76,7 +76,7 @@ class FormTestCase extends WebTestCase
         self::bootKernel();
 
         /** @var FormFactoryInterface $formFactory */
-        $formFactory = self::$container->get('form.factory');
+        $formFactory = static::getContainer()->get('form.factory');
 
         // create the form
         $form = $formFactory->create($formClass, $formData, $formOptions);
@@ -126,7 +126,7 @@ class FormTestCase extends WebTestCase
     private function renderAndCompare($fixture, FormInterface $componentForm)
     {
         /** @var Environment $twig */
-        $twig = self::$container->get('twig');
+        $twig = static::getContainer()->get('twig');
 
         $renderedHtml = '';
         // render it
@@ -171,6 +171,7 @@ class FormTestCase extends WebTestCase
             {
                 case 'text' :
                     $formOptions['label'] = $value;
+                    break;
                 case 'html' :
                     $formOptions['label'] = $value;
                     $formOptions['label_html'] = true;

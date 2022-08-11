@@ -11,23 +11,11 @@ use Twig\Environment;
 
 class AdminMenuEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Environment
-     */
-    private $twig;
+    private AdminMenu $adminMenu;
+    private string $hostname;
+    private Environment $twig;
 
-    /**
-     * @var string
-     */
-    private $hostname;
-
-    /**
-     * @var AdminMenu
-     */
-    private $adminMenu;
-
-
-    public function __construct(Environment $twig, AdminMenu $adminMenu, $hostname = '')
+    public function __construct(Environment $twig, AdminMenu $adminMenu, string $hostname = '')
     {
         $this->twig = $twig;
         $this->adminMenu = $adminMenu;
@@ -41,7 +29,7 @@ class AdminMenuEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'kernel.controller' => 'onKernelController',

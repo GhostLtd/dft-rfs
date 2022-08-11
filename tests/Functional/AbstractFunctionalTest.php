@@ -6,7 +6,8 @@ use Doctrine\Common\DataFixtures\Executor\AbstractExecutor;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -17,17 +18,16 @@ use Symfony\Component\DomCrawler\Link;
 
 abstract class AbstractFunctionalTest extends WebTestCase
 {
-    use FixturesTrait {
-        loadFixtures as _loadFixtures;
-    }
-
+    protected AbstractDatabaseTool $databaseTool;
     protected ReferenceRepository $fixtureReferenceRepository;
     protected KernelBrowser $browser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->browser = self::createClient();
         $this->browser->followRedirects(true);
+
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
 
 //        $this->browser->disableReboot();
 //        $entityManager = $this->getEntityManager();
@@ -41,10 +41,10 @@ abstract class AbstractFunctionalTest extends WebTestCase
         return $this->fixtureReferenceRepository->getReference($reference);
     }
 
-    protected function loadFixtures(array $classNames = [], bool $append = false, ?string $omName = null, string $registryName = 'doctrine', ?int $purgeMode = null): ?AbstractExecutor
+    protected function loadFixtures(array $classNames = [], bool $append = false): ?AbstractExecutor
     {
         $this->setupMessengerTransports();
-        $fixtures = $this->_loadFixtures($classNames, $append, $omName, $registryName, $purgeMode);
+        $fixtures = $this->databaseTool->loadFixtures($classNames, $append);
         $this->fixtureReferenceRepository = $fixtures->getReferenceRepository();
 
         return $fixtures;
@@ -104,7 +104,6 @@ abstract class AbstractFunctionalTest extends WebTestCase
 
     protected function getEntityManager(): EntityManager
     {
-        $container = self::$kernel->getContainer();
-        return $container->get(EntityManagerInterface::class);
+        return static::getContainer()->get(EntityManagerInterface::class);
     }
 }

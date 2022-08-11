@@ -11,12 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NumberType extends InputType
 {
-    public function getParent()
+    public function getParent(): ?string
     {
         return InputType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_number';
     }

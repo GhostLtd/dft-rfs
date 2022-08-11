@@ -6,6 +6,7 @@ use App\Tests\DataFixtures\DoctrineMigrationFixtures;
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\RemoteActions;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
@@ -13,11 +14,6 @@ use Symfony\Component\Process\Process;
 class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 {
     private array $addedMigrations = [];
-
-    protected function setUp()
-    {
-        $kernel = static::bootKernel();
-    }
 
     protected function tearDown(): void
     {

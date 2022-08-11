@@ -70,7 +70,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         }
 
         foreach ($actualErrors as $k => $v) {
-            $this->assertNotRegExp('/^[\w\-]+(\.[\w\-]+)+$/', $v, 'error message appears to be un-translated');
+            $this->assertDoesNotMatchRegularExpression('/^[\w\-]+(\.[\w\-]+)+$/', $v, 'error message appears to be un-translated');
             if (!isset($expectedErrors[$k])) {
                 $excessErrors[] = $k;
             }

@@ -12,7 +12,7 @@ class ValidRegistration extends Constraint
     public $validMessage = "common.vehicle.vehicle-registration.valid";
     public $alreadyExistsMessage = "common.vehicle.vehicle-registration.not-exists";
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 

@@ -54,7 +54,7 @@
     {%- set icon = options['icon'] | default(null) -%}
     {%- if icon %}<i class="icon ion-md-{{ icon }}"></i>{% endif -%}
     {%- if options.srHiddenPrefix ?? false -%}<span class="govuk-visually-hidden">{{- options.srHiddenPrefix | trans([], 'admin') }} - </span>{%- endif -%}
-    <span class="title">{{- menuItem.title | trans({username: app.user.username}, 'admin') -}}</span>
+    <span class="title">{{- menuItem.title | trans({username: app.user.userIdentifier}, 'admin') -}}</span>
 {%- endmacro -%}
 
 {%- macro renderDataAttributes(menuItem) -%}

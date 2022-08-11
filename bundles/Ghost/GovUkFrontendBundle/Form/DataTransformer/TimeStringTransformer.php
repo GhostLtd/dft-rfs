@@ -8,6 +8,9 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class TimeStringTransformer implements DataTransformerInterface
 {
+    /**
+     * @return mixed
+     */
     public function transform($value)
     {
         if (!$value) {
@@ -29,6 +32,9 @@ class TimeStringTransformer implements DataTransformerInterface
         ];
     }
 
+    /**
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         if (!is_array($value)) {

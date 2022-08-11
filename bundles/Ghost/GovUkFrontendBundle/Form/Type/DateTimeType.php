@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class DateTimeType extends AbstractType
 {
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_datetime';
     }

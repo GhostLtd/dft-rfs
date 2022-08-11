@@ -9,10 +9,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class Country extends Constraint
 {
-    public string $message = "common.country.country";
+    public $message = "common.country.country";
     public string $otherMessage = "common.country.other";
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 

@@ -68,8 +68,8 @@ class ListPageForm extends AbstractType
         $resolver->setAllowedTypes('fields', Simple::class.'[]');
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
-        return null;
+        return '';
     }
 }

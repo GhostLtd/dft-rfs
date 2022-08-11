@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraint;
  */
 class TripRoute extends Constraint
 {
-    public string $message = "common.trip-route.not-blank";
+    public $message = "common.trip-route.not-blank";
     public string $direction;
     public string $formField = "ports";
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 

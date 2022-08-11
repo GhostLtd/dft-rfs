@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
-
 
 use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
@@ -15,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LabelIsPageHeadingExtension extends AbstractTypeExtension
 {
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         return [
             TextareaType::class,

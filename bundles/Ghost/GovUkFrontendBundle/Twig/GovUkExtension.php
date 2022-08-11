@@ -13,7 +13,7 @@ use function twig_trim_filter;
 
 class GovUkExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('njIndent', [$this, 'indent']),
@@ -21,7 +21,7 @@ class GovUkExtension extends AbstractExtension
         ];
     }
 
-    public function getTokenParsers()
+    public function getTokenParsers(): array
     {
         return [
             new StrictTokenParser(),

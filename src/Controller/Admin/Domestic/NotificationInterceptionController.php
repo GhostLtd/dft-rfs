@@ -12,8 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,13 +26,13 @@ class NotificationInterceptionController extends AbstractController
     const TYPE_EDIT = 'edit';
 
     protected EntityManagerInterface $entityManager;
-    protected FlashBagInterface $flashBag;
+    protected RequestStack $requestStack;
     protected TranslatorInterface $translator;
 
-    public function __construct(EntityManagerInterface $entityManager, FlashBagInterface $flashBag, TranslatorInterface $translator)
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
-        $this->flashBag = $flashBag;
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
     }
 
@@ -108,7 +108,7 @@ class NotificationInterceptionController extends AbstractController
                         ['style' => NotificationBanner::STYLE_SUCCESS]
                     );
 
-                    $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $banner);
+                    $this->requestStack->getSession()->getBag('flashes')->add(NotificationBanner::FLASH_BAG_TYPE, $banner);
                 }
 
                 return new RedirectResponse($successUrl);

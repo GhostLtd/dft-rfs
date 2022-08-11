@@ -31,7 +31,7 @@ abstract class AbstractExportNormalizer implements ContextAwareNormalizerInterfa
         return array_map(fn(Mapper $mapper) => $mapper->getData($object), $this->getMapping());
     }
 
-    abstract public function supportsNormalization($data, $format = null, array $context = []);
+    abstract public function supportsNormalization($data, $format = null, array $context = []): bool;
 
     /**
      * @return Mapper[]|array

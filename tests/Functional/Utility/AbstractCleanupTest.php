@@ -11,12 +11,10 @@ abstract class AbstractCleanupTest extends AbstractFunctionalTest
 {
     protected EntityManagerInterface $entityManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-
-        $container = self::$kernel->getContainer();
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
     }
 
     protected function getSurveyAndSetState(string $auditOffset, string $state): Survey

@@ -6,7 +6,7 @@ use App\Entity\Domestic\DayStop;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use App\Utility\Domestic\DeleteHelper;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteDayStopConfirmAction extends AbstractConfirmAction
@@ -15,9 +15,9 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
     protected $subject;
     private DeleteHelper $deleteHelper;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, DeleteHelper $deleteHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, DeleteHelper $deleteHelper)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->deleteHelper = $deleteHelper;
     }
 

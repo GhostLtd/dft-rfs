@@ -1,36 +1,32 @@
 <?php
 
-
 namespace App\EventListener\InternationalSurvey;
-
 
 use App\Entity\International\Vehicle;
 use App\Entity\PasscodeUser;
 use App\Utility\RegistrationMarkHelper;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Events;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class VehicleRegMarkChangedListener
 {
-    private $session;
-    private $security;
-    private $translator;
+    private RequestStack $requestStack;
+    private Security $security;
+    private TranslatorInterface $translator;
 
-    public function __construct(SessionInterface $session, Security $security, TranslatorInterface $translator)
+    public function __construct(RequestStack $requestStack, Security $security, TranslatorInterface $translator)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->security = $security;
         $this->translator = $translator;
     }
 
-    public function preUpdate(PreUpdateEventArgs $eventArgs)
+    public function preUpdate(PreUpdateEventArgs $eventArgs): void
     {
-        $entity = $eventArgs->getEntity();
+        $entity = $eventArgs->getObject();
         if (!$entity instanceof Vehicle) {
             return;
         }
@@ -44,7 +40,8 @@ class VehicleRegMarkChangedListener
         if ($eventArgs->hasChangedField('registrationMark')
              && ($newValue = $eventArgs->getNewValue('registrationMark')) !== ($oldValue = $eventArgs->getOldValue('registrationMark'))
         ) {
-            $this->session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+            $session = $this->requestStack->getSession();
+            $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                 'Check vehicle details',
                 'Vehicle registration mark has changed',
                 $this->translator->trans('international.vehicle.vehicle-details.registration-mark.changed-notification-content', [

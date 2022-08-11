@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\Email;
  */
 class CommaSeparatedEmails extends Email
 {
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return CommaSeparatedEmailsValidator::class;
     }

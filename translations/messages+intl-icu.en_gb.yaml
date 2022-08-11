@@ -1281,13 +1281,14 @@ international:
     heading: Delete action {actionNumber}
     delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
     delete-unloading: Are you sure you want to delete this unloading action?
-    notification:
-      deleted:
-        heading: Action deleted successfully
-        content: The action was successfully deleted
-      cancelled:
-        heading: Action not deleted
-        content: The request to delete the action was cancelled
+    confirm.label: Yes, delete action
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Action deleted successfully
+      content: The action was successfully deleted
+    cancelled-notification:
+      heading: Action not deleted
+      content: The request to delete the action was cancelled
 
   trip-delete:
     heading: "Delete trip — {date, date, short}"
@@ -1305,13 +1306,14 @@ international:
   vehicle-delete:
     heading: "Delete vehicle — {regMark}"
     delete: This will permanently delete this vehicle and all related trips and actions
-    notification:
-      deleted:
-        heading: Vehicle deleted successfully
-        content: The vehicle was successfully deleted
-      cancelled:
-        heading: Vehicle not deleted
-        content: The request to delete the vehicle was cancelled
+    confirm.label: Yes, delete this vehicle
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Vehicle deleted successfully
+      content: The vehicle was successfully deleted
+    cancelled-notification:
+      heading: Vehicle not deleted
+      content: The request to delete the vehicle was cancelled
 
   vehicle-cant-edit-trailer-configs:
     title: Edit cancelled

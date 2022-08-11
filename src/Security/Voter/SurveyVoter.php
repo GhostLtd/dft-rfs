@@ -22,19 +22,13 @@ class SurveyVoter extends Voter
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW_SUBMISSION_SUMMARY, self::PROVIDE_FEEDBACK, self::VIEW_FEEDBACK_SUMMARY])
             && $subject instanceof SurveyInterface;
     }
 
-    /**
-     * @param string $attribute
-     * @param SurveyInterface $subject
-     * @param TokenInterface $token
-     * @return bool
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->authorizationChecker->isGranted(PasscodeUser::ROLE_PASSCODE_USER)) {
             return false;

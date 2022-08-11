@@ -2,25 +2,23 @@
 
 namespace App\Security;
 
-
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class FileUserProvider implements UserProviderInterface
 {
-    /** @var User[] */
-    protected $users = [];
+    /** @var InMemoryUser[] */
+    protected array $users = [];
 
     public function __construct($usersFile)
     {
         $this->loadUsersFromFile($usersFile);
     }
 
-    protected function loadUsersFromFile($usersFile)
+    protected function loadUsersFromFile($usersFile): void
     {
         if (is_null($usersFile)) return;
         if (!file_exists($usersFile)) return;
@@ -32,36 +30,41 @@ class FileUserProvider implements UserProviderInterface
             {
                 $username = trim($userParts[0]);
                 $password = trim($userParts[1]);
-                $user = new User($username, $password, ['ROLE_ADMIN_FORM_USER']);
+                $user = new InMemoryUser($username, $password, ['ROLE_ADMIN_FORM_USER']);
                 $this->users[$username] = $user;
             }
         }
     }
 
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        if (array_key_exists($username, $this->users)) {
-            return $this->users[$username];
+        if (array_key_exists($identifier, $this->users)) {
+            return $this->users[$identifier];
         }
 
-        throw new UsernameNotFoundException(
-            sprintf('Username "%s" does not exist.', $username)
+        throw new UserNotFoundException(
+            sprintf('Username "%s" does not exist.', $identifier)
         );
     }
 
-    public function refreshUser(UserInterface $user)
+    public function loadUserByUsername(string $username): UserInterface
     {
-        if (!$user instanceof User) {
+        return $this->loadUserByIdentifier($username);
+    }
+
+    public function refreshUser(UserInterface $user): UserInterface
+    {
+        if (!$user instanceof InMemoryUser) {
             throw new UnsupportedUserException(
                 sprintf('Instances of "%s" are not supported.', get_class($user))
             );
         }
 
-        return $this->loadUserByUsername($user->getUsername());
+        return $this->loadUserByIdentifier($user->getUserIdentifier());
     }
 
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
-        return $class === User::class;
+        return $class === InMemoryUser::class;
     }
 }

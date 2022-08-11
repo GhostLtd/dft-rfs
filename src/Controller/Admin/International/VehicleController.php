@@ -4,14 +4,13 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Entity\International\Vehicle;
-use App\Form\Admin\InternationalSurvey\VehicleDeleteType;
 use App\Form\Admin\InternationalSurvey\VehicleType;
 use App\Security\Voter\AdminSurveyVoter;
-use App\Utility\International\DeleteHelper;
+use App\Utility\ConfirmAction\International\DeleteVehicleConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -104,33 +103,23 @@ class VehicleController extends AbstractController
     /**
      * @Route("/vehicle/{vehicleId}/delete", name=self::DELETE_ROUTE)
      * @Entity("vehicle", expr="repository.find(vehicleId)")
+     * @Template("admin/international/vehicle/delete.html.twig")
      */
-    public function delete(Vehicle $vehicle, Request $request, DeleteHelper $deleteHelper): Response
+    public function delete(Vehicle $vehicle, Request $request, DeleteVehicleConfirmAction $confirmAction)
     {
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
-        $form = $this->createForm(VehicleDeleteType::class);
-
         $survey = $vehicle->getSurveyResponse()->getSurvey();
-        $redirectUrl = $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]);
 
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $deleteHelper->deleteVehicle($vehicle);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Vehicle successfully deleted", "The vehicle was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
-                return new RedirectResponse($redirectUrl);
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Vehicle not deleted', "The request to delete this vehicle was cancelled."));
-                return new RedirectResponse($redirectUrl);
-            }
-        }
-
-        return $this->render('admin/international/vehicle/delete.html.twig', [
-            'vehicle' => $vehicle,
-            'form' => $form->createView(),
-        ]);
+        return $confirmAction
+            ->setSubject($vehicle)
+            ->setExtraViewData([
+                'vehicle' => $vehicle,
+            ])
+            ->controller(
+                $request,
+                function() use ($survey) {
+                    return $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]);
+                }
+            );
     }
 }

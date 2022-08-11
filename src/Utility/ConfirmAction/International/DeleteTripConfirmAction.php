@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Utility\ConfirmAction\International;
-
 
 use App\Entity\International\Trip;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use App\Utility\International\DeleteHelper;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteTripConfirmAction extends AbstractConfirmAction
@@ -17,9 +15,9 @@ class DeleteTripConfirmAction extends AbstractConfirmAction
     protected $subject;
     private DeleteHelper $deleteHelper;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, DeleteHelper $deleteHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, DeleteHelper $deleteHelper)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->deleteHelper = $deleteHelper;
     }
 

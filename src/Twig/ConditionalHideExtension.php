@@ -8,7 +8,7 @@ use Twig\TwigFunction;
 
 class ConditionalHideExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('namesToIds', [$this, 'namesToIds']),
@@ -17,7 +17,7 @@ class ConditionalHideExtension extends AbstractExtension
 
     public function namesToIds(FormView $view, ?array $names): ?array
     {
-        if ($names === null || empty($names)) {
+        if (empty($names)) {
             return null;
         }
 

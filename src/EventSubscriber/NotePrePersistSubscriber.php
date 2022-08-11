@@ -20,17 +20,16 @@ class NotePrePersistSubscriber implements EventSubscriber
 
     public function prePersist(LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         if (!in_array(NoteTrait::class, class_uses($entity))) {
             return;
         }
         /** @var $entity NoteTrait */
-
         $entity->setCreatedAt(new \DateTime());
         $entity->setCreatedBy($this->security->getUser()->getUsername());
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             OrmEvents::prePersist => 'prePersist',

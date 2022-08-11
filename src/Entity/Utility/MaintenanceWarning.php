@@ -19,14 +19,14 @@ class MaintenanceWarning
      * @Assert\NotBlank(message="Provide a date/time")
      * @Assert\GreaterThan ("now", message="Provide a date/time in the future")
      */
-    private ?\DateTime $start;
+    private ?\DateTime $start = null;
 
     /**
      * @ORM\Column(type="time")
      * @Assert\NotBlank(message="Provide a time")
      * @Assert\GreaterThan(propertyPath="startTime", message="The end must be after the start")
      */
-    private ?\DateTime $end;
+    private ?\DateTime $end = null;
 
     public function getStart(): ?\DateTime
     {

@@ -22,6 +22,6 @@ framework:
 
 services:
     cache.messenger.restart_workers_signal:
-        parent: 'cache.adapter.pdo'
+        parent: 'cache.adapter.doctrine_dbal'
         tags:
             - { name: 'cache.pool', namespace: 'shared' }

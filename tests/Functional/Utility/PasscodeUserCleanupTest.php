@@ -11,12 +11,10 @@ class PasscodeUserCleanupTest extends AbstractCleanupTest
 {
     protected ?PasscodeUserCleanupUtility $cleanupUtility = null;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-
-        $container = self::$kernel->getContainer();
-        $this->cleanupUtility = $container->get(PasscodeUserCleanupUtility::class);
+        $this->cleanupUtility = static::getContainer()->get(PasscodeUserCleanupUtility::class);
     }
 
     public function dataCleanup(): array

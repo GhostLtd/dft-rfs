@@ -7,7 +7,7 @@ use App\Utility\ConfirmAction\AbstractConfirmAction;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ResetPasscodeConfirmAction extends AbstractConfirmAction
@@ -18,9 +18,9 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
     protected EntityManagerInterface $entityManager;
     protected ?string $passcode;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, PasscodeGenerator $passcodeGenerator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, PasscodeGenerator $passcodeGenerator, EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->entityManager = $entityManager;
         $this->passcodeGenerator = $passcodeGenerator;
     }

@@ -1,5 +1,7 @@
 security:
-    encoders:
+    enable_authenticator_manager: true
+
+    password_hashers:
         App\Entity\PasscodeUser:
             algorithm: 'bcrypt'
             # these users have a short lifespan, and bulk creation of surveys/users needs faster hashing
@@ -18,7 +20,7 @@ security:
             id: App\Security\FileUserProvider
         null_provider:
             memory:
-                users: ~
+                users: []
 
     firewalls:
         dev:
@@ -27,17 +29,16 @@ security:
 
         main:
             host: '^%frontend_hostname%$'
-            anonymous: lazy
+            lazy: true
             provider: passcode
-            guard:
-                authenticator: App\Security\PasscodeAuthenticator
+            custom_authenticator: App\Security\PasscodeAuthenticator
             logout:
                 path: app_logout
                 target: app_login
 
         admin:
             host: '^%admin_hostname%$'
-            anonymous: lazy
+            lazy: true
             provider: null_provider
             logout:
                 path: admin_logout

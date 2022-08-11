@@ -60,7 +60,7 @@ class AddressType extends AbstractType
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return Gds\FieldsetType::class;
     }

@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraint;
  */
 class DriverAvailabilityWagesPeriod extends Constraint
 {
-    public string $message = 'Choose a period for this wage increase.';
+    public $message = 'Choose a period for this wage increase.';
     public string $triggerField;
     public string $targetField;
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 

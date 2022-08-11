@@ -11,12 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextareaType extends ExtendedTextareaType
 {
-    public function getParent()
+    public function getParent(): ?string
     {
         return ExtendedTextareaType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_textarea';
     }

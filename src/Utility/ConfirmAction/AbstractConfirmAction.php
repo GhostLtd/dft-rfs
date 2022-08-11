@@ -9,21 +9,23 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractConfirmAction implements ConfirmActionInterface
 {
     protected $subject;
     protected FormFactoryInterface $formFactory;
-    protected FlashBagInterface $flashBag;
+    protected RequestStack $requestStack;
     protected TranslatorInterface $translator;
+    protected array $extraViewData;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator)
     {
         $this->formFactory = $formFactory;
-        $this->flashBag = $flashBag;
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
+        $this->extraViewData = [];
     }
 
     public function getSubject()
@@ -104,16 +106,18 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
             $form->handleRequest($request);
 
             $confirm = $form->get('confirm');
+            $flashBag = $this->requestStack->getSession()->getBag('flashes');
+
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
                 if ($form->isValid()) {
                     $this->doConfirmedAction($form->getData());
                     $redirectUrl = $confirmedActionUrlCallback();
 
-                    $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
+                    $flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
                     return new RedirectResponse($redirectUrl);
                 }
             } else {
-                $this->flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
+                $flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
                 return new RedirectResponse($cancelledActionUrlCallback ? $cancelledActionUrlCallback() : $confirmedActionUrlCallback());
             }
         }
@@ -129,6 +133,12 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
 
     public function getExtraViewData(): array
     {
-        return [];
+        return $this->extraViewData;
+    }
+
+    public function setExtraViewData(array $extraViewData): self
+    {
+        $this->extraViewData = $extraViewData;
+        return $this;
     }
 }

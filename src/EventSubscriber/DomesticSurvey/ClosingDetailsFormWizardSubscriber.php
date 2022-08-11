@@ -12,7 +12,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         $prefix = 'workflow.domestic_survey_closing_details';
         return [

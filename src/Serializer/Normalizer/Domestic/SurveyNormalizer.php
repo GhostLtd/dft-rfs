@@ -22,7 +22,7 @@ use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Survey;
     }

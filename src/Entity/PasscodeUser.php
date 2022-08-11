@@ -7,12 +7,13 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=PasscodeUserRepository::class)
  */
-class PasscodeUser implements UserInterface
+class PasscodeUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_PASSCODE_USER = 'ROLE_PASSCODE_USER';
     const ROLE_DOMESTIC_SURVEY_USER = 'ROLE_DOMESTIC_SURVEY_USER';
@@ -21,8 +22,9 @@ class PasscodeUser implements UserInterface
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
+     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      */
     private $id;
 
@@ -67,21 +69,22 @@ class PasscodeUser implements UserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getUserIdentifier(): string
     {
         return $this->username;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
     }
 
     public function setUsername(?string $username): self
     {
         $this->username = $username;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         // guarantee every user at least has ROLE_USER
@@ -113,9 +116,6 @@ class PasscodeUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -127,21 +127,13 @@ class PasscodeUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getDomesticSurvey(): ?DomesticSurvey
@@ -152,22 +144,14 @@ class PasscodeUser implements UserInterface
     public function setDomesticSurvey(?DomesticSurvey $domesticSurvey): self
     {
         $this->domesticSurvey = $domesticSurvey;
-
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
     }
 
-    /**
-     * @param string|null $plainPassword
-     * @return PasscodeUser
-     */
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;

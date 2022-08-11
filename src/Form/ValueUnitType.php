@@ -51,7 +51,7 @@ class ValueUnitType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_value_units';
     }

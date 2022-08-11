@@ -10,13 +10,13 @@ class VehicleChangeTrailerConfigVoter extends Voter
 {
     const EDIT_TRAILER_CONFIGS = 'EDIT_TRAILER_CONFIGS';
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, [self::EDIT_TRAILER_CONFIGS])
             && $subject instanceof Vehicle;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         /** @var Vehicle $subject */
         switch ($attribute) {

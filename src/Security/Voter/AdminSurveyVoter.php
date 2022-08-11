@@ -29,7 +29,7 @@ class AdminSurveyVoter extends Voter
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES, self::RESEND])
             && $subject instanceof SurveyInterface;
@@ -43,7 +43,7 @@ class AdminSurveyVoter extends Voter
         return $surveyInterfaceSupport || $haulageInterfaceSupport || $domesticOnlySupport;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->authorizationChecker->isGranted('ROLE_ADMIN_USER')) {
             return false;

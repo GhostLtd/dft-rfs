@@ -20,7 +20,7 @@ class PreEnquiryResponseStateLifecycleSubscriber implements EventSubscriber
 
     public function prePersist(LifecycleEventArgs $args)
     {
-        $response = $args->getEntity();
+        $response = $args->getObject();
         if (!$response instanceof PreEnquiryResponse) {
             return;
         }
@@ -32,7 +32,7 @@ class PreEnquiryResponseStateLifecycleSubscriber implements EventSubscriber
         }
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             OrmEvents::prePersist => 'prePersist',

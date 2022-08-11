@@ -6,7 +6,7 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -30,10 +30,9 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
         return $this;
     }
 
-
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, WorkflowInterface $preEnquiryStateMachine, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, WorkflowInterface $preEnquiryStateMachine, EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->preEnquiryStateMachine = $preEnquiryStateMachine;
         $this->entityManager = $entityManager;
     }

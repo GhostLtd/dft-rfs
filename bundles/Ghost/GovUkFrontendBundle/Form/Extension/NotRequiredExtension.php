@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
-
 
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
@@ -12,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NotRequiredExtension extends AbstractTypeExtension
 {
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         return [
             InputType::class,

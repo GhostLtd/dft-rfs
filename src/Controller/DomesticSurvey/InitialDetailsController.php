@@ -34,10 +34,9 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 
     protected function getFormWizard(): FormWizardStateInterface
     {
-        $em = $this->getDoctrine()->getManager();
-
         $survey = $this->getSurvey();
-        $databaseSurvey = $em->getRepository(Survey::class)->findOneByIdWithResponseAndVehicle($survey->getId());
+        $databaseSurvey = $this->entityManager->getRepository(Survey::class)
+            ->findOneByIdWithResponseAndVehicle($survey->getId());
 
         /** @var InitialDetailsState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), (new InitialDetailsState())->setSubject($databaseSurvey->getResponse()));

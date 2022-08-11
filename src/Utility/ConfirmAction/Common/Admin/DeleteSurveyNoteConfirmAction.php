@@ -7,7 +7,7 @@ use App\Entity\International\SurveyNote as InternationalSurveyNote;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
@@ -17,9 +17,9 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
     protected EntityManagerInterface $entityManager;
     protected array $extraViewData;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->entityManager = $entityManager;
     }
 
@@ -41,16 +41,5 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();
-    }
-
-    public function getExtraViewData(): array
-    {
-        return $this->extraViewData;
-    }
-
-    public function setExtraViewData(array $extraViewData): DeleteSurveyNoteConfirmAction
-    {
-        $this->extraViewData = $extraViewData;
-        return $this;
     }
 }

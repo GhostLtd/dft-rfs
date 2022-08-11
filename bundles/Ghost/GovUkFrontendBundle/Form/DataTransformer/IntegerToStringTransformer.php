@@ -23,6 +23,9 @@ class IntegerToStringTransformer implements DataTransformerInterface
         $this->invalidMessageParameters = $invalidMessageParameters;
     }
 
+    /**
+     * @return mixed
+     */
     public function transform($value)
     {
         if ($value === null || $value === '') {
@@ -36,6 +39,9 @@ class IntegerToStringTransformer implements DataTransformerInterface
         return (string) $value;
     }
 
+    /**
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         if ('' === trim($value)) {

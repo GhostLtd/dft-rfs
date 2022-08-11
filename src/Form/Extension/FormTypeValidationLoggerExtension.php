@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Extension;
-
 
 use App\EventSubscriber\FormValidationLoggerSubscriber;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -11,17 +9,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FormTypeValidationLoggerExtension extends AbstractTypeExtension
 {
-    /**
-     * @var FormValidationLoggerSubscriber
-     */
-    private $eventSubscriber;
+    private FormValidationLoggerSubscriber $eventSubscriber;
 
     public function __construct(FormValidationLoggerSubscriber $eventSubscriber)
     {
         $this->eventSubscriber = $eventSubscriber;
     }
 
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         return [
             FormType::class

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Functional;
-
 
 use App\Entity\PasscodeUser;
 use App\Tests\DataFixtures\Domestic\SurveyFixtures;
@@ -14,16 +12,16 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
 {
     private PasscodeGenerator $passcodeGenerator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->browser->followRedirects(true);
 
-        $container = self::$kernel->getContainer()->get('test.service_container');
+        $container = static::getContainer()->get('test.service_container');
         $this->passcodeGenerator = $container->get(PasscodeGenerator::class);
     }
 
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return [
             ['user:frontend', 'test', true],

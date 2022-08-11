@@ -4,14 +4,13 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
-use App\Form\Admin\InternationalSurvey\ActionDeleteType;
 use App\Form\Admin\InternationalSurvey\ActionLoadType;
 use App\Form\Admin\InternationalSurvey\ActionUnloadType;
 use App\Security\Voter\AdminSurveyVoter;
-use App\Utility\International\DeleteHelper;
+use App\Utility\ConfirmAction\International\DeleteActionConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -120,38 +119,24 @@ class ActionController extends AbstractController
     /**
      * @Route("/action/{actionId}/delete", name=self::DELETE_ROUTE)
      * @Entity("action", expr="repository.findOneByIdWithRelatedActions(actionId)")
+     * @Template("admin/international/action/delete.html.twig")
      */
-    public function delete(Action $action, Request $request, DeleteHelper $deleteHelper): Response
+    public function delete(Action $action, Request $request, DeleteActionConfirmAction $confirmAction)
     {
-        $form = $this->createForm(ActionDeleteType::class);
-
         $trip = $action->getTrip();
         $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
 
-        $redirectUrl = $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            ).'#actions-' . $trip->getId();
-
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $deleteHelper->deleteAction($action);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Success', "Action successfully deleted", "The consignment action was deleted.", ['style' => NotificationBanner::STYLE_SUCCESS]));
-                return new RedirectResponse($redirectUrl);
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner('Important', 'Action not deleted', "The request to delete this consignment action was cancelled."));
-                return new RedirectResponse($redirectUrl);
-            }
-        }
-
-        return $this->render('admin/international/action/delete.html.twig', [
-            'action' => $action,
-            'form' => $form->createView(),
-        ]);
+        return $confirmAction
+            ->setSubject($action)
+            ->setExtraViewData([
+                'action' => $action,
+            ])
+            ->controller(
+                $request,
+                function() use ($survey, $trip) {
+                    return $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#actions-' . $trip->getId();
+                }
+            );
     }
 }

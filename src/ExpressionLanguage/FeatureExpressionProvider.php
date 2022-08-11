@@ -11,17 +11,14 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class FeatureExpressionProvider implements ExpressionFunctionProviderInterface
 {
-    /**
-     * @var Features
-     */
-    private $features;
+    private Features $features;
 
     public function __construct(Features $features)
     {
         $this->features = $features;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new ExpressionFunction('is_feature_enabled', function($str) {

@@ -13,7 +13,7 @@ class TimeType extends AbstractType
     const AM = 'am';
     const PM = 'pm';
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_time';
     }

@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\AbstractComparisonValidator;
 
 abstract class AbstractDateComparisonValidator extends AbstractComparisonValidator
 {
-    protected function formatValue($value, $format = 0)
+    protected function formatValue($value, $format = 0): string
     {
         if ($value instanceof DateTimeInterface) {
             if (class_exists('IntlDateFormatter')) {

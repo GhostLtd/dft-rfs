@@ -20,7 +20,8 @@ class DoctrineMigrationFixtures extends Fixture implements FixtureInterface
 
         $connection = $manager->getConnection();
         $connection->beginTransaction();
-        $connection->executeQuery('create table doctrine_migration_versions (version varchar(191) not null primary key, executed_at datetime null, execution_time int null)');
+//        $connection->executeQuery('create table doctrine_migration_versions (version varchar(191) not null primary key, executed_at datetime null, execution_time int null)');
+        $connection->executeQuery('DELETE FROM doctrine_migration_versions WHERE TRUE=TRUE');
 
         foreach($finder as $file) {
             $connection->createQueryBuilder()
@@ -35,7 +36,7 @@ class DoctrineMigrationFixtures extends Fixture implements FixtureInterface
                     'timestamp' => (new \DateTime())->getTimestamp(),
                     'execTime' => 1,
                 ])
-                ->execute();
+                ->executeQuery();
         }
 
         $connection->commit();

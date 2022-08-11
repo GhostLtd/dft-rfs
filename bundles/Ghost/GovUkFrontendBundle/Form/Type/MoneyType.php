@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MoneyType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): ?string
     {
         return InputType::class;
     }
@@ -21,8 +21,7 @@ class MoneyType extends AbstractType
         $builder->addViewTransformer(new CostTransformer($options['divisor']));
     }
 
-
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_money';
     }

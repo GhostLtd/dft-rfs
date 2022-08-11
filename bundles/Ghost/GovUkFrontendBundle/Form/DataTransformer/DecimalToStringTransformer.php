@@ -27,6 +27,9 @@ class DecimalToStringTransformer implements DataTransformerInterface
         $this->scale = $scale;
     }
 
+    /**
+     * @return mixed
+     */
     public function transform($value)
     {
         if ($value === null || $value === '') {
@@ -45,6 +48,9 @@ class DecimalToStringTransformer implements DataTransformerInterface
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         if ('' === trim($value)) {

@@ -36,7 +36,7 @@ class FormValidationLoggerSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         // Validation occurs at the default priority, so if we hook in to a lower priority, errors should be available
         return [

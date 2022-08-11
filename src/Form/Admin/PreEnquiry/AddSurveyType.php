@@ -72,11 +72,17 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
         ]);
     }
 
+    /**
+     * @return mixed
+     */
     public function transform($value)
     {
         return $value;
     }
 
+    /**
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         if ($value instanceof PreEnquiry) {

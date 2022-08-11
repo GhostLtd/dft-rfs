@@ -2,5 +2,4 @@ security:
     firewalls:
         admin:
             provider: passwd_file
-            guard:
-                authenticator: App\Security\AdminFormAuthenticator
+            custom_authenticator: App\Security\AdminFormAuthenticator

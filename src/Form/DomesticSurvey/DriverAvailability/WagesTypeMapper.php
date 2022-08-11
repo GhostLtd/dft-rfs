@@ -2,25 +2,23 @@
 
 namespace App\Form\DomesticSurvey\DriverAvailability;
 
-use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\SurveyResponse;
+use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 use Symfony\Component\Form\FormInterface;
-use Traversable;
 
-class WagesTypeMapper extends PropertyPathMapper
+class WagesTypeMapper implements DataMapperInterface
 {
-    public function mapDataToForms($data, $forms)
+    public function mapDataToForms($viewData, \Traversable $forms)
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
-        if (!$data instanceof SurveyResponse) {
-            throw new UnexpectedTypeException($data, SurveyResponse::class);
+        if (!$viewData instanceof SurveyResponse) {
+            throw new UnexpectedTypeException($viewData, SurveyResponse::class);
         }
 
-        $driverAvailability = $data->getSurvey()->getDriverAvailability();
+        $driverAvailability = $viewData->getSurvey()->getDriverAvailability();
 
         if ($driverAvailability && isset($forms['haveWagesIncreased'])) {
             $forms['haveWagesIncreased']->setData($driverAvailability->getHaveWagesIncreased());
@@ -32,20 +30,16 @@ class WagesTypeMapper extends PropertyPathMapper
         }
     }
 
-    /**
-     * @param FormInterface[]|Traversable $forms
-     * @param SurveyResponse $data
-     */
-    public function mapFormsToData($forms, &$data)
+    public function mapFormsToData(\Traversable $forms, &$viewData)
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
-        if (!$data instanceof SurveyResponse) {
-            throw new UnexpectedTypeException($data, SurveyResponse::class);
+        if (!$viewData instanceof SurveyResponse) {
+            throw new UnexpectedTypeException($viewData, SurveyResponse::class);
         }
 
-        $driverAvailability = $data->getSurvey()->getDriverAvailability();
+        $driverAvailability = $viewData->getSurvey()->getDriverAvailability();
 
         $driverAvailability
             ->setHaveWagesIncreased($forms['haveWagesIncreased']->getData())

@@ -4,7 +4,7 @@ namespace App\Utility\ConfirmAction;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteNotificationInterceptionConfirmAction extends AbstractConfirmAction
@@ -12,9 +12,9 @@ class DeleteNotificationInterceptionConfirmAction extends AbstractConfirmAction
     protected $subject;
     protected EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
+        parent::__construct($formFactory, $requestStack, $translator);
         $this->entityManager = $entityManager;
     }
 

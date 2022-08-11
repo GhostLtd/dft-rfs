@@ -8,7 +8,7 @@ class Postcode extends Constraint
 {
     public $message = "common.address.postcode.invalid";
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 }

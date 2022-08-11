@@ -17,7 +17,7 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
         $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         $prefix = 'workflow.international_survey_closing_details';
         return [

@@ -32,7 +32,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
                 [ResponseSoldFixtures::class],
                 self::BUTTON_ONLY_FORM_NAME,
             ],
-            // N.B. Normal hire doesn't have an approve button (it can only be re-issued, re-opened or rejected)
+            // N.B. Normal hire doesn't have an "approve" button (it can only be re-issued, re-opened or rejected)
             [
                 [ResponseOnMultiHireFixtures::class],
                 self::BUTTON_ONLY_FORM_NAME,

@@ -1,28 +1,21 @@
 <?php
 
-
 namespace App\Tests\Utility\International;
-
 
 use App\Entity\International\Survey;
 use App\Utility\International\SampleImporter;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Vfs\FileSystem;
 
 class SampleImporterTest extends WebTestCase
 {
-    /**
-     * @var SampleImporter|null
-     */
-    private $sampleImporter;
+    private ?SampleImporter $sampleImporter;
 
     private $tempFilename;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         self::bootKernel();
-        $this->sampleImporter = self::$container->get(SampleImporter::class);
-
+        $this->sampleImporter = static::getContainer()->get(SampleImporter::class);
         $this->tempFilename = tempnam('/tmp', 'rfs-sample-import-test');
     }
 

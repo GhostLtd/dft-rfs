@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Tests\Controller\Cron;
-
 
 use App\Tests\Functional\AbstractFrontendFunctionalTest;
 
 class RequestConditionsTest extends AbstractFrontendFunctionalTest
 {
-    public function cronUrlsProvider()
+    public function cronUrlsProvider(): array
     {
         return [
             ['/cron/test'],
@@ -18,7 +16,7 @@ class RequestConditionsTest extends AbstractFrontendFunctionalTest
     /**
      * @dataProvider cronUrlsProvider
      */
-    public function testConditionsNotMet($url)
+    public function testConditionsNotMet($url): void
     {
         $this->loadFixtures([]);
 
@@ -39,7 +37,7 @@ class RequestConditionsTest extends AbstractFrontendFunctionalTest
     /**
      * @dataProvider cronUrlsProvider
      */
-    public function testConditionsMet($url)
+    public function testConditionsMet($url): void
     {
         $this->loadFixtures([]);
 
@@ -59,5 +57,4 @@ class RequestConditionsTest extends AbstractFrontendFunctionalTest
         ]);
         self::assertResponseStatusCodeSame(200);
     }
-
 }

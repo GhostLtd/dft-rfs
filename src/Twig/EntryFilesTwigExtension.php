@@ -21,7 +21,7 @@ class EntryFilesTwigExtension extends AbstractExtension
         $this->webRootDir = $webRootDir;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             // Names in keeping with Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension

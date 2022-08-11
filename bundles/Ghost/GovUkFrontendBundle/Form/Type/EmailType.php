@@ -2,20 +2,17 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
-use App\Form\Gds\DataTransformer\IntegerToStringTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EmailType extends InputType
 {
-    public function getParent()
+    public function getParent(): ?string
     {
         return InputType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gds_email';
     }

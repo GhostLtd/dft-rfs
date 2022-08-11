@@ -13,7 +13,7 @@ class UnloadedWeight extends Constraint
     public $minMessage = "international.action.unloaded.weight-more-than-one";
     public $maxMessage = 'international.action.unloaded.weight-positive';
 
-    public function validatedBy() {
+    public function validatedBy() : string {
         return static::class.'Validator';
     }
 
