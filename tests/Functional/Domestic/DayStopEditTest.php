@@ -60,6 +60,7 @@ class DayStopEditTest extends AbstractWizardTest
                     new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_continue", [
                         new FormTestCase([
                             "border_crossing" => [
+                                "borderCrossed" => 1,
                                 "borderCrossingLocation" => "Littlehampton",
                             ]
                         ]),
@@ -122,6 +123,7 @@ class DayStopEditTest extends AbstractWizardTest
                     new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_continue", [
                         new FormTestCase([
                             "border_crossing" => [
+                                "borderCrossed" => 1,
                                 "borderCrossingLocation" => "Felpham",
                             ]
                         ]),

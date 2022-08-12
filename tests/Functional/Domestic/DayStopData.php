@@ -53,6 +53,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
             new WizardStepUrlTestCase($borderCrossingUrl, "border_crossing_continue", [
                 new FormTestCase([
                     "border_crossing" => [
+                        "borderCrossed" => 1,
                         "borderCrossingLocation" => "Hove", // N.B. This field can be left blank
                     ],
                 ]),
