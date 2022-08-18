@@ -222,8 +222,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         if (is_null($this->getReasonForEmptySurvey())) return null;
         return $this->getReasonForEmptySurvey() === self::REASON_FOR_EMPTY_SURVEY_OTHER
-            ? $this->getReasonForEmptySurvey()
-            : 'Other: ' . $this->getReasonForEmptySurveyOther();
+            ? 'Other: ' . $this->getReasonForEmptySurveyOther()
+            : $this->getReasonForEmptySurvey();
     }
 
     public function shouldAskWhyEmptySurvey(): bool
