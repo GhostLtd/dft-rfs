@@ -38,7 +38,8 @@ class SurveyNormalizer implements ContextAwareNormalizerInterface, NormalizerAwa
             'contactPhone' => $response ? $response->getContactTelephone() : null,
             'numberOfIntJourneys' => $response ? $response->getAnnualInternationalJourneyCount() : null,
             'activityStatus' => $response ? $response->getActivityStatus() : null,
-            'reasonForEmptySurvey' => $object->getReasonForEmptySurveyNormalized(),
+            'reasonForEmptySurvey' => $object->getReasonForEmptySurvey(),
+            'reasonForEmptySurveyOther' => $object->getReasonForEmptySurvey() === Survey::REASON_FOR_EMPTY_SURVEY_OTHER ? $object->getReasonForEmptySurveyOther() : null,
             'businessNature' => $response ? $response->getBusinessNature() : null,
             'businessSize' => $response ? $response->getNumberOfEmployees() : null,
         ];
