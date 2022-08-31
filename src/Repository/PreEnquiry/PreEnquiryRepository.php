@@ -48,7 +48,7 @@ class PreEnquiryRepository extends ServiceEntityRepository
      */
     public function findForExportMonth(int $year, int $month): array
     {
-        $monthStart = \DateTimeImmutable::createFromFormat('Y-m', "$year-$month")->modify('midnight first day of this month');
+        $monthStart = \DateTimeImmutable::createFromFormat('Y-m-d', "$year-$month-1")->modify('midnight first day of this month');
         $monthEnd = $monthStart->modify('+1 month');
 
         return $this->createQueryBuilder('pe')
