@@ -21,7 +21,7 @@ class NotificationInterceptionRepository extends ServiceEntityRepository impleme
         parent::__construct($registry, NotificationInterception::class);
     }
 
-    public function findOneBySurvey(SurveyInterface $survey): NotificationInterception
+    public function findOneBySurvey(SurveyInterface $survey): ?NotificationInterception
     {
         return $this->findOneBy(['addressLine' => $survey->getInvitationAddress()->getLine1()]);
     }
