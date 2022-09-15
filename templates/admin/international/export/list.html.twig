@@ -4,23 +4,18 @@
 
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
-    {%- set headers = ['Week', 'Start Date', 'State', ''] -%}
+    {%- set headers = ['Year', 'Quarter', ''] -%}
 
 <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- tableHead(false, headers) -}}
     <tbody class="govuk-table__body">
     {%- for export in exports -%}
         <tr class="govuk-table__row">
-            {{- tableCell(export.week) -}}
-            {{- tableCell(export.startDate | date('Y-m-d')) }}
-            {{- tableCell(export.storageObject ? 'Exported' : 'Not exported') -}}
+            {{- tableCell(export.year) -}}
+            {{- tableCell('Q' ~ export.quarter) -}}
 
             {%- set actions -%}
-                {%- if export.storageObject -%}
-                    <a href="{{ url('admin_international_export_download', {week: export.week}) }}" class="govuk-!-margin-bottom-0">Download</a>
-                {%- else -%}
-                    <a href="{{ url('admin_international_export_week', {week: export.week}) }}" class="govuk-!-margin-bottom-0">Export</a>
-                {%- endif -%}
+                <a href="{{ url('admin_international_export_quarter', {year: export.year, quarter: export.quarter}) }}" class="govuk-!-margin-bottom-0">Export</a>
             {%- endset -%}
 
             {{- tableCell(actions, {actions: true}) -}}

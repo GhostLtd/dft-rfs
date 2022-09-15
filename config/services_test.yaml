@@ -1,0 +1,9 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        public: true        # Need to be public to allow testing
+
+    App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
+    App\Utility\Cleanup\PersonalDataCleanupUtility: ~
+    App\Utility\AlphagovNotify\PersonalisationHelper: ~

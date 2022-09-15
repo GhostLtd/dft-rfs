@@ -20,6 +20,16 @@ class ReasonEmptySurveyType extends AbstractType
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
                 'help' => "{$translationKeyPrefix}.reason-for-empty-survey.help",
+                'choice_options' => [
+                    SurveyResponse::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX.SurveyResponse::REASON_OTHER => [
+                        'conditional_form_name' => 'reasonForEmptySurveyOther',
+                    ]
+                ],
+            ])
+            ->add('reasonForEmptySurveyOther', Gds\InputType::class, [
+                'label' => "{$translationKeyPrefix}.other.label",
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.other.help",
             ])
         ;
     }

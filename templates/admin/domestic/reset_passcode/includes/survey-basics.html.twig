@@ -1,6 +1,0 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
-
-{{- actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark|formatRegMark) -}}
-{{- actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) -}}
-{{- actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('d/m/Y')) -}}
-{{- actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('d/m/Y')) -}}

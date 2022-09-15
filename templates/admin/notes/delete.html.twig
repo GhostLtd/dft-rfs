@@ -1,7 +1,7 @@
 {% extends 'admin/base-with-nav.html.twig' %}
 
 {% set headingParams = {
-    createdDate: subject.createdAt | date(('format.date.medium' | trans)),
+    createdDate: subject.createdAt | date(('format.date-time.default' | trans)),
     createdBy: subject.createdBy | removeEmailNamespacePrefix,
 } %}
 

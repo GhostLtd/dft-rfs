@@ -39,15 +39,9 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
         return 'admin.passcode-reset';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
-        $this->passcode = $this->passcodeGenerator->generatePasscode();
-        $this->subject->setPlainPassword($this->passcode);
+        $this->subject->setPassword(null);
         $this->entityManager->flush();
-    }
-
-    public function getPasscode(): ?string
-    {
-        return $this->passcode;
     }
 }

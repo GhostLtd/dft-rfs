@@ -12,8 +12,8 @@ return static function (ContainerConfigurator $container) {
         'redirectRoute' => $preEnquirySummaryRoute,
     ];
 
-    $guardUncommitted = 'is_empty(subject.getSubject().getId())';
-    $guardCommitted = "!{$guardUncommitted}";
+    $guardNotPersisted = 'is_empty(subject.getSubject().getId())';
+    $guardPersisted = "!{$guardNotPersisted}";
 
     $container->extension('framework', [
         'workflows' => [
@@ -31,40 +31,40 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_CORRESPONDENCE_DETAILS,
                     StateObject::STATE_CORRESPONDENCE_ADDRESS,
                     StateObject::STATE_VEHICLE_QUESTIONS,
-                    StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                    StateObject::STATE_BUSINESS_DETAILS,
                     StateObject::STATE_SUMMARY,
                 ],
                 'transitions' => [
                     'start' => [
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_COMPANY_NAME,
-                        'guard' => $guardUncommitted,
+                        'guard' => $guardNotPersisted,
                     ],
                     'name-to-details' => [
                         'from' => StateObject::STATE_COMPANY_NAME,
                         'to' =>  StateObject::STATE_CORRESPONDENCE_DETAILS,
-                        'guard' => $guardUncommitted,
+                        'guard' => $guardNotPersisted,
                     ],
                     'details-to-address' => [
                         'from' => StateObject::STATE_CORRESPONDENCE_DETAILS,
                         'to' =>  StateObject::STATE_CORRESPONDENCE_ADDRESS,
-                        'guard' => $guardUncommitted,
+                        'guard' => $guardNotPersisted,
                     ],
                     'address-to-vehicles' => [
                         'from' => StateObject::STATE_CORRESPONDENCE_ADDRESS,
                         'to' =>  StateObject::STATE_VEHICLE_QUESTIONS,
-                        'guard' => $guardUncommitted,
+                        'guard' => $guardNotPersisted,
                     ],
                     'vehicles-to-employees' => [
                         'from' => StateObject::STATE_VEHICLE_QUESTIONS,
-                        'to' =>  StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
-                        'guard' => $guardUncommitted,
+                        'to' =>  StateObject::STATE_BUSINESS_DETAILS,
+                        'guard' => $guardNotPersisted,
                     ],
                     'finish' => [
                         'metadata' => $endMetadata,
-                        'from' => StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                        'from' => StateObject::STATE_BUSINESS_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardUncommitted,
+                        'guard' => $guardNotPersisted,
                     ],
 
                     // -----
@@ -73,31 +73,31 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => $endMetadata,
                         'from' =>  StateObject::STATE_COMPANY_NAME,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardCommitted,
+                        'guard' => $guardPersisted,
                     ],
                     'address-changed' => [
                         'metadata' => $endMetadata,
                         'from' =>  StateObject::STATE_CORRESPONDENCE_ADDRESS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardCommitted,
+                        'guard' => $guardPersisted,
                     ],
                     'details-changed' => [
                         'metadata' => $endMetadata,
                         'from' =>  StateObject::STATE_CORRESPONDENCE_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardCommitted,
+                        'guard' => $guardPersisted,
                     ],
                     'vehicle-changed' => [
                         'metadata' => $endMetadata,
                         'from' =>  StateObject::STATE_VEHICLE_QUESTIONS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardCommitted,
+                        'guard' => $guardPersisted,
                     ],
                     'employees-changed' => [
                         'metadata' => $endMetadata,
-                        'from' =>  StateObject::STATE_EMPLOYEES_AND_INTERNATIONAL_JOURNEYS,
+                        'from' =>  StateObject::STATE_BUSINESS_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
-                        'guard' => $guardCommitted,
+                        'guard' => $guardPersisted,
                     ],
                 ]
             ],

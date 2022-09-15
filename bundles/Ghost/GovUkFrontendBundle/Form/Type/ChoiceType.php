@@ -43,9 +43,9 @@ class ChoiceType extends ExtendedChoiceType
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
 
         foreach ($form->all() as $k => $v) {
-            if (($v->getConfig()->getOption("conditional_form_name")) ?? false) {
+            if ((($v->getConfig()->getOption("conditional_form_name")) ?? false) || (($v->getConfig()->getOption("conditional_hide_form_names")) ?? false)) {
                 $view->vars['attr']['class'] = trim(($view->vars['attr']['class'] ?? '') . ' govuk-radios--conditional');
-                $view->vars['attr']['data-module'] = 'govuk-radios';
+                $view->vars['attr']['data-module'] = $view->vars['multiple'] ? 'govuk-checkboxes' : 'govuk-radios';
                 break;
             }
         }

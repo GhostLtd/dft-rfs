@@ -8,13 +8,11 @@ use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
 use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
-use App\Form\DomesticSurvey\DaySummary\DestinationPortsType;
 use App\Form\DomesticSurvey\DaySummary\DestinationType;
 use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
 use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
 use App\Form\DomesticSurvey\DaySummary\HazardousGoodsType;
 use App\Form\DomesticSurvey\DaySummary\NumberOfStopsType;
-use App\Form\DomesticSurvey\DaySummary\OriginPortsType;
 use App\Form\DomesticSurvey\DaySummary\OriginType;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
@@ -23,10 +21,9 @@ use App\Workflow\FormWizardStateInterface;
 
 class DaySummaryState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_ORIGIN = 'origin';
-    const STATE_ORIGIN_PORTS = 'origin-ports';
-    const STATE_DESTINATION = 'destination';
-    const STATE_DESTINATION_PORTS = 'destination-ports';
+    const STATE_INTRO = 'introduction';
+    const STATE_ORIGIN = 'day-start';
+    const STATE_DESTINATION = 'day-end';
     const STATE_BORDER_CROSSING = 'border-crossing';
     const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
     const STATE_FURTHEST_STOP = 'furthest-stop';
@@ -39,9 +36,7 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardState
 
     private const FORM_MAP = [
         self::STATE_ORIGIN => OriginType::class,
-        self::STATE_ORIGIN_PORTS => OriginPortsType::class,
         self::STATE_DESTINATION => DestinationType::class,
-        self::STATE_DESTINATION_PORTS => DestinationPortsType::class,
         self::STATE_BORDER_CROSSING => BorderCrossingType::class,
         self::STATE_FURTHEST_STOP => FurthestStopType::class,
         self::STATE_DISTANCE_TRAVELLED => DistanceTravelledType::class,
@@ -53,10 +48,9 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardState
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_INTRO => 'domestic_survey/day_summary/intro.html.twig',
         self::STATE_ORIGIN => 'domestic_survey/day_summary/form-origin.html.twig',
-        self::STATE_ORIGIN_PORTS => 'domestic_survey/day_summary/form-origin-ports.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_summary/form-destination.html.twig',
-        self::STATE_DESTINATION_PORTS => 'domestic_survey/day_summary/form-destination-ports.html.twig',
         self::STATE_BORDER_CROSSING => 'domestic_survey/day_summary/form-border-crossing.html.twig',
         self::STATE_FURTHEST_STOP => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
         self::STATE_DISTANCE_TRAVELLED => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
@@ -108,6 +102,8 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardState
                 case self::STATE_NUMBER_OF_STOPS :
                     return true;
             }
+        } else if ($state === self::STATE_INTRO) {
+            return true;
         }
         return parent::isValidAlternativeStartState($state);
     }

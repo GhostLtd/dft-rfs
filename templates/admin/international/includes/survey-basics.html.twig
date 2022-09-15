@@ -1,4 +1,5 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+{%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {{- actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) -}}
@@ -11,11 +12,21 @@
             {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
         {%- endset %}
         {{ actionlessSummaryListRow('Status', status, {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
-        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('Y-m-d H:i')})") }}{% endif %}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+    {%- endif -%}
+    {%- if showReasonForEmptySurvey ?? false and canViewUnfilledReason and survey.reasonForEmptySurvey -%}
+        {%- set reason = choiceLabel(constant('App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_CHOICES'), survey.reasonForEmptySurvey) -%}
+        {{- actionlessSummaryListRow(
+            'Reason for unfilled survey',
+            (reason ? reason|trans : '-')
+        ~ (survey.reasonForEmptySurvey == constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')
+        ? " - #{survey.reasonForEmptySurveyOther}" : '')
+        ) -}}
     {%- endif -%}
     {%- if showUsername ?? true -%}
         {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
+        {{ actionlessSummaryListRow('Last logged in', (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
     {%- endif -%}
     {%- if pdfs is defined and pdfs is not empty -%}
         {%- set pdfContent -%}
@@ -24,7 +35,7 @@
                 {%- set routeParams = {surveyId: pdf.survey.id} -%}
                 {%- if multiplePdfs -%}{% set routeParams = routeParams|merge({timestamp: pdf.timestamp}) -%}{%- endif -%}
                 <div><a href="{{ path('app_admin_international_surveypdf_pdf', routeParams) }}" target="_blank" rel="noopener noreferrer" class="govuk-link">
-                        {{- pdf.filename() -}}{% if multiplePdfs %} @ {{ pdf.date|date('Y-m-d H:i:s') }}{% endif -%}
+                        {{- pdf.filename() -}}{% if multiplePdfs %} @ {{ pdf.date|date('format.date-time.default' | trans) }}{% endif -%}
                     </a></div>
             {%- endfor -%}
         {%- endset -%}

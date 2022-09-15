@@ -28,22 +28,6 @@ class SurveyResponse extends AbstractSurveyResponse
          self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_STILL_ACTIVE => self::ACTIVITY_STATUS_STILL_ACTIVE,
     ];
 
-    const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
-    const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
-    const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
-    const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
-    const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
-
-    const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
-    const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
-    const REASON_FOR_EMPTY_SURVEY_CHOICES = [
-        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK => self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK,
-        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
-        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
-        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE => self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE,
-        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_OTHER => self::REASON_FOR_EMPTY_SURVEY_OTHER,
-    ];
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="UUID")
@@ -64,19 +48,6 @@ class SurveyResponse extends AbstractSurveyResponse
      * @Assert\NotNull(groups={"activity_status", "admin_business_details"}, message="common.choice.invalid")
      */
     private $activityStatus;
-
-    /**
-     * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotNull(groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"}, message="common.choice.invalid")
-     */
-    private ?string $reasonForEmptySurvey;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
-     * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\International\\SurveyResponse::REASON_FOR_EMPTY_SURVEY_OTHER')) || value != null", message="international.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
-     */
-    private ?string $reasonForEmptySurveyOther;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist", "remove"})
@@ -115,19 +86,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setAnnualInternationalJourneyCount(?int $annualInternationalJourneyCount): self
     {
         $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
-
-        if ($annualInternationalJourneyCount !== null) {
-            if ($annualInternationalJourneyCount > 0) {
-                $this->setActivityStatus(self::ACTIVITY_STATUS_STILL_ACTIVE);
-            } else if ($annualInternationalJourneyCount === 0) {
-                // If the journey count has just been set to 0, and we were previously still performing international
-                // journeys, then the activity question needs to be a asked again
-                if (!$this->isNoLongerActive()) {
-                    $this->setActivityStatus(null);
-                }
-            }
-        }
-
         return $this;
     }
 
@@ -145,18 +103,6 @@ class SurveyResponse extends AbstractSurveyResponse
             $this->setNumberOfEmployees(null);
             $this->setInitialDetailsSignedOff(null);
         }
-
-        return $this;
-    }
-
-    public function getReasonForEmptySurvey(): ?string
-    {
-        return $this->reasonForEmptySurvey;
-    }
-
-    public function setReasonForEmptySurvey(?string $reasonForEmptySurvey): self
-    {
-        $this->reasonForEmptySurvey = $reasonForEmptySurvey;
 
         return $this;
     }
@@ -242,12 +188,6 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
     }
 
-    public function mergeClosingDetails(SurveyResponse $response)
-    {
-        $this->setReasonForEmptySurvey($response->getReasonForEmptySurvey());
-        $this->setReasonForEmptySurveyOther($response->getReasonForEmptySurveyOther());
-    }
-
     public function canSubmit(): bool
     {
         return $this->isNoLongerActive(); // TODO: Add further check cases
@@ -266,16 +206,5 @@ class SurveyResponse extends AbstractSurveyResponse
     public function getTotalNumberOfTrips(): int
     {
         return array_sum(array_map(fn(Vehicle $v) => $v->getTrips()->count(), $this->vehicles->toArray()));
-    }
-
-    public function getReasonForEmptySurveyOther(): ?string
-    {
-        return $this->reasonForEmptySurveyOther;
-    }
-
-    public function setReasonForEmptySurveyOther(?string $reasonForEmptySurveyOther): self
-    {
-        $this->reasonForEmptySurveyOther = $reasonForEmptySurveyOther;
-        return $this;
     }
 }

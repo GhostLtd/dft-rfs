@@ -4,8 +4,8 @@
     <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
         {{- 'domestic.day-summary.sidebar-summary.day'|trans({
             dayNumber: subject.day.number,
-            date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number-1) ~ ' day') | date('F j, Y')
-        }) -}}</h2>
+            date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number-1) ~ ' day') | date('format.date.written-with-year' | trans)
+        }) | nl2br -}}</h2>
     <h3 class="govuk-heading-s">{{- 'domestic.day-summary.sidebar-summary.more-than-five'|trans -}}</h3>
     {% if subject.originLocation and subject.destinationLocation %}
         <p class="govuk-body">

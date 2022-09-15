@@ -6,11 +6,19 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
+    # see https://symfony.com/doc/current/performance.html#dump-the-service-container-into-a-single-file
+    container.dumper.inline_factories: true
+
     admin_hostname: '%env(string:ADMIN_HOSTNAME)%'
+    frontend_hostname: '%env(string:FRONTEND_HOSTNAME)%'
+
+    env_label_admin: '%env(string:APP_ENV_LABEL_ADMIN)%'
+    env_label_frontend: '%env(string:APP_ENV_LABEL_FRONTEND)%'
+    env_label_colour: '%env(string:APP_ENV_LABEL_COLOUR)%'
+    env_label_background: '%env(string:APP_ENV_LABEL_BACKGROUND)%'
+
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
-    container.dumper.inline_factories: true
     app_features_empty: none
 
 services:
@@ -22,6 +30,7 @@ services:
             $appEnvironment: '%env(APP_ENV)%'
             $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
             $frontendHostname: '%frontend_hostname%'
+            $secret: '%env(APP_SECRET)%'
             $webRootDir: "%kernel.project_dir%/public"
 
     # makes classes in src/ available to be used as services
@@ -123,3 +132,21 @@ services:
         class: 'Google\Cloud\Storage\Bucket'
         factory: ['@Google\Cloud\Storage\StorageClient', 'bucket']
         arguments: ['%google_bucket_export%']
+
+    App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner:
+        class: Doctrine\Migrations\Version\DbalMigrationFactory
+        factory: ['@doctrine.migrations.dependency_factory', 'getMigrationFactory']
+
+    App\Doctrine\Migrations\Version\ProjectMigrationFactory:
+        arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
+
+
+    App\EventSubscriber\RedirectAnnotationSubscriber:
+        arguments:
+            - '@framework_extra_bundle.argument_name_convertor'
+            - '@sensio_framework_extra.security.expression_language.default'
+            - '@security.authentication.trust_resolver'
+            - '@security.role_hierarchy'
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+            - '@logger'

@@ -29,14 +29,14 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
             ->orderBy('maintenanceWarning.start', 'DESC')
             ->setMaxResults(1)
             ->setParameters([
-                'now' => new \DateTime(),
+                'now' => (new \DateTime())->modify('-15 minutes'),
                 'future' => (new \DateTime())->modify($warningPeriodDateModifier)
             ])
             ->getQuery()
             ->getOneOrNullResult();
         if ($warning) {
-            $timeFormat = $this->translator->trans('format.time.short');
-            $dateFormat = $this->translator->trans('format.date.long');
+            $timeFormat = $this->translator->trans('format.time.default');
+            $dateFormat = $this->translator->trans('format.date.full-with-year');
             return new NotificationBanner(
                 $this->translator->trans('maintenance-warning.banner.title'),
                 $this->translator->trans('maintenance-warning.banner.heading'),

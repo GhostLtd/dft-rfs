@@ -4,6 +4,8 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Entity\Domestic\Day;
 use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
+use App\Workflow\DomesticSurvey\DayStopState;
+use App\Workflow\DomesticSurvey\DaySummaryState;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -66,9 +68,9 @@ class DayController extends AbstractController
                 $hasMoreThanFiveStops = $data['hasMoreThanFiveStops'];
 
                 if ($hasMoreThanFiveStops === true) {
-                    return $this->redirectToRoute('app_domesticsurvey_daysummary_start', ['dayNumber' => $dayNumber]);
+                    return $this->redirectToRoute('app_domesticsurvey_daysummary_wizard', ['dayNumber' => $dayNumber, 'state' => DaySummaryState::STATE_INTRO]);
                 } else if ($hasMoreThanFiveStops === false) {
-                    return $this->redirectToRoute('app_domesticsurvey_daystop_start', ['dayNumber' => $dayNumber]);
+                    return $this->redirectToRoute('app_domesticsurvey_daystop_wizard', ['dayNumber' => $dayNumber, 'state' => DayStopState::STATE_INTRO]);
                 }
             }
         }

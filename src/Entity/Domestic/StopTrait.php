@@ -59,8 +59,19 @@ trait StopTrait
     private $goodsTransferredTo;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Assert\NotNull(message="domestic.day.border-crossed.not-null", groups={"border-crossing"})
+     */
+    private $borderCrossed;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255, maxMessage="domestic.day.border-crossing.max-length", groups={"border-crossing"})
+     *
+     * @Assert\Expression("!this.getBorderCrossed() or this.getBorderCrossingLocation()",
+     *     groups={"border-crossing"},
+     *     message="domestic.day.border-crossing.not-null"
+     * )
      */
     private $borderCrossingLocation;
 
@@ -171,6 +182,17 @@ trait StopTrait
     {
         if (!$this->getGoodsUnloaded()) return false;
         return $this->goodsTransferredTo > Day::TRANSFERRED_NONE;
+    }
+
+    public function getBorderCrossed(): ?bool
+    {
+        return $this->borderCrossed;
+    }
+
+    public function setBorderCrossed(?bool $borderCrossed): self
+    {
+        $this->borderCrossed = $borderCrossed;
+        return $this;
     }
 
     public function getBorderCrossingLocation(): ?string

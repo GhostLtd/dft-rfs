@@ -1,0 +1,17 @@
+{% extends 'domestic_survey/base.html.twig' %}
+
+{% set translation_prefix = 'domestic.completed' %}
+
+{% block content %}
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">{{ (translation_prefix ~ '.heading')|trans }}</h1>
+        <div class="govuk-panel__body">
+            {{ (translation_prefix ~ '.reference-number')|trans }}<br>
+            <strong>{{ survey.referenceNumber }}</strong>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ (translation_prefix ~ '.download') | trans({url: path('app_domesticsurvey_completedpdf')}) | raw }}
+    </p>
+    {% include "feedback/survey-summary-include.html.twig" %}
+{% endblock %}

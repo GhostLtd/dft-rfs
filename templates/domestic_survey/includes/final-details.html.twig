@@ -5,17 +5,23 @@
 <h2 class="govuk-heading-m">Final details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- if not survey.response.isInPossessionOfVehicle -%}
-        No final details — respondent is not in possession of vehicle
+        No final details — respondent not in possession of vehicle
     {%- elseif not survey.response.hasJourneys -%}
         {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
         {{- row(showActions,
             'Reason for empty survey',
-            reason ? reason|trans : '-'
+            (reason ? reason|trans : '-')
+                ~ (survey.response.reasonForEmptySurvey == constant('\\App\\Entity\\Domestic\\SurveyResponse::REASON_OTHER')
+                    ? ": #{survey.response.reasonForEmptySurveyOther}" : '')
         ) -}}
     {%- else -%}
+        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
+            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
+            '-'
+        -%}
         {{- row(showActions,
             'Fuel used during survey week',
-            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value}))
+            fuelValue
         ) -}}
     {%- endif -%}
 </dl>

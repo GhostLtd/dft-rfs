@@ -4,17 +4,13 @@
 namespace App\Controller\Admin\International;
 
 
-use App\Form\Admin\DomesticSurvey\ImportDvlaFileUploadType;
-use App\Form\Admin\DomesticSurvey\ImportDvlaReviewDataType;
 use App\Form\Admin\InternationalSurvey\ImportSampleFileUploadType;
 use App\Form\Admin\InternationalSurvey\ImportSampleReviewDataType;
-use App\Utility\Domestic\DvlaImporter;
 use App\Utility\International\SampleImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -55,7 +51,7 @@ class SampleImportController extends AbstractController
      * @Route("/review", name="review")
      * @Template()
      */
-    public function review(Request $request, Session $session, DvlaImporter $dvlaImporter, EntityManagerInterface $entityManager)
+    public function review(Request $request, Session $session, EntityManagerInterface $entityManager)
     {
         // grab the data from the session
         $data = $session->get(self::SESSION_KEY, false);

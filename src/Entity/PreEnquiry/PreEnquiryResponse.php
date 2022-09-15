@@ -2,6 +2,7 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\IdTrait;
 use App\Entity\LongAddress;
 use App\Form\Validator as AppAssert;
 use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
@@ -15,12 +16,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class PreEnquiryResponse
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="boolean")
@@ -29,7 +25,7 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotNull(groups={"correspondence_address"})
+     * @Assert\NotNull(groups={"correspondence_address", "is_correct_address"}, message="pre-enquiry.pre-enquiry-response.is-correct-address")
      */
     private $isCorrectAddress;
 
@@ -46,7 +42,7 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true)
+     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true, includeAddressee=false)
      */
     private $contactAddress;
 
@@ -79,15 +75,15 @@ class PreEnquiryResponse
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
-     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"business_details"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
+     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details"})
      */
     private $numberOfEmployees;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"employees_and_international_journeys"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
-     * @Assert\PositiveOrZero(groups={"employees_and_international_journeys"})
+     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
+     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
      */
     private $annualJourneyEstimate;
 
@@ -119,22 +115,17 @@ class PreEnquiryResponse
     {
         if ($this->isCorrectCompanyName === null) {
             $context
-                ->buildViolation('pre-enquiry.pre-enquiry-response.is-correct-company-name.not-blank')
+                ->buildViolation('pre-enquiry.pre-enquiry-response.is-correct-company-name')
                 ->atPath('isCorrectCompanyName')
                 ->addViolation();
         } else {
             if ($this->companyName === null) {
                 $context
-                    ->buildViolation('pre-enquiry.pre-enquiry-response.company-name.not-blank')
+                    ->buildViolation('pre-enquiry.pre-enquiry-response.company-name')
                     ->atPath('companyName')
                     ->addViolation();
             }
         }
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
     }
 
     public function getIsCorrectCompanyName(): ?bool

@@ -30,9 +30,21 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
         self::ensureKernelShutdown();
     }
 
-    public function testNoMigrations()
+    public function testNoMigrationsNotMaintenance()
     {
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
+
+        try {
+            self::assertStringNotContainsString('Pre-install checks have passed.', RemoteActions::preInstall(), 'PreInstall checks should not pass');
+        } catch (HttpException $e) {
+            self::assertSame(500, $e->getStatusCode());
+            return;
+        }
+    }
+
+    public function testNoMigrationsMaintenance()
+    {
+        $this->loadFixtures([DoctrineMigrationFixtures::class, MaintenanceLockFixtures::class]);
 
         self::assertStringContainsString('Pre-install checks have passed.', RemoteActions::preInstall());
     }

@@ -4,7 +4,7 @@
     <div class="govuk-grid-column-full">
         {% set heading = ("#{translation_prefix}.heading" | trans((heading_translation_parameters | default({})), heading_translation_domain | default(null)) ) %}
         {% if heading != "#{translation_prefix}.heading" and not heading is empty %}
-            <h1 class="page-heading__heading govuk-heading-xl">{{ heading }}</h1>
+            <h1 class="page-heading__heading govuk-heading-xl">{{ heading|nl2br }}</h1>
         {% endif %}
     </div>
 </div>

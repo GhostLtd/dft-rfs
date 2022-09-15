@@ -1,9 +1,19 @@
 {% extends 'admin/base-with-nav.html.twig' %}
 
-{% set translation_prefix = "admin.domestic.survey-add" %}
+{% set translation_prefix = translation_prefix|default("admin.domestic.survey-add") %}
 
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLinks %}
     {%- form_theme form "admin/domestic/surveys/theme-add.html.twig" -%}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            <p class="govuk-body">
+                If the first line of the address matches the name of a company in
+                <a class="govuk-link" href="{{ path('admin_domestic_notification_interception_list') }}">LCNI (Large company notify interception)</a>
+                <strong>and</strong> the email address field is empty, then the matching email address will be automatically
+                added to the survey.
+            </p>
+        </div>
+    </div>
     {{ form(form) }}
 {% endblock %}

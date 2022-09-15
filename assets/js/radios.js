@@ -25,7 +25,6 @@ function radiosOverride() {
             }
 
             $input.setAttribute('aria-controls', activeTargets.join(' '));
-            $input.removeAttribute('data-aria-hide-controls');
         })
 
         oldInit.apply(this);
@@ -41,7 +40,8 @@ function radiosOverride() {
 
         ariaControls = ariaControls.split(' ');
 
-        if (ariaControls.length === 1) {
+        // if the hide attribute is not present, we must be using the original conditional method
+        if (!$input.getAttribute('data-aria-hide-controls')) {
             syncConditionalRevealWithInputState.apply(this, [$input]);
             return;
         }

@@ -1,25 +1,30 @@
 menu:
   dashboard: Home
   logout: Sign out
+  reports: Reports
+  feedback: Feedback
   domestic:
     root: CSRGT
     surveys-gb: Surveys (GB)
     surveys-ni: Surveys (NI)
     survey-add: Add Survey
-    reports: Reports
     export: Export
     dvla-import: DVLA bulk import
+    driver-availability-export: Driver availability
+    notification-interception: LCNI
   international:
     root: IRHS
     surveys: Surveys
-    reports: Reports
     survey-add: Add Survey
     export: Export
     sample-import: Bulk sample import
+    notification-interception: LCNI
   pre-enquiry:
     root: Pre-enquiry
     pre-enquiries: Pre-enquiries
     add: Add
+    sample-import: Bulk sample import
+    export: Export
 
 format:
   date:
@@ -48,11 +53,17 @@ common:
         heading: '{transitionTitleUcfirst} survey'
         content: 'The requested {transitionTitle} survey transition was completed.'
 
+survey-feedback:
+  export:
+    heading: Survey feedback export
+
 domestic:
   export-failed-notification:
     heading: 'Export failed'
     content: 'The export failed'
     title: ''
+  driver-availability-export:
+    heading: Driver availability export
 
 international:
   action:
@@ -67,3 +78,37 @@ international:
     heading: 'Export failed'
     content: 'The export failed'
     title: ''
+
+notification-interception:
+  add:
+    heading: Add LCNI
+    confirmed-notification:
+      heading: LCNI added
+      content: The LCNI was successfully added
+  button.add: Add LCNI
+  delete:
+    heading: "Delete LCNI: {addressLine}"
+    cancel.label: Cancel
+    confirm.label: Yes, delete
+    warning: Are you sure you wish to delete this item?
+    confirmed-notification:
+      heading: LCNI deleted
+      content: The LCNI was successfully deleted
+    cancelled-notification:
+      heading: LCNI not deleted
+      content: The request to delete the LCNI was cancelled
+  edit.heading: Edit LCNI
+  form:
+    business-name:
+      label: Business name
+      help: ''
+    additional-names:
+      label: Additional business names
+      help: Place each additional company name on a new line
+    cancel: Cancel
+    emails:
+      label: Emails
+      help: 'Multiple email addresses can be added as a comma-separated list'
+    submit: Save changes
+  heading: Large company notify interceptions
+  sr-hidden-suffix: "{primaryName}"

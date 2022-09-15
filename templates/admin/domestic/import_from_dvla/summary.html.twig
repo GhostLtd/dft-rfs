@@ -5,11 +5,13 @@
 {% block adminContent %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
     <p class="govuk-body">The following surveys have been created for the <strong>{{ surveyOptions.isNorthernIreland ? 'NI' : 'GB' }} region</strong>
-        and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('l, jS F Y') }}</strong>
+        and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {% for survey in surveys %}
-            {{ actionlessSummaryListRow(survey.registrationMark | formatRegMark, survey.invitationAddress | formatAddress) }}
+            {# @var survey \App\Entity\Domestic\Survey #}
+            {% set email = survey.invitationEmails ? " (#{survey.invitationEmails})" : "" %}
+            {{ actionlessSummaryListRow(survey.registrationMark | formatRegMark, (survey.invitationAddress | formatAddress) ~ email) }}
         {% endfor %}
     </dl>
 {% endblock %}

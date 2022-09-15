@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\PasscodeUser;
-use App\Utility\PasscodeGenerator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -18,34 +17,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PasscodeUserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var PasscodeGenerator
-     */
-    private $passcodeGenerator;
-    private $appEnvironment;
-
-    public function __construct(ManagerRegistry $registry, PasscodeGenerator $passcodeGenerator, $appEnvironment)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PasscodeUser::class);
-        $this->registry = $registry;
-        $this->passcodeGenerator = $passcodeGenerator;
-        $this->appEnvironment = $appEnvironment;
-    }
-
-    /**
-     * @return PasscodeUser
-     */
-    public function createNewPasscodeUser()
-    {
-        return (new PasscodeUser())
-            ->setUsername($this->passcodeGenerator->generatePasscode())
-            ->setPlainPassword($this->appEnvironment === 'dev' ? 'dev' : $this->passcodeGenerator->generatePasscode())
-            ;
     }
 
     /**

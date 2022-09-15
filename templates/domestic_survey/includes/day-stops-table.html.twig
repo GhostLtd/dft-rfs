@@ -1,0 +1,37 @@
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableRowComplex, tableCell %}
+{% set linkRowNumbers = linkRowNumbers | default(false) %}
+<table class="govuk-table rfs-admin-report-table">
+    {{ tableHeadComplex(false, {
+        '#': {},
+        'From': {},
+        'To': {},
+        'Goods': {},
+    }) }}
+    {% set stopCount = stops | length %}
+    <tbody>
+        {% for stop in stops %}
+            {% set link %}<a href="#stop-{{ stop.number }}">{{ stop.number }}</a>{% endset %}
+            {{ tableRowComplex({
+                'link': {html: linkRowNumbers, content: linkRowNumbers ? link : stop.number},
+                ((stop.originLocation | formatPotentialPostcode) ~ (stop | formatGoodsTransferDetails('loading', ' — '))): {},
+                ((stop.destinationLocation | formatPotentialPostcode) ~ (stop | formatGoodsTransferDetails('unloading', ' — '))): {},
+                (stop | formatGoodsDescription(true) ): {}
+            }) }}
+        {% endfor %}
+        {% if stopCount < 4 %}
+            {% for x in (stopCount + 1)..4 %}
+                {{ _self.emptyRow(x) }}
+            {% endfor %}
+        {% endif %}
+        {{ _self.emptyRow(stopCount < 5 ? 5 : (stopCount + 1)) }}
+    </tbody>
+</table>
+
+{% macro emptyRow(rowNumber) %}
+    <tr class="govuk-table__row">
+        {{ tableCell(rowNumber) }}
+        {{ tableCell('-') }}
+        {{ tableCell('-') }}
+        {{ tableCell('-') }}
+    </tr>
+{% endmacro %}

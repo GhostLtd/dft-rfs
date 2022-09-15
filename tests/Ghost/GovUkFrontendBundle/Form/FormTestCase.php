@@ -78,14 +78,14 @@ class FormTestCase extends WebTestCase
         /** @var FormFactoryInterface $formFactory */
         $formFactory = self::$container->get('form.factory');
 
-        // create a button form element
-        $buttonForm = $formFactory->create($formClass, $formData, $formOptions);
+        // create the form
+        $form = $formFactory->create($formClass, $formData, $formOptions);
 
         if ($fixture['options']['errorMessage'] ?? false) {
-            $buttonForm->addError(new FormError($fixture['options']['errorMessage']['text']));
+            $form->addError(new FormError($fixture['options']['errorMessage']['text']));
         }
 
-        $this->renderAndCompare($fixture, $buttonForm);
+        $this->renderAndCompare($fixture, $form);
     }
 
 

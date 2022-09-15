@@ -2,13 +2,16 @@
 
 namespace App\Entity\PreEnquiry;
 
-use App\Entity\International\Company;
+use App\Entity\NotifyApiResponse;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
 use App\Entity\PasscodeUser;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 /**
  * @ORM\Entity(repositoryClass=PreEnquiryRepository::class)
@@ -18,29 +21,42 @@ class PreEnquiry implements SurveyInterface
 {
     use SurveyTrait;
 
+    const STATE_FILTER_CHOICES = [
+        self::STATE_NEW,
+        self::STATE_INVITATION_PENDING,
+        self::STATE_INVITATION_SENT,
+        self::STATE_INVITATION_FAILED,
+        self::STATE_IN_PROGRESS,
+        self::STATE_CLOSED,
+        self::STATE_APPROVED,
+        self::STATE_REJECTED,
+        self::STATE_EXPORTING,
+        self::STATE_EXPORTED,
+    ];
+
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiryResponse::class, mappedBy="preEnquiry", cascade={"persist"})
      */
-    private $response;
+    private ?PreEnquiryResponse $response = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
      * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private $referenceNumber;
+    private ?string $referenceNumber = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="preEnquiries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\Valid(groups={"add_survey", "import_survey"})
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
+     * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private $company;
+    private ?string $companyName;
 
     /**
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="preEnquiry", cascade={"persist", "remove"})
      */
-    private $passcodeUser;
+    private ?PasscodeUser $passcodeUser = null;
 
     /**
      * @ORM\OneToMany(targetEntity=PreEnquiryNote::class, mappedBy="preEnquiry")
@@ -48,6 +64,25 @@ class PreEnquiry implements SurveyInterface
      */
     private $notes;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private ?\DateTime $dispatchDate = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
+     * @ORM\JoinTable(
+     *     name="pre_enquiry_notify_api_responses",
+     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
+     * )
+     */
+    private Collection $apiResponses;
+
+    public function __construct()
+    {
+        $this->apiResponses = new ArrayCollection();
+    }
 
     public function getResponse(): ?PreEnquiryResponse
     {
@@ -77,14 +112,15 @@ class PreEnquiry implements SurveyInterface
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getCompanyName(): ?string
     {
-        return $this->company;
+        if (!isset($this->companyName)) return null;
+        return $this->companyName;
     }
 
-    public function setCompany(?Company $company): self
+    public function setCompanyName(?string $companyName): self
     {
-        $this->company = $company;
+        $this->companyName = $companyName;
 
         return $this;
     }
@@ -118,6 +154,18 @@ class PreEnquiry implements SurveyInterface
         if ($passcodeUser->getPreEnquiry() !== $newPreEnquiry) {
             $passcodeUser->setPreEnquiry($newPreEnquiry);
         }
+
+        return $this;
+    }
+
+    public function getDispatchDate(): ?\DateTime
+    {
+        return $this->dispatchDate;
+    }
+
+    public function setDispatchDate(?\DateTime $dispatchDate): self
+    {
+        $this->dispatchDate = $dispatchDate;
 
         return $this;
     }

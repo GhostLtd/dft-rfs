@@ -43,7 +43,7 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
         return 'domestic.day-stop-delete';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->deleteHelper->deleteDayStop($this->subject);
     }

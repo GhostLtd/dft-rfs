@@ -16,6 +16,7 @@ use App\Serializer\Normalizer\Domestic\Mapper\EpochWeekNumberProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\ReturnCodeIdProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\YearlyWeekNumberProperty;
 use App\Serializer\Normalizer\Mapper\Property;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
@@ -33,6 +34,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
 
         return [
             'QDSurveyDetailsID' => new Property('id'),
+            'SurveyState' => new Property('state'),
             'RegMark' => new Property('registrationMark'),
             'CarryingCapacity' => new Property('response.vehicle.carryingCapacity'),
             'CarryingCapacityNotEntered' => new BooleanEquivalencyProperty('response.vehicle.carryingCapacity', false, true),
@@ -73,20 +75,24 @@ class SurveyNormalizer extends AbstractExportNormalizer
 //            'CaryingCapacityAdjusted' => '', // will all be null, not required - lucy doesn't know
             'BusinessType' => new Property('response.businessNature'),
             'SurveyID' => new EpochWeekNumberProperty('surveyPeriodStart'),
+            'SurveyWeek' => new YearlyWeekNumberProperty('surveyPeriodStart'),
 //            'VehicleOwnerID' => '', // not needed
             'DateSurveySent' => new Property('notifiedDate'),
 //            'DateSurveyReturned' => '',
-//            'DateReminder1' => '', // not currently sending, handy to have
-//            'DateReminder2' => '', // not currently sending, handy to have
+            'DateReminder1' => new Property('firstReminderSentDate'),
+            'DateReminder2' => new Property('secondReminderSentDate'),
 //            'SurveyDiscardedReasonID' => '', // from lookup table
-            'SurveyAddressLine1' => new Property('survey.invitationAddress.line2'),
-            'SurveyAddressLine2' => new Property('survey.invitationAddress.line3'),
-            'SurveyAddressLine3' => new Property('survey.invitationAddress.line4'),
-            'SurveyAddressLine4' => new Property('survey.invitationAddress.line5'),
-            'SurveyAddressLine5' => new Property('survey.invitationAddress.line6'),
-            'SurveyPostcode' => new Property('survey.invitationAddress.postcode'),
-//            'SurveyEmail' => '', // invitation email - not needed for our export
+            'SurveyAddressLine1' => new Property('invitationAddress.line2'),
+            'SurveyAddressLine2' => new Property('invitationAddress.line3'),
+            'SurveyAddressLine3' => new Property('invitationAddress.line4'),
+            'SurveyAddressLine4' => new Property('invitationAddress.line5'),
+            'SurveyAddressLine5' => new Property('invitationAddress.line6'),
+            'SurveyPostcode' => new Property('invitationAddress.postcode'),
+            'SurveyEmail' => new Property('invitationEmails'),
+            'ContactName' => new Property('response.contactName'),
             'ContactTelNo' => new IntegerProperty('response.contactTelephone'),
+            'ContactEmail' => new IntegerProperty('response.contactEmail'),
+            'EmployeeCount' => new Property('response.numberOfEmployees'),
 // DVLA import data --->
 //            'FuelTypePropulsionCode' => '',
 //            'WheelPlanCode' => '',
@@ -98,13 +104,14 @@ class SurveyNormalizer extends AbstractExportNormalizer
 //            'GrossTrainWeight' => '',
 //            'BodyTypeDescription' => '',
 // <--- DVLA import data
-            'NotUsedReasonID' => new Property('survey.response.reasonForEmptySurveyExportId'),
+            'NotUsedReasonID' => new Property('response.reasonForEmptySurveyExportId'),
 //            'LastUpdatedDate' => '', // date approved
-            'RegisteredKeeper' => new Property('survey.invitationAddress.line1'),
+            'RegisteredKeeper' => new Property('invitationAddress.line1'),
 //            'DateHireCompanyRequestSent' => '', // ??
 //            'DateHireCompanyReminderSent' => '', // ??
 //            'DateSurveyDueBack' => '', // ??
             'WithTrips' => new BooleanProperty('response.hasJourneys'),
+            'PossessionState' => new Property('response.isInPossessionOfVehicle'),
             'Sold' => new BooleanProperty('response.isInPossessionOfVehicle', SurveyResponse::IN_POSSESSION_SOLD),
             'ScrappedStolen' => new BooleanProperty('response.isInPossessionOfVehicle', SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN),
             'HireCompany' => new Property('response.hireeeName', ''),
@@ -113,7 +120,6 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'NotUsed' => new BooleanProperty('response.hasJourneys', false),
             'DisableReminders' => $false,
             'TickBoxForSortingRecords' => $false,
-            'ContactName' => new Property('response.contactName'),
             'SendEMail' => $false,
             'ReturnCodeID' => new ReturnCodeIdProperty(),
             'ArticOrRigidID' => new BooleanProperty('response.vehicle.trailerConfiguration', Vehicle::TRAILER_CONFIGURATION_ARTICULATED),

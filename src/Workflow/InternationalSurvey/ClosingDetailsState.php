@@ -2,7 +2,7 @@
 
 namespace App\Workflow\InternationalSurvey;
 
-use App\Entity\International\SurveyResponse;
+use App\Entity\International\Survey;
 use App\Form\InternationalSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
@@ -24,7 +24,7 @@ class ClosingDetailsState extends AbstractFormWizardState implements FormWizardS
         self::STATE_CONFIRM => 'international_survey/closing_details/confirm.html.twig',
     ];
 
-    /** @var SurveyResponse */
+    /** @var Survey */
     private $subject;
 
     public function getSubject()
@@ -34,8 +34,8 @@ class ClosingDetailsState extends AbstractFormWizardState implements FormWizardS
 
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === SurveyResponse::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        if (get_class($subject) !== Survey::class) {
+            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . Survey::class);
         }
         $this->subject = $subject;
         return $this;

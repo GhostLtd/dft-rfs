@@ -1,34 +1,62 @@
 <?php
 
-
 namespace App\Utility;
 
-
-use Exception;
+use App\Entity\PasscodeUser;
+use App\Repository\PasscodeUserRepository;
 
 class PasscodeGenerator
 {
-    /**
-     * @throws Exception
-     */
-    public function generatePasscode()
+    protected ?PasscodeUserRepository $passcodeUserRepository;
+    protected string $secret;
+
+    public function __construct(?PasscodeUserRepository $passcodeUserRepository, string $secret)
     {
-        while(($passcode = $this->checkPasscode($this->generateUntestedCode())) === false) null;
+        $this->passcodeUserRepository = $passcodeUserRepository;
+        $this->secret = $secret;
+    }
+
+    public function createNewPasscodeUser(): PasscodeUser
+    {
+        return (new PasscodeUser())
+            ->setUsername($this->generateUsernameCode())
+            ->setPassword(null);
+    }
+
+    public function getPasswordForUser(PasscodeUser $user): string
+    {
+        $hash = hash('sha256', $this->secret.$user->getId());
+        $passcode = hexdec(substr($hash, -8, 8));
+        return str_pad($passcode % 100000000, 8, '0', STR_PAD_LEFT);
+    }
+
+    public function generateUsernameCode(): string
+    {
+        while(($passcode = $this->checkPasscode($this->generateUntestedCode(), true)) === null) {};
         return $passcode;
     }
 
-    protected function generateUntestedCode()
+    protected function generateUntestedCode(): string
     {
         return str_pad(random_int(1, 99999999), 8, '0', STR_PAD_LEFT);
     }
 
-    protected function checkPasscode($passcode)
+    protected function checkPasscode($passcode, $enforceUniqueUsername = false): ?string
     {
-        if (!$this->isValidPasscode($passcode)) return false;
+        if (!$this->isValidPasscode($passcode)) {
+            return null;
+        }
+
+        if ($enforceUniqueUsername) {
+            if ($this->usernameExistsInDatabase($passcode)) {
+                return null;
+            }
+        }
+
         return $passcode;
     }
 
-    public function isValidPasscode($passcode, $preventRepeating = 4, $preventSequential = 4)
+    public function isValidPasscode($passcode, $preventRepeating = 4, $preventSequential = 4): bool
     {
         if (strlen($passcode) !== 8) {
             return false;
@@ -47,12 +75,18 @@ class PasscodeGenerator
         return true;
     }
 
-    protected function hasRepeatingDigits($passcode, $preventRepeating = 4)
+    protected function usernameExistsInDatabase($passcode): bool
+    {
+        $result = $this->passcodeUserRepository->findBy(['username' => $passcode]);
+        return (!empty($result));
+    }
+
+    protected function hasRepeatingDigits($passcode, $preventRepeating = 4): bool
     {
         return preg_match('/(\d)\1{' . ($preventRepeating - 1) . '}/', $passcode) === 1;
     }
 
-    protected function hasSequentialDigits($passcode, $sequentialCount = 4)
+    protected function hasSequentialDigits($passcode, $sequentialCount = 4): bool
     {
         $positionLimit = strlen($passcode) - $sequentialCount;
         if ($positionLimit < 0) {

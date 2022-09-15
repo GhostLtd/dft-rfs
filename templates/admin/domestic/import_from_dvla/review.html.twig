@@ -7,7 +7,7 @@
     <p class="govuk-body">When submitting this form, a Domestic Survey will be created for each item that is selected below.</p>
     <p class="govuk-body">
         The surveys will be created for the <strong>{{ surveyOptions.isNorthernIreland ? 'NI' : 'GB' }} region</strong>
-        and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('l, jS F Y') }}</strong>
+        and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>
     </p>
 
     {{ warningText('An invitation letter will be sent to each Survey recipient') }}
@@ -30,9 +30,8 @@
         {% for failed in invalidData %}
             <kbd>{{ failed | join(', ') }}</kbd><br>
         {% endfor %}
-        {% for failed in invalidSurveys %}
-            <kbd>{{ failed.registrationMark }}</kbd><br>
-        {% endfor %}
+            {% from "admin/macros/notify.html.twig" import showValidationFailures %}
+            {{ showValidationFailures(invalidSurveys, 'registrationMark') }}
         </p>
     {% endif %}
 

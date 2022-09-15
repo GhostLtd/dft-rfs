@@ -5,6 +5,7 @@ namespace App\Utility\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Entity\LongAddress;
 use App\Utility\AbstractBulkSurveyImporter;
+use App\Utility\NotificationInterceptionService;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Form\FormError;
@@ -44,9 +45,9 @@ class DvlaImporter extends AbstractBulkSurveyImporter
 
     private $regex;
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
     {
-        parent::__construct($validator);
+        parent::__construct($validator, $notificationInterception);
 
         $this->regex = "/^";
         foreach (self::COLUMN_WIDTHS as $name => $length) {
@@ -122,11 +123,13 @@ class DvlaImporter extends AbstractBulkSurveyImporter
         $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
         $surveyPeriodEnd->add(new DateInterval('P6D'));
 
-        return $survey
+        $survey
             ->setSurveyPeriodEnd($surveyPeriodEnd)
             ->setRegistrationMark($surveyData[self::COL_REG_MARK])
             ->setInvitationAddress($this->createAddress($surveyData))
             ;
+
+        return $this->notificationInterception->checkAndInterceptSurvey($survey);
     }
 
     protected function createAddress($surveyData)

@@ -109,9 +109,10 @@
             }),
         } -%}
             <a {{- _self.attributes(attributes) -}}>
-                {{- action | trans -}}
+                {{- action | trans(options.labelTranslationParams ?? {}, options.labelTranslationDomain ?? null) -}}
                 {%- if options.srHiddenSuffix | default(false) -%}
-                    <span class="govuk-visually-hidden">{{ (options.srHiddenSuffixSplitContext ?? true) ? ':' : '' }} {{ options.srHiddenSuffix | trans(options.srHiddenSuffixParams ?? {}) }}</span>
+                    <span class="govuk-visually-hidden">{{ (options.srHiddenSuffixSplitContext ?? true) ? ': ' : ' ' -}}
+                        {{- options.srHiddenSuffix | trans(options.srHiddenSuffixParams ?? {}, options.srHiddenSuffixDomain ?? null) }}</span>
                 {%- endif -%}
             </a>
         {%- endwith -%}

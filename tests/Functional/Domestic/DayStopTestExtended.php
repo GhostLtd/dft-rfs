@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Domestic;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
 use App\Entity\HazardousGoods;
-use App\Tests\DataFixtures\BusinessFixtures;
+use App\Tests\DataFixtures\Domestic\BusinessFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\DayStopDatabaseTestCase;
 

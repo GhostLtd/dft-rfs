@@ -12,8 +12,7 @@
         <tr class="govuk-table__row">
             {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
             {{ tableCell("#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}", {}) }}
-            {{ tableCell(survey.surveyPeriodStart | date ('Y-m-d'), {}) }}
-            {{ tableCell(survey.surveyPeriodEnd | date ('Y-m-d'), {}) }}
+            {{ tableCell(survey.invitationAddress.line1 ?? '-', {}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
@@ -22,9 +21,8 @@
                 (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
             }}
             {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
-            {{- countField(survey, 'summaryDayCount') -}}
-            {{- countField(survey, 'stopDayCount') -}}
-            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('d/m/Y') }"} }), {}) }}
+            {{- countField(survey, 'totalDayCount') -}}
+            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }"} }), {}) }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

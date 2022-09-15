@@ -1,7 +1,7 @@
 {%- extends 'base-pdf.html.twig' %}
 
 {%- block pageTitle -%}
-    IRHS survey &ndash; {{ survey.surveyPeriodStart | date ('Y-m-d') }}
+    IRHS survey &ndash; {{ survey.surveyPeriodStart | date ('format.date.default' | trans) }}
 {%- endblock -%}
 
 {%- block header -%}
@@ -18,16 +18,18 @@
     <h1 class="govuk-heading-xl">Survey details</h1>
     <hr class="govuk-section-break govuk-section-break--xl">
     <dl class="govuk-summary-list">
-        {{- row('Survey period start', survey.surveyPeriodStart | date ('Y-m-d')) -}}
+        {{- row('Survey period start', survey.surveyPeriodStart | date ('format.date.default' | trans)) -}}
     </dl>
 
-    <div class="international-business-details">
-        <h1 class="govuk-heading-xl">Business details</h1>
-        <hr class="govuk-section-break govuk-section-break--xl">
-        {%- with {showActions: false, showTitle: false, response: survey.response} -%}
-            {%- include "international_survey/includes/business-details.html.twig" -%}
-        {%- endwith -%}
-    </div>
+    {%- if survey.response -%}
+        <div class="international-business-details">
+            <h1 class="govuk-heading-xl">Business details</h1>
+            <hr class="govuk-section-break govuk-section-break--xl">
+            {%- with {showActions: false, showTitle: false, response: survey.response} -%}
+                {%- include "international_survey/includes/business-details.html.twig" -%}
+            {%- endwith -%}
+        </div>
+    {%- endif -%}
 
     {%- if survey.response and (survey.response.vehicles is not empty) -%}
         {%- for vehicle in survey.response.vehicles -%}
@@ -41,9 +43,9 @@
                 {%- endwith -%}
 
                 {%- for trip in vehicle.trips -%}
-                    {%- set srTripIdentifier = trip.outboundDate | date('d/m/Y') -%}
+                    {%- set srTripIdentifier = trip.outboundDate | date('format.date.default' | trans) -%}
                     <h2 class="govuk-heading-l admin-surveys__trip-header">
-                        Trip #{{ loop.index }} &mdash; {{ trip.outboundDate | date('d/m/Y') -}}
+                        Trip #{{ loop.index }} &mdash; {{ trip.outboundDate | date('format.date.default' | trans) -}}
                     </h2>
                     {%- with {showActions: false, trip: trip} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}

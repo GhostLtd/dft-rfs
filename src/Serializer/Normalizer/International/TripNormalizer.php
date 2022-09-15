@@ -36,8 +36,8 @@ class TripNormalizer extends AbstractExportNormalizer
             'IHRVehicleDetailsID' => new Property('id'),
             'RegMark' => new Property('vehicle.registration_mark'),
             'RefNumber' => new Property('vehicle.survey_response.survey.reference_number'),
-            // FirstDate                        - ??
-            // SecondDate                       - ??
+            'FirstDate' => new Property('outboundDate'),
+            'SecondDate' => new Property('returnDate'),
             'GrossVehicleWeight' => new Property('vehicle.gross_weight'),
             'GrossVehicleWeightNotEntered' => new BooleanLiteral(false),
             'CarryingCapacity' => new Property('vehicle.carrying_capacity'),
@@ -51,10 +51,8 @@ class TripNormalizer extends AbstractExportNormalizer
             'BoxNonSpecialised' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_BOX),
             'TemperatureControlled' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TEMPERATURE_CONTROLLED),
             'CurtainSided' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CURTAIN_SIDED),
-            'Tanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], [
-                BaseVehicle::BODY_TYPE_LIQUID,
-                BaseVehicle::BODY_TYPE_SOLID_BULK
-            ]),
+            'LiquidTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIQUID),
+            'SolidBulkTanker' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_SOLID_BULK),
             'LiveStockCarrier' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_LIVESTOCK),
             'CarTansporter' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_CAR), // N.B. Typo as per target
             'Tipper' => new BooleanPropertyList(['body_type', 'vehicle.body_type'], BaseVehicle::BODY_TYPE_TIPPER),
@@ -64,6 +62,8 @@ class TripNormalizer extends AbstractExportNormalizer
             // LastAddressLineDesc              - ??
             'SurveyType' => new Literal(3),
             // TripDataLoaded                   - ??
+            'VehicleOrigin' => new Property('origin'),
+            'VehicleDestination' => new Property('destination'),
             'UKPortOfDeparture' => new Property('outbound_uk_port'),
             'ForeignPortOfArrival' => new Property('outbound_foreign_port'),
             'OutwardVehicleEmpty' => new BooleanProperty('outbound_was_empty'),
@@ -92,7 +92,7 @@ class TripNormalizer extends AbstractExportNormalizer
                 return join(', ', array_unique($countries));
             }),
             'TotalRoundTripDistance' => new Property('round_trip_distance.value'),
-            'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETERS),
+            'KMsYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_KILOMETRES),
             'MilesYN' => new BooleanProperty('round_trip_distance.unit', Distance::UNIT_MILES),
             'DatesNotEntered' => new BooleanLiteral(false),
             'OutwardJourneyNotEntered' => new BooleanLiteral(false),

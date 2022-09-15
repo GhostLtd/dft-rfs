@@ -13,6 +13,7 @@ trait SimpleVehicleTrait
      * @Assert\NotBlank(groups={"vehicle_weight", "admin_vehicle"}, message="common.vehicle.gross-weight.not-blank")
      * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight", "admin_vehicle"})
      * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, min=3500, minMessage="common.vehicle.gross-weight.minimum")
      */
     private $grossWeight;
 
@@ -21,6 +22,7 @@ trait SimpleVehicleTrait
      * @Assert\NotBlank(groups={"vehicle_weight", "admin_vehicle"}, message="common.vehicle.carrying-capacity.not-blank")
      * @Assert\Positive(message="common.number.positive", groups={"vehicle_weight", "admin_vehicle"})
      * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, max=2000000000, maxMessage="common.number.max")
+     * @Assert\Range(groups={"vehicle_weight", "admin_vehicle"}, min=1000, minMessage="common.vehicle.carrying-capacity.minimum")
      */
     private $carryingCapacity;
 

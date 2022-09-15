@@ -72,6 +72,10 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
             return true;
         }
 
+        if (1 === preg_match('/^_profiler/', $routeName)) {
+            return true;
+        }
+
         if (in_array($routeName, self::ROUTE_WHITELIST)) {
             return true;
         }

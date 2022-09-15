@@ -1,13 +1,18 @@
-{% macro displayRow(data, total, allZeros, fields) %}
+{% macro displayRow(data, total, allZeros, fields, excludeFromTotals) %}
     {%- for field in fields -%}
-        <td class="govuk-table__cell">{{ _self.displayCell(data, total, allZeros, field) }}</td>
+        {%- set isExcludedFromTotal = field in excludeFromTotals|default([]) -%}
+        <td class="govuk-table__cell">{{ _self.displayCell(data, total, allZeros, field, isExcludedFromTotal) }}</td>
     {%- endfor -%}
     <td class="govuk-table__cell">{{- allZeros ? '-' : total -}}</td>
 {% endmacro %}
 
-{% macro displayCell(data, total, allZeros, field,) %}
-    {{ allZeros ? '-' : data[field] }}
-    {%- if not allZeros -%}
+{% macro displayCell(data, total, allZeros, field, isExcludedFromTotal) %}
+    {%- if allZeros -%}
+        -
+    {%- else -%}
+        {{- isExcludedFromTotal ? ('(' ~ data[field] ~ ')') : data[field] -}}
+    {%- endif -%}
+    {%- if not allZeros and not isExcludedFromTotal -%}
         <span>{% if data[field] > 0 %}{{- ((data[field] / total) * 100) | number_format(1) -}}%{% endif %}</span>
     {%- endif -%}
 {% endmacro %}

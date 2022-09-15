@@ -6,7 +6,13 @@
 
     <div class="govuk-grid-row govuk-!-padding-bottom-5">
         <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">The survey takes place over the course of a week and relates to the vehicle with registration mark <strong>{{ app.user.domesticSurvey.registrationMark | formatRegMark }}</strong>. Your survey week starts on <strong>{{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.long' | trans) }}</strong>.</p>
+            <p class="govuk-body">The survey takes place over the course of a week and relates to the vehicle with registration mark <strong>{{ app.user.domesticSurvey.registrationMark | formatRegMark }}</strong>. Your survey week starts on <strong>{{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>.</p>
+
+            {%- if (app.user.domesticSurvey.surveyPeriodStart | date('Y-m-d')) == "2021-08-30" -%}
+                {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+                {{- warningText("Note: This is a change to the survey dates in your letter, which were printed in error. The above date is correct. Apologies for any confusion.") -}}
+            {%- endif -%}
+
             <p class="govuk-body">We recommend answering the initial questions as soon as possible. After that, it will probably take around 10 minutes to enter your journey information on each day of your survey week.</p>
 
             <h2 class="govuk-heading-m">Initial questions</h2>

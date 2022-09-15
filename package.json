@@ -1,13 +1,14 @@
 {
     "devDependencies": {
-        "@symfony/webpack-encore": "^0.33.0",
+        "@symfony/webpack-encore": "^1.5.0",
         "accessible-autocomplete": "^2.0.3",
         "chart.js": "^3.3.2",
         "core-js": "^3.0.0",
+        "file-loader": "^6.0.0",
         "govuk-frontend": "^3.9.1",
-        "node-sass": "^4.14.1",
+        "node-sass": "^6.0.1",
         "regenerator-runtime": "^0.13.2",
-        "sass-loader": "^10.0.0",
+        "sass-loader": "^12.0.0",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
@@ -22,5 +23,15 @@
     },
     "dependencies": {
         "renderjson": "^1.4.0"
-    }
+    },
+    "browserslist": [
+        ">0.1%",
+        "last 2 Chrome versions",
+        "last 2 Firefox versions",
+        "last 2 Edge versions",
+        "last 2 Samsung versions",
+        "Safari >= 9",
+        "ie 8-11",
+        "iOS >= 9"
+    ]
 }

@@ -9,9 +9,18 @@ front_end:
     host: '%frontend_hostname%'
 
 admin:
-    resource: ../../src/Controller/Admin/
+    resource: '../../src/Controller/Admin/**/*'
+    exclude:
+        - '../../src/Controller/Admin/Reports/'
     type: annotation
     host: '%admin_hostname%'
+
+admin_reports:
+    resource: ../../src/Controller/Admin/Reports/
+    type: annotation
+    host: '%admin_hostname%'
+    name_prefix: 'admin_reports_'
+    prefix: /reports
 
 cron:
     resource: ../../src/Controller/Cron/

@@ -10,7 +10,7 @@
     } %}
     {{ row(showActions, 'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label', (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans, canCompleteActionLinks) }}
     {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') %}
-        {{ row(showActions, 'domestic.survey-response.scrapped-details.date.label', survey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.scrapped-details.date.label', survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans), canCompleteActionLinks) }}
     {%- endif -%}
 </dl>
 
@@ -25,10 +25,10 @@
 {% elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') %}
     <h2 class="govuk-heading-m">{{ 'domestic.survey-response.sold-details-display.heading'|trans }}</h2>
     <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 7 }}">
-        {{ row(showActions, 'domestic.survey-response.sold-details-display.date', survey.response.unableToCompleteDate | date('F j, Y'), canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details-display.name', survey.response.newOwnerName, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details-display.email', survey.response.newOwnerEmail, canCompleteActionLinks) }}
-        {{ row(showActions, 'domestic.survey-response.sold-details-display.address', survey.response.newOwnerAddress|formatAddress(true), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details-display.date', survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans), canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details-display.name', survey.response.newOwnerName ?? '-', canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details-display.email', survey.response.newOwnerEmail ?? '-', canCompleteActionLinks) }}
+        {{ row(showActions, 'domestic.survey-response.sold-details-display.address', (survey.response.newOwnerAddress and survey.response.newOwnerAddress.filled) ? (survey.response.newOwnerAddress|formatAddress(true)) : '-', canCompleteActionLinks) }}
     </dl>
 {% endif %}
 

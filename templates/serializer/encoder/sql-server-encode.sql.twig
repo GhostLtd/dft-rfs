@@ -1,13 +1,39 @@
 {% autoescape false %}
-INSERT INTO {{ table_name }} ("{{ fields | join('", "') }}") VALUES
-{% for dataRow in data %}
-{# twig doesn't want to escape empty strings, so we have to do it manually #}
-({{ dataRow | map(v =>
-    (v is same as '')
-        ? "''"
-        : (v | e('sql'))
-) | join(", ") }}){% if not loop.last %},
-{% else %};
-{% endif -%}
-{%- endfor %}
+declare @lf char
+declare @cr char
+set @lf = char(10)
+set @cr = char(13)
+
+BEGIN TRANSACTION
+{% for dataRow in data -%}
+{%- if (loop.index0 % context['rows-per-insert']) == 0 %}
+
+INSERT INTO "{{ table_name }}" ("{{ fields | join('", "') }}") VALUES
+{% endif %}
+(
+    {%- for k,v in dataRow -%}
+        {%- if v is same as '' -%}
+            {#- twig doesn't want to escape empty strings, so we have to do it manually -#}
+            {{- "''" -}}
+        {%- else -%}
+            {%- set ev = v | e('sql') -%}
+            {#- String fields that contain numbers don't get quoted in the escape function -#}
+            {%- if (v is not empty) and (k in context['force-string-fields']) and ((ev | first) != "'") -%}
+                '{{ ev }}'
+            {%- else -%}
+                {{ ev }}
+            {%- endif -%}
+        {%- endif -%}
+        {%- if not loop.last %}, {% endif -%}
+    {%- endfor -%}
+)
+{%- if loop.last or ((loop.index0 % context['rows-per-insert']) == (context['rows-per-insert']) - 1) %}
+
+{% else %}
+,
+{% endif %}
+{% endfor %}
+
+COMMIT TRANSACTION
+GO
 {% endautoescape %}

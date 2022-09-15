@@ -1,8 +1,24 @@
 {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
 
 <h2 class="govuk-heading-l">{{ 'domestic.day-view.headings.five-stops-or-fewer' | trans }}</h2>
+{% if not day.stops is empty %}
+    {% with {stops: day.stops, linkRowNumbers: true} %}
+        {% include "/domestic_survey/includes/day-stops-table.html.twig" %}
+    {% endwith %}
+{% endif %}
+
+<p class="govuk-body">
+    {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
+    {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
+    {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
+
+    {%- if day.stops | length > 1 %}
+        <a href="{{ path('app_domesticsurvey_daystop_reorder', {dayNumber: day.number}) }}" class="govuk-button govuk-button--secondary">{{ 'domestic.day-stop.re-order.button'|trans }}</a>
+    {% endif %}
+</p>
+
 {% for stop in day.stops %}
-    <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
+    <h2 id="stop-{{ stop.number }}" class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -15,13 +31,3 @@
         {{ 'domestic.day-view.no-info' | trans }}
     </p>
 {% endfor %}
-<p class="govuk-body">
-    {%- set summaryRoute = constant('App\\Controller\\DomesticSurvey\\IndexController::SUMMARY_ROUTE') -%}
-    {{ buttonLink(path('app_domesticsurvey_daystop_start', {dayNumber: day.number, stopNumber: 'add'}), 'domestic.day-view.actions.add-a-stage-for-this-journey'|trans) }}
-    {{ buttonLink(path(summaryRoute), 'domestic.day-view.actions.complete'|trans) }}
-
-    {%- if day.stops | length > 1 %}
-        {%- set reorderRoute = constant('App\\Controller\\DomesticSurvey\\DayStopController::REORDER_ROUTE') -%}
-        <a href="{{ url(reorderRoute, {dayNumber: day.number}) }}" class="govuk-button govuk-button--secondary">{{ 'domestic.day-stop.re-order.button'|trans }}</a>
-    {% endif %}
-</p>

@@ -13,7 +13,7 @@ interface ConfirmActionInterface
     public function getTranslationDomain(): ?string;
     public function getTranslationParameters(): array;
     public function getFormOptions(): array;
-    public function doConfirmedAction();
+    public function doConfirmedAction($formData);
     public function getConfirmedBanner(): NotificationBanner;
     public function getCancelledBanner(): NotificationBanner;
     public function getExtraViewData(): array;

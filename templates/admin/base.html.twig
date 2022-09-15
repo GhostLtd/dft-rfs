@@ -8,7 +8,8 @@
 {% block header %}
     {% block headerBar %}
         {{ govuk.header({
-            serviceName: ('service.name' | trans) ~ ' Admin'
+            serviceName: ('service.name' | trans) ~ ' Admin',
+            serviceNameEnv: env_label_admin
         }) }}
     {% endblock %}
 {% endblock %}

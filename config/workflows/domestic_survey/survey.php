@@ -2,6 +2,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Entity\Domestic\Survey as StateObject;
+use App\Entity\Domestic\SurveyResponse;
 
 return static function (ContainerConfigurator $container) {
     $container->extension('framework', [
@@ -23,8 +24,9 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_CLOSED,
                     StateObject::STATE_APPROVED,
                     StateObject::STATE_REJECTED,
-                    StateObject::STATE_EXPORTING,
-                    StateObject::STATE_EXPORTED,
+//                    StateObject::STATE_EXPORTING,
+//                    StateObject::STATE_EXPORTED,
+                    StateObject::STATE_REISSUED,
                 ],
                 'transitions' => [
                     'invite_user' => [
@@ -41,11 +43,11 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_INVITATION_FAILED,
                     ],
                     'started' => [
-                        'from' => [StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_PENDING, StateObject::STATE_NEW],
+                        'from' => [StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_PENDING, StateObject::STATE_NEW, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_IN_PROGRESS,
                     ],
                     'complete' => [
-                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_NEW, StateObject::STATE_INVITATION_SENT, StateObject::STATE_INVITATION_FAILED, StateObject::STATE_INVITATION_PENDING],
                         'to' => StateObject::STATE_CLOSED,
                     ],
                     're_open' => [
@@ -55,23 +57,32 @@ return static function (ContainerConfigurator $container) {
                     'approve' => [
                         'from' => StateObject::STATE_CLOSED,
                         'to' => StateObject::STATE_APPROVED,
+                        'guard' => "is_empty(subject.getResponse())"
+                            . sprintf(" or not (subject.getResponse().getIsInPossessionOfVehicle() === '%s' and is_empty(subject.getOriginalSurvey()))", SurveyResponse::IN_POSSESSION_ON_HIRE)
+                    ],
+                    'reissue' => [
+                        'from' => StateObject::STATE_CLOSED,
+                        'to' => StateObject::STATE_REISSUED,
+                        'guard' => "not is_empty(subject.getResponse())"
+                            . sprintf(" and subject.getResponse().getIsInPossessionOfVehicle() in ['%s', '%s']", SurveyResponse::IN_POSSESSION_ON_HIRE, SurveyResponse::IN_POSSESSION_SOLD)
+                            . " and is_empty(subject.getOriginalSurvey())",
                     ],
                     'un_approve' => [
                         'from' => StateObject::STATE_APPROVED,
                         'to' => StateObject::STATE_CLOSED,
                     ],
-                    'start_export' => [
-                        'from' => StateObject::STATE_APPROVED,
-                        'to' => StateObject::STATE_EXPORTING,
-                    ],
-                    'cancel_export' => [
-                        'from' => StateObject::STATE_EXPORTING,
-                        'to' => StateObject::STATE_APPROVED,
-                    ],
-                    'confirm_export' => [
-                        'from' => StateObject::STATE_EXPORTING,
-                        'to' => StateObject::STATE_EXPORTED,
-                    ],
+//                    'start_export' => [
+//                        'from' => StateObject::STATE_APPROVED,
+//                        'to' => StateObject::STATE_EXPORTING,
+//                    ],
+//                    'cancel_export' => [
+//                        'from' => StateObject::STATE_EXPORTING,
+//                        'to' => StateObject::STATE_APPROVED,
+//                    ],
+//                    'confirm_export' => [
+//                        'from' => StateObject::STATE_EXPORTING,
+//                        'to' => StateObject::STATE_EXPORTED,
+//                    ],
                     'reject' => [
                         'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_REJECTED,

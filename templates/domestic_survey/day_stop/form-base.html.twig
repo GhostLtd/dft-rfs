@@ -1,37 +1,35 @@
 {% extends 'domestic_survey/form-base.html.twig' %}
 
 {% block oneThirdColumnContent -%}
-    <h2 class="govuk-heading-m">
-    {%- set params = {
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+    {{ 'domestic.day-stop.sidebar-summary.day' | trans({
         stageNumber: subject.number,
         dayNumber: subject.day.number,
-        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('F j, Y')
-    }  -%}
-    {%- if subject.id is null -%}
-        {{ 'domestic.day-stop.sidebar-summary.adding' | trans(params) }}
-    {%- else -%}
-        {{ 'domestic.day-stop.sidebar-summary.editing' | trans(params) }}
-    {%- endif -%}
+        date: subject.day.response.survey.surveyPeriodStartModifiedBy('+' ~ (subject.day.number - 1) ~ ' day') | date('format.date.written-with-year' | trans)
+    }) | nl2br }}
     </h2>
+    <h3 class="govuk-heading-s">{{- 'domestic.day-stop.sidebar-summary.five-or-fewer'|trans -}}</h3>
 
-    {%- if subject.originLocation and subject.destinationLocation -%}
-        <p class="govuk-body">
-            {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
-                origin: subject.originLocation,
-                destination: subject.destinationLocation
-            }) -}}
-    {%- else -%}
-        {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
-        {%- if stops | length > 1 -%}
-            {%- set previousStage = stops[stops | length - 2] -%}
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+    {% if show_sidebar_stage_details ?? true %}
+        {%- if subject.originLocation and subject.destinationLocation -%}
             <p class="govuk-body">
                 {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
-                    origin: previousStage.originLocation,
-                    destination: previousStage.destinationLocation
+                    origin: subject.originLocation,
+                    destination: subject.destinationLocation
                 }) -}}
-        {% else %}
-            <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
+        {%- else -%}
+            {%- set stops = subject.day.stops.values -%}{# .values gives a 0-indexed array #}
+            {%- if stops | length > 1 -%}
+                {%- set previousStage = stops[stops | length - 2] -%}
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ 'domestic.day-stop.sidebar-summary.previous-stages'|trans }}</h3>
+                <p class="govuk-body">
+                    {{- 'domestic.day-stop.sidebar-summary.place-to-place'| trans({
+                        origin: previousStage.originLocation | formatPotentialPostcode,
+                        destination: previousStage.destinationLocation | formatPotentialPostcode
+                    }) -}}
+            {% else %}
+                <p class="govuk-body">{{ 'domestic.day-stop.sidebar-summary.first-stage'|trans }}</p>
+            {% endif %}
         {% endif %}
     {% endif %}
 

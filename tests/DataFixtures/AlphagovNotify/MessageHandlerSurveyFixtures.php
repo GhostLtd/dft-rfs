@@ -21,7 +21,6 @@ class MessageHandlerSurveyFixtures extends Fixture
             ->setSurveyPeriodEnd(new \DateTime('2021-05-10'))
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
-            ->setInvitationEmail('test@example.com')
             ->setPasscodeUser((new PasscodeUser())->setUsername('test')->setPlainPassword('test'))
             ->setState(Survey::STATE_INVITATION_PENDING);
         $manager->persist($survey);

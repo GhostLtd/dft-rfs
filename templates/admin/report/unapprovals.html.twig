@@ -1,0 +1,15 @@
+{% extends 'admin/report/report-base.html.twig' %}
+
+{% set translation_prefix = "admin.reports.unapprovals" %}
+
+{% block statsTable %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row %}
+    <p class="govuk-body">Number of approvals that have later been un-approved, by username.</p>
+    <dl class="govuk-summary-list">
+        {%- for data in stats -%}
+            {{- row(data.username| removeEmailNamespacePrefix, data.rejectedApprovalCount) -}}
+        {%- else -%}
+            <p class="govuk-body">No approved surveys have been un-approved in this period.</p>
+        {%- endfor -%}
+    </dl>
+{% endblock %}

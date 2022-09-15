@@ -9,7 +9,7 @@
 {%- block adminContent -%}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
 
-    {{ warningText("Are you sure you want to export this quarter?") }}
+    {{ warningText((translation_prefix ~ '.warning')|trans) }}
 
     {{ form(form) }}
 {%- endblock -%}

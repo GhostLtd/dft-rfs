@@ -31,9 +31,9 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
                 $data = $formEvent->getData();
 
                 assert($data instanceof PreEnquiryResponse);
-                $expectedCompanyName = $data->getPreEnquiry()->getCompany()->getBusinessName();
+                $expectedCompanyName = $data->getPreEnquiry()->getCompanyName();
 
-                $translationPrefix = 'pre-enquiry.business-details';
+                $translationPrefix = 'pre-enquiry.company-name';
                 $correctNamePrefix = "{$translationPrefix}.correct-company-name";
                 $companyNamePrefix = "{$translationPrefix}.company-name";
 
@@ -116,7 +116,7 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
         $isCorrectCompanyName = $forms['isCorrectCompanyName']->getData();
 
         if ($isCorrectCompanyName === self::CHOICES[self::CHOICE_YES]) {
-            $companyName = $viewData->getPreEnquiry()->getCompany()->getBusinessName();
+            $companyName = $viewData->getPreEnquiry()->getCompanyName();
 
             $viewData->setCompanyName($companyName);
             $viewData->setIsCorrectCompanyName(true);

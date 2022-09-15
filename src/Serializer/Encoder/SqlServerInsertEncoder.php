@@ -10,9 +10,13 @@ class SqlServerInsertEncoder implements EncoderInterface
 {
     const FORMAT = 'sql-server-insert';
     const TABLE_NAME_KEY = 'table-name';
+    const FORCE_STRING_FIELDS = 'force-string-fields';
+    const ROWS_PER_INSERT = 'rows-per-insert';
 
     private $defaultContext = [
         self::TABLE_NAME_KEY => 'table_a',
+        self::FORCE_STRING_FIELDS => [],
+        self::ROWS_PER_INSERT => 1000,
     ];
 
     /**
@@ -49,9 +53,10 @@ class SqlServerInsertEncoder implements EncoderInterface
         }
 
         return $this->twig->render('serializer/encoder/sql-server-encode.sql.twig', [
-            'fields' => array_keys($data[0]),
+            'fields' => array_keys($data[array_key_first($data)]),
             'data' => $data,
             'table_name' => $context[self::TABLE_NAME_KEY] ?? $this->defaultContext[self::TABLE_NAME_KEY],
+            'context' => array_merge($this->defaultContext, $context),
         ]) . "\n";
     }
 
@@ -75,22 +80,20 @@ class SqlServerInsertEncoder implements EncoderInterface
             return "''";
         }
 
+        // replace characters with similar ones if we can
+        setlocale(LC_CTYPE, 'en_GB.UTF-8');
+        $data = iconv('UTF-8', 'ASCII//TRANSLIT', $data);
+
+        // catch any non-ascii chars left (ignoring tab, carriage return, new line)
+        $data = preg_replace('/[^\x{0020}-\x{007f}\n\r\t]/u', '?', $data);
+
+        // escape single quote, replace carriage return/newline with sql vars (defined in template)
         $simpleReplacements = [
-            "\"" => '\\"',
-            "\\" => '\\\\',
-            "/" => '\\/',
-            chr(8) => "\\b",
-            "\f" => "\\f",
-            "\n" => '\\n',
-            "\r" => '\\r',
-            "\t" => '\\t',
             "'" => "''",
+            "\r" => "'+@cr+'",
+            "\n" => "'+@lf+'",
         ];
         $data = str_replace(array_keys($simpleReplacements), array_values($simpleReplacements), $data);
-
-        $data = preg_replace_callback('/[\x{0000}-\x{001f}]/', function ($match) use($data) {
-            return sprintf("\\u%'04d", mb_ord($match[0]));
-        }, $data);
 
         return "'{$data}'";
     }

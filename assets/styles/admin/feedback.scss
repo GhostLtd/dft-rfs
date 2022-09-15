@@ -1,0 +1,15 @@
+.govuk-survey-feedback-response {
+  margin-left: 20px;
+
+  li.govuk-survey-feedback-selected {
+    font-weight: bold;
+    position: relative;
+
+    &:before {
+      content: '\000BB';
+      display: block;
+      position: absolute;
+      right: calc(100% + 5px);
+    }
+  }
+}

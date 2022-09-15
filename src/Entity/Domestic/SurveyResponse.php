@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Form\Validator as AppAssert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
@@ -66,6 +67,16 @@ class SurveyResponse extends AbstractSurveyResponse
     ];
 
     use SurveyResponseTrait;
+
+    public ?int $_summaryCountForExport;
+    public ?int $_stopCountForExport;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="domestic.survey-response.initial-details.business-name-required", groups={"contact_details", "admin_correspondence"})
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
+     */
+    private ?string $contactBusinessName = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -128,7 +139,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * N.B. Validation in individual form types due to message varying depending upon context.
+     * N.B. Validation in individual form types or callback validators due to criteria and errors depending upon context.
      */
     private $unableToCompleteDate;
 
@@ -145,8 +156,16 @@ class SurveyResponse extends AbstractSurveyResponse
     private $reasonForEmptySurvey;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\Domestic\\SurveyResponse::REASON_OTHER')) || value != null", message="domestic.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
+     */
+    private ?string $reasonForEmptySurveyOther = null;
+
+    /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
     private $survey;
 
@@ -176,6 +195,60 @@ class SurveyResponse extends AbstractSurveyResponse
      * @ORM\OrderBy({"number" = "ASC"})
      */
     private $days;
+
+    /**
+     * @Assert\Callback(groups={"admin_sold"})
+     */
+    public function validateSoldDateAdmin(ExecutionContextInterface $context) {
+        $this->doSoldDateValidation($context, 'soldDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"sold_details"})
+     */
+    public function validateSoldDateFrontend(ExecutionContextInterface $context) {
+        $this->doSoldDateValidation($context, 'unableToCompleteDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"admin_scrapped"})
+     */
+    public function validateScrappedDateAdmin(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'scrappedDate');
+    }
+
+    /**
+     * @Assert\Callback(groups={"scrapped_details"})
+     */
+    public function validateScrappedDateFrontend(ExecutionContextInterface $context) {
+        $this->doScrappedDateValidation($context, 'unableToCompleteDate');
+    }
+
+    protected function doSoldDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SOLD, "domestic.survey-response.sold-details");
+    }
+
+    protected function doScrappedDateValidation(ExecutionContextInterface $context, string $validationPath) {
+        $this->doSoldOrScrappedDateValidation($context, $validationPath, self::IN_POSSESSION_SCRAPPED_OR_STOLEN, "domestic.survey-response.scrapped-details");
+    }
+
+    protected function doSoldOrScrappedDateValidation(ExecutionContextInterface $context, string $validationPath, string $isPossessionState, string $errorPrefix)
+    {
+        /** @var SurveyResponse $response */
+        $response = $context->getValue();
+        $survey = $response->getSurvey();
+
+        if ($response->getIsInPossessionOfVehicle() === $isPossessionState) {
+            $date = $response->getUnableToCompleteDate();
+            $max = $survey->getSurveyPeriodEnd();
+
+            if (!$date) {
+                $context->buildViolation("{$errorPrefix}.date")->atPath($validationPath)->addViolation();
+            } else if ($date > $max) {
+                $context->buildViolation("{$errorPrefix}.date-max")->atPath($validationPath)->addViolation();
+            }
+        }
+    }
 
     public function __construct()
     {
@@ -385,8 +458,23 @@ class SurveyResponse extends AbstractSurveyResponse
         return self::EMPTY_SURVEY_REASON_EXPORT_IDS[$this->reasonForEmptySurvey] ?? null;
     }
 
-    public function hasJourneys()
+    public function getReasonForEmptySurveyOther(): ?string
     {
+        return $this->reasonForEmptySurveyOther;
+    }
+
+    public function setReasonForEmptySurveyOther(?string $reasonForEmptySurveyOther): self
+    {
+        $this->reasonForEmptySurveyOther = $reasonForEmptySurveyOther;
+        return $this;
+    }
+
+    public function hasJourneys(): bool
+    {
+        if (isset($this->_stopCountForExport) && isset($this->_summaryCountForExport)) {
+            return ($this->_stopCountForExport !== 0 || $this->_summaryCountForExport !== 0);
+        }
+
         foreach ($this->getDays() as $day)
         {
             $summaryOrStops = $day->getHasMoreThanFiveStops() ? $day->getSummary() : $day->getStops();
@@ -400,6 +488,7 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
         $this->setContactTelephone($response->getContactTelephone());
+        $this->setContactBusinessName($response->getContactBusinessName());
 
         $this->setIsInPossessionOfVehicle($response->getIsInPossessionOfVehicle());
 
@@ -424,6 +513,11 @@ class SurveyResponse extends AbstractSurveyResponse
     public function getStopDayCount(): int
     {
         return $this->days->filter(fn(Day $day) => $day->getStops()->count() !== 0)->count();
+    }
+
+    public function getTotalDayCount(): int
+    {
+        return $this->getSummaryDayCount() + $this->getStopDayCount();
     }
 
     public function getHireeTelephone(): ?string
@@ -470,5 +564,16 @@ class SurveyResponse extends AbstractSurveyResponse
             + (empty($this->getNewOwnerTelephone()) ? 0 : 1)
             + ((is_null($this->getNewOwnerAddress()) || !$this->getNewOwnerAddress()->isFilled()) ? 0 : 1)
             ;
+    }
+
+    public function getContactBusinessName(): ?string
+    {
+        return $this->contactBusinessName;
+    }
+
+    public function setContactBusinessName(?string $contactBusinessName): self
+    {
+        $this->contactBusinessName = $contactBusinessName;
+        return $this;
     }
 }

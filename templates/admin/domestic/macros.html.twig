@@ -67,26 +67,27 @@
         {%- set dayNumber = day.number -%}
     {%- endif -%}
     <caption class="govuk-table__caption">
-        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('l, jS M') }}</div>
+        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
         {%- if day|default(false) %}
             <div class="journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
     </caption>
 {%- endmacro -%}
 
-{%- macro locationAndStatus(location, loaded, port, isOrigin) -%}
+{%- macro locationAndStatus(location, loaded, showLoaded, port, isOrigin) -%}
     {{- location|formatPotentialPostcode -}}
     {%- set type = _self.transfer(port) %}
     {%- if loaded -%}
-        {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
+        {%- if showLoaded -%}
+            <br><span>{{ (isOrigin ?? true) ? 'Loaded' : 'Unloaded' }}
+            {%- if type != '' %} ({{ type }}){% endif -%}</span>
+        {%- else -%}
+            {%- if type != '' %}<br><span>(Transferred {{ (isOrigin ?? true) ? 'from' : 'to' }} {{ type }}){% endif -%}</span>
+        {%- endif -%}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro transfer(xfer) -%}
-    {%- if xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_AIR') -%}
-        Airport
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_PORT') -%}
-        Ports/docks
-    {%- elseif xfer == constant('App\\Entity\\Domestic\\Day::TRANSFERRED_RAIL') -%}
-        Rail siding/terminal
+    {%- if xfer != constant('App\\Entity\\Domestic\\Day::TRANSFERRED_NONE') -%}
+        {{- "domestic.transferred-port.options.#{xfer}" | trans -}}
     {%- endif -%}
 {%- endmacro -%}

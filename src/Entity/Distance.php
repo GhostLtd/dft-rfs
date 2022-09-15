@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Distance implements ValueUnitInterface
 {
-    const UNIT_KILOMETERS = 'kilometers';
+    const UNIT_KILOMETRES = 'kilometres';
     const UNIT_MILES = 'miles';
 
     const UNIT_CONVERSION_FACTOR = 1.609344;
@@ -18,7 +18,7 @@ class Distance implements ValueUnitInterface
 
     const UNIT_CHOICES = [
         self::UNIT_TRANSLATION_PREFIX . self::UNIT_MILES => self::UNIT_MILES,
-        self::UNIT_TRANSLATION_PREFIX . self::UNIT_KILOMETERS => self::UNIT_KILOMETERS,
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_KILOMETRES => self::UNIT_KILOMETRES,
     ];
 
     /**
@@ -50,7 +50,7 @@ class Distance implements ValueUnitInterface
             return $this->value;
         }
         switch ($unit) {
-            case self::UNIT_KILOMETERS :
+            case self::UNIT_KILOMETRES :
                 return $this->value * self::UNIT_CONVERSION_FACTOR;
             case self::UNIT_MILES :
                 return $this->value / self::UNIT_CONVERSION_FACTOR;

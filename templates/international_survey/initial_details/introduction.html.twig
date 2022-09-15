@@ -9,8 +9,8 @@
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">The survey is for <strong>{{ survey.company.businessName }}</strong> and covers
                 {%- set surveyPeriodInDays = survey.getSurveyPeriodInDays -%}
-                {%- if surveyPeriodInDays == 1 %} a single day — <strong>{{ survey.surveyPeriodStart | date('format.date.long' | trans) }}</strong>.
-                {%- else %} the period from<br><strong>{{ survey.surveyPeriodStart | date('format.date.long' | trans) }}</strong> to <strong>{{ survey.surveyPeriodEnd | date('format.date.long' | trans) }}</strong>.
+                {%- if surveyPeriodInDays == 1 %} a single day — <strong>{{ survey.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>.
+                {%- else %} the period from<br><strong>{{ survey.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong> to <strong>{{ survey.surveyPeriodEnd | date('format.date.full-with-year' | trans) }}</strong>.
                 {%- endif -%}
             </p>
 

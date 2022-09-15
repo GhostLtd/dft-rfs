@@ -26,6 +26,8 @@ yarn-error.log
 /.idea
 /.gitattributes
 
-
-admin-passwords
+/admin-passwords
 /public/.htaccess
+
+/local/
+/*keys.json

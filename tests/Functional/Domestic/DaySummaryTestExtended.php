@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Domestic;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
 use App\Entity\HazardousGoods;
-use App\Tests\DataFixtures\BusinessFixtures;
+use App\Tests\DataFixtures\Domestic\BusinessFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\DaySummaryDatabaseTestCase;
 
@@ -30,7 +30,7 @@ class DaySummaryTestExtended extends AbstractWizardTest
                         10,
                         Distance::UNIT_MILES,
                         16,
-                        Distance::UNIT_KILOMETERS,
+                        Distance::UNIT_KILOMETRES,
                         AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
                         'Bread',
                         'RC',

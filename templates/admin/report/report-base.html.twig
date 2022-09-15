@@ -2,8 +2,9 @@
 
 {% set headingParams = {
     typeLabel: typeLabel,
-    quarter: quarter,
-    year: year
+    quarter: quarter ?? null,
+    year: year,
+    mode: quarter is defined ? 'quarterly' : 'yearly'
 } %}
 
 {% block adminContentIncludingHeader %}

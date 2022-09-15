@@ -3,26 +3,41 @@
 {% set translation_prefix = "admin.reports.dashboard" %}
 
 {% block adminContent %}
-    <h2 class="govuk-heading-m">Surveys by state</h2>
-    <ul class="govuk-list">
-        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_state_type', {type: 'irhs'}) }}">IRHS</a></li>
-    </ul>
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLink %}
 
-    <h2 class="govuk-heading-m">Possession of vehicle</h2>
-    <ul class="govuk-list">
-        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_possession_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
-    </ul>
+    {%- set csrgtAll = 1 %}{% set csrgtGB = 2 %}{% set csrgtNI = 4 %}{% set irhs = 8 -%}{% set preEnquiry = 16 -%}
+    {%- set reportTypeRef = {(csrgtAll): 'csrgt', (csrgtGB): 'csrgt-gb', (csrgtNI): 'csrgt-ni', (irhs): 'irhs', (preEnquiry): 'pre-enquiry'} -%}
+    {%- set reportConfig = {
+        'Activity Status':       {'admin_reports_activity_status_type': irhs},
+        'Approvals':             {'admin_reports_approvals_type':       csrgtAll + csrgtGB + csrgtNI + irhs},
+        'Possession of vehicle': {'admin_reports_possession_type':      csrgtAll + csrgtGB + csrgtNI},
+        'Quality assurance':     {'admin_reports_qa_type':              csrgtAll + csrgtGB + csrgtNI + irhs},
+        'Surveys by state':      {'admin_reports_state_type':           csrgtAll + csrgtGB + csrgtNI + irhs + preEnquiry},
+        'Unapprovals':           {'admin_reports_unapprovals_type':     csrgtAll + irhs},
+    } -%}
 
-    <h2 class="govuk-heading-m">Quality assurance</h2>
-    <ul class="govuk-list">
-        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt'}) }}">CSRGT (All)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt-gb'}) }}">CSRGT (GB)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'csrgt-ni'}) }}">CSRGT (NI)</a></li>
-        <li><a class="govuk-link" href="{{ path('admin_reports_qa_type', {type: 'irhs'}) }}">IRHS</a></li>
-    </ul>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-wide">
+            <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+            {{- tableHead(null, ['', 'CSRGT (All)', 'CSRGT (GB)', 'CSRGT (NI)', 'IRHS', 'Pre-Enquiry']) -}}
+            <tbody class="govuk-table__body">
+            {%- for reportName, config in reportConfig -%}
+                {%- set routeName = (config | keys).0 -%}
+                {%- set reportType = config[routeName] -%}
+                <tr class="govuk-table__row">
+                    {{- tableCell(reportName, {class: 'govuk-table__header'}) -}}
+                    {% for col in [csrgtAll, csrgtGB, csrgtNI, irhs, preEnquiry] %}
+                        {%- if (reportType b-and col) -%}
+                            {%- set link = actionLink(path(routeName, {type: reportTypeRef[col]}), 'view') -%}
+                            {{- tableCell(link, {html: true}) -}}
+                        {%- else -%}
+                            {{- tableCell('') -}}
+                        {%- endif -%}
+                    {%- endfor -%}
+                </tr>
+            {%- endfor -%}
+            </tbody>
+        </table>
+        </div>
+    </div>
 {% endblock %}

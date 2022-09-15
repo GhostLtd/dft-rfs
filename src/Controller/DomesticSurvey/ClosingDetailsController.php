@@ -2,7 +2,9 @@
 
 namespace App\Controller\DomesticSurvey;
 
+use App\Annotation\Redirect;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\Domestic\DriverAvailability;
 use App\Entity\Domestic\SurveyResponse;
 use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardStateInterface;
@@ -22,7 +24,8 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     /**
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
      * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
+     * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
+     * @Security("is_granted('EDIT', user.getDomesticSurvey())", )
      */
     public function index(WorkflowInterface $domesticSurveyClosingDetailsStateMachine, Request $request, $state = null): Response
     {
@@ -40,7 +43,15 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
             $formWizard->setSubject($response);
         }
         // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
+        $formWizardDriverAvailability = $formWizard->getSubject()->getSurvey()->getDriverAvailability();
+        if (!$formWizardDriverAvailability) {
+            $formWizardDriverAvailability = new DriverAvailability();
+            $formWizardDriverAvailability->setSurvey($survey);
+            $this->entityManager->persist($formWizardDriverAvailability);
+            $this->entityManager->flush();
+        }
         $formWizard->getSubject()->setSurvey($survey);
+        $formWizard->getSubject()->getSurvey()->setDriverAvailability($this->entityManager->merge($formWizardDriverAvailability));
         $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
         $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
 

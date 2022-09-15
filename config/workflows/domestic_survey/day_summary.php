@@ -23,6 +23,7 @@ return static function (ContainerConfigurator $container) {
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
+                    StateObject::STATE_INTRO,
                     StateObject::STATE_ORIGIN,
                     StateObject::STATE_DESTINATION,
                     StateObject::STATE_BORDER_CROSSING,
@@ -36,9 +37,13 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
+                    'intro_to_origin' => [
+                        'from' => StateObject::STATE_INTRO,
+                        'to' => StateObject::STATE_ORIGIN,
+                    ],
                     'origin_to_destination' => [
                         'from' => StateObject::STATE_ORIGIN,
-                        'to' =>  StateObject::STATE_DESTINATION,
+                        'to' => StateObject::STATE_DESTINATION,
                     ],
                     'destination_to_furthest_stop' => [
                         'from' => StateObject::STATE_DESTINATION,

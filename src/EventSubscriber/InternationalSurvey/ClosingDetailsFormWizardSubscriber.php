@@ -10,7 +10,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 {
-    private $internationalSurveyStateMachine;
+    private WorkflowInterface $internationalSurveyStateMachine;
 
     public function __construct(WorkflowInterface $internationalSurveyStateMachine)
     {
@@ -29,7 +29,7 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
     public function transitionFinish(Event $event)
     {
         $stateObject = $this->getStateObject($event);
-        $survey = $stateObject->getSubject()->getSurvey();
+        $survey = $stateObject->getSubject();
 
         if ($this->internationalSurveyStateMachine->can($survey, 'complete'))
         {

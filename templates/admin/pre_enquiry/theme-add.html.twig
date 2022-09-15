@@ -1,0 +1,16 @@
+{% block form %}
+    {{ form_start(form) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.companyName) }}
+            {{ form_row(form.referenceNumber) }}
+            {{ form_row(form.dispatchDate) }}
+            {{ form_row(form.invitationEmails) }}
+        </div>
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+            {{ form_row(form.invitationAddress) }}
+        </div>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}

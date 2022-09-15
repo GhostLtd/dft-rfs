@@ -5,11 +5,13 @@
         <tbody class="govuk-table__body">
 {%- endmacro -%}
 
-{%- macro listTableEnd(data, form) -%}
+{%- macro listTableEnd(data, form, pagination=true) -%}
         </tbody>
     </table>
     {{ form_end(form) }}
-    {{ _self.pagination(data) }}
+    {% if pagination %}
+        {{ _self.pagination(data) }}
+    {% endif %}
 {%- endmacro -%}
 
 {%- macro tableHeader(data, form) -%}

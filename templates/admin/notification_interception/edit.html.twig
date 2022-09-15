@@ -1,0 +1,9 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% trans_default_domain 'admin' %}
+{% set headingDomain = 'admin' %}
+{% set translation_prefix = "notification-interception." ~ type %}
+
+{%- block adminContent -%}
+    {{ form(form) }}
+{%- endblock -%}

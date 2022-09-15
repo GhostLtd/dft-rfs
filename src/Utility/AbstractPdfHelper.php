@@ -108,13 +108,7 @@ abstract class AbstractPdfHelper
         return $pdfs;
     }
 
-    public function outputPDF(SurveyInterface $survey)
-    {
-        $this->generatePDF($survey)->stream();
-        exit;
-    }
-
-    protected function generatePDF(SurveyInterface $survey): Dompdf
+    public function generatePDF(SurveyInterface $survey): Dompdf
     {
         $dompdf = new Dompdf();
         $dompdf->getOptions()

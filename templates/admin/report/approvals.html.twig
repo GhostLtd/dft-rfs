@@ -1,0 +1,44 @@
+{% extends 'admin/report/report-base.html.twig' %}
+
+{% set translation_prefix = "admin.reports.approvals" %}
+
+{% block statsTable %}
+    {{ _self.displayTable(stats.usernames, stats.data, stats.totals) }}
+{% endblock %}
+
+{% macro displayTable(usernames, stats, totals) %}
+    <p class="govuk-body">
+        Stats shown for all approvals by username
+    </p>
+    <table class="govuk-table rfs-admin-report-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Week</th>
+            {% for username in usernames %}
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric"><span class="govuk-vertical">{{ username | removeEmailNamespacePrefix }}</span></th>
+            {% endfor %}
+            <th scope="col" class="govuk-table__header">Total</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        {% import "admin/report/macros.html.twig" as m %}
+        {% set fields = ['yes', 'on-hire', 'scrapped-or-stolen', 'sold'] %}
+        {% for week, weekStats in stats %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__header">{{ week }}</td>
+                {% for stat in weekStats.data %}
+                    <td class="govuk-table__header govuk-table__header--numeric">{{ stat }}</td>
+                {% endfor %}
+                <td class="govuk-table__header">{{ weekStats.data | reduce((carry, v) => carry + v) }}</td>
+            </tr>
+        {% endfor %}
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header">Total</td>
+            {% for stat in totals %}
+                <td class="govuk-table__header govuk-table__header--numeric">{{ stat }}</td>
+            {% endfor %}
+            <td class="govuk-table__header govuk-table__header--numeric"></td>
+        </tr>
+        </tbody>
+    </table>
+{% endmacro %}

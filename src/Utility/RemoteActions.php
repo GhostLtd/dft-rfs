@@ -14,21 +14,13 @@ class RemoteActions
 
     public static function preInstall($kernelDir = '')
     {
+        // previous migration count checks have been removed (2021-08-25), check git history if reinstating
         $output = "";
-        $migrationStatus = self::runProcess(["{$kernelDir}bin/console", 'doctrine:migrations:status'], false);
-        preg_match_all('#(?:\|\s+New\s+\|\s+(?<value>\d+))#', $migrationStatus, $matches);
-
-        // New migrations waiting
-        if ($migrationsCount = intval($matches['value'][0] ?? 0) > 0) {
-            $output .= "{$migrationsCount} migration(s) pending\n";
-            $lockStatus = self::runProcess(["{$kernelDir}bin/console", 'rfs:maintenance-mode:status'], false);
-            if (stripos($lockStatus, 'not active') !== false) {
-                throw new HttpException(500, "{$output}Maintenance lock is NOT active! Activate the maintenance lock before re-deploying.\nPre-install checks have failed.\n");
-            } else {
-                $output .= "Maintenance mode is active\n";
-            }
+        $lockStatus = self::runProcess(["{$kernelDir}bin/console", 'rfs:maintenance-mode:status'], false);
+        if (stripos($lockStatus, 'not active') !== false) {
+            throw new HttpException(500, "{$output}Maintenance lock is NOT active! Activate the maintenance lock before re-deploying.\nPre-install checks have failed.\n");
         } else {
-            $output .= "There are NO pending migrations\n";
+            $output .= "Maintenance mode is active\n";
         }
         $output .= "Pre-install checks have passed.\n";
 
@@ -38,7 +30,7 @@ class RemoteActions
     public static function postInstall($kernelDir = '')
     {
         $output = self::runProcess(["{$kernelDir}bin/console", 'messenger:stop-workers']); // stop running messenger workers
-        $output .= self::runProcess(["{$kernelDir}bin/console", 'doctrine:migrations:migrate', '-n']); // run any pending migrations
+        $output .= self::runProcess(["{$kernelDir}bin/console", 'doctrine:migrations:status']); // check migration status (don't automatically run migrations, as we sometimes seem to hit the old version)
         $output .= "Post-install script completed successfully.\n";
         return $output;
     }

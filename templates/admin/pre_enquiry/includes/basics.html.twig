@@ -1,0 +1,16 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.company-name', preEnquiry.companyName) -}}
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.reference-number', preEnquiry.referenceNumber) -}}
+    {{- actionlessSummaryListRow('admin.pre-enquiry.view.dispatch-date', preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-') -}}
+
+    {%- if showStatus ?? true -%}
+        {{- actionlessSummaryListRow('admin.pre-enquiry.view.status', tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
+        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('admin.pre-enquiry.view.approved-by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+    {%- endif -%}
+    {%- if showUsername ?? true -%}
+        {{- actionlessSummaryListRow('admin.pre-enquiry.view.username', preEnquiry.passcodeUser.username) }}
+        {{ actionlessSummaryListRow('Last logged in', preEnquiry.passcodeUser.lastLogin ? preEnquiry.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
+    {%- endif -%}
+</dl>

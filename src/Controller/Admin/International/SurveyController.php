@@ -38,9 +38,6 @@ class SurveyController extends AbstractController
     public const DELETE_NOTE_ROUTE = self::ROUTE_PREFIX.'deletenote';
     public const FLAG_QA_ROUTE = self::ROUTE_PREFIX.'flag_qa';
 
-    public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
-    public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
-
     public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_enter';
     public const EDIT_CORRESPONDENCE_ROUTE = self::ROUTE_PREFIX.'correspondence_edit';
     public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX.'business_edit';
@@ -60,13 +57,13 @@ class SurveyController extends AbstractController
      */
     public function enterInitialDetails(Survey $survey): Response
     {
-        $response = (new SurveyResponse())
-            ->setSurvey($survey);
+        $response = (new SurveyResponse());
+        $survey->setResponse($response);
 
         $this->entityManager->persist($response);
 
         $redirectUrl = $this->getRedirectUrl($survey);
-        return $this->handleRequest($response, InitialDetailsType::class, "admin/international/surveys/enter-initial-details.html.twig", $redirectUrl);
+        return $this->handleRequest($survey, InitialDetailsType::class, "admin/international/surveys/enter-initial-details.html.twig", $redirectUrl);
     }
 
     /**
@@ -75,7 +72,7 @@ class SurveyController extends AbstractController
     public function editCorrespondenceDetails(Survey $survey): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, "tab-correspondence");
-        return $this->handleRequest($this->getResponse($survey), CorrespondenceDetailsType::class, "admin/international/surveys/edit-correspondence-details.html.twig", $redirectUrl);
+        return $this->handleRequest($survey, CorrespondenceDetailsType::class, "admin/international/surveys/edit-correspondence-details.html.twig", $redirectUrl);
     }
 
     /**
@@ -84,7 +81,7 @@ class SurveyController extends AbstractController
     public function editBusinessDetails(Survey $survey): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, "tab-business-details");
-        return $this->handleRequest($this->getResponse($survey), BusinessDetailsType::class, "admin/international/surveys/edit-business-details.html.twig", $redirectUrl);
+        return $this->handleRequest($survey, BusinessDetailsType::class, "admin/international/surveys/edit-business-details.html.twig", $redirectUrl);
     }
 
     /**
@@ -93,11 +90,17 @@ class SurveyController extends AbstractController
     public function editFinalDetails(Survey $survey): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-final-details');
-        return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/international/surveys/edit-final-details.html.twig', $redirectUrl);
+        return $this->handleRequest(
+            $survey,
+            FinalDetailsType::class,
+            'admin/international/surveys/edit-final-details.html.twig',
+            $redirectUrl,
+            true
+        );
     }
 
-    protected function handleRequest(SurveyResponse $response, string $formClass, string $template, string $redirectUrl) {
-        $form = $this->createForm($formClass, $response);
+    protected function handleRequest(Survey $survey, string $formClass, string $template, string $redirectUrl, bool $formUsesSurvey = false) {
+        $form = $this->createForm($formClass, $formUsesSurvey ? $survey : $this->getResponse($survey));
         $request = $this->requestStack->getCurrentRequest();
 
         if ($request->getMethod() === Request::METHOD_POST) {
@@ -114,7 +117,7 @@ class SurveyController extends AbstractController
         }
 
         return $this->render($template, [
-            'survey' => $response->getSurvey(),
+            'survey' => $survey,
             'form' => $form->createView(),
         ]);
     }

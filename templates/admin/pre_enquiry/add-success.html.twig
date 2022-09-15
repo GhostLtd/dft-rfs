@@ -1,0 +1,33 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = translation_prefix|default("admin.pre-enquiry.add-success") %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+
+    {% set body_translation_prefix = "admin.pre-enquiry.created" %}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.company-name', preEnquiry.companyName) }}
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ (body_translation_prefix ~ '.invitation-email') | trans | nl2br }}</dt>
+            <dd class="govuk-summary-list__value">
+                {%- set bodyText -%}
+                    Access code 1: {{ preEnquiry.passcodeUser.username }}
+                    Access code 2: {{ password }}
+                {%- endset -%}
+                {%- set mailLink = "mailto:?subject=DfT International Road Haulage Pre Enquiry - Access codes&body=" ~ (bodyText|trim|url_encode) -%}
+                <a href="{{ mailLink }}">email link</a>
+            </dd>
+        </div>
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.invitation-address', preEnquiry.invitationAddress.isFilled ?
+            (preEnquiry.invitationAddress | formatAddress(true)) :
+        '-', null) }}
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', password, {'row_class': 'access-code'}) }}
+    </dl>
+
+    <a class="govuk-button" href="{{ path('admin_preenquiry_view', {preEnquiryId: preEnquiry.id}) }}">View pre-enquiry</a>
+{% endblock %}
+

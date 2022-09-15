@@ -134,7 +134,7 @@ class DayStopController extends AbstractController
 
     /**
      * @Route("/day-stages/{stopId}/delete", name=self::DELETE_ROUTE)
-     * @Entity("stop", expr="repository.find(stopId)")
+     * @Entity("stop", expr="repository.findOneForDelete(stopId)")
      * @Template("admin/domestic/stop/delete.html.twig")
      */
     public function delete(DayStop $stop, DeleteDayStopConfirmAction $deleteDayStopConfirmAction, Request $request)

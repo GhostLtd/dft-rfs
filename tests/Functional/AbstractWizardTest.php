@@ -3,8 +3,8 @@
 namespace App\Tests\Functional;
 
 use App\Tests\Functional\Wizard\DatabaseTestCase;
-use App\Tests\Functional\Wizard\WizardEndTestCase;
-use App\Tests\Functional\Wizard\WizardStepTestCase;
+use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
+use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 use App\Tests\Functional\Wizard\WizardTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
@@ -27,34 +27,23 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         foreach ($wizardTestCases as $wizardTestCase) {
             $crawler = $browser->getCrawler();
 
-            if ($wizardTestCase instanceof WizardStepTestCase) {
-                // A step in a wizard...
-                $expectedTitle = $wizardTestCase->getExpectedTitle();
-
-                if ($expectedTitle !== null) {
-                    $actualTitle = $this->getTitle($crawler);
-                    $this->assertEquals($expectedTitle, $actualTitle, 'Page title as expected');
+            if ($wizardTestCase instanceof WizardStepUrlTestCase) {
+                $expectedUrl = $wizardTestCase->getExpectedUrl();
+                if ($expectedUrl !== null) {
+                    $actualUrl = $this->getUrl($crawler);
+                    $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
                 }
 
-                $submitButtonId = $wizardTestCase->getSubmitButtonId();
-                if ($submitButtonId !== null) {
+                $wizardSubmitButtonId = $wizardTestCase->getSubmitButtonId();
+                if ($wizardSubmitButtonId !== null) {
                     foreach ($wizardTestCase->getFormTestCases() as $formTestCase) {
+                        $submitButtonId = $formTestCase->getSubmitButtonId() ?? $wizardSubmitButtonId;
                         $this->submitForm($submitButtonId, $browser, $formTestCase->getFormData());
                         $this->checkErrors($browser->getCrawler(), array_flip($formTestCase->getExpectedErrorIds()));
                     }
                 }
-            } else if ($wizardTestCase instanceof WizardEndTestCase) {
-                // The end of a wizard
-                $expectedTitle = $wizardTestCase->getExpectedTitle();
-                $matchMode = $wizardTestCase->getMatchMode();
-
-                $actualTitle = $this->getTitle($crawler);
-
-                if ($matchMode === WizardEndTestCase::MODE_EXACT) {
-                    $this->assertEquals($expectedTitle, $actualTitle, 'Page title as expected');
-                } else if ($matchMode === WizardEndTestCase::MODE_CONTAINS) {
-                    $this->assertStringContainsString($expectedTitle, $actualTitle, 'Page title as expected');
-                }
+            } else if ($wizardTestCase instanceof WizardEndUrlTestCase) {
+                $this->assertEquals($wizardTestCase->getExpectedUrl(), $this->getUrl($crawler), 'Page URL as expected');
             } else if ($wizardTestCase instanceof DatabaseTestCase) {
                 $wizardTestCase->checkDatabaseAsExpected($entityManager, $this);
             } else {
@@ -124,7 +113,17 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
             $node = $crawler->filterXPath("//legend[contains(concat(' ',normalize-space(@class),' '),' govuk-fieldset__legend ')]")->first();
         }
 
-        $actualTitle = $node->text();
+        $actualTitle = $node->text('', true);
         return $actualTitle;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return string
+     */
+    protected function getUrl(Crawler $crawler): string
+    {
+        $url = parse_url($crawler->getUri());
+        return $url["path"];
     }
 }

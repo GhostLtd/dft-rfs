@@ -4,49 +4,81 @@
 
 {% block statsTable %}
     {%- if type == 'irhs' -%}
-        {{- _self.displayIrhs(stats) -}}
+        {{- _self.displayIrhs(stateMappings, stats, excludeFromTotals, type) -}}
+    {%- elseif type == 'pre-enquiry' -%}
+        {{- _self.displayPreEnquiry(stateMappings, stats, excludeFromTotals, type) -}}
     {%- else -%}
-        {{- _self.displayCsrgt(stats) -}}
+        {{- _self.displayCsrgt(stateMappings, stats, excludeFromTotals, type) -}}
     {%- endif -%}
 {% endblock %}
 
-{% macro displayCsrgt(stats) %}
+{% macro displayCsrgt(stateMappings, stats, excludeFromTotals, type) %}
     {% for year, yearStats in stats %}
-        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+        {{ _self.displayTable(stateMappings, yearStats.data, yearStats.totals, yearStats.total, excludeFromTotals, type) }}
     {% endfor %}
 {% endmacro %}
 
-{% macro displayIrhs(stats) %}
-    {{ _self.displayTable(stats.data, stats.totals, stats.total) }}
+{% macro displayIrhs(stateMappings, stats, excludeFromTotals, type) %}
+    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals, type) }}
 {% endmacro %}
 
-{% macro displayTable(stats, totals, totalOfTotals) %}
+{% macro displayPreEnquiry(stateMappings, stats, excludeFromTotals, type) %}
+    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals, type) }}
+{% endmacro %}
+
+{% macro displayTable(stateMappings, stats, totals, totalOfTotals, excludeFromTotals, type) %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Column mappings
+    </span>
+        </summary>
+        <div class="govuk-details__text">
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+                {%- for state, mappings in stateMappings -%}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">{{ state|capitalize }}</th>
+                    <td class="govuk-table__cell">
+                        {% for mapping in mappings %}
+                            {{- tag({text: mapping, classes: "admin.survey.state.#{mapping}" | trans}) -}}{{- ' ' -}}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {%- endfor -%}
+                </tbody>
+            </table>
+        </div>
+    </details>
+    {%- if type != 'pre-enquiry' -%}
+    <p class="govuk-body">
+        N.B. Reissued surveys are not included in row totals.
+    </p>
+    {%- endif -%}
     <table class="govuk-table rfs-admin-report-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Week</th>
-            <th scope="col" class="govuk-table__header">Invited</th>
-            <th scope="col" class="govuk-table__header">In progress</th>
-            <th scope="col" class="govuk-table__header">Closed</th>
-            <th scope="col" class="govuk-table__header">Approved</th>
-            <th scope="col" class="govuk-table__header">Rejected</th>
-            <th scope="col" class="govuk-table__header">Exported</th>
+            <th scope="col" class="govuk-table__header">{% if type == 'pre-enquiry' %}Month{% else %}Week{% endif %}</th>
+            {% for state in stateMappings|keys %}
+            <th scope="col" class="govuk-table__header">{{ state|capitalize }}</th>
+            {% endfor %}
             <th scope="col" class="govuk-table__header">Total</th>
         </tr>
         </thead>
         <tbody class="govuk-table__body">
         {% import "admin/report/macros.html.twig" as m %}
-        {% set fields = ['invited', 'in-progress', 'closed', 'approved', 'rejected', 'exported'] %}
-        {% for week, weekStats in stats %}
-            {%- set allZeros = weekStats.allZeros -%}
+        {% set fields = stateMappings|keys %}
+        {% for period, periodStats in stats %}
+            {%- set allZeros = periodStats.allZeros -%}
             <tr class="govuk-table__row">
-                <td class="govuk-table__header">{{ week }}</td>
-                {{ m.displayRow(weekStats.data, weekStats.total, weekStats.allZeros, fields) }}
+                <td class="govuk-table__header">{{ period }}</td>
+                {{ m.displayRow(periodStats.data, periodStats.total, periodStats.allZeros, fields, excludeFromTotals) }}
             </tr>
         {% endfor %}
         <tr class="govuk-table__row">
             <td class="govuk-table__header">Total</td>
-            {{ m.displayRow(totals, totalOfTotals, false, fields) }}
+            {{ m.displayRow(totals, totalOfTotals, false, fields, excludeFromTotals) }}
         </tr>
         </tbody>
     </table>

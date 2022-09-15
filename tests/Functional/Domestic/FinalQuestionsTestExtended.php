@@ -3,10 +3,10 @@
 namespace App\Tests\Functional\Domestic;
 
 use App\Entity\SurveyInterface;
-use App\Tests\DataFixtures\DayFullOfSummaryFixtures;
-use App\Tests\DataFixtures\DayStopFixtures;
-use App\Tests\DataFixtures\DaySummaryFixtures;
-use App\Tests\DataFixtures\VehicleFixtures;
+use App\Tests\DataFixtures\Domestic\DayFullOfSummaryFixtures;
+use App\Tests\DataFixtures\Domestic\DayStopFixtures;
+use App\Tests\DataFixtures\Domestic\DaySummaryFixtures;
+use App\Tests\DataFixtures\Domestic\VehicleFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\FinalQuestionsDatabaseTestCase;
 

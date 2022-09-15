@@ -1,0 +1,16 @@
+{%- macro showValidationFailures(invalidSurveys, surveyProperty) -%}
+    {%- if invalidSurveys is not empty -%}
+        <ul class="govuk-list">
+            {%- for failed in invalidSurveys -%}
+            <li>
+                {# access the attribute specified of failed.survey, using reduce to allow for multiple dots #}
+                {{- surveyProperty | split('.') | reduce((carry, v) => carry ? attribute(carry, v) : null, failed.survey) }} failed to import
+                <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+                    {%- for violation in failed.violations -%}
+                        <li><kbd>{{ violation.propertyPath }}</kbd>: {{ violation.message }}</li>
+                    {%- endfor -%}
+                </ul>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endmacro -%}

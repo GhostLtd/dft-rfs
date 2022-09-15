@@ -18,7 +18,7 @@ class MessageHandler implements MessageHandlerInterface
         $this->alphagovNotify = $alphagovNotify;
     }
 
-    public function __invoke(AbstractMessage $message)
+    public function __invoke(AbstractSendMessage $message)
     {
         try {
             switch(get_class($message)) {

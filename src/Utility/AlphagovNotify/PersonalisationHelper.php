@@ -8,55 +8,73 @@ use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\SurveyInterface;
+use App\Utility\PasscodeGenerator;
 use App\Utility\RegistrationMarkHelper;
+use Exception;
 
 class PersonalisationHelper
 {
-    public static function getForEntity($entity)
+    private PasscodeGenerator $passcodeGenerator;
+
+    public function __construct(PasscodeGenerator $passcodeGenerator)
     {
-        switch (get_class($entity)) {
-            case DomesticSurvey::class :
-                return self::getForDomesticSurvey($entity);
-            case InternationalSurvey::class :
-                return self::getForInternationalSurvey($entity);
-            case PreEnquiry::class:
-                return self::getForPreEnquiry($entity);
+        $this->passcodeGenerator = $passcodeGenerator;
+    }
+
+    public function getForEntity($entity): array
+    {
+        switch (true) {
+            case ($entity instanceof DomesticSurvey):
+                return $this->getForDomesticSurvey($entity);
+            case ($entity instanceof InternationalSurvey):
+                return $this->getForInternationalSurvey($entity);
+            case ($entity instanceof PreEnquiry):
+                return $this->getForPreEnquiry($entity);
         }
         throw new \LogicException("unexpected entity class: " . get_class($entity));
     }
 
-    public static function getForDomesticSurvey(DomesticSurvey $survey)
+    private function getForDomesticSurvey(DomesticSurvey $survey): array
     {
-        return array_merge(self::getForAllSurveys($survey), [
+        return array_merge($this->getForAllSurveys($survey), $this->getForHaulageSurveys($survey), [
             'registrationMark' => (new RegistrationMarkHelper($survey->getRegistrationMark()))->getFormattedRegistrationMark(),
         ]);
     }
 
-    public static function getForInternationalSurvey(InternationalSurvey $survey)
+    private function getForInternationalSurvey(InternationalSurvey $survey): array
     {
-        return array_merge(self::getForAllSurveys($survey), [
+        return array_merge($this->getForAllSurveys($survey), $this->getForHaulageSurveys($survey), [
             'surveyReference' => $survey->getReferenceNumber(),
         ]);
     }
 
-    public static function getForPreEnquiry(PreEnquiry $preEnquiry)
+    private function getForPreEnquiry(PreEnquiry $preEnquiry): array
     {
+        return array_merge($this->getForAllSurveys($preEnquiry), [
+            'surveyReference' => $preEnquiry->getReferenceNumber(),
+        ]);
+    }
+
+    private function getForAllSurveys(SurveyInterface $survey): array
+    {
+        if (!$survey->getPasscodeUser()) {
+            throw new Exception('PasscodeUser entity expected');
+        }
         return [
-            'passcode1' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getUsername() : 'unknown',
-            'passcode2' => $preEnquiry->getPasscodeUser() ? $preEnquiry->getPasscodeUser()->getPlainPassword() : 'unknown',
+            'passcode1' => $survey->getPasscodeUser()->getUsername(),
+            'passcode2' => $this->passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
         ];
     }
 
-    private static function getForAllSurveys(HaulageSurveyInterface $survey)
+    private function getForHaulageSurveys(HaulageSurveyInterface $survey): array
     {
-        $periodStart = $survey->getSurveyPeriodStart()->format('l, jS F Y');
-        $periodEnd = $survey->getSurveyPeriodEnd()->format('l, jS F Y');
+        $periodStart = $survey->getSurveyPeriodStart()->format('l jS F Y');
+        $periodEnd = $survey->getSurveyPeriodEnd()->format('l jS F Y');
         return [
             'surveyPeriodStart' => $periodStart,
             'surveyPeriodEnd' => $periodEnd,
             'surveyPeriod' => ($periodStart === $periodEnd) ? $periodStart : "{$periodStart} to {$periodEnd}",
-            'passcode1' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getUsername() : 'unknown',
-            'passcode2' => $survey->getPasscodeUser() ? $survey->getPasscodeUser()->getPlainPassword() : 'unknown',
         ];
     }
 }

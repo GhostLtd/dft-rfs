@@ -3,9 +3,13 @@
 namespace App\Utility\ConfirmAction\Domestic\Admin;
 
 use App\Entity\Domestic\Survey;
+use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
+use App\Form\Admin\DomesticSurvey\FinalDetailsType;
+use App\Form\ConfirmActionType;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -56,9 +60,63 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return "common.survey.workflow-transition";
     }
 
-    public function doConfirmedAction()
+    public function getFormClass(): string
     {
-        $this->domesticSurveyStateMachine->apply($this->getSubject(), $this->transition);
+        $survey = $this->getSurvey();
+
+        if ($this->getTransition() === 'approve') {
+            if ($survey->shouldAskWhyUnfilled()) {
+                return ConfirmApprovedActionType::class;
+            }
+
+            if ($survey->shouldAskWhyNoJourneys() && !$survey->getResponse()->getReasonForEmptySurvey()) {
+                return FinalDetailsType::class;
+            }
+        }
+
+        return ConfirmActionType::class;
+    }
+
+    public function getForm(): FormInterface
+    {
+        $formClass = $this->getFormClass();
+        $survey = $this->getSurvey();
+
+        switch($formClass) {
+            case ConfirmApprovedActionType::class:
+                $data = $survey;
+                $formOptions = $this->getFormOptions();
+                break;
+            case ConfirmActionType::class:
+                $data = null;
+                $formOptions = $this->getFormOptions();
+                break;
+            case FinalDetailsType::class:
+                $data = $survey->getResponse();
+                $formOptions = [
+                    'submit_name' => 'confirm',
+                    'submit_label' => $this->getTranslationKeyPrefix().".confirm.label",
+                    'label_translation_domain' => $this->getTranslationDomain(),
+                    'label_translation_parameters' => $this->getTranslationParameters(),
+                ];
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid formClass');
+        }
+
+        return $this->formFactory->create($formClass, $data, $formOptions);
+    }
+
+    public function doConfirmedAction($formData)
+    {
+        $survey = $this->getSurvey();
+
+        $this->domesticSurveyStateMachine->apply($survey, $this->transition);
         $this->entityManager->flush();
+    }
+
+    public function getSurvey(): Survey
+    {
+        return $this->subject;
     }
 }

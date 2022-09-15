@@ -1,0 +1,12 @@
+{% set translation_prefix = 'domestic.day-stop.intro' %}
+{% set show_sidebar_stage_details = false %}
+{% extends 'domestic_survey/day_stop/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <p class="govuk-body">You need to provide details of each stop you made on this day, including empty stages.</p>
+    <h2 class="govuk-heading-m">Example journey</h2>
+    {% with {stops: exampleDayStops} %}
+        {% include "/domestic_survey/includes/day-stops-table.html.twig" %}
+    {% endwith %}
+    <p class="govuk-body">Continue to enter the first stage on this day.</p>
+{% endset %}

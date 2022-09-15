@@ -7,11 +7,15 @@ service:
 
 format:
   date:
-    long: 'l, jS F Y'
-    medium: 'jS M Y'
-    short: 'jS M'
+    written-with-year: 'jS F Y'
+    full-with-year: 'l, jS F Y'
+    full: 'l, jS F'
+    side-bar: 'j M Y'
+    default: 'd/m/Y'
   time:
-    short: 'g:i a'
+    default: 'g:i a'
+  date-time:
+    default: 'd/m/Y g:i a'
 
 common:
   logout: Sign out
@@ -51,6 +55,7 @@ common:
     boolean:
       yes: Yes
       no: No
+      do-not-know: "Don't know"
     other: 'Other'
   consignment:
     cargo-type: Cargo type
@@ -104,10 +109,10 @@ common:
         one {1.0 mile}
         other {{value, number} miles}
       }
-    kilometers: >-
+    kilometres: >-
       {value, plural,
-        one {1.0 kilometer}
-        other {{value, number} kilometers}
+        one {1.0 kilometre}
+        other {{value, number} kilometres}
       }
   number:
     plain: "{value, number}"
@@ -162,12 +167,10 @@ common:
 unit:
   distance:
     miles: Miles
-    kilometers: Kilometers
+    kilometres: Kilometres
   volume:
     litres: Litres
     gallons: Gallons
-
-
 
 passcode:
   login:
@@ -184,6 +187,8 @@ admin:
       event: "Event"
       header: "Audit Logs"
       user: "User"
+    cleanup-passcode: "Removed passcode user"
+    cleanup-personal: "Removed personal data"
     survey-qa: "Flagged survey as QA checked"
     survey-state: "Changed survey state from `{from}` to `{to}`"
   login:
@@ -196,15 +201,28 @@ admin:
   reports:
     dashboard:
       heading: Reports
+    activity-status:
+      heading: Surveys by activity state
+      sub-heading: &subHeading >-
+        {mode, select, 
+          quarterly {{typeLabel} — Quarter {quarter}, {year}}
+          other     {{typeLabel} — {year}}
+        }
     possession:
       heading: Surveys by possession of vehicle
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     quality-assurance:
       heading: Surveys by quality assurance
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
     state:
       heading: Surveys by state
-      sub-heading: "{typeLabel} — Quarter {quarter}, {year}"
+      sub-heading: *subHeading
+    approvals:
+      heading: Approvals by username
+      sub-heading: *subHeading
+    unapprovals:
+      heading: Un-approvals
+      sub-heading: *subHeading
   survey:
     state:
       in-progress: govuk-tag--yellow
@@ -223,8 +241,8 @@ admin:
       failed: govuk-tag--red
       waiting-for-retry: govuk-tag--yellow
   domestic:
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     log:
       heading: Log
     survey-delete:
@@ -254,6 +272,10 @@ admin:
       heading: Add CSRGT survey
     survey-add-success:
       heading: CSRGT Survey created
+    survey-resend:
+      heading: Resend CSRGT survey
+    survey-resend-success:
+      heading: CSRGT Survey resent
     import:
       heading: CSRGT DVLA bulk import
     import-review:
@@ -285,6 +307,7 @@ admin:
         help: ''
       submit:
         label: Add survey
+        resend-label: Resend survey
     survey-created:
       registration-mark: Registration mark
       type: Type
@@ -298,19 +321,21 @@ admin:
       heading: CSRGT export
     export-confirm:
       heading: CSRGT export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
       heading: CSRGT export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     re-order-day-stops:
       heading: Re-order stages
   international:
     export:
       heading: IRHS export
     export-confirm:
-      heading: IRHS export - week {week}
-      warning: Are you sure you want to export this week?
+      heading: IRHS export - {year} Q{quarter}
+      warning: Are you sure you want to export this quarter?
     export-success:
-      heading: IRHS export - week {week} - Success
-      message: Export successfully generated for week {week}
+      heading: IRHS export - {year} Q{quarter} - Success
+      message: Export successfully generated for {year} Q{quarter}
     add-loading-action:
       heading: Add loading action
     add-unloading-action:
@@ -333,8 +358,8 @@ admin:
       heading: "Edit vehicle — {registrationMark}"
     delete-vehicle:
       heading: "Delete vehicle — {registrationMark}"
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     survey-delete:
       heading: Delete survey
       warning: This will permanently delete this survey and all related vehicles, trips and consignment actions.
@@ -356,6 +381,10 @@ admin:
       heading: Add IRHS survey
     survey-add-success:
       heading: IRHS Survey created
+    survey-resend:
+      heading: Resend IRHS survey
+    survey-resend-success:
+      heading: IRHS Survey resent
     company:
       business-name:
         label: Business name
@@ -372,6 +401,7 @@ admin:
         help: ''
       period-end:
         label: 'Survey end date'
+        help: ''
       period-days:
         label: 'Survey period (days)'
         help: ''
@@ -383,6 +413,7 @@ admin:
         help: There is no need to add the business name to the invitation address
       submit:
         label: Add survey
+        resend-label: Resend survey
     survey-created:
       invitation-email: Invitation email
       invitation-address: Invitation address
@@ -412,9 +443,15 @@ admin:
       content: The request to delete the note was cancelled
   pre-enquiry:
     add:
-      heading: Add pre-enquiry
+      heading: Add Pre-enquiry
+      company-name:
+        label: Company name
+        help: ''
       reference-number:
         label: Reference number
+        help: ''
+      dispatch-date:
+        label: Dispatch date
         help: ''
       invitation-email:
         label: Invitation email
@@ -424,10 +461,17 @@ admin:
         help: ''
       submit:
         label: Add
+        resend-label: Resend pre-enquiry
     add-success:
-      heading: IRHS Pre-Enquiry created
+      heading: IRHS Pre-enquiry created
+    resend:
+      heading: Resend IRHS Pre-enquiry
+    resend-success:
+      heading: IRHS Pre-enquiry resent
+    created:
       company-name: Company name
       invitation-email: Invitation email
+      invitation-address: Invitation address
       access-code-1: "Access code #1"
       access-code-2: "Access code #2"
     edit-response:
@@ -436,8 +480,8 @@ admin:
       heading: "Enter Pre-enquiry response — {companyName}"
     list:
       heading: "IRHS Pre-enquiries"
-    passcode-reset-success:
-      heading: Passcode changed
+    passcode-reveal:
+      heading: Reveal passcode
     view:
       approved-by: Approved by
       company-name: Company name
@@ -445,6 +489,15 @@ admin:
       reference-number: Reference number
       status: Status
       username: Username
+      dispatch-date: Dispatch date
+    sample-import:
+      heading: Pre-Enquiry Bulk sample import
+    sample-import-review:
+      heading: Pre-Enquiry Bulk sample import — Review Data
+    sample-import-summary:
+      heading: Pre-Enquiry Bulk sample import — Summary
+    export:
+      heading: Pre-Enquiry Export
 
   maintenance-warning:
     heading: Maintenance warnings
@@ -493,6 +546,9 @@ domestic:
     contact-details:
       heading: 'Contact details'
       help: ''
+      business-name:
+        label: 'Business name'
+        help: 'The name of the business that owns the vehicle. If you are a sole trader, this is your operating name.'
       contact-name:
         label: 'Name'
         help: ''
@@ -518,10 +574,14 @@ domestic:
           sold: 'No - sold'
           on-hire: 'No - on hire'
       change-link-sr-suffix: vehicle posession details
+
     reason-for-empty-survey:
       reason-for-empty-survey:
         label: 'Why have you been unable to complete any journeys?'
         help: 'You have not entered any journey information for your survey week. Why is that?'
+      other:
+        label: ''
+        help: Give details of why no journeys were carried out
       option:
         not-taxed: 'The vehicle was not taxed'
         no-work: 'There was no work'
@@ -532,17 +592,25 @@ domestic:
         no-driver: 'There was no driver available'
         other: 'Other'
 
+    reason-for-unfilled-survey:
+      option:
+        not-delivered: Form not delivered
+        respondent-refused: Respondent refused
+        excused-personal: Respondent excused — personal
+        excused-other: Respondent excused — other
+        other: Other
+
     scrapped-details:
       date:
         label: 'When was the vehicle scrapped or stolen?'
-        help: ''
+        help: 'If the vehicle was scrapped or stolen after the end of the survey period, this would be classed as being in possession of the vehicle'
 
     sold-details:
       heading: 'Details of the sale'
       help: 'Provide details for the sale, including contact details for the new owner'
       date:
         label: "When was the vehicle sold?"
-        help: ''
+        help: 'If the vehicle was sold after the end of the survey period, this would be classed as being in possession of the vehicle'
       new-owner-name:
         label: "What is the new owner's name?"
         help: ''
@@ -636,7 +704,7 @@ domestic:
   day-view:
     heading: Day record ({date, date, long})
     headings:
-      more-than-five-stops: Summary day (more than 5 stops)
+      more-than-five-stops: Summary day (6 stops or more)
       five-stops-or-fewer: Detailed day (5 stops or fewer)
     detailed-change-link-sr-suffix:
       locations: 'stage {stopNumber} - locations'
@@ -696,9 +764,13 @@ domestic:
   ## summary day
   day-summary:
     sidebar-summary:
-      day: "Day {dayNumber} ({date})"
-      more-than-five: More than 5 stages
+      day: "Day {dayNumber}\n({date})"
+      more-than-five: 6 stops or more
       place-to-place: "{origin} to {destination}"
+
+    intro:
+      heading: "Introduction to summary day\n(6 stops or more)"
+      help: ''
 
     origin:
       heading: Where did the vehicle start the day?
@@ -735,9 +807,12 @@ domestic:
         label: Furthest point on this day
         help: "Record the furthest place from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nPlease provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
 
-    border-crossing:
+    border-crossing: &border-crossing
+      border-crossed:
+        label: 'Did you cross an international border?'
+        help: ''
       border-crossing-location:
-        label: 'Border crossing'
+        label: 'Where did you cross a border?'
         help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
                state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
                For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
@@ -807,11 +882,15 @@ domestic:
       journey: "{origin} to {destination}"
 
     sidebar-summary:
-      adding: "Adding a stage on day {dayNumber} ({date})"
-      editing: "Editing stage {stageNumber} on day {dayNumber} ({date})"
+      day: "Day {dayNumber}, stage {stageNumber}\n({date})"
       place-to-place: "{origin} to {destination}"
       previous-stages: Previous stage on this day
       first-stage: This is the first stage of the day
+      five-or-fewer: 5 stops or fewer
+
+    intro:
+      heading: "Introduction to detailed day\n(5 stops or fewer)"
+      help: ''
 
     origin:
       heading: Where did the vehicle begin this stage of the journey?
@@ -843,14 +922,7 @@ domestic:
         label: Which mode of transport were the goods transferred to?
         help: Indicate which option best describes the detination. This question is to establish if the goods being loaded are being transferred from one mode of transport to another.
 
-    border-crossing:
-      border-crossing-location:
-        label: 'Border crossing'
-        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
-               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
-               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
-               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel.\n\n
-               If you did not cross the border, leave this empty."
+    border-crossing: *border-crossing
 
     distance-travelled:
       distance-travelled:
@@ -903,8 +975,12 @@ domestic:
           <li>Do not include meal/rest breaks, congestion</li>
           </ul>
 
-        fewer-than-5: 5 stops or fewer
-        5-or-more: More than 5 stops
+        fewer-than-5:
+          label: 5 stops or fewer
+          help: ''
+        5-or-more:
+          label: 6 stops or more
+          help: ''
 
   completed:
     heading: Survey complete
@@ -926,6 +1002,116 @@ domestic:
       contact-details: Contact details
       contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
       confirm-and-submit: Confirm and submit
+  driver-availability:
+    currency-or-percentage:
+      percentage: "% (percent)"
+      currency: "£ (GBP)"
+    yes-no-plan-to:
+      choices:
+        yes: Yes
+        no: No
+        plan-to: Planning to
+        do-not-know: "Don't know"
+    drivers:
+      heading: Driver vacancies
+      number-of-drivers-employed:
+        label: How many Heavy Goods Vehicle (HGV) drivers does your company currently employ?
+        help: "Do not include any unfilled vacancies in this number. If you don't know the answer, leave it blank."
+      has-vacancies:
+        label: Do you currently have any HGV driver vacancies?
+        help: ''
+      number-of-driver-vacancies:
+        label: How many HGV driver vacancies do you currently have?
+        help: "If you don't know the answer, leave it blank."
+      reasons-for-vacancies:
+        label: Which of the following (if any) have contributed to your HGV driver vacancies?
+        help: 'Select all that apply.'
+        choices:
+          lured-away: Better pay or benefits elsewhere
+          covid: COVID related
+          retirement: Driver retirement
+          existing-drivers-leaving: Existing drivers leaving industry
+          new-work: Increase in workload
+          lack-of-eu-drivers: Lack of European drivers
+          no-new-drivers: New drivings not entering profession
+          ir35-changes: Off-payroll (IR35) rule changes
+          unavailable-tests: Unavailable HGV driver tests
+          working-conditions: Working hours or conditions
+          other: Other
+      reasons-for-vacancies-other:
+        label: ''
+        help: 'Give details of the other reason(s) for your vacancies'
+      number-of-drivers-that-have-left:
+        label: How many HGV drivers have left your company in the last 3 months?
+        help: "If you don't know the answer, leave it blank."
+    deliveries:
+      heading: HGVs and deliveries
+      number-of-lorries-operated:
+        label: How many HGVs does your company operate?
+        help: "If you don't know the answer, leave it blank."
+      number-of-parked-lorries:
+        label: On an average day in the last week, how many HGVs were not operating due to drivers not being available?
+        help: "If you don't know the answer, leave it blank."
+      has-missed-deliveries:
+        label: Have you experienced any missed deliveries in the last week due to drivers not being available?
+        help: ''
+      number-of-missed-deliveries:
+        label: How many missed deliveries have there been in the last week?
+        help: "If you don't know the answer, leave it blank."
+      missed-deliveries:
+        yes: Yes
+        no: No
+        no-with-workarounds: No, but had to change suppliers / find alternative solutions
+        do-not-know: "Don't know"
+    wages:
+      heading: Driver wages
+      have-wages-increased:
+        label: Has your company increased wages (not including incentives) for HGV drivers in the last 3 months?
+        help: ''
+      average-wage-increase:
+        label: What was the average wage increase in the last 3 months?
+        help: "If you don't know the answer, leave it blank."
+      reasons-for-wage-increase:
+        label: Which (if any) of the following are reasons why you have increased wages in the last 3 months?
+        help: 'Select all that apply.'
+        choices:
+          planned: Planned pay rise
+          retain-existing: To retain existing drivers
+          attract-new: To attract new drivers
+          other: Other
+      wage-increase-period:
+        label: What was the period of this wage increase
+        help: Was this wage increase per-hour, per-week, per-month or something else?
+        choices:
+          hourly: Hourly
+          weekly: Weekly
+          monthly: Monthly
+          do-not-know: "Don't know"
+          other: Other
+      wage-increase-period-other:
+        label: ''
+        help: 'What was the period of this wage increase?'
+      reasons-for-wage-increase-other:
+        label: ''
+        help: 'Give details of the other reason(s) for increasing wages'
+    bonuses:
+      heading: Driver incentives
+      has-paid-bonus:
+        label: Has your company paid an incentive to recruit or retain drivers in the last 3 months?
+        help: ''
+      average-bonus:
+        label: What was the average incentive paid in the last 3 months?
+        help: "If you don't know the answer, leave it blank."
+      reasons-for-bonuses:
+        label: 'What was the reason for these incentives?'
+        help: "Select all that apply. If you don't know the answer, leave it blank."
+        choices:
+          recruit: To recruit drivers
+          retain: To retain drivers
+
+
+
+
 
   day-stop-delete:
     heading: "Delete stage {stageNumber} (day {dayNumber})"
@@ -983,16 +1169,16 @@ pre-enquiry:
     submit:
       label: Submit pre-enquiry
 
-  business-details:
-    heading: Business details
+  company-name:
+    heading: Company name
     title: ''
     help: ''
     correct-company-name:
-      label: 'Is the name of your company "{expectedCompanyName}"?'
+      label: 'Is the trading name of the company "{expectedCompanyName}"?'
       help: ''
     company-name:
       label: Company name
-      help: Please state the correct company name
+      help: Please state the correct trading name of the company
   correspondence-details:
     heading: Correspondence details
     title: ''
@@ -1030,15 +1216,15 @@ pre-enquiry:
     international-journey-vehicle-count:
       label: How many of these vehicles will be used to make international journeys?
       help: ''
-  employees-and-international-journeys:
-    heading: Employee count and international journeys
+    annual-journey-estimate:
+      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      help: ''
+  business-details:
+    heading: Business details
     title: ''
     help: ''
     number-of-employees:
-      label: How many people does the firm employee nationally?
-      help: ''
-    annual-journey-estimate:
-      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
+      label: How many people does the company employ nationally?
       help: ''
 
 # International
@@ -1659,10 +1845,55 @@ errors:
     title: Scheduled maintenance - Service unavailable
     heading: Scheduled maintenance - Service unavailable
     copy: |-
-      The service is undergoing scheduled maintenance, and is not availble. Check back in 15 minutes.
+      The service is undergoing scheduled maintenance, and is not available. Check back in 15 minutes.
 
 maintenance-warning:
     banner:
       title: Important
       heading: Scheduled maintenance
       content: This service will be unavailable between {startTime} and {endTime} on {date}
+
+
+survey-feedback:
+  heading: Survey Feedback
+  help: The answers you give us to this short survey will help us to make improvements to the service.
+  confirm.label: Submit feedback
+  cancel.label: Cancel
+  thanks-page:
+    heading: Survey feedback received
+    copy: Thank you for your feedback. Your answers will help us improve the service.
+  experience-rating:
+    label: What was your experience of completing the digital survey?
+    choices:
+      5-very-good: Very good
+      4-good: Good
+      3-neutral: Neither good nor bad
+      2-bad: Bad
+      1-very-bad: Very bad
+  has-completed-paper-survey:
+    label: Have you ever completed the survey on paper?
+  comparison-rating:
+    label: Overall, how does this digital service compare to the paper survey?
+    choices:
+      5-much-better: Much better
+      4-better: Slightly better
+      3-same: Same
+      2-worse: Slightly worse
+      1-much-worse: Much worse
+  time-to-complete:
+    label: How long does it take you to submit your data using the new digital service?
+    choices:
+      5-less-time: Less time than the paper survey
+      3-same: About the same time as the paper survey
+      1-more-time: More time than the paper survey
+  had-issues:
+    label: In the past three months, have you had any issues submitting your survey information via this service?
+    choices:
+      no: No
+      yes-solved: Yes, but the problem is now solved
+      yes-unsolved: Yes, and the problem still exists
+  issue-details:
+    label: Provide details of the issues you have faced
+  comments:
+    label: Do you have any other comments or feedback?
+

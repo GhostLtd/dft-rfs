@@ -1,7 +1,7 @@
 <h2 class="govuk-heading-m">Domestic survey{% if app.user.domesticSurvey.isNorthernIreland %} (NI){% endif %}</h2>
 
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Survey week start</h3>
-<p class="govuk-body">{{ app.user.domesticSurvey.surveyPeriodStart | date('F j, Y') }}</p>
+<p class="govuk-body">{{ app.user.domesticSurvey.surveyPeriodStart | date('format.date.side-bar' | trans) }}</p>
 
 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Vehicle</h3>
 <p class="govuk-body">{{ app.user.domesticSurvey.registrationMark | formatRegMark }}</p>

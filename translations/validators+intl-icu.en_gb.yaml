@@ -27,7 +27,7 @@ common:
     not-null: Enter a number
     positive-or-zero: Enter a positive number or zero
     positive: Enter a positive number
-    max: "Cannot be more than {limit}"
+    max: "Cannot be more than {limit, number}"
   place:
     place: Enter a place
     country: Enter a country
@@ -42,14 +42,18 @@ common:
   email:
     invalid: Enter a valid email address
     not-blank: Enter an email address
+    list-contains-invalid: Enter a comma-separated list of valid email addresses
   telephone:
     not-blank: Enter a phone number
   string:
-    max-length: "This value must be {limit} characters or fewer"
+    max-length: "This value must be {limit, number} characters or fewer"
     not-blank: Enter a value
   goods-description-other:
     not-blank: Describe the goods
-    max-length: "Description must be {limit} characters or fewer"
+    max-length: "Description must be {limit, number} characters or fewer"
+  survey:
+    period-end:
+      after-start: Enter a date that is the same as, or after, the start date
   survey-response:
     name:
       not-blank: Enter a name
@@ -63,7 +67,9 @@ common:
     carrying-capacity:
       not-blank: Enter the vehicle's carrying capacity
       not-more-than-gross-weight: Carrying capacity cannot be more than the vehicle's gross weight
+      minimum: "The vehicle's carrying capacity must be at least {limit, number} kg"
     gross-weight:
+      minimum: "The vehicle's gross weight must be at least {limit, number} kg"
       not-blank: Enter the vehicle's gross weight
     operation-type:
       not-blank: Choose how this vehicle was being operated during the survey period
@@ -112,11 +118,13 @@ international:
       not-null: Specify the reason that no work was done during the survey period
   trip:
     cargo-state-how-at-capacity: Select how the vehicle was at capacity
+    carrying-capacity: Enter the carrying capacity
     dates:
       not-return-before-departure: Return date must be the same as or after date of leaving
       outside-period: Date must be within the survey period
     destination:
       not-blank: Enter where the trip ended
+    gross-weight: Enter the gross weight
     origin:
       not-blank: Enter where the trip started
     outbound:
@@ -148,18 +156,18 @@ international:
 
 pre-enquiry:
   pre-enquiry-response:
-    annual-journey-estimate: Enter your annual international journey estimate
+    annual-journey-estimate: Enter an estimate of the number of international journeys in the next 12 months
     contact-address: Enter a contact address
     contact-email: Enter a contact email
     contact-name: Enter a contact name
     contact-telephone: Enter a contact telephone number
-    company-name: Enter your company name
+    company-name: Enter the company name
     international-journey-vehicle-count:
       not-more-international-than-total-vehicles: Number of vehicles used for international journeys must be less than or equal to the total number of vehicles
       not-blank: Enter the number of vehicles that will be used to make international journeys
-    is-correct-company-name:
-      not-blank: Choose whether this is the correct company name
-    number-of-employees: Choose the national number of employees your firm has
+    is-correct-address: Choose whether this is the correct correspondence address
+    is-correct-company-name: Choose whether this is the correct company name
+    number-of-employees: Choose the number of employees employed nationally
     vehicle-count: Enter the number of vehicles
 
 domestic:
@@ -169,8 +177,11 @@ domestic:
     missing-days:
       not-null: Choose whether the information listed on this page is correct or not
   day:
+    border-crossed:
+      not-null: Choose whether you crossed an international border or not
     border-crossing:
-      max-length: "Location must be less {limit} characters or fewer"
+      max-length: "Location must be {limit, number} characters or fewer"
+      not-null: Enter the location when you crossed the international border
     destination:
       not-blank: Enter the location where the vehicle ended its journey
       goods-unloaded: Choose whether goods were unloaded or not
@@ -178,7 +189,7 @@ domestic:
     furthest-point:
       not-blank: Enter the furthest place that the vehicle reached on this day
     location:
-      max-length: "Location must be less {limit} characters or fewer"
+      max-length: "Location must be {limit, number} characters or fewer"
     number-of-stops:
       loading.not-null: Enter the number of stops where goods were only loaded onto the vehicle
       unloading.not-null: Enter the number of stops where goods were only unloaded onto the vehicle
@@ -210,12 +221,36 @@ domestic:
       choice: Choose whether you will be in possession of the vehicle during your survey week
     initial-details:
       contact-email-or-telephone-required: 'Provide a contact telephone number or an email address'
+      business-name-required: 'Provide the name of your business'
     hiree-details:
-      contact-details-required: Prvoide at least one contact method for the hiree
+      contact-details-required: Provide at least one contact method for the hiree
     number-of-employees:
       choice: Choose the number of people your firm employees nationally
+    reason-for-empty-survey-other:
+      not-null: Specify the reason that no journeys were made during the survey week
     scrapped-details:
       date: Enter the date when the vehicle was scrapped or stolen
+      date-max: Enter a date before the end of survey period
     sold-details:
       date: Enter the date when the vehicle was sold
-      contact-details-required: Prvoide at least one contact method for the new owner
+      date-max: Enter a date before the end of survey period
+      contact-details-required: Provide at least one contact method for the new owner
+
+driver-availability:
+  reasons-for-driver-vacancies:
+    other: Enter details of the other reason(s) for your vacancies
+  wages:
+    increase-period: Choose the period of this wage increase
+    increase-reason:
+      other: Enter the reason(s) for the wage increases
+    period:
+      other: Enter the period of this wage increase
+
+survey-feedback:
+  experience-rating.not-null: Rate your experience
+  has-completed-paper.not-null: Choose whether you previously completed the survey on paper
+  comparison-rating.not-null: Rate the digital service in comparison to the paper survey
+  time-to-complete.not-null: Choose how long it took
+  had-issues.not-null: Choose whether you have had issues submitting your survey
+  issue-details.not-null: Provide details of the issues
+

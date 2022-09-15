@@ -33,7 +33,7 @@ class PasscodeUser implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -45,17 +45,22 @@ class PasscodeUser implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $domesticSurvey;
+    private ?DomesticSurvey $domesticSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $internationalSurvey;
+    private ?InternationalSurvey $internationalSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
      */
-    private $preEnquiry;
+    private ?PreEnquiry $preEnquiry = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastLogin;
 
     public function getId(): ?string
     {
@@ -111,15 +116,14 @@ class PasscodeUser implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -194,5 +198,36 @@ class PasscodeUser implements UserInterface
     {
         $this->preEnquiry = $preEnquiry;
         return $this;
+    }
+
+    public function getLastLogin(): ?\DateTimeInterface
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(?\DateTimeInterface $lastLogin): self
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    public function getSurvey(): ?SurveyInterface
+    {
+        if ($this->domesticSurvey) {
+            return $this->domesticSurvey;
+        } else if ($this->internationalSurvey) {
+            return $this->internationalSurvey;
+        } else if ($this->preEnquiry) {
+            return $this->preEnquiry;
+        }
+
+        return null;
+    }
+
+    public function getSurveyId(): ?string
+    {
+        $survey = $this->getSurvey();
+        return $survey ? $survey->getId() : null;
     }
 }

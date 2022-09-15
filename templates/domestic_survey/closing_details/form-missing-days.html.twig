@@ -18,7 +18,7 @@
             {% set day = subject.survey.response.dayByNumber(dayNumber) %}
             {% if not (day | default(false)) %}
                 {{ actionlessSummaryListRow(
-                    (translation_prefix ~ '.day-x')|trans({dayNumber: dayNumber, date: (subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('l, jS M')) }),
+                    (translation_prefix ~ '.day-x')|trans({dayNumber: dayNumber, date: (subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('format.date.full' | trans)) }),
                     dayText(day),
                 ) }}
             {% endif %}

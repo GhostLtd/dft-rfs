@@ -9,7 +9,7 @@
     <tbody class="govuk-table__body">
     {% for log in auditLogs %}
     <tr class="govuk-table__row">
-        <th class="govuk-table__cell">{{ log.timestamp | date('Y-m-d H:i:s') }}</th>
+        <th class="govuk-table__cell">{{ log.timestamp | date('format.date-time.default' | trans) }}</th>
         <td class="govuk-table__cell">{{ log.username | removeEmailNamespacePrefix }}</td>
         <td class="govuk-table__cell">
             {{ "admin.audit.#{log.category}"|trans(log.data) }}

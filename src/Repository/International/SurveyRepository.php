@@ -5,11 +5,11 @@ namespace App\Repository\International;
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
+use App\Repository\AbstractSurveyRepository;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\International\WeekNumberHelper;
+use App\Utility\StateReportHelper;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,15 +20,17 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends AbstractSurveyRepository
 {
     protected CompanyRepository $companyRepo;
     protected EntityManagerInterface $entityManager;
+    protected StateReportHelper $stateReportHelper;
 
     use DashboardStatsTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, StateReportHelper $stateReportHelper)
     {
+        $this->stateReportHelper = $stateReportHelper;
         $this->entityManager = $registry->getManager();
         $this->companyRepo = $this->entityManager->getRepository(Company::class);
 
@@ -50,33 +52,6 @@ class SurveyRepository extends ServiceEntityRepository
             ])
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @return Survey[]|Collection
-     */
-    public function getSurveysForExport(DateTime $weekStart, DateTime $weekEnd): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('s,r,v,t,a')
-            ->leftJoin('s.response', 'r')
-            ->leftJoin('r.vehicles', 'v')
-            ->leftJoin('v.trips', 't')
-            ->leftJoin('t.actions', 'a')
-            ->leftJoin('a.loadingAction', 'la')
-            ->where('s.state = :state')
-            ->andWhere('s.surveyPeriodStart >= :weekStart')
-            ->andWhere('s.surveyPeriodStart < :weekEnd')
-            ->orderBy('s.surveyPeriodStart', 'ASC')
-            ->addOrderBy('v.registrationMark', 'ASC')
-            ->addOrderBy('a.number', 'ASC')
-            ->getQuery()
-            ->setParameters([
-                'state' => Survey::STATE_APPROVED,
-                'weekStart' => $weekStart,
-                'weekEnd' => $weekEnd,
-            ])
-            ->execute();
     }
 
     public function getOverdueCount(): int
@@ -104,24 +79,19 @@ class SurveyRepository extends ServiceEntityRepository
     public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.state, count(s) AS count, MIN(s.surveyPeriodStart) as surveyPeriodStart, WEEK(s.surveyPeriodStart) AS week');
+            ->select('s.state, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 0) AS week, YEAR(s.surveyPeriodStart) AS year');
 
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.state, week')
-            ->orderBy('week, s.state')
+            ->groupBy('year, week, s.state, week, surveyPeriodStart')
+            ->orderBy('year, week, s.state')
             ->getQuery()
             ->execute();
 
         [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
 
-        $mergeStates = [
-            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
-            SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
-        ];
+        $mergeStates = $this->stateReportHelper->getStateReportMergeMappings();
 
         $stats = [];
         for ($week = $firstWeek; $week <= $lastWeek; $week++) {
@@ -131,22 +101,25 @@ class SurveyRepository extends ServiceEntityRepository
                     SurveyInterface::STATE_IN_PROGRESS => 0,
                     SurveyInterface::STATE_CLOSED => 0,
                     SurveyInterface::STATE_REJECTED => 0,
-                    SurveyInterface::STATE_EXPORTED => 0,
+//                    SurveyInterface::STATE_EXPORTED => 0,
                     SurveyInterface::STATE_APPROVED => 0,
                 ],
             ];
         }
 
         foreach ($results as $result) {
-            $dateTime = new \DateTime($result['surveyPeriodStart']);
-            $week = WeekNumberHelper::getWeekNumber($dateTime);
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
             $state = $result['state'];
 
             if (array_key_exists($state, $mergeStates)) {
                 $state = $mergeStates[$state];
             }
 
-            $stats['data'][$week]['data'][$state] = $result['count'];
+            if (!isset($stats['data'][$week]['data'][$state])) {
+                $stats['data'][$week]['data'][$state] = 0;
+            }
+
+            $stats['data'][$week]['data'][$state] += $result['count'];
         }
 
         return $this->addTotalsAndFlags($stats);
@@ -156,7 +129,7 @@ class SurveyRepository extends ServiceEntityRepository
     public function getQualityAssuranceReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('s.qualityAssured, count(s) AS count, MIN(s.surveyPeriodStart), WEEK(s.surveyPeriodStart) AS week')
+            ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 0) AS week, YEAR(s.surveyPeriodStart) AS year')
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
                 SurveyInterface::STATE_APPROVED,
@@ -167,8 +140,8 @@ class SurveyRepository extends ServiceEntityRepository
         $this->addTimeBounds($qb, $minStart, $maxStart);
 
         $results = $qb
-            ->groupBy('s.qualityAssured, week')
-            ->orderBy('week')
+            ->groupBy('s.qualityAssured, s.surveyPeriodStart, year, week')
+            ->orderBy('year, week')
             ->getQuery()
             ->execute();
 
@@ -186,11 +159,69 @@ class SurveyRepository extends ServiceEntityRepository
         }
 
         foreach ($results as $result) {
-            $dateTime = new \DateTime($result['surveyPeriodStart']);
-            $week = WeekNumberHelper::getWeekNumber($dateTime);
+            $week = WeekNumberHelper::getWeekNumber($result['surveyPeriodStart']);
             $qualityAssured = $result['qualityAssured'] == 1 ? 'quality-assured' : 'not-quality-assured';
 
-            $stats['data'][$week]['data'][$qualityAssured] = $result['count'];
+            if (!isset($stats['data'][$week]['data'][$qualityAssured])) {
+                $stats['data'][$week]['data'][$qualityAssured] = 0;
+            }
+
+            $stats['data'][$week]['data'][$qualityAssured] += $result['count'];
+        }
+
+        return $this->addTotalsAndFlags($stats);
+    }
+
+    public function getActivityStatusReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select(<<<EOQ
+    r.activityStatus, 
+    count(s) AS count, 
+    MIN(s.surveyPeriodStart) AS surveyPeriodStart, 
+    WEEK(s.surveyPeriodStart, 0) AS week, 
+    YEAR(s.surveyPeriodStart) AS year
+EOQ
+)
+            ->where('s.state in (:approvedStates)')
+            ->setParameter('approvedStates', [
+                SurveyInterface::STATE_CLOSED,
+                SurveyInterface::STATE_APPROVED,
+                SurveyInterface::STATE_EXPORTING,
+                SurveyInterface::STATE_EXPORTED,
+            ]);
+
+        $this->addTimeBounds($qb, $minStart, $maxStart);
+
+        $results = $qb
+            ->innerJoin('s.response', 'r') // Ignore surveys that haven't had a response - e.g. Licence revoked
+            ->groupBy('r.activityStatus, year, week')
+            ->orderBy('year, week')
+            ->getQuery()
+            ->execute();
+
+        [$firstWeek, $lastWeek] = $this->getWeekRange($minStart, $maxStart, $results);
+
+        $stats = [];
+        for ($week = $firstWeek; $week <= $lastWeek; $week++) {
+            $stats['data'][$week] = [
+                'data' => [
+                    'still-active' => 0,
+                    'ceased-trading' => 0,
+                    'only-domestic-work' => 0,
+                ],
+            ];
+        }
+
+        foreach ($results as $result) {
+            $week = WeekNumberHelper::getWeekNumber(new \DateTime($result['surveyPeriodStart']));
+            $activityStatus = $result['activityStatus'];
+
+            if (!isset($stats['data'][$week]['data'][$activityStatus])) {
+                $stats['data'][$week]['data'][$activityStatus] = 0;
+            }
+
+            $stats['data'][$week]['data'][$activityStatus] += $result['count'];
         }
 
         return $this->addTotalsAndFlags($stats);
@@ -268,5 +299,40 @@ class SurveyRepository extends ServiceEntityRepository
         $stats['totals'] = $totals;
         $stats['total'] = $sumOfTotals;
         return $stats;
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
+    {
+        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'international_survey');
+    }
+
+    /**
+     * @return Survey[]|array
+     */
+    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
+        $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED];
+        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'international_survey');
+    }
+
+    public function getSurveysForExport(DateTime $minDate, DateTime $maxDate): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s, r, v, t, p')
+            ->leftJoin('s.response', 'r')
+            ->leftJoin('r.vehicles', 'v')
+            ->leftJoin('v.trips', 't')
+            // If we don't join on user, it does n+1 queries
+            ->leftJoin('s.passcodeUser', 'p')
+            ->andWhere('s.surveyPeriodEnd >= :minDate')
+            ->andWhere('s.surveyPeriodEnd < :maxDate')
+            ->getQuery()
+            ->setParameters([
+                'minDate' => $minDate,
+                'maxDate' => $maxDate,
+            ])
+            ->execute();
     }
 }

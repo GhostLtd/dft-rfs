@@ -247,10 +247,10 @@
 {%- block gds_choice_widget_expanded -%}
     {%- set blockPrefix = multiple ? 'gds_checkbox' : 'gds_radio' -%}
     {%- set classPrefix = multiple ? 'govuk-checkboxes' : 'govuk-radios' -%}
-    {%- set attr = attr|merge({
-        class: (classPrefix ~ ' ' ~
-        attr.class|default(''))|trim
-    }) -%}
+    {%- set dataModuleAttr = multiple ? {'data-module': 'govuk-checkboxes'} : {} -%}
+    {%- set attr = attr | merge({
+        class: (classPrefix ~ ' ' ~ attr.class|default(''))|trim
+    }) | merge(dataModuleAttr) -%}
     <div {{ block('widget_container_attributes') }}>
 
         {%- set isGrouped = (form.vars.choices | first).choices is defined -%}
@@ -280,7 +280,6 @@
 {% block gds_choice_widget_expanded_item %}
     {%- set conditionalFormItem = child.vars.conditional_form_name | default(false) -%}
     {%- set conditionalHideFormItems = namesToIds(form, child.vars.conditional_hide_form_names | default(null)) -%}
-
     <div class="{{ classPrefix }}__item">
         {%- with child.vars|merge({
             'label_is_page_heading': false,
@@ -298,7 +297,7 @@
         {% endwith %}
     </div>
     {%- if conditionalFormItem -%}
-        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ child.vars.id }}">
+        <div class="{{ classPrefix }}__conditional {{ classPrefix }}__conditional--hidden" id="conditional-{{ child.vars.id }}">
             {{- form_row(form.parent.children[conditionalFormItem]) -}}
         </div>
     {%- endif -%}
@@ -480,7 +479,7 @@
             ) | trim
         })
         } %}{{ block('attributes') }}{% endwith %}>
-        <fieldset class="govuk-fieldset {{ attr.class | default('') }}" role="group"{% if fieldsetDescribedBy is not empty %} aria-describedby="{{ fieldsetDescribedBy }}"{% endif %}>
+        <fieldset {% with {attr: fieldset_attr ?? {}} %}{{ block('attributes') }}{% endwith %} class="govuk-fieldset {{ attr.class | default('') }}" role="group"{% if fieldsetDescribedBy is not empty %} aria-describedby="{{ fieldsetDescribedBy }}"{% endif %}>
             {{- form_label(form, null, {element: 'legend'}) }}
             {{- form_help(form) -}}
             {{- form_errors(form) -}}

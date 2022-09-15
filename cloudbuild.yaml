@@ -1,3 +1,8 @@
+options:
+    env:
+        - 'APP_SECRET=${_APP_SECRET}'
+        - 'FRONTEND_HOSTNAME=${_FRONTEND_HOSTNAME}'
+
 steps:
     # Start by running some pre-install actions
     - name: node:14
@@ -5,9 +10,6 @@ steps:
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
       waitFor: ['-']
-      env:
-          - 'APP_SECRET=${_APP_SECRET}'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
 
     # Copy depoyment config files in to root directory (alpine required for gsutil)
     - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
@@ -20,16 +22,19 @@ steps:
     - name: node:14
       id: 'yarn-build'
       entrypoint: sh
-      args: ['-c', 'yarn install --frozen-lockfile && yarn run deploy-build && yarn run build-env-subs']
+      args: ['-c', 'yarn install --frozen-lockfile --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs && cat .env.local']
       env:
           - 'APP_ENV=prod'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
-          - 'ADMIN_HOSTNAME=admin.${_BASE_HOSTNAME}'
+          - 'ADMIN_HOSTNAME=${_ADMIN_HOSTNAME}'
           - 'DATABASE_URL=${_DATABASE_URL}'
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
-          - 'APP_SECRET=${_APP_SECRET}'
           - 'APP_FEATURES=${_APP_FEATURES}'
           - 'GOOGLE_BUCKET_EXPORT=${_GOOGLE_BUCKET_EXPORT}'
+          - 'APP_ENV_LABEL_ADMIN=${_APP_ENV_LABEL_ADMIN}'
+          - 'APP_ENV_LABEL_FRONTEND=${_APP_ENV_LABEL_FRONTEND}'
+          - 'APP_ENV_LABEL_COLOUR="${_APP_ENV_LABEL_COLOUR}"'
+          - 'APP_ENV_LABEL_BACKGROUND="${_APP_ENV_LABEL_BACKGROUND}"'
+
       waitFor: ['copy-deploy-files']
 
     ## The app deployment will not run `composer install` if the composer.lock file has not changed
@@ -43,7 +48,7 @@ steps:
     - name: "gcr.io/cloud-builders/gcloud"
       id: 'deploy-admin-service'
       args: ["app", "deploy", "app.admin.yaml", "--ignore-file=.gcloudignore", "--no-cache"]
-      waitFor: ['yarn-build']
+      waitFor: ['deploy-default-service']
 
 
     # Finish up by calling the post-install-script
@@ -52,9 +57,6 @@ steps:
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']
       waitFor: ['deploy-default-service', 'deploy-admin-service']
-      env:
-          - 'APP_SECRET=${_APP_SECRET}'
-          - 'FRONTEND_HOSTNAME=${_BASE_HOSTNAME}'
 
 
     ## https://stackoverflow.com/questions/58893845/cloud-build-permission-denied-when-deploy-to-cloud-run-with-set-sql-instance
@@ -65,4 +67,4 @@ steps:
       args: ["app", "deploy", "cron.yaml"]
       waitFor: ['deploy-default-service', 'deploy-admin-service']
 
-timeout: "900s"
+timeout: "1800s"

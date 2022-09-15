@@ -27,6 +27,10 @@ class CostTransformer implements DataTransformerInterface
         $this->invalidMessageParameters = $invalidMessageParameters;
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     public function transform($value)
     {
         if (null === $value) {
@@ -41,12 +45,16 @@ class CostTransformer implements DataTransformerInterface
 
         $whole = intdiv($value, $this->divisor);
         $fractional = (string) abs($value % $this->divisor);
-        $fractional = str_pad($fractional, $this->decimalPlaces, '0');
+        $fractional = str_pad($fractional, $this->decimalPlaces, '0', STR_PAD_LEFT);
 
         return $this->decimalPlaces > 0 ?
-            "{$whole}.{$fractional}" : $whole;
+            "{$whole}.{$fractional}" : "$whole";
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     public function reverseTransform($value)
     {
         if ('' === $value) {
@@ -60,6 +68,6 @@ class CostTransformer implements DataTransformerInterface
         $int = $matches['int'];
         $dec = $matches['dec'] ?? null;
 
-        return $int.($dec ? $dec : str_repeat('0', $this->decimalPlaces));
+        return intval($int.($dec ?? str_repeat('0', $this->decimalPlaces)));
     }
 }

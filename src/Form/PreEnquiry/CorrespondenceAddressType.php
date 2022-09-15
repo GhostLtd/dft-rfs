@@ -8,6 +8,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -72,7 +73,12 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
-            'validation_groups' => ['correspondence_address'],
+            'validation_groups' => function (Form $form) {
+                if ($form->get('isCorrectAddress')->getData() === self::CHOICES[self::CHOICE_NO])
+                    return ['correspondence_address'];
+                else
+                    return ["is_correct_address"];
+            },
         ]);
     }
 
@@ -112,8 +118,11 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
 
         assert($viewData instanceof PreEnquiryResponse);
 
-        $isCorrectAddress = isset($forms['isCorrectAddress']) &&
-            $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES];
+        if (!isset($forms['isCorrectAddress'])) return;
+
+        $isCorrectAddress = !empty($forms['isCorrectAddress']->getData())
+            ? $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES]
+            : null;
 
         $address = $isCorrectAddress ?
             (clone $viewData->getPreEnquiry()->getInvitationAddress()) :

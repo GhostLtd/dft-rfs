@@ -23,6 +23,8 @@ class ChoiceTypeTest extends FormTestCase
             'multiple hints', // this one is stupid, it expects there to be an option with no label or value, but has a hint
             'label with attributes', // we can't easily do choice label attributes
             'fieldset params',
+            'with divider and None',
+            'with divider, None and conditional items',
         ];
         return $this->loadFixtures('checkboxes', $ignoreTests);
     }
@@ -33,7 +35,7 @@ class ChoiceTypeTest extends FormTestCase
      */
     public function testCheckboxesFixtures($fixture)
     {
-        $buttonForm = $this->createAndTestForm(
+        $this->createAndTestForm(
             ChoiceType::class,
             $this->getCheckboxData($fixture['options']['items'] ?? []),
             array_merge([

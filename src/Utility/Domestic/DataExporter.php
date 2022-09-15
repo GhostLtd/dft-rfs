@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Throwable;
 
 class DataExporter extends AbstractDataExporter
 {
@@ -55,39 +56,69 @@ class DataExporter extends AbstractDataExporter
         $this->logger = $logger;
     }
 
-    public function uploadExportData(int $year, int $quarter): bool {
-        $surveys = $this->surveyRepository->findForExport($year, $quarter);
+    public function generateExportData(int $year, int $quarter)
+    {
+        $surveyIDs = $this->surveyRepository->getSurveyIDsForExport($year, $quarter);
         try {
-            $this->startExport($surveys);
-            $sql = $this->getVehiclesSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")."\n"
-                . $this->getDetailedDaysSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")."\n"
-                . $this->getSummaryDaysSql($surveys, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys")."\n"
-                ;
-            $this->exportHelper->upload($sql, $year, $quarter);
-            $this->confirmExport($surveys);
-            return true;
-        } catch (\Throwable $e) {
-            $this->cancelExport($surveys);
+            $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-csrgt-');
+
+            $this->getVehiclesSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")."\n";
+            $this->getDetailedDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")."\n";
+            $this->getSummaryDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys")."\n";
+
+            return $sqlFilename;
+        } catch (Throwable $e) {
             $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
             return false;
         }
     }
 
-    protected function getDetailedDaysSql($surveys, $filename)
+    protected function getDetailedDaysSql($surveyIDs, $outputFilename, $filename)
     {
-        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveys));
-        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
+        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs));
+        file_put_contents(
+            $outputFilename,
+            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['Origin', 'Destination', 'TypeOfGoods',
+                    'MOA', 'WhereBorderCrossed', 'DayOfWeek'],
+            ]),
+            FILE_APPEND
+        );
+        $this->entityManager->clear();
     }
 
-    protected function getSummaryDaysSql($surveys, $filename)
+    protected function getSummaryDaysSql($surveyIDs, $outputFilename, $filename)
     {
-        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveys));
-        return $this->serializer->serialize($dayArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
+        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs));
+        file_put_contents(
+            $outputFilename,
+            $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RegMark', 'Origin', 'Destination', 'TypeOfGoods',
+                    'WeightOfGoodsDelivered', 'WeightOfGoodsCollected', 'FurthestStop', 'MOA',
+                    'WhereBorderCrossed', 'DayOfWeek'],
+            ]),
+            FILE_APPEND
+        );
+        $this->entityManager->clear();
     }
 
-    protected function getVehiclesSql($surveys, $filename)
+    protected function getVehiclesSql($surveyIDs, $outputFilename, $filename)
     {
+        $surveys = $this->surveyRepository->findForExport($surveyIDs);
         $surveyArrayData = $this->surveySerializer->normalize($surveys);
-        return $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [SqlServerInsertEncoder::TABLE_NAME_KEY => $filename]);
+        file_put_contents(
+            $outputFilename,
+            $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [
+                SqlServerInsertEncoder::TABLE_NAME_KEY => $filename,
+                SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RegMark', 'BusinessType', 'SurveyAddressLine1',
+                    'SurveyAddressLine2', 'SurveyAddressLine3', 'SurveyAddressLine4', 'SurveyAddressLine5',
+                    'SurveyPostcode', 'SurveyEmail', 'ContactName', 'ContactTelNo', 'ContactEmail', 'RegisteredKeeper',
+                    'HireCompany'],
+            ]),
+            FILE_APPEND
+        );
+        $this->entityManager->clear();
     }
 }

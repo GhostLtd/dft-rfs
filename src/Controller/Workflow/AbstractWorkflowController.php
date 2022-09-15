@@ -44,7 +44,7 @@ abstract class AbstractWorkflowController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    protected function doWorkflow(WorkflowInterface $stateMachine, Request $request, $state = null): Response
+    protected function doWorkflow(WorkflowInterface $stateMachine, Request $request, $state = null, $additionalViewData = []): Response
     {
         $formWizard = $this->getFormWizard();
         if (is_null($state)) return $this->getRedirectUrl($stateMachine->getDefinition()->getInitialPlaces()[0]);
@@ -92,11 +92,11 @@ abstract class AbstractWorkflowController extends AbstractController
             throw new RuntimeException("Template not defined for state '{$state}' of '{$stateMachine->getName()}' state machine");
         }
 
-        return $this->render($template, [
+        return $this->render($template, array_merge($additionalViewData, [
             'form' => $form->createView(),
             'subject' => $formWizard->getSubject(),
             'formWizardState' => $formWizard,
-        ]);
+        ]));
     }
 
     /**

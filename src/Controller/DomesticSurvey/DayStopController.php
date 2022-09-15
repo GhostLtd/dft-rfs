@@ -3,6 +3,7 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Repository\Domestic\DayRepository;
@@ -19,18 +20,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"}, name="app_domesticsurvey_daystop_")
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DayStopController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_PREFIX = 'app_domesticsurvey_daystop_';
-
-    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
-    public const START_ROUTE = self::ROUTE_PREFIX.'start';
-    public const REORDER_ROUTE = self::ROUTE_PREFIX.'reorder';
-    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
-
     protected string $dayNumber;
     protected string $stopNumber;
 
@@ -41,12 +35,12 @@ class DayStopController extends AbstractSessionStateWorkflowController
     /**
      * @Route(
      *     "/stop-{stopNumber}/start",
-     *     name=self::START_ROUTE,
+     *     name="start",
      *     requirements={"stopNumber"="\d+|(add)"}
      * )
      * @Route(
      *     "/stop-{stopNumber}/{state}",
-     *     name=self::WIZARD_ROUTE,
+     *     name="wizard",
      *     requirements={"stopNumber"="\d+|(add)"}
      * )
      */
@@ -55,7 +49,44 @@ class DayStopController extends AbstractSessionStateWorkflowController
         $this->stopNumber = $stopNumber;
         $this->dayNumber = $dayNumber;
 
-        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state);
+        $additionalViewData = [];
+        if ($state === DayStopState::STATE_INTRO) {
+            $additionalViewData['exampleDayStops'] = $this->getExampleDayStops();
+        }
+
+        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+    }
+
+    protected function getExampleDayStops(): array
+    {
+        return [
+            (new DayStop())
+                ->setNumber(1)
+                ->setOriginLocation('HD1 3LE')
+                ->setDestinationLocation('Binley')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER)
+                ->setGoodsDescriptionOther('Building materials')
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(2)
+                ->setOriginLocation('Binley')
+                ->setDestinationLocation('S20 3FF')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(3)
+                ->setOriginLocation('S20 3FF')
+                ->setDestinationLocation('S20 8GN')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setGoodsUnloaded(true),
+            (new DayStop())
+                ->setNumber(4)
+                ->setOriginLocation('S20 8GN')
+                ->setDestinationLocation('HD1 3LE')
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY),
+        ];
     }
 
     protected function getFormWizard(): FormWizardStateInterface
@@ -96,7 +127,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
+        return $this->redirectToRoute('app_domesticsurvey_daystop_wizard', ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
     }
 
     protected function getCancelUrl(): ?Response
@@ -110,7 +141,7 @@ class DayStopController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/delete-day-stop-{stopNumber}", name=self::DELETE_ROUTE)
+     * @Route("/delete-day-stop-{stopNumber}", name="delete")
      * @Template("domestic_survey/day_stop/delete.html.twig")
      */
     public function delete(string $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request)

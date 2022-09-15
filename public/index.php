@@ -9,7 +9,9 @@ require dirname(__DIR__).'/config/bootstrap.php';
 
 switch (@parse_url($_SERVER['REQUEST_URI'])['path']) {
     case '/_ah/warmup':
-        RemoteActions::runProcess(['../bin/console', 'cache:clear']);
+        // commented out as it wasn't working and just spamming the log with errors
+        // It seems there's a file permission error, probably related to spinning up of a new instance
+        //RemoteActions::runProcess(['../bin/console', 'cache:clear']);
         echo "Warmup successful";
         exit;
 

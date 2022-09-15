@@ -1,0 +1,10 @@
+{% set translation_prefix = 'domestic.day-summary.intro' %}
+{% extends 'domestic_survey/day_summary/form-base.html.twig' %}
+
+{% set preFormContent %}
+    <p class="govuk-body">You need to provide a summary of the journey on this day.</p>
+    <h2 class="govuk-heading-m">Example journey</h2>
+    {% with {day: exampleSummaryDay, elementClass: 'govuk-!-margin-bottom-5', showActions: false} %}
+        {% include "domestic_survey/includes/day-summary.html.twig" %}
+    {% endwith %}
+{% endset %}

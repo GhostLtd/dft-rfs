@@ -21,37 +21,32 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ->addModelTransformer($this)
             ->add('company', CompanyType::class, [
                 'label' => false,
+                'disabled' => $options['is_resend'],
             ])
             ->add('referenceNumber', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.reference-number.label",
                 'help' => "{$translationKeyPrefix}.reference-number.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'disabled' => $options['is_resend'],
             ])
             ->add('surveyPeriodStart', Gds\DateType::class, [
                 'label' => "{$translationKeyPrefix}.period-start.label",
                 'help' => "{$translationKeyPrefix}.period-start.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'disabled' => $options['is_resend'],
             ])
-            ->add('surveyPeriodInDays', Gds\ChoiceType::class, [
-                'label' => "{$translationKeyPrefix}.period-days.label",
-                'help' => "{$translationKeyPrefix}.period-days.help",
+            ->add('surveyPeriodEnd', Gds\DateType::class, [
+                'label' => "{$translationKeyPrefix}.period-end.label",
+                'help' => "{$translationKeyPrefix}.period-end.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-radios--inline'],
-                'mapped' => false,
-                'constraints' => new NotNull(['message' => 'common.choice.not-null', 'groups' => ['add_survey']]),
-                'choices' => [
-                    '1 day' => 1,
-                    '7 days' => 7,
-                    '14 days' => 14,
-                    '28 days' => 28,
-                ],
+                'disabled' => $options['is_resend'],
             ])
-            ->add('invitationEmail', Gds\EmailType::class, [
+            ->add('invitationEmails', Gds\EmailType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-email.label",
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'disabled' => true,
+//                'disabled' => true,
             ])
             ->add('invitationAddress', LongAddressType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-address.label",
@@ -61,7 +56,9 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
-                'label' => "{$translationKeyPrefix}.submit.label",
+                'label' => $options['is_resend'] ?
+                        "{$translationKeyPrefix}.submit.resend-label" :
+                        "{$translationKeyPrefix}.submit.label",
             ])
             ->add('cancel', Gds\ButtonType::class, [
                 'type' => 'submit',
@@ -74,7 +71,8 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
-            'validation_groups' => 'add_survey',
+            'validation_groups' => ['add_survey', 'notify_api', 'add_international_survey'],
+            'is_resend' => false,
         ]);
     }
 

@@ -3,7 +3,7 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\International\SurveyResponse;
+use App\Entity\International\Survey;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -22,7 +22,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     public const START_ROUTE = 'app_internationalsurvey_closing_start';
     public const WIZARD_ROUTE = 'app_internationalsurvey_closing_state';
 
-    protected SurveyResponse $surveyResponse;
+    protected Survey $survey;
 
     /**
      * @Route("/international-survey/closing-details/{state}", name=self::WIZARD_ROUTE)
@@ -30,7 +30,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
      */
     public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, string $state = null): Response
     {
-        $this->surveyResponse = $this->getSurveyResponse();
+        $this->survey = $this->getSurvey();
 
         if (!$state || $state === ClosingDetailsState::STATE_START) {
             $formWizard = $this->getFormWizard();
@@ -59,9 +59,9 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ClosingDetailsState());
 
-        $surveyResponse = $formWizard->getSubject() ?? $this->surveyResponse;
-        $this->surveyResponse->mergeClosingDetails($surveyResponse);
-        $formWizard->setSubject($this->surveyResponse);
+        $surveyResponse = $formWizard->getSubject() ?? $this->survey;
+        $this->survey->mergeClosingDetails($surveyResponse);
+        $formWizard->setSubject($this->survey);
 
         return $formWizard;
     }

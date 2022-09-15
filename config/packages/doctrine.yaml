@@ -24,6 +24,11 @@ doctrine:
                         WEEK: DoctrineExtensions\Query\Mysql\Week
                         MONTH: DoctrineExtensions\Query\Mysql\Month
                         YEAR: DoctrineExtensions\Query\Mysql\Year
+                        GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
+                hydrators:
+                    App\Doctrine\Hydrators\ColumnHydrator: App\Doctrine\Hydrators\ColumnHydrator
+                    App\Doctrine\Hydrators\DomesticSurveyExportHydrator: App\Doctrine\Hydrators\DomesticSurveyExportHydrator
+
             audit_log:
 #                connection: default
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware

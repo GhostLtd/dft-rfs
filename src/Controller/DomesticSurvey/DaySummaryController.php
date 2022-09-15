@@ -3,11 +3,15 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
+use App\Entity\AbstractGoodsDescription;
+use App\Entity\CargoType;
+use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
+use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -20,17 +24,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
+ * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"}, name="app_domesticsurvey_daysummary_")
  * @Security("is_granted('EDIT', user.getDomesticSurvey())")
  */
 class DaySummaryController extends AbstractSessionStateWorkflowController
 {
-    public const ROUTE_PREFIX = 'app_domesticsurvey_daysummary_';
-
-    public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
-    public const START_ROUTE = self::ROUTE_PREFIX.'start';
-    public const WIZARD_ROUTE = self::ROUTE_PREFIX.'wizard';
-
     protected int $dayNumber;
 
     use SurveyHelperTrait;
@@ -38,13 +36,43 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     private DaySummary $daySummary;
 
     /**
-     * @Route("/summary/start", name=self::START_ROUTE)
-     * @Route("/summary/{state}", name=self::WIZARD_ROUTE)
+     * @Route("/summary/start", name="start")
+     * @Route("/summary/{state}", name="wizard")
      */
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
     {
         $this->dayNumber = intval($dayNumber);
-        return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state);
+
+        $additionalViewData = [];
+        if ($state === DayStopState::STATE_INTRO) {
+            $additionalViewData['exampleSummaryDay'] = $this->getExampleDay();
+        }
+
+        return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state, $additionalViewData);
+    }
+
+    protected function getExampleDay(): Day
+    {
+        return (new Day())
+            ->setSummary((new DaySummary())
+                ->setOriginLocation('HD1 3LE')
+                ->setDestinationLocation('HD1 3LE')
+                ->setGoodsLoaded(true)
+                ->setGoodsUnloaded(true)
+                ->setFurthestStop('CV3 2NT')
+                ->setDistanceTravelledLoaded((new Distance())->setValue(192)->setUnit(Distance::UNIT_MILES))
+                ->setDistanceTravelledUnloaded((new Distance())->setValue(35)->setUnit(Distance::UNIT_MILES))
+                ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
+                ->setCargoTypeCode(CargoType::CODE_PL_PALLETISED_GOODS)
+                ->setWeightOfGoodsLoaded(50000)
+                ->setWeightOfGoodsLoaded(50000)
+                ->setNumberOfStopsLoading(1)
+                ->setNumberOfStopsUnloading(2)
+                ->setNumberOfStopsLoadingAndUnloading(2)
+            )
+            ->setNumber(1)
+            ->setHasMoreThanFiveStops(true)
+            ;
     }
 
     protected function getFormWizard(): FormWizardStateInterface
@@ -86,7 +114,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['dayNumber' => $this->dayNumber, 'state' => $state]);
+        return $this->redirectToRoute('app_domesticsurvey_daysummary_wizard', ['dayNumber' => $this->dayNumber, 'state' => $state]);
     }
 
     protected function getCancelUrl(): ?Response
@@ -99,7 +127,7 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
     }
 
     /**
-     * @Route("/delete-summary-day", name=self::DELETE_ROUTE)
+     * @Route("/delete-summary-day", name="delete")
      * @Template("domestic_survey/day_summary/delete.html.twig")
      */
     public function delete(string $dayNumber, DeleteDaySummaryConfirmAction $confirmAction, Request $request)

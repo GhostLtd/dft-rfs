@@ -1,7 +1,7 @@
 {% macro dayText(day) -%}
     {{- (day | default(false))
         ? (day.hasMoreThanFiveStops
-            ? ('More than 5 stops' ~ (day.isComplete
+            ? ('6 stops or more' ~ (day.isComplete
                 ? " (#{day.summary.originLocation|formatPotentialPostcode} to #{day.summary.destinationLocation|formatPotentialPostcode})"
                 : ' (incomplete)'
             ))

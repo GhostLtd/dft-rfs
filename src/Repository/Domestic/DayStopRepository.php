@@ -50,15 +50,16 @@ class DayStopRepository extends ServiceEntityRepository
         return $dayStop;
     }
 
-    public function findForExport($surveys)
+    public function findForExport($surveyIDs)
     {
         return $this->createQueryBuilder('day_stop')
-            ->select('day_stop, day, response')
+            ->select('day_stop, day, summary')
             ->leftJoin('day_stop.day', 'day')
             ->leftJoin('day.response', 'response')
+            ->leftJoin('day.summary', 'summary')
             ->leftJoin('response.survey', 'survey')
-            ->where('survey in (:surveys)')
-            ->setParameter('surveys', $surveys)
+            ->where('survey.id in (:surveyIDs)')
+            ->setParameter('surveyIDs', $surveyIDs)
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')
             ->addOrderBy('day.number', 'ASC')
@@ -66,32 +67,22 @@ class DayStopRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
-        // /**
-    //  * @return DayStop[] Returns an array of DayStop objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?DayStop
+    public function findOneForDelete(string $stopId): ?DayStop
     {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        try {
+            return $this->createQueryBuilder('ds')
+                ->select('ds, day, stops')
+                ->leftJoin('ds.day', 'day')
+                ->leftJoin('day.stops', 'stops')
+                ->where('ds.id = :stopId')
+                ->setParameters([
+                    'stopId' => $stopId,
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
-    */
 }

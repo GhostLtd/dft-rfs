@@ -5,7 +5,7 @@ namespace App\EventSubscriber\InternationalSurvey;
 
 
 use App\Entity\International\Survey;
-use App\Repository\PasscodeUserRepository;
+use App\Utility\PasscodeGenerator;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -16,16 +16,16 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
 {
     private $internationalSurveyStateMachine;
     private $entityManager;
-    private $passcodeUserRepository;
+    private PasscodeGenerator $passcodeGenerator;
 
     public function __construct(
         WorkflowInterface $internationalSurveyStateMachine,
         EntityManagerInterface $entityManager,
-        PasscodeUserRepository $passcodeUserRepository
+        PasscodeGenerator $passcodeGenerator
     ) {
         $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
         $this->entityManager = $entityManager;
-        $this->passcodeUserRepository = $passcodeUserRepository;
+        $this->passcodeGenerator = $passcodeGenerator;
     }
 
     public function prePersist(LifecycleEventArgs $args)
@@ -36,9 +36,12 @@ class SurveyStateLifecycleSubscriber implements EventSubscriber
         }
 
         // it's a new survey
-        $entity->setState(Survey::STATE_NEW);
+        if (!$entity->getState()) {
+            $entity->setState(Survey::STATE_NEW);
+        }
+
         if (!$entity->getPasscodeUser()) {
-            $entity->setPasscodeUser($this->passcodeUserRepository->createNewPasscodeUser());
+            $entity->setPasscodeUser($this->passcodeGenerator->createNewPasscodeUser());
         }
     }
 

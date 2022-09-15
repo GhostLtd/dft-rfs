@@ -5,7 +5,8 @@
     {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})):
         {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.contact-details.heading'}
     } %}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', survey.response.contactName, contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone|default('-'), contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail|default('-'), contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.business-name.label', survey.response.contactBusinessName | default('-'), contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', survey.response.contactName | default('-'), contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone | default('-'), contactDetailsActionLinks) }}
+    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail | default('-'), contactDetailsActionLinks) }}
 </dl>

@@ -4,6 +4,8 @@ namespace App\Repository\International;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
+use App\Entity\SurveyInterface;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -66,17 +68,32 @@ class TripRepository extends ServiceEntityRepository
     /**
      * @return Trip[]|Collection
      */
-    public function getTripsForExport($surveys): array
+    public function getTripsForExport(DateTime $minDate, DateTime $maxDate): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t,v,r,s')
+            ->select('t,v,r,s,a,p')
             ->leftJoin('t.vehicle', 'v')
             ->leftJoin('v.surveyResponse', 'r')
             ->leftJoin('r.survey', 's')
-            ->andWhere('s IN (:surveys)')
+            ->leftJoin('s.passcodeUser', 'p')
+            ->leftJoin('t.actions', 'a')
+                // Do not link to loadingAction, as this was limiting the query (actions that had not been unloaded)
+                // They will be added by doctrine anyway, as they are included in the actions relationship
+                // Even adding and outer join caused problems... we'll just have to live with N+1 queries.
+            ->where('s.state IN (:states)')
+            ->andWhere('t.outboundDate >= :minDate')
+            ->andWhere('t.outboundDate < :maxDate')
+            ->orderBy('s.surveyPeriodStart', 'ASC')
+            ->addOrderBy('v.registrationMark', 'ASC')
+            ->addOrderBy('t.outboundDate', 'ASC')
+            ->addOrderBy('a.number', 'ASC')
             ->getQuery()
             ->setParameters([
-                'surveys' => $surveys,
+                'states' => [
+                    SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED,
+                ],
+                'minDate' => $minDate,
+                'maxDate' => $maxDate,
             ])
             ->execute();
     }

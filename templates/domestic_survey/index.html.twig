@@ -10,7 +10,7 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         {{ actionlessSummaryListRow('domestic.summary.vehicle', survey.registrationMark|formatRegMark) }}
-        {{ actionlessSummaryListRow('domestic.summary.start-date', survey.surveyPeriodStart | date('l, jS F Y')) }}
+        {{ actionlessSummaryListRow('domestic.summary.start-date', survey.surveyPeriodStart | date('format.date.full-with-year' | trans)) }}
     </dl>
     {% if survey.initialDetailsComplete %}
         {% if survey.businessAndVehicleDetailsComplete %}
@@ -23,7 +23,7 @@
                 {% for dayNumber in 1..7 %}
                     {% set day = survey.response.dayByNumber(dayNumber) %}
                     {{ summaryListRow(
-                        'domestic.summary.day-x-date'|trans({dayNumber: dayNumber, date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('l, jS M')) }),
+                        'domestic.summary.day-x-date'|trans({dayNumber: dayNumber, date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('format.date.full' | trans)) }),
                         dayText(day),
                         {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): {label: 'common.actions.change', srHiddenSuffix: 'domestic.summary.day-x', srHiddenSuffixParams: {dayNumber: dayNumber}} }
                     ) }}
@@ -54,7 +54,7 @@
             <a class="govuk-button" data-module="govuk-button" href="{{
                 survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES')
                     ? url('app_domesticsurvey_closingdetails_start')
-                    : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::STATE_CONFIRM')})
+                    : url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE')})
             }}">{{ 'domestic.summary.complete-week'|trans }}</a>
         </p>
 

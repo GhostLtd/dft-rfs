@@ -42,7 +42,7 @@ class DeleteDaySummaryConfirmAction extends AbstractConfirmAction
         return 'domestic.day-summary-delete';
     }
 
-    public function doConfirmedAction()
+    public function doConfirmedAction($formData)
     {
         $this->deleteHelper->deleteDaySummary($this->subject);
     }

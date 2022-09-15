@@ -8,7 +8,7 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {% for survey in surveys %}
-            {{ actionlessSummaryListRow("#{survey.surveyPeriodStart | date('format.date.short' | trans)} (#{survey.surveyPeriodEnd.diff(survey.surveyPeriodStart).days + 1} days)", survey.invitationAddress | formatAddress) }}
+            {{ actionlessSummaryListRow("#{survey.surveyPeriodStart | date('format.date.default' | trans)} (#{survey.surveyPeriodEnd.diff(survey.surveyPeriodStart).days + 1} days)", (survey.invitationAddress | formatAddress) ~ (survey.invitationEmails ? ("\r\n" ~ survey.invitationEmails) : '')) }}
         {% endfor %}
     </dl>
 {% endblock %}

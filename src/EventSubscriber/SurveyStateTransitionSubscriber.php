@@ -27,6 +27,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     private DomesticPdfHelper $domesticPdfHelper;
     private InternationalPdfHelper $internationalPdfHelper;
     private AuditLogRepository $auditLogRepository;
+    private PersonalisationHelper $personalisationHelper;
 
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
@@ -45,19 +46,20 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository) {
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository, PersonalisationHelper $personalisationHelper) {
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
         $this->domesticPdfHelper = $domesticPdfHelper;
         $this->internationalPdfHelper = $internationalPdfHelper;
         $this->auditLogRepository = $auditLogRepository;
+        $this->personalisationHelper = $personalisationHelper;
     }
 
     public function guardInviteUser(GuardEvent $event)
     {
         $survey = $this->getSurvey($event);
         $address = $survey->getInvitationAddress();
-        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmail()) {
+        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmails()) {
             $event->setBlocked(true);
         }
     }
@@ -65,7 +67,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionInviteUser(Event $event)
     {
         $survey = $this->getSurvey($event);
-        $personalisation = PersonalisationHelper::getForEntity($survey);
+        $personalisation = $this->personalisationHelper->getForEntity($survey);
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
@@ -80,15 +82,20 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             ));
         }
 
-        if ($survey->getInvitationEmail() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
-            $this->messageBus->dispatch(new Email(
-                Reference::EVENT_INVITE,
-                get_class($survey),
-                $survey->getId(),
-                $survey->getInvitationEmail(),
-                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
-                $personalisation,
-            ));
+        if ($survey->getInvitationEmails() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
+
+            $invitationEmails = array_map('trim', explode(',', $survey->getInvitationEmails()));
+
+            foreach($invitationEmails as $invitationEmail) {
+                $this->messageBus->dispatch(new Email(
+                    Reference::EVENT_INVITE,
+                    get_class($survey),
+                    $survey->getId(),
+                    $invitationEmail,
+                    self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
+                    $personalisation,
+                ));
+            }
         }
     }
 
@@ -115,7 +122,39 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     public function transitionConfirmExport(Event $event)
     {
         $survey = $this->getSurvey($event);
-        $this->entityManager->remove($survey->getPasscodeUser());
+        $this->deletePasscodeUser($survey);
+    }
+
+    public function transitionReissue(Event $event)
+    {
+        $survey = $this->getSurvey($event);
+        $this->deletePasscodeUser($survey);
+    }
+
+    public function transitionApprove(Event $event)
+    {
+        $survey = $this->getSurvey($event);
+
+        if ($survey instanceof DomesticSurvey) {
+            if (!$survey->shouldAskWhyUnfilled()) {
+                // ReasonForUnfilledSurvey should be NULL, because the survey *is* filled
+                $survey->setReasonForUnfilledSurvey(null);
+
+                if (!$survey->shouldAskWhyNoJourneys()) {
+                    // ReasonForEmptyJourney should be NULL, because journeys *have* been entered
+                    $survey->getResponse()->setReasonForEmptySurvey(null);
+                }
+            }
+        }
+
+        if ($survey instanceof InternationalSurvey) {
+            if (!$survey->shouldAskWhyEmptySurvey()) {
+                // ReasonForEmptySurvey (+Other) should be NULL, because the survey *is* filled
+                $survey
+                    ->setReasonForEmptySurvey(null)
+                    ->setReasonForEmptySurveyOther(null);
+            }
+        }
     }
 
     protected function getSurvey(Event $event): SurveyInterface
@@ -142,10 +181,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             // Transitions
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
+            'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
+            'workflow.domestic_survey.transition.approve' => 'transitionApprove',
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
+            'workflow.international_survey.transition.approve' => 'transitionApprove',
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
             'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
 
@@ -156,5 +198,18 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.international_survey.guard.invite_user' => 'guardInviteUser',
             'workflow.pre_enquiry.guard.invite_user' => 'guardInviteUser',
         ];
+    }
+
+    /**
+     * @param SurveyInterface $survey
+     */
+    public function deletePasscodeUser(SurveyInterface $survey): void
+    {
+        $passcodeUser = $survey->getPasscodeUser();
+
+        if ($passcodeUser) {
+            $survey->setPasscodeUser(null);
+            $this->entityManager->remove($passcodeUser);
+        }
     }
 }

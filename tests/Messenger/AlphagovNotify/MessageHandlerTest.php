@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Tests\Messenger\AlphagovNotify;
-
 
 use App\Entity\Address;
 use App\Entity\Domestic\Survey;
+use App\Entity\NotifyApiResponse;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Tests\DataFixtures\AlphagovNotify\MessageHandlerSurveyFixtures;
@@ -22,6 +21,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
 {
     protected MessageBusInterface $bus;
     private EntityManagerInterface $entityManager;
+    private PersonalisationHelper $personalisationHelper;
 
     protected function setUp(): void
     {
@@ -29,7 +29,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $container = self::$kernel->getContainer()->get('test.service_container');
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
-        self::ensureKernelShutdown();
+        $this->personalisationHelper = $container->get(PersonalisationHelper::class);
     }
 
     public function testSendLetterAccepted()
@@ -39,9 +39,14 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getValidTestAddress()));
         $this->runAsyncNotifyMessengerConsumer();
 
+        /** @var Survey $survey */
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponse = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
-        self::assertSame(Reference::STATUS_ACCEPTED, $apiResponse[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+
+        /** @var NotifyApiResponse $response */
+        $response = current($apiResponses);
+
+        self::assertSame(Reference::STATUS_ACCEPTED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     public function testSendLetterValidationError()
@@ -51,9 +56,14 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getInvalidTestAddress()));
         $this->runAsyncNotifyMessengerConsumer();
 
+        /** @var Survey $survey */
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
-        $apiResponse = $survey->getNotifyApiResponse(Reference::EVENT_INVITE, Letter::class);
-        self::assertSame(Reference::STATUS_FAILED, $apiResponse[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+
+        /** @var NotifyApiResponse $response */
+        $response = current($apiResponses);
+
+        self::assertSame(Reference::STATUS_FAILED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     protected function runAsyncNotifyMessengerConsumer()
@@ -95,7 +105,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
             $survey->getId(),
             $address,
             Reference::LETTER_DOMESTIC_SURVEY_INVITE,
-            PersonalisationHelper::getForDomesticSurvey($survey)
+            $this->personalisationHelper->getForEntity($survey)
         );
     }
 

@@ -28,3 +28,10 @@ body {
         width: 50%;
     }
 }
+
+.govuk-warning-header {
+    background: govuk-colour("white");
+    color: govuk-colour("black");
+    padding: govuk-spacing(2);
+    @include govuk-font(16);
+}

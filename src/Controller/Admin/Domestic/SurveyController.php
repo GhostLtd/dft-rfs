@@ -14,6 +14,7 @@ use App\Security\Voter\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -38,9 +39,6 @@ class SurveyController extends AbstractController
     public const ADD_NOTE_ROUTE = self::ROUTE_PREFIX.'addnote';
     public const DELETE_NOTE_ROUTE = self::ROUTE_PREFIX.'deletenote';
 
-    public const RESET_PASSCODE_ROUTE = self::ROUTE_PREFIX.'reset_passcode';
-    public const RESET_PASSCODE_SUCCESS_ROUTE = self::ROUTE_PREFIX.'reset_passcode_success';
-
     public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX.'initial_enter';
     public const ENTER_BUSINESS_AND_VEHICLE_ROUTE = self::ROUTE_PREFIX.'business_and_vehicle_enter';
     public const EDIT_FINAL_DETAILS_ROUTE = self::ROUTE_PREFIX.'final_details_edit';
@@ -64,6 +62,7 @@ class SurveyController extends AbstractController
 
     /**
      * @Route("/enter-business-and-vehicle-details", name=self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)
+     * @Security("is_granted('ENTER_BUSINESS_AND_VEHICLE_DETAILS', survey)");
      */
     public function enterBusinessAndVehicle(Survey $survey): Response
     {

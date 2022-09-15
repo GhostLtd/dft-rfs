@@ -1,0 +1,27 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = 'admin.pre-enquiry.sample-import-review' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText %}
+    <p class="govuk-body">When submitting this form, a Pre-Enquiry will be created for each item that is selected below.</p>
+
+    {{ warningText('An invitation letter will be sent to each Survey recipient') }}
+
+    {% set failedCount = (invalidLines | length) + (invalidData | length) + (invalidSurveys | length) %}
+    {% if failedCount > 0 %}
+        {{ warningText("#{failedCount} surveys failed to import") }}
+        <p class="govuk-body">
+            {% for failed in invalidLines %}
+                "<kbd>{{ failed }}</kbd>"<br>
+            {% endfor %}
+            {% for failed in invalidData %}
+                <kbd>{{ failed[4] }}</kbd><br>
+            {% endfor %}
+            {% from "admin/macros/notify.html.twig" import showValidationFailures %}
+            {{ showValidationFailures(invalidSurveys, 'company.businessName') }}
+        </p>
+    {% endif %}
+
+    {{ form(form) }}
+{% endblock %}

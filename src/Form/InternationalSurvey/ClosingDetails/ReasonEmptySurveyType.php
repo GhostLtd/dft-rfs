@@ -2,7 +2,7 @@
 
 namespace App\Form\InternationalSurvey\ClosingDetails;
 
-use App\Entity\International\SurveyResponse;
+use App\Entity\International\Survey;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,13 +15,13 @@ class ReasonEmptySurveyType extends AbstractType
         $translationKeyPrefix = "international.survey-response.reason-for-empty-survey";
         $builder
             ->add('reasonForEmptySurvey', Gds\ChoiceType::class, [
-                'choices' => SurveyResponse::REASON_FOR_EMPTY_SURVEY_CHOICES,
+                'choices' => Survey::REASON_FOR_EMPTY_SURVEY_CHOICES,
                 'label' => "{$translationKeyPrefix}.reason-for-empty-survey.label",
 //                'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.reason-for-empty-survey.help",
                 'choice_options' => [
-                    SurveyResponse::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . SurveyResponse::REASON_FOR_EMPTY_SURVEY_OTHER => ['conditional_form_name' => 'reasonForEmptySurveyOther'],
+                    Survey::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . Survey::REASON_FOR_EMPTY_SURVEY_OTHER => ['conditional_form_name' => 'reasonForEmptySurveyOther'],
                 ],
             ])
             ->add('reasonForEmptySurveyOther', Gds\InputType::class, [
@@ -35,7 +35,7 @@ class ReasonEmptySurveyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => SurveyResponse::class,
+            'data_class' => Survey::class,
             'validation_groups' => 'reason_for_empty_survey'
         ]);
     }

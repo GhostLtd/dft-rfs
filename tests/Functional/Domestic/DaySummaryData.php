@@ -2,17 +2,19 @@
 
 namespace App\Tests\Functional\Domestic;
 
+use App\Entity\Distance;
 use App\Tests\Functional\Wizard\FormTestCase;
-use App\Tests\Functional\Wizard\WizardEndTestCase;
-use App\Tests\Functional\Wizard\WizardStepTestCase;
+use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
+use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 
 class DaySummaryData extends AbstractDayStopOrSummaryData
 {
     public static function daySummaryData(bool $goodsLoaded, ?bool $goodsUnloaded = null, ?bool $isHazardous = null): array
     {
+        $baseUrl = "/domestic-survey/day-1";
         $originTests = self::getLocationFormTestCases('origin', $goodsLoaded, 'Portsmouth');
         $testData = [
-            new WizardStepTestCase("How many times did you stop on day 1?", "number_of_stops_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/add", "number_of_stops_continue", [
                 new FormTestCase([], [
                     "#number_of_stops_hasMoreThanFiveStops",
                 ]),
@@ -22,27 +24,30 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Where did the vehicle start the day?", "origin_continue", $originTests),
+            new WizardStepUrlTestCase("{$baseUrl}/summary/introduction", "form_continue", [
+                new FormTestCase([], []),
+            ]),
+            new WizardStepUrlTestCase("{$baseUrl}/summary/day-start", "origin_continue", $originTests),
         ];
 
-        $destinationTitle = "Where did the journey end?";
-        $furthestPointTitle = "Furthest point on this day";
+        $destinationUrl = "{$baseUrl}/summary/day-end";
+        $furthestStopUrl = "{$baseUrl}/summary/furthest-stop";
 
         if ($goodsUnloaded === null) {
-            return array_merge($testData, [new WizardStepTestCase($destinationTitle)]);
+            return array_merge($testData, [new WizardStepUrlTestCase($destinationUrl)]);
         }
 
         $destinationTests = self::getLocationFormTestCases('destination', $goodsUnloaded, 'Worthing');
         $testData = array_merge($testData, [
-            new WizardStepTestCase($destinationTitle, "destination_continue", $destinationTests),
+            new WizardStepUrlTestCase($destinationUrl, "destination_continue", $destinationTests),
         ]);
 
         if ($isHazardous === null) {
-            return array_merge($testData, [new WizardStepTestCase($furthestPointTitle)]);
+            return array_merge($testData, [new WizardStepUrlTestCase($furthestStopUrl)]);
         }
 
         return array_merge($testData, [
-            new WizardStepTestCase($furthestPointTitle, "furthest_stop_continue", [
+            new WizardStepUrlTestCase($furthestStopUrl, "furthest_stop_continue", [
                 new FormTestCase([], [
                     "#furthest_stop_furthestStop",
                 ]),
@@ -52,14 +57,15 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Border crossing", "border_crossing_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/border-crossing", "border_crossing_continue", [
                 new FormTestCase([
                     "border_crossing" => [
+                        "borderCrossed" => 1,
                         "borderCrossingLocation" => "Hove", // N.B. This field can be left blank
                     ],
                 ]),
             ]),
-            new WizardStepTestCase("How far did you travel?", "distance_travelled_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/distance-travelled", "distance_travelled_continue", [
                 new FormTestCase([], [
                     "#distance_travelled_distanceTravelledLoaded_value",
                     "#distance_travelled_distanceTravelledLoaded_unit",
@@ -70,16 +76,16 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     "distance_travelled" => [
                         "distanceTravelledLoaded" => [
                             "value" => 10,
-                            "unit" => "miles",
+                            "unit" => Distance::UNIT_MILES,
                         ],
                         "distanceTravelledUnloaded" => [
                             "value" => 16,
-                            "unit" => "kilometers",
+                            "unit" => Distance::UNIT_KILOMETRES,
                         ],
                     ]
                 ])
             ]),
-            new WizardStepTestCase("Description of goods carried", "goods_description_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-description", "goods_description_continue", [
                 new FormTestCase([], ["#goods_description_goodsDescription"]),
                 new FormTestCase([
                     "goods_description" => [
@@ -95,8 +101,8 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ]
                 ])
             ]),
-            new WizardStepTestCase("Dangerous or hazardous goods", "hazardous_goods_continue", self::getHazardousTests($isHazardous)),
-            new WizardStepTestCase("How were the goods carried?", "cargo_type_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/hazardous-goods", "hazardous_goods_continue", self::getHazardousTests($isHazardous)),
+            new WizardStepUrlTestCase("{$baseUrl}/summary/cargo-type", "cargo_type_continue", [
                 new FormTestCase([], [
                     "#cargo_type_cargoTypeCode",
                 ]),
@@ -106,7 +112,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Weight of goods", "goods_weight_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-weight", "goods_weight_continue", [
                 new FormTestCase([], [
                     "#goods_weight_weightOfGoodsLoaded",
                     "#goods_weight_weightOfGoodsUnloaded",
@@ -118,7 +124,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepTestCase("Number of stops", "number_of_stops_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/number-of-stops", "number_of_stops_continue", [
                 new FormTestCase([], [
                     "#number_of_stops_numberOfStopsLoading",
                     "#number_of_stops_numberOfStopsUnloading",
@@ -132,7 +138,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ]),
             ]),
-            new WizardEndTestCase('Day record', WizardEndTestCase::MODE_CONTAINS),
+            new WizardEndUrlTestCase($baseUrl),
         ]);
     }
 }

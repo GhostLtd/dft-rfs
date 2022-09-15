@@ -56,11 +56,5 @@ abstract class AbstractImportReviewDataType extends AbstractType
             'surveys',
             'uploaded_filename',
         ]);
-
-        $resolver->setDefaults([
-            'attr' => [
-                'data-prevent-double-click' => 'true',
-            ],
-        ]);
     }
 }

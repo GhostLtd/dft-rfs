@@ -12,14 +12,16 @@ use Vfs\FileSystem;
 abstract class AbstractBulkSurveyImporter
 {
     private $validator;
+    protected NotificationInterceptionService $notificationInterception;
 
     abstract protected function parseLine($line);
     abstract public function createSurvey($surveyData, $surveyOptions = null);
     abstract protected function getAggregateSurveyOptionsAndValidate(FormInterface $form);
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
     {
         $this->validator = $validator;
+        $this->notificationInterception = $notificationInterception;
     }
 
     public function getSurveys(FormInterface $form)
@@ -48,10 +50,14 @@ abstract class AbstractBulkSurveyImporter
         foreach ($data as $dataRow) {
             $survey = $this->createSurvey($dataRow, $surveyOptions);
             if ($survey) {
-                if ($this->isSurveyValid($survey)) {
+                $violations = $this->validate($survey);
+                if ($violations->count() === 0) {
                     $result['surveys'][] = $survey;
                 } else {
-                    $result['invalidSurveys'][] = $survey;
+                    $result['invalidSurveys'][] = [
+                        'survey' => $survey,
+                        'violations' => $violations,
+                    ];
                 }
             } else {
                 $result['invalidData'][] = $dataRow;
@@ -85,9 +91,8 @@ abstract class AbstractBulkSurveyImporter
         return $surveyData;
     }
 
-    protected function isSurveyValid($survey)
+    protected function validate($survey)
     {
-        $violations = $this->validator->validate($survey, null, ['import_survey']);
-        return ($violations->count() === 0);
+        return  $this->validator->validate($survey, null, ['import_survey', 'notify_api']);
     }
 }

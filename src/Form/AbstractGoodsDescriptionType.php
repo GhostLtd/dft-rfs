@@ -3,12 +3,17 @@
 namespace App\Form;
 
 use App\Entity\AbstractGoodsDescription;
+use App\Entity\GoodsDescriptionInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Traversable;
 
-abstract class AbstractGoodsDescriptionType extends AbstractType
+abstract class AbstractGoodsDescriptionType extends AbstractType implements DataMapperInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -30,6 +35,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
                 'label' => false,
                 'help' => "goods.description.help.other",
             ])
+            ->setDataMapper($this)
             ;
     }
 
@@ -40,5 +46,48 @@ abstract class AbstractGoodsDescriptionType extends AbstractType
             'is_summary_day' => false,
             'validation_groups' => 'goods-description',
         ]);
+    }
+
+    public function mapDataToForms($data, $forms)
+    {
+        $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
+
+        if (!$data instanceof GoodsDescriptionInterface) {
+            throw new UnexpectedTypeException($data, GoodsDescriptionInterface::class);
+        }
+
+        if (!isset($forms['goodsDescription'])) {
+            return;
+        }
+
+        $forms['goodsDescription']->setData($data->getGoodsDescription());
+        $forms['goodsDescriptionOther']->setData($data->getGoodsDescriptionOther());
+    }
+
+    /**
+     * @param FormInterface[]|Traversable $forms
+     * @param GoodsDescriptionInterface $data
+     */
+    public function mapFormsToData($forms, &$data)
+    {
+        $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
+
+        if (!$data instanceof GoodsDescriptionInterface) {
+            throw new UnexpectedTypeException($data, GoodsDescriptionInterface::class);
+        }
+
+        if (!isset($forms['goodsDescription'])) {
+            return;
+        }
+
+        $goodsDescription = $forms['goodsDescription']->getData();
+        $goodsDescriptionOther = $goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER ?
+            $forms['goodsDescriptionOther']->getData() : null;
+
+        $data
+            ->setGoodsDescription($goodsDescription)
+            ->setGoodsDescriptionOther($goodsDescriptionOther);
     }
 }

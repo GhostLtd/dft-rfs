@@ -9,37 +9,33 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+    {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
+
     {%- set hasAuditLogs = auditLogs is not empty -%}
+    {%- set hasFeedback = survey.feedback is not empty -%}
 
     {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
-        {%- if survey.response.noLongerActive == false -%}
-            {%- set tabs = tabs|merge({
-                'Vehicles': 'tab-vehicles',
-            }) -%}
-        {%- endif -%}
-
-        {%- set tabs = tabs|merge({
-            'Correspondence details': 'tab-correspondence',
-            'Business details': 'tab-business-details',
-        }) -%}
-
-        {%- if not survey.response.isFilledOut() -%}
-            {%- set tabs = tabs | merge({
-                'Final details': 'tab-final-details',
-            }) -%}
-        {%- endif -%}
+        {%- set tabs = tabs
+            | merge(survey.response.noLongerActive == false ? {'Vehicles': 'tab-vehicles'} : {})
+            | merge({
+                'Correspondence details': 'tab-correspondence',
+                'Business details': 'tab-business-details',
+            })
+        -%}
     {%- endif -%}
-    {%- set tabs = tabs | merge({
-        ("Notes (#{ survey.notes | length })"): 'tab-notes',
-        'Invitation/reminders': 'tab-invitation-details',
-    }) -%}
-    {%- if hasAuditLogs -%}
-        {%- set tabs = tabs | merge({
-            'Audit logs': 'tab-audit-logs',
-        }) -%}
-    {%- endif -%}
+    {%- set tabs = tabs
+        | merge(canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() ? {'Final details': 'tab-final-details'} : {})
+        | merge({
+            ("Notes (#{ survey.notes | length })"): 'tab-notes',
+            'Invitation/reminders': 'tab-invitation-details',
+        })
+        | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
+        | merge(hasAuditLogs ? {'Audit logs': 'tab-audit-logs'} : {})
+    -%}
+
 
     <div class="govuk-!-margin-bottom-9">
         {%- with {marginBottom: 5} -%}
@@ -50,7 +46,10 @@
             <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
         {%- endif -%}
         {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reset_passcode', {surveyId: survey.id}) }}">Reset passcode</a>
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reveal_passcode', {surveyId: survey.id}) }}">Reveal passcode</a>
+        {%- endif -%}
+        {%- if canResend -%}
+            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
         {%- endif -%}
     </div>
 
@@ -127,6 +126,14 @@
                 {%- endwith -%}
             </div>
 
+            {%- if hasFeedback -%}
+                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                    {%- with {feedback: survey.feedback} -%}
+                        {%- include 'admin/includes/feedback.html.twig' -%}
+                    {%- endwith -%}
+                </div>
+            {%- endif -%}
+
             {%- if hasAuditLogs -%}
                 <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
@@ -162,9 +169,9 @@
                 <h3 class="govuk-heading-m">Trips</h3>
 
                 {%- for trip in vehicle.trips -%}
-                    {% set srTripIdentifier = trip.outboundDate | date('d/m/Y') %}
+                    {% set srTripIdentifier = trip.outboundDate | date('format.date.default' | trans) %}
                     <h3 class="govuk-heading-s admin-surveys__trip-header" id="{{ trip.id }}">
-                        Trip #{{ loop.index }}&mdash;{{ trip.outboundDate | date('d/m/Y') }}
+                        Trip #{{ loop.index }}&mdash;{{ trip.outboundDate | date('format.date.default' | trans) }}
                     </h3>
                     {%- with {showActions: false, trip: trip, marginBottom: canEdit ? 5 : 9} -%}
                         {%- include "international_survey/includes/trip.html.twig" -%}
@@ -208,7 +215,7 @@
     %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
-            <h2 class="govuk-heading--l">Survey actions</h2>
+            <h2 class="govuk-heading-m">Survey actions</h2>
             {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
             {{ _self.workflow_link(survey, 'complete', 'Complete') }}
             {{ _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}

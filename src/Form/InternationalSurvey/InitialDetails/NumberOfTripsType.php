@@ -3,6 +3,7 @@
 namespace App\Form\InternationalSurvey\InitialDetails;
 
 use App\Entity\International\SurveyResponse;
+use App\Form\InternationalSurvey\InitialDetails\DataMapper\NumberOfTripsDataMapper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,7 @@ class NumberOfTripsType extends AbstractType
                     'class' => 'govuk-input--width-5',
                 ],
             ])
+            ->setDataMapper(new NumberOfTripsDataMapper())
         ;
     }
 

@@ -13,7 +13,7 @@ use App\Form\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
  * @ORM\Table("domestic_day_summary")
  */
-class DaySummary implements GoodsDescriptionInterface
+class DaySummary implements GoodsDescriptionInterface, BorderCrossingInterface
 {
     use StopTrait;
 

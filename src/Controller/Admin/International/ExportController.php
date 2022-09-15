@@ -5,52 +5,45 @@ namespace App\Controller\Admin\International;
 use App\Form\ConfirmationType;
 use App\Utility\International\ExportHelper;
 use App\Utility\International\DataExporter;
+use DateTime;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Route("/irhs/export")
+ * @Route("/irhs/export", name="admin_international_export_")
  */
 class ExportController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_international_export_';
-    public const EXPORT_ROUTE = self::ROUTE_PREFIX . 'list';
-    public const SUCCESS_ROUTE = self::ROUTE_PREFIX . 'success';
-    public const EXPORT_WEEK_ROUTE = self::ROUTE_PREFIX . 'week';
-    public const DOWNLOAD_ROUTE = self::ROUTE_PREFIX . 'download';
-
     protected ExportHelper $exportHelper;
 
-    public function __construct(ExportHelper $storageHelper)
+    public function __construct(ExportHelper $exportHelper)
     {
-        $this->exportHelper = $storageHelper;
+        $this->exportHelper = $exportHelper;
     }
 
     /**
-     * @Route("", name=self::EXPORT_ROUTE)
+     * @Route("", name="list")
      */
-    public function list()
+    public function list(): Response
     {
         return $this->render('admin/international/export/list.html.twig', [
-            'exports' => $this->exportHelper->getExportsExistingAndPossible(),
+            'exports' => $this->exportHelper->getPossibleYearsAndQuarters(true),
         ]);
     }
 
     /**
-     * @Route("/{week}", name=self::EXPORT_WEEK_ROUTE, requirements={"week": "\d+"})
+     * @Route("/{year}/{quarter}", name="quarter", requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
      */
-    public function exportWeek(Request $request, string $week, DataExporter $dataExporter, TranslatorInterface $translator)
+    public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $dataExporter, TranslatorInterface $translator): Response
     {
-        if ($this->objectExists($week)) {
-            throw new NotFoundHttpException();
-        }
-
         $form = $this->createForm(ConfirmationType::class, null, [
             'yes_label' => 'Export',
         ]);
@@ -62,57 +55,28 @@ class ExportController extends AbstractController
             $export = $form->get('yes');
 
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
-                return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
+                return new RedirectResponse($this->generateUrl('admin_international_export_list'));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                if ($dataExporter->uploadExportData($week)) {
-                    return new RedirectResponse($this->generateUrl(self::SUCCESS_ROUTE, ['week' => $week]));
+                if ($filename = $dataExporter->generateExportData($year, $quarter)) {
+                    $now = new DateTime();
+                    return $this
+                        ->file(new File($filename), "IRHS_export_{$year}_Q{$quarter}_{$now->format('Ymd_Hi')}.sql")
+                        ->deleteFileAfterSend(true);
                 } else {
                     $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
                         $translator->trans('international.export-failed-notification.title', [], 'admin'),
                         $translator->trans('international.export-failed-notification.heading', [], 'admin'),
                         $translator->trans('international.export-failed-notification.content', [], 'admin')
                     ));
-                    return new RedirectResponse($this->generateUrl(self::EXPORT_ROUTE));
+                    return new RedirectResponse($this->generateUrl('admin_international_export_list'));
                 }
             }
         }
 
         return $this->render('admin/international/export/confirm.html.twig', [
-            'week' => $week,
+            'quarter' => $quarter,
+            'year' => $year,
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/{week}/success", name=self::SUCCESS_ROUTE, requirements={"week": "\d+"})
-     */
-    public function success(string $week)
-    {
-        if (!$this->objectExists($week)) {
-            throw new NotFoundHttpException();
-        }
-
-        return $this->render('admin/international/export/success.html.twig', [
-            'week' => $week,
-        ]);
-    }
-
-    /**
-     * @Route("/{week}/download", name=self::DOWNLOAD_ROUTE, requirements={"week": "\d+"})
-     */
-    public function download(string $week)
-    {
-        $signedUrl = $this->exportHelper->getSignedUrl($week);
-
-        if (!$signedUrl) {
-            throw new NotFoundHttpException();
-        }
-
-        return new RedirectResponse($signedUrl);
-    }
-
-    protected function objectExists(string $week)
-    {
-        return !!$this->exportHelper->getStorageObjectIfExists($week);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable()
@@ -22,26 +23,31 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      */
     protected $line1;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    protected $line2;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      */
     protected $line3;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
+     */
+    protected $line2;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      */
     protected $line4;
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
+     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      */
     protected $postcode;
 
@@ -109,5 +115,10 @@ class Address
 
     public function isFilled(): bool {
         return $this->line1 || $this->line2 || $this->line3 || $this->line4 || $this->postcode;
+    }
+
+    public function __toString(): string {
+        $nonEmptyLines = array_filter($this->toArray(), fn(?string $line) => $line && trim($line) !== '');
+        return join(', ', $nonEmptyLines);
     }
 }

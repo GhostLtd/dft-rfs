@@ -4,6 +4,8 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\AddSurveyType;
+use App\Utility\NotificationInterceptionService;
+use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +19,7 @@ class SurveyAddController extends AbstractController
     /**
      * @Route("/irhs/survey-add/", name=SurveyController::ADD_ROUTE)
      */
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception): Response
     {
         $form = $this->createForm(AddSurveyType::class);
 
@@ -32,10 +34,8 @@ class SurveyAddController extends AbstractController
             if ($form->isValid()) {
                 /** @var Survey $survey */
                 $survey = $form->getData();
-                $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
-                $periodDays = $form->get('surveyPeriodInDays')->getData() - 1;
-                $surveyPeriodEnd->add(new DateInterval("P{$periodDays}D"));
-                $survey->setSurveyPeriodEnd($surveyPeriodEnd);
+
+                $notificationInterception->checkAndInterceptSurvey($survey);
 
                 $entityManager->persist($survey->getCompany());
                 $entityManager->persist($survey);
@@ -43,6 +43,7 @@ class SurveyAddController extends AbstractController
 
                 return $this->render("admin/international/surveys/add-success.html.twig", [
                     'survey' => $survey,
+                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
                 ]);
             }
         }

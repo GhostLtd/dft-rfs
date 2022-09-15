@@ -8,6 +8,11 @@
 {%- endblock %}
 
 {% block headerBar %}
+    {% if env_label_frontend %}
+    <div class="govuk-warning-header" style="{% if env_label_colour|default(false) %}color: {{ env_label_colour }};{% endif %}{% if env_label_background|default(false) %}background: {{ env_label_background }};{% endif %}">
+        This is the {{ env_label_frontend|upper }} deployment of the Road Haulage Surveys website. <strong>Do not use this site unless you have been asked to do so</strong>.<br>
+    </div>
+    {% endif %}
     {{ govukHeader({
         homepageUrl: 'https://www.gov.uk/',
         serviceName: ('service.name' | trans),
