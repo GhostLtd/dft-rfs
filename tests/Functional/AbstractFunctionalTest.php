@@ -3,6 +3,7 @@
 namespace App\Tests\Functional;
 
 use Doctrine\Common\DataFixtures\Executor\AbstractExecutor;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +37,12 @@ abstract class AbstractFunctionalTest extends WebTestCase
         parent::setUp();
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->databaseTool);
+    }
+
     protected function getFixtureByReference($reference)
     {
         return $this->fixtureReferenceRepository->getReference($reference);
@@ -43,7 +50,7 @@ abstract class AbstractFunctionalTest extends WebTestCase
 
     protected function loadFixtures(array $classNames = [], bool $append = false): ?AbstractExecutor
     {
-        $this->setupMessengerTransports();
+//        $this->setupMessengerTransports();
         $fixtures = $this->databaseTool->loadFixtures($classNames, $append);
         $this->fixtureReferenceRepository = $fixtures->getReferenceRepository();
 

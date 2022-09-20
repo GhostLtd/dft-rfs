@@ -72,7 +72,7 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
             return true;
         }
 
-        if (1 === preg_match('/^_profiler/', $routeName)) {
+        if ($routeName !== null && 1 === preg_match('/^_profiler/', $routeName)) {
             return true;
         }
 

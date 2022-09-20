@@ -36,7 +36,7 @@ class MessageHandler implements MessageHandlerInterface
             }
         } catch (ApiException $apiException) {
             if (in_array($apiException->getCode(), [400, 403])) {
-                throw new UnrecoverableMessageHandlingException(null, null, $apiException);
+                throw new UnrecoverableMessageHandlingException('', 0, $apiException);
             }
             throw $apiException;
         }

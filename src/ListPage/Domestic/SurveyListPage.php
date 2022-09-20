@@ -20,11 +20,7 @@ use Symfony\Component\Routing\RouterInterface;
 class SurveyListPage extends AbstractListPage
 {
     protected bool $isNorthernIreland;
-
-    /**
-     * @var SurveyRepository
-     */
-    private SurveyRepository $repository;
+    protected SurveyRepository $repository;
 
     public function __construct(SurveyRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
@@ -32,9 +28,6 @@ class SurveyListPage extends AbstractListPage
         $this->repository = $repository;
     }
 
-    /**
-     * @param bool $isNorthernIreland
-     */
     public function setIsNorthernIreland(bool $isNorthernIreland): self
     {
         $this->isNorthernIreland = $isNorthernIreland;
@@ -82,5 +75,4 @@ class SurveyListPage extends AbstractListPage
             Simple::generateId('Reg mark') => 'ASC',
         ];
     }
-
 }

@@ -44,7 +44,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        if ('' === trim($value)) {
+        if ($value === null || '' === trim($value)) {
             return null;
         }
 

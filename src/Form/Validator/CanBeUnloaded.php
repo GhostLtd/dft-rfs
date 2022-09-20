@@ -15,7 +15,7 @@ class CanBeUnloaded extends Constraint
         return static::class.'Validator';
     }
 
-    public function getTargets() {
+    public function getTargets(): string|array {
         return self::CLASS_CONSTRAINT;
     }
 }

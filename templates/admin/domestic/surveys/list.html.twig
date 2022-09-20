@@ -22,7 +22,14 @@
             }}
             {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
             {{- countField(survey, 'totalDayCount') -}}
-            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }"} }), {}) }}
+            {{ tableCell(
+                actionLinks(
+                    {(url('admin_domestic_survey_view', {surveyId: survey.id})): {
+                        label: 'view',
+                        srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }"}
+                    }
+                ))
+            }}
         </tr>
     {% else %}
         {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}

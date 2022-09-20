@@ -25,7 +25,6 @@ class RemoteActionsPostInstallTest extends AbstractFunctionalTest
 
     public function testNoMigrations()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         self::assertStringContainsString('Post-install script completed successfully.', RemoteActions::postInstall());
@@ -33,7 +32,6 @@ class RemoteActionsPostInstallTest extends AbstractFunctionalTest
 
     public function testMigrations()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         $this->generateMigration();

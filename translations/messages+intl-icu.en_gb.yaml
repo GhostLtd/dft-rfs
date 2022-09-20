@@ -201,6 +201,21 @@ admin:
   reports:
     dashboard:
       heading: Reports
+      surveys:
+        csrgt: CSRGT (All)
+        csrgt-gb: CSRGT (GB)
+        csrgt-ni: CSRGT (NI)
+        irhs: IRHS
+        pre-enquiry: Pre-Enquiry
+      types:
+        activity: Activity Status
+        approvals: Approvals
+        possession: Possession of vehicle
+        quality: Quality assurance
+        state: Surveys by state
+        unapprovals: Unapprovals
+      view: view
+
     activity-status:
       heading: Surveys by activity state
       sub-heading: &subHeading >-

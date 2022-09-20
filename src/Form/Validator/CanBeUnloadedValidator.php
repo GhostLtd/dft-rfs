@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class CanBeUnloadedValidator extends ConstraintValidator
 {
-    protected $actionRepository;
+    protected ActionRepository $actionRepository;
 
     public function __construct(ActionRepository $actionRepository)
     {

@@ -27,12 +27,14 @@ class WeekYearFilterType extends AbstractType
             })
             ->add('year', Gds\ChoiceType::class, [
                 'choices' => array_combine($years, $years),
+                'choice_translation_domain' => false,
                 'expanded' => false,
                 'placeholder' => 'Year',
                 'label' => false,
             ])
             ->add('week', Gds\ChoiceType::class, [
                 'choices' => array_combine($weeks, $weeks),
+                'choice_translation_domain' => false,
                 'expanded' => false,
                 'placeholder' => 'Week',
                 'label' => false,

@@ -26,7 +26,7 @@ abstract class AbstractExportNormalizer implements ContextAwareNormalizerInterfa
         $this->serializer = new Serializer([new DateTimeNormalizer(), $normalizer]);
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         return array_map(fn(Mapper $mapper) => $mapper->getData($object), $this->getMapping());
     }
