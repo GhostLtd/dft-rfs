@@ -59,7 +59,12 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
             new UserBadge('', fn() => new InMemoryUser(
                 $credentials['emailAddress'],
                 $credentials['assertion'],
-                ['ROLE_ADMIN'],
+                ['ROLE_ADMIN_IAP_USER'],
+                true,
+                true,
+                true,
+                true,
+                [self::EXTRA_FIELD_USER_ID => $credentials['userId']]
             )),
             new CustomCredentials(
                 [$this, 'customAuthenticator'],
