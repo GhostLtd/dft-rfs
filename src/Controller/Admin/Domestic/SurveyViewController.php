@@ -6,7 +6,7 @@ use App\Controller\Admin\SurveyAddNoteController;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyInterface;
-use App\Form\NoteType;
+use App\Form\Admin\NoteType;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\Domestic\PdfHelper;
@@ -114,7 +114,7 @@ class SurveyViewController extends AbstractController
     protected function getAddNoteForm(SurveyInterface $survey)
     {
         return $this->createForm(NoteType::class, new SurveyNote(), [
-            'action' => SurveyAddNoteController::addNotesTabAnchor($this->generateUrl(SurveyController::ADD_NOTE_ROUTE, ['surveyId' => $survey->getId()])),
+            'action' => SurveyAddNoteController::addNotesTabAnchor($this->generateUrl('admin_domestic_survey_addnote', ['surveyId' => $survey->getId()])),
         ]);
     }
 }

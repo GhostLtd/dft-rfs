@@ -81,7 +81,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
-    private $notes;
+    private ?Collection $notes;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
@@ -180,9 +180,14 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return WeekNumberHelper::getWeekNumber($this->getSurveyPeriodStart());
     }
 
-    public function getNotes()
+    public function getNotes(): ?Collection
     {
         return $this->notes;
+    }
+
+    public function getChasedCount(): int
+    {
+        return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
     public function addNote(SurveyNote $note): self

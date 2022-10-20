@@ -9,10 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SurveyAddNoteController extends AbstractController
 {
-    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, array $viewSurveyRouteParams, string $viewSurveyTemplate, array $additionalViewData=[])
+    public function addNotePostAction(Request $request, EntityManagerInterface $entityManager, SurveyInterface $survey, FormInterface $addNoteForm, string $viewSurveyRoute, array $viewSurveyRouteParams, string $viewSurveyTemplate, array $additionalViewData=[]): Response
     {
         $addNoteForm->handleRequest($request);
         if (!$addNoteForm->isSubmitted()) {
@@ -33,7 +34,7 @@ class SurveyAddNoteController extends AbstractController
         ]));
     }
 
-    public static function addNotesTabAnchor(string $url)
+    public static function addNotesTabAnchor(string $url): string
     {
         return $url . '#tab-notes';
     }

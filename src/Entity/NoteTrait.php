@@ -13,7 +13,7 @@ trait NoteTrait
 
     /**
      * @ORM\Column(type="text", nullable=false)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"admin_comment"})
+     * @Assert\NotNull(message="common.string.not-blank", groups={"admin_comment"})
      */
     private ?string $note;
 
@@ -27,6 +27,12 @@ trait NoteTrait
      * @ORM\Column(type="datetime", nullable=false)
      */
     private ?\DateTime $createdAt;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=false)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"admin_comment"})
+     */
+    private ?bool $wasChased;
 
     public function getNote(): ?string
     {
@@ -73,5 +79,16 @@ trait NoteTrait
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
+    }
+
+    public function getWasChased(): ?bool
+    {
+        return $this->wasChased;
+    }
+
+    public function setWasChased(?bool $wasChased): self
+    {
+        $this->wasChased = $wasChased;
+        return $this;
     }
 }

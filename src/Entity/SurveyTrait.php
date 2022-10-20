@@ -13,13 +13,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait SurveyTrait
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
-     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
-     */
-    private $id;
+    use IdTrait;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -39,33 +33,31 @@ trait SurveyTrait
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $responseStartDate;
+    private ?\DateTime $responseStartDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $submissionDate;
+    private ?\DateTime $submissionDate;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=false)
      */
-    private $state;
+    private ?string $state;
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
      * @AppAssert\CommaSeparatedEmails(groups={"add_survey", "import_survey"}, message="common.email.list-contains-invalid")
      * @Assert\Length(max=1024, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private $invitationEmails;
+    private ?string $invitationEmails;
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
      * @AppAssert\ValidAddress(groups={"add_survey", "import_survey"}, validatePostcode=true, allowBlank=true)
      * @Assert\Valid(groups={"add_srvuey", "import_survey", "notify_api"})
-     *
-     * @var LongAddress|null
      */
-    private $invitationAddress;
+    private ?LongAddress $invitationAddress;
 
     /**
      * @ORM\OneToOne(targetEntity=Feedback::class, cascade={"persist", "remove"})
@@ -89,11 +81,6 @@ trait SurveyTrait
                 ->atPath('invitationAddress')
                 ->addViolation();
         }
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
     }
 
     public function getNotifiedDate(): ?DateTime
@@ -134,7 +121,7 @@ trait SurveyTrait
 
     public function getState(): ?string
     {
-        return $this->state;
+        return $this->state ?? null;
     }
 
     public function setState($state): self
@@ -145,7 +132,7 @@ trait SurveyTrait
 
     public function getInvitationEmails(): ?string
     {
-        return $this->invitationEmails;
+        return $this->invitationEmails ?? null;
     }
 
     public function setInvitationEmails(?string $invitationEmails): self
@@ -157,7 +144,7 @@ trait SurveyTrait
 
     public function getInvitationAddress(): ?LongAddress
     {
-        return $this->invitationAddress;
+        return $this->invitationAddress ?? null;
     }
 
     public function setInvitationAddress(?LongAddress $invitationAddress): self
@@ -191,7 +178,7 @@ trait SurveyTrait
 
     public function hasInvitationAddress(): bool
     {
-        return $this->invitationAddress instanceof LongAddress && $this->invitationAddress->isFilled();
+        return ($this->invitationAddress instanceof LongAddress) && $this->invitationAddress->isFilled();
     }
 
     public function getFeedback(): ?Feedback

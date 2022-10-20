@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 use App\Entity\Address;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -18,12 +18,20 @@ class NoteType extends AbstractType
         $builder
             ->add('note', Gds\TextareaType::class, [
                 'label' => false,
-                'constraints' => [new NotBlank()],
+            ])
+            ->add('wasChased', Gds\BooleanChoiceType::class, [
+                'label' => 'Is this note about contact with the haulier?',
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Add note',
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('validation_groups', ['admin_comment']);
     }
 }

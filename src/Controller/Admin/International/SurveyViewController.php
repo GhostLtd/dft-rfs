@@ -6,7 +6,7 @@ use App\Controller\Admin\SurveyAddNoteController;
 use App\Entity\International\SurveyNote;
 use App\Entity\International\Survey;
 use App\Entity\SurveyInterface;
-use App\Form\NoteType;
+use App\Form\Admin\NoteType;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;

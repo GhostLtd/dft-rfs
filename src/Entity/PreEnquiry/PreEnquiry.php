@@ -62,7 +62,7 @@ class PreEnquiry implements SurveyInterface
      * @ORM\OneToMany(targetEntity=PreEnquiryNote::class, mappedBy="preEnquiry")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
-    private $notes;
+    private ?Collection $notes;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -125,9 +125,14 @@ class PreEnquiry implements SurveyInterface
         return $this;
     }
 
-    public function getNotes()
+    public function getNotes(): ?Collection
     {
         return $this->notes;
+    }
+
+    public function getChasedCount(): int
+    {
+        return array_reduce($this->notes->toArray(), fn($c, PreEnquiryNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
     public function addNote(PreEnquiryNote $note): self

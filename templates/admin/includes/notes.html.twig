@@ -5,6 +5,7 @@
         {{- displayNote(note, deleteRoute, deleteParams) -}}
     {%- else -%}
         No notes
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     {%- endfor -%}
 </dl>
 {% if addNoteForm is defined and is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), survey) %}

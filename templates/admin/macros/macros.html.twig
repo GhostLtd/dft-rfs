@@ -13,6 +13,9 @@
         <dt class="govuk-summary-list__key">
             {{- note.createdBy | removeEmailNamespacePrefix -}}
             <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date-time.default' | trans) -}}</div>
+            {% if note.wasChased %}
+                <div><strong class="govuk-tag govuk-tag--blue">Contacted haulier</strong></div>
+            {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">{{ note.note | nl2br }}</dd>
         {% if not (options.hideActions | default(false)) and is_granted(constant('\\App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), note.survey ?? note.preEnquiry) %}

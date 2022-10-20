@@ -17,7 +17,7 @@
     {%- set tabs = {}
         | merge(hasInitialDetails ? {'Response': 'tab-response'}: {})
         | merge({
-            ("Notes (#{ preEnquiry.notes | length })"): 'tab-notes',
+            ("Notes (#{preEnquiry.chasedCount} / #{preEnquiry.notes | length})"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
         })
         | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})

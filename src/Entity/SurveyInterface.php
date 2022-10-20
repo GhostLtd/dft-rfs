@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 
 interface SurveyInterface
 {
@@ -47,4 +48,7 @@ interface SurveyInterface
 
     public function getFeedback(): ?Feedback;
     public function setFeedback(?Feedback $feedback): self;
+
+    public function getNotes(): ?Collection;
+    public function getChasedCount(): int;
 }

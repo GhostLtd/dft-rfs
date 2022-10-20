@@ -37,7 +37,7 @@
     {%- endif -%}
     {%- set tabs = tabs
         | merge({
-            ("Notes (#{ survey.notes | length })"): 'tab-notes',
+            ("Notes (#{survey.chasedCount} / #{ survey.notes | length })"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
         })
         | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
@@ -84,6 +84,7 @@
             {% set businessLink %}<a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">{{ survey.invitationAddress.line1 }}</a>{% endset %}
             {{- actionlessSummaryListRow('Business name', businessLink) -}}
         {% endif %}
+        {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount) }}
     </dl>
 
     <div class="govuk-!-margin-bottom-9">
