@@ -3,6 +3,7 @@
 namespace App;
 
 use App\DependencyInjection\AuditLogPass;
+use App\ML\FileTypeMatcher;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -97,6 +98,11 @@ class Kernel extends BaseKernel implements CompilerPassInterface
                 null, array_map(function($service){return new Reference($service);}, array_keys($providers))
             ]));
             $definition->setArguments([$expressionLanguage]);
+        }
+
+        $fileTypeMatcher = $container->getDefinition(FileTypeMatcher::class);
+        foreach($container->findTaggedServiceIds('app.ml.file_type') as $id => $tags) {
+            $fileTypeMatcher->addMethodCall('addFileType', [new Reference($id)]);
         }
     }
 }

@@ -82,6 +82,8 @@ services:
     # please note that last definitions always *replace* previous ones
 
     _instanceof:
+        App\ML\FileType\FileTypeInterface:
+            tags: [ 'app.ml.file_type' ]
         App\Utility\AuditEntityLogger\AuditEntityLogger:
             tags: [ 'app.audit_entity_logger' ]
         Doctrine\Common\EventSubscriber:
