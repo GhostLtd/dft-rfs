@@ -824,15 +824,14 @@ domestic:
 
     border-crossing: &border-crossing
       border-crossed:
-        label: 'Did you cross an international border?'
+        label: 'Did you make a border or sea crossing?'
         help: ''
       border-crossing-location:
-        label: 'Where did you cross a border?'
-        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
-               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
-               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
-               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel."
-
+        label: 'Tell us where'
+        help: |-
+          If you crossed the border between Northern Ireland and Eire (Republic of Ireland) on this journey, state where the vehicle crossed the border.
+          
+          If you made a sea crossing, indicate whether you used the channel tunnel or a specific ferry route, for example "Larne-Cairnryan" or "channel tunnel".
     distance-travelled:
       heading: How far did you travel?
       help: "Tell us the total distance travelled for this day.\n\nInclude all empty mileage made during the journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ journey, include this empty mileage too."
@@ -1874,7 +1873,9 @@ maintenance-warning:
 survey-feedback:
   heading: Survey Feedback
   help: The answers you give us to this short survey will help us to make improvements to the service.
-  confirm.label: Submit feedback
+  confirm:
+    label: Submit feedback
+    privacy-warning: Our team may contact you in relation to any feedback given, with the aim of further improving this service.
   cancel.label: Cancel
   thanks-page:
     heading: Survey feedback received
