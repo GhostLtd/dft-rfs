@@ -22,9 +22,11 @@ use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
+    const CONTEXT_KEY = 'for-export';
+
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $data instanceof Survey;
+        return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
     }
 
     protected function getMapping(): array

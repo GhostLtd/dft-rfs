@@ -6,6 +6,7 @@ namespace App\Controller\Admin\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Serializer\Encoder\SqlServerInsertEncoder;
+use App\Serializer\Normalizer\PreEnquiry\PreEnquiryNormalizer;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -50,6 +51,7 @@ class ExportController extends AbstractController
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'rfs-preenquiry-export-');
         file_put_contents($tmpFile, $serializer->serialize($preEnquiries, 'sql-server-insert', [
+            PreEnquiryNormalizer::CONTEXT_KEY => true,
             SqlServerInsertEncoder::TABLE_NAME_KEY => 'tbl_pre_enquiry',
             SqlServerInsertEncoder::FORCE_STRING_FIELDS => ["contactPhone", "addressLine1", "addressLine2", "addressLine3", "addressLine4", "addressLine5", "addressLine6", "addressPostcode", "businessSize"],
         ]));

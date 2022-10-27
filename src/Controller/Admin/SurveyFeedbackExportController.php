@@ -31,7 +31,7 @@ class SurveyFeedbackExportController extends AbstractController
     public function index(): array
     {
         return [
-            'existingExportDates' => $this->surveyFeedbackExportHelper->getExistingDates(),
+            'existingExportDates' => $this->surveyFeedbackExportHelper->getPastExportDates(),
             'hasNewResponses' => $this->surveyFeedbackExportHelper->hasAnyFeedbackReadyForNewExport(),
         ];
     }

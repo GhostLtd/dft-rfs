@@ -75,7 +75,7 @@ class DataExporter extends AbstractDataExporter
 
     protected function getDetailedDaysSql($surveyIDs, $outputFilename, $filename)
     {
-        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs));
+        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs), null, [SurveyNormalizer::CONTEXT_KEY => true]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
@@ -90,7 +90,7 @@ class DataExporter extends AbstractDataExporter
 
     protected function getSummaryDaysSql($surveyIDs, $outputFilename, $filename)
     {
-        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs));
+        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs), null, [SurveyNormalizer::CONTEXT_KEY => true,]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
@@ -107,7 +107,7 @@ class DataExporter extends AbstractDataExporter
     protected function getVehiclesSql($surveyIDs, $outputFilename, $filename)
     {
         $surveys = $this->surveyRepository->findForExport($surveyIDs);
-        $surveyArrayData = $this->surveySerializer->normalize($surveys);
+        $surveyArrayData = $this->surveySerializer->normalize($surveys, null, [SurveyNormalizer::CONTEXT_KEY => true]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [

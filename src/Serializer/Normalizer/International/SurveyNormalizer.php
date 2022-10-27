@@ -16,7 +16,7 @@ class SurveyNormalizer implements ContextAwareNormalizerInterface, NormalizerAwa
 
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $data instanceof Survey && $context[self::CONTEXT_KEY] === true;
+        return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
     }
 
     /**

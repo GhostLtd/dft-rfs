@@ -13,11 +13,13 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
 class PreEnquiryNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {
+    const CONTEXT_KEY = 'for-export';
+
     use NormalizerAwareTrait;
 
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $data instanceof PreEnquiry;
+        return $data instanceof PreEnquiry && ($context[self::CONTEXT_KEY] ?? false) === true;
     }
 
     /**
