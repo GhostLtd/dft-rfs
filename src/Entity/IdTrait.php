@@ -19,4 +19,16 @@ trait IdTrait
     {
         return $this->id;
     }
+
+    /**
+     * @ignore
+     * @internal
+     *
+     * Should not be used outside of tests/fixtures.
+     */
+    public function setId(?string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 }

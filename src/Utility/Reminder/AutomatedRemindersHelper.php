@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utility;
+namespace App\Utility\Reminder;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
@@ -16,7 +16,10 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class RemindersHelper
+/**
+ * Provides methods to dispatch reminder notifications (both letter and email) for non-started surveys.
+ */
+class AutomatedRemindersHelper
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $messageBus;
@@ -62,7 +65,7 @@ class RemindersHelper
         $this->personalisationHelper = $personalisationHelper;
     }
 
-    public function sendReminders()
+    public function sendReminders(): void
     {
         // Send reminders for each that requires it
         foreach ($this->getSurveysForReminding() as $reminder => $surveyGroups)
@@ -77,7 +80,7 @@ class RemindersHelper
         $this->entityManager->flush();
     }
 
-    protected function sendReminderMessages(int $reminder, array $templateReferences, SurveyInterface $survey)
+    protected function sendReminderMessages(int $reminder, array $templateReferences, SurveyInterface $survey): void
     {
         $eventType = ([1 => Reference::EVENT_REMINDER_1, 2 => Reference::EVENT_REMINDER_2])[$reminder];
 
@@ -110,10 +113,9 @@ class RemindersHelper
                 ));
             }
         }
-
     }
 
-    protected function getSurveysForReminding()
+    protected function getSurveysForReminding(): array
     {
         return [
             1 => [
@@ -165,13 +167,10 @@ class RemindersHelper
         return $queryBuilder->andWhere($this->getSurveyStateExpression($queryBuilder));
     }
 
-    protected function getSurveyStateExpression(QueryBuilder $queryBuilder): Expr\Base
+    protected function getSurveyStateExpression(QueryBuilder $queryBuilder): Expr\Func
     {
-        // $queryBuilder->expr()->isNull('survey.submissionDate'),
-        return $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT, SurveyInterface::STATE_IN_PROGRESS]),
-            $queryBuilder->expr()->andX('response.contactTelephone IS NULL', 'response.contactEmail IS NULL')
-        );
+        // Check that survey is not started
+        return $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT]);
     }
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder): Expr\Base
@@ -181,7 +180,7 @@ class RemindersHelper
             'survey.firstReminderSentDate IS NULL',
             'survey.secondReminderSentDate IS NULL',
             'survey.surveyPeriodEnd <= :sevenDaysAgo',
-            'survey.notifiedDate <= :sevenDaysAgo'
+            'survey.invitationSentDate <= :sevenDaysAgo'
         );
     }
 
@@ -191,16 +190,16 @@ class RemindersHelper
         return $queryBuilder->expr()->andX(
             'survey.firstReminderSentDate IS NULL',
             'survey.secondReminderSentDate IS NULL',
-            'survey.notifiedDate <= :fourteenDaysAgo'
+            'survey.invitationSentDate <= :fourteenDaysAgo'
         );
     }
 
     protected function getSecondReminderExpression(QueryBuilder $queryBuilder): Expr\Base
     {
-        $queryBuilder->setParameter('firstReminderDate', (new DateTime())->modify('-14 days')->modify('+12 hours'));
+        $queryBuilder->setParameter('fourteenDaysAgo', (new DateTime())->modify('-14 days')->modify('+12 hours'));
         return $queryBuilder->expr()->andX(
             'survey.secondReminderSentDate IS NULL',
-            'survey.firstReminderSentDate <= :firstReminderDate'
+            'survey.firstReminderSentDate <= :fourteenDaysAgo'
         );
     }
 }

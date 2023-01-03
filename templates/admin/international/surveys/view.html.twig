@@ -11,6 +11,9 @@
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canSendManualReminder = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER'), survey) -%}
+    {%- set canShowManualReminderButton = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER_BUTTON'), survey) -%}
+
     {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
     {%- set hasAuditLogs = auditLogs is not empty -%}
@@ -50,6 +53,9 @@
         {%- endif -%}
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
+        {%- endif -%}
+        {%- if canShowManualReminderButton -%}
+            <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ path('admin_international_survey_manual_reminder', {id: survey.id}) }}">Send reminder</a>
         {%- endif -%}
     </div>
 

@@ -109,14 +109,17 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
                     $workflow->apply($entity, 'invitation_sent');
                 }
                 switch($message->getEventName()) {
-                    case Reference::EVENT_INVITE :
-                        $entity->setNotifiedDate($timestamp);
+                    case Reference::EVENT_INVITE:
+                        $entity->setInvitationSentDate($timestamp);
                         break;
-                    case Reference::EVENT_REMINDER_1 :
+                    case Reference::EVENT_REMINDER_1:
                         $entity->setFirstReminderSentDate($timestamp);
                         break;
-                    case Reference::EVENT_REMINDER_2 :
+                    case Reference::EVENT_REMINDER_2:
                         $entity->setSecondReminderSentDate($timestamp);
+                        break;
+                    case Reference::EVENT_MANUAL_REMINDER:
+                        $entity->setLatestManualReminderSentDate($timestamp);
                         break;
                 }
             } else if ($status === Reference::STATUS_FAILED) {

@@ -18,7 +18,7 @@ trait SurveyTrait
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?\DateTime $notifiedDate;
+    private ?\DateTime $invitationSentDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -29,6 +29,11 @@ trait SurveyTrait
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?\DateTime $secondReminderSentDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $latestManualReminderSentDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -83,15 +88,25 @@ trait SurveyTrait
         }
     }
 
-    public function getNotifiedDate(): ?DateTime
+    public function getInvitationSentDate(): ?DateTime
     {
-        return $this->notifiedDate;
+        return $this->invitationSentDate;
     }
 
-    public function setNotifiedDate(?DateTime $notifiedDate): self
+    public function setInvitationSentDate(?DateTime $invitationSentDate): self
     {
-        $this->notifiedDate = $notifiedDate;
+        $this->invitationSentDate = $invitationSentDate;
+        return $this;
+    }
 
+    public function getLatestManualReminderSentDate(): ?DateTime
+    {
+        return $this->latestManualReminderSentDate;
+    }
+
+    public function setLatestManualReminderSentDate(?DateTime $latestManualReminderSentDate): self
+    {
+        $this->latestManualReminderSentDate = $latestManualReminderSentDate;
         return $this;
     }
 
@@ -103,7 +118,6 @@ trait SurveyTrait
     public function setResponseStartDate(?DateTime $responseStartDate): self
     {
         $this->responseStartDate = $responseStartDate;
-
         return $this;
     }
 
@@ -115,7 +129,6 @@ trait SurveyTrait
     public function setSubmissionDate(?DateTime $submissionDate): self
     {
         $this->submissionDate = $submissionDate;
-
         return $this;
     }
 
@@ -138,7 +151,6 @@ trait SurveyTrait
     public function setInvitationEmails(?string $invitationEmails): self
     {
         $this->invitationEmails = $invitationEmails;
-
         return $this;
     }
 
@@ -150,7 +162,6 @@ trait SurveyTrait
     public function setInvitationAddress(?LongAddress $invitationAddress): self
     {
         $this->invitationAddress = $invitationAddress;
-
         return $this;
     }
 
@@ -197,7 +208,7 @@ trait SurveyTrait
         return $this->apiResponses;
     }
 
-    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false): array
+    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false, bool $reverse = false): array
     {
         $responses = $this->apiResponses
             ->filter(fn(NotifyApiResponse $r) =>
@@ -208,7 +219,9 @@ trait SurveyTrait
 
         if ($sorted) {
             usort($responses,
-                fn(NotifyApiResponse $a, NotifyApiResponse $b) => $b->getTimestamp() <=> $a->getTimestamp()
+                fn(NotifyApiResponse $a, NotifyApiResponse $b) => $reverse ?
+                    $a->getTimestamp() <=> $b->getTimestamp() :
+                    $b->getTimestamp() <=> $a->getTimestamp()
             );
         }
 

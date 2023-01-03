@@ -2,9 +2,7 @@
 
 namespace App\Controller\Cron;
 
-use App\Utility\RemindersHelper;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TestController extends AbstractCronController

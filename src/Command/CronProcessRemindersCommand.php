@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Utility\RemindersHelper;
+use App\Utility\Reminder\AutomatedRemindersHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,14 +13,14 @@ class CronProcessRemindersCommand extends Command
     protected static $defaultName = 'app:cron:reminders:process';
 
     /**
-     * @var RemindersHelper
+     * @var AutomatedRemindersHelper
      */
-    private RemindersHelper $remindersHelper;
+    private AutomatedRemindersHelper $automatedRemindersHelper;
 
-    public function __construct(RemindersHelper $remindersHelper)
+    public function __construct(AutomatedRemindersHelper $automatedRemindersHelper)
     {
         parent::__construct();
-        $this->remindersHelper = $remindersHelper;
+        $this->automatedRemindersHelper = $automatedRemindersHelper;
     }
 
     protected function configure()
@@ -34,7 +34,7 @@ class CronProcessRemindersCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->remindersHelper->sendReminders();
+        $this->automatedRemindersHelper->sendReminders();
 
         $io->success("Success");
 

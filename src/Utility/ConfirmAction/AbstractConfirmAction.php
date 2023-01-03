@@ -98,7 +98,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
      * @param null|callable $cancelledActionUrlCallback if omitted, will use the same callback as for confirmed
      * @return array|RedirectResponse
      */
-    public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null)
+    public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null): array|RedirectResponse
     {
         $form = $this->getForm();
 

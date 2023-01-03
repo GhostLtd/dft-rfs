@@ -234,13 +234,17 @@
     {%- with {
         class: ('govuk-warning-text '
             ~ (options.class ?? '')
-        ) | trim,
+        ) | trim
     } -%}
     <div class="{{ class }}">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
         <strong class="govuk-warning-text__text">
             <span class="govuk-warning-text__assistive">{{ 'common.notification.warning'|trans }}</span>
-            {{- content|nl2br -}}
+            {%- if options.markdown ?? false -%}
+                {{- content|markdown_to_html -}}
+            {%- else -%}
+                {{- content|nl2br -}}
+            {%- endif -%}
         </strong>
     </div>
     {%- endwith -%}

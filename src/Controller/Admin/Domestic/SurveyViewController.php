@@ -29,7 +29,7 @@ class SurveyViewController extends AbstractController
     private PdfHelper $pdfHelper;
     private AuditLogRepository $logRepository;
 
-    public function __construct(PdfHelper $pdfHelper, AuditLogRepository $logRepository)
+    public function __construct(AuditLogRepository $logRepository, PdfHelper $pdfHelper)
     {
         $this->pdfHelper = $pdfHelper;
         $this->logRepository = $logRepository;
@@ -71,8 +71,6 @@ class SurveyViewController extends AbstractController
     protected function getSurveyViewData(Survey $survey): array
     {
         return [
-            'survey' => $survey,
-            'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
             'auditLogs' => $this->logRepository->getLogs($survey->getId(), Survey::class),
             'approvedBy' => in_array($survey->getState(), [
                 SurveyInterface::STATE_INVITATION_SENT,
@@ -81,9 +79,11 @@ class SurveyViewController extends AbstractController
                 SurveyInterface::STATE_REJECTED,
                 SurveyInterface::STATE_CLOSED,
             ]) ? false : $this->logRepository->getApprovedBy($survey),
+            'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
             'qualityAssuredBy' => $survey->getQualityAssured() ?
                 $this->logRepository->getQualityAssuredBy($survey) :
                 false,
+            'survey' => $survey,
         ];
     }
 

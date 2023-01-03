@@ -61,17 +61,27 @@ class AuditLogRepository extends ServiceEntityRepository
 
     public function getLogs(string $entityId, string $entityClass): array
     {
-        return $this
-            ->createQueryBuilder('l')
-            ->where('l.entityClass = :entityClass')
-            ->andWhere('l.entityId = :entityId')
-            ->orderBy('l.timestamp', 'DESC')
-            ->getQuery()
-            ->setParameters([
-                'entityId' => $entityId,
-                'entityClass' => $entityClass,
-            ])
-            ->execute();
+        // Gets called a couple of times on the survey view admin page, from disparate places, and so a little
+        // memoization is used here.
+        static $localCache = [];
+
+        $key = "{$entityClass}-{$entityId}";
+
+        if (!isset($localCache[$key])) {
+            $localCache[$key] = $this
+                ->createQueryBuilder('l')
+                ->where('l.entityClass = :entityClass')
+                ->andWhere('l.entityId = :entityId')
+                ->orderBy('l.timestamp', 'DESC')
+                ->getQuery()
+                ->setParameters([
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                ])
+                ->execute();
+        }
+
+        return $localCache[$key];
     }
 
     public function getQualityAssuredBy($entity)

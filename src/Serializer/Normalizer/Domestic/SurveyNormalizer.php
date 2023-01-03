@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Normalizer\Domestic;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
@@ -79,7 +77,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyID' => new EpochWeekNumberProperty('surveyPeriodStart'),
             'SurveyWeek' => new YearlyWeekNumberProperty('surveyPeriodStart'),
 //            'VehicleOwnerID' => '', // not needed
-            'DateSurveySent' => new Property('notifiedDate'),
+            'DateSurveySent' => new Property('invitationSentDate'),
 //            'DateSurveyReturned' => '',
             'DateReminder1' => new Property('firstReminderSentDate'),
             'DateReminder2' => new Property('secondReminderSentDate'),
@@ -126,7 +124,6 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'ReturnCodeID' => new ReturnCodeIdProperty(),
             'ArticOrRigidID' => new BooleanProperty('response.vehicle.trailerConfiguration', Vehicle::TRAILER_CONFIGURATION_ARTICULATED),
             'AxleConfigurationID' => new Property('response.vehicle.axleConfiguration'),
-
         ];
     }
 }

@@ -1,0 +1,14 @@
+@import "~govuk-frontend/govuk/base";
+
+.send-reminder-unavailable {
+  .govuk-warning-text {
+    p {
+      margin: 0;
+    }
+
+    em {
+      color: govuk-colour('bright-purple');
+      font-style: normal;
+    }
+  }
+}

@@ -7,6 +7,7 @@ use App\Entity\Domestic\SurveyResponse as DomesticResponse;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\SurveyInterface;
+use App\Utility\Reminder\ManualReminderHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -17,21 +18,25 @@ class AdminSurveyVoter extends Voter
     const EDIT_NOTES = 'EDIT_NOTES';
     const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
     const FLAG_QA = 'FLAG_QA';
+    const MANUAL_REMINDER = 'MANUAL_REMINDER';
+    const MANUAL_REMINDER_BUTTON = 'MANUAL_REMINDER_BUTTON';
     const RESEND = 'RESEND';
     const RESET_PASSCODE = 'RESET_PASSCODE';
     const TRANSITION = 'TRANSITION';
     const VIEW_UNFILLED_REASON = 'VIEW_UNFILLED_REASON';
 
     private AuthorizationCheckerInterface $authorizationChecker;
+    private ManualReminderHelper $manualReminderHelper;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, ManualReminderHelper $manualReminderHelper)
     {
         $this->authorizationChecker = $authorizationChecker;
+        $this->manualReminderHelper = $manualReminderHelper;
     }
 
     protected function supports(string $attribute, $subject): bool
     {
-        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES, self::RESEND])
+        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::MANUAL_REMINDER, self::MANUAL_REMINDER_BUTTON, self::RESET_PASSCODE, self::TRANSITION, self::EDIT_NOTES, self::RESEND])
             && $subject instanceof SurveyInterface;
 
         $haulageInterfaceSupport = in_array($attribute, [self::FLAG_QA, self::VIEW_UNFILLED_REASON])
@@ -66,6 +71,10 @@ class AdminSurveyVoter extends Voter
             case self::EDIT:
             case self::RESET_PASSCODE:
                 return in_array($state, $openStatusesOrClosed) && (!is_null($subject->getPasscodeUser()));
+            case self::MANUAL_REMINDER_BUTTON:
+                return $this->manualReminderHelper->canShowManualReminderButton($subject);
+            case self::MANUAL_REMINDER:
+                return $this->manualReminderHelper->canSendManualReminder($subject);
             case self::RESEND:
                 return $state === SurveyInterface::STATE_INVITATION_FAILED;
             case self::VIEW_UNFILLED_REASON:

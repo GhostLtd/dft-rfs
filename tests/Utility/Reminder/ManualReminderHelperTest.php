@@ -1,0 +1,331 @@
+<?php
+
+namespace App\Tests\Utility\Reminder;
+
+use App\Entity\AuditLog\AuditLog;
+use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\Domestic\SurveyResponse as DomesticResponse;
+use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\International\SurveyResponse as InternationalResponse;
+use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\PreEnquiry\PreEnquiryResponse;
+use App\Entity\SurveyInterface;
+use App\Repository\AuditLog\AuditLogRepository;
+use App\Utility\AlphagovNotify\PersonalisationHelper;
+use App\Utility\AuditEntityLogger\SurveyStateLogger;
+use App\Utility\Reminder\ManualReminderHelper;
+use App\Utility\Reminder\UnavailabilityReason;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Security\Core\Security;
+
+class ManualReminderHelperTest extends KernelTestCase
+{
+    protected MockObject|AuditLogRepository $auditLogRepositoryMock;
+
+    protected ManualReminderHelper $manualReminderHelper;
+
+    protected function setUp(): void
+    {
+        $this->auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $personalisationHelperMock = $this->createMock(PersonalisationHelper::class);
+        $securityMock = $this->createMock(Security::class);
+
+        $this->manualReminderHelper = new ManualReminderHelper(
+            $this->auditLogRepositoryMock,
+            $entityManagerMock,
+            $messageBusMock,
+            $personalisationHelperMock,
+            $securityMock
+        );
+    }
+
+    public function dataCanShowManualReminderButton(): array
+    {
+        $domesticSurvey = fn(string $state): DomesticSurvey => (new DomesticSurvey())->setState($state);
+        $internationalSurvey = fn(string $state): InternationalSurvey => (new InternationalSurvey())->setState($state);
+        $preEnquiry = fn(string $state): PreEnquiry => (new PreEnquiry())->setState($state);
+
+        $testCases = [];
+
+        foreach(DomesticSurvey::STATE_FILTER_CHOICES as $state) {
+            $testCases[] = [$domesticSurvey($state), $state === SurveyInterface::STATE_IN_PROGRESS];
+        }
+
+        foreach(InternationalSurvey::STATE_FILTER_CHOICES as $state) {
+            $testCases[] = [$internationalSurvey($state), $state === SurveyInterface::STATE_IN_PROGRESS];
+        }
+
+        foreach(PreEnquiry::STATE_FILTER_CHOICES as $state) {
+            $testCases[] = [$preEnquiry($state), false]; // Not yet supported
+        }
+
+        return $testCases;
+    }
+
+    /**
+     * @dataProvider dataCanShowManualReminderButton
+     */
+    public function testCanShowManualReminderButton(SurveyInterface $survey, bool $expectedResult): void
+    {
+        $this->assertEquals($expectedResult, $this->manualReminderHelper->canShowManualReminderButton($survey));
+    }
+
+    public function dataGetRecipientEmails(): array
+    {
+        $domesticSurvey = fn(?string $contactEmail, ?string $invitationEmails): DomesticSurvey =>
+            (new DomesticSurvey())
+                ->setInvitationEmails($invitationEmails)
+                ->setResponse(
+                    (new DomesticResponse())
+                        ->setContactEmail($contactEmail)
+                );
+
+        $internationalSurvey = fn(?string $contactEmail, ?string $invitationEmails): InternationalSurvey =>
+            (new InternationalSurvey())
+                ->setInvitationEmails($invitationEmails)
+                ->setResponse(
+                    (new InternationalResponse())
+                        ->setContactEmail($contactEmail)
+                );
+
+        $preEnquiry = fn(?string $contactEmail, ?string $invitationEmails): PreEnquiry =>
+            (new PreEnquiry())
+                ->setInvitationEmails($invitationEmails)
+                ->setResponse(
+                    (new PreEnquiryResponse())
+                        ->setContactEmail($contactEmail)
+                );
+
+        $testCases = [];
+
+        // All three survey-types should work identically...
+        foreach([$domesticSurvey, $internationalSurvey, $preEnquiry] as $surveyGenerator) {
+            $testCases[] = [$surveyGenerator(null, null), null];
+            $testCases[] = [$surveyGenerator('one@example.com', null), ['one@example.com']];
+            $testCases[] = [$surveyGenerator('one@example.com', 'two@example.com'), ['one@example.com']];
+            $testCases[] = [$surveyGenerator(null, 'two@example.com'), ['two@example.com']];
+            $testCases[] = [$surveyGenerator(null, '     two@example.com     '), ['two@example.com']];
+            $testCases[] = [$surveyGenerator(null, 'two@example.com,three@example.com'), ['two@example.com', 'three@example.com']];
+            $testCases[] = [$surveyGenerator(null, 'two@example.com,,,,three@example.com'), ['two@example.com', 'three@example.com']];
+            $testCases[] = [$surveyGenerator(null, '     two@example.com     ,     three@example.com     '), ['two@example.com', 'three@example.com']];
+            $testCases[] = [$surveyGenerator(null, 'two@example.com,two@example.com'), ['two@example.com']];
+            $testCases[] = [$surveyGenerator(null, '     two@example.com     ,     two@example.com     '), ['two@example.com']];
+            $testCases[] = [$surveyGenerator(null, ''), null];
+            $testCases[] = [$surveyGenerator(null, ',     ,,'), null];
+        }
+
+        return $testCases;
+    }
+
+    /**
+     * @dataProvider dataGetRecipientEmails
+     */
+    public function testGetRecipientEmails(SurveyInterface $survey, ?array $expectedResult): void
+    {
+        $this->assertEquals($expectedResult, $this->manualReminderHelper->getRecipientEmails($survey));
+    }
+
+    public function dataGetInProgressDate(): array
+    {
+        $auditLog = fn(\DateTime $timestamp, array $data = [], string $category = SurveyStateLogger::CATEGORY) =>
+            (new AuditLog())->setTimestamp($timestamp)->setCategory($category)->setData($data);
+
+        $inProgressDate = new \DateTime('2021-05-06');
+
+        $toRejected = $auditLog(new \DateTime('2021-03-02'), ['to' => SurveyInterface::STATE_REJECTED]);
+        $toInProgress = $auditLog($inProgressDate, ['to' => SurveyInterface::STATE_IN_PROGRESS]);
+        $badToInProgress = $auditLog(new \DateTime('2021-05-06'), ['to' => SurveyInterface::STATE_IN_PROGRESS], 'other-category');
+
+        return [
+            [
+                [$toInProgress],
+                $inProgressDate
+            ], [
+                [$toRejected, $toInProgress],
+                $inProgressDate
+            ], [
+                [$toRejected],
+                null
+            ], [
+                [$badToInProgress],
+                null
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataGetInProgressDate
+     */
+    public function testGetInProgressDate(array $logResults, ?\DateTime $expectedResult): void
+    {
+        $this->auditLogRepositoryMock
+            ->method('getLogs')
+            ->willReturn($logResults);
+
+        $reflClass = new \ReflectionClass($this->manualReminderHelper);
+        $method = $reflClass->getMethod('getInProgressDate');
+
+        $survey = (new Survey())->setId('abc-123');
+
+        $result = $method->invoke($this->manualReminderHelper, $survey);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function dataGetReasonWhyCannotSendManualReminder(): array
+    {
+        $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): DomesticSurvey =>
+        (new DomesticSurvey())
+            ->setId('abc-123')
+            ->setState($state)
+            ->setInvitationSentDate($invitationDate)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate(null)
+            ->setInvitationEmails($invitationEmails)
+            ->setResponse(
+                (new DomesticResponse())
+                    ->setContactEmail($contactEmail)
+            );
+
+        $internationalSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): InternationalSurvey =>
+        (new InternationalSurvey())
+            ->setId('abc-123')
+            ->setState($state)
+            ->setInvitationSentDate($invitationDate)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate(null)
+            ->setInvitationEmails($invitationEmails)
+            ->setResponse(
+                (new InternationalResponse())
+                    ->setContactEmail($contactEmail)
+            );
+
+        $preEnquiry = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): PreEnquiry =>
+        (new PreEnquiry())
+            ->setId('abc-123')
+            ->setState($state)
+            ->setInvitationSentDate($invitationDate)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate(null)
+            ->setInvitationEmails($invitationEmails)
+            ->setResponse(
+                (new PreEnquiryResponse())
+                    ->setContactEmail($contactEmail)
+            );
+
+        $sixDaysAgo = (new \DateTime())->modify('-6 days');
+        $eightDaysAgo = (new \DateTime())->modify('-8 days');
+
+        return [
+            [$domesticSurvey(SurveyInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
+            [$internationalSurvey(SurveyInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
+            [$preEnquiry(SurveyInterface::STATE_NEW), UnavailabilityReason::NO_NOTIFY_TEMPLATE], // Currently not supported
+
+            // -----
+
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
+
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
+
+            // -----
+
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
+
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
+
+        ];
+    }
+
+    /**
+     * @dataProvider dataGetReasonWhyCannotSendManualReminder
+     */
+    public function testGetReasonWhyCannotSendManualReminder(SurveyInterface $survey, ?string $expectedResult): void
+    {
+        $this->auditLogRepositoryMock
+            ->method('getLogs')
+            ->willReturn([]);
+
+        $reason = $this->manualReminderHelper->getReasonWhyCannotSendManualReminder($survey);
+
+        if ($reason) {
+            $this->assertEquals($reason->getReason(), $expectedResult);
+        } else {
+            $this->assertNull($reason);
+        }
+    }
+
+    public function dataGetMostRecentEventDate(): array
+    {
+        $one = new \DateTime('2021-01-01');
+        $two = new \DateTime('2021-03-01');
+        $three = new \DateTime('2021-05-01');
+        $four = new \DateTime('2021-07-01');
+        $five = new \DateTime('2021-08-01');
+
+        $survey = fn(
+            ?\DateTime $invitationDate,
+            ?\DateTime $firstReminderDate,
+            ?\DateTime $secondReminderDate,
+            ?\DateTime $manualReminderDate,
+        ) => (new DomesticSurvey())
+            ->setId('abc-123')
+            ->setInvitationSentDate($invitationDate)
+            ->setFirstReminderSentDate($firstReminderDate)
+            ->setSecondReminderSentDate($secondReminderDate)
+            ->setLatestManualReminderSentDate($manualReminderDate);
+
+        $logs = fn(\DateTime $inProgressDate) =>
+            [
+                (new AuditLog())
+                ->setTimestamp($inProgressDate)
+                ->setData(['to' => SurveyInterface::STATE_IN_PROGRESS])
+                ->setCategory(SurveyStateLogger::CATEGORY)
+            ];
+
+        return [
+            [$survey(null, null, null, null), [], null, null],
+            [$survey($one, $two, $three, $four), $logs($five), $five, 'in_progress'],
+            [$survey($one, $two, $three, $five), $logs($four), $five, 'manual_reminder'],
+            [$survey($one, $two, $five, $three), $logs($four), $five, 'second_reminder'],
+            [$survey($one, $five, $two, $three), $logs($four), $five, 'first_reminder'],
+            [$survey($five, $one, $two, $three), $logs($four), $five, 'invitation'],
+            [$survey($one, null, $two, null), [], $two, 'second_reminder'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataGetMostRecentEventDate
+     */
+    public function testGetMostRecentEventDate(SurveyInterface $survey, array $logs, ?\DateTime $expectedDate, ?string $expectedEventType): void
+    {
+        $this->auditLogRepositoryMock
+            ->method('getLogs')
+            ->willReturn($logs);
+
+        [$latestEventDate, $eventType] = $this->manualReminderHelper->getMostRecentEventDate($survey);
+
+        $this->assertEquals($expectedDate, $latestEventDate);
+        $this->assertEquals($expectedEventType, $eventType);
+    }
+}

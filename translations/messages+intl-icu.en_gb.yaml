@@ -189,6 +189,7 @@ admin:
       user: "User"
     cleanup-passcode: "Removed passcode user"
     cleanup-personal: "Removed personal data"
+    manual-reminder: "Sent manual reminder"
     survey-qa: "Flagged survey as QA checked"
     survey-state: "Changed survey state from `{from}` to `{to}`"
   login:
@@ -530,6 +531,36 @@ admin:
       cancelled-notification:
         heading: 'Delete cancelled'
         content: The Maintenance Warning for {start, date, medium} was not deleted
+
+  send-reminder:
+    heading: Send email reminder
+    warning: 'Are you sure you want to send an email reminder for this survey?'
+    cancel.label: Cancel
+    confirm.label: Send reminder
+    recipients: Reminder recipients
+
+    confirmed-notification:
+      heading: 'Reminder sent'
+      content: A reminder has been sent for this survey
+    cancelled-notification:
+      heading: 'Reminder cancelled'
+      content: No reminder has been sent
+
+  send-reminder-unavailable:
+    heading: Send email reminder
+    warning:
+      no-email-addresses: |-
+        A reminder cannot be sent, as there is neither an invitation address nor a contact email associated with this survey.
+      too-soon: |-
+        A reminder cannot be sent yet, as {eventType, select,
+          invitation {the *initial invitation* was recently sent.}
+          in_progress {the survey recently changed state to in-progress.}
+          first_reminder {the *first reminder* was recently sent.}
+          second_reminder {the *second reminder* was recently sent.}
+          manual_reminder {a *manual reminder* was recently sent.}
+          other {Other}
+        }  
+        A manual reminder may next be sent in *{interval}*.
 
 domestic:
   transferred-port:
