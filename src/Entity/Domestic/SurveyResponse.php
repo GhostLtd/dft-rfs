@@ -43,6 +43,16 @@ class SurveyResponse extends AbstractSurveyResponse
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SOLD => self::IN_POSSESSION_SOLD,
     ];
 
+    const IS_EXEMPT_TRANSLATION_PREFIX = 'domestic.survey-response.is-exempt-vehicle-type.option.';
+
+    const IS_EXEMPT_YES = 'yes';
+    const IS_EXEMPT_NO = 'no';
+
+    const IS_EXEMPT_CHOICES = [
+        self::IS_EXEMPT_TRANSLATION_PREFIX . self::IS_EXEMPT_YES => true,
+        self::IS_EXEMPT_TRANSLATION_PREFIX . self::IS_EXEMPT_NO => false,
+    ];
+
     const EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-empty-survey.option.';
     const EMPTY_SURVEY_REASON_CHOICES = [
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
@@ -197,6 +207,12 @@ class SurveyResponse extends AbstractSurveyResponse
     private $days;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Assert\NotNull(message="domestic.survey-response.is-exempt-vehicle-type.choice", groups={"domestic.is-exempt-vehicle-type", "admin_exempt_vehicle_type"})
+     */
+    private ?bool $isExemptVehicleType;
+
+    /**
      * @Assert\Callback(groups={"admin_sold"})
      */
     public function validateSoldDateAdmin(ExecutionContextInterface $context) {
@@ -253,6 +269,7 @@ class SurveyResponse extends AbstractSurveyResponse
     public function __construct()
     {
         $this->days = new ArrayCollection();
+        $this->isExemptVehicleType = null;
     }
 
     public function getHireeName(): ?string
@@ -333,6 +350,11 @@ class SurveyResponse extends AbstractSurveyResponse
                 ->setHireeAddress(null)
             ;
         }
+
+        if ($isInPossessionOfVehicle !== SurveyResponse::IN_POSSESSION_YES) {
+            $this->setIsExemptVehicleType(null);
+        }
+
         $this->isInPossessionOfVehicle = $isInPossessionOfVehicle;
 
         return $this;
@@ -469,6 +491,17 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
+    public function getIsExemptVehicleType(): ?bool
+    {
+        return $this->isExemptVehicleType;
+    }
+
+    public function setIsExemptVehicleType(?bool $isExemptVehicleType): self
+    {
+        $this->isExemptVehicleType = $isExemptVehicleType;
+        return $this;
+    }
+
     public function hasJourneys(): bool
     {
         if (isset($this->_stopCountForExport) && isset($this->_summaryCountForExport)) {
@@ -542,6 +575,7 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->newOwnerTelephone = $newOwnerTelephone;
         return $this;
     }
+
     /**
      * Used in constraint validation for hiree details
      */

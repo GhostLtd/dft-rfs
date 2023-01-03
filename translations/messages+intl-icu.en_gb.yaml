@@ -543,6 +543,7 @@ domestic:
     heading: Survey dashboard
     vehicle: Vehicle
     start-date: Start date
+    complete-exempt: Review survey details
     complete-week: Complete survey week
     complete-vehicle-and-business-details: Complete vehicle and business details
     change-contact-details: View/change the contact, business and vehicle details you have already entered
@@ -589,6 +590,13 @@ domestic:
           sold: 'No - sold'
           on-hire: 'No - on hire'
       change-link-sr-suffix: vehicle posession details
+
+    is-exempt-vehicle-type:
+      label: Is your vehicle a horsebox, jetter, cherry-picker or exhibition/showperson's vehicle?
+      help: ''
+      option:
+        yes: Yes
+        no: No
 
     reason-for-empty-survey:
       reason-for-empty-survey:
@@ -1016,6 +1024,11 @@ domestic:
       contact-details: Contact details
       contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
       confirm-and-submit: Confirm and submit
+
+  closing-exempt:
+    confirm.label: Submit survey
+    cancel.label: Cancel
+
   driver-availability:
     currency-or-percentage:
       percentage: "% (percent)"

@@ -30,15 +30,33 @@ class InitialDetailsData
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_continue", [
+        ];
+
+        if ($inPossessionAnswer === SurveyResponse::IN_POSSESSION_YES) {
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
+                new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
+                new FormTestCase([
+                    'in_possession_of_vehicle' => [
+                        'isInPossessionOfVehicle' => $inPossessionAnswer,
+                    ]
+                ], ['#in_possession_of_vehicle_isExemptVehicleType']),
+                new FormTestCase([
+                    'in_possession_of_vehicle' => [
+                        'isInPossessionOfVehicle' => $inPossessionAnswer,
+                        'isExemptVehicleType' => strval(array_search(SurveyResponse::IS_EXEMPT_NO, array_values(SurveyResponse::IS_EXEMPT_CHOICES))),
+                    ],
+                ]),
+            ]);
+        } else {
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
                 new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
                 new FormTestCase([
                     'in_possession_of_vehicle' => [
                         'isInPossessionOfVehicle' => $inPossessionAnswer,
                     ]
                 ]),
-            ]),
-        ];
+            ]);
+        }
 
         $endData = [
             new WizardEndUrlTestCase('/domestic-survey')

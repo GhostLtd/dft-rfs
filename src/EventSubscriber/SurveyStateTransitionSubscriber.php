@@ -119,6 +119,19 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
+    public function transitionRejectExempt(Event $event)
+    {
+        $survey = $this->getSurvey($event);
+
+        if (!$survey instanceof DomesticSurvey) {
+            return;
+        }
+
+        if ($survey->getResponse()?->getIsExemptVehicleType()) {
+            $this->domesticPdfHelper->generateAndUploadPdfIfNotExists($survey);
+        }
+    }
+
     public function transitionConfirmExport(Event $event)
     {
         $survey = $this->getSurvey($event);
@@ -168,11 +181,15 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
     public function guardUnReject(GuardEvent $event)
     {
-        $event->setBlocked(
-            !$this->auditLogRepository->surveyHasPreviouslyBeenInClosedState(
-                $this->getSurvey($event)
-            )
-        );
+        $survey = $this->getSurvey($event);
+
+        $hasPreviouslyBeenInClosedState = $this->auditLogRepository->surveyHasPreviouslyBeenInClosedState($survey);
+
+        $isExemptVehicleType =
+            $survey instanceof DomesticSurvey &&
+            $survey->getResponse()?->getIsExemptVehicleType() === true;
+
+        $event->setBlocked(!$hasPreviouslyBeenInClosedState && !$isExemptVehicleType);
     }
 
     public static function getSubscribedEvents(): array
@@ -184,6 +201,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
             'workflow.domestic_survey.transition.approve' => 'transitionApprove',
+            'workflow.domestic_survey.transition.reject_exempt' => 'transitionRejectExempt',
+
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',

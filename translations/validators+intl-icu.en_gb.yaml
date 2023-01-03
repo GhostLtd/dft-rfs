@@ -217,6 +217,8 @@ domestic:
   number-of-stops:
     choice: Choose how many times you stopped on the day
   survey-response:
+    is-exempt-vehicle-type:
+      choice: Choose whether your vehicle is one of the described vehicle types
     in-possession-of-vehicle:
       choice: Choose whether you will be in possession of the vehicle during your survey week
     initial-details:

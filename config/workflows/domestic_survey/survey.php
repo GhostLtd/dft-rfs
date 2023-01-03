@@ -83,6 +83,11 @@ return static function (ContainerConfigurator $container) {
 //                        'from' => StateObject::STATE_EXPORTING,
 //                        'to' => StateObject::STATE_EXPORTED,
 //                    ],
+                    'reject_exempt' => [
+                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'to' => StateObject::STATE_REJECTED,
+                        'guard' => 'subject.getResponse().getIsExemptVehicleType() === true',
+                    ],
                     'reject' => [
                         'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_REJECTED,

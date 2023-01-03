@@ -25,7 +25,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
      * @Route("/domestic-survey/closing-details", name=self::START_ROUTE_NAME)
      * @Route("/domestic-survey/closing-details/{state}", name=self::ROUTE_NAME)
      * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())", )
+     * @Security("is_granted('CLOSING_DETAILS', user.getDomesticSurvey())")
      */
     public function index(WorkflowInterface $domesticSurveyClosingDetailsStateMachine, Request $request, $state = null): Response
     {

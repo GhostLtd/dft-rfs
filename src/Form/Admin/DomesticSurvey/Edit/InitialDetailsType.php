@@ -31,11 +31,17 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                 'choices' => SurveyResponse::IN_POSSESSION_CHOICES,
                 'label' => "domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label",
                 'choice_options' => [
+                    SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_YES => ['conditional_form_name' => 'isExemptVehicleType'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_ON_HIRE => ['conditional_form_name' => 'hiree_details'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN => ['conditional_form_name' => 'scrapped_details'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SOLD => ['conditional_form_name' => 'sold_details'],
                 ],
                 'constraints' => [new NotBlank(['groups' => 'admin_correspondence', 'message' => 'Please choose an option'])],
+            ])
+            ->add('isExemptVehicleType', Gds\ChoiceType::class, [
+                'choices' => SurveyResponse::IS_EXEMPT_CHOICES,
+                'label' => "domestic.survey-response.is-exempt-vehicle-type.label",
+                'help' => "domestic.survey-response.is-exempt-vehicle-type.help",
             ])
             ->add('hiree_details', HireeDetailsType::class, [
                 'label' => false,
@@ -72,6 +78,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                 $validationGroups = ['admin_correspondence'];
 
                 switch ($isInPossession) {
+                    case SurveyResponse::IN_POSSESSION_YES:
+                        $validationGroups[] = 'admin_exempt_vehicle_type';
+                        break;
                     case SurveyResponse::IN_POSSESSION_ON_HIRE:
                         $validationGroups[] = 'admin_on_hire';
                         break;
@@ -102,8 +111,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         // a) Getting the date data to/from the correct form field (soldDate, scrappedDate or neither)
         // b) Setting fields related to the non-chosen options to null (e.g. choose "hire" and sold/scrapped fields will be nulled)
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+
+        /** @var FormInterface[] $forms */
         $accessor = PropertyAccess::createPropertyAccessor();
 
         foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
@@ -111,6 +121,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
 
         switch ($viewData->getIsInPossessionOfVehicle()) {
+            case SurveyResponse::IN_POSSESSION_YES:
+                $forms['isExemptVehicleType']->setData($accessor->getValue($viewData, 'isExemptVehicleType'));
+                break;
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
                 foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {
                     $forms[$field]->setData($accessor->getValue($viewData, $field));
@@ -130,15 +143,16 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
 
     public function mapFormsToData($forms, &$viewData)
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!$viewData instanceof SurveyResponse) {
             throw new Exception\UnexpectedTypeException($viewData, SurveyResponse::class);
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
         $isInPossession = $forms['isInPossessionOfVehicle']->getData();
+
 
         foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
@@ -153,6 +167,10 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         };
 
         switch ($isInPossession) {
+            case SurveyResponse::IN_POSSESSION_YES:
+                $isExemptVehicleType = $forms['isExemptVehicleType']->getData();
+                $viewData->setIsExemptVehicleType($isExemptVehicleType);
+                break;
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
                 $viewData->setUnableToCompleteDate(null);
                 foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {

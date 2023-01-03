@@ -2,6 +2,8 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -10,10 +12,13 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SurveyVoter extends Voter
 {
+    const ELIGIBLE_TO_FILL_SURVEY_WEEK = "ELIGIBLE_TO_FILL_SURVEY_WEEK";
+    const CLOSE_SURVEY_EXEMPT = 'CLOSE_SURVEY_EXEMPT';
     const EDIT = 'EDIT';
-    const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
+    const CLOSING_DETAILS = 'CLOSING_DETAILS';
     const PROVIDE_FEEDBACK = "PROVIDE_FEEDBACK";
     const VIEW_FEEDBACK_SUMMARY = "VIEW_FEEDBACK_SUMMARY";
+    const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
 
     private AuthorizationCheckerInterface $authorizationChecker;
 
@@ -24,10 +29,20 @@ class SurveyVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW_SUBMISSION_SUMMARY, self::PROVIDE_FEEDBACK, self::VIEW_FEEDBACK_SUMMARY])
-            && $subject instanceof SurveyInterface;
+        return in_array($attribute, [
+            self::CLOSE_SURVEY_EXEMPT,
+            self::EDIT,
+            self::CLOSING_DETAILS,
+            self::ELIGIBLE_TO_FILL_SURVEY_WEEK,
+            self::PROVIDE_FEEDBACK,
+            self::VIEW_FEEDBACK_SUMMARY,
+            self::VIEW_SUBMISSION_SUMMARY,
+        ]) && $subject instanceof SurveyInterface;
     }
 
+    /**
+     * @param SurveyInterface $subject
+     */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->authorizationChecker->isGranted(PasscodeUser::ROLE_PASSCODE_USER)) {
@@ -36,24 +51,35 @@ class SurveyVoter extends Voter
 
         $hasFeedback = fn(SurveyInterface $s) => $s->getFeedback() && $s->getFeedback()->getId();
 
-        switch ($attribute) {
-            case self::EDIT:
-                return in_array($subject->getState(), [
-                    SurveyInterface::STATE_IN_PROGRESS,
-                    SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT,
-                    SurveyInterface::STATE_INVITATION_FAILED, SurveyInterface::STATE_INVITATION_PENDING
-                ]);
+        return match ($attribute) {
+            self::CLOSE_SURVEY_EXEMPT =>
+                $subject instanceof DomesticSurvey &&
+                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getResponse()?->getIsExemptVehicleType() === true,
 
-            case self::VIEW_SUBMISSION_SUMMARY:
-                return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]);
+            // Closing details and viewing the main survey week-filling screen is available to those who have:
+            // a) Filled out initial-details
+            // b) Don't have an exempt vehicle
+            self::CLOSING_DETAILS,
+            self::ELIGIBLE_TO_FILL_SURVEY_WEEK =>
+                $subject instanceof DomesticSurvey &&
+                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                !$subject->getResponse()?->getIsExemptVehicleType(),
 
-            case self::PROVIDE_FEEDBACK:
-                return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && !$hasFeedback($subject);
+            self::EDIT => in_array($subject->getState(), [
+                SurveyInterface::STATE_IN_PROGRESS,
+                SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT,
+                SurveyInterface::STATE_INVITATION_FAILED, SurveyInterface::STATE_INVITATION_PENDING
+            ]),
 
-            case self::VIEW_FEEDBACK_SUMMARY:
-                return in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && $hasFeedback($subject);
-        }
+            self::PROVIDE_FEEDBACK => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && !$hasFeedback($subject),
 
-        return false;
+            self::VIEW_FEEDBACK_SUMMARY => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && $hasFeedback($subject),
+
+            self::VIEW_SUBMISSION_SUMMARY => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED, SurveyInterface::STATE_REJECTED]),
+
+            default => false,
+        };
+
     }
 }

@@ -17,7 +17,7 @@ class SurveyTransitionController extends AbstractController
 {
     /**
      * @Route("/csrgt/surveys/{surveyId}/transition/{transition}", name=SurveyController::TRANSITION_ROUTE,
-     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_approve"}
+     *     requirements={"transition": "complete|re_open|approve|reject|un_reject|un_reject_exempt|un_approve"}
      * )
      * @Entity("survey", expr="repository.find(surveyId)")
      * @Template("admin/domestic/surveys/workflow-action.html.twig")

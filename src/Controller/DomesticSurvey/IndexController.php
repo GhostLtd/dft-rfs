@@ -3,7 +3,6 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Annotation\Redirect;
-use App\Security\Voter\SurveyVoter;
 use App\Utility\Domestic\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,16 +45,20 @@ class IndexController extends AbstractController
     /**
      * @Route("/contact-and-business-details", name=self::CONTACT_AND_BUSINESS_ROUTE)
      * @Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route="app_domesticsurvey_completed")
+     * @Redirect("!is_granted('ELIGIBLE_TO_FILL_SURVEY_WEEK', user.getDomesticSurvey())", route="app_domesticsurvey_summary")
      * @Security("is_granted('EDIT', user.getDomesticSurvey())")
      */
     public function contactAndBusinessDetails(): Response
     {
         $survey = $this->getSurvey();
+
         if (!$survey->isInitialDetailsComplete()) {
             return $this->redirectToRoute("app_domesticsurvey_initialdetails_start");
         }
 
-        if (!$survey->isBusinessAndVehicleDetailsComplete()) {
+        $response = $survey->getResponse();
+
+        if (!$survey->isBusinessAndVehicleDetailsComplete() || $response->getIsExemptVehicleType()) {
             return $this->redirectToRoute(self::SUMMARY_ROUTE);
         }
 

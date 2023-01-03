@@ -70,22 +70,34 @@ class AdminSurveyVoter extends Voter
                 return $state === SurveyInterface::STATE_INVITATION_FAILED;
             case self::VIEW_UNFILLED_REASON:
                 if ($subject instanceof DomesticSurvey) {
-                    return in_array($state, $approvedOrExportedStatuses);
+                    $response = $subject->getResponse();
+
+                    $isExemptVehicleType = $response?->getIsExemptVehicleType();
+                    $isInPossessionOfVehicle = $response?->getIsInPossessionOfVehicle();
+
+                    return in_array($state, $approvedOrExportedStatuses) &&
+                        !$isExemptVehicleType &&
+                        $isInPossessionOfVehicle;
                 } else if ($subject instanceof InternationalSurvey) {
-                    return in_array($state, array_merge($approvedOrExportedStatuses, [SurveyInterface::STATE_CLOSED]));
+                    return in_array($state, array_merge($approvedOrExportedStatuses, [SurveyInterface::STATE_CLOSED])) &&
+                        $subject->shouldAskWhyEmptySurvey();
                 }
                 break;
             case self::TRANSITION:
             case self::EDIT_NOTES:
                 return !in_array($state, [SurveyInterface::STATE_EXPORTING, SurveyInterface::STATE_EXPORTED]);
             case self::ENTER_BUSINESS_AND_VEHICLE_DETAILS:
-                assert($subject instanceof DomesticSurvey);
+                if (!$subject instanceof DomesticSurvey) {
+                    return false;
+                }
+
                 $response = $subject->getResponse();
 
-                return in_array($state, $openStatusesOrClosed)
-                    && !$subject->isBusinessAndVehicleDetailsComplete()
-                    && $response
-                    && $response->getIsInPossessionOfVehicle() === DomesticResponse::IN_POSSESSION_YES;
+                return
+                    in_array($state, $openStatusesOrClosed) &&
+                    !$subject->isBusinessAndVehicleDetailsComplete() &&
+                    $response?->getIsInPossessionOfVehicle() === DomesticResponse::IN_POSSESSION_YES &&
+                    $response?->getIsExemptVehicleType() === DomesticResponse::IS_EXEMPT_NO;
             case self::FLAG_QA:
                 assert($subject instanceof HaulageSurveyInterface);
                 return $state === SurveyInterface::STATE_APPROVED && !$subject->getQualityAssured();

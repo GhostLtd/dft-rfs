@@ -31,7 +31,7 @@
                 'Business details': 'tab-business-details',
                 'Vehicle details': 'tab-vehicle-details',
             } : {})
-            | merge(survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') ? {'Final details': 'tab-final-details'} : {})
+            | merge(canViewUnfilledReason ? {'Final details': 'tab-final-details'} : {})
             | merge(not survey.inActiveState and survey.driverAvailability ?? false ? {'Driver availability': 'tab-driver-availability'} : {})
         %}
     {%- endif -%}
@@ -206,10 +206,7 @@
         {%- endwith -%}
     {%- endif -%}
 
-    {% if workflow_can(survey, 'approve') or workflow_can(survey, 'reject') or workflow_can(survey, 'complete')
-        or workflow_can(survey, 're_open') or workflow_can(survey, 'un_approve') or workflow_can(survey, 'un_reject')
-        or workflow_can(survey, 'reissue')
-    %}
+    {% if workflow_can_any(survey, ['approve', 'complete', 'reissue', 'reject', 're_open', 'un_approve', 'un_reject']) %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Survey actions</h2>

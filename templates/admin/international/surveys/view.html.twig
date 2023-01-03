@@ -27,7 +27,7 @@
         -%}
     {%- endif -%}
     {%- set tabs = tabs
-        | merge(canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() ? {'Final details': 'tab-final-details'} : {})
+        | merge(canViewUnfilledReason ? {'Final details': 'tab-final-details'} : {})
         | merge({
             ("Notes (#{survey.chasedCount} / #{ survey.notes | length })"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
