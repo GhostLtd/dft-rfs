@@ -612,11 +612,13 @@ domestic:
         help: 'We may need to ask you to supply evidence at the end of the survey period'
       option:
         yes: 'Yes'
+        yes-exempt: 'Yes - exempt'
         scrapped-or-stolen: 'No - it has been scrapped or stolen'
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'
         short:
           yes: 'Yes'
+          yes-exempt: 'Yes - exempt'
           scrapped-or-stolen: 'No - scrapped/stolen'
           sold: 'No - sold'
           on-hire: 'No - on hire'

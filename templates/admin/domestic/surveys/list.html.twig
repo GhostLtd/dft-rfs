@@ -16,10 +16,14 @@
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
-            {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
-                '-' :
-                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
-            }}
+
+            {%- if survey.response == null or survey.response.isInPossessionOfVehicle == null -%}
+                {{ tableCell('-') }}
+            {%- else -%}
+                {%- set inPossessionCode = survey.response.isExemptVehicleType ? 'yes-exempt' : survey.response.isInPossessionOfVehicle -%}
+                {{ tableCell((constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ inPossessionCode) | trans) }}
+            {%- endif -%}
+
             {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
             {{- countField(survey, 'totalDayCount') -}}
             {{ tableCell(

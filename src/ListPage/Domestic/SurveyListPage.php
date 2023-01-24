@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\DaysFilter;
+use App\ListPage\Domestic\Field\InPossessionFilter;
 use App\ListPage\Domestic\Field\WeekYearFilter;
 use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\QaChoiceFilter;
@@ -39,6 +40,13 @@ class SurveyListPage extends AbstractListPage
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         $possessionChoices = array_combine(array_map(fn($x) => ucfirst($x), SurveyResponse::IN_POSSESSION_CHOICES), SurveyResponse::IN_POSSESSION_CHOICES);
 
+        // Sneak "yes - exempt" in as the second option
+        $possessionChoices = array_merge(
+            array_slice($possessionChoices, 0, 1),
+            [SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . 'yes-exempt' => 'yes-exempt'],
+            array_slice($possessionChoices, 1),
+        );
+
         return [
             (new WeekYearFilter('Week', 'survey.surveyPeriodStart'))->sortable(),
             (new TextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
@@ -48,7 +56,7 @@ class SurveyListPage extends AbstractListPage
                 'Yes' => true,
                 'No' => false,
             ]))->sortable(),
-            (new ChoiceFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
+            (new InPossessionFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),
             (new DaysFilter('Days')),
         ];
