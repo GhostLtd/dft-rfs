@@ -9,8 +9,6 @@
     {%- with {stop: subject} -%}
         {%- set survey = stop.day.response.survey -%}
 
-        <h1 class="govuk-heading-l" id="top">{{ "#{translation_prefix}.title"|trans }}</h1>
-
         <table class="govuk-table journeys-table">
             {{- dayStopTableHeadingAndCaption(null, survey, stop.day) -}}
             <tbody class="govuk-table__body">
