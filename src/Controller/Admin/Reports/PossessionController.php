@@ -25,7 +25,7 @@ class PossessionController extends AbstractReportsController
     {
         [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS]);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS, ReportFilterType::TYPE_PRE_ENQUIRY]);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_possession_full', $form->getData()));

@@ -31,7 +31,7 @@ class ApprovalsController extends AbstractReportsController
             ? InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter)
             : DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_PRE_ENQUIRY]);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_approvals_full', $form->getData()));

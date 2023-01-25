@@ -25,7 +25,7 @@ class QualityAssuranceController extends AbstractReportsController
     {
         [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_PRE_ENQUIRY]);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_qa_full', $form->getData()));

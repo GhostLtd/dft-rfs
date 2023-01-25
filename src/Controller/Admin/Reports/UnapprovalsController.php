@@ -33,7 +33,7 @@ class UnapprovalsController extends AbstractReportsController
             ? InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter)
             : DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_CSRGT_GB, ReportFilterType::TYPE_CSRGT_NI]);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_CSRGT_GB, ReportFilterType::TYPE_CSRGT_NI, ReportFilterType::TYPE_PRE_ENQUIRY]);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_unapprovals_full', $form->getData()));
