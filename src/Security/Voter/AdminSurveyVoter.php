@@ -64,6 +64,11 @@ class AdminSurveyVoter extends Voter
             SurveyInterface::STATE_EXPORTED,
         ];
 
+        $notOpenStatuses = array_merge($approvedOrExportedStatuses, [
+            SurveyInterface::STATE_CLOSED,
+            SurveyInterface::STATE_REJECTED,
+        ]);
+
         /** @var $subject SurveyInterface */
         $state = $subject->getState();
 
@@ -84,11 +89,11 @@ class AdminSurveyVoter extends Voter
                     $isExemptVehicleType = $response?->getIsExemptVehicleType();
                     $isInPossessionOfVehicle = $response?->getIsInPossessionOfVehicle();
 
-                    return in_array($state, $approvedOrExportedStatuses) &&
+                    return in_array($state, $notOpenStatuses) &&
                         !$isExemptVehicleType &&
                         $isInPossessionOfVehicle;
                 } else if ($subject instanceof InternationalSurvey) {
-                    return in_array($state, array_merge($approvedOrExportedStatuses, [SurveyInterface::STATE_CLOSED])) &&
+                    return in_array($state, $notOpenStatuses) &&
                         $subject->shouldAskWhyEmptySurvey();
                 }
                 break;
