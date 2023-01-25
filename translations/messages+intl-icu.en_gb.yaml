@@ -1271,14 +1271,14 @@ pre-enquiry:
     title: ''
     help: ''
     total-vehicle-count:
-      label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
+      label: How many powered goods vehicles of 3.5 tonnes and over (gross vehicle weight) do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
       label: How many of these vehicles will be used to make international journeys?
       help: ''
     annual-journey-estimate:
-      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
-      help: ''
+      label: Estimate of the number of international journeys (round trips) that your company will make in these vehicles over the next 12 months
+      help: Only include the trips of vehicles of 3.5 tonnes and over in your estimate
   business-details:
     heading: Business details
     title: ''
