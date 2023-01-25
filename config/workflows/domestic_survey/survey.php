@@ -86,7 +86,7 @@ return static function (ContainerConfigurator $container) {
                     'reject_exempt' => [
                         'from' => StateObject::STATE_IN_PROGRESS,
                         'to' => StateObject::STATE_REJECTED,
-                        'guard' => 'subject.getResponse().getIsExemptVehicleType() === true',
+                        'guard' => 'subject.getResponse() && subject.getResponse().getIsExemptVehicleType() === true',
                     ],
                     'reject' => [
                         'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
