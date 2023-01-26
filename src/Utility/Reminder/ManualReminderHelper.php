@@ -4,6 +4,7 @@ namespace App\Utility\Reminder;
 
 use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\Domestic\SurveyNote as DomesticSurveyNote;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
@@ -75,6 +76,18 @@ class ManualReminderHelper
             ->setData([]);
 
         $this->entityManager->persist($log);
+
+        $survey->setLatestManualReminderSentDate(new \DateTime());
+
+        if ($survey instanceof DomesticSurvey) {
+            $note = (new DomesticSurveyNote())
+                ->setNote("Manual reminder sent")
+                ->setWasChased(true);
+
+            $survey->addNote($note);
+            $this->entityManager->persist($note);
+        }
+
         $this->entityManager->flush();
     }
 
@@ -103,7 +116,7 @@ class ManualReminderHelper
             return new UnavailabilityReason(UnavailabilityReason::NO_EMAIL_ADDRESSES);
         }
 
-        $sevenDaysAgo = (new \DateTime())->modify('-7 days')->modify('+12 hours');
+        $sevenDaysAgo = (new \DateTime())->modify('-7 days')->modify('+1 second');
         [$latestEventDate, $eventType] = $this->getMostRecentEventDate($survey);
 
         return ($latestEventDate <= $sevenDaysAgo) ?
