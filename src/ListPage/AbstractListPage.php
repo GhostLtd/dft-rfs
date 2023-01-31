@@ -4,6 +4,7 @@ namespace App\ListPage;
 
 use App\ListPage\Field\FilterableInterface;
 use App\ListPage\Field\Simple;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -162,6 +163,10 @@ abstract class AbstractListPage
         return $form;
     }
 
+    protected function prePaginatorQueryAdjustments(Query $query): void
+    {
+    }
+
     public function getData(): ListPageData
     {
         $itemsPerPage = $this->getItemsPerPage();
@@ -171,7 +176,10 @@ abstract class AbstractListPage
             ->setFirstResult(($page - 1) * $itemsPerPage)
             ->setMaxResults($itemsPerPage);
 
-        $paginator = new Paginator($queryBuilder);
+        $query = $queryBuilder->getQuery();
+        $this->prePaginatorQueryAdjustments($query);
+
+        $paginator = new Paginator($query);
         $numRecords = $paginator->count();
         $numPages = intval(ceil($numRecords / $itemsPerPage));
 

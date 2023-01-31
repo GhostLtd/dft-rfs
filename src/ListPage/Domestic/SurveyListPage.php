@@ -14,6 +14,8 @@ use App\ListPage\Field\Simple;
 use App\ListPage\Field\SpaceStrippingTextFilter;
 use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\SurveyRepository;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -74,6 +76,16 @@ class SurveyListPage extends AbstractListPage
             ->leftJoin('day.summary', 'summary')
             ->andWhere('survey.isNorthernIreland = :isNorthernIreland')
             ->setParameter('isNorthernIreland', $this->isNorthernIreland);
+    }
+
+    protected function prePaginatorQueryAdjustments(Query $query): void
+    {
+        // Override these nasty fetch=EAGER flags causing extra fetches!
+        $query->setFetchMode(Survey::class, "driverAvailability", ClassMetadataInfo::FETCH_LAZY);
+
+        // This one stops it from loading the one-to-ones that we don't explicitly choose to load
+        // (Namely originalSurvey/reissuedSurvey)
+        $query->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true);
     }
 
     protected function getDefaultOrder(): array

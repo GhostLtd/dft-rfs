@@ -9,8 +9,6 @@ class InPossessionFilter extends ChoiceFilter
 {
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
-
-
         if ($formData === 'yes-exempt' || $formData === 'yes') {
             $qb = $queryBuilder
                 ->andWhere("{$this->getPropertyPath()} = :{$this->getId()}")
