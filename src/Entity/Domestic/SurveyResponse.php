@@ -610,4 +610,16 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->contactBusinessName = $contactBusinessName;
         return $this;
     }
+
+    // -----
+
+    public function isSoldScrappedStolenOrOnHire(): bool
+    {
+        return $this->isInPossessionOfVehicle !== null &&
+            in_array($this->isInPossessionOfVehicle, [
+                self::IN_POSSESSION_ON_HIRE,
+                self::IN_POSSESSION_SCRAPPED_OR_STOLEN,
+                self::IN_POSSESSION_SOLD,
+            ]);
+    }
 }

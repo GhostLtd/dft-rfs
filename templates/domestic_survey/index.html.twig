@@ -13,10 +13,29 @@
         {{ actionlessSummaryListRow('domestic.summary.start-date', survey.surveyPeriodStart | date('format.date.full-with-year' | trans)) }}
     </dl>
 
-    {# We don't get to this template unless initialDetails are complete, which also means that response is present #}
+    {# N.B. We don't get to this template unless initialDetails are complete, which also means that response is always present #}
     {% if not is_granted(constant('App\\Security\\Voter\\SurveyVoter::ELIGIBLE_TO_FILL_SURVEY_WEEK'), survey) %}
+        {# ----- Initial details dashboard ----- #}
+
         {% include 'domestic_survey/includes/initial-details.html.twig' %}
+
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-step'|trans }}</h2>
+        {% if survey.response.isExemptVehicleType %}
+            <p class="govuk-body">
+                <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_close_exempt') }}">{{ 'domestic.summary.complete-exempt'|trans }}</a>
+            </p>
+        {% elseif survey.response.isSoldScrappedStolenOrOnHire() %}
+            <p class="govuk-body">
+                <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_close_not_in_possession') }}">{{ 'domestic.summary.complete-exempt'|trans }}</a>
+            </p>
+        {% elseif not survey.businessAndVehicleDetailsComplete %}
+            <p class="govuk-body">
+                <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">{{ 'domestic.summary.complete-vehicle-and-business-details'|trans }}</a>
+            </p>
+        {% endif %}
     {% else %}
+        {# ----- Survey week dashboard ----- #}
+
         <p class="govuk-body govuk-!-margin-bottom-7">
             <a class="govuk-link" href="{{ url('app_domesticsurvey_contactdetails') }}">{{ 'domestic.summary.change-contact-details'|trans }}</a>
         </p>
@@ -32,25 +51,8 @@
                 ) }}
             {% endfor %}
         </dl>
-    {% endif %}
 
-    <h2 class="govuk-heading-m">{{ 'common.headings.next-step'|trans }}</h2>
-    {% if survey.response.isExemptVehicleType %}
-        <p class="govuk-body">
-            <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_exempt') }}">{{ 'domestic.summary.complete-exempt'|trans }}</a>
-        </p>
-    {% elseif not survey.businessAndVehicleDetailsComplete %}
-        {% if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') %}
-            <p class="govuk-body">
-                <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_vehicleandbusinessdetails_start') }}">{{ 'domestic.summary.complete-vehicle-and-business-details'|trans }}</a>
-            </p>
-        {% else %}
-            {#- Not in possession of vehicle -#}
-            <p class="govuk-body">
-                <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_closingdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\ClosingDetailsState::IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE')}) }}">{{ 'domestic.summary.complete-week'|trans }}</a>
-            </p>
-        {% endif %}
-    {% else %}
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-step'|trans }}</h2>
         <p class="govuk-body">
             <a class="govuk-button" data-module="govuk-button" href="{{ url('app_domesticsurvey_closingdetails_start') }}">{{ 'domestic.summary.complete-week'|trans }}</a>
         </p>

@@ -4,9 +4,6 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Tests\DataFixtures\Domestic\AbstractResponseFixtures;
-use App\Tests\DataFixtures\Domestic\SurveyFixtures;
-use App\Tests\DataFixtures\Domestic\SurveyHiredFixtures;
 use Doctrine\Persistence\ObjectManager;
 
 class ResponseOnMultiHireFixtures extends AbstractResponseFixtures

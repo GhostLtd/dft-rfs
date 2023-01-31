@@ -1058,9 +1058,11 @@ domestic:
       contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
       confirm-and-submit: Confirm and submit
 
-  closing-exempt:
+  closing-exempt: &closing-survey
     confirm.label: Submit survey
     cancel.label: Cancel
+
+  closing-not-in-possession: *closing-survey
 
   driver-availability:
     currency-or-percentage:

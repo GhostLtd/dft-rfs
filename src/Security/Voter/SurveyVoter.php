@@ -14,6 +14,7 @@ class SurveyVoter extends Voter
 {
     const ELIGIBLE_TO_FILL_SURVEY_WEEK = "ELIGIBLE_TO_FILL_SURVEY_WEEK";
     const CLOSE_SURVEY_EXEMPT = 'CLOSE_SURVEY_EXEMPT';
+    const CLOSE_SURVEY_NOT_IN_POSSESSION = 'CLOSE_SURVEY_NOT_IN_POSSESSION';
     const EDIT = 'EDIT';
     const CLOSING_DETAILS = 'CLOSING_DETAILS';
     const PROVIDE_FEEDBACK = "PROVIDE_FEEDBACK";
@@ -31,6 +32,7 @@ class SurveyVoter extends Voter
     {
         return in_array($attribute, [
             self::CLOSE_SURVEY_EXEMPT,
+            self::CLOSE_SURVEY_NOT_IN_POSSESSION,
             self::EDIT,
             self::CLOSING_DETAILS,
             self::ELIGIBLE_TO_FILL_SURVEY_WEEK,
@@ -57,13 +59,21 @@ class SurveyVoter extends Voter
                 $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
                 $subject->getResponse()?->getIsExemptVehicleType() === true,
 
-            // Closing details and viewing the main survey week-filling screen is available to those who have:
-            // a) Filled out initial-details
-            // b) Don't have an exempt vehicle
+            self::CLOSE_SURVEY_NOT_IN_POSSESSION =>
+                $subject instanceof DomesticSurvey &&
+                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getResponse()?->isSoldScrappedStolenOrOnHire(),
+
+            // Closing details and viewing the main survey week-filling screen is available to those who:
+            // a) Have filled out initial-details
+            // b) Are in possession of the vehicle
+            // c) Don't have an exempt vehicle
             self::CLOSING_DETAILS,
             self::ELIGIBLE_TO_FILL_SURVEY_WEEK =>
                 $subject instanceof DomesticSurvey &&
                 $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getResponse()?->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+                $subject->isBusinessAndVehicleDetailsComplete() &&
                 !$subject->getResponse()?->getIsExemptVehicleType(),
 
             self::EDIT => in_array($subject->getState(), [

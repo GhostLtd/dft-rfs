@@ -91,7 +91,7 @@ class AdminSurveyVoter extends Voter
 
                     return in_array($state, $notOpenStatuses) &&
                         !$isExemptVehicleType &&
-                        $isInPossessionOfVehicle;
+                        $isInPossessionOfVehicle === DomesticResponse::IN_POSSESSION_YES;
                 } else if ($subject instanceof InternationalSurvey) {
                     return in_array($state, $notOpenStatuses) &&
                         $subject->shouldAskWhyEmptySurvey();
