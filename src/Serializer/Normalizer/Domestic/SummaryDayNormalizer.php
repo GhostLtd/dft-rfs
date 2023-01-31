@@ -9,6 +9,7 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\DayOfWeekProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\MOAProperty;
 use App\Serializer\Normalizer\Mapper\DistanceProperty;
 use App\Serializer\Normalizer\Mapper\NullIsZeroProperty;
 use App\Serializer\Normalizer\Mapper\Property;
@@ -41,7 +42,7 @@ class SummaryDayNormalizer extends AbstractExportNormalizer
 //            'DateInput' => '', // All nulls in example data
 //            'RowNumber' => '', // All nulls in example data
             'FurthestStop' => new Property('furthestStop'),
-            'MOA' => new Property('cargoTypeCode'),
+            'MOA' => new MOAProperty(),
             'WhereBorderCrossed' => new Property('borderCrossingLocation'),
             'DayOfWeek' => new DayOfWeekProperty(),
 //            'MOACode' => '', // All nulls in example data
