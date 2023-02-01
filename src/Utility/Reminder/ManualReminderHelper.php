@@ -6,6 +6,7 @@ use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\Domestic\SurveyNote as DomesticSurveyNote;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\International\SurveyNote as InternationalSurveyNote;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\Email;
@@ -80,7 +81,15 @@ class ManualReminderHelper
         $survey->setLatestManualReminderSentDate(new \DateTime());
 
         if ($survey instanceof DomesticSurvey) {
-            $note = (new DomesticSurveyNote())
+            $note = (new DomesticSurveyNote());
+        } elseif ($survey instanceof InternationalSurvey) {
+            $note = (new InternationalSurveyNote());
+        } else {
+            $note = null;
+        }
+
+        if ($note) {
+            $note
                 ->setNote("Manual reminder sent")
                 ->setWasChased(true);
 

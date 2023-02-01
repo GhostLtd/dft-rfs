@@ -8,4 +8,5 @@
     {{- actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark | formatRegMark) -}}
     {{- actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('format.date.default' | trans)) -}}
     {{- actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('format.date.default' | trans)) -}}
+    {{- actionlessSummaryListRow('Contact with haulier', survey.chasedCount) -}}
 </dl>
