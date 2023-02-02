@@ -553,11 +553,9 @@ admin:
         A reminder cannot be sent, as there is neither an invitation address nor a contact email associated with this survey.
       too-soon: |-
         A reminder cannot be sent yet, as {eventType, select,
-          invitation {the *initial invitation* was recently sent.}
-          in_progress {the survey recently changed state to in-progress.}
-          first_reminder {the *first reminder* was recently sent.}
-          second_reminder {the *second reminder* was recently sent.}
+          in_progress {the survey recently changed state to *in-progress*.}
           manual_reminder {a *manual reminder* was recently sent.}
+          was_chased {the hauler was recently contacted (see "Notes" tab).}
           other {Other}
         }  
         A manual reminder may next be sent in *{interval}*.

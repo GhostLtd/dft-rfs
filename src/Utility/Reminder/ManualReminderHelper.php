@@ -139,11 +139,9 @@ class ManualReminderHelper
     public function getMostRecentEventDate(SurveyInterface $survey): array
     {
         $eventDates = [
-            'invitation' => $survey->getInvitationSentDate(),
-            'first_reminder' => $survey->getFirstReminderSentDate(),
-            'second_reminder' => $survey->getSecondReminderSentDate(),
             'manual_reminder' => $survey->getLatestManualReminderSentDate(),
             'in_progress' => $this->getInProgressDate($survey),
+            'was_chased' => $this->getLastChasedDate($survey),
         ];
 
         $latestEventDate = max($eventDates);
@@ -152,7 +150,15 @@ class ManualReminderHelper
             return [null, null];
         }
 
-        $eventType = array_keys($eventDates, $latestEventDate)[0];
+        $latestEvents = array_keys($eventDates, $latestEventDate);
+        $eventType = $latestEvents[0];
+
+        if ($eventType === 'was_chased' && array_key_exists('manual_reminder', $latestEvents)) {
+            // Given that a manual reminder also adds a note at the same time, we might end up with both,
+            // but ultimately want to choose the manual_reminder as the cause in such a case.
+            $eventType = 'manual_reminder';
+        }
+
         return [$latestEventDate, $eventType];
     }
 
@@ -196,6 +202,19 @@ class ManualReminderHelper
         }
 
         return null;
+    }
+
+    protected function getLastChasedDate(SurveyInterface $survey): ?\DateTime
+    {
+        $latestDate = null;
+
+        foreach($survey->getNotes() as $note) {
+            if ($note->getWasChased()) {
+                $latestDate = max($latestDate, $note->getCreatedAt());
+            }
+        }
+
+        return $latestDate;
     }
 
     protected function getNotifyTemplateId(SurveyInterface $survey): ?string

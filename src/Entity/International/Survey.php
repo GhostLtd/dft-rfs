@@ -109,6 +109,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function __construct()
     {
         $this->apiResponses = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getReferenceNumber(): ?string
@@ -119,7 +120,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setReferenceNumber(string $referenceNumber): self
     {
         $this->referenceNumber = $referenceNumber;
-
         return $this;
     }
 
@@ -131,7 +131,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
-
         return $this;
     }
 
@@ -208,7 +207,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setReasonForEmptySurvey(?string $reasonForEmptySurvey): self
     {
         $this->reasonForEmptySurvey = $reasonForEmptySurvey;
-
         return $this;
     }
 

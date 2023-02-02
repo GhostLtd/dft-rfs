@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Domestic\SurveyNote as DomesticSurveyNote;
+use App\Entity\International\SurveyNote as InternationalSurveyNote;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 
@@ -51,6 +53,7 @@ interface SurveyInterface
     public function getFeedback(): ?Feedback;
     public function setFeedback(?Feedback $feedback): self;
 
+    /** @return ?Collection<DomesticSurveyNote|InternationalSurveyNote> */
     public function getNotes(): ?Collection;
     public function getChasedCount(): int;
 }

@@ -131,6 +131,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function __construct()
     {
         $this->apiResponses = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function isInitialDetailsComplete(): bool

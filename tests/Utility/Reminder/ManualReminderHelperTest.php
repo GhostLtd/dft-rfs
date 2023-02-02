@@ -5,6 +5,7 @@ namespace App\Tests\Utility\Reminder;
 use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\Domestic\SurveyNote;
 use App\Entity\Domestic\SurveyResponse as DomesticResponse;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\International\SurveyResponse as InternationalResponse;
@@ -180,42 +181,42 @@ class ManualReminderHelperTest extends KernelTestCase
 
     public function dataGetReasonWhyCannotSendManualReminder(): array
     {
-        $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): DomesticSurvey =>
+        $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): DomesticSurvey =>
         (new DomesticSurvey())
             ->setId('abc-123')
             ->setState($state)
-            ->setInvitationSentDate($invitationDate)
+            ->setInvitationSentDate(null)
             ->setFirstReminderSentDate(null)
             ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate(null)
+            ->setLatestManualReminderSentDate($latestManualReminderDate)
             ->setInvitationEmails($invitationEmails)
             ->setResponse(
                 (new DomesticResponse())
                     ->setContactEmail($contactEmail)
             );
 
-        $internationalSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): InternationalSurvey =>
+        $internationalSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): InternationalSurvey =>
         (new InternationalSurvey())
             ->setId('abc-123')
             ->setState($state)
-            ->setInvitationSentDate($invitationDate)
+            ->setInvitationSentDate(null)
             ->setFirstReminderSentDate(null)
             ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate(null)
+            ->setLatestManualReminderSentDate($latestManualReminderDate)
             ->setInvitationEmails($invitationEmails)
             ->setResponse(
                 (new InternationalResponse())
                     ->setContactEmail($contactEmail)
             );
 
-        $preEnquiry = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $invitationDate = null): PreEnquiry =>
+        $preEnquiry = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): PreEnquiry =>
         (new PreEnquiry())
             ->setId('abc-123')
             ->setState($state)
-            ->setInvitationSentDate($invitationDate)
+            ->setInvitationSentDate(null)
             ->setFirstReminderSentDate(null)
             ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate(null)
+            ->setLatestManualReminderSentDate($latestManualReminderDate)
             ->setInvitationEmails($invitationEmails)
             ->setResponse(
                 (new PreEnquiryResponse())
@@ -283,17 +284,39 @@ class ManualReminderHelperTest extends KernelTestCase
         $four = new \DateTime('2021-07-01');
         $five = new \DateTime('2021-08-01');
 
-        $survey = fn(
+        $survey = function(
             ?\DateTime $invitationDate,
             ?\DateTime $firstReminderDate,
             ?\DateTime $secondReminderDate,
             ?\DateTime $manualReminderDate,
-        ) => (new DomesticSurvey())
-            ->setId('abc-123')
-            ->setInvitationSentDate($invitationDate)
-            ->setFirstReminderSentDate($firstReminderDate)
-            ->setSecondReminderSentDate($secondReminderDate)
-            ->setLatestManualReminderSentDate($manualReminderDate);
+            ?\DateTime $chaseNoteDate,
+        ) {
+            $survey = (new DomesticSurvey())
+                ->setId('abc-123')
+                ->setInvitationSentDate($invitationDate)
+                ->setFirstReminderSentDate($firstReminderDate)
+                ->setSecondReminderSentDate($secondReminderDate)
+                ->setLatestManualReminderSentDate($manualReminderDate);
+
+            $addNote = function(\DateTime $date, string $message) use ($survey) {
+                $note = (new SurveyNote())
+                    ->setNote('Manual reminder')
+                    ->setWasChased(true)
+                    ->setCreatedAt($date);
+
+                $survey->addNote($note);
+            };
+
+            if ($manualReminderDate) {
+                $addNote($manualReminderDate, 'Manual reminder');
+            }
+
+            if ($chaseNoteDate) {
+                $addNote($chaseNoteDate, 'Contacted by phone');
+            }
+
+            return $survey;
+        };
 
         $logs = fn(\DateTime $inProgressDate) =>
             [
@@ -304,13 +327,20 @@ class ManualReminderHelperTest extends KernelTestCase
             ];
 
         return [
-            [$survey(null, null, null, null), [], null, null],
-            [$survey($one, $two, $three, $four), $logs($five), $five, 'in_progress'],
-            [$survey($one, $two, $three, $five), $logs($four), $five, 'manual_reminder'],
-            [$survey($one, $two, $five, $three), $logs($four), $five, 'second_reminder'],
-            [$survey($one, $five, $two, $three), $logs($four), $five, 'first_reminder'],
-            [$survey($five, $one, $two, $three), $logs($four), $five, 'invitation'],
-            [$survey($one, null, $two, null), [], $two, 'second_reminder'],
+            // N.B. Invitation date / firstReminder / secondReminder are ignored by manualHelperReminder, as they
+            //      pertain to automated reminders/events that are dispatched on not-yet-started surveys. Manual
+            //      reminders can only be sent when the survey is in-progress (hence it only examines in_progress
+            //      state change, the last manual reminder send date etc).
+            [$survey(null, null, null, null, null), [], null, null],
+            [$survey($one, $two, $three, $four, null), $logs($five), $five, 'in_progress'],
+            [$survey($one, $two, $three, $five, null), $logs($four), $five, 'manual_reminder'],
+            [$survey($one, $two, $five, $three, null), $logs($four), $four, 'in_progress'],
+            [$survey($one, $five, $two, $three, null), $logs($four), $four, 'in_progress'],
+            [$survey($three, $one, $two, $five, null), $logs($four), $five, 'manual_reminder'],
+            [$survey($one, null, $two, $three, null), [], $three, 'manual_reminder'],
+
+            [$survey($one, $two, $five, $three, $five), $logs($four), $five, 'was_chased'],
+            [$survey($one, $two, $five, $five, $four), $logs($four), $five, 'manual_reminder'],
         ];
     }
 
