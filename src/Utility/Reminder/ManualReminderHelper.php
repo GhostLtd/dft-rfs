@@ -164,26 +164,28 @@ class ManualReminderHelper
 
     public function getRecipientEmails(SurveyInterface $survey): ?array
     {
-        if ($survey instanceof DomesticSurvey || $survey instanceof InternationalSurvey) {
-            $response = $survey->getResponse();
-        } elseif ($survey instanceof PreEnquiry) {
+        if ($survey instanceof DomesticSurvey ||
+            $survey instanceof InternationalSurvey ||
+            $survey instanceof PreEnquiry
+        ) {
             $response = $survey->getResponse();
         } else {
             throw new \RuntimeException('Unsupported survey type: ' . get_class($survey));
         }
 
-        $recipients = $response->getContactEmail() ?? $survey->getInvitationEmails();
+        $recipients = $response->getContactEmail();
 
-        if (!$recipients) {
+        if ($recipients) {
+            $recipients = [$recipients];
+        } else {
+            $recipients = $survey->getArrayOfInvitationEmails();
+        }
+
+        if (empty($recipients)) {
             return null;
         }
 
-        $recipients = explode(',', $recipients);
-        $recipients = array_map(fn(string $recipient) => trim($recipient), $recipients);
-        $recipients = array_filter($recipients, fn(string $recipient) => $recipient !== '');
-        $recipients = array_values(array_unique($recipients));
-
-        return empty($recipients) ? null : $recipients;
+        return $recipients;
     }
 
     protected function getInProgressDate(SurveyInterface $survey): ?\DateTime

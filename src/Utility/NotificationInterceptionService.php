@@ -40,7 +40,7 @@ class NotificationInterceptionService
 
     public function checkAndInterceptSurvey(SurveyInterface $survey): SurveyInterface
     {
-        if ($survey->getInvitationEmails()) {
+        if ($survey->hasValidInvitationEmails()) {
             return $survey;
         }
         if (!$survey->getInvitationAddress()) {

@@ -56,4 +56,6 @@ interface SurveyInterface
     /** @return ?Collection<DomesticSurveyNote|InternationalSurveyNote> */
     public function getNotes(): ?Collection;
     public function getChasedCount(): int;
+    public function getArrayOfInvitationEmails(): array;
+    public function hasValidInvitationEmails(): bool;
 }

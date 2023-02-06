@@ -55,7 +55,7 @@ trait SurveyTrait
      * @AppAssert\CommaSeparatedEmails(groups={"add_survey", "import_survey"}, message="common.email.list-contains-invalid")
      * @Assert\Length(max=1024, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
-    private ?string $invitationEmails;
+    private ?string $invitationEmails = null;
 
     /**
      * @ORM\Embedded(class=LongAddress::class)
@@ -240,5 +240,27 @@ trait SurveyTrait
     {
         $this->apiResponses->removeElement($apiResponse);
         return $this;
+    }
+
+    // -----
+
+    /**
+     * @return array<string>
+     */
+    public function getArrayOfInvitationEmails(): array
+    {
+        if (!$this->invitationEmails) {
+            return [];
+        }
+
+        $emails = explode(',', $this->invitationEmails);
+        $emails = array_map('trim', $emails);
+        $emails = array_filter($emails, fn(string $email) => $email !== '');
+        return array_values(array_unique($emails));
+    }
+
+    public function hasValidInvitationEmails(): bool
+    {
+        return count($this->getArrayOfInvitationEmails()) > 0;
     }
 }

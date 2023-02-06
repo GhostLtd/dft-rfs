@@ -99,10 +99,9 @@ class AutomatedRemindersHelper
         }
 
         $emailTemplateReference = $templateReferences[self::TYPE_EMAIL] ?? false;
-        if ($survey->getInvitationEmails() && $emailTemplateReference)
+        if ($emailTemplateReference)
         {
-            $invitationEmails = array_map('trim', explode(',', $survey->getInvitationEmails()));
-            foreach($invitationEmails as $invitationEmail) {
+            foreach($survey->getArrayOfInvitationEmails() as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     $eventType,
                     get_class($survey),

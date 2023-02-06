@@ -40,7 +40,7 @@ class NotifyApiResponse
     /**
      * A hash of the recipient (i.e. address, sms or email -> unique string)
      *
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     private ?string $recipientHash;
 
@@ -121,7 +121,7 @@ class NotifyApiResponse
         return $this->recipientHash;
     }
 
-    public function setRecipientHash(string $recipientHash): self
+    public function setRecipientHash(?string $recipientHash): self
     {
         $this->recipientHash = $recipientHash;
         return $this;

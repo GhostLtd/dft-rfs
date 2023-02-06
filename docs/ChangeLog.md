@@ -2,6 +2,11 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** A bug was causing empty email addresses to be passed to Notify.
+* **Fix:** NotifyApiResponse should have a nullable recipientHash.
+
 ## 2nd February 2023
 
 * **Feature:** Manual reminders
