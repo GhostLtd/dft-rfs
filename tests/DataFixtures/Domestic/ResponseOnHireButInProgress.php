@@ -3,6 +3,7 @@
 namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\SurveyInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,12 +14,12 @@ class ResponseOnHireButInProgress extends Fixture implements DependentFixtureInt
     {
         /** @var Survey $survey */
         $survey = $this->getReference('survey:simple');
-        $survey->setState(Survey::STATE_IN_PROGRESS);
+        $survey->setState(SurveyInterface::STATE_IN_PROGRESS);
 
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [ResponseOnHireFixtures::class];
     }

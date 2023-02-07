@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
 use App\Repository\Domestic\SurveyResponseRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -78,8 +79,8 @@ class SurveyResponse extends AbstractSurveyResponse
 
     use SurveyResponseTrait;
 
-    public ?int $_summaryCountForExport;
-    public ?int $_stopCountForExport;
+    public ?int $_summaryCountForExport = null;
+    public ?int $_stopCountForExport = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -93,7 +94,7 @@ class SurveyResponse extends AbstractSurveyResponse
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      */
-    private $hireeName;
+    private ?string $hireeName = null;
 
 
     /**
@@ -102,28 +103,28 @@ class SurveyResponse extends AbstractSurveyResponse
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
      */
-    private $hireeEmail;
+    private ?string $hireeEmail = null;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
      * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"hiree_details", "admin_on_hire"})
      * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
      */
-    private $hireeTelephone;
+    private ?string $hireeTelephone = null;
 
     /**
      * @ORM\Embedded(class=Address::class)
      * @AppAssert\ValidAddress(groups={"hiree_details", "admin_on_hire"}, validatePostcode=true, allowBlank=true)
      * @Assert\Expression("this.getHireeContactMethodCount() > 0", message="domestic.survey-response.hiree-details.contact-details-required", groups={"hiree_details", "admin_on_hire"})
      */
-    private $hireeAddress;
+    private ?Address $hireeAddress = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"sold_details", "admin_sold"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      */
-    private $newOwnerName;
+    private ?string $newOwnerName = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -131,39 +132,39 @@ class SurveyResponse extends AbstractSurveyResponse
      * @Assert\Email(message="common.email.invalid", groups={"sold_details", "admin_sold"})
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      */
-    private $newOwnerEmail;
+    private ?string $newOwnerEmail = null;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
      * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"sold_details", "admin_sold"})
      * @Assert\Expression("this.getNewOwnerContactMethodCount() > 0", message="domestic.survey-response.sold-details.contact-details-required", groups={"sold_details", "admin_sold"})
      */
-    private $newOwnerTelephone;
+    private ?string $newOwnerTelephone = null;
 
     /**
      * @ORM\Embedded(class=Address::class)
      * @AppAssert\ValidAddress(groups={"sold_details", "admin_sold"}, validatePostcode=true, allowBlank=true)
      * @Assert\Expression("this.getNewOwnerContactMethodCount() > 0", message="domestic.survey-response.sold-details.contact-details-required", groups={"sold_details", "admin_sold"})
      */
-    private $newOwnerAddress;
+    private ?Address $newOwnerAddress = null;
 
     /**
      * @ORM\Column(type="date", nullable=true)
      * N.B. Validation in individual form types or callback validators due to criteria and errors depending upon context.
      */
-    private $unableToCompleteDate;
+    private ?DateTime $unableToCompleteDate = null;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      * @Assert\NotNull(message="domestic.survey-response.in-possession-of-vehicle.choice", groups={"domestic.in-possession"})
      */
-    private $isInPossessionOfVehicle;
+    private ?string $isInPossessionOfVehicle = null;
 
     /**
      * @ORM\Column(type="string", length=24, nullable=true)
      * @Assert\NotNull(message="common.choice.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
      */
-    private $reasonForEmptySurvey;
+    private ?string $reasonForEmptySurvey = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -177,7 +178,7 @@ class SurveyResponse extends AbstractSurveyResponse
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
-    private $survey;
+    private ?Survey $survey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=Vehicle::class, inversedBy="response", cascade={"persist"})
@@ -192,25 +193,25 @@ class SurveyResponse extends AbstractSurveyResponse
      *     "admin_vehicle_fuel_quantity",
      * })
      */
-    private $vehicle;
+    private ?Vehicle $vehicle = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $actualVehicleLocation;
+    private ?string $actualVehicleLocation = null;
 
     /**
-     * @var Day[]
+     * @var Collection<Day>
      * @ORM\OneToMany(targetEntity=Day::class, mappedBy="response", orphanRemoval=true, indexBy="number")
      * @ORM\OrderBy({"number" = "ASC"})
      */
-    private $days;
+    private Collection $days;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Assert\NotNull(message="domestic.survey-response.is-exempt-vehicle-type.choice", groups={"domestic.is-exempt-vehicle-type", "admin_exempt_vehicle_type"})
      */
-    private ?bool $isExemptVehicleType;
+    private ?bool $isExemptVehicleType = null;
 
     /**
      * @Assert\Callback(groups={"admin_sold"})
@@ -280,7 +281,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setHireeName(?string $hireeName): self
     {
         $this->hireeName = $hireeName;
-
         return $this;
     }
 
@@ -292,7 +292,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setHireeEmail(?string $hireeEmail): self
     {
         $this->hireeEmail = $hireeEmail;
-
         return $this;
     }
 
@@ -304,7 +303,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setHireeAddress(?Address $hireeAddress): self
     {
         $this->hireeAddress = $hireeAddress;
-
         return $this;
     }
 
@@ -316,7 +314,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setNewOwnerAddress(?Address $newOwnerAddress): self
     {
         $this->newOwnerAddress = $newOwnerAddress;
-
         return $this;
     }
 
@@ -328,7 +325,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setUnableToCompleteDate(?DateTimeInterface $unableToCompleteDate): self
     {
         $this->unableToCompleteDate = $unableToCompleteDate;
-
         return $this;
     }
 
@@ -347,8 +343,7 @@ class SurveyResponse extends AbstractSurveyResponse
                 ->setNewOwnerAddress(null)
                 ->setHireeName(null)
                 ->setHireeEmail(null)
-                ->setHireeAddress(null)
-            ;
+                ->setHireeAddress(null);
         }
 
         if ($isInPossessionOfVehicle !== SurveyResponse::IN_POSSESSION_YES) {
@@ -356,7 +351,6 @@ class SurveyResponse extends AbstractSurveyResponse
         }
 
         $this->isInPossessionOfVehicle = $isInPossessionOfVehicle;
-
         return $this;
     }
 
@@ -368,7 +362,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setSurvey(Survey $survey): self
     {
         $this->survey = $survey;
-
         return $this;
     }
 
@@ -380,7 +373,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setVehicle(?Vehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
-
         return $this;
     }
 
@@ -392,7 +384,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setActualVehicleLocation(?string $actualVehicleLocation): self
     {
         $this->actualVehicleLocation = $actualVehicleLocation;
-
         return $this;
     }
 
@@ -404,7 +395,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setNewOwnerName(?string $newOwnerName): self
     {
         $this->newOwnerName = $newOwnerName;
-
         return $this;
     }
 
@@ -416,12 +406,11 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setNewOwnerEmail(?string $newOwnerEmail): self
     {
         $this->newOwnerEmail = $newOwnerEmail;
-
         return $this;
     }
 
     /**
-     * @return Collection | Day[]
+     * @return Collection<Day>
      */
     public function getDays(): Collection
     {
@@ -450,21 +439,18 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
-    /**
-     * @param $dayNumber
-     * @return Day | null
-     */
-    public function getDayByNumber($dayNumber): ?Day
+    public function getDayByNumber(int $dayNumber): ?Day
     {
         foreach ($this->days ?? [] as $day) {
             if ($day->getNumber() === $dayNumber) {
                 return $day;
             }
         }
+
         return null;
     }
 
-    public function getReasonForEmptySurvey()
+    public function getReasonForEmptySurvey(): ?string
     {
         return $this->reasonForEmptySurvey;
     }
@@ -475,7 +461,7 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this;
     }
 
-    public function getReasonForEmptySurveyExportId()
+    public function getReasonForEmptySurveyExportId(): ?int
     {
         return self::EMPTY_SURVEY_REASON_EXPORT_IDS[$this->reasonForEmptySurvey] ?? null;
     }
@@ -516,7 +502,7 @@ class SurveyResponse extends AbstractSurveyResponse
         return false;
     }
 
-    public function mergeInitialDetails(SurveyResponse $response)
+    public function mergeInitialDetails(SurveyResponse $response): self
     {
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
@@ -561,7 +547,6 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setHireeTelephone(?string $hireeTelephone): self
     {
         $this->hireeTelephone = $hireeTelephone;
-
         return $this;
     }
 
@@ -621,5 +606,18 @@ class SurveyResponse extends AbstractSurveyResponse
                 self::IN_POSSESSION_SCRAPPED_OR_STOLEN,
                 self::IN_POSSESSION_SOLD,
             ]);
+    }
+
+    public function mergeVehicleFuel(?Vehicle $vehicleToMerge): Vehicle
+    {
+        $this->vehicle->setFuelQuantity($vehicleToMerge->getFuelQuantity());
+        return $this->vehicle;
+    }
+
+    public function mergeReasonForEmptySurvey(SurveyResponse $responseToMerge): self
+    {
+        $this->setReasonForEmptySurvey($responseToMerge->getReasonForEmptySurvey());
+        $this->setReasonForEmptySurveyOther($responseToMerge->getReasonForEmptySurveyOther());
+        return $this;
     }
 }

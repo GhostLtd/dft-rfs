@@ -106,7 +106,7 @@ class DriverAvailability
      * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
      * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      */
-    private string $id;
+    private ?string $id = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -222,7 +222,7 @@ class DriverAvailability
     private ?int $numberOfMissedDeliveries = null;
 
     /**
-     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="driverAvailability", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="driverAvailability")
      */
     private ?Survey $survey = null;
 
@@ -231,7 +231,7 @@ class DriverAvailability
      */
     private ?\DateTime $exportedDate = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -244,7 +244,6 @@ class DriverAvailability
     public function setNumberOfDriversEmployed(?int $numberOfDriversEmployed): self
     {
         $this->numberOfDriversEmployed = $numberOfDriversEmployed;
-
         return $this;
     }
 
@@ -256,7 +255,6 @@ class DriverAvailability
     public function setHasVacancies(?string $hasVacancies): self
     {
         $this->hasVacancies = $hasVacancies;
-
         return $this;
     }
 
@@ -268,7 +266,6 @@ class DriverAvailability
     public function setNumberOfDriverVacancies(?int $numberOfDriverVacancies): self
     {
         $this->numberOfDriverVacancies = $numberOfDriverVacancies;
-
         return $this;
     }
 
@@ -294,7 +291,6 @@ class DriverAvailability
     public function setNumberOfDriversThatHaveLeft(?int $numberOfDriversThatHaveLeft): self
     {
         $this->numberOfDriversThatHaveLeft = $numberOfDriversThatHaveLeft;
-
         return $this;
     }
 
@@ -306,7 +302,6 @@ class DriverAvailability
     public function setHaveWagesIncreased(?string $haveWagesIncreased): self
     {
         $this->haveWagesIncreased = $haveWagesIncreased;
-
         return $this;
     }
 
@@ -348,7 +343,6 @@ class DriverAvailability
     public function setWageIncreasePeriodOther(?string $wageIncreasePeriodOther): self
     {
         $this->wageIncreasePeriodOther = $wageIncreasePeriodOther;
-
         return $this;
     }
 
@@ -360,7 +354,6 @@ class DriverAvailability
     public function setHasPaidBonus(?string $hasPaidBonus): self
     {
         $this->hasPaidBonus = $hasPaidBonus;
-
         return $this;
     }
 
@@ -372,7 +365,6 @@ class DriverAvailability
     public function setAverageBonus(?int $averageBonus): self
     {
         $this->averageBonus = $averageBonus;
-
         return $this;
     }
 
@@ -398,7 +390,6 @@ class DriverAvailability
     public function setNumberOfParkedLorries(?int $numberOfParkedLorries): self
     {
         $this->numberOfParkedLorries = $numberOfParkedLorries;
-
         return $this;
     }
 
@@ -410,7 +401,6 @@ class DriverAvailability
     public function setNumberOfMissedDeliveries(?int $numberOfMissedDeliveries): self
     {
         $this->numberOfMissedDeliveries = $numberOfMissedDeliveries;
-
         return $this;
     }
 
@@ -432,7 +422,6 @@ class DriverAvailability
         }
 
         $this->survey = $survey;
-
         return $this;
     }
 
@@ -444,7 +433,6 @@ class DriverAvailability
     public function setHasMissedDeliveries(?string $hasMissedDeliveries): self
     {
         $this->hasMissedDeliveries = $hasMissedDeliveries;
-
         return $this;
     }
 
@@ -456,7 +444,6 @@ class DriverAvailability
     public function setNumberOfLorriesOperated(?int $numberOfLorriesOperated): self
     {
         $this->numberOfLorriesOperated = $numberOfLorriesOperated;
-
         return $this;
     }
 
@@ -468,7 +455,6 @@ class DriverAvailability
     public function setReasonsForDriverVacanciesOther(?string $reasonsForDriverVacanciesOther): self
     {
         $this->reasonsForDriverVacanciesOther = $reasonsForDriverVacanciesOther;
-
         return $this;
     }
 
@@ -480,7 +466,6 @@ class DriverAvailability
     public function setReasonsForWageIncreaseOther(?string $reasonsForWageIncreaseOther): self
     {
         $this->reasonsForWageIncreaseOther = $reasonsForWageIncreaseOther;
-
         return $this;
     }
 
@@ -492,7 +477,6 @@ class DriverAvailability
     public function setExportedDate(?\DateTime $exportedDate): self
     {
         $this->exportedDate = $exportedDate;
-
         return $this;
     }
 

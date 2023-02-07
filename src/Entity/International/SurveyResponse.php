@@ -57,10 +57,11 @@ class SurveyResponse extends AbstractSurveyResponse
     private $survey;
 
     /**
+     * @var Collection<Vehicle>
      * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="surveyResponse", orphanRemoval=true)
      * @ORM\OrderBy({"registrationMark": "ASC"})
      */
-    private $vehicles;
+    private Collection $vehicles;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -164,7 +165,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     // -----
 
-    public function hasPositiveTrips(): bool
+    public function hasPositiveEstimatedInternationalTrips(): bool
     {
         $journeyCount = $this->getAnnualInternationalJourneyCount();
         return $journeyCount !== null && $journeyCount > 0;

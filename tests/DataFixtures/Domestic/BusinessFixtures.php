@@ -3,7 +3,7 @@
 namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Tests\DataFixtures\Domestic\ResponseFixtures;
+use App\Entity\SurveyResponse as BaseSurveyResponse;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -15,16 +15,14 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
         /** @var SurveyResponse $response */
         $response = $this->getReference('response:simple');
 
-
         $response
-            ->setNumberOfEmployees(SurveyResponse::EMPLOYEES_10_TO_49)
+            ->setNumberOfEmployees(BaseSurveyResponse::EMPLOYEES_10_TO_49)
             ->setBusinessNature('Haulage');
 
-        $manager->persist($response);
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [ResponseFixtures::class];
     }

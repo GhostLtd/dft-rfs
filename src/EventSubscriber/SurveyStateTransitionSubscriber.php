@@ -141,32 +141,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $this->deletePasscodeUser($survey);
     }
 
-    public function transitionApprove(Event $event)
-    {
-        $survey = $this->getSurvey($event);
-
-        if ($survey instanceof DomesticSurvey) {
-            if (!$survey->shouldAskWhyUnfilled()) {
-                // ReasonForUnfilledSurvey should be NULL, because the survey *is* filled
-                $survey->setReasonForUnfilledSurvey(null);
-
-                if (!$survey->shouldAskWhyNoJourneys()) {
-                    // ReasonForEmptyJourney should be NULL, because journeys *have* been entered
-                    $survey->getResponse()->setReasonForEmptySurvey(null);
-                }
-            }
-        }
-
-        if ($survey instanceof InternationalSurvey) {
-            if (!$survey->shouldAskWhyEmptySurvey()) {
-                // ReasonForEmptySurvey (+Other) should be NULL, because the survey *is* filled
-                $survey
-                    ->setReasonForEmptySurvey(null)
-                    ->setReasonForEmptySurveyOther(null);
-            }
-        }
-    }
-
     protected function getSurvey(Event $event): SurveyInterface
     {
         $survey = $event->getSubject();
@@ -197,13 +171,11 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             'workflow.domestic_survey.transition.complete' => 'transitionComplete',
             'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.domestic_survey.transition.approve' => 'transitionApprove',
             'workflow.domestic_survey.transition.reject_exempt' => 'transitionRejectExempt',
 
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
             'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.international_survey.transition.approve' => 'transitionApprove',
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
             'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
 

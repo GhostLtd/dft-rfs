@@ -2,10 +2,8 @@
 
 namespace App\Tests\DataFixtures\Domestic;
 
-use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Tests\DataFixtures\Domestic\AbstractResponseFixtures;
-use App\Tests\DataFixtures\Domestic\SurveyFixtures;
+use App\Entity\SurveyInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class ResponseOnHireFixtures extends AbstractResponseFixtures
@@ -19,10 +17,10 @@ class ResponseOnHireFixtures extends AbstractResponseFixtures
             ->setHireeTelephone('12345')
             ->setUnableToCompleteDate(new \DateTime('now - 2 days'));
 
-        $this->loadSurveyAndVehicle($manager, $response, Survey::STATE_CLOSED);
+        $this->loadSurveyAndVehicle($manager, $response, SurveyInterface::STATE_CLOSED);
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [SurveyFixtures::class];
     }

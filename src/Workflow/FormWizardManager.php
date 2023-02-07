@@ -128,6 +128,7 @@ class FormWizardManager
         if (!$this->entityManager->contains($subject)) {
             $this->entityManager->persist($subject);
         };
+
         $this->entityManager->flush();
     }
 

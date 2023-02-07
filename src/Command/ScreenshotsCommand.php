@@ -10,7 +10,6 @@ use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
 use App\Utility\Domestic\DeleteHelper as DomesticDeleteHelper;
-use App\Utility\International\DeleteHelper as InternationalDeleteHelper;
 use App\Utility\PreEnquiry\DeleteHelper as PreEnquiryDeleteHelper;
 use DateInterval;
 use DateTime;
@@ -36,7 +35,6 @@ class ScreenshotsCommand extends Command
 
     protected EntityManagerInterface $entityManager;
     protected DomesticDeleteHelper $domDeleteHelper;
-    protected InternationalDeleteHelper $intDeleteHelper;
     protected PreEnquiryDeleteHelper $preEnquiryDeleteHelper;
 
     protected string $frontendHostname;
@@ -44,14 +42,13 @@ class ScreenshotsCommand extends Command
     protected string $userPassword = 'screenshot:password';
     private ?string $appEnvironment;
 
-    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, InternationalDeleteHelper $intDeleteHelper, PreEnquiryDeleteHelper $preEnquiryDeleteHelper, string $frontendHostname, ?string $appEnvironment)
+    public function __construct(EntityManagerInterface $entityManager, DomesticDeleteHelper $domDeleteHelper, PreEnquiryDeleteHelper $preEnquiryDeleteHelper, string $frontendHostname, ?string $appEnvironment)
     {
         parent::__construct();
         $this->appEnvironment = $appEnvironment;
         $this->entityManager = $entityManager;
         $this->domDeleteHelper = $domDeleteHelper;
         $this->frontendHostname = $frontendHostname;
-        $this->intDeleteHelper = $intDeleteHelper;
         $this->preEnquiryDeleteHelper = $preEnquiryDeleteHelper;
     }
 
@@ -132,7 +129,7 @@ class ScreenshotsCommand extends Command
 
             if ($internationSurvey) {
                 $company = $internationSurvey->getCompany();
-                $this->intDeleteHelper->deleteSurvey($internationSurvey);
+                $this->entityManager->remove($internationSurvey);
                 $this->entityManager->remove($company);
             }
 

@@ -4,7 +4,6 @@ namespace App\Controller\DomesticSurvey;
 
 use App\Annotation\Redirect;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Entity\Domestic\DriverAvailability;
 use App\Entity\Domestic\SurveyResponse;
 use App\Workflow\DomesticSurvey\ClosingDetailsState;
 use App\Workflow\FormWizardStateInterface;
@@ -35,26 +34,28 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
     protected function getFormWizard(): FormWizardStateInterface
     {
         $survey = $this->getSurvey();
-        $response = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
+        $databaseResponse = $this->entityManager->getRepository(SurveyResponse::class)
+            ->getBySurvey($survey);
 
         /** @var ClosingDetailsState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new ClosingDetailsState());
-        if (is_null($formWizard->getSubject())) {
-            $formWizard->setSubject($response);
-        }
-        // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-        $formWizardDriverAvailability = $formWizard->getSubject()->getSurvey()->getDriverAvailability();
-        if (!$formWizardDriverAvailability) {
-            $formWizardDriverAvailability = new DriverAvailability();
-            $formWizardDriverAvailability->setSurvey($survey);
-            $this->entityManager->persist($formWizardDriverAvailability);
-            $this->entityManager->flush();
-        }
-        $formWizard->getSubject()->setSurvey($survey);
-        $formWizard->getSubject()->getSurvey()->setDriverAvailability($this->entityManager->merge($formWizardDriverAvailability));
-        $formWizard->getSubject()->setVehicle($this->entityManager->merge($formWizard->getSubject()->getVehicle()));
-        $formWizard->setSubject($this->entityManager->merge($formWizard->getSubject()));
 
+        $sessionResponse = $formWizard->getSubject();
+        if ($sessionResponse) {
+            $driverAvailability = $sessionResponse->getSurvey()->getDriverAvailability();
+            $driverAvailability = $databaseResponse->getSurvey()->mergeDriverAvailability($driverAvailability);
+
+            $vehicle = $sessionResponse->getVehicle();
+            $databaseResponse->mergeVehicleFuel($vehicle);
+
+            $databaseResponse->mergeReasonForEmptySurvey($sessionResponse);
+
+            if (!$driverAvailability->getId()) {
+                $this->entityManager->persist($driverAvailability);
+            }
+        }
+
+        $formWizard->setSubject($databaseResponse);
         return $formWizard;
     }
 

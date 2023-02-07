@@ -25,7 +25,7 @@ class Vehicle
 
     /**
      * @var SurveyResponse
-     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="vehicle", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="vehicle")
      */
     private $response;
 
@@ -37,7 +37,6 @@ class Vehicle
     public function setFuelQuantity(Volume $fuelQuantity): self
     {
         $this->fuelQuantity = $fuelQuantity;
-
         return $this;
     }
 

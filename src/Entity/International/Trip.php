@@ -146,7 +146,7 @@ class Trip
     private $vehicle;
 
     /**
-     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip")
+     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip", cascade={"persist","remove"})
      * @ORM\OrderBy({"number" = "ASC"})
      */
     private $actions;

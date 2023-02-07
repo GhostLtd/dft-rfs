@@ -72,51 +72,51 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
      * @ORM\Column(type="boolean")
      * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey", "import_survey"})
      */
-    private $isNorthernIreland;
+    private ?bool $isNorthernIreland = null;
 
     /**
      * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
      */
-    private $response;
+    private ?SurveyResponse $response = null;
 
     /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank(groups={"add_survey", "import_survey"}, message="common.vehicle.vehicle-registration.not-blank")
      */
-    private $registrationMark;
+    private ?string $registrationMark = null;
 
     /**
      * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
      */
-    private $passcodeUser;
+    private ?PasscodeUser $passcodeUser = null;
 
     /**
      * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
-    private ?Collection $notes;
+    private Collection $notes;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="reissuedSurvey", cascade={"persist"}, fetch="EAGER")
      */
-    private $originalSurvey;
+    private ?Survey $originalSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="originalSurvey", cascade={"persist", "remove"}, fetch="EAGER")
      */
-    private $reissuedSurvey;
+    private ?Survey $reissuedSurvey = null;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      * @Assert\NotNull(message="common.choice.not-null", groups={"admin_reason_for_unfilled_survey"})
      */
-    private ?string $reasonForUnfilledSurvey;
+    private ?string $reasonForUnfilledSurvey = null;
 
     /**
      * @ORM\OneToOne(targetEntity=DriverAvailability::class, inversedBy="survey", fetch="EAGER")
      * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
      */
-    private ?DriverAvailability $driverAvailability;
+    private ?DriverAvailability $driverAvailability = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
@@ -257,7 +257,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setDriverAvailability(?DriverAvailability $driverAvailability): self
     {
         $this->driverAvailability = $driverAvailability;
-
         return $this;
     }
 
@@ -269,7 +268,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setOriginalSurvey(?self $originalSurvey): self
     {
         $this->originalSurvey = $originalSurvey;
-
         return $this;
     }
 
@@ -322,10 +320,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         $response = $this->getResponse();
 
-        $isInPossession = $response && $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES;
+        $isInPossessionOfNonExemptVehicle = $response &&
+            $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->getIsExemptVehicleType();
 
         return !$this->isInitialDetailsComplete() ||
-            ($isInPossession && !$this->isBusinessAndVehicleDetailsComplete());
+            ($isInPossessionOfNonExemptVehicle && !$this->isBusinessAndVehicleDetailsComplete());
     }
 
     /**
@@ -338,6 +338,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return $this->isBusinessAndVehicleDetailsComplete() &&
             $response &&
             $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->getIsExemptVehicleType() &&
             !$response->hasJourneys();
     }
 
@@ -389,5 +390,42 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         }
 
         return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
+    }
+
+    public function mergeDriverAvailability(?DriverAvailability $driverAvailabilityToMerge): DriverAvailability
+    {
+        if ($this->driverAvailability === null || $this->driverAvailability->getId() === null) {
+            $this->driverAvailability = new DriverAvailability();
+        }
+
+        if ($driverAvailabilityToMerge !== null) {
+            $this->driverAvailability
+                // BonusesType
+                ->setHasPaidBonus($driverAvailabilityToMerge->getHasPaidBonus())
+                ->setReasonsForBonuses($driverAvailabilityToMerge->getReasonsForBonuses())
+                ->setAverageBonus($driverAvailabilityToMerge->getAverageBonus())
+                // DeliveriesType
+                ->setNumberOfLorriesOperated($driverAvailabilityToMerge->getNumberOfLorriesOperated())
+                ->setNumberOfParkedLorries($driverAvailabilityToMerge->getNumberOfParkedLorries())
+                ->setHasMissedDeliveries($driverAvailabilityToMerge->getHasMissedDeliveries())
+                ->setNumberOfMissedDeliveries($driverAvailabilityToMerge->getNumberOfMissedDeliveries())
+                // DriversAndVacanciesType
+                ->setNumberOfDriversEmployed($driverAvailabilityToMerge->getNumberOfDriversEmployed())
+                ->setHasVacancies($driverAvailabilityToMerge->getHasVacancies())
+                ->setNumberOfDriversThatHaveLeft($driverAvailabilityToMerge->getNumberOfDriversThatHaveLeft())
+                ->setNumberOfDriverVacancies($driverAvailabilityToMerge->getNumberOfDriverVacancies())
+                ->setReasonsForDriverVacancies($driverAvailabilityToMerge->getReasonsForDriverVacancies())
+                ->setReasonsForDriverVacanciesOther($driverAvailabilityToMerge->getReasonsForDriverVacanciesOther())
+                // WagesType
+                ->setHaveWagesIncreased($driverAvailabilityToMerge->getHaveWagesIncreased())
+                ->setAverageWageIncrease($driverAvailabilityToMerge->getAverageWageIncrease())
+                ->setWageIncreasePeriod($driverAvailabilityToMerge->getWageIncreasePeriod())
+                ->setWageIncreasePeriodOther($driverAvailabilityToMerge->getWageIncreasePeriodOther())
+                ->setReasonsForWageIncrease($driverAvailabilityToMerge->getReasonsForWageIncrease())
+                ->setReasonsForWageIncreaseOther($driverAvailabilityToMerge->getReasonsForWageIncreaseOther());
+        }
+
+        $this->driverAvailability->setSurvey($this);
+        return $this->driverAvailability;
     }
 }

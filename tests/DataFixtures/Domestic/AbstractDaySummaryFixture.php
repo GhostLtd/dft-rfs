@@ -50,7 +50,6 @@ abstract class AbstractDaySummaryFixture  extends Fixture implements DependentFi
         $manager->persist($day);
         $manager->persist($daySummary);
 
-        $this->setReference('day:simple:summary', $day);
-        $this->setReference("day-summary:simple:{$dayNumber}", $daySummary);
+        $this->addReference("day-summary:simple:{$dayNumber}", $daySummary);
     }
 }

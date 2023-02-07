@@ -68,7 +68,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     private $company;
 
     /**
-     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist", "remove"})
      */
     private $response;
 
@@ -224,7 +224,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function shouldAskWhyEmptySurvey(): bool
     {
         $response = $this->getResponse();
-        return !$response || ($response->getTotalNumberOfTrips() === 0 && !$response->isNoLongerActive());
+        return !$response || (!$response->isNoLongerActive() && $response->getTotalNumberOfTrips() === 0);
     }
 
     public function mergeClosingDetails(Survey $survey)

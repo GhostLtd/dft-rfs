@@ -20,17 +20,18 @@ abstract class AbstractResponseFixtures extends Fixture implements DependentFixt
             ->setResponse($response)
             ->setState($surveyState);
 
+        $manager->persist($response);
+        $manager->flush();
+
         // See initialDetailsController line 57
         $vehicle = (new Vehicle())
             ->setRegistrationMark($survey->getRegistrationMark())
             ->setResponse($response);
 
-        $manager->persist($response);
         $manager->persist($vehicle);
-
-        $this->setReference('response:simple', $response);
-        $this->setReference('vehicle:simple', $vehicle);
-
         $manager->flush();
+
+        $this->addReference('response:simple', $response);
+        $this->addReference('vehicle:simple', $vehicle);
     }
 }

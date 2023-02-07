@@ -4,7 +4,7 @@ namespace App\Utility\ConfirmAction\International;
 
 use App\Entity\International\Action;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\International\DeleteHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -13,12 +13,12 @@ class DeleteActionConfirmAction extends AbstractConfirmAction
 {
     /** @var Action */
     protected $subject;
-    private DeleteHelper $deleteHelper;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, DeleteHelper $deleteHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->deleteHelper = $deleteHelper;
+        $this->entityManager = $entityManager;
     }
 
     public function getFormOptions(): array
@@ -37,6 +37,15 @@ class DeleteActionConfirmAction extends AbstractConfirmAction
 
     public function doConfirmedAction($formData)
     {
-        $this->deleteHelper->deleteAction($this->subject);
+        $trip = $this->subject->getTrip();
+        $trip->removeAction($this->subject);
+        foreach($this->subject->getUnloadingActions() as $unloadingAction) {
+            $trip->removeAction($unloadingAction);
+        }
+
+        $trip->renumberActions();
+
+        $this->entityManager->remove($this->subject);
+        $this->entityManager->flush();
     }
 }

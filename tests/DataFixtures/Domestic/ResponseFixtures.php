@@ -3,8 +3,6 @@
 namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Tests\DataFixtures\Domestic\AbstractResponseFixtures;
-use App\Tests\DataFixtures\Domestic\SurveyFixtures;
 use Doctrine\Persistence\ObjectManager;
 
 class ResponseFixtures extends AbstractResponseFixtures
@@ -21,7 +19,7 @@ class ResponseFixtures extends AbstractResponseFixtures
         $this->loadSurveyAndVehicle($manager, $response);
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [SurveyFixtures::class];
     }

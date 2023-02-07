@@ -9,7 +9,6 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\HazardousGoods;
-use App\Tests\DataFixtures\Domestic\VehicleFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -70,9 +69,9 @@ class DayStopFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($dayStop1);
         $manager->persist($dayStop2);
 
-        $this->setReference('day:simple:stop', $day);
-        $this->setReference('day-stop:simple:1', $dayStop1);
-        $this->setReference('day-stop:simple:2', $dayStop2);
+        $this->addReference('day:simple:stop', $day);
+        $this->addReference('day-stop:simple:1', $dayStop1);
+        $this->addReference('day-stop:simple:2', $dayStop2);
 
         $manager->flush();
     }

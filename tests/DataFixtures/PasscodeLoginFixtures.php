@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\DataFixtures;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;

@@ -90,6 +90,18 @@ services:
             tags:
                 - { name: 'doctrine.event_subscriber' }
 
+    App\EventListener\DomesticSurvey\DataConsistencyListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'onFlush'
+                lazy: true
+
+    App\EventListener\InternationalSurvey\DataConsistencyListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'onFlush'
+                lazy: true
+
     App\EventListener\InternationalSurvey\VehicleRegMarkChangedListener:
         tags:
             -   name: 'doctrine.event_listener'

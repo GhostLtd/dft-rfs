@@ -4,6 +4,7 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\SurveyInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class ResponseOnMultiHireFixtures extends AbstractResponseFixtures
@@ -25,10 +26,10 @@ class ResponseOnMultiHireFixtures extends AbstractResponseFixtures
 
         $hiredSurvey->setReissuedSurvey($survey);
 
-        $this->loadSurveyAndVehicle($manager, $response, Survey::STATE_CLOSED);
+        $this->loadSurveyAndVehicle($manager, $response, SurveyInterface::STATE_CLOSED);
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [SurveyFixtures::class, SurveyHiredFixtures::class];
     }

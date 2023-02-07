@@ -27,7 +27,7 @@ class Vehicle
     private $surveyResponse;
 
     /**
-     * @ORM\OneToMany(targetEntity=Trip::class, mappedBy="vehicle")
+     * @ORM\OneToMany(targetEntity=Trip::class, mappedBy="vehicle", cascade={"persist","remove"})
      * @ORM\OrderBy({"outboundDate": "ASC", "returnDate": "ASC"})
      */
     private $trips;

@@ -4,6 +4,7 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
+use App\Entity\SurveyInterface;
 use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -22,16 +23,16 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
             ->setPasscodeUser($user)
-            ->setState(Survey::STATE_NEW);
+            ->setState(SurveyInterface::STATE_NEW);
 
         $manager->persist($user);
 
-        $this->setReference('survey:simple', $survey);
+        $this->addReference('survey:simple', $survey);
 
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [UserFixtures::class];
     }
