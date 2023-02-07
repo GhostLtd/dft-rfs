@@ -111,7 +111,7 @@ class AdminSurveyVoter extends Voter
                     in_array($state, $openStatusesOrClosed) &&
                     !$subject->isBusinessAndVehicleDetailsComplete() &&
                     $response?->getIsInPossessionOfVehicle() === DomesticResponse::IN_POSSESSION_YES &&
-                    $response?->getIsExemptVehicleType() === DomesticResponse::IS_EXEMPT_NO;
+                    !$response?->getIsExemptVehicleType();
             case self::FLAG_QA:
                 assert($subject instanceof HaulageSurveyInterface);
                 return $state === SurveyInterface::STATE_APPROVED && !$subject->getQualityAssured();
