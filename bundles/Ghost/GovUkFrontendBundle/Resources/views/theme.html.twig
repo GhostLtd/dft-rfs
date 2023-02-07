@@ -64,11 +64,15 @@
     {%- if translation_domain is same as(false) -%}
         {%- if label_html | default(false) is same as(true) -%}
             {{- label | raw -}}
+        {%- elseif label_html | default(false) is same as('markdown') -%}
+            {{- label | markdown_to_html -}}
         {%- else -%}
             {{- label | nl2br -}}
         {%- endif -%}
     {%- else -%}
         {%- if label_html | default(false) is same as(true) -%}
+            {{- label | trans(label_translation_parameters, translation_domain) | raw -}}
+        {%- elseif label_html | default(false) is same as('markdown') -%}
             {{- label | trans(label_translation_parameters, translation_domain) | raw -}}
         {%- else -%}
             {{- label | trans(label_translation_parameters, translation_domain) | nl2br -}}
@@ -82,8 +86,8 @@
 {%- endblock -%}
 
 {%- block form_row -%}
-    {%- import _self as s -%}
-    {{- s.gds_form_row(_context, false) -}}
+    {%- from _self import gds_form_row -%}
+    {{- gds_form_row(_context, false) -}}
 {%- endblock -%}
 
 {%- macro gds_form_row(context, isWrappedInFieldset) -%}
@@ -116,9 +120,9 @@
             {% else %}
                 {{- form_label(form) -}}
             {%- endif -%}
-                {{- form_help(form) -}}
-                {{- form_errors(form) -}}
-                {{- form_widget(form, widget_context_overrides) -}}
+            {{- form_help(form) -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form, widget_context_overrides) -}}
             {%- if isWrappedInFieldset -%}
                 </fieldset>
             {%- endif %}
@@ -140,27 +144,36 @@
 {%- endblock form_errors -%}
 
 {% block form_help -%}
-
     {%- if help is not empty -%}
-        {%- set help_attr = help_attr|merge({class: ('govuk-hint ' ~ help_attr.class|default(''))|trim}) %}
-        <div id="{{ id }}-hint"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+        {%- set help_content -%}
             {%- if translation_domain is same as(false) -%}
-                {%- if help_html is same as(false) -%}
-                    {{- help|nl2br -}}
+                {%- if help_html is same as(true) -%}
+                    {{- help | raw -}}
+                {%- elseif help_html is same as('markdown') -%}
+                    {{- help | markdown_to_html -}}
                 {%- else -%}
-                    {{- help|raw -}}
+                    {{- help | nl2br -}}
                 {%- endif -%}
             {%- else -%}
                 {%- set helpTranslated = help | trans(help_translation_parameters, translation_domain) -%}
                 {%- if helpTranslated is not empty -%}
-                    {%- if help_html is same as(false) -%}
-                        {{- helpTranslated | nl2br -}}
-                    {%- else -%}
+                    {%- if help_html is same as(true) -%}
                         {{- helpTranslated | raw -}}
+                    {%- elseif help_html is same as('markdown') -%}
+                        {{- helpTranslated | markdown_to_html -}}
+                    {%- else -%}
+                        {{- helpTranslated | nl2br -}}
                     {%- endif -%}
-                {% endif %}
+                {%- endif -%}
             {%- endif -%}
-        </div>
+        {%- endset -%}
+
+        {%- if help_content is not empty -%}
+            {%- set help_attr = help_attr|merge({class: ('govuk-hint ' ~ help_attr.class|default(''))|trim}) -%}
+            <div id="{{ id }}-hint"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+                {{ help_content -}}
+            </div>
+        {%- endif -%}
     {%- endif -%}
 {%- endblock %}
 

@@ -27,7 +27,10 @@ class FormTypeExtension extends AbstractTypeExtension
                 'novalidate' => 'novalidate',
             ],
         ]);
-        $resolver->setAllowedTypes('label_html', ['bool']);
+        $resolver->setAllowedTypes('label_html', ['bool', 'string']);
+        $resolver->setAllowedValues('label_html', [true, false, 'markdown']);
+        $resolver->setAllowedTypes('help_html', ['bool', 'string']);
+        $resolver->setAllowedValues('help_html', [true, false, 'markdown']);
 
         // Since symfony/form 5.2: Setting the "legacy_error_messages" option to "true" is deprecated. It will be disabled in Symfony 6.0.
         $resolver->setDefault('legacy_error_messages', false);

@@ -4,8 +4,10 @@
 
 ## Upcoming
 
+* **Change:** Update IRHS Trip Start/End form copy to highlight that these should be UK locations.
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
+* **Feature:** Can now use markdown in labels + help (merged from NTS)
 
 ## 2nd February 2023
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\InternationalSurvey\Trip;
-
 
 use App\Entity\International\Trip;
 use Symfony\Component\Form\AbstractType;
@@ -20,12 +18,14 @@ class OriginAndDestinationType extends AbstractType
             ->add('origin', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.origin.label",
                 'help' => "{$translationKeyPrefix}.origin.help",
+                'help_html' => 'markdown',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-20'],
             ])
             ->add('destination', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.destination.label",
                 'help' => "{$translationKeyPrefix}.destination.help",
+                'help_html' => 'markdown',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-20'],
             ])
