@@ -139,7 +139,7 @@ class AuditLogRepository extends ServiceEntityRepository
         $usernames = $userQb->getQuery()->getArrayResult();
         $usernames = array_map(fn($u) => $u['username'], $usernames);
         if (!$usernames) {
-            $usernames = ['-'];
+            $usernames = [];
         }
 
         $approvalsQb = $this->createQueryBuilder('a')
@@ -199,7 +199,6 @@ class AuditLogRepository extends ServiceEntityRepository
             $stats['data'][$week]['data'][$approver]++;
             $stats['totals'][$approver]++;
         }
-
         return $stats;
     }
 
