@@ -173,6 +173,10 @@ class ManualReminderHelper
             throw new \RuntimeException('Unsupported survey type: ' . get_class($survey));
         }
 
+        if (!$response) {
+            return null;
+        }
+
         $recipients = $response->getContactEmail();
 
         if ($recipients) {
