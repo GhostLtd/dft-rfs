@@ -8,6 +8,7 @@ use App\Repository\Domestic\DaySummaryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Form\Validator as AppAssert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=DaySummaryRepository::class)
@@ -81,6 +82,31 @@ class DaySummary implements GoodsDescriptionInterface, BorderCrossingInterface
      * @ORM\JoinColumn(nullable=false)
      */
     private $day;
+
+    /**
+     * @Assert\Callback(groups={"day-summary.number-of-stops.total-stops", "admin-day-summary.total-stops"})
+     */
+    public function validateNumberOfStops(ExecutionContextInterface $context)
+    {
+        $daySummary = $context->getValue();
+        if (!$daySummary instanceof DaySummary) {
+            return;
+        }
+
+        $loading = $daySummary->getNumberOfStopsLoading();
+        $unloading = $daySummary->getNumberOfStopsUnloading();
+        $bothLoadingAndUnloading = $daySummary->getNumberOfStopsLoadingAndUnloading();
+
+        $totalStops = $loading + $unloading + $bothLoadingAndUnloading;
+
+        if ($totalStops < 5) {
+            $context
+                ->buildViolation("domestic.day.number-of-stops.at-least-five")
+                ->atPath('number-of-stops')
+                ->addViolation();
+        }
+    }
+
 
     public function isNorthernIrelandSurvey()
     {

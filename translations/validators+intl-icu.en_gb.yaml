@@ -191,6 +191,7 @@ domestic:
     location:
       max-length: "Location must be {limit, number} characters or fewer"
     number-of-stops:
+      at-least-five: Enter a total of at least five stops
       loading.not-null: Enter the number of stops where goods were only loaded onto the vehicle
       unloading.not-null: Enter the number of stops where goods were only unloaded onto the vehicle
       loading-and-unloading.not-null: Enter the number of stops where goods were both loaded and unloaded

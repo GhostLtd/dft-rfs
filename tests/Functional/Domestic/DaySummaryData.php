@@ -126,15 +126,27 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
             ]),
             new WizardStepUrlTestCase("{$baseUrl}/summary/number-of-stops", "number_of_stops_continue", [
                 new FormTestCase([], [
-                    "#number_of_stops_numberOfStopsLoading",
-                    "#number_of_stops_numberOfStopsUnloading",
-                    "#number_of_stops_numberOfStopsLoadingAndUnloading",
+                    "#number_of_stops_group_numberOfStopsLoading",
+                    "#number_of_stops_group_numberOfStopsUnloading",
+                    "#number_of_stops_group_numberOfStopsLoadingAndUnloading",
                 ]),
+                // At least five stops...
                 new FormTestCase([
                     "number_of_stops" => [
-                        "numberOfStopsLoading" => 2,
-                        "numberOfStopsUnloading" => 8,
-                        "numberOfStopsLoadingAndUnloading" => 0,
+                        "group" => [
+                            "numberOfStopsLoading" => 1,
+                            "numberOfStopsUnloading" => 1,
+                            "numberOfStopsLoadingAndUnloading" => 0,
+                        ],
+                    ],
+                ], ["#number_of_stops_group"]),
+                new FormTestCase([
+                    "number_of_stops" => [
+                        "group" => [
+                            "numberOfStopsLoading" => 2,
+                            "numberOfStopsUnloading" => 8,
+                            "numberOfStopsLoadingAndUnloading" => 0,
+                        ],
                     ],
                 ]),
             ]),

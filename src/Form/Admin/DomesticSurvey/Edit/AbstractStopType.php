@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractStopType extends AbstractType implements DataMapperInterface
@@ -198,7 +199,10 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
             /** @var DayStop $stop */
             $stop = $form->getData();
-            $groups = ['admin-day-stop', 'admin-day-summary'];
+            $groups = [
+                'admin-day-stop',
+                new GroupSequence(['admin-day-summary', 'admin-day-summary.total-stops']),
+            ];
 
             if ($this->isNorthernIreland($stop)) {
                 $groups[] = 'admin-day-stop-ni';
@@ -220,6 +224,10 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         });
 
         $resolver->setDefault('is_add_form', false);
+
+        $resolver->setDefault('error_mapping', [
+            'number-of-stops' => 'numberOfStops',
+        ]);
     }
 
     public function mapDataToForms($viewData, $forms)
