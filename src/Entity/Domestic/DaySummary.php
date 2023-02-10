@@ -88,16 +88,10 @@ class DaySummary implements GoodsDescriptionInterface, BorderCrossingInterface
      */
     public function validateNumberOfStops(ExecutionContextInterface $context)
     {
-        $daySummary = $context->getValue();
-        if (!$daySummary instanceof DaySummary) {
-            return;
-        }
-
-        $loading = $daySummary->getNumberOfStopsLoading();
-        $unloading = $daySummary->getNumberOfStopsUnloading();
-        $bothLoadingAndUnloading = $daySummary->getNumberOfStopsLoadingAndUnloading();
-
-        $totalStops = $loading + $unloading + $bothLoadingAndUnloading;
+        $totalStops =
+            $this->getNumberOfStopsLoading() +
+            $this->getNumberOfStopsUnloading() +
+            $this->getNumberOfStopsLoadingAndUnloading();
 
         if ($totalStops < 5) {
             $context
