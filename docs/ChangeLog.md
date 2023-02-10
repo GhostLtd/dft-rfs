@@ -5,12 +5,15 @@
 ## Upcoming
 
 * **Change:** Update IRHS Trip Start/End form copy to highlight that these should be UK locations.
-* **Feature:** Add routines to purge inconsistent survey data (e.g. has journeys, but reason-for-empty-survey filled)
-* **Feature:** Can now use markdown in labels + help (merged from NTS)
+* **Change:** CSRGT: Validation change - Day summary's number of stops must total at least five. 
+* **Feature:** Add routines to purge inconsistent survey data (e.g. has journeys, but reason-for-empty-survey filled).
+* **Feature:** Can now use markdown in labels + help (merged from NTS).
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
 * **Fix:** A bug was a crash in ManualReminderHelper when approving and then re-opening an empty survey.
-* **Fix:** Small bug in display of approvals report
+* **Fix:** Small bug in display of approvals report.
+* **Fix:** Don't show .env.local during cloud build.
+* **Fix:** "Enter business and vehicle details" button not showing in admin.
 
 ## 2nd February 2023
 
