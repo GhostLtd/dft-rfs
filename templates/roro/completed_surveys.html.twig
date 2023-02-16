@@ -1,0 +1,13 @@
+{%- extends "roro/base.html.twig" -%}
+{%- set translation_prefix = 'roro.dashboard' -%}
+
+{%- set titleParams = ({
+    operator: user.operator.name
+}) -%}
+
+{% block content %}
+    {%- from "roro/macros.html.twig" import surveysTabsAndList -%}
+    <h1 class="govuk-heading-l">{{ 'roro.completed-surveys.title' | trans(titleParams) }}</h1>
+
+    {{ surveysTabsAndList(user, surveys, hasBookmarks, ['completed']) }}
+{% endblock %}

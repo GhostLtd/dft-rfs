@@ -27,7 +27,7 @@
                 {{ flashNotificationBanners() }}
 
                 {% block adminContentIncludingHeader %}
-                <h1 class="govuk-heading-l" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}</h1>
+                <h1 class="govuk-heading-l {{ block('extraHeadingClasses') ?? null }}" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}</h1>
                 {% block adminContent %}
                     <p class="govuk-body">Content</p>
                 {% endblock %}

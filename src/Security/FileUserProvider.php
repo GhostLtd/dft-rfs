@@ -12,16 +12,20 @@ class FileUserProvider implements UserProviderInterface
 {
     /** @var InMemoryUser[] */
     protected array $users = [];
+    protected ManagementUserHelper $managementUserHelper;
 
-    public function __construct($usersFile)
+    public function __construct(?string $usersFile, ManagementUserHelper $managementUserHelper)
     {
+        $this->managementUserHelper = $managementUserHelper;
         $this->loadUsersFromFile($usersFile);
     }
 
-    protected function loadUsersFromFile($usersFile): void
+    protected function loadUsersFromFile(?string $usersFile): void
     {
-        if (is_null($usersFile)) return;
-        if (!file_exists($usersFile)) return;
+        if ($usersFile === null || !file_exists($usersFile)) {
+            return;
+        }
+
         $userFileLines = file($usersFile);
         foreach ($userFileLines as $line)
         {
@@ -30,7 +34,12 @@ class FileUserProvider implements UserProviderInterface
             {
                 $username = trim($userParts[0]);
                 $password = trim($userParts[1]);
-                $user = new InMemoryUser($username, $password, ['ROLE_ADMIN_FORM_USER']);
+
+                $role = $this->managementUserHelper->isManagementDomain($username) ?
+                    'ROLE_ADMIN_FORM_MANAGER' :
+                    'ROLE_ADMIN_FORM_USER';
+
+                $user = new InMemoryUser($username, $password, [$role]);
                 $this->users[$username] = $user;
             }
         }

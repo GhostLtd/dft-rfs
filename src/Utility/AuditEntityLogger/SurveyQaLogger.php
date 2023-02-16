@@ -3,6 +3,7 @@
 namespace App\Utility\AuditEntityLogger;
 
 use App\Entity\HaulageSurveyInterface;
+use App\Entity\QualityAssuranceInterface;
 
 class SurveyQaLogger extends AbstractAuditEntityLogger
 {
@@ -24,7 +25,7 @@ class SurveyQaLogger extends AbstractAuditEntityLogger
 
     public function supports(string $className): bool
     {
-        return $this->implementsInterface($className, HaulageSurveyInterface::class);
+        return $this->implementsInterface($className, QualityAssuranceInterface::class);
     }
 
     function getCategory(): string

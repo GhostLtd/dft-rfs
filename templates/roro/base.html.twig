@@ -1,0 +1,13 @@
+{% set translation_prefix = translation_prefix ?? 'roro.survey' %}
+{% extends 'base.html.twig' %}
+
+{% block pageTitle -%}
+    {%- include 'includes/form-page-title.html.twig' -%}
+    RoRo - {{ parent() -}}
+{%- endblock %}
+
+{%- block beforeContent -%}
+    {{- parent() -}}
+
+    {{- include('roro/survey/breadcrumbs.html.twig') -}}
+{%- endblock -%}

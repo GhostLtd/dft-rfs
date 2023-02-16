@@ -58,7 +58,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         );
     }
 
-    protected function domainTrans($key)
+    protected function domainTrans($key): string
     {
         return $this->translator->trans($key, $this->getTranslationParameters(), $this->getTranslationDomain());
     }

@@ -1,0 +1,22 @@
+{%- extends "roro/base.html.twig" -%}
+{%- set translation_prefix = 'roro.dashboard' -%}
+
+{%- set titleParams = ({
+    operator: user.operator.name
+}) -%}
+
+{% block content %}
+    {%- from "roro/macros.html.twig" import surveysTabsAndList -%}
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4">{{ 'roro.dashboard.title' | trans(titleParams) }}</h1>
+    <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
+
+    {{ surveysTabsAndList(user, surveys, hasBookmarks, ['outstanding']) }}
+
+    <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
+    <ul class="govuk-list">
+        {%- if is_granted('EDIT_BOOKMARKS') -%}
+            <li><a href="{{ path('app_roro_bookmarked_routes') }}" class="govuk-link">{{ 'roro.dashboard.edit-bookmarked-routes' | trans }}</a></li>
+        {%- endif -%}
+        <li><a href="{{ path('app_roro_completed_surveys') }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
+    </ul>
+{% endblock %}

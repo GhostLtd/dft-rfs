@@ -1,0 +1,55 @@
+{%- macro surveysTabsAndList(user, surveys, hasBookmarks, filters) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
+
+    {%- if not hasBookmarks -%}
+        {{- _self.surveyList(user, surveys, filters | merge(['non-bookmarked'])) -}}
+    {%- else -%}
+        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+            {{ tabsHead({
+                ('roro.dashboard.bookmarked-routes' | trans): "tab-bookmarked",
+                ('roro.dashboard.other-routes' | trans): "tab-other"
+            }) }}
+
+            <div class="govuk-tabs__panel" id="tab-bookmarked">
+                {{- _self.surveyList(user, surveys, filters | merge(['bookmarked'])) -}}
+            </div>
+
+            <div class="govuk-tabs__panel" id="tab-other">
+                {{- _self.surveyList(user, surveys, filters | merge(['non-bookmarked'])) -}}
+            </div>
+        </div>
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro surveyList(user, surveys, filters) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
+
+    {%- if 'completed' in filters -%}
+        {%- set surveys = surveys | filter(s => s.isCompleted) -%}
+    {%- elseif 'outstanding' in filters -%}
+        {%- set surveys = surveys | filter(s => not s.isCompleted) -%}
+    {%- endif -%}
+
+    {%- if 'bookmarked' in filters -%}
+        {%- set surveys = surveys | filter(s => user.bookmarkedRoutes.contains(s.route)) -%}
+    {%- elseif 'non-bookmarked' in filters -%}
+        {%- set surveys = surveys | filter(s => not user.bookmarkedRoutes.contains(s.route)) -%}
+    {%- endif -%}
+
+    <dl class="govuk-summary-list">
+        {%- for survey in surveys -%}
+            {{- summaryListRow(
+                survey.surveyPeriodStart | date('format.date.year-and-month' | trans),
+                'roro.route' | trans({ukPort: survey.route.ukPort.name, foreignPort: survey.route.foreignPort.name}),
+                {
+                    (path('app_roro_survey_view', {surveyId: survey.id})): 'common.actions.view',
+                },
+                {
+                    key_translation: false
+                }
+            ) -}}
+        {%- else  -%}
+            {{- actionlessSummaryListRow('No surveys', null, {key_translation: false}) }}
+        {%- endfor -%}
+    </dl>
+{%- endmacro -%}

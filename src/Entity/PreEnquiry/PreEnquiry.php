@@ -2,6 +2,7 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyTrait;
@@ -135,8 +136,12 @@ class PreEnquiry implements SurveyInterface
         return array_reduce($this->notes->toArray(), fn($c, PreEnquiryNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
-    public function addNote(PreEnquiryNote $note): self
+    public function addNote(NoteInterface $note): self
     {
+        if (!$note instanceof PreEnquiryNote) {
+            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".PreEnquiryNote::class);
+        }
+
         if (!$this->notes->contains($note)) {
             $note->setPreEnquiry($this);
             $this->notes[] = $note;

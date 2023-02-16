@@ -1,0 +1,34 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.roro.surveys" %}
+
+{% block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+
+    {{ listTableStart(data, form) }}
+
+    {% for survey in data.entities %}
+        <tr class="govuk-table__row">
+            {{ tableCell(survey.surveyPeriodStart | date ('Y/m')) }}
+            {{ tableCell(survey.operator.name ?? '-', {}) }}
+            {{ tableCell(survey.route.ukPort.name ?? '-', {}) }}
+            {{ tableCell(survey.route.foreignPort.name ?? '-', {}) }}
+            {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
+
+            {%- set date = survey.surveyPeriodStart | date('F Y') -%}
+            {%- set links = {
+                (path('admin_roro_surveys_view', {surveyId: survey.id})): {
+                    label: 'view',
+                    srHiddenSuffix: "{date} survey for {survey.operator.name} on route {survey.route}"
+                }
+            } -%}
+            {{- tableCell(links is empty ? '' : actionLinks(links)) -}}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form) }}
+{% endblock %}

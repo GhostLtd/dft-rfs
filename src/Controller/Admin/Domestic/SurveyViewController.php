@@ -2,12 +2,11 @@
 
 namespace App\Controller\Admin\Domestic;
 
-use App\Controller\Admin\SurveyAddNoteController;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyNote;
-use App\Entity\SurveyInterface;
-use App\Form\Admin\NoteType;
+use App\Entity\SurveyStateInterface;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\AddNotesHelper;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
@@ -15,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -26,65 +26,38 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SurveyViewController extends AbstractController
 {
-    private PdfHelper $pdfHelper;
-    private AuditLogRepository $logRepository;
-
-    public function __construct(AuditLogRepository $logRepository, PdfHelper $pdfHelper)
-    {
-        $this->pdfHelper = $pdfHelper;
-        $this->logRepository = $logRepository;
-    }
+    public function __construct(
+        protected AddNotesHelper $addNotesHelper,
+        protected AuditLogRepository $auditLogRepository,
+        protected PdfHelper $pdfHelper,
+    ) {}
 
     /**
      * @Route("", name=SurveyController::VIEW_ROUTE)
      */
-    public function viewDetails(Survey $survey): Response
+    public function viewDetails(Survey $survey, Request $request): Response
     {
-        $addNoteForm = $this->getAddNoteForm($survey);
+        $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);
+        if ($this->addNotesHelper->formSubmittedAndProcessed($request, $survey, $addNotesForm)) {
+            return new RedirectResponse($this->addNotesHelper->addNotesTabAnchor($this->generateUrl('admin_domestic_survey_view', ['surveyId' => $survey->getId()])));
+        }
 
-        return $this->render('admin/domestic/surveys/view.html.twig', array_merge(
-            $this->getSurveyViewData($survey),
-            [
-                'survey' => $survey,
-                'addNoteForm' => $addNoteForm->createView(),
-            ]
-        ));
-    }
-
-    /**
-     * @Route("/add-note", name=SurveyController::ADD_NOTE_ROUTE)
-     * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="survey")
-     */
-    public function addNote(Survey $survey)
-    {
-        $addNoteForm = $this->getAddNoteForm($survey);
-        return $this->forward(SurveyAddNoteController::class . '::addNotePostAction', [
-            'survey' => $survey,
-            'addNoteForm' => $addNoteForm,
-            'viewSurveyRoute' => SurveyController::VIEW_ROUTE,
-            'viewSurveyRouteParams' => ['surveyId' => $survey->getId()],
-            'viewSurveyTemplate' => 'admin/domestic/surveys/view.html.twig',
-            'additionalViewData' => $this->getSurveyViewData($survey),
-        ]);
-    }
-
-    protected function getSurveyViewData(Survey $survey): array
-    {
-        return [
-            'auditLogs' => $this->logRepository->getLogs($survey->getId(), Survey::class),
+        return $this->render('admin/domestic/surveys/view.html.twig', [
+            'addNoteForm' => $addNotesForm->createView(),
             'approvedBy' => in_array($survey->getState(), [
-                SurveyInterface::STATE_INVITATION_SENT,
-                SurveyInterface::STATE_NEW,
-                SurveyInterface::STATE_IN_PROGRESS,
-                SurveyInterface::STATE_REJECTED,
-                SurveyInterface::STATE_CLOSED,
-            ]) ? false : $this->logRepository->getApprovedBy($survey),
+                SurveyStateInterface::STATE_INVITATION_SENT,
+                SurveyStateInterface::STATE_NEW,
+                SurveyStateInterface::STATE_IN_PROGRESS,
+                SurveyStateInterface::STATE_REJECTED,
+                SurveyStateInterface::STATE_CLOSED,
+            ]) ? false : $this->auditLogRepository->getApprovedBy($survey),
+            'auditLogs' => $this->auditLogRepository->getLogs($survey->getId(), Survey::class),
             'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
             'qualityAssuredBy' => $survey->getQualityAssured() ?
-                $this->logRepository->getQualityAssuredBy($survey) :
+                $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,
             'survey' => $survey,
-        ];
+        ]);
     }
 
     /**
@@ -92,7 +65,7 @@ class SurveyViewController extends AbstractController
      * @Template("admin/notes/delete.html.twig")
      * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="survey")
      */
-    public function deleteNote(Request $request, DeleteSurveyNoteConfirmAction $deleteSurveyNoteConfirmAction, Survey $survey, SurveyNote $note)
+    public function deleteNote(Request $request, DeleteSurveyNoteConfirmAction $deleteSurveyNoteConfirmAction, Survey $survey, SurveyNote $note): Response|array
     {
         // check note is part of survey
         if ($note->getSurvey()->getId() !== $survey->getId()) {
@@ -109,12 +82,5 @@ class SurveyViewController extends AbstractController
                 $request,
                 fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#tab-notes"
             );
-    }
-
-    protected function getAddNoteForm(SurveyInterface $survey)
-    {
-        return $this->createForm(NoteType::class, new SurveyNote(), [
-            'action' => SurveyAddNoteController::addNotesTabAnchor($this->generateUrl('admin_domestic_survey_addnote', ['surveyId' => $survey->getId()])),
-        ]);
     }
 }

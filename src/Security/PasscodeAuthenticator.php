@@ -34,8 +34,13 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
     protected UserPasswordHasherInterface $passwordHasher;
     protected UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, PasscodeGenerator $passcodeGenerator, UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        FormFactoryInterface $formFactory,
+        PasscodeGenerator $passcodeGenerator,
+        UserPasswordHasherInterface $passwordHasher,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
         $this->passcodeGenerator = $passcodeGenerator;
@@ -82,15 +87,17 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
         $user->setLastLogin(new \DateTime());
         $this->entityManager->flush();
 
+        $roles = $user->getRoles();
+
         switch (true)
         {
-            case $user->hasRole(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER):
+            case in_array(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER, $roles):
                 return new RedirectResponse($this->urlGenerator->generate(DomesticIndexController::SUMMARY_ROUTE));
 
-            case $user->hasRole(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER):
+            case in_array(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER, $roles):
                 return new RedirectResponse($this->urlGenerator->generate(InternationalIndexController::SUMMARY_ROUTE));
 
-            case $user->hasRole(PasscodeUser::ROLE_PRE_ENQUIRY_USER):
+            case in_array(PasscodeUser::ROLE_PRE_ENQUIRY_USER, $roles):
                 return new RedirectResponse($this->urlGenerator->generate(PreEnquiryController::SUMMARY_ROUTE));
         }
 

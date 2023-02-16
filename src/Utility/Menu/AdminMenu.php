@@ -13,21 +13,9 @@ class AdminMenu implements MenuInterface
 {
     use RoleFilterTrait;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $security;
+    protected Security $security;
+    protected RouterInterface $router;
 
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
-     * NavBar constructor.
-     * @param Security $security
-     * @param RouterInterface $router
-     */
     public function __construct(Security $security, RouterInterface $router)
     {
         $this->security = $security;
@@ -35,9 +23,9 @@ class AdminMenu implements MenuInterface
     }
 
     /**
-     * @return MenuItemInterface[]
+     * @return array<int, MenuItemInterface>
      */
-    public function getMenuItems()
+    public function getMenuItems(): array
     {
         return $this->filterMenuItemsByRole($this->security, [
             new RoleMenuItem('dashboard', 'menu.dashboard', $this->router->generate('admin_index'), [], []),
@@ -69,6 +57,19 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('sample-import', 'menu.pre-enquiry.sample-import', $this->router->generate('admin_preenquiry_sampleimport_start'), [], []),
                 new RoleMenuItem('add', 'menu.pre-enquiry.add', $this->router->generate('admin_preenquiry_add'), [], []),
                 new RoleMenuItem('export', 'menu.pre-enquiry.export', $this->router->generate('admin_preenquiry_export_list'), [], []),
+            ]),
+            new MenuDivider(),
+
+            new RoleMenuItem('roro', 'menu.roro.root', null, [
+                new RoleMenuItem('dashboard', 'menu.roro.surveys', $this->router->generate('admin_roro_surveys_list'), [], []),
+                new RoleMenuItem('operators', 'menu.roro.operators', $this->router->generate('admin_operators_list'), [], []),
+            ]),
+            new MenuDivider(),
+
+            new RoleMenuItem('ports-and-routes', 'menu.ports-and-routes.root', null, [
+                new RoleMenuItem('ports-uk', 'menu.ports-and-routes.ports.uk', $this->router->generate('admin_ports_uk_list'), [], []),
+                new RoleMenuItem('ports-foreign', 'menu.ports-and-routes.ports.foreign', $this->router->generate('admin_ports_foreign_list'), [], []),
+                new RoleMenuItem('routes', 'menu.ports-and-routes.routes', $this->router->generate('admin_routes_list'), [], []),
             ]),
             new MenuDivider(),
 

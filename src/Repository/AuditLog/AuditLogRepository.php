@@ -5,6 +5,7 @@ namespace App\Repository\AuditLog;
 use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\QualityAssuranceInterface;
 use App\Entity\SurveyInterface;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
@@ -84,7 +85,10 @@ class AuditLogRepository extends ServiceEntityRepository
         return $localCache[$key];
     }
 
-    public function getQualityAssuredBy($entity)
+    /**
+     * @return array<AuditLog>|null
+     */
+    public function getQualityAssuredBy(QualityAssuranceInterface $entity): ?array
     {
         return $this->createQueryBuilder('audit_log')
             ->select('audit_log.username, audit_log.timestamp')
@@ -99,8 +103,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->orderBy('audit_log.timestamp', 'desc')
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-            ;
+            ->getOneOrNullResult();
     }
 
     protected function addApprovalQueryBuilderConditions(QueryBuilder $queryBuilder, string $surveyClass, ?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null)

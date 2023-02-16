@@ -1,0 +1,265 @@
+<?php
+
+namespace App\Entity\RoRo;
+
+use App\Entity\IdTrait;
+use App\Entity\NoteInterface;
+use App\Entity\QualityAssuranceInterface;
+use App\Entity\Route\Route;
+use App\Entity\SurveyStateInterface;
+use App\Repository\RoRo\SurveyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @ORM\Entity(repositoryClass=SurveyRepository::class)
+ * @ORM\Table(
+ *     name="roro_survey",
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="roro_operation_route_date_index", columns={"operator_id", "route_id", "survey_period_start"})
+ *     }
+ * )
+ */
+class Survey implements SurveyStateInterface, QualityAssuranceInterface
+{
+    const STATE_FILTER_CHOICES = [
+        self::STATE_NEW,
+        self::STATE_IN_PROGRESS,
+        self::STATE_CLOSED,
+        self::STATE_APPROVED,
+    ];
+
+    use IdTrait;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private ?\DateTime $surveyPeriodStart = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Operator::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private ?Operator $operator = null;
+
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private ?string $state = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Route::class, inversedBy="surveys")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private ?Route $route = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity=VehicleCount::class, mappedBy="survey", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OrderBy({"otherCode" = "ASC", "countryCode" = "ASC"})
+     * @var Collection<int, VehicleCount>
+     */
+    private Collection $vehicleCounts;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Assert\NotNull(message="common.choice.not-null", groups={"roro.is-active"})
+     */
+    private ?bool $isActiveForPeriod = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private Collection $notes;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $qualityAssured;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+        $this->vehicleCounts = new ArrayCollection();
+    }
+
+    public function getSurveyPeriodStart(): ?\DateTime
+    {
+        return $this->surveyPeriodStart;
+    }
+
+    public function setSurveyPeriodStart(\DateTime $surveyPeriodStart): self
+    {
+        $this->surveyPeriodStart = $surveyPeriodStart;
+        return $this;
+    }
+
+    public function getOperator(): ?Operator
+    {
+        return $this->operator;
+    }
+
+    public function setOperator(?Operator $operator): self
+    {
+        $this->operator = $operator;
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(?string $state): self
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    public function getRoute(): ?Route
+    {
+        return $this->route;
+    }
+
+    public function setRoute(?Route $route): self
+    {
+        $this->route = $route;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VehicleCount>
+     */
+    public function getVehicleCounts(): Collection
+    {
+        return $this->vehicleCounts;
+    }
+
+    public function getCountryVehicleCounts(): Collection
+    {
+        return $this->vehicleCounts->filter(fn(VehicleCount $cvc) => $cvc->getCountryCode() !== null)->matching($this->getVehicleCountOrderCriteria());
+    }
+    public function getOtherVehicleCounts(): Collection
+    {
+        return $this->vehicleCounts->filter(fn(VehicleCount $cvc) => $cvc->getCountryCode() === null)->matching($this->getVehicleCountOrderCriteria());
+    }
+
+    protected function getVehicleCountOrderCriteria(): Criteria
+    {
+        return Criteria::create()
+            ->orderBy(array("label" => Criteria::ASC));
+    }
+
+    public function addCountryVehicleCount(VehicleCount $countryVehicleCount): self
+    {
+        if (!$this->vehicleCounts->contains($countryVehicleCount)) {
+            $this->vehicleCounts[] = $countryVehicleCount;
+            $countryVehicleCount->setSurvey($this);
+        }
+
+        return $this;
+    }
+
+    public function addOtherVehicleCount(VehicleCount $otherVehicleCount): self
+    {
+        return $this->addCountryVehicleCount($otherVehicleCount);
+    }
+
+    public function removeCountryVehicleCount(VehicleCount $countryVehicleCount): self
+    {
+        if ($this->vehicleCounts->removeElement($countryVehicleCount)) {
+            // set the owning side to null (unless already changed)
+            if ($countryVehicleCount->getSurvey() === $this) {
+                $countryVehicleCount->setSurvey(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeOtherVehicleCount(VehicleCount $otherVehicleCount): self
+    {
+        return $this->removeCountryVehicleCount($otherVehicleCount);
+    }
+
+    public function getIsActiveForPeriod(): ?bool
+    {
+        return $this->isActiveForPeriod;
+    }
+
+    public function setIsActiveForPeriod(?bool $isActiveForPeriod): self
+    {
+        $this->isActiveForPeriod = $isActiveForPeriod;
+        if ($isActiveForPeriod === false) {
+            foreach ($this->vehicleCounts as $vehicleCount) {
+                $vehicleCount->setVehicleCount(null);
+            }
+        }
+        return $this;
+    }
+
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(Collection $notes): self
+    {
+        $this->notes = $notes;
+        return $this;
+    }
+
+    public function addNote(NoteInterface $note): self
+    {
+        if (!$note instanceof SurveyNote) {
+            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".SurveyNote::class);
+        }
+
+        if (!$this->notes->contains($note)) {
+            $note->setSurvey($this);
+            $this->notes[] = $note;
+        }
+
+        return $this;
+    }
+
+    public function getQualityAssured(): ?bool
+    {
+        return $this->qualityAssured;
+    }
+
+    public function setQualityAssured(?bool $qualityAssured): self
+    {
+        $this->qualityAssured = $qualityAssured;
+        return $this;
+    }
+
+    // -----
+
+    public function isCompleted(): bool
+    {
+        return in_array($this->state, [
+            SurveyStateInterface::STATE_APPROVED,
+            SurveyStateInterface::STATE_CLOSED,
+            SurveyStateInterface::STATE_REJECTED,
+        ]);
+    }
+
+    public function getChasedCount(): int
+    {
+        return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c + ($i->getWasChased() ? 1 : 0)) ?? 0;
+    }
+
+    public function merge(?Survey $survey): void
+    {
+        if ($survey) {
+            foreach ($survey->getVehicleCounts() as $key => $item) {
+                $this->vehicleCounts->get($key)->setVehicleCount($item->getVehicleCount());
+            }
+            $this->isActiveForPeriod = $survey->getIsActiveForPeriod();
+        }
+    }
+}

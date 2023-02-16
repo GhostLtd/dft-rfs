@@ -2,6 +2,7 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\NoteInterface;
 use App\Entity\NoteTrait;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table("pre_enquiry_note")
  */
-class PreEnquiryNote
+class PreEnquiryNote implements NoteInterface
 {
     use NoteTrait;
 

@@ -106,16 +106,6 @@ class PasscodeUser implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function hasRole($role)
-    {
-        return in_array($role, $this->getRoles());
-    }
-
-    public function setRoles(array $roles): self
-    {
-        return $this;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;

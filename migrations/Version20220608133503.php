@@ -9,6 +9,7 @@ use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Symfony\Component\Uid\Uuid;
 
 final class Version20220608133503 extends AbstractMigration
 {
@@ -62,7 +63,7 @@ final class Version20220608133503 extends AbstractMigration
                         }
 
                         $recipientHash = hash('sha256', $recipient);
-                        $apiResponseId = $this->getUuid();
+                        $apiResponseId = Uuid::v1();
 
                         $this->addSql('INSERT INTO notify_api_response (id, event_name, message_class, recipient, recipient_hash, timestamp, data, endpoint) VALUES (:id, :event_name, :message_class, :recipient, :recipient_hash, :timestamp, :data, :endpoint)', [
                             'id' => $apiResponseId,
@@ -102,12 +103,5 @@ final class Version20220608133503 extends AbstractMigration
         $this->addSql('ALTER TABLE pre_enquiry ADD notify_api_responses LONGTEXT CHARACTER SET utf8mb4 DEFAULT NULL COLLATE `utf8mb4_unicode_ci` COMMENT \'(DC2Type:json)\'');
 
         $this->addSql('ALTER TABLE domestic_notification_interception CHANGE emails email VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`');
-    }
-
-    protected function getUuid(): string
-    {
-        // TODO: This ties us to MySQL (and/or any platform sharing this syntax)
-        //       Can be replaced with symfony/uid once we upgrade to Symfony 5.x
-        return $this->connection->executeQuery('SELECT UUID()')->fetchOne();
     }
 }

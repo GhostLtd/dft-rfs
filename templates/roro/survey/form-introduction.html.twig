@@ -1,0 +1,6 @@
+{% set translation_prefix = 'roro.survey.introduction' %}
+{% set titleParams = {
+    route: 'roro.route' | trans({ukPort: form.vars.data.route.ukPort.name, foreignPort: form.vars.data.route.foreignPort.name}),
+    period: form.vars.data.surveyPeriodStart | date('format.date.year-and-month' | trans),
+} %}
+{%- extends "roro/form-base.html.twig" -%}

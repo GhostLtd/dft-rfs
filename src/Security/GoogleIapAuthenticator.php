@@ -21,11 +21,13 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 class GoogleIapAuthenticator extends AbstractAuthenticator
 {
     const EXTRA_FIELD_USER_ID = 'IAPid';
-    private bool $isGaeEnvironment;
+    protected bool $isGaeEnvironment;
+    protected ManagementUserHelper $managementUserHelper;
 
-    public function __construct()
+    public function __construct(ManagementUserHelper $managementUserHelper)
     {
         $this->isGaeEnvironment = PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT);
+        $this->managementUserHelper = $managementUserHelper;
     }
 
     protected function getUserEmail(Request $request): string
@@ -50,16 +52,23 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
+        $email = $this->getUserEmail($request);
+
         $credentials = [
-            'emailAddress' => $this->getUserEmail($request),
+            'emailAddress' => $email,
             'userId' => $this->getUserId($request),
             'assertion' => $this->getJwtAssertion($request),
         ];
+
+        $role = $this->managementUserHelper->isManagementDomain($email) ?
+            'ROLE_ADMIN_IAP_MANAGER' :
+            'ROLE_ADMIN_IAP_USER';
+
         return new Passport(
             new UserBadge('', fn() => new InMemoryUser(
-                $credentials['emailAddress'],
+                $email,
                 $credentials['assertion'],
-                ['ROLE_ADMIN_IAP_USER'],
+                [$role],
                 true,
                 true,
                 true,

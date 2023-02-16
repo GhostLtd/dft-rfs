@@ -1,0 +1,50 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.ports." ~ portType %}
+
+{% block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    {{ listTableStart(data, form) }}
+
+    {%- set addRoute = "admin_ports_#{portType}_add" -%}
+    {%- set deleteRoute = "admin_ports_#{portType}_delete" -%}
+    {%- set editRoute = "admin_ports_#{portType}_edit" -%}
+
+    <p class="govuk-body govuk-!-margin-bottom-5">
+        <a href="{{ path(addRoute) }}" class="govuk-link">Add port</a>
+    </p>
+
+    {% for port in data.entities %}
+        <tr class="govuk-table__row">
+            {{- tableCell(port.name ?? '-', {}) -}}
+            {{- tableCell(port.code ?? '-', {}) -}}
+
+            {%- set links = {} -%}
+            {%- if is_granted('CAN_EDIT_PORT', port) -%}
+                {%- set links = links | merge({
+                    (path(editRoute, {portId: port.id})): {
+                        label: 'edit',
+                        srHiddenSuffix: "port called #{port.name}"
+                    }
+                }) -%}
+            {%- endif -%}
+            {%- if is_granted('CAN_DELETE_PORT', port) -%}
+                {%- set links = links | merge({
+                    (path(deleteRoute, {portId: port.id})): {
+                        label: 'delete',
+                        srHiddenSuffix: "port called #{port.name}"
+                    }
+                }) -%}
+            {%- endif -%}
+            {{- tableCell(links is empty ? '' : actionLinks(links)) -}}
+        </tr>
+    {% else %}
+        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
+    {% endfor %}
+    {{ listTableEnd(data, form) }}
+{% endblock %}

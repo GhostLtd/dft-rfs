@@ -2,10 +2,12 @@
 
 namespace App\Entity\International;
 
+use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
+use App\Entity\QualityAssuranceInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
@@ -20,7 +22,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey implements HaulageSurveyInterface, ApiResponseInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface
 {
     use HaulageSurveyTrait;
 
@@ -33,8 +35,8 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         self::STATE_CLOSED,
         self::STATE_APPROVED,
         self::STATE_REJECTED,
-        self::STATE_EXPORTING,
-        self::STATE_EXPORTED,
+//        self::STATE_EXPORTING,
+//        self::STATE_EXPORTED,
     ];
 
     const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
@@ -189,8 +191,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
-    public function addNote(SurveyNote $note): self
+    public function addNote(NoteInterface $note): self
     {
+        if (!$note instanceof SurveyNote) {
+            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".SurveyNote::class);
+        }
+
         if (!$this->notes->contains($note)) {
             $note->setSurvey($this);
             $this->notes[] = $note;

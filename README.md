@@ -3,9 +3,11 @@
 ## Requirements
 - PHP 8.1+
 - Mysql / MariaDB
+- Node 14 (to build CSS/JS assets)
 - Gov.uk Notify API key
 
 ## Relation documents / config
 - [Change log](docs/ChangeLog.md)
+- [Env files](docs/Env.md)
 - [Reminders](docs/Reminders.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

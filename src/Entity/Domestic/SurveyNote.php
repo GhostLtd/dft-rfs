@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Entity\Domestic;
 
-
+use App\Entity\NoteInterface;
 use App\Entity\NoteTrait;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table("domestic_survey_note")
  */
-class SurveyNote
+class SurveyNote implements NoteInterface
 {
     use NoteTrait;
 
@@ -38,5 +37,4 @@ class SurveyNote
     {
         return $this->survey;
     }
-
 }

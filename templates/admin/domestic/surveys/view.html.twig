@@ -113,7 +113,7 @@
             {{- tabsHead(tabs) -}}
 
             {%- if 'Initial details' in tabs | keys -%}
-                <div class="govuk-tabs__panel" id="tab-initial-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0" id="tab-initial-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/initial-details.html.twig' -%}
                     {%- endwith -%}
@@ -126,7 +126,7 @@
             {%- endif -%}
 
             {%- if 'Business details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-business-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/business-details.html.twig' -%}
                     {%- endwith -%}
@@ -140,7 +140,7 @@
             {%- endif -%}
 
             {%- if 'Vehicle details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-vehicle-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/vehicle-details.html.twig' -%}
                     {%- endwith -%}
@@ -153,7 +153,7 @@
             {%- endif -%}
 
             {%- if 'Final details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-final-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/final-details.html.twig' -%}
                     {%- endwith -%}
@@ -166,27 +166,27 @@
             {%- endif -%}
 
             {%- if 'Driver availability' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-driver-availability">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-driver-availability">
                     {%- with {availability: survey.driverAvailability} -%}
                         {%- include 'admin/domestic/includes/driver-availability.html.twig' -%}
                     {%- endwith -%}
                 </div>
             {%- endif -%}
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-invitation-details">
                 {%- with {marginBottom: 5} -%}
                     {%- include 'admin/includes/invitation-details.html.twig' -%}
                 {%- endwith -%}
             </div>
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-notes">
                 {%- with {marginBottom: 5, deleteRoute: 'admin_domestic_survey_deletenote', deleteParams: {surveyId: survey.id}} -%}
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
 
             {%- if hasFeedback -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-feedback">
                     {%- with {feedback: survey.feedback} -%}
                         {%- include 'admin/includes/feedback.html.twig' -%}
                     {%- endwith -%}
@@ -194,7 +194,7 @@
             {%- endif -%}
 
             {%- if hasAuditLogs -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
                         {%- include 'admin/includes/audit-log.html.twig' -%}
                     {%- endwith -%}

@@ -67,11 +67,6 @@ services:
             # If you get transaction issues (e.g. after login) uncomment the line below
             - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_ADVISORY }
 
-    App\Security\FileUserProvider:
-        arguments:
-            $usersFile: '%env(resolve:ADMIN_USERS_PASSWORD_FILE)%'
-
-
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
@@ -138,6 +133,14 @@ services:
             - { name: 'workflow.expression_language_provider' }
             - { name: 'validator.expression_language_provider' }
 
+    App\Security\FileUserProvider:
+        arguments:
+            $usersFile: '%env(resolve:default::ADMIN_USERS_PASSWORD_FILE)%'
+
+    App\Security\ManagementUserHelper:
+        arguments:
+            $managementDomains: '%env(json:default::MANAGEMENT_DOMAINS)%'
+
     App\Serializer\Encoder\SqlServerInsertEncoder:
         calls:
             - setTwig: ['@twig']
@@ -158,7 +161,6 @@ services:
 
     App\Doctrine\Migrations\Version\ProjectMigrationFactory:
         arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
-
 
     App\EventSubscriber\RedirectAnnotationSubscriber:
         arguments:

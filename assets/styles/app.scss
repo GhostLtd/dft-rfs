@@ -35,3 +35,15 @@ body {
     padding: govuk-spacing(2);
     @include govuk-font(16);
 }
+
+.roro-vehicle-counts {
+    dl.govuk-summary-list {
+        .govuk-summary-list__key {
+            width: 75%;
+        }
+        .govuk-summary-list__value {
+            width: 25%;
+            text-align: right;
+        }
+    }
+}

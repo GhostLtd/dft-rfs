@@ -2,7 +2,7 @@
 <h2 class="govuk-heading-m">Invitation/Reminder details</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
-    {{- row('Address', address | formatAddress(true) | default('-')) -}}
+    {{- _self.row('Address', address | formatAddress(true) | default('-'), {nl2br: true}) -}}
 
     {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
@@ -22,7 +22,7 @@
 </dl>
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- row('Email Address', '') -}}
+    {{- _self.row('Email Address', '') -}}
     {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
         'App\\Messenger\\AlphagovNotify\\Email',
@@ -59,7 +59,7 @@
 {%- macro row(key, value, options) -%}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key govuk-!-padding-left-5">{{ key }}</dt>
-        <dd class="govuk-summary-list__value">{{ value }}</dd>
+        <dd class="govuk-summary-list__value">{% if (options.nl2br ?? false) %}{{ value | nl2br }}{% else %}{{ value }}{% endif %}</dd>
     </div>
 {%- endmacro -%}
 

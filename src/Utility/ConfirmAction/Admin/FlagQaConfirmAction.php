@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Utility\ConfirmAction\Domestic\Admin;
+namespace App\Utility\ConfirmAction\Admin;
 
-use App\Entity\Domestic\Survey;
-use App\Entity\HaulageSurveyInterface;
+use App\Entity\International\Survey;
+use App\Entity\QualityAssuranceInterface;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -39,11 +39,11 @@ class FlagQaConfirmAction extends AbstractConfirmAction
         return "common.survey.flag-qa";
     }
 
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction($formData): void
     {
         $survey = $this->getSubject();
 
-        if ($survey instanceof HaulageSurveyInterface) {
+        if ($survey instanceof QualityAssuranceInterface) {
             $survey->setQualityAssured(true);
             $this->entityManager->flush();
         }

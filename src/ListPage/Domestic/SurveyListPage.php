@@ -25,10 +25,10 @@ class SurveyListPage extends AbstractListPage
     protected bool $isNorthernIreland;
     protected SurveyRepository $repository;
 
-    public function __construct(SurveyRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(SurveyRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $repository;
+        $this->repository = $routeRepository;
     }
 
     public function setIsNorthernIreland(bool $isNorthernIreland): self

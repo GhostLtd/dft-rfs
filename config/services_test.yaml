@@ -3,7 +3,10 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         public: true        # Need to be public to allow testing
+        bind:
+            $secret: '%env(APP_SECRET)%'
 
+    App\Utility\AlphagovNotify\PersonalisationHelper: ~
     App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
     App\Utility\Cleanup\PersonalDataCleanupUtility: ~
-    App\Utility\AlphagovNotify\PersonalisationHelper: ~
+    App\Utility\UrlSigner: ~

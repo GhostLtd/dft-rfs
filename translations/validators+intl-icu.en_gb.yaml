@@ -249,6 +249,29 @@ driver-availability:
     period:
       other: Enter the period of this wage increase
 
+operators:
+  name.not-null: Enter a name
+  code.not-null: Enter a code
+  is-active.not-null: Choose whether this operator is active
+  duplicate-code: An operator with this code already exists
+  duplicate-name: An operator with this name already exists
+
+ports:
+  name.not-null: Enter a name
+  code.not-null: Enter a code
+  duplicate-code: A port with this code already exists
+  duplicate-name: A port with this name already exists
+
+roro:
+  login:
+    invalid-email: Enter a valid email address
+    username-blank: Enter an email address
+  user:
+    username.not-null: Enter an email address
+
+routes:
+  duplicate-route: This route already exists
+
 survey-feedback:
   experience-rating.not-null: Rate your experience
   has-completed-paper.not-null: Choose whether you previously completed the survey on paper

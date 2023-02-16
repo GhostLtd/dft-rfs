@@ -3,6 +3,15 @@ menu:
   logout: Sign out
   reports: Reports
   feedback: Feedback
+  ports-and-routes:
+    ports:
+      foreign: Foreign ports
+      foreign-add: Add foreign port
+      uk: UK ports
+      uk-add: Add UK port
+    root: Ports and Routes
+    route-add: Add route
+    routes: Routes
   domestic:
     root: CSRGT
     surveys-gb: Surveys (GB)
@@ -25,6 +34,10 @@ menu:
     add: Add
     sample-import: Bulk sample import
     export: Export
+  roro:
+    operators: Operators
+    root: RoRo
+    surveys: Surveys
 
 format:
   date:
@@ -112,3 +125,66 @@ notification-interception:
     submit: Save changes
   heading: Large company notify interceptions
   sr-hidden-suffix: "{primaryName}"
+
+
+operator:
+  delete:
+    heading: Delete operator {name}?
+    warning: Are you sure you want to delete this operator?
+    confirm.label: Yes, delete {name}
+    cancel.label: Cancel
+    cancelled-notification:
+      heading: Operation cancelled
+      content: Operator {name} was NOT deleted
+    confirmed-notification:
+      heading: Operation successful
+      content: Operator {name} was successfully deleted
+  route:
+    unassign:
+      heading: Unassign route "{uk_port_name} to {foreign_port_name}" from operator {operator_name}?
+      confirm.label: Yes, unassign route
+      cancel.label: Cancel
+      cancelled-notification:
+        heading: Operation cancelled
+        content: Route from {uk_port_name} to {foreign_port_name} was NOT unassigned
+      confirmed-notification:
+        heading: Operation successful
+        content: Route from {uk_port_name} to {foreign_port_name} was successfully unassigned
+  user:
+    delete:
+      heading: Delete RoRo user {username}?
+      warning: Are you sure you want to delete this RoRo user?
+      confirm.label: Yes, delete {username}
+      cancel.label: Cancel
+      cancelled-notification:
+        heading: Operation cancelled
+        content: RoRo user {username} was NOT deleted
+      confirmed-notification:
+        heading: Operation successful
+        content: RoRo user {username} was successfully deleted
+
+port:
+  delete:
+    heading: Delete port {name}?
+    warning: Are you sure you want to delete this port?
+    confirm.label: Yes, delete {name}
+    cancel.label: Cancel
+    cancelled-notification:
+      heading: Operation cancelled
+      content: Port {name} was NOT deleted
+    confirmed-notification:
+      heading: Operation successful
+      content: Port {name} was successfully deleted
+
+route:
+  delete:
+    heading: Delete route from {uk_port_name} to {foreign_port_name}?
+    warning: Are you sure you want to delete this port?
+    confirm.label: Yes, delete route
+    cancel.label: Cancel
+    cancelled-notification:
+      heading: Operation cancelled
+      content: Route from {uk_port_name} to {foreign_port_name} was NOT deleted
+    confirmed-notification:
+      heading: Operation successful
+      content: Route from {uk_port_name} to {foreign_port_name} was successfully deleted

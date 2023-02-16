@@ -16,10 +16,10 @@ class PreEnquiryListPage extends AbstractListPage
 {
     private PreEnquiryRepository $repository;
 
-    public function __construct(PreEnquiryRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(PreEnquiryRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $repository;
+        $this->repository = $routeRepository;
     }
 
     protected function getFieldsDefinition(): array

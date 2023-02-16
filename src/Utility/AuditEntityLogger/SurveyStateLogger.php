@@ -2,7 +2,7 @@
 
 namespace App\Utility\AuditEntityLogger;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 
 class SurveyStateLogger extends AbstractAuditEntityLogger
 {
@@ -29,7 +29,7 @@ class SurveyStateLogger extends AbstractAuditEntityLogger
 
     public function supports(string $className): bool
     {
-        return $this->implementsInterface($className, SurveyInterface::class);
+        return $this->implementsInterface($className, SurveyStateInterface::class);
     }
 
     function getCategory(): string

@@ -1,14 +1,17 @@
 {%- set title = "#{translation_prefix}.title" | trans(titleParams|default({})) -%}
-{%- set heading_override = headingOverride is defined ? headingOverride : 'heading' -%}
-{%- set heading = "#{translation_prefix}.#{heading_override}" | trans(headingParams|default({})) -%}
 
 {%- if title != "#{translation_prefix}.title" and not title is empty -%}
     {{- title }}{{ ' - ' -}}
-{%- elseif heading != "#{translation_prefix}.#{heading_override}" and not heading is empty -%}
-    {{- heading }}{{ ' - ' -}}
-{%- elseif form is defined and (form.children | length) > 0 -%}
-    {%- set firstField = form.children[(form.children | keys)[0]] -%}
-    {%- if firstField.vars.label_is_page_heading|default(false) %}
-        {{- firstField.vars.label|trans(firstField.vars.label_translation_parameters|default({})) }}{{ ' - ' -}}
+{%- else -%}
+    {%- set heading_override = headingOverride is defined ? headingOverride : 'heading' -%}
+    {%- set heading = "#{translation_prefix}.#{heading_override}" | trans(headingParams|default({})) -%}
+
+    {%- if heading != "#{translation_prefix}.#{heading_override}" and not heading is empty -%}
+        {{- heading }}{{ ' - ' -}}
+    {%- elseif form is defined and (form.children | length) > 0 -%}
+        {%- set firstField = form.children[(form.children | keys)[0]] -%}
+        {%- if firstField.vars.label_is_page_heading|default(false) %}
+            {{- firstField.vars.label|trans(firstField.vars.label_translation_parameters|default({})) }}{{ ' - ' -}}
+        {%- endif -%}
     {%- endif -%}
 {%- endif -%}

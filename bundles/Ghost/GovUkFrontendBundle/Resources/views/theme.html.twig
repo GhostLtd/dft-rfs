@@ -503,3 +503,7 @@
         </fieldset>
     </div>
 {% endblock %}
+
+{%- block gds_link_row -%}
+    <a {{ block('attributes') }}>{{ block('form_label_inner_content') }}</a>
+{%- endblock -%}

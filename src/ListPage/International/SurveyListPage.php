@@ -20,10 +20,10 @@ class SurveyListPage extends AbstractListPage
      */
     private SurveyRepository $repository;
 
-    public function __construct(SurveyRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(SurveyRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $repository;
+        $this->repository = $routeRepository;
     }
 
     protected function getFieldsDefinition(): array

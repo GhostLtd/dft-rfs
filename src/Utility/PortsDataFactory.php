@@ -2,19 +2,19 @@
 
 namespace App\Utility;
 
-use App\Repository\International\CrossingRouteRepository;
+use App\Repository\Route\RouteRepository;
 
 class PortsDataFactory
 {
-    protected CrossingRouteRepository $crossingRouteRepository;
+    protected RouteRepository $routeRepository;
 
-    public function __construct(CrossingRouteRepository $crossingRouteRepository)
+    public function __construct(RouteRepository $routeRepository)
     {
-        $this->crossingRouteRepository = $crossingRouteRepository;
+        $this->routeRepository = $routeRepository;
     }
 
     public function getData(string $direction): PortsDataSet
     {
-        return new PortsDataSet($this->crossingRouteRepository, $direction);
+        return new PortsDataSet($this->routeRepository, $direction);
     }
 }

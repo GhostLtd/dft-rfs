@@ -12,6 +12,7 @@ format:
     full: 'l, jS F'
     side-bar: 'j M Y'
     default: 'd/m/Y'
+    year-and-month: 'F Y'
   time:
     default: 'g:i a'
   date-time:
@@ -41,6 +42,7 @@ common:
     re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
+    save: Save
     submit-survey: Submit survey
     view: View
   address:
@@ -180,25 +182,117 @@ passcode:
       0.label: First code
       1.label: Second code
 
+roro:
+  auth:
+    login-failure-banner:
+      heading: Login error
+      title: Login error
+  dashboard:
+    title: Dashboard for {operator}
+    bookmarked-routes: Bookmarked routes
+    edit-bookmarked-routes: &edit-bookmarked-routes Edit bookmarked routes
+    other-routes: Other routes
+    outstanding-surveys: Outstanding surveys
+    useful-links: Useful links
+    view-completed-surveys: View completed surveys
+  bookmarked-routes:
+    bookmark: Bookmark
+    bookmarked-routes: Bookmarked routes
+    no-bookmarked-routes: No bookmarked routes
+    no-other-routes: No other routes
+    other-routes: Other routes
+    remove-bookmark: Remove bookmark
+    save: Save bookmarks
+    title: *edit-bookmarked-routes
+  completed-surveys:
+    title: Completed surveys
+  login:
+    username.label: Email address
+  route: "{ukPort} to {foreignPort}"
+  survey:
+    state: Status
+    introduction:
+      title: Introduction - {route} - {period}
+      is-active: Was this route active for the period?
+    vehicle-counts:
+      heading: Vehicle counts
+      title: Vehicle counts - {route} - {period}
+      help: ''
+      country:
+        label: Country vehicle counts
+      other:
+        label: Other vehicle counts
+    vehicle-count:
+      others:
+        XK: Kosovo
+        other: Other country
+        unknown: Unknown country
+        trailers: Unaccompanied trailers
+    view.title: &route-and-date "{ukPort} to {foreignPort} - {date}"
+    complete:
+      title: Complete survey
+      heading: Complete survey
+      help: This will mark the survey for "{ukPort} to {foreignPort} - {date}" as complete
+      confirm.label: Complete
+      cancel.label: Cancel
+      cancelled-notification:
+        heading: Cancelled completion
+        content: The survey was not completed
+      confirmed-notification:
+        heading: Survey completed
+        content: The survey was successfully completed
+  breadcrumbs:
+    dashboard: "Dashboard"
+    survey: *route-and-date
+
 admin:
   audit:
     table:
-      date: "Date"
-      event: "Event"
-      header: "Audit Logs"
-      user: "User"
-    cleanup-passcode: "Removed passcode user"
-    cleanup-personal: "Removed personal data"
-    manual-reminder: "Sent manual reminder"
-    survey-qa: "Flagged survey as QA checked"
+      date: Date
+      event: Event
+      header: Audit Logs
+      no-entries: No entries
+      user: User
+    cleanup-passcode: Removed passcode user
+    cleanup-personal: Removed personal data
+    manual-reminder: Sent manual reminder
+    survey-qa: Flagged survey as QA checked
     survey-state: "Changed survey state from `{from}` to `{to}`"
+
+  dashboard:
+    heading: Dashboard
+
   login:
     label: Login
     help: ''
     username.label: Username
     password.label: Password
-  dashboard:
-    heading: Dashboard
+
+  operators:
+    add:
+      heading: Add operator
+    edit:
+      heading: Edit operator
+    heading: Operators
+    routes:
+      assign:
+        heading: "Assign route to {name}"
+    view:
+      heading: "{name}"
+    users:
+      add:
+        heading: "Add user to {name}"
+
+  ports:
+    foreign:
+      add.heading: Add foreign port
+      edit.heading: Edit foreign port
+      heading: Foreign ports
+    uk:
+      add.heading: Add UK port
+      edit.heading: Edit UK port
+      heading: UK ports
+
   reports:
     dashboard:
       heading: Reports
@@ -239,6 +333,32 @@ admin:
     unapprovals:
       heading: Un-approvals
       sub-heading: *subHeading
+
+  roro:
+    edit:
+      heading: Edit survey data
+
+    edit-is-active:
+      heading: Edit survey activity state
+
+    survey:
+      heading: RoRo Survey
+      operator.label: Operator
+      route.label: Route
+      survey-start.label: Survey period
+
+    surveys:
+      heading: RoRo surveys
+
+  routes:
+    add:
+      heading: Add route
+    edit:
+      heading: Edit route
+    heading: Routes
+    view:
+      heading: "{uk_port_name} to {foreign_port_name}"
+
   survey:
     state:
       in-progress: govuk-tag--yellow
@@ -251,6 +371,7 @@ admin:
       rejected: govuk-tag--red
       exporting: govuk-tag--green
       exported: govuk-tag--green
+
   notify:
     status:
       accepted: govuk-tag--green
@@ -620,7 +741,7 @@ domestic:
           scrapped-or-stolen: 'No - scrapped/stolen'
           sold: 'No - sold'
           on-hire: 'No - on hire'
-      change-link-sr-suffix: vehicle posession details
+      change-link-sr-suffix: vehicle possession details
 
     is-exempt-vehicle-type:
       label: Is your vehicle a horsebox, jetter, cherry-picker or exhibition/showperson's vehicle?

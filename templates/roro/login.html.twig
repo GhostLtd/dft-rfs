@@ -1,0 +1,26 @@
+{% extends 'roro/base.html.twig' %}
+
+{% block pageTitle %}RoRo Sign in - {{ parent() }}{% endblock %}
+{% block metaDescription %}Sign in here to complete your roro survey. You will need the credentials you were sent.{% endblock %}
+
+{% block beforeContent %}
+{% endblock %}
+
+{% block content %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner %}
+
+    {%- if maintenanceWarningBanner -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
+    {%- if authenticationError -%}
+        {{- errorSummary({
+            errorList: [
+                {text: authenticationError, href: '#ro_ro_login_username'}
+            ]
+        }) -}}
+    {% endif -%}
+
+    <h1 class="govuk-heading-xl">RoRo Sign in</h1>
+    {{ form(form) }}
+{% endblock %}

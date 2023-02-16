@@ -2,10 +2,12 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
+use App\Entity\QualityAssuranceInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
@@ -24,7 +26,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
  *
  * @AppAssert\ValidRegistration(groups={"add_survey", "import_survey"})
  */
-class Survey implements HaulageSurveyInterface, ApiResponseInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface
 {
     use HaulageSurveyTrait;
 
@@ -239,8 +241,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
-    public function addNote(SurveyNote $note): self
+    public function addNote(NoteInterface $note): self
     {
+        if (!$note instanceof SurveyNote) {
+            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".SurveyNote::class);
+        }
+
         if (!$this->notes->contains($note)) {
             $note->setSurvey($this);
             $this->notes[] = $note;

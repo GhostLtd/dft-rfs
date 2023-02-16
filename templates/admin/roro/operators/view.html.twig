@@ -1,0 +1,63 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.operators.view" -%}
+{% set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
+
+    {%- set canDeleteOperator = is_granted('CAN_DELETE_OPERATOR', operator) -%}
+    {%- set canEditOperator = is_granted('CAN_EDIT_OPERATOR', operator) -%}
+
+    <dl class="govuk-summary-list">
+        {{ actionlessSummaryListRow('Name', operator.name) }}
+        {{ actionlessSummaryListRow('Code', operator.code) }}
+        {{ actionlessSummaryListRow('Is active?', operator.isActive ? 'Yes' : 'No') }}
+    </dl>
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- if canEditOperator -%}
+            <a class="govuk-button govuk-button--{{ canEditOperator ? 'primary' : 'secondary' }}" href="{{ path('admin_operators_edit', {operatorId: operator.id}) }}">Edit operator</a>
+        {%- endif -%}
+        {%- if canDeleteOperator -%}
+            <a class="govuk-button govuk-button--{{ canDeleteOperator ? 'warning' : 'secondary' }}" href="{{ path('admin_operators_delete', {operatorId: operator.id}) }}">Delete operator</a>
+        {%- endif -%}
+    </div>
+
+    <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Routes</h2>
+
+    <dl class="govuk-summary-list">
+        {%- for route in operator.routes -%}
+            {{ summaryListRow("#{route.ukPort.name} to #{route.foreignPort.name}", '',
+                {
+                    (path('admin_operators_unassign_route', {operatorId: operator.id, routeId: route.id})): 'unassign',
+                }
+            ) }}
+        {%- else -%}
+            No routes
+        {%- endfor -%}
+    </dl>
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--primary" href="{{ path('admin_operators_assign_route', {operatorId: operator.id}) }}">Assign route</a>
+    </div>
+
+    <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Users</h2>
+
+    <dl class="govuk-summary-list">
+        {%- for user in operator.users -%}
+            {{ summaryListRow("#{user.UserIdentifier}", '',
+                {
+                    (path('admin_operators_delete_user', {operatorId: operator.id, userId: user.id})): 'delete',
+                }
+            ) }}
+        {%- else -%}
+            No users
+        {%- endfor -%}
+    </dl>
+
+    <div class="govuk-!-margin-bottom-9">
+        <a class="govuk-button govuk-button--primary" href="{{ path('admin_operators_add_user', {operatorId: operator.id}) }}">Add user</a>
+    </div>
+
+{%- endblock -%}

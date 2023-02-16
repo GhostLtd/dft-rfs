@@ -4,6 +4,7 @@
 
 ## Upcoming
 
+* **Feature:** RoRo survey
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
 

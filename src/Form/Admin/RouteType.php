@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Form\Admin;
+
+use App\Entity\Route\Route;
+use App\Repository\Route\ForeignPortRepository;
+use App\Repository\Route\UkPortRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
+use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
+use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class RouteType extends AbstractType
+{
+    protected ForeignPortRepository $foreignPortRepository;
+    protected UkPortRepository $ukPortRepository;
+
+    public function __construct(ForeignPortRepository $foreignPortRepository, UkPortRepository $ukPortRepository)
+    {
+        $this->foreignPortRepository = $foreignPortRepository;
+        $this->ukPortRepository = $ukPortRepository;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $getChoices = function(ServiceEntityRepository $r) {
+            return $r->createQueryBuilder('p')
+                ->orderBy('p.name')
+                ->getQuery()
+                ->getResult();
+        };
+
+        $builder
+            ->add('ports', FieldsetType::class, [
+                'label' => false,
+            ])
+            ->add('isActive', BooleanChoiceType::class)
+            ->add('submit', ButtonType::class, [
+                'type' => 'submit',
+                'label' => 'Save',
+            ])
+            ->add('cancel', ButtonType::class, [
+                'type' => 'submit',
+                'label' => 'Cancel',
+                'attr' => ['class' => 'govuk-button--secondary'],
+            ]);
+
+        $builder
+            ->get('ports')
+            ->add('ukPort', ChoiceType::class, [
+                'placeholder' => '-',
+                'choices' => $getChoices($this->ukPortRepository),
+                'choice_label' => 'name',
+                'expanded' => false,
+                'disabled' => !$options['add'],
+                'attr' => ['class' => 'govuk-input--width-10'],
+            ])
+            ->add('foreignPort', ChoiceType::class, [
+                'placeholder' => '-',
+                'choices' => $getChoices($this->foreignPortRepository),
+                'choice_label' => 'name',
+                'expanded' => false,
+                'disabled' => !$options['add'],
+                'attr' => ['class' => 'govuk-input--width-10'],
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'add' => false,
+            'data_class' => Route::class,
+            'error_mapping' => [
+                'ports' => 'ports', // Enables red line alongside ports group when an error targets it
+            ],
+        ]);
+
+        $resolver->setAllowedTypes('add', 'bool');
+
+        $resolver->setDefault('validation_groups', function(Options $options) {
+            $groups = $options['add'] ? 'admin_add_route' : 'admin_edit_route';
+            return [$groups];
+        });
+    }
+}

@@ -6,3 +6,7 @@ cron:
   url: "/cron/reminders/process"
   schedule: "every day 06:00"
   timezone: "Europe/London"
+- description: "Create RoRo surveys"
+  url: "/cron/roro/create-surveys"
+  schedule: "1 of month 01:00"
+  timezone: "Europe/London"

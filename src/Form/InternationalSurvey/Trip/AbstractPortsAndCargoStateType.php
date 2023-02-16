@@ -2,7 +2,6 @@
 
 namespace App\Form\InternationalSurvey\Trip;
 
-use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
 use App\Form\InternationalSurvey\Trip\DataMapper\PortsAndCargoStateDataMapper;
 use App\Form\LimitedByType;
@@ -32,9 +31,6 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
 
     protected PortsDataFactory $portsHelper;
     protected PortsDataSet $portsData;
-
-    /** @var CrossingRoute[] $ports */
-    protected array $ports;
 
     public function __construct(PortsDataFactory $portsHelper)
     {

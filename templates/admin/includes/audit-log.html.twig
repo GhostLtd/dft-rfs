@@ -1,4 +1,4 @@
-<table class="govuk-table">
+<table class="govuk-table govuk-!-margin-bottom-7">
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">{{ 'admin.audit.table.date'|trans }}</th>
@@ -14,6 +14,10 @@
         <td class="govuk-table__cell">
             {{ "admin.audit.#{log.category}"|trans(log.data) }}
         </td>
+    </tr>
+    {% else %}
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell" colspan="3">{{ 'admin.audit.table.no-entries'|trans }}</td>
     </tr>
     {% endfor %}
     </tbody>

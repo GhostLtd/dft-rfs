@@ -4,13 +4,14 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
-use App\Utility\ConfirmAction\Domestic\Admin\FlagQaConfirmAction;
+use App\Utility\ConfirmAction\Admin\FlagQaConfirmAction;
 use App\Utility\ConfirmAction\Domestic\Admin\SurveyWorkflowConfirmAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SurveyTransitionController extends AbstractController
@@ -46,7 +47,7 @@ class SurveyTransitionController extends AbstractController
      * @Template("admin/domestic/surveys/flag-qa.html.twig")
      * @IsGranted(AdminSurveyVoter::FLAG_QA, subject="survey")
      */
-    public function flagQa(FlagQaConfirmAction $flagQaConfirmAction, Request $request, Survey $survey)
+    public function flagQa(FlagQaConfirmAction $flagQaConfirmAction, Request $request, Survey $survey): Response|array
     {
         $flagQaConfirmAction
             ->setSubject($survey);

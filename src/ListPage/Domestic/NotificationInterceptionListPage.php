@@ -16,10 +16,10 @@ class NotificationInterceptionListPage extends AbstractListPage
 
     private NotificationInterceptionRepository $repository;
 
-    public function __construct(NotificationInterceptionRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(NotificationInterceptionRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $repository;
+        $this->repository = $routeRepository;
     }
 
     protected function getFieldsDefinition(): array

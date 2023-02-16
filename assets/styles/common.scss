@@ -13,3 +13,11 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
     @include govuk-visually-hidden;
   }
 }
+
+.govuk-tabs__panel {
+  .govuk-summary-list__row:last-child {
+    .govuk-summary-list__key, .govuk-summary-list__value, .govuk-summary-list__actions {
+      border-bottom-color: transparent;
+    }
+  }
+}

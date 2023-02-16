@@ -137,7 +137,7 @@ trait SurveyTrait
         return $this->state ?? null;
     }
 
-    public function setState($state): self
+    public function setState(?string $state): self
     {
         $this->state = $state;
         return $this;

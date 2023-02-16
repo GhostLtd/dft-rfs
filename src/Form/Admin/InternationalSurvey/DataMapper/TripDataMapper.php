@@ -2,8 +2,8 @@
 
 namespace App\Form\Admin\InternationalSurvey\DataMapper;
 
-use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
+use App\Entity\Route\Route;
 use App\Form\Admin\InternationalSurvey\TripType;
 use App\Utility\PortsDataSet;
 use Symfony\Component\Form\DataMapperInterface;
@@ -62,7 +62,7 @@ class TripDataMapper implements DataMapperInterface
 
             $ports = $this->portsDataSets[$direction]->getPorts();
 
-            $matchingPair = array_filter($ports, fn(CrossingRoute $route) => $route->getUkPort() === $ukPort && $route->getForeignPort() === $foreignPort);
+            $matchingPair = array_filter($ports, fn(Route $route) => $route->getUkPort()->getName() === $ukPort && $route->getForeignPort()->getName() === $foreignPort);
 
             if (count($matchingPair) === 1) {
                 $forms["{$direction}Ports"]->setData(array_shift($matchingPair)->getId());
@@ -108,12 +108,12 @@ class TripDataMapper implements DataMapperInterface
             $foreignPort = null;
 
             if ($ports) {
-                $matchingPair = array_filter($this->portsDataSets[$direction]->getPorts(), fn(CrossingRoute $r) => $r->getId() === $ports);
+                $matchingPair = array_filter($this->portsDataSets[$direction]->getPorts(), fn(Route $r) => $r->getId() === $ports);
 
                 if (count($matchingPair) === 1) {
                     $matchingPair = array_shift($matchingPair);
-                    $ukPort = $matchingPair->getUkPort();
-                    $foreignPort = $matchingPair->getForeignPort();
+                    $ukPort = $matchingPair->getUkPort()->getName();
+                    $foreignPort = $matchingPair->getForeignPort()->getName();
                 }
             }
 
