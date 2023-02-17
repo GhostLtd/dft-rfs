@@ -25,43 +25,16 @@ class PasscodeUserRepository extends ServiceEntityRepository implements Password
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof PasscodeUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
-        $user->setPassword($newEncodedPassword);
-        $this->_em->persist($user);
-        $this->_em->flush();
-    }
+        $user->setPassword($newHashedPassword);
 
-    // /**
-    //  * @return PasscodeUser[] Returns an array of PasscodeUser objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?PasscodeUser
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
