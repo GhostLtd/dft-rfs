@@ -50,6 +50,9 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
                 $wizardTestCaseClass = get_class($wizardTestCase);
                 $this->fail("Unknown wizard test case type - '{$wizardTestCaseClass}'");
             }
+
+            $statusCode = $browser->getResponse()->getStatusCode();
+            $this->assertEquals(200, $statusCode);
         }
     }
 

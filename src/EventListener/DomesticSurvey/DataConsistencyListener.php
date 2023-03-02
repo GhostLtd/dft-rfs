@@ -12,6 +12,7 @@ use App\Entity\Volume;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Proxy;
 
 class DataConsistencyListener
 {
@@ -53,6 +54,15 @@ class DataConsistencyListener
                 }
 
                 if ($entity instanceof Survey) {
+                    if ($entity instanceof Proxy && !$entity->__isInitialized()) {
+                        // Doctrine's usual proxy initialisation was failing - possibly due to this survey proxy being
+                        // from the session and lacking its initializer.
+
+                        // If we have an uninitialized proxy, we therefore trigger the load so that the survey's data is
+                        // correct.
+                        $entity = $this->entityManager->find(Survey::class, $entity->getId());
+                    }
+
                     $surveysToCheck[spl_object_id($entity)] = $entity;
                 }
             }
