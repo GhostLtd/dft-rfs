@@ -42,11 +42,13 @@ class Route
 
     /**
      * @ORM\ManyToMany(targetEntity=Operator::class, mappedBy="routes")
+     * @var Collection<Operator>
      */
     private Collection $roroOperators;
 
     /**
      * @ORM\OneToMany(targetEntity=Survey::class, mappedBy="route")
+     * @var Collection<Survey>
      */
     private Collection $surveys;
 
@@ -60,6 +62,7 @@ class Route
     public function __construct()
     {
         $this->roroOperators = new ArrayCollection();
+        $this->surveys = new ArrayCollection();
     }
 
     public function getUkPort(): ?UkPort
@@ -119,6 +122,13 @@ class Route
     public function setIsActive(?bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        if ($this->isActive === false) {
+            foreach ($this->roroOperators as $operator) {
+                $operator->removeRoute($this);
+            }
+        }
+
         return $this;
     }
 

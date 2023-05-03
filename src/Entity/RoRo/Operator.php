@@ -39,11 +39,13 @@ class Operator
     /**
      * @ORM\ManyToMany(targetEntity=Route::class, inversedBy="roroOperators")
      * @ORM\JoinTable(name="roro_operator_route")
+     * @var Collection<Route>
      */
     private Collection $routes;
 
     /**
      * @ORM\OneToMany(targetEntity=RoRoUser::class, mappedBy="operator", orphanRemoval=true)
+     * @var Collection<RoRoUser>
      */
     private Collection $users;
 
@@ -96,6 +98,11 @@ class Operator
     public function removeRoute(Route $route): self
     {
         $this->routes->removeElement($route);
+
+        foreach($this->users as $user) {
+            $user->removeBookmarkedRoute($route);
+        }
+
         return $this;
     }
 

@@ -63,7 +63,7 @@ class UnassignRouteConfirmAction extends AbstractConfirmAction
         return 'operator.route.unassign';
     }
 
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction($formData): void
     {
         $this->getOperator()->removeRoute($this->getRoute());
         $this->entityManager->flush();
