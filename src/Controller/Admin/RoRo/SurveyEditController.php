@@ -5,9 +5,11 @@ namespace App\Controller\Admin\RoRo;
 use App\Form\Admin\RoRo\EditIsActiveStateType;
 use App\Form\Admin\RoRo\EditType;
 use App\Entity\RoRo\Survey;
+use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\RoRo\VehicleCountHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/roro/surveys/{surveyId}", name: "admin_roro_surveys_")]
 #[Entity("survey", expr: "repository.find(surveyId)")]
-
+#[IsGranted(AdminSurveyVoter::EDIT, subject: "survey")]
 class SurveyEditController extends AbstractController
 {
     public function __construct(protected EntityManagerInterface $entityManager)

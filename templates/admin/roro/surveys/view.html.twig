@@ -39,9 +39,11 @@
                 {{ actionlessSummaryListRow('Survey is active for period?', isActiveForPeriod) }}
             </dl>
 
+            {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
             <div>
                 <a class="govuk-button" href="{{ path('admin_roro_surveys_edit_is_active', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
             </div>
+            {%- endif -%}
         </div>
 
 
@@ -108,10 +110,11 @@
                 </table>
             </div>
         </div>
-
+        {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
         <div class="govuk-!-padding-bottom-5">
             <a class="govuk-button" href="{{ path('admin_roro_surveys_edit', {surveyId: survey.id}) }}">Edit survey data</a>
         </div>
+        {%- endif -%}
     {% endif %}
 
     {% if workflow_can(survey, 'approve') or workflow_can(survey, 'complete')

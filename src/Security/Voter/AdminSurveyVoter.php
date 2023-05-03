@@ -7,6 +7,7 @@ use App\Entity\Domestic\SurveyResponse as DomesticResponse;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\RoRo\Survey as RoroSurvey;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyStateInterface;
 use App\Utility\Reminder\ManualReminderHelper;
@@ -36,11 +37,11 @@ class AdminSurveyVoter extends Voter
     protected function supports(string $attribute, $subject): bool
     {
         // RoRo, Pre-enquiry, CSRGT, IRHS
-        $surveyStateInterfaceSupport = in_array($attribute, [self::EDIT_NOTES, self::TRANSITION])
+        $surveyStateInterfaceSupport = in_array($attribute, [self::EDIT, self::EDIT_NOTES, self::TRANSITION])
             && $subject instanceof SurveyStateInterface;
 
         // Pre-enquiry, CSRGT, IRHS
-        $surveyInterfaceSupport = in_array($attribute, [self::EDIT, self::MANUAL_REMINDER, self::MANUAL_REMINDER_BUTTON, self::RESET_PASSCODE, self::RESEND])
+        $surveyInterfaceSupport = in_array($attribute, [self::MANUAL_REMINDER, self::MANUAL_REMINDER_BUTTON, self::RESET_PASSCODE, self::RESEND])
             && $subject instanceof SurveyInterface;
 
         // CSRGT, IRHS
@@ -78,6 +79,10 @@ class AdminSurveyVoter extends Voter
 
         /** @var $subject SurveyInterface */
         $state = $subject->getState();
+
+        if ($subject instanceof RoroSurvey && $attribute === self::EDIT) {
+            return in_array($state, $openStatusesOrClosed);
+        }
 
         switch ($attribute) {
             case self::EDIT:
