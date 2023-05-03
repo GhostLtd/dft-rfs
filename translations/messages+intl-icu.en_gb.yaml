@@ -194,7 +194,7 @@ roro:
     other-routes: Other routes
     outstanding-surveys: Outstanding surveys
     useful-links: Useful links
-    view-completed-surveys: View completed surveys
+    view-completed-surveys: View submitted surveys
   bookmarked-routes:
     bookmark: Bookmark
     bookmarked-routes: Bookmarked routes
@@ -205,12 +205,17 @@ roro:
     save: Save bookmarks
     title: *edit-bookmarked-routes
   completed-surveys:
-    title: Completed surveys
+    title: Submitted surveys
   login:
     username.label: Email address
   route: "{ukPort} to {foreignPort}"
   survey:
     state: Status
+    states:
+      completed: Submitted
+      outstanding: Outstanding
+    edit-vehicle-counts: Edit vehicle counts
+    submit-survey: Submit survey
     introduction:
       title: Introduction - {route} - {period}
       is-active: Was this route active for the period?
@@ -230,17 +235,17 @@ roro:
         trailers: Unaccompanied trailers
     view.title: &route-and-date "{ukPort} to {foreignPort} - {date}"
     complete:
-      title: Complete survey
-      heading: Complete survey
-      help: This will mark the survey for "{ukPort} to {foreignPort} - {date}" as complete
-      confirm.label: Complete
+      title: Submit survey
+      heading: Submit survey
+      help: This will mark the survey for "{ukPort} to {foreignPort} - {date}" as complete.
+      confirm.label: Submit survey
       cancel.label: Cancel
       cancelled-notification:
         heading: Cancelled completion
-        content: The survey was not completed
+        content: The survey was not submitted
       confirmed-notification:
-        heading: Survey completed
-        content: The survey was successfully completed
+        heading: Survey submitted
+        content: The survey was successfully submitted
   breadcrumbs:
     dashboard: "Dashboard"
     survey: *route-and-date
@@ -343,6 +348,7 @@ admin:
 
     survey:
       heading: RoRo Survey
+
       operator.label: Operator
       route.label: Route
       survey-start.label: Survey period

@@ -15,7 +15,7 @@
     </h1>
 
     {%- set isOutstanding = survey.state in ['new', 'in-progress'] -%}
-    {%- set summarisedState = isOutstanding ? 'Outstanding' : 'Completed' -%}
+    {%- set summarisedState = (isOutstanding ? 'roro.survey.states.outstanding' : 'roro.survey.states.completed') | trans -%}
 
     {% if survey.isActiveForPeriod is null %}
         <dl class="govuk-summary-list">
@@ -35,8 +35,8 @@
         </dl>
 
         {% if survey.isActiveForPeriod %}
-            {% if canEdit %}<a class="govuk-button" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_VEHICLE_COUNTS')}) }}">Edit</a>{% endif %}
-            {% if workflow_can(survey, 'complete') %}<a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">Complete</a>{% endif %}
+            {% if canEdit %}<a class="govuk-button" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_VEHICLE_COUNTS')}) }}">{{ 'roro.survey.edit-vehicle-counts' | trans }}</a>{% endif %}
+            {% if workflow_can(survey, 'complete') %}<a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>{% endif %}
 
             <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.country.label' | trans }}</h2>
             {{ _self.vehicleCounts(survey.countryVehicleCounts) }}
