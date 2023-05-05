@@ -48,6 +48,10 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
             $message = 'Invalid or expired login link.';
         }
 
+        if ($message === 'Login link can only be used "1" times.') {
+            $message = 'Login link can only be used once.';
+        }
+
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $message);
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));
     }
