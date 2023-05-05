@@ -46,7 +46,9 @@ class LoginController extends AbstractController
             if ($user) {
                 $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
 
-                if ($this->getParameter('kernel.environment') === 'dev') {
+                if ($this->getParameter('kernel.environment') === 'dev' &&
+                    $this->getParameter('dev.roro.auto_login')
+                ) {
                     return new RedirectResponse($loginLinkDetails->getUrl());
                 }
 

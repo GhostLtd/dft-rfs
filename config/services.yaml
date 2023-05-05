@@ -21,6 +21,8 @@ parameters:
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     app_features_empty: none
 
+    dev.roro.auto_login: "%env(bool:DEV_RORO_AUTO_LOGIN)%"
+
 services:
     # default configuration for services in *this* file
     _defaults:
