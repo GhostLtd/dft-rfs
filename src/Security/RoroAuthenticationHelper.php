@@ -32,7 +32,23 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception->getMessage());
+        $message = $exception->getPrevious()?->getMessage();
+
+        if (!$message) {
+            $message = $exception->getMessage();
+        }
+
+        if ($message === 'User not found.') {
+            // Ultimately, these messages are generated in:
+            // * LoginLinkHandler -> consumeLoginLink()
+            // * SignatureHasher  -> verifySignatureHash()
+            //
+            // We want to give some more detail (e.g. whether it's invalid or whether its expired), but don't want to
+            // info that could potentially be a security information leak (e.g. User not found).
+            $message = 'Invalid or expired login link.';
+        }
+
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $message);
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));
     }
 
