@@ -68,7 +68,11 @@ class LoginController extends AbstractController
     }
 
     #[Route("/check-email", name: "login_check_email")]
-    public function loginCheckEmail(): Response {
+    public function loginCheckEmail(Security $security): Response {
+        if ($security->getUser() !== null) {
+            return $this->redirectToRoute('app_roro_dashboard');
+        }
+
         return $this->render('roro/login_check_email.html.twig');
     }
 
