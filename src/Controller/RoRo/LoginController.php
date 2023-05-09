@@ -8,6 +8,7 @@ use App\Form\RoRoLoginType;
 use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRoUserRepository;
 use App\Utility\AlphagovNotify\Reference;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,6 +27,7 @@ class LoginController extends AbstractController
     public function login(
         Client $client,
         LoginLinkHandlerInterface $loginLinkHandler,
+        LoggerInterface $logger,
         MaintenanceWarningRepository $maintenanceWarningRepository,
         Request $request,
         RequestRateLimiterInterface $roroLoginLimiter,
@@ -43,10 +45,10 @@ class LoginController extends AbstractController
 
         $authenticationError = $this->getAuthenticationError($request);
 
-        try {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $email = $form->getData()['username'];
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = $form->getData()['username'];
 
+            try {
                 $user = $userRepository->findOneBy(['username' => $email]);
 
                 if ($user) {
@@ -56,21 +58,26 @@ class LoginController extends AbstractController
                     if ($this->getParameter('kernel.environment') === 'dev' &&
                         $this->getParameter('dev.roro.auto_login')
                     ) {
+                        $logger->info("RoRo Login submitted: {$email} - success - DEV mode auto-redirect");
                         return new RedirectResponse($loginLinkDetails->getUrl());
                     }
 
+                    $logger->info("RoRo Login submitted: {$email} - check-email page, email sent");
                     $client->sendEmail($email, Reference::RORO_LOGIN_LINK, [
                         'login_link' => $loginLinkDetails->getUrl(),
                     ]);
+                } else {
+                    $logger->info("RoRo Login submitted: {$email} - check-email page, no such user");
                 }
 
                 return $this->redirectToRoute('app_roro_login_check_email');
             }
-        }
-        catch(RateLimitExceededException $exceededException) {
-            $authenticationError = $translator->trans('roro.auth.rate-limit', [
-//                'retry_after' => $exceededException->getRateLimit()->getRetryAfter(),
-            ]);
+            catch(RateLimitExceededException $exceededException) {
+                $authenticationError = $translator->trans('roro.auth.rate-limit', [
+                    // 'retry_after' => $exceededException->getRateLimit()->getRetryAfter(),
+                ]);
+                $logger->info("RoRo Login submitted: {$email} - failure - rate-limit hit");
+            }
         }
 
         return $this->render('roro/login.html.twig', [

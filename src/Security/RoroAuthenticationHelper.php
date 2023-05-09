@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, AuthenticationFailureHandlerInterface, AuthenticationSuccessHandlerInterface
 {
     public function __construct(
+        protected LoggerInterface $logger,
         protected RequestRateLimiterInterface $roroLoginLimiter,
         protected RequestStack $requestStack,
         protected TranslatorInterface $translator,
@@ -28,6 +30,10 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
         $this->roroLoginLimiter->reset($this->requestStack->getMainRequest());
+
+        $user = $request->request->get('user', '<none>');
+        $this->logger->info("RoRo Login successful: {$user}");
+
         return new RedirectResponse($this->urlGenerator->generate('app_roro_dashboard'));
     }
 
@@ -52,6 +58,9 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         if ($message === 'Login link can only be used "1" times.') {
             $message = 'Login link can only be used once.';
         }
+
+        $user = $request->request->get('user', '<none>');
+        $this->logger->info("RoRo Login failed: {$user} - {$message}");
 
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $message);
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));
