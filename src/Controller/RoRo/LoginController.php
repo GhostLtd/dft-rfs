@@ -77,9 +77,21 @@ class LoginController extends AbstractController
     }
 
     #[Route("/authenticate", name: "login_check")]
-    public function loginCheck()
+    public function loginCheck(Request $request): Response
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the login check on your firewall.');
+        $expires = $request->query->get('expires');
+        $username = $request->query->get('user');
+        $hash = $request->query->get('hash');
+
+        if (!$expires || !$username || !$hash) {
+            return $this->redirectToRoute('app_roro_login');
+        }
+
+        return $this->render('roro/login_process.html.twig', [
+            'expires' => $expires,
+            'user' => $username,
+            'hash' => $hash,
+        ]);
     }
 
     #[Route("/logout", name: "logout")]

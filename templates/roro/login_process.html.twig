@@ -1,0 +1,19 @@
+{% extends 'roro/base.html.twig' %}
+
+{% block pageTitle %}RoRo Survey - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <h1 class="govuk-heading-xl">RoRo Survey</h1>
+
+    <p class="govuk-body">
+        Welcome to the RoRo survey. Click the button below to login and access your dashboard.
+    </p>
+
+    <form action="{{ path('app_roro_login_check') }}" method="POST">
+        <input type="hidden" name="expires" value="{{ expires }}">
+        <input type="hidden" name="user" value="{{ user }}">
+        <input type="hidden" name="hash" value="{{ hash }}">
+
+        <button type="submit" class="govuk-button">Access dashboard</button>
+    </form>
+{% endblock %}

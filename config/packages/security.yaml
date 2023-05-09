@@ -44,11 +44,13 @@ security:
                 always_remember_me: true
             login_link:
                 check_route: app_roro_login_check
-                signature_properties: ['email']
+                check_post_only: true
                 lifetime: 600
                 max_uses: 1
-                success_handler: App\Security\RoroAuthenticationHelper
+                signature_properties: ['email']
+
                 failure_handler: App\Security\RoroAuthenticationHelper
+                success_handler: App\Security\RoroAuthenticationHelper
             entry_point: App\Security\RoroAuthenticationHelper
             logout:
                 path: app_roro_logout
