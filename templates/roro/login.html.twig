@@ -21,6 +21,24 @@
         }) -}}
     {% endif -%}
 
-    <h1 class="govuk-heading-xl">RoRo Sign in</h1>
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">RoRo Sign in</h1>
+    <p class="govuk-body govuk-!-margin-bottom-8">Use this service to complete your Roll-on/Roll-off (RoRo) operator surveys.</p>
+
     {{ form(form) }}
+
+
+<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <h2 class="govuk-heading-s">Contact us</h2>
+        <div class="govuk-inset-text">
+            <p class="govuk-body">Email <a href="mailto:roro.stats@dft.gov.uk" class="govuk-link">roro.stats@dft.gov.uk</a></p>
+            <p class="govuk-body">
+                Public enquiries<br>
+                <strong>020 7944 8233</strong>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

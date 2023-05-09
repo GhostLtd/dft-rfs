@@ -5,9 +5,8 @@
 {% block content %}
     <h1 class="govuk-heading-xl">RoRo Survey</h1>
 
-    <p class="govuk-body">
-        Welcome to the RoRo survey. Click the button below to login and access your dashboard.
-    </p>
+    <p class="govuk-body">Thank you for logging into the Roll-on/Roll-off (RoRo) statistics service.</p>
+    <p class="govuk-body">Click through to your dashboard to fill in a new survey or review completed returns.</p>
 
     <form action="{{ path('app_roro_login_check') }}" method="POST">
         <input type="hidden" name="expires" value="{{ expires }}">
