@@ -9,23 +9,28 @@ use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRoUserRepository;
 use App\Utility\AlphagovNotify\Reference;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/roro', name: "app_roro_")]
 class LoginController extends AbstractController
 {
     #[Route("/login", name: "login")]
     public function login(
-        Request $request,
-        MaintenanceWarningRepository $maintenanceWarningRepository,
-        LoginLinkHandlerInterface $loginLinkHandler,
         Client $client,
-        RoRoUserRepository $userRepository
+        LoginLinkHandlerInterface $loginLinkHandler,
+        MaintenanceWarningRepository $maintenanceWarningRepository,
+        Request $request,
+        RequestRateLimiterInterface $roroLoginLimiter,
+        RoRoUserRepository $userRepository,
+        TranslatorInterface $translator,
     ): Response {
         $user = $this->getUser();
 
@@ -38,26 +43,34 @@ class LoginController extends AbstractController
 
         $authenticationError = $this->getAuthenticationError($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form->getData()['username'];
+        try {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $email = $form->getData()['username'];
 
-            $user = $userRepository->findOneBy(['username' => $email]);
+                $user = $userRepository->findOneBy(['username' => $email]);
 
-            if ($user) {
-                $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
+                if ($user) {
+                    $roroLoginLimiter->consume($request)->ensureAccepted();
+                    $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
 
-                if ($this->getParameter('kernel.environment') === 'dev' &&
-                    $this->getParameter('dev.roro.auto_login')
-                ) {
-                    return new RedirectResponse($loginLinkDetails->getUrl());
+                    if ($this->getParameter('kernel.environment') === 'dev' &&
+                        $this->getParameter('dev.roro.auto_login')
+                    ) {
+                        return new RedirectResponse($loginLinkDetails->getUrl());
+                    }
+
+                    $client->sendEmail($email, Reference::RORO_LOGIN_LINK, [
+                        'login_link' => $loginLinkDetails->getUrl(),
+                    ]);
                 }
 
-                $client->sendEmail($email, Reference::RORO_LOGIN_LINK, [
-                    'login_link' => $loginLinkDetails->getUrl(),
-                ]);
+                return $this->redirectToRoute('app_roro_login_check_email');
             }
-
-            return $this->redirectToRoute('app_roro_login_check_email');
+        }
+        catch(RateLimitExceededException $exceededException) {
+            $authenticationError = $translator->trans('roro.auth.rate-limit', [
+//                'retry_after' => $exceededException->getRateLimit()->getRetryAfter(),
+            ]);
         }
 
         return $this->render('roro/login.html.twig', [

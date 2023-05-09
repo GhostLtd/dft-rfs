@@ -187,6 +187,7 @@ roro:
     login-failure-banner:
       heading: Login error
       title: Login error
+    rate-limit: "Rate limit exceeded; try again later"
   dashboard:
     title: Dashboard for {operator}
     bookmarked-routes: Bookmarked routes

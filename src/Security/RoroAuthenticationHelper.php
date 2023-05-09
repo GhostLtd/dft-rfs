@@ -2,8 +2,10 @@
 
 namespace App\Security;
 
+use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -16,17 +18,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, AuthenticationFailureHandlerInterface, AuthenticationSuccessHandlerInterface
 {
-    protected TranslatorInterface $translator;
-    protected UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(TranslatorInterface $translator, UrlGeneratorInterface $urlGenerator)
-    {
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
-    }
+    public function __construct(
+        protected RequestRateLimiterInterface $roroLoginLimiter,
+        protected RequestStack $requestStack,
+        protected TranslatorInterface $translator,
+        protected UrlGeneratorInterface $urlGenerator
+    ) {}
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
+        $this->roroLoginLimiter->reset($this->requestStack->getMainRequest());
         return new RedirectResponse($this->urlGenerator->generate('app_roro_dashboard'));
     }
 
