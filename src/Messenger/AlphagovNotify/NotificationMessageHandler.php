@@ -1,15 +1,15 @@
 <?php
 
-
 namespace App\Messenger\AlphagovNotify;
-
 
 use Alphagov\Notifications\Client;
 use Alphagov\Notifications\Exception\ApiException;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class MessageHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class NotificationMessageHandler implements MessageHandlerInterface
 {
     private Client $alphagovNotify;
 
@@ -18,7 +18,7 @@ class MessageHandler implements MessageHandlerInterface
         $this->alphagovNotify = $alphagovNotify;
     }
 
-    public function __invoke(AbstractSendMessage $message)
+    public function __invoke(AbstractSendMessage $message): ?array
     {
         try {
             switch(get_class($message)) {

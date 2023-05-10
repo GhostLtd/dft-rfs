@@ -2,18 +2,18 @@
 
 namespace App\Controller\RoRo;
 
-use Alphagov\Notifications\Client;
 use App\Entity\RoRoUser;
 use App\Form\RoRoLoginType;
+use App\Messenger\AlphagovNotify\RoRoLoginEmail;
 use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRoUserRepository;
-use App\Utility\AlphagovNotify\Reference;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -25,10 +25,10 @@ class LoginController extends AbstractController
 {
     #[Route("/login", name: "login")]
     public function login(
-        Client $client,
         LoginLinkHandlerInterface $loginLinkHandler,
         LoggerInterface $logger,
         MaintenanceWarningRepository $maintenanceWarningRepository,
+        MessageBusInterface $messageBus,
         Request $request,
         RequestRateLimiterInterface $roroLoginLimiter,
         RoRoUserRepository $userRepository,
@@ -62,10 +62,11 @@ class LoginController extends AbstractController
                         return new RedirectResponse($loginLinkDetails->getUrl());
                     }
 
-                    $logger->info("RoRo Login submitted: {$email} - check-email page, email sent");
-                    $client->sendEmail($email, Reference::RORO_LOGIN_LINK, [
-                        'login_link' => $loginLinkDetails->getUrl(),
-                    ]);
+                    $logger->info("RoRo Login submitted: {$email} - check-email page, message dispatched");
+
+                    $messageBus->dispatch(
+                        new RoRoLoginEmail($email, ['login_link' => $loginLinkDetails->getUrl()])
+                    );
                 } else {
                     $logger->info("RoRo Login submitted: {$email} - check-email page, no such user");
                 }
