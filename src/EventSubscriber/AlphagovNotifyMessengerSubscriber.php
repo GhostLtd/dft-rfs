@@ -29,7 +29,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         $this->workflowRegistry = $workflowRegistry;
     }
 
-    public function onMessageFailed(WorkerMessageFailedEvent $event)
+    public function onMessageFailed(WorkerMessageFailedEvent $event): void
     {
         $originalMessage = $event->getEnvelope()->getMessage();
         if (!$originalMessage instanceof AbstractSendMessage) {
@@ -66,7 +66,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         $this->logResponse($originalMessage, $apiResponseData);
     }
 
-    public function onMessageHandled(WorkerMessageHandledEvent $event)
+    public function onMessageHandled(WorkerMessageHandledEvent $event): void
     {
         $originalMessage = $event->getEnvelope()->getMessage();
         if (!$originalMessage instanceof AbstractSendMessage) {
@@ -80,7 +80,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         $this->logResponse($originalMessage, $apiResponseData);
     }
 
-    protected function logResponse(AbstractSendMessage $message, array $apiResponseData)
+    protected function logResponse(AbstractSendMessage $message, array $apiResponseData): void
     {
         /** @var ApiResponseInterface|SurveyInterface $entity */
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
@@ -104,23 +104,33 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 
             $status = $notifyApiResponse->getData()[self::STATUS_KEY];
 
+            // We set the "sent date" immediately, otherwise upon the next cron run, the cron will see that no reminder
+            // has been sent and will immediately queue another message.
+            //
+            // This would result in failed messages being perpetually re-tried, and the daily cron run would end up
+            // hitting the notify API with an ever-increasing amount of calls.
+            //
+            // When the "sent date" is set immediately on the other hand, then failures will still be re-tried 3 times
+            // by the message consumer using its exponential backoff settings. If it fails 3 times, then the error
+            // will be permanent (and that's not an issue in any case, as these are reminder messages!)
+            switch($message->getEventName()) {
+                case Reference::EVENT_INVITE:
+                    $entity->setInvitationSentDate($timestamp);
+                    break;
+                case Reference::EVENT_REMINDER_1:
+                    $entity->setFirstReminderSentDate($timestamp);
+                    break;
+                case Reference::EVENT_REMINDER_2:
+                    $entity->setSecondReminderSentDate($timestamp);
+                    break;
+                case Reference::EVENT_MANUAL_REMINDER:
+                    $entity->setLatestManualReminderSentDate($timestamp);
+                    break;
+            }
+
             if ($status === Reference::STATUS_ACCEPTED) {
                 if ($workflow->can($entity, 'invitation_sent')) {
                     $workflow->apply($entity, 'invitation_sent');
-                }
-                switch($message->getEventName()) {
-                    case Reference::EVENT_INVITE:
-                        $entity->setInvitationSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_REMINDER_1:
-                        $entity->setFirstReminderSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_REMINDER_2:
-                        $entity->setSecondReminderSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_MANUAL_REMINDER:
-                        $entity->setLatestManualReminderSentDate($timestamp);
-                        break;
                 }
             } else if ($status === Reference::STATUS_FAILED) {
                 if ($workflow->can($entity, 'invitation_failed')) {
