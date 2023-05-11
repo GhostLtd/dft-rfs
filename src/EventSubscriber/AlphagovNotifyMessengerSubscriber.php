@@ -112,7 +112,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
             //
             // When the "sent date" is set immediately on the other hand, then failures will still be re-tried 3 times
             // by the message consumer using its exponential backoff settings. If it fails 3 times, then the error
-            // will be permanent (and that's not an issue in any case, as these are reminder messages!)
+            // will be permanent.
             switch($message->getEventName()) {
                 case Reference::EVENT_INVITE:
                     $entity->setInvitationSentDate($timestamp);
