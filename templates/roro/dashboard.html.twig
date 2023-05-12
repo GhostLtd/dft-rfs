@@ -5,18 +5,37 @@
     operator: user.operator.name
 }) -%}
 
-{% block content %}
-    {%- from "roro/macros.html.twig" import surveysTabsAndList -%}
+{%- block content -%}
+    {%- from "roro/macros.html.twig" import contactDetails, surveysTabsAndList -%}
+
     <h1 class="govuk-heading-l govuk-!-margin-bottom-4">{{ 'roro.dashboard.title' | trans(titleParams) }}</h1>
-    <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
 
-    {{ surveysTabsAndList(user, surveys, hasBookmarks, ['outstanding']) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
 
-    <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
-    <ul class="govuk-list">
-        {%- if is_granted('EDIT_BOOKMARKS') -%}
-            <li><a href="{{ path('app_roro_bookmarked_routes') }}" class="govuk-link">{{ 'roro.dashboard.edit-bookmarked-routes' | trans }}</a></li>
-        {%- endif -%}
-        <li><a href="{{ path('app_roro_completed_surveys') }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
-    </ul>
-{% endblock %}
+            {{- surveysTabsAndList(user, surveys, hasBookmarks, ['outstanding']) -}}
+
+            <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
+            <ul class="govuk-list govuk-!-margin-bottom-8">
+                {%- if is_granted('EDIT_BOOKMARKS') -%}
+                    <li><a href="{{ path('app_roro_bookmarked_routes') }}" class="govuk-link">{{ 'roro.dashboard.edit-bookmarked-routes' | trans }}</a></li>
+                {%- endif -%}
+                <li><a href="{{ path('app_roro_completed_surveys') }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
+            </ul>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop">
+            <h2 class="govuk-heading-m">{{ 'roro.dashboard.questions.header' | trans }}</h2>
+            <p class="govuk-body">{{ 'roro.dashboard.questions.text' | trans }}</p>
+            <ul class="govuk-list">
+                {%- set email = 'roro.contact.email' | trans -%}
+                {%- set email_label = 'roro.dashboard.questions.email' | trans -%}
+                {%- set phone = 'roro.contact.phone' | trans -%}
+                {%- set phone_label = 'roro.dashboard.questions.phone' | trans -%}
+
+                <li>{{ email_label }} <a href="mailto:{{ email }}" class="govuk-link">{{ email }}</a></li>
+                <li>{{ phone_label }} {{ phone }}</li>
+            </ul>
+        </div>
+    </div>
+{%- endblock -%}

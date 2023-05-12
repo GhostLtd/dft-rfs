@@ -36,7 +36,7 @@
         {%- set surveys = surveys | filter(s => not user.bookmarkedRoutes.contains(s.route)) -%}
     {%- endif -%}
 
-    <dl class="govuk-summary-list">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-8">
         {%- for survey in surveys -%}
             {{- summaryListRow(
                 survey.surveyPeriodStart | date('format.date.year-and-month' | trans),

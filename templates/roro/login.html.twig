@@ -3,11 +3,12 @@
 {% block pageTitle %}RoRo Sign in - {{ parent() }}{% endblock %}
 {% block metaDescription %}Sign in here to complete your roro survey. You will need the credentials you were sent.{% endblock %}
 
-{% block beforeContent %}
-{% endblock %}
+{%- block beforeContent -%}
+{%- endblock -%}
 
-{% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner %}
+{%- block content -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner -%}
+    {%- from 'roro/macros.html.twig' import contactDetails -%}
 
     {%- if maintenanceWarningBanner -%}
         {{- notificationBanner(maintenanceWarningBanner) -}}
@@ -33,12 +34,16 @@
     <div class="govuk-grid-column-one-half">
         <h2 class="govuk-heading-s">Contact us</h2>
         <div class="govuk-inset-text">
-            <p class="govuk-body">Email <a href="mailto:roro.stats@dft.gov.uk" class="govuk-link">roro.stats@dft.gov.uk</a></p>
+            {%- set email = 'roro.contact.email' | trans -%}
+            {%- set phone = 'roro.contact.phone' | trans -%}
+
+            <p class="govuk-body">Email <a href="mailto:{{ email }}" class="govuk-link">{{ email }}</a></p>
             <p class="govuk-body">
                 Public enquiries<br>
-                <strong>020 7944 8233</strong>
+                <strong>{{ phone }}</strong>
             </p>
         </div>
+
     </div>
 </div>
-{% endblock %}
+{%- endblock -%}

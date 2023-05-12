@@ -188,12 +188,20 @@ roro:
       heading: Login error
       title: Login error
     rate-limit: "Rate limit exceeded; try again later"
+  contact:
+    email: roro.stats@dft.gov.uk
+    phone: 020 7944 8233
   dashboard:
     title: Dashboard for {operator}
     bookmarked-routes: Bookmarked routes
     edit-bookmarked-routes: &edit-bookmarked-routes Edit bookmarked routes
     other-routes: Other routes
     outstanding-surveys: Outstanding surveys
+    questions:
+      header: Questions?
+      email: "Email:"
+      phone: "Phone:"
+      text: "If you have any queries, please contact us:"
     useful-links: Useful links
     view-completed-surveys: View submitted surveys
   bookmarked-routes:
