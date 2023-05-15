@@ -7,10 +7,10 @@ use Exception;
 class Features
 {
     public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
-    public const WISDOM_USER_SESSION_RECORDING = 'WISDOM_USER_SESSION_RECORDING';
+    public const SMARTLOOK_USER_SESSION_RECORDING = 'SMARTLOOK_USER_SESSION_RECORDING';
 
     public const FEATURE_MAP = [
-        'wisdom-user-session-recording' => self::WISDOM_USER_SESSION_RECORDING,
+        'smartlook-user-session-recording' => self::SMARTLOOK_USER_SESSION_RECORDING,
     ];
 
     private array $enabledFeatures;
@@ -28,7 +28,7 @@ class Features
      * @return bool
      * @throws Exception
      */
-    public function isEnabled($feature, $checkFeatureIsValid = false): bool
+    public function isEnabled($feature, bool $checkFeatureIsValid = false): bool
     {
         if ($checkFeatureIsValid) {
             $this->checkFeatureIsValid($feature);
@@ -40,7 +40,7 @@ class Features
      * @param $feature
      * @throws Exception
      */
-    private function checkFeatureIsValid($feature)
+    private function checkFeatureIsValid($feature): void
     {
         $allFeatures = array_merge(
             array_values(self::FEATURE_MAP),

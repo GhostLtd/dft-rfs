@@ -24,7 +24,7 @@
     <meta property="og:image" content="{{ asset('build/images/govuk-opengraph-image.png') }}">
 </head>
 <body class="govuk-template__body {{ bodyClasses | default('') }}"{% for attribute, value in bodyAttributes | default([]) %} {{ attribute }}="{{ value }}"{% endfor %}>
-<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+<script nonce="{{ csp_inline_script_helper.nonce('js-detect') }}">document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 {% block bodyStart %}{% endblock %}
 
 {% block skipLink %}

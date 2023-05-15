@@ -4,12 +4,19 @@
 
 {% block head -%}
     {{ encore_entry_link_tags('app') }}
-    {% include 'includes/wisdom-tracking.html.twig' %}
+    {% include 'includes/smartlook-tracking.html.twig' %}
 {%- endblock %}
 
 {% block headerBar %}
+    <style nonce="{{ csp_inline_script_helper.nonce('env-label') }}" data-wibble="{{ csp_inline_script_helper.nonce('env-label') }}">
+        #envLabel {
+            {% if env_label_colour ?? false %}color: {{ env_label_colour }};{% endif %}
+            {% if env_label_background ?? false %}background: {{ env_label_background }};{% endif %}
+        }
+        #session-reminder {display:none;}
+    </style>
     {% if env_label_frontend %}
-    <div class="govuk-warning-header" style="{% if env_label_colour|default(false) %}color: {{ env_label_colour }};{% endif %}{% if env_label_background|default(false) %}background: {{ env_label_background }};{% endif %}">
+    <div class="govuk-warning-header" id="envLabel">
         This is the {{ env_label_frontend|upper }} deployment of the Road Haulage Surveys website. <strong>Do not use this site unless you have been asked to do so</strong>.<br>
     </div>
     {% endif %}
@@ -27,7 +34,8 @@
 {% block beforeMain %}
     {% block sessionWarning %}
     {%- if app.user -%}
-    <div data-warning="{{ sessionWarningTime() }}" data-expiry="{{ sessionExpiryTime() }}" class="{{ params.containerClasses | default('govuk-width-container') }}" id="session-reminder" style="display: none;">
+    {#- Re: role="alert" - https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role#example_4_making_an_element_with_an_alert_role_visible -#}
+    <div role="alert" data-warning="{{ sessionWarningTime() }}" data-expiry="{{ sessionExpiryTime() }}" class="govuk-width-container {{ containerClasses | default('') }}" id="session-reminder">
         <span class="extend">Your session will time out soon. <a href="#" class="govuk-link">Click here to extend your session.</a></span>
         <span class="expired">Your session has expired. Any unsaved data will be lost. <a href="{{ path('app_login') }}" class="govuk-link">Click here to login.</a></span>
     </div>
