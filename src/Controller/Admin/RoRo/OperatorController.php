@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Entity("operator", expr: "repository.findOneById(operatorId)")]
 class OperatorController extends AbstractController
 {
-    protected \App\Utility\ConfirmAction\RoRo\Admin\DeleteOperatorConfirmAction $deleteOperatorConfirmAction;
+    protected DeleteOperatorConfirmAction $deleteOperatorConfirmAction;
     protected EntityManagerInterface $entityManager;
 
     public function __construct(DeleteOperatorConfirmAction $deleteOperatorConfirmAction, EntityManagerInterface $entityManager)

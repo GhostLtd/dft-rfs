@@ -3,7 +3,7 @@
 namespace App\Utility;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Form\Admin\ReportFilterType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
@@ -23,15 +23,15 @@ class StateReportHelper
         $isDomestic = !in_array($type, [ReportFilterType::TYPE_IRHS, ReportFilterType::TYPE_PRE_ENQUIRY]);
         $columns = array_merge(
             [
-                SurveyInterface::STATE_INVITATION_SENT,
-                SurveyInterface::STATE_IN_PROGRESS,
-                SurveyInterface::STATE_CLOSED,
+                SurveyStateInterface::STATE_INVITATION_SENT,
+                SurveyStateInterface::STATE_IN_PROGRESS,
+                SurveyStateInterface::STATE_CLOSED,
             ],
             ($isDomestic ? [DomesticSurvey::STATE_REISSUED] : []),
             [
-                SurveyInterface::STATE_APPROVED,
-                SurveyInterface::STATE_REJECTED,
-//                SurveyInterface::STATE_EXPORTED,
+                SurveyStateInterface::STATE_APPROVED,
+                SurveyStateInterface::STATE_REJECTED,
+//                SurveyStateInterface::STATE_EXPORTED,
             ]);
 
         foreach($columns as $column) {
@@ -47,10 +47,10 @@ class StateReportHelper
 
     public function getStateReportMergeMappings(): array {
         return [
-            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-//            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
-            SurveyInterface::STATE_INVITATION_FAILED => SurveyInterface::STATE_REJECTED,
+            SurveyStateInterface::STATE_NEW => SurveyStateInterface::STATE_INVITATION_SENT,
+            SurveyStateInterface::STATE_INVITATION_PENDING => SurveyStateInterface::STATE_INVITATION_SENT,
+//            SurveyStateInterface::STATE_EXPORTING => SurveyStateInterface::STATE_EXPORTED,
+            SurveyStateInterface::STATE_INVITATION_FAILED => SurveyStateInterface::STATE_REJECTED,
         ];
     }
 

@@ -69,12 +69,11 @@ trait SurveyTrait
      */
     private ?Feedback $feedback;
 
-    private Collection $apiResponses;
-
     /**
      * @Assert\Callback(groups={"add_survey.not-enabled"})
      */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
+    public function validInvitationDetails(ExecutionContextInterface $context): void
+    {
         if (!$this->invitationEmails && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
             $context
                 ->buildViolation('international.add.invitation-email-or-address')
@@ -200,45 +199,6 @@ trait SurveyTrait
     public function setFeedback(?Feedback $feedback): self
     {
         $this->feedback = $feedback;
-        return $this;
-    }
-
-    public function getNotifyApiResponses(): Collection
-    {
-        return $this->apiResponses;
-    }
-
-    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false, bool $reverse = false): array
-    {
-        $responses = $this->apiResponses
-            ->filter(fn(NotifyApiResponse $r) =>
-                $r->getEventName() === $eventName &&
-                $r->getMessageClass() === $notificationClass
-            )
-            ->toArray();
-
-        if ($sorted) {
-            usort($responses,
-                fn(NotifyApiResponse $a, NotifyApiResponse $b) => $reverse ?
-                    $a->getTimestamp() <=> $b->getTimestamp() :
-                    $b->getTimestamp() <=> $a->getTimestamp()
-            );
-        }
-
-        return $responses;
-    }
-
-    public function addNotifyApiResponse(NotifyApiResponse $apiResponse): self {
-        if (!$this->apiResponses->contains($apiResponse)) {
-            $this->apiResponses[] = $apiResponse;
-        }
-
-        return $this;
-    }
-
-    public function removeNotifyApiResponse(NotifyApiResponse $apiResponse): self
-    {
-        $this->apiResponses->removeElement($apiResponse);
         return $this;
     }
 

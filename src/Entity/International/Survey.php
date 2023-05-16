@@ -4,10 +4,13 @@ namespace App\Entity\International;
 
 use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
+use App\Entity\NotifyApiResponseTrait;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\International\WeekNumberHelper;
@@ -22,9 +25,10 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
  * @ORM\Table(name="international_survey")
  */
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
+    use NotifyApiResponseTrait;
 
     const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
@@ -106,7 +110,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
      *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
      * )
      */
-    private Collection $apiResponses;
+    protected Collection $apiResponses;
 
     public function __construct()
     {

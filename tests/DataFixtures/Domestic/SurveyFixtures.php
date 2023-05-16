@@ -4,7 +4,7 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -23,7 +23,7 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
             ->setPasscodeUser($user)
-            ->setState(SurveyInterface::STATE_NEW);
+            ->setState(SurveyStateInterface::STATE_NEW);
 
         $manager->persist($user);
 

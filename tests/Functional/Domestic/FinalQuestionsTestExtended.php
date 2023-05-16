@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\Domestic\DayFullOfSummaryFixtures;
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 use App\Tests\DataFixtures\Domestic\DaySummaryFixtures;
@@ -18,7 +18,7 @@ class FinalQuestionsTestExtended extends AbstractWizardTest
                 FinalQuestionsData::finalQuestionsData($state),
                 [
                     new FinalQuestionsDatabaseTestCase(
-                        SurveyInterface::STATE_CLOSED,
+                        SurveyStateInterface::STATE_CLOSED,
                         $state === FinalQuestionsData::STATE_EMPTY ? 'repair' : null,
                         $state === FinalQuestionsData::STATE_EMPTY ? null : 30,
                         $state === FinalQuestionsData::STATE_EMPTY ? null : 'litres',

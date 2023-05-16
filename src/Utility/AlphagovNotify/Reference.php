@@ -39,4 +39,7 @@ class Reference
     const EMAIL_PRE_ENQUIRY_REMINDER_2 = '';
 
     const RORO_LOGIN_LINK = 'a934719d-d978-4add-84d2-d0e7229679c7';
+
+    const EMAIL_RORO_REMINDER_1 = '7c9c1c43-e446-47f0-8a7c-96784d8966ae';
+    const EMAIL_RORO_REMINDER_2 = 'bd930a59-3783-4ae9-aa4d-e0d86a8412d9';
 }

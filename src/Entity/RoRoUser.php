@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\NotifyApiResponse;
 use App\Entity\RoRo\Operator;
 use App\Entity\Route\Route;
 use App\Repository\RoRoUserRepository;
@@ -21,6 +22,7 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
     const ROLE_RORO_USER = 'ROLE_RORO_USER';
 
     use IdTrait;
+    use NotifyApiResponseTrait;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -51,9 +53,20 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private Collection $bookmarkedRoutes;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
+     * @ORM\JoinTable(
+     *     name="roro_user_notify_api_responses",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
+     * )
+     */
+    protected Collection $apiResponses;
+
     public function __construct()
     {
         $this->bookmarkedRoutes = new ArrayCollection();
+        $this->apiResponses = new ArrayCollection();
     }
 
     public function getUserIdentifier(): ?string

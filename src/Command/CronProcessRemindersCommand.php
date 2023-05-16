@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Utility\Reminder\AutomatedRemindersHelper;
+use App\Utility\Reminder\AutomatedRoroRemindersHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,18 +13,14 @@ class CronProcessRemindersCommand extends Command
 {
     protected static $defaultName = 'app:cron:reminders:process';
 
-    /**
-     * @var AutomatedRemindersHelper
-     */
-    private AutomatedRemindersHelper $automatedRemindersHelper;
-
-    public function __construct(AutomatedRemindersHelper $automatedRemindersHelper)
-    {
+    public function __construct(
+        protected AutomatedRemindersHelper $automatedRemindersHelper,
+        protected AutomatedRoroRemindersHelper $automatedRoroRemindersHelper,
+    ) {
         parent::__construct();
-        $this->automatedRemindersHelper = $automatedRemindersHelper;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Send reminders for surveys that need them.')
@@ -35,6 +32,7 @@ class CronProcessRemindersCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $this->automatedRemindersHelper->sendReminders();
+        $this->automatedRoroRemindersHelper->sendReminders();
 
         $io->success("Success");
 

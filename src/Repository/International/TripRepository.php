@@ -4,7 +4,7 @@ namespace App\Repository\International;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -90,7 +90,7 @@ class TripRepository extends ServiceEntityRepository
             ->getQuery()
             ->setParameters([
                 'states' => [
-                    SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED,
+                    SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED,
                 ],
                 'minDate' => $minDate,
                 'maxDate' => $maxDate,

@@ -5,7 +5,7 @@ namespace App\Tests\DataFixtures\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -32,7 +32,7 @@ class SurveyHiredFixtures extends Fixture implements DependentFixtureInterface
             ->setRegistrationMark('AB01 ABC')
             ->setPasscodeUser($user)
             ->setResponse($response)
-            ->setState(SurveyInterface::STATE_CLOSED);
+            ->setState(SurveyStateInterface::STATE_CLOSED);
 
         $manager->persist($survey);
         $manager->persist($response);

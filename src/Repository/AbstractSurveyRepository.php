@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 abstract class AbstractSurveyRepository extends ServiceEntityRepository
@@ -45,7 +45,7 @@ EOQ
             ->innerJoin('s.passcodeUser', 'p') // i.e. passcodeUser must not be NULL
             ->where('s.state IN (:states)')
             ->andWhere('s.id IN (:ids)')
-            ->setParameter('states', [SurveyInterface::STATE_REJECTED])
+            ->setParameter('states', [SurveyStateInterface::STATE_REJECTED])
             ->setParameter('ids', $surveyIds)
             ->getQuery()
             ->execute();

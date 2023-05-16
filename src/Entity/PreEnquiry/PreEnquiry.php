@@ -4,7 +4,10 @@ namespace App\Entity\PreEnquiry;
 
 use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
+use App\Entity\NotifyApiResponseTrait;
+use App\Entity\SurveyReminderInterface;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Entity\SurveyTrait;
 use App\Entity\PasscodeUser;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
@@ -18,9 +21,10 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
  * @ORM\Entity(repositoryClass=PreEnquiryRepository::class)
  * @ORM\Table(name="pre_enquiry")
  */
-class PreEnquiry implements SurveyInterface
+class PreEnquiry implements SurveyReminderInterface, SurveyInterface, SurveyStateInterface
 {
     use SurveyTrait;
+    use NotifyApiResponseTrait;
 
     const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
@@ -78,7 +82,7 @@ class PreEnquiry implements SurveyInterface
      *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
      * )
      */
-    private Collection $apiResponses;
+    protected Collection $apiResponses;
 
     public function __construct()
     {

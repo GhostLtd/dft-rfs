@@ -3,8 +3,7 @@
 namespace App\Utility\Domestic;
 
 use App\Entity\Domestic\DriverAvailability;
-use App\Entity\SurveyInterface;
-use App\Utility\Domestic\WeekNumberHelper;
+use App\Entity\SurveyStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -15,11 +14,11 @@ class DriverAvailabilityExportHelper
     protected EntityManagerInterface $entityManager;
 
     private const UNWANTED_STATES = [
-        SurveyInterface::STATE_INVITATION_FAILED,
-        SurveyInterface::STATE_INVITATION_PENDING,
-        SurveyInterface::STATE_INVITATION_SENT,
-        SurveyInterface::STATE_IN_PROGRESS,
-        SurveyInterface::STATE_REJECTED,
+        SurveyStateInterface::STATE_INVITATION_FAILED,
+        SurveyStateInterface::STATE_INVITATION_PENDING,
+        SurveyStateInterface::STATE_INVITATION_SENT,
+        SurveyStateInterface::STATE_IN_PROGRESS,
+        SurveyStateInterface::STATE_REJECTED,
     ];
 
     public function __construct(EntityManagerInterface $entityManager)

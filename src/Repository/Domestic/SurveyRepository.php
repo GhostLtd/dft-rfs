@@ -5,7 +5,7 @@ namespace App\Repository\Domestic;
 use App\Doctrine\Hydrators\ColumnHydrator;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Repository\AbstractSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper;
@@ -154,7 +154,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->andWhere('s.state IN (:activeStates)')
             ->setParameters([
                 'now' => new DateTime(),
-                'activeStates' => SurveyInterface::ACTIVE_STATES,
+                'activeStates' => SurveyStateInterface::ACTIVE_STATES,
                 'isNorthernIreland' => $isNortherIreland,
             ])
             ->getQuery()
@@ -168,7 +168,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->where('s.isNorthernIreland = :isNorthernIreland')
             ->andWhere('s.state IN (:activeStates)')
             ->setParameters([
-                'activeStates' => SurveyInterface::ACTIVE_STATES,
+                'activeStates' => SurveyStateInterface::ACTIVE_STATES,
                 'isNorthernIreland' => $isNortherIreland,
             ])
             ->getQuery()
@@ -201,12 +201,12 @@ class SurveyRepository extends AbstractSurveyRepository
             for ($week = $firstWeek; $week <= $lastWeek; $week++) {
                 $stats[$year]['data'][$week] = [
                     'data' => [
-                        SurveyInterface::STATE_INVITATION_SENT => 0,
-                        SurveyInterface::STATE_IN_PROGRESS => 0,
-                        SurveyInterface::STATE_CLOSED => 0,
-                        SurveyInterface::STATE_REJECTED => 0,
-//                        SurveyInterface::STATE_EXPORTED => 0,
-                        SurveyInterface::STATE_APPROVED => 0,
+                        SurveyStateInterface::STATE_INVITATION_SENT => 0,
+                        SurveyStateInterface::STATE_IN_PROGRESS => 0,
+                        SurveyStateInterface::STATE_CLOSED => 0,
+                        SurveyStateInterface::STATE_REJECTED => 0,
+//                        SurveyStateInterface::STATE_EXPORTED => 0,
+                        SurveyStateInterface::STATE_APPROVED => 0,
                         Survey::STATE_REISSUED => 0,
                     ],
                 ];
@@ -252,9 +252,9 @@ class SurveyRepository extends AbstractSurveyRepository
             ->select('s.qualityAssured, count(s) AS count, s.surveyPeriodStart AS surveyPeriodStart, WEEK(s.surveyPeriodStart, 1) AS week, YEAR(s.surveyPeriodStart) AS year')
             ->where('s.state in (:approvedStates)')
             ->setParameter('approvedStates', [
-                SurveyInterface::STATE_APPROVED,
-                SurveyInterface::STATE_EXPORTING,
-                SurveyInterface::STATE_EXPORTED,
+                SurveyStateInterface::STATE_APPROVED,
+                SurveyStateInterface::STATE_EXPORTING,
+                SurveyStateInterface::STATE_EXPORTED,
             ]);
 
         $this->addTimeAndLocationBounds($qb, $isNorthernIreland, $minStart, $maxStart);
@@ -302,10 +302,10 @@ class SurveyRepository extends AbstractSurveyRepository
             ->leftJoin('s.response', 'r')
             ->where('s.state in (:closedStates)')
             ->setParameter('closedStates', [
-                SurveyInterface::STATE_CLOSED,
-                SurveyInterface::STATE_APPROVED,
-                SurveyInterface::STATE_EXPORTING,
-                SurveyInterface::STATE_EXPORTED,
+                SurveyStateInterface::STATE_CLOSED,
+                SurveyStateInterface::STATE_APPROVED,
+                SurveyStateInterface::STATE_EXPORTING,
+                SurveyStateInterface::STATE_EXPORTED,
                 Survey::STATE_REISSUED,
             ]);
 
@@ -437,7 +437,7 @@ class SurveyRepository extends AbstractSurveyRepository
      * @return Survey[]|array
      */
     public function getSurveysRequiringPersonalDataCleanup(DateTime $before): array {
-        $states = [SurveyInterface::STATE_REJECTED, SurveyInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
+        $states = [SurveyStateInterface::STATE_REJECTED, SurveyStateInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
         return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
     }
 }

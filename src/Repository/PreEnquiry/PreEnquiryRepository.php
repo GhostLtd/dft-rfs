@@ -3,11 +3,10 @@
 namespace App\Repository\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Utility\StateReportHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -58,7 +57,7 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
             ->setParameters([
-                'state' => SurveyInterface::STATE_CLOSED,
+                'state' => SurveyStateInterface::STATE_CLOSED,
                 'monthStart' => $monthStart,
                 'monthEnd' => $monthEnd,
             ])
@@ -101,12 +100,11 @@ class PreEnquiryRepository extends ServiceEntityRepository
         for ($month = 1; $month <= 12; $month++) {
             $stats['data'][$month] = [
                 'data' => [
-                    SurveyInterface::STATE_INVITATION_SENT => 0,
-                    SurveyInterface::STATE_IN_PROGRESS => 0,
-                    SurveyInterface::STATE_CLOSED => 0,
-                    SurveyInterface::STATE_REJECTED => 0,
-//                    SurveyInterface::STATE_EXPORTED => 0,
-                    SurveyInterface::STATE_APPROVED => 0,
+                    SurveyStateInterface::STATE_INVITATION_SENT => 0,
+                    SurveyStateInterface::STATE_IN_PROGRESS => 0,
+                    SurveyStateInterface::STATE_CLOSED => 0,
+                    SurveyStateInterface::STATE_REJECTED => 0,
+                    SurveyStateInterface::STATE_APPROVED => 0,
                 ],
             ];
         }

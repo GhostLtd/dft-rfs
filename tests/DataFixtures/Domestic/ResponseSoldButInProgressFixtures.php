@@ -3,7 +3,7 @@
 namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class ResponseSoldButInProgressFixtures extends AbstractResponseFixtures
@@ -12,7 +12,7 @@ class ResponseSoldButInProgressFixtures extends AbstractResponseFixtures
     {
         /** @var Survey $survey */
         $survey = $this->getReference('survey:simple');
-        $survey->setState(SurveyInterface::STATE_IN_PROGRESS);
+        $survey->setState(SurveyStateInterface::STATE_IN_PROGRESS);
 
         $manager->flush();
     }

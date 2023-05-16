@@ -12,6 +12,7 @@ use App\Entity\International\SurveyResponse as InternationalResponse;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
@@ -55,11 +56,11 @@ class ManualReminderHelperTest extends KernelTestCase
         $testCases = [];
 
         foreach(DomesticSurvey::STATE_FILTER_CHOICES as $state) {
-            $testCases[] = [$domesticSurvey($state), $state === SurveyInterface::STATE_IN_PROGRESS];
+            $testCases[] = [$domesticSurvey($state), $state === SurveyStateInterface::STATE_IN_PROGRESS];
         }
 
         foreach(InternationalSurvey::STATE_FILTER_CHOICES as $state) {
-            $testCases[] = [$internationalSurvey($state), $state === SurveyInterface::STATE_IN_PROGRESS];
+            $testCases[] = [$internationalSurvey($state), $state === SurveyStateInterface::STATE_IN_PROGRESS];
         }
 
         foreach(PreEnquiry::STATE_FILTER_CHOICES as $state) {
@@ -139,9 +140,9 @@ class ManualReminderHelperTest extends KernelTestCase
 
         $inProgressDate = new \DateTime('2021-05-06');
 
-        $toRejected = $auditLog(new \DateTime('2021-03-02'), ['to' => SurveyInterface::STATE_REJECTED]);
-        $toInProgress = $auditLog($inProgressDate, ['to' => SurveyInterface::STATE_IN_PROGRESS]);
-        $badToInProgress = $auditLog(new \DateTime('2021-05-06'), ['to' => SurveyInterface::STATE_IN_PROGRESS], 'other-category');
+        $toRejected = $auditLog(new \DateTime('2021-03-02'), ['to' => SurveyStateInterface::STATE_REJECTED]);
+        $toInProgress = $auditLog($inProgressDate, ['to' => SurveyStateInterface::STATE_IN_PROGRESS]);
+        $badToInProgress = $auditLog(new \DateTime('2021-05-06'), ['to' => SurveyStateInterface::STATE_IN_PROGRESS], 'other-category');
 
         return [
             [
@@ -227,33 +228,33 @@ class ManualReminderHelperTest extends KernelTestCase
         $eightDaysAgo = (new \DateTime())->modify('-8 days');
 
         return [
-            [$domesticSurvey(SurveyInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
-            [$internationalSurvey(SurveyInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
-            [$preEnquiry(SurveyInterface::STATE_NEW), UnavailabilityReason::NO_NOTIFY_TEMPLATE], // Currently not supported
+            [$domesticSurvey(SurveyStateInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
+            [$internationalSurvey(SurveyStateInterface::STATE_NEW), UnavailabilityReason::NOT_IN_PROGRESS],
+            [$preEnquiry(SurveyStateInterface::STATE_NEW), UnavailabilityReason::NO_NOTIFY_TEMPLATE], // Currently not supported
 
             // -----
 
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
 
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
 
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
-            [$domesticSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$domesticSurvey(SurveyStateInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
 
             // -----
 
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS), UnavailabilityReason::NO_EMAIL_ADDRESSES],
 
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', null, $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $sixDaysAgo), UnavailabilityReason::TOO_SOON],
 
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
-            [$internationalSurvey(SurveyInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', null, $eightDaysAgo), null],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, 'one@example.com', 'two@example.com,three@example.com', $eightDaysAgo), null],
+            [$internationalSurvey(SurveyStateInterface::STATE_IN_PROGRESS, null, 'two@example.com,three@example.com', $eightDaysAgo), null],
 
         ];
     }
@@ -322,7 +323,7 @@ class ManualReminderHelperTest extends KernelTestCase
             [
                 (new AuditLog())
                 ->setTimestamp($inProgressDate)
-                ->setData(['to' => SurveyInterface::STATE_IN_PROGRESS])
+                ->setData(['to' => SurveyStateInterface::STATE_IN_PROGRESS])
                 ->setCategory(SurveyStateLogger::CATEGORY)
             ];
 

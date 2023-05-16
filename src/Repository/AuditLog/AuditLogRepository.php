@@ -7,6 +7,7 @@ use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\QualityAssuranceInterface;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
 use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
@@ -33,7 +34,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameters([
                 'id' => $entity->getId(),
                 'class' => get_class($entity),
-                'props' => '%"' . SurveyInterface::STATE_CLOSED . '"%',
+                'props' => '%"' . SurveyStateInterface::STATE_CLOSED . '"%',
             ])
             ->orderBy('audit_log.timestamp', 'desc')
             ->getQuery()
@@ -51,7 +52,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameters([
                 'id' => $entity->getId(),
                 'class' => get_class($entity),
-                'props' => '%"to":"' . SurveyInterface::STATE_APPROVED . '"%',
+                'props' => '%"to":"' . SurveyStateInterface::STATE_APPROVED . '"%',
             ])
             ->orderBy('audit_log.timestamp', 'desc')
             ->setMaxResults(1)
@@ -134,7 +135,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->innerJoin($surveyClass, 's', Expr\Join::WITH, 'a.entityId = s.id')
             ->where('a.data LIKE :data')
             ->andWhere('a.category = :category')
-            ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
+            ->setParameter('data', '%"to":"' . SurveyStateInterface::STATE_APPROVED . '"%')
             ->setParameter('category', SurveyStateLogger::CATEGORY)
             ->orderBy('a.username', 'ASC')
         ;
@@ -150,7 +151,7 @@ class AuditLogRepository extends ServiceEntityRepository
             ->innerJoin($surveyClass, 's', Expr\Join::WITH, 'a.entityId = s.id')
             ->where('a.data LIKE :data')
             ->andWhere('a.category = :category')
-            ->setParameter('data', '%"to":"' . SurveyInterface::STATE_APPROVED . '"%')
+            ->setParameter('data', '%"to":"' . SurveyStateInterface::STATE_APPROVED . '"%')
             ->setParameter('category', SurveyStateLogger::CATEGORY)
             ->orderBy('a.timestamp', 'ASC')
         ;

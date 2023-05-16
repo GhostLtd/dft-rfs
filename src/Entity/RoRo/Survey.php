@@ -78,7 +78,17 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $qualityAssured;
+    private ?bool $qualityAssured;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $firstReminderSentDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $secondReminderSentDate;
 
     public function __construct()
     {
@@ -234,6 +244,28 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
     public function setQualityAssured(?bool $qualityAssured): self
     {
         $this->qualityAssured = $qualityAssured;
+        return $this;
+    }
+
+    public function getFirstReminderSentDate(): ?\DateTime
+    {
+        return $this->firstReminderSentDate;
+    }
+
+    public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self
+    {
+        $this->firstReminderSentDate = $firstReminderSentDate;
+        return $this;
+    }
+
+    public function getSecondReminderSentDate(): ?\DateTime
+    {
+        return $this->secondReminderSentDate;
+    }
+
+    public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self
+    {
+        $this->secondReminderSentDate = $secondReminderSentDate;
         return $this;
     }
 

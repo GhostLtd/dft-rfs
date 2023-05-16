@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use Alphagov\Notifications\Exception\ApiException;
 use App\Entity\NotifyApiResponse;
+use App\Entity\SurveyReminderInterface;
 use App\Entity\SurveyInterface;
 use App\Messenger\AlphagovNotify\AbstractSendMessage;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
@@ -20,14 +21,10 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 {
     const STATUS_KEY = 'symfony_messenger_bus.govuk_notify_status';
 
-    private EntityManagerInterface $entityManager;
-    private Registry $workflowRegistry;
-
-    public function __construct(EntityManagerInterface $entityManager, Registry $workflowRegistry)
-    {
-        $this->entityManager = $entityManager;
-        $this->workflowRegistry = $workflowRegistry;
-    }
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected Registry $workflowRegistry
+    ) {}
 
     public function onMessageFailed(WorkerMessageFailedEvent $event): void
     {
@@ -86,9 +83,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
 
         if ($entity) {
-            $workflow = $this->workflowRegistry->get($entity);
-
-            $timestamp = new \DateTime();
+           $timestamp = new \DateTime();
 
             $notifyApiResponse = (new NotifyApiResponse())
                 ->setEndpoint($message->getEndpoint())
@@ -113,28 +108,38 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
             // When the "sent date" is set immediately on the other hand, then failures will still be re-tried 3 times
             // by the message consumer using its exponential backoff settings. If it fails 3 times, then the error
             // will be permanent.
-            switch($message->getEventName()) {
-                case Reference::EVENT_INVITE:
-                    $entity->setInvitationSentDate($timestamp);
-                    break;
-                case Reference::EVENT_REMINDER_1:
-                    $entity->setFirstReminderSentDate($timestamp);
-                    break;
-                case Reference::EVENT_REMINDER_2:
-                    $entity->setSecondReminderSentDate($timestamp);
-                    break;
-                case Reference::EVENT_MANUAL_REMINDER:
-                    $entity->setLatestManualReminderSentDate($timestamp);
-                    break;
+
+            // N.B. Everything below here only applies to CSRGT / IRHS / PreEnquiry.
+            //      RoRo works a bit differently.
+
+            if ($entity instanceof SurveyReminderInterface) {
+                switch ($message->getEventName()) {
+                    case Reference::EVENT_INVITE:
+                        $entity->setInvitationSentDate($timestamp);
+                        break;
+                    case Reference::EVENT_REMINDER_1:
+                        $entity->setFirstReminderSentDate($timestamp);
+                        break;
+                    case Reference::EVENT_REMINDER_2:
+                        $entity->setSecondReminderSentDate($timestamp);
+                        break;
+                    case Reference::EVENT_MANUAL_REMINDER:
+                        $entity->setLatestManualReminderSentDate($timestamp);
+                        break;
+                }
             }
 
-            if ($status === Reference::STATUS_ACCEPTED) {
-                if ($workflow->can($entity, 'invitation_sent')) {
-                    $workflow->apply($entity, 'invitation_sent');
-                }
-            } else if ($status === Reference::STATUS_FAILED) {
-                if ($workflow->can($entity, 'invitation_failed')) {
-                    $workflow->apply($entity, 'invitation_failed');
+            if ($this->workflowRegistry->has($entity)) {
+                $workflow = $this->workflowRegistry->get($entity);
+
+                if ($status === Reference::STATUS_ACCEPTED) {
+                    if ($workflow->can($entity, 'invitation_sent')) {
+                        $workflow->apply($entity, 'invitation_sent');
+                    }
+                } else if ($status === Reference::STATUS_FAILED) {
+                    if ($workflow->can($entity, 'invitation_failed')) {
+                        $workflow->apply($entity, 'invitation_failed');
+                    }
                 }
             }
 

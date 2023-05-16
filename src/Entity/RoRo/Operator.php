@@ -86,6 +86,11 @@ class Operator
         return $this->routes;
     }
 
+    public function hasRoute(Route $route): bool
+    {
+        return $this->routes->contains($route);
+    }
+
     public function addRoute(Route $route): self
     {
         if (!$this->routes->contains($route)) {

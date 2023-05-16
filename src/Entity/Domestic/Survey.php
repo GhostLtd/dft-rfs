@@ -4,10 +4,13 @@ namespace App\Entity\Domestic;
 
 use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
+use App\Entity\NotifyApiResponseTrait;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
@@ -26,9 +29,10 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
  *
  * @AppAssert\ValidRegistration(groups={"add_survey", "import_survey"})
  */
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
+    use NotifyApiResponseTrait;
 
     const STATE_REISSUED = 'reissued';
 
@@ -128,7 +132,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
      *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
      * )
      */
-    private Collection $apiResponses;
+    protected Collection $apiResponses;
 
     public function __construct()
     {

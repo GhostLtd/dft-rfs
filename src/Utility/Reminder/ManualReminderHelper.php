@@ -9,6 +9,7 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\International\SurveyNote as InternationalSurveyNote;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
@@ -108,7 +109,7 @@ class ManualReminderHelper
     public function canShowManualReminderButton(SurveyInterface $survey): bool
     {
         $hasTemplate = isset(self::REMINDER_MAP[get_class($survey)]);
-        return $survey->getState() === SurveyInterface::STATE_IN_PROGRESS && $hasTemplate;
+        return $survey->getState() === SurveyStateInterface::STATE_IN_PROGRESS && $hasTemplate;
     }
 
     public function getReasonWhyCannotSendManualReminder(SurveyInterface $survey): ?UnavailabilityReason
@@ -117,7 +118,7 @@ class ManualReminderHelper
             return new UnavailabilityReason(UnavailabilityReason::NO_NOTIFY_TEMPLATE);
         }
 
-        if ($survey->getState() !== SurveyInterface::STATE_IN_PROGRESS) {
+        if ($survey->getState() !== SurveyStateInterface::STATE_IN_PROGRESS) {
             return new UnavailabilityReason(UnavailabilityReason::NOT_IN_PROGRESS);
         }
 
@@ -201,7 +202,7 @@ class ManualReminderHelper
             $data = $log->getData();
             if (
                 $log->getCategory() === SurveyStateLogger::CATEGORY &&
-                ($data['to'] ?? '') === SurveyInterface::STATE_IN_PROGRESS
+                ($data['to'] ?? '') === SurveyStateInterface::STATE_IN_PROGRESS
             ) {
                 return $log->getTimestamp();
             }

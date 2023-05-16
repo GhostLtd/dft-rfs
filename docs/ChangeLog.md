@@ -5,8 +5,11 @@
 ## Upcoming
 
 * **Feature:** RoRo survey
+* **Change:** Smartlook integration and removal of Wisdom.
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
+* **Fix:** Notification sent date is now recorded when processing messages (rather than on successful completion) to 
+avoid perpetual requeue of failed messages. 
 
 ## 7th June 2023
 

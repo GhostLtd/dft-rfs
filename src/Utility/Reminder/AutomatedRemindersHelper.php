@@ -5,7 +5,8 @@ namespace App\Utility\Reminder;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
@@ -68,19 +69,22 @@ class AutomatedRemindersHelper
     public function sendReminders(): void
     {
         // Send reminders for each that requires it
-        foreach ($this->getSurveysForReminding() as $reminder => $surveyGroups)
+        foreach ($this->getSurveysForReminding() as $reminder => $surveyGroups) {
             foreach ($surveyGroups as $surveyClass => $surveys) {
                 $templateReferences = self::REMINDER_TEMPLATE_MAP[$reminder][$surveyClass] ?? false;
                 foreach ($surveys as $survey) {
-                    if ($templateReferences) $this->sendReminderMessages($reminder, $templateReferences, $survey);
+                    if ($templateReferences) {
+                        $this->sendReminderMessages($reminder, $templateReferences, $survey);
+                    }
                 }
             }
+        }
 
         // save the surveys with updated reminder dates
         $this->entityManager->flush();
     }
 
-    protected function sendReminderMessages(int $reminder, array $templateReferences, SurveyInterface $survey): void
+    protected function sendReminderMessages(int $reminder, array $templateReferences, SurveyReminderInterface $survey): void
     {
         $eventType = ([1 => Reference::EVENT_REMINDER_1, 2 => Reference::EVENT_REMINDER_2])[$reminder];
 
@@ -169,7 +173,7 @@ class AutomatedRemindersHelper
     protected function getSurveyStateExpression(QueryBuilder $queryBuilder): Expr\Func
     {
         // Check that survey is not started
-        return $queryBuilder->expr()->in('survey.state', [SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT]);
+        return $queryBuilder->expr()->in('survey.state', [SurveyStateInterface::STATE_NEW, SurveyStateInterface::STATE_INVITATION_SENT]);
     }
 
     protected function getFirstReminderExpression(QueryBuilder $queryBuilder): Expr\Base

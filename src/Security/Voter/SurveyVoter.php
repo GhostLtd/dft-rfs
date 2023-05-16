@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -56,12 +57,12 @@ class SurveyVoter extends Voter
         return match ($attribute) {
             self::CLOSE_SURVEY_EXEMPT =>
                 $subject instanceof DomesticSurvey &&
-                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getState() === SurveyStateInterface::STATE_IN_PROGRESS &&
                 $subject->getResponse()?->getIsExemptVehicleType() === true,
 
             self::CLOSE_SURVEY_NOT_IN_POSSESSION =>
                 $subject instanceof DomesticSurvey &&
-                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getState() === SurveyStateInterface::STATE_IN_PROGRESS &&
                 $subject->getResponse()?->isSoldScrappedStolenOrOnHire(),
 
             // Closing details and viewing the main survey week-filling screen is available to those who:
@@ -71,22 +72,22 @@ class SurveyVoter extends Voter
             self::CLOSING_DETAILS,
             self::ELIGIBLE_TO_FILL_SURVEY_WEEK =>
                 $subject instanceof DomesticSurvey &&
-                $subject->getState() === SurveyInterface::STATE_IN_PROGRESS &&
+                $subject->getState() === SurveyStateInterface::STATE_IN_PROGRESS &&
                 $subject->getResponse()?->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
                 $subject->isBusinessAndVehicleDetailsComplete() &&
                 !$subject->getResponse()?->getIsExemptVehicleType(),
 
             self::EDIT => in_array($subject->getState(), [
-                SurveyInterface::STATE_IN_PROGRESS,
-                SurveyInterface::STATE_NEW, SurveyInterface::STATE_INVITATION_SENT,
-                SurveyInterface::STATE_INVITATION_FAILED, SurveyInterface::STATE_INVITATION_PENDING
+                SurveyStateInterface::STATE_IN_PROGRESS,
+                SurveyStateInterface::STATE_NEW, SurveyStateInterface::STATE_INVITATION_SENT,
+                SurveyStateInterface::STATE_INVITATION_FAILED, SurveyStateInterface::STATE_INVITATION_PENDING
             ]),
 
-            self::PROVIDE_FEEDBACK => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && !$hasFeedback($subject),
+            self::PROVIDE_FEEDBACK => in_array($subject->getState(), [SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED]) && !$hasFeedback($subject),
 
-            self::VIEW_FEEDBACK_SUMMARY => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED]) && $hasFeedback($subject),
+            self::VIEW_FEEDBACK_SUMMARY => in_array($subject->getState(), [SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED]) && $hasFeedback($subject),
 
-            self::VIEW_SUBMISSION_SUMMARY => in_array($subject->getState(), [SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED, SurveyInterface::STATE_REJECTED]),
+            self::VIEW_SUBMISSION_SUMMARY => in_array($subject->getState(), [SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED, SurveyStateInterface::STATE_REJECTED]),
 
             default => false,
         };

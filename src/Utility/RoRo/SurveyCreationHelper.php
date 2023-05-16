@@ -7,7 +7,7 @@ use App\Entity\RoRo\VehicleCount;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey;
 use App\Entity\Route\Route;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Repository\RoRo\CountryRepository;
 use App\Repository\RoRo\SurveyRepository;
 use App\Repository\Route\RouteRepository;
@@ -112,7 +112,7 @@ class SurveyCreationHelper
         ]);
         $survey = (new Survey())
             ->setSurveyPeriodStart($surveyPeriodStart)
-            ->setState(SurveyInterface::STATE_NEW)
+            ->setState(SurveyStateInterface::STATE_NEW)
             ->setOperator($this->entityManager->getReference(Operator::class, $operatorRoute->getOperatorId()))
             ->setRoute($this->entityManager->getReference(Route::class, $operatorRoute->getRouteId()));
 
