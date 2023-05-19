@@ -41,5 +41,5 @@
         {%- endset -%}
         {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
     {%- endif -%}
-    {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount) }}
+    {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount ? survey.chasedCount : '-') }}
 </dl>

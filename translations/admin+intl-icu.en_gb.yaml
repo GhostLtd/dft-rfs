@@ -31,7 +31,7 @@ menu:
   pre-enquiry:
     root: Pre-enquiry
     pre-enquiries: Pre-enquiries
-    add: Add
+    add: Add Survey
     sample-import: Bulk sample import
     export: Export
   roro:
