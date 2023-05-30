@@ -266,6 +266,8 @@ roro:
   login:
     invalid-email: Enter a valid email address
     username-blank: Enter an email address
+  survey:
+    vehicle-count.positive: Enter zero or a positive number
   user:
     username.not-null: Enter an email address
 

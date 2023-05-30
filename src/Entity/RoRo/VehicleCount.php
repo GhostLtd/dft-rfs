@@ -6,8 +6,6 @@ use App\Entity\IdTrait;
 use App\Repository\RoRo\CountryVehicleCountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
-use Symfony\Component\Intl\Countries;
-use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @ORM\Entity(repositoryClass=CountryVehicleCountRepository::class)

@@ -50,6 +50,7 @@ class VehicleCountsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
+            'validation_groups' => 'roro.vehicle-counts',
         ]);
     }
 }

@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -59,6 +60,7 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
     /**
      * @ORM\OneToMany(targetEntity=VehicleCount::class, mappedBy="survey", orphanRemoval=true, cascade={"persist"}, indexBy="id")
      * @ORM\OrderBy({"otherCode" = "ASC", "countryCode" = "ASC"})
+     * @Assert\Valid(groups={"roro.vehicle-counts"})
      * @var Collection<int, VehicleCount>
      */
     private Collection $vehicleCounts;
@@ -89,6 +91,32 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?\DateTime $secondReminderSentDate;
+
+    /**
+     * @Assert\Callback(groups={"roro.vehicle-counts"})
+     */
+    public function validateVehicleCount(ExecutionContextInterface $context): void
+    {
+        foreach($this->vehicleCounts as $vehicleCount) {
+            $count = $vehicleCount->getVehicleCount();
+
+            if ($count === null) {
+                continue;
+            }
+
+            $count = intval($count);
+            if ($count < 0) {
+                $countsPath = $vehicleCount->getOtherCode() === null ?
+                    'countryVehicleCounts' :
+                    'otherVehicleCounts';
+
+                $context
+                    ->buildViolation('roro.survey.vehicle-count.positive')
+                    ->atPath("{$countsPath}[{$vehicleCount->getId()}].vehicleCount")
+                    ->addViolation();
+            }
+        }
+    }
 
     public function __construct()
     {
