@@ -43,6 +43,8 @@
 
             <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.other.label' | trans }}</h2>
             {{ _self.vehicleCounts(survey.otherVehicleCounts) }}
+        {% else %}
+            {% if workflow_can(survey, 'complete') %}<a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>{% endif %}
         {% endif %}
     {% endif %}
 {% endblock %}
