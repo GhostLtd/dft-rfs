@@ -57,7 +57,7 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
     private ?Route $route = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=VehicleCount::class, mappedBy="survey", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=VehicleCount::class, mappedBy="survey", orphanRemoval=true, cascade={"persist"}, indexBy="id")
      * @ORM\OrderBy({"otherCode" = "ASC", "countryCode" = "ASC"})
      * @var Collection<int, VehicleCount>
      */

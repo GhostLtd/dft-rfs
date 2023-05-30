@@ -236,6 +236,7 @@ roro:
         label: Country vehicle counts
       other:
         label: Other vehicle counts
+      unaccompanied-trailers.help: Include tow-bar trailers and articulated semi trailers
     vehicle-count:
       others:
         XK: Kosovo

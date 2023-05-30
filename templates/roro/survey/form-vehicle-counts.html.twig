@@ -4,6 +4,22 @@
     period: form.vars.data.surveyPeriodStart | date('format.date.year-and-month' | trans),
 } %}
 
-{% form_theme form 'roro/survey/form-theme-vertical-first-collection.html.twig' %}
+{% form_theme form _self 'roro/survey/form-theme-vertical-first-collection.html.twig' %}
 
 {%- extends "roro/form-base.html.twig" -%}
+
+{%- set pageHeadingClass = "govuk-!-margin-bottom-3" -%}
+{%- set postHeadingContent -%}
+    <p class="govuk-body">Number of vehicles <strong>over 3.5 tonnes</strong> carried <strong>outwards</strong> from the GB.</p>
+    <p class="govuk-body govuk-!-margin-bottom-2"><strong>Include</strong>:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+        <li>Rigid lorries</li>
+        <li>Tractor &amp; trailer (count as one unit)</li>
+        <li>Tractive units only</li>
+    </ul>
+
+    <p class="govuk-body govuk-!-margin-bottom-2"><strong>Exclude</strong>:</p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+        <li>Vehicles being exported</li>
+    </ul>
+{%- endset -%}

@@ -14,12 +14,16 @@ class VehicleCountEntryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($options) {
             /** @var VehicleCount $countryVehicleCount */
             $countryVehicleCount = $event->getData();
+
+            $help = $options['help_options'][$countryVehicleCount->getId()] ?? null;
+
             $event->getForm()
                 ->add('vehicleCount', NumberType::class, [
                     'attr' => ['class' => 'govuk-input--width-5'],
+                    'help' => $help,
                     'label' => $countryVehicleCount->getLabel(),
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'translation_domain' => false, // Already translated via VehicleCountHelper
@@ -32,6 +36,7 @@ class VehicleCountEntryType extends AbstractType
         $resolver->setDefaults([
             'data_class' => VehicleCount::class,
             'label' => false,
+            'help_options' => [],
         ]);
     }
 }
