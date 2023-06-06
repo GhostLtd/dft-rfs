@@ -2,7 +2,12 @@
 
 # Changelog
 
-## Upcoming
+## 7th June 2023
+
+* **Feature:** Feedback form
+* **Fix:** A bug was causing a crash in pre-enquiry when the invitation address was not set.
+
+## 16th February 2023
 
 * **Change:** Update IRHS Trip Start/End form copy to highlight that these should be UK locations.
 * **Change:** CSRGT: Validation change - Day summary's number of stops must total at least five. 

@@ -69,20 +69,23 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
             'validation_groups' => function (Form $form) {
-                if ($form->get('isCorrectAddress')->getData() === self::CHOICES[self::CHOICE_NO])
-                    return ['correspondence_address'];
-                else
-                    return ["is_correct_address"];
+                $hasInvitationAddress = $form->has('isCorrectAddress');
+                $alreadyHaveCorrectAddress = $hasInvitationAddress &&
+                    $form->get('isCorrectAddress')->getData() === self::CHOICES[self::CHOICE_YES];
+
+                return $alreadyHaveCorrectAddress ?
+                    ["is_correct_address"] :
+                    ['correspondence_address'];
             },
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
         if (null === $viewData) {
@@ -111,18 +114,22 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
         assert($viewData instanceof PreEnquiryResponse);
 
-        if (!isset($forms['isCorrectAddress'])) return;
+        if (!isset($forms['contactAddress'])) return;
 
-        $isCorrectAddress = !empty($forms['isCorrectAddress']->getData())
-            ? $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES]
-            : null;
+        if (!isset($forms['isCorrectAddress'])) {
+            $isCorrectAddress = false;
+        } else {
+            $isCorrectAddress = !empty($forms['isCorrectAddress']->getData())
+                ? $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES]
+                : null;
+        }
 
         $address = $isCorrectAddress ?
             (clone $viewData->getPreEnquiry()->getInvitationAddress()) :
