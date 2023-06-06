@@ -55,7 +55,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $this->personalisationHelper = $personalisationHelper;
     }
 
-    public function guardInviteUser(GuardEvent $event)
+    public function guardInviteUser(GuardEvent $event): void
     {
         $survey = $this->getSurvey($event);
         $address = $survey->getInvitationAddress();
@@ -64,7 +64,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function transitionInviteUser(Event $event)
+    public function transitionInviteUser(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $personalisation = $this->personalisationHelper->getForEntity($survey);
@@ -96,7 +96,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function transitionComplete(Event $event)
+    public function surveyFinished(Event $event): void
     {
         $survey = $this->getSurvey($event);
 
@@ -116,26 +116,13 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function transitionRejectExempt(Event $event)
-    {
-        $survey = $this->getSurvey($event);
-
-        if (!$survey instanceof DomesticSurvey) {
-            return;
-        }
-
-        if ($survey->getResponse()?->getIsExemptVehicleType()) {
-            $this->domesticPdfHelper->generateAndUploadPdfIfNotExists($survey);
-        }
-    }
-
-    public function transitionConfirmExport(Event $event)
+    public function transitionConfirmExport(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $this->deletePasscodeUser($survey);
     }
 
-    public function transitionReissue(Event $event)
+    public function transitionReissue(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $this->deletePasscodeUser($survey);
@@ -150,7 +137,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         return $survey;
     }
 
-    public function guardUnReject(GuardEvent $event)
+    public function guardUnReject(GuardEvent $event): void
     {
         $survey = $this->getSurvey($event);
 
@@ -168,16 +155,18 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         return [
             // Transitions
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
-            'workflow.domestic_survey.transition.complete' => 'transitionComplete',
             'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.domestic_survey.transition.reject_exempt' => 'transitionRejectExempt',
+            'workflow.domestic_survey.entered.closed' => 'surveyFinished',
+            'workflow.domestic_survey.entered.rejected' => 'surveyFinished',
 
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
-            'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
+            'workflow.international_survey.entered.closed' => 'surveyFinished',
+
+
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
-            'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
+            'workflow.pre_enquiry.entered.closed' => 'surveyFinished',
 
             // Guards
             'workflow.domestic_survey.guard.un_reject' => 'guardUnReject',
