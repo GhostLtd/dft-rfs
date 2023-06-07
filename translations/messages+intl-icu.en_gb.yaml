@@ -229,7 +229,7 @@ roro:
       title: Introduction - {route} - {period}
       is-active: Was this route active for the period?
     vehicle-counts:
-      heading: Vehicle counts
+      heading: Vehicle counts by country of registration
       title: Vehicle counts - {route} - {period}
       help: ''
       country:
