@@ -10,4 +10,5 @@
 - [Change log](docs/ChangeLog.md)
 - [Env files](docs/Env.md)
 - [Reminders](docs/Reminders.md)
+- [RoRo](docs/RoRo.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

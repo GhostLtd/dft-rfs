@@ -4,7 +4,7 @@
 
 ## Upcoming
 
-* **Feature:** RoRo survey
+* **Feature:** [RoRo survey](./RoRo.md)
 * **Change:** Smartlook integration and removal of Wisdom.
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
