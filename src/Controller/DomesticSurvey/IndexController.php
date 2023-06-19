@@ -7,6 +7,7 @@ use App\Utility\Domestic\PdfHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -82,9 +83,14 @@ class IndexController extends AbstractController
      * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())")
      * @Route("/completed.pdf", name=self::COMPLETED_PDF_ROUTE)
      */
-    public function pdf(PdfHelper $pdfHelper): Response
+    public function pdf(PdfHelper $pdfHelper, Request $request): Response
     {
         $survey = $this->getSurvey();
+
+        if ($request->query->get('html')) {
+            return new Response($pdfHelper->getSurveyPdfHtml($survey));
+        }
+
         $pdf = $pdfHelper->getMostRecentSurveyPDF($survey);
 
         if (!$pdf) {
