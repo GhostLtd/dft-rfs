@@ -2,11 +2,16 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** A bug was causing empty email addresses to be passed to Notify.
+* **Fix:** NotifyApiResponse should have a nullable recipientHash.
+
 ## 7th June 2023
 
 * **Feature:** Feedback form
 * **Fix:** A bug was causing a crash in pre-enquiry when the invitation address was not set.
-* **Fix:** Auto generate any missing proxy files in production
+* **Fix:** Auto generate any missing proxy files in production.
 
 ## 16th February 2023
 
