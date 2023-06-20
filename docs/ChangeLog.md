@@ -6,6 +6,7 @@
 
 * **Feature:** Feedback form
 * **Fix:** A bug was causing a crash in pre-enquiry when the invitation address was not set.
+* **Fix:** Auto generate any missing proxy files in production
 
 ## 16th February 2023
 
