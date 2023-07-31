@@ -37,6 +37,7 @@
                 -%}
 
                 {{ actionlessSummaryListRow('Survey is active for period?', isActiveForPeriod) }}
+                {{ actionlessSummaryListRow('Respondent comments', survey.comments ?? '-') }}
             </dl>
 
             {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}

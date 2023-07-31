@@ -28,7 +28,7 @@ class VehicleCountsType extends AbstractType
             ->add('countryVehicleCounts', CollectionType::class, [
                 'attr' => ['class' => 'govuk-!-margin-bottom-5'],
                 'label' => 'roro.survey.vehicle-counts.country.label',
-                'label_attr' => ['class' => 'govuk-label--l'],
+                'label_attr' => ['class' => 'govuk-label--l govuk-!-padding-top-4'],
                 'entry_type' => VehicleCountEntryType::class,
             ])
             ->add('otherVehicleCounts', CollectionType::class, [

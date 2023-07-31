@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VehicleCountEntryType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($options) {
             /** @var VehicleCount $countryVehicleCount */
@@ -20,18 +20,25 @@ class VehicleCountEntryType extends AbstractType
 
             $help = $options['help_options'][$countryVehicleCount->getId()] ?? null;
 
+            $countryCode = $countryVehicleCount->getCountryCode();
+            $label = $countryVehicleCount->getLabel();
+
+            if ($countryCode) {
+                $label .= " ($countryCode)";
+            }
+
             $event->getForm()
                 ->add('vehicleCount', NumberType::class, [
                     'attr' => ['class' => 'govuk-input--width-5'],
                     'help' => $help,
-                    'label' => $countryVehicleCount->getLabel(),
+                    'label' => $label,
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'translation_domain' => false, // Already translated via VehicleCountHelper
                 ]);
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => VehicleCount::class,

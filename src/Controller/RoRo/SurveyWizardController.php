@@ -39,7 +39,16 @@ class SurveyWizardController extends AbstractSessionStateWorkflowController
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var RoRoState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), (new RoRoState())->setSubject($this->databaseSurvey));
+        $formWizard = $this->session->get($this->getSessionKey(), null);
+
+        // If there's no session currently in progress, or if the survey in the session is a different survey to the
+        // one mentioned in the URL, generate a new state.
+        if (!$formWizard || $formWizard->getSubject()->getId() !== $this->databaseSurvey->getId()) {
+            $formWizard = (new RoRoState())
+                ->setSubject($this->databaseSurvey)->determineWhetherWizardPreviouslyCompleted();
+        }
+
+
         $formData = $formWizard->getSubject();
 
         $this->databaseSurvey->merge($formData);

@@ -219,17 +219,106 @@ roro:
     username.label: Email address
   route: "{ukPort} to {foreignPort}"
   survey:
-    state: Status
-    states:
-      completed: Submitted
-      outstanding: Outstanding
+    comments:
+      comments:
+        label: Comments
+        help: Enter any comments about this survey, that you wish to send to the RoRo team
+    data-entry:
+      choices:
+        advanced: Bulk data entry
+        manual: Manual data entry
+      data:
+        label: Enter data
+        help: Copy/paste your data into the box below (e.g. from a spreadsheet)
+      format-decription:
+        title: View format description
+        copy: |
+          ## Format description
+
+          The data pasted must comprise groups of cells containing:
+
+          1. Country name or category name (see below)
+          2. 2-letter country code, in brackets (optional)
+          3. Vehicle count
+
+          ## Valid category names
+
+          * Other countries
+          * Unknown countries
+          * Unaccompanied trailers
+          * Total vehicles
+          * Total powered vehicles
+
+          ## Error checking
+
+          There are two potential types of error, which may be shown when you submit your data:
+          
+          1. **Unused rows:** row data that looks like a "Country, Count" grouping, but isn't (e.g. "Irelond 83")
+
+          2. **Totals mismatch:** If you include either "Total vehicles" or "Total powered vehicles", and error will be 
+          shown if actual totals don't match the totals from your data. This serves as a good extra check that the 
+          system has recognised all of your country names.
+          
+          These errors must be fixed before you will be able to continue.
+
+          ## Example data
+
+          ```
+           United Kingdom          (GB)     23
+           France                  (FR)     10
+           Ireland                         383
+           Other countries                  27
+           Unaccompanied trailers           10
+           Total vehicles                  453
+           Total powered vehicles          443
+          ```
     edit-vehicle-counts: Edit vehicle counts
+    edit-vehicle-counts-advanced: Edit vehicle counts using bulk data entry
     submit-survey: Submit survey
     introduction:
       title: Introduction - {route} - {period}
       is-active: Was this route active for the period?
+      data-entry-method:
+        label: Which data entry method do you want to use?
+        help: If unsure, choose "manual data entry"
     vehicle-counts:
       heading: Vehicle counts by country of registration
+      intro: |
+        Number of vehicles **over 3.5 tonnes** carried **outwards** from GB by **country of registration**.
+        
+        **Include:**
+        
+        * Rigid lorries
+        * Tractor & trailers (count as one unit)
+        * Tractive units only
+        
+        **Exclude:**
+
+        * Vehicles being exported
+      bulk-entry:
+        title: Bulk data entry feedback
+        check-data: |
+          Please check the numbers below are correct before saving.
+        unused-rows:
+          title: Unused rows
+          copy: |
+            The following data looked like "<Country>, <Number>" pairs, but did not match to a country name or category:
+        sum-inconsistencies:
+          title: Sum inconsistencies
+          copy: |
+            The values of the "Total vehicles" and/or "Total powered vehicles" rows from your data do not match the actual sums of the values that you entered.
+          table:
+            your-data: Your data
+            actual: Actual
+            difference: Difference
+            total-vehicles: Total vehicles
+            total-powered-vehicles: Total powered vehicles
+        unparsable-rows:
+          title: Unparsable rows
+          copy: |
+            The system was unable to interpret the following rows:
+        view-minor-issues: View minor issues
+
       title: Vehicle counts - {route} - {period}
       help: ''
       country:
@@ -243,7 +332,13 @@ roro:
         other: Other country
         unknown: Unknown country
         trailers: Unaccompanied trailers
-    view.title: &route-and-date "{ukPort} to {foreignPort} - {date}"
+    view:
+      comments: Comments
+      state: Status
+      states:
+        completed: Submitted
+        outstanding: Outstanding
+      title: &route-and-date "{ukPort} to {foreignPort} - {date}"
     complete:
       title: Submit survey
       heading: Submit survey
@@ -354,7 +449,7 @@ admin:
       heading: Edit survey data
 
     edit-is-active:
-      heading: Edit survey activity state
+      heading: Edit survey basics
 
     survey:
       heading: RoRo Survey

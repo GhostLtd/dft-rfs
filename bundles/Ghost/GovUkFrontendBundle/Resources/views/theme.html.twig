@@ -136,7 +136,7 @@
         <span id="{{ id }}" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span>
             {% for error in errors -%}
-                {{ error.message }}
+                {{ error.message | trim | nl2br }}
                 {%- if not loop.last %}<br>{% endif -%}
             {%- endfor -%}
         </span>

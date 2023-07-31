@@ -24,17 +24,17 @@ class VehicleCount
     /**
      * @ORM\Column(type="string", length=2, nullable=true)
      */
-    private ?string $countryCode;
+    private ?string $countryCode = null;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
      */
-    private ?string $otherCode;
+    private ?string $otherCode = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $vehicleCount;
+    private ?int $vehicleCount = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Survey::class, inversedBy="vehicleCounts")

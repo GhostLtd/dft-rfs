@@ -5,6 +5,9 @@ namespace Ghost\GovUkFrontendBundle\Twig;
 use Ghost\GovUkFrontendBundle\Twig\TokenParser\StrictTokenParser;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormView;
+use Twig\Extension\CoreExtension;
 use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
 use Twig\Markup;
@@ -18,6 +21,7 @@ class GovUkExtension extends AbstractExtension
         return [
             new TwigFilter('njIndent', [$this, 'indent']),
             new TwigFilter('njTrim', [$this, 'trim']),
+            new TwigFilter('form_views_to_errors', [$this, 'formViewsToErrors']),
         ];
     }
 
@@ -32,13 +36,9 @@ class GovUkExtension extends AbstractExtension
      * Implementation of Nunjucks' indent filter
      * http://mozilla.github.io/nunjucks/templating.html#indent.
      *
-     * @param $string
-     *
-     * @return string
-     *
      * @throws ReflectionException
      */
-    public function indent($string, int $width = 4, bool $indentFirst = false)
+    public function indent($string, int $width = 4, bool $indentFirst = false): string|Markup
     {
         $lines = explode("\n", $string);
         $prefix = str_repeat(' ', $width);
@@ -54,31 +54,19 @@ class GovUkExtension extends AbstractExtension
 
     /**
      * Update trim so that it doesn't mark already-safe content as not safe.
-     *
-     * @param $string
-     * @param null   $characterMask
-     * @param string $side
-     *
-     * @return string
-     *
-     * @throws RuntimeError
      * @throws ReflectionException
+     * @throws RuntimeError
      */
-    public function trim($string, $characterMask = null, $side = 'both')
+    public function trim($string, $characterMask = null, $side = 'both'): string|Markup
     {
         $replacement = twig_trim_filter($string, $characterMask, $side);
-
         return $this->applyFilterRetainingSafeStatus($string, $replacement);
     }
 
     /**
-     * @param $node
-     *
-     * @return string|Markup
-     *
      * @throws ReflectionException
      */
-    protected function applyFilterRetainingSafeStatus($node, string $replacement)
+    protected function applyFilterRetainingSafeStatus($node, string $replacement): string|Markup
     {
         if ($node instanceof Markup) {
             $reflClass = new ReflectionClass($node);
@@ -90,5 +78,40 @@ class GovUkExtension extends AbstractExtension
         }
 
         return $replacement;
+    }
+
+    /**
+     * @param array | FormView[] $formViews
+     * @return array
+     */
+    public function formViewsToErrors(array $formViews): array
+    {
+        $errors = [];
+
+        foreach($formViews as $formView) {
+            $errors = array_merge($errors, $this->flattenFormViewErrors($formView));
+        }
+
+        return $errors;
+    }
+
+    protected function flattenFormViewErrors(FormView $formView): array
+    {
+        $errors = [];
+
+        foreach($formView->vars['errors'] ?? [] as $error) {
+            if ($error instanceof FormError) {
+                $errors[] = [
+                    'href' => '#' . $formView->vars['id'],
+                    'text' => $error->getMessage(),
+                ];
+            }
+        }
+
+        foreach($formView->children as $child) {
+            $errors = array_merge($errors, $this->flattenFormViewErrors($child));
+        }
+
+        return $errors;
     }
 }

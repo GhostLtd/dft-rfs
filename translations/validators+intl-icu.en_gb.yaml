@@ -263,10 +263,24 @@ ports:
   duplicate-name: A port with this name already exists
 
 roro:
+  data-entry:
+    unused-row: |
+      "{countryName} {countryCode, select,
+        empty {}
+        other {({countryCode})}
+      } {count}" could not be matched to a country or category
+    incorrect-total: |
+      "Total vehicles" entry, does not add up correctly
+      (Your total: {expected}, actual total: {actual}, difference: {difference})
+    incorrect-total-powered: |
+      "Total powered vehicles" entry, does not add up correctly
+      (Your total: {expected}, actual total: {actual}, difference: {difference})
   login:
     invalid-email: Enter a valid email address
     username-blank: Enter an email address
   survey:
+    data-entry-method.not-null: Choose your data entry method
+    advanced-data-entry.invalid: Unable to parse data
     vehicle-count.positive: Enter zero or a positive number
   user:
     username.not-null: Enter an email address

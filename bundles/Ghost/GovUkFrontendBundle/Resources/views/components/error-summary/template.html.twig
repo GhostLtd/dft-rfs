@@ -1,5 +1,5 @@
-<div class="govuk-error-summary
-  {%- if params.classes is defined and params.classes %} {{ params.classes }}{% endif %}" aria-labelledby="error-summary-title" role="alert"
+ <div class="govuk-error-summary
+  {%- if params.classes is defined and params.classes %} {{ params.classes }}{% endif %}" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
   {%- if params.disableAutoFocus is defined and params.disableAutoFocus %} data-disable-auto-focus="true"{% endif %}
   {%- for attribute, value in params.attributes | default({}) %} {{ attribute }}="{{ value }}"{% endfor %}
 data-module="govuk-error-summary">
@@ -17,10 +17,10 @@ data-module="govuk-error-summary">
                 <li>
                     {%- if item.href is defined and item.href %}
                         <a href="{{ item.href }}"{% for attribute, value in item.attributes | default([]) %} {{attribute}}="{{value}}"{% endfor %}>
-                            {% if item.html is defined %}{{ item.html | raw }}{% else %}{{ item.text }}{% endif %}
+                            {% if item.html is defined %}{{ item.html | raw }}{% else %}{{ item.text | nl2br }}{% endif %}
                         </a>
                     {% else %}
-                        {% if item.html is defined %}{{ item.html | raw }}{% else %}{{ item.text }}{% endif %}
+                        {% if item.html is defined %}{{ item.html | raw }}{% else %}{{ item.text | nl2br }}{% endif %}
                     {% endif %}
                 </li>
             {%- endfor -%}
