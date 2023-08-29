@@ -94,6 +94,8 @@ class DataEntryDataMapper implements DataMapperInterface
                     $dataCountry = mb_ereg_replace('-', ' ', $dataCountry);
                     $dataCountry = mb_ereg_replace('\s+', ' ', $dataCountry);
 
+                    $dataCount = intval(str_replace(',', '', $dataCount));
+
                     if ($oldCountryMap[$dataCountry] ?? null) {
                         $dataCountry = $oldCountryMap[$dataCountry];
                     }

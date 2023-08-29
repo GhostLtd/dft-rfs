@@ -115,6 +115,7 @@ class DataEntryTypeTest extends TypeTestCase
             'Unknown countries - variation #1' => ["Unknown 302", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 302])],
             'Unknown countries - variation #2' => ["Unknown country 303", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 303])],
             'Unknown countries - variation #3' => ["Unknown countries 304", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 304])],
+            'Commas in number' => ["Portugal\t   (PT)\t\t\t2,396", $this->zeroesApartFrom(['PT' => 2396])],
         ];
 
         $oldCountryNames = [
