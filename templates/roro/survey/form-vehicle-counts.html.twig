@@ -10,3 +10,8 @@
 
 {%- set pageHeadingClass = "govuk-!-margin-bottom-3" -%}
 {%- set pageHeadingSizeClass = "govuk-heading-xl" -%}
+{%- set postHeadingContent -%}
+<div class="prose-scope govuk-!-margin-bottom-8">
+    {{ 'roro.survey.vehicle-counts.intro' | trans | markdown_to_html }}
+</div>
+{%- endset -%}
