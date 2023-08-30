@@ -132,53 +132,90 @@ class DataEntryTypeTest extends TypeTestCase
             'Non-survey country names - variation #3' => ["Other 123 Latvia (LV) 101 South Africa 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123, 'LV' => 101])],
 
             'Sample spreadsheet - variation #1 (PO:3/March)' => [$this->getSampleSpreadsheetOne(), $this->zeroesApartFrom([
-                'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
-                'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
-                'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
-                'MT' => 2, 'MD' => 10, 'ME' => 3, 'NL' => 98, 'NO' => 1, 'PL' => 9350, 'PT' => 1251, 'RO' => 7432,
-                'RU' => 35, 'RS' => 113, 'SK' => 167, 'SI' => 125, 'ES' => 2254, 'SE' => 30, 'CH' => 8, 'TR' => 227,
-                'UA' => 1306, 'GB' => 1308,
-                VehicleCount::OTHER_CODE_OTHER => 5457,
-                VehicleCount::OTHER_CODE_UNKNOWN => 209,
-                VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 3,
-            ]), 40161, 40164],
+                    'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
+                    'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
+                    'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
+                    'MT' => 2, 'MD' => 10, 'ME' => 3, 'NL' => 98, 'NO' => 1, 'PL' => 9350, 'PT' => 1251, 'RO' => 7432,
+                    'RU' => 35, 'RS' => 113, 'SK' => 167, 'SI' => 125, 'ES' => 2254, 'SE' => 30, 'CH' => 8, 'TR' => 227,
+                    'UA' => 1306, 'GB' => 1308,
+                    VehicleCount::OTHER_CODE_OTHER => 5457,
+                    VehicleCount::OTHER_CODE_UNKNOWN => 209,
+                    VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 3,
+                ]),
+                40161,
+                40164,
+                [],
+                [
+                    // The unused header
+                    'Country of Vehicle Registration						Powered Vehicles						Country of Vehicle Registration						Powered Vehicles',
+                ]
+            ],
 
             'Sample spreadsheet - variation #2 (PO:4/Import col G+H)' => [$this->getSampleSpreadsheetTwo(), $this->zeroesApartFrom([
-                'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
-                'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
-                'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
-                'MT' => 2, 'MD' => 10, 'ME' => 3, 'NL' => 98, 'NO' => 1, 'PL' => 9350, 'PT' => 1251, 'RO' => 7432,
-                'RU' => 35, 'RS' => 113, 'SK' => 167, 'SI' => 125, 'ES' => 2254, 'SE' => 30, 'CH' => 8, 'TR' => 227,
-                'UA' => 1306, 'GB' => 1308,
-                VehicleCount::OTHER_CODE_OTHER => 5457,
-                VehicleCount::OTHER_CODE_UNKNOWN => 209,
-                VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 3,
-            ]), null, 40164],
+                    'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
+                    'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
+                    'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
+                    'MT' => 2, 'MD' => 10, 'ME' => 3, 'NL' => 98, 'NO' => 1, 'PL' => 9350, 'PT' => 1251, 'RO' => 7432,
+                    'RU' => 35, 'RS' => 113, 'SK' => 167, 'SI' => 125, 'ES' => 2254, 'SE' => 30, 'CH' => 8, 'TR' => 227,
+                    'UA' => 1306, 'GB' => 1308,
+                    VehicleCount::OTHER_CODE_OTHER => 5457,
+                    VehicleCount::OTHER_CODE_UNKNOWN => 209,
+                    VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 3,
+                ]),
+                null,
+                40164,
+                [],
+                [
+                    // Unused row between the month header and the data
+                    'Country	Movements',
+                ]
+            ],
 
             'Sample spreadsheet - variation #3 (ET:1)' => [$this->getSampleSpreadsheetThree(), $this->zeroesApartFrom([
-                'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
-                'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
-                'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
-                'SI' => 60, 'ES' => 6526, 'SE' => 25, 'CH' => 5, 'TR' => 85, 'GB' => 8273,
-                VehicleCount::OTHER_CODE_OTHER => 36,
-                VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 127,
-            ]), 43499],
+                    'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
+                    'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
+                    'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
+                    'SI' => 60, 'ES' => 6526, 'SE' => 25, 'CH' => 5, 'TR' => 85, 'GB' => 8273,
+                    VehicleCount::OTHER_CODE_OTHER => 36,
+                    VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 127,
+                ]),
+                43499,
+                null,
+                [],
+                []
+            ],
 
             'Sample spreadsheet - variation #4 (ET:2)' => [$this->getSampleSpreadsheetFour(), $this->zeroesApartFrom([
-                'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
-                'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
-                'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
-                'SI' => 60, 'ES' => 6526, 'SE' => 25, 'CH' => 5, 'TR' => 85, 'GB' => 8273,
-                VehicleCount::OTHER_CODE_OTHER => 36,
-                VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 127,
-            ]), 43499, 43626],
+                    'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
+                    'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
+                    'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
+                    'SI' => 60, 'ES' => 6526, 'SE' => 25, 'CH' => 5, 'TR' => 85, 'GB' => 8273,
+                    VehicleCount::OTHER_CODE_OTHER => 36,
+                    VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 127,
+                ]),
+                43499,
+                43626,
+                [],
+                [
+                    // The unused header
+                    'Country of Vehicle Registration						Powered Vehicles							Country of Vehicle Registration						Powered Vehicles',
+                ]
+            ],
 
             'Sample spreadsheet - variation #5 (DFDS:2/AprMayJun col A+BN)' => [$this->getSampleSpreadsheetFive(), $this->zeroesApartFrom([
-                'AT' => 4, 'BE' => 3, 'BA' => 1, 'BG' => 2, 'CZ' => 4, 'DK' => 3, 'IE' => 39, 'EE' => 9, 'DE' => 6,
-                'HU' => 3, 'LT' => 7, 'NL' => 16, 'NO' => 2, 'PL' => 33, 'PT' => 1, 'RO' => 54, 'SK' => 2, 'ES' => 6,
-                'TR' => 44, 'GB' => 48, 'UA' => 5,
-                VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 8984,
-            ]), 292, 8995],
+                    'AT' => 4, 'BE' => 3, 'BA' => 1, 'BG' => 2, 'CZ' => 4, 'DK' => 3, 'IE' => 39, 'EE' => 9, 'DE' => 6,
+                    'HU' => 3, 'LT' => 7, 'NL' => 16, 'NO' => 2, 'PL' => 33, 'PT' => 1, 'RO' => 54, 'SK' => 2, 'ES' => 6,
+                    'TR' => 44, 'GB' => 48, 'UA' => 5,
+                    VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 8984,
+                ]),
+                292,
+                8995,
+                [],
+                [
+                    // On the entry row between "Unknown" and "Total Powered vehicles", we have a load of whitespace followed by a 0:
+                    '																																																																	0',
+                ]
+            ],
 
             'Unused rows - variation #1' => [
                 'Banana 123 Latvia 234',
@@ -227,7 +264,7 @@ class DataEntryTypeTest extends TypeTestCase
                 null,
                 null,
                 [],
-                [],
+                ['											0'],
             ],
         ];
 

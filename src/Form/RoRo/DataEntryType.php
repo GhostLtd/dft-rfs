@@ -23,6 +23,7 @@ class DataEntryType extends AbstractType
                 'help' => 'roro.survey.data-entry.data.help',
                 'label_attr' => ['class' => 'govuk-label--l'],
                 'mapped' => false,
+                'trim' => false,
             ])
         ;
     }

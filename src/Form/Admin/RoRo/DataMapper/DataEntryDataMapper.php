@@ -30,30 +30,41 @@ class DataEntryDataMapper implements DataMapperInterface
         $viewData->setDataEntryDebugInfo($debugInfo);
 
         $regex = "/".
+            // Either:
             "(?:".
-            "(?P<country>(?:".                          // Country name:
-                "(?:[a-z\-\p{L}]{3,}|of|-|&)".          //   A word 3+ characters (including unicode letters),
-                                                        //     the word "of", a dash, or an ampersand
-                "[\t\f ]*?".                            //   <whitespace> (optional, non-greedy)
-            ")+)".                                      //   <repeated as many times as possible>
+                // Country with optional code
+                "(?:".
+                    "(?:".
+                        "(?P<country>(?:".                      // Country name:
+                            "(?:[a-z\-\p{L}]{3,}|of|-|&)".      //   A word 3+ characters (including unicode letters),
+                                                                //     the word "of", a dash, or an ampersand
+                            "[\t\f ]*?".                        //   <whitespace> (optional, non-greedy)
+                        ")+)".                                  //   <repeated as many times as possible>
 
-            "[\t\f ]+".                                 // <whitespace>
-            ")?".
+                        "[\t\f ]+".                             // <whitespace>
+                    ")".
 
-                                                        // Country code (optional):
-            "(?:\(?".                                   //   <opening bracket> (optional)
+                                                                // Country code (optional):
+                    "(?:\(?".                                   //   <opening bracket> (optional)
 
-            // N.B. We allow a 3-digit code, in case the user enters a 3-digit code.
-            //      That won't match against our codes, but hopefully the country name will match.
-            //
-            //      (If we only allowed 2, then the row would be ignored and the sums not adding up would be
-            //       the only error the user received, so this is preferable).
+                    // N.B. We allow a 3-digit code, in case the user enters a 3-digit code.
+                    //      That won't match against our codes, but hopefully the country name will match.
+                    //
+                    //      (If we only allowed 2, then the row would be ignored and the sums not adding up would be
+                    //       the only error the user received, so this is preferable).
 
-            "(?P<code>\w{2,3})".                        //   A code comprising 2 characters
-            "\)?\s+)?".                                 //   <closing bracket> (optional) followed by whitespace
+                    "(?P<code>\w{2,3})".                        //   A code comprising 2 characters
+                    "\)?\s+)?".                                 //   <closing bracket> (optional) followed by whitespace
+                ")".
+                // OR
+                "|".
+                // Just the country code:
+                "(?:\(?(?P<code>\w{2,3})\)?\s+)".
+            ")".
 
-            "(?P<count>[\d,]+)".                        // Count
-            "/imu";
+            // Followed by a count
+            "(?P<count>[\d,]+)".
+            "/imuJ";
 
         $monthHeaderRegex = "/".
             "Month \d+".
@@ -84,12 +95,6 @@ class DataEntryDataMapper implements DataMapperInterface
 
         $otherVehicleCount = $viewData->getVehicleCountByOtherCode(VehicleCount::OTHER_CODE_OTHER);
 
-        $addUnparsableRow = function(string $row) use ($debugInfo): void {
-            if (trim($row) !== '') {
-                $debugInfo->addUnparsableRow($row);
-            }
-        };
-
         // Breaking things into rows helps the regex cope with what sometimes ends up being backtracking hell, which
         // ultimately causes the parse to fail. It also allows us to pick out which rows were completely unparsable
         // for debugging purposes.
@@ -107,11 +112,6 @@ class DataEntryDataMapper implements DataMapperInterface
                         'code' => $dataCountryCode,
                         'count' => $dataCount,
                     ] = $match;
-
-                    if ($dataCountry === '' && $dataCountryCode === '' && $dataCount === '0') {
-                        // Special exception for DFDS source sheet (spaces and a zero)
-                        continue;
-                    }
 
                     $originalDataCountry = $dataCountry;
                     $originalDataCountryCode = $dataCountryCode;
@@ -201,7 +201,9 @@ class DataEntryDataMapper implements DataMapperInterface
                 $viewData->setDataEntryMethod(IntroductionType::DATA_ENTRY_ADVANCED_CHOICE);
             }
             else {
-                $addUnparsableRow($row);
+                if (trim($row) !== '') {
+                    $debugInfo->addUnparsableRow($row);
+                }
             }
         }
 
