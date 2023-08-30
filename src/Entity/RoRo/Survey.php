@@ -246,6 +246,17 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
         return $this->vehicleCounts->filter(fn(VehicleCount $cvc) => $cvc->getCountryCode() !== null)->matching($this->getVehicleCountOrderCriteria());
     }
 
+    public function getVehicleCountByOtherCode(string $otherCode): ?VehicleCount
+    {
+        foreach($this->vehicleCounts as $vehicleCount) {
+            if ($vehicleCount->getOtherCode() === $otherCode) {
+                return $vehicleCount;
+            }
+        }
+
+        return null;
+    }
+
     /** @return Collection<int, VehicleCount> */
     public function getOtherVehicleCounts(): Collection
     {

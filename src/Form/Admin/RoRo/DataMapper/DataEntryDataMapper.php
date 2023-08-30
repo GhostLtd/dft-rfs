@@ -9,6 +9,7 @@ use App\Form\RoRo\IntroductionType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Intl\Countries;
 
 class DataEntryDataMapper implements DataMapperInterface
 {
@@ -29,6 +30,7 @@ class DataEntryDataMapper implements DataMapperInterface
         $viewData->setDataEntryDebugInfo($debugInfo);
 
         $regex = "/".
+            "(?:".
             "(?P<country>(?:".                          // Country name:
                 "(?:[a-z\-\p{L}]{3,}|of|-|&)".          //   A word 3+ characters (including unicode letters),
                                                         //     the word "of", a dash, or an ampersand
@@ -36,9 +38,10 @@ class DataEntryDataMapper implements DataMapperInterface
             ")+)".                                      //   <repeated as many times as possible>
 
             "[\t\f ]+".                                 // <whitespace>
+            ")?".
 
                                                         // Country code (optional):
-            "(?:\(".                                    //   <opening bracket>
+            "(?:\(?".                                   //   <opening bracket> (optional)
 
             // N.B. We allow a 3-digit code, in case the user enters a 3-digit code.
             //      That won't match against our codes, but hopefully the country name will match.
@@ -47,9 +50,15 @@ class DataEntryDataMapper implements DataMapperInterface
             //       the only error the user received, so this is preferable).
 
             "(?P<code>\w{2,3})".                        //   A code comprising 2 characters
-            "\)\s+)?".                                  //   <closing bracket>
+            "\)?\s+)?".                                 //   <closing bracket> (optional) followed by whitespace
 
             "(?P<count>[\d,]+)".                        // Count
+            "/imu";
+
+        $monthHeaderRegex = "/".
+            "Month \d+".
+            "[\t\f ]+".
+            "(?P<count>\d+)".
             "/imu";
 
         $oldCountryMap = [
@@ -73,11 +82,24 @@ class DataEntryDataMapper implements DataMapperInterface
             }
         };
 
+        $otherVehicleCount = $viewData->getVehicleCountByOtherCode(VehicleCount::OTHER_CODE_OTHER);
+
+        $addUnparsableRow = function(string $row) use ($debugInfo): void {
+            if (trim($row) !== '') {
+                $debugInfo->addUnparsableRow($row);
+            }
+        };
+
         // Breaking things into rows helps the regex cope with what sometimes ends up being backtracking hell, which
         // ultimately causes the parse to fail. It also allows us to pick out which rows were completely unparsable
         // for debugging purposes.
         foreach(explode("\n", $forms['data']->getData()) as $row) {
-            if (preg_match_all($regex, $row, $matches, PREG_SET_ORDER)) {
+            if (preg_match($monthHeaderRegex, $row, $matches)) {
+                // The "Month x 12345" headers found on the P&O import sheet
+                // (denoting total powered vehicles for the month)
+                $dataCount = intval(str_replace(',', '', $matches['count']));
+                $debugInfo->setTotalVehicles($dataCount);
+            } else if (preg_match_all($regex, $row, $matches, PREG_SET_ORDER)) {
                 // Populate
                 foreach ($matches as $match) {
                     [
@@ -85,6 +107,11 @@ class DataEntryDataMapper implements DataMapperInterface
                         'code' => $dataCountryCode,
                         'count' => $dataCount,
                     ] = $match;
+
+                    if ($dataCountry === '' && $dataCountryCode === '' && $dataCount === '0') {
+                        // Special exception for DFDS source sheet (spaces and a zero)
+                        continue;
+                    }
 
                     $originalDataCountry = $dataCountry;
                     $originalDataCountryCode = $dataCountryCode;
@@ -100,7 +127,7 @@ class DataEntryDataMapper implements DataMapperInterface
                         $dataCountry = $oldCountryMap[$dataCountry];
                     }
 
-                    if (preg_match('/^([a-z ]+)\t+\1$/', $dataCountry, $countryMatch)) {
+                    if (preg_match('/^([a-z]+)[\t ]+\1$/', $dataCountry, $countryMatch)) {
                         // "Kosovo" is being copied out of the spreadsheet as "Kosovo\t\t\tKosovo", even tho' there appears
                         // to be only one in the source cell.
                         $dataCountry = $countryMatch[1];
@@ -132,12 +159,41 @@ class DataEntryDataMapper implements DataMapperInterface
                     }
 
                     if (!$found) {
-                        if (str_ends_with($dataCountry, 'total powered vehicles')) {
-                            $debugInfo->setTotalPoweredVehicles($originalDataCount);
+                        if (
+                            str_ends_with($dataCountry, 'total powered vehicles') ||
+                            $dataCountry === 'overall result'
+                        ) {
+                            $debugInfo->setTotalPoweredVehicles($dataCount);
                         } else if (str_ends_with($dataCountry, 'total vehicles')) {
-                            $debugInfo->setTotalVehicles($originalDataCount);
+                            $debugInfo->setTotalVehicles($dataCount);
                         } else {
-                            $debugInfo->addUnusedRow($originalDataCountry, $originalDataCountryCode, $originalDataCount);
+                            $clearDataIfFirstMatch();
+                            $foundOtherCountry = false;
+
+                            foreach(Countries::getCountryCodes() as $countryCode) {
+                                if ($dataCountryCode === $countryCode) {
+                                    $foundOtherCountry = true;
+                                    break;
+                                }
+                            }
+
+                            if (!$foundOtherCountry) {
+                                foreach(Countries::getNames('en') as $countryName) {
+                                    if ($dataCountry === strtolower($countryName)) {
+                                        $foundOtherCountry = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ($foundOtherCountry) {
+                                $otherVehicleCount->setVehicleCount(
+                                    ($otherVehicleCount->getVehicleCount() ?? 0) +
+                                    $dataCount
+                                );
+                            } else {
+                                $debugInfo->addUnusedRow($originalDataCountry, $originalDataCountryCode, $originalDataCount);
+                            }
                         }
                     }
                 }
@@ -145,9 +201,7 @@ class DataEntryDataMapper implements DataMapperInterface
                 $viewData->setDataEntryMethod(IntroductionType::DATA_ENTRY_ADVANCED_CHOICE);
             }
             else {
-                if (trim($row) !== '') {
-                    $debugInfo->addUnparsableRow($row);
-                }
+                $addUnparsableRow($row);
             }
         }
 
