@@ -228,7 +228,7 @@ roro:
         advanced: Bulk data entry
         manual: Manual data entry
       data:
-        label: Enter data
+        label: Bulk vehicle count data
         help: Copy/paste your data into the box below (e.g. from a spreadsheet)
       format-decription:
         title: View format description
@@ -272,6 +272,7 @@ roro:
            Total vehicles                  453
            Total powered vehicles          443
           ```
+      survey-requirements.title: Survey requirements
     edit-vehicle-counts: Edit vehicle counts
     edit-vehicle-counts-advanced: Edit vehicle counts using bulk data entry
     submit-survey: Submit survey

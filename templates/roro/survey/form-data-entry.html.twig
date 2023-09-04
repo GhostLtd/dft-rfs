@@ -17,6 +17,11 @@
             {{- block('data_entry_help_contents') -}}
         </div>
     </details>
+
+    <h2 class="govuk-heading-m">{{ 'roro.survey.data-entry.survey-requirements.title' | trans }}</h2>
+    <div class="prose-scope govuk-!-margin-bottom-8">
+        {{ 'roro.survey.vehicle-counts.intro' | trans | markdown_to_html }}
+    </div>
 {% endblock %}
 
 {% block data_entry_help_contents %}
