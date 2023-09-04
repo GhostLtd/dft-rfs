@@ -48,7 +48,7 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Assert\Expression("this.getIsActiveForPeriod() === false or this.getDataEntryMethod() !== null", message="roro.survey.data-entry-method.not-null", groups={"roro.is-active"})
+     * @Assert\Expression("this.getIsActiveForPeriod() !== true or this.getDataEntryMethod() !== null", message="roro.survey.data-entry-method.not-null", groups={"roro.is-active"})
      */
     private ?string $dataEntryMethod = null;
 
