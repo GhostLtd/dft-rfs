@@ -85,15 +85,6 @@ class SurveyRepository extends ServiceEntityRepository
      */
     public function getSurveysForUser(RoRoUser $user): array
     {
-        $isOperatorRoute = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('op_route.id')
-            ->from(Operator::class, 'op')
-            ->join('op.routes', 'op_route')
-            ->where('op_route.isActive = 1')
-            ->andWhere('op.id = :operatorId')
-            ->getDQL();
-
         $queryBuilder = $this->createQueryBuilder('survey');
 
         return $queryBuilder
@@ -103,7 +94,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->join('route.foreignPort', 'foreign_port')
             ->join('survey.operator', 'operator')
             ->andWhere('operator.isActive = 1')
-            ->andWhere($queryBuilder->expr()->in('route.id', $isOperatorRoute))
+            ->andWhere('operator.id = :operatorId')
             ->orderBy('survey.surveyPeriodStart')
             ->addOrderBy('uk_port.name')
             ->addOrderBy('foreign_port.name')
