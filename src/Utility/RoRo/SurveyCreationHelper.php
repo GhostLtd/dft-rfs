@@ -110,6 +110,7 @@ class SurveyCreationHelper
             'route' => $operatorRoute->getRouteId(),
             'operator' => $operatorRoute->getOperatorId(),
         ]);
+
         $survey = (new Survey())
             ->setSurveyPeriodStart($surveyPeriodStart)
             ->setState(SurveyStateInterface::STATE_NEW)
@@ -119,6 +120,7 @@ class SurveyCreationHelper
         foreach ($this->countryRepository->findAll() as $country) {
             $survey->addCountryVehicleCount((new VehicleCount())->setCountryCode($country->getCode()));
         }
+
         foreach ([VehicleCount::OTHER_CODE_OTHER, VehicleCount::OTHER_CODE_UNKNOWN, VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS] as $other) {
             $survey->addCountryVehicleCount((new VehicleCount())->setOtherCode($other));
         }

@@ -1,14 +1,19 @@
 <?php
 
-
 namespace App\Form;
 
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LimitedByType extends ChoiceType
+class LimitedByType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function getParent(): string
+    {
+        return ChoiceType::class;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -17,6 +22,7 @@ class LimitedByType extends ChoiceType
 
         $resolver->setDefaults([
             'multiple' => true,
+            'expanded' => true,
             'label' => "{$prefix}.label",
             'help' => "{$prefix}.help",
             'choices' => [

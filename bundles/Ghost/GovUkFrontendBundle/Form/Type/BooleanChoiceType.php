@@ -2,14 +2,15 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
+use RuntimeException;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BooleanChoiceType extends AbstractType
 {
-    public function getParent(): ?string
+    public function getParent(): string
     {
         return ChoiceType::class;
     }
@@ -19,21 +20,37 @@ class BooleanChoiceType extends AbstractType
         return 'gds_boolean_choice';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $view->vars['attr'] = array_merge([
-            'class' => 'govuk-radios--inline',
-        ], $view->vars['attr']);
+        $builder->addModelTransformer(new CallbackTransformer(
+            function ($property) {
+                return match ($property) {
+                    null => null,
+                    false => "false",
+                    true => "true",
+                    default => throw new RuntimeException("unexpected property value: $property"),
+                };
+            },
+            function ($property) {
+                return match ($property) {
+                    null => null,
+                    "false" => false,
+                    "true" => true,
+                    default => throw new RuntimeException("unexpected property value: $property"),
+                };
+            }
+        ));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'expanded' => true,
             'choices' => [
-                'common.choices.boolean.yes' => true,
-                'common.choices.boolean.no' => false,
+                'common.choices.boolean.yes' => "true",
+                'common.choices.boolean.no' => "false",
             ],
+            'choice_translation_domain' => 'messages',
         ]);
     }
 }

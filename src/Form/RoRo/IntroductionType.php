@@ -11,16 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class
-IntroductionType extends AbstractType
+class IntroductionType extends AbstractType
 {
-    const ACTIVE_CHOICE_YES = 'common.choices.boolean.yes';
-    const ACTIVE_CHOICE_NO = 'common.choices.boolean.no';
-    const ACTIVATE_CHOICES = [
-        self::ACTIVE_CHOICE_YES => true,
-        self::ACTIVE_CHOICE_NO => false,
-    ];
-
     const DATA_ENTRY_MANUAL = 'roro.survey.data-entry.choices.manual';
     const DATA_ENTRY_ADVANCED = 'roro.survey.data-entry.choices.advanced';
 
@@ -38,17 +30,16 @@ IntroductionType extends AbstractType
 
         if ($showDataEntryQuestion) {
             $choiceOptions = [
-                self::ACTIVE_CHOICE_YES => [
+                'common.choices.boolean.yes' => [
                     'conditional_form_name' => 'dataEntryMethod',
                 ],
             ];
         }
 
         $builder
-            ->add('isActiveForPeriod', ChoiceType::class, [
+            ->add('isActiveForPeriod', BooleanChoiceType::class, [
                 'label_attr' => ['class' => $showDataEntryQuestion ? 'govuk-label--l' : 'govuk-label--m'],
                 'label' => 'roro.survey.introduction.is-active',
-                'choices' => self::ACTIVATE_CHOICES,
                 'choice_options' => $choiceOptions,
             ]);
 

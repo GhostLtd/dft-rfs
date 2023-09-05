@@ -2,6 +2,7 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
 
+use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
@@ -19,7 +20,7 @@ class ConditionalTypeExtension extends AbstractTypeExtension
         ];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -32,7 +33,7 @@ class ConditionalTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('conditional_hide_form_names', ['null', 'string[]']);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 

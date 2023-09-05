@@ -2,6 +2,7 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Extension;
 
+use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
@@ -20,21 +21,23 @@ class LabelIsPageHeadingExtension extends AbstractTypeExtension
             InputType::class,
             TimeType::class,
             FieldsetType::class,
+            ChoiceType::class,
         ];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions($resolver);
         $resolver->setDefaults([
             'label_is_page_heading' => false,
         ]);
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        parent::buildView($view, $form, $options);
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];
+        if ($options['label_is_page_heading']) {
+            array_splice($view->vars['block_prefixes'], -1, 0, ['label_is_page_heading']);
+        }
     }
 }

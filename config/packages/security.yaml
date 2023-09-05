@@ -96,24 +96,24 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## General
-        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/roro/authenticate, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/roro/check-email, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/roro/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/authenticate, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/check-email, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## RoRo firewall
-        - { host: '^%frontend_hostname%$', path: ^/roro(/.*)?$, roles: ROLE_RORO_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/roro(/.*)?$, roles: ROLE_RORO_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Frontend firewall
-        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, roles: ROLE_PRE_ENQUIRY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, roles: ROLE_PRE_ENQUIRY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
-        - { host: '^%frontend_hostname%$', path: ^/survey-feedback(/.*)?$, roles: ROLE_SURVEY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/survey-feedback(/.*)?$, roles: ROLE_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Admin firewall
-        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER, requires_channel: https }
+        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Remainder
-        - { path: '^/', requires_channel: https }
+        - { path: '^/', requires_channel: '%env(SECURE_SCHEME)%' }
 
