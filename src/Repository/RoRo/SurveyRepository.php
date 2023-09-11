@@ -7,6 +7,7 @@ use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
+use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -109,5 +110,29 @@ class SurveyRepository extends ServiceEntityRepository
     {
         $monthPadded = str_pad($currentMonth, 2, '0', STR_PAD_LEFT);
         return \DateTime::createFromFormat(\DateTime::ATOM, "{$currentYear}-{$monthPadded}-01T00:00:00+00:00");
+    }
+
+    public function findForExportMonth(int $year, int $month): array
+    {
+        $monthStart = \DateTimeImmutable::createFromFormat('Y-m-d', "$year-$month-1")->modify('midnight first day of this month');
+        $monthEnd = $monthStart->modify('+1 month');
+
+        return $this->createQueryBuilder('survey')
+            ->select('survey')
+            ->join('survey.operator', 'operator')
+            ->join('survey.route', 'route')
+            ->join('route.ukPort', 'uk_port')
+            ->join('route.foreignPort', 'foreign_port')
+            ->join('survey.vehicleCounts', 'vehicle_count')
+            ->where('survey.state = :state')
+            ->andWhere('survey.surveyPeriodStart >= :monthStart')
+            ->andWhere('survey.surveyPeriodStart < :monthEnd')
+            ->setParameters([
+                'state' => SurveyStateInterface::STATE_APPROVED,
+                'monthStart' => $monthStart,
+                'monthEnd' => $monthEnd,
+            ])
+            ->getQuery()
+            ->execute();
     }
 }

@@ -257,6 +257,17 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
         return null;
     }
 
+    public function getVehicleCountByCode(string $code): ?VehicleCount
+    {
+        foreach($this->vehicleCounts as $vehicleCount) {
+            if ($vehicleCount->getOtherCode() === $code || $vehicleCount->getCountryCode() === $code) {
+                return $vehicleCount;
+            }
+        }
+
+        return null;
+    }
+
     /** @return Collection<int, VehicleCount> */
     public function getOtherVehicleCounts(): Collection
     {

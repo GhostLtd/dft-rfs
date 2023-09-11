@@ -35,6 +35,7 @@ menu:
     sample-import: Bulk sample import
     export: Export
   roro:
+    export: Export
     operators: Operators
     root: RoRo
     surveys: Surveys

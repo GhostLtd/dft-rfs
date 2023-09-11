@@ -161,4 +161,11 @@ class Route
 
         return $this;
     }
+
+    // -----
+
+    public function getRouteCode(): string
+    {
+        return $this->ukPort->getCode().$this->foreignPort->getCode();
+    }
 }
