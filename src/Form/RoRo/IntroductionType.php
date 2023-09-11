@@ -7,9 +7,8 @@ use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class IntroductionType extends AbstractType
 {
@@ -58,8 +57,17 @@ class IntroductionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
-            'validation_groups' => ['roro.is-active'],
             'show_data_entry_question' => true,
         ]);
+
+        $resolver->setDefault('validation_groups', function(Options $options): array {
+            $groups = ['roro.is-active'];
+
+            if ($options['show_data_entry_question']) {
+                $groups[] = 'roro.data-entry-method';
+            }
+
+            return $groups;
+        });
     }
 }
