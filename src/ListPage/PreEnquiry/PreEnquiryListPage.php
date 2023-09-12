@@ -28,7 +28,7 @@ class PreEnquiryListPage extends AbstractListPage
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
             (new TextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
-            (new TextFilter('Company name', 'companyName'))->sortable(),
+            (new TextFilter('Company name', 'preEnquiry.companyName'))->sortable(),
             (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
         ];
