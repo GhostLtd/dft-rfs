@@ -45,6 +45,9 @@
 
             <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.other.label' | trans }}</h2>
             {{ _self.vehicleCounts(survey.otherVehicleCounts) }}
+
+            <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.totals.label' | trans }}</h2>
+            {{ _self.totals(survey) }}
         {% endif %}
 
         {%- set canComplete = workflow_can(survey, 'complete') -%}
@@ -83,19 +86,39 @@
                     <thead>
                     <tr>
                         <th class="govuk-table__header">Country</th>
-                        <th class="govuk-table__header">Count</th>
+                        <th class="govuk-table__header govuk-!-text-align-right">Count</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for vehicleCount in column %}
                         <tr>
                             <td class="govuk-table__cell">{{ vehicleCount.label }}</td>
-                            <td class="govuk-table__cell">{{ vehicleCount.vehicleCount ?? '-' }}</td>
+                            <td class="govuk-table__cell govuk-!-text-align-right">{{ vehicleCount.vehicleCount == null ? '-' : (vehicleCount.vehicleCount | number_format) }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
         {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro totals(survey) %}
+    {%- set count_totals = survey.totalVehicleCounts() -%}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <tbody>
+                <tr>
+                    <th class="govuk-table__header">Total powered vehicles</th>
+                    <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total_powered'] | number_format }}</td>
+                </tr>
+                <tr>
+                    <th class="govuk-table__header">Total vehicles</th>
+                    <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total'] | number_format }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endmacro %}

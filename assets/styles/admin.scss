@@ -16,6 +16,8 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/vertical-text";
 @import "admin/feedback";
 
+@import "common/text-align";
+
 .govuk-header__service-name-env {
   @include govuk-font(24, "bold");
   color: govuk-colour('white');

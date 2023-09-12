@@ -64,23 +64,23 @@
     {% if survey.isActiveForPeriod %}
         <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Vehicle counts</h2>
 
-        {%- set vehicleCountColumns = survey.vehicleCounts | filter(vc => vc.countryCode is not null) | to_lists(2) -%}
+        {%- set vehicleCountColumns = survey.countryVehicleCounts | to_lists(2) -%}
 
         <div class="govuk-grid-row">
         {% for column in vehicleCountColumns %}
-            <div class="govuk-grid-column-one-half">
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
                 <table class="govuk-table govuk-!-margin-bottom-9">
                     <thead>
                         <tr>
                             <th class="govuk-table__header">Country</th>
-                            <th class="govuk-table__header">Count</th>
+                            <th class="govuk-table__header govuk-!-text-align-right">Count</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for vehicleCount in column %}
                         <tr>
                             <td class="govuk-table__cell">{{ vehicleCount.label }}</td>
-                            <td class="govuk-table__cell">{{ vehicleCount.vehicleCount ?? '-' }}</td>
+                            <td class="govuk-table__cell govuk-!-text-align-right">{{ vehicleCount.vehicleCount == null ? '-' : (vehicleCount.vehicleCount | number_format) }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -92,21 +92,41 @@
         <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Other counts</h2>
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
                 <table class="govuk-table govuk-!-margin-bottom-9">
                     <thead>
                     <tr>
                         <th class="govuk-table__header">Category</th>
-                        <th class="govuk-table__header">Count</th>
+                        <th class="govuk-table__header govuk-!-text-align-right">Count</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for vehicleCount in survey.vehicleCounts | filter(vc => vc.otherCode is not null) %}
+                    {% for vehicleCount in survey.otherVehicleCounts %}
                         <tr>
                             <td class="govuk-table__cell">{{ vehicleCount.label }}</td>
-                            <td class="govuk-table__cell">{{ vehicleCount.vehicleCount ?? '-' }}</td>
+                            <td class="govuk-table__cell govuk-!-text-align-right">{{ vehicleCount.vehicleCount == null ? '-' : (vehicleCount.vehicleCount | number_format) }}</td>
                         </tr>
                     {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Totals</h2>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
+                {%- set count_totals = survey.totalVehicleCounts() -%}
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <tbody>
+                    <tr>
+                        <th class="govuk-table__header">Total powered vehicles</th>
+                        <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total_powered'] | number_format }}</td>
+                    </tr>
+                    <tr>
+                        <th class="govuk-table__header">Total vehicles</th>
+                        <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total'] | number_format }}</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

@@ -5,9 +5,10 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "app/choice-label-bring-to-attention";
 @import "app/passcode-fieldset";
 @import "app/session-reminder";
-@import "app/text-align";
 @import "app/vehicle-icons";
 @import "app/prose-scope";
+
+@import "common/text-align";
 
 body {
     background-color: lightgray;
