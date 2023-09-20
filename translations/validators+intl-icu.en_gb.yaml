@@ -249,6 +249,10 @@ driver-availability:
     period:
       other: Enter the period of this wage increase
 
+notification:
+  address-line:
+    duplicate: Company name has already been used
+
 operators:
   name.not-null: Enter a name
   code.not-null: Enter a code

@@ -17,7 +17,7 @@ class UniqueNotificationInterceptionNameValidator extends ConstraintValidator
         $this->notificationInterceptionService = $notificationInterceptionService;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueNotificationInterceptionName) {
             throw new UnexpectedTypeException($constraint, UniqueNotificationInterceptionName::class);
@@ -27,11 +27,27 @@ class UniqueNotificationInterceptionNameValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, NotificationInterceptionAdvancedInterface::class);
         }
 
-        $names = [$value->getPrimaryName(), ...array_map(fn($n) => $n->getName(), $value->getAdditionalNames()->toArray())];
+        // Check whether primaryName submitted is duplicated in the additionalNames submitted
+        $primaryName = $value->getPrimaryName();
+        $additionalNames = array_map(fn($n) => $n->getName(), $value->getAdditionalNames()->toArray());
+
+        if (in_array($primaryName, $additionalNames)) {
+            $this->context->buildViolation($constraint->message, ['{{ value }}' => $primaryName])
+                ->atPath('additionalNames')
+                ->addViolation();
+        }
+
+        // Check whether any of the names specified are used elsewhere (in other saved entities)
         $nonUniqueNames = $this->notificationInterceptionService->getNonUniqueCompanyNames($value);
 
         foreach ($nonUniqueNames as $nonUniqueName) {
-            $this->context->buildViolation($constraint->message, ['{{ value }}' => $nonUniqueName])->addViolation();
+            $path = ($nonUniqueName === $primaryName) ?
+                'primaryName' :
+                'additionalNames';
+
+            $this->context->buildViolation($constraint->message, ['{{ value }}' => $nonUniqueName])
+                ->atPath($path)
+                ->addViolation();
         }
     }
 }

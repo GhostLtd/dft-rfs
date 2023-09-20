@@ -10,6 +10,7 @@ use App\Entity\NotificationInterceptionTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,6 +27,9 @@ class NotificationInterception implements NotificationInterceptionAdvancedInterf
      * @Assert\NotBlank(groups={"notification_interception"}, message="Company name must not be empty")
      * @Assert\Regex(groups={"notification_interception"}, message="Company name must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
      * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"notification_interception"})
+     *
+     * N.B. Validation of name uniqueness is handled by the validator in NotificationInterceptionAdvancedInterface,
+     *      since each IRHS LCNI can have multiple names.
      */
     private ?string $primaryName;
 

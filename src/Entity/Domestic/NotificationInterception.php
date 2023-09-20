@@ -6,11 +6,13 @@ use App\Entity\NotificationInterceptionInterface;
 use App\Repository\Domestic\NotificationInterceptionRepository;
 use App\Form\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=NotificationInterceptionRepository::class)
  * @ORM\Table("domestic_notification_interception")
+ * @UniqueEntity("addressLine", groups={"notification_interception"}, message="notification.address-line.duplicate")
  */
 class NotificationInterception implements NotificationInterceptionInterface
 {

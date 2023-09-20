@@ -10,7 +10,8 @@
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
 * **Fix:** Notification sent date is now recorded when processing messages (rather than on successful completion) to 
 avoid perpetual requeue of failed messages.
-* Fix: Update dbrekelmans/bdi to fix broken Selenium driver updates for Chrome.
+* **Fix**: Update dbrekelmans/bdi to fix broken Selenium driver updates for Chrome.
+* **Fix**: Fix LCNI validation
 
 ## 7th June 2023
 
