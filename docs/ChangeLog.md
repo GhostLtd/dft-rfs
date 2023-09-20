@@ -9,7 +9,8 @@
 * **Fix:** A bug was causing empty email addresses to be passed to Notify.
 * **Fix:** NotifyApiResponse should have a nullable recipientHash.
 * **Fix:** Notification sent date is now recorded when processing messages (rather than on successful completion) to 
-avoid perpetual requeue of failed messages. 
+avoid perpetual requeue of failed messages.
+* Fix: Update dbrekelmans/bdi to fix broken Selenium driver updates for Chrome.
 
 ## 7th June 2023
 
