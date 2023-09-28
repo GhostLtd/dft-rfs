@@ -5,6 +5,7 @@ namespace App\ListPage\International;
 use App\Entity\International\Survey;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
+use App\ListPage\Field\DateTextFilter;
 use App\ListPage\Field\QaChoiceFilter;
 use App\ListPage\Field\Simple;
 use App\ListPage\Field\TextFilter;
@@ -31,8 +32,8 @@ class SurveyListPage extends AbstractListPage
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Ref. no.', 'survey.referenceNumber'))->sortable(),
-            (new Simple('Start date', 'survey.surveyPeriodStart'))->sortable(),
-            (new Simple('End date', 'survey.surveyPeriodEnd'))->sortable(),
+            (new DateTextFilter('Start date', 'survey.surveyPeriodStart'))->sortable(),
+            (new DateTextFilter('End date', 'survey.surveyPeriodEnd'))->sortable(),
             (new TextFilter('Business name', 'company.businessName'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
             (new QaChoiceFilter("QA'd?", 'survey.qualityAssured', [

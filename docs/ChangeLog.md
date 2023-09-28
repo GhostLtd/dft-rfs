@@ -12,6 +12,7 @@
 avoid perpetual requeue of failed messages.
 * **Fix**: Update dbrekelmans/bdi to fix broken Selenium driver updates for Chrome.
 * **Fix**: Fix LCNI validation
+* **Fix**: Fix broken date text searches in admin, and allow date searching on IRHS admin list page
 
 ## 7th June 2023
 

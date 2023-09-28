@@ -5,6 +5,7 @@ namespace App\ListPage\PreEnquiry;
 use App\Entity\International\Survey;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
+use App\ListPage\Field\DateTextFilter;
 use App\ListPage\Field\Simple;
 use App\ListPage\Field\TextFilter;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
@@ -27,7 +28,7 @@ class PreEnquiryListPage extends AbstractListPage
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
-            (new TextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
+            (new DateTextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
             (new TextFilter('Company name', 'preEnquiry.companyName'))->sortable(),
             (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
