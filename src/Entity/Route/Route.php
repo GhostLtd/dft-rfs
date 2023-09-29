@@ -135,7 +135,7 @@ class Route
     /**
      * @return Collection<int, Survey>
      */
-    public function getSurvey(): Collection
+    public function getSurveys(): Collection
     {
         return $this->surveys;
     }

@@ -114,4 +114,19 @@ EOS)
             ])
             ->getSingleColumnResult();
     }
+
+    public function getRouteByPortNames(string $ukPort, string $foreignPort): ?Route
+    {
+        return $this->createQueryBuilder('route')
+            ->join('route.ukPort', 'uk_port')
+            ->join('route.foreignPort', 'foreign_port')
+            ->where('uk_port.name = :uk_port_name')
+            ->andWhere('foreign_port.name = :foreign_port_name')
+            ->setParameters([
+                'uk_port_name' => $ukPort,
+                'foreign_port_name' => $foreignPort,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

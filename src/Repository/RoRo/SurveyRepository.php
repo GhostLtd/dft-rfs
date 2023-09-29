@@ -84,6 +84,22 @@ class SurveyRepository extends ServiceEntityRepository
     /**
      * @return array<Survey>
      */
+    public function getAllSurveysForOperator(Operator $operator): array
+    {
+        return $this->createQueryBuilder('survey')
+            ->select('survey')
+            ->join('survey.operator', 'operator')
+            ->where('operator.id = :operatorId')
+            ->getQuery()
+            ->setParameters([
+                'operatorId' => $operator->getId(),
+            ])
+            ->getResult();
+    }
+
+    /**
+     * @return array<Survey>
+     */
     public function getSurveysForUser(RoRoUser $user): array
     {
         $queryBuilder = $this->createQueryBuilder('survey');
