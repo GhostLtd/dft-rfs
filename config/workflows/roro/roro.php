@@ -27,14 +27,29 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_FINISH,
                 ],
                 'transitions' => [
+                    // Introduction screen (is survey active?)
+                    // -> Not active (wizard flow)
                     'not-active' => [
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_COMMENTS,
+                        'metadata' => [
+                            'submitLabel' => 'common.actions.continue'
+                        ],
+                        'guard' => '!subject.getSubject().getIsActiveForPeriod() && !subject.hasWizardPreviouslyCompleted()',
+                    ],
+
+                    // -> Not active (editing)
+                    'not-active-editing' => [
+                        'from' => StateObject::STATE_INTRODUCTION,
+                        'to' =>  StateObject::STATE_FINISH,
                         'metadata' => array_merge($endMetadata, [
+                            // If the user chooses yes, the wizard continues, so prefer "continue" over "save and continue"
                             'submitLabel' => 'common.actions.continue'
                         ]),
-                        'guard' => '!subject.getSubject().getIsActiveForPeriod()',
+                        'guard' => '!subject.getSubject().getIsActiveForPeriod() && subject.hasWizardPreviouslyCompleted()',
                     ],
+
+                    // -> Active
                     'active' => [
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_VEHICLE_COUNTS,
@@ -43,6 +58,8 @@ return static function (ContainerConfigurator $container) {
                         ],
                         'guard' => 'subject.getSubject().getIsActiveForPeriod()',
                     ],
+
+                    // Data entry
                     'data-entry' => [
                         'from' => StateObject::STATE_INTRODUCTION,
                         'to' =>  StateObject::STATE_DATA_ENTRY,
@@ -55,22 +72,25 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_DATA_ENTRY,
                         'to' =>  StateObject::STATE_VEHICLE_COUNTS,
                     ],
+
+                    // Vehicle counts
                     'vehicle-counts-to-comments' => [
                         'from' => StateObject::STATE_VEHICLE_COUNTS,
                         'to' =>  StateObject::STATE_COMMENTS,
                         'guard' => '!subject.hasWizardPreviouslyCompleted()',
                     ],
-                    'finish' => [
-                        'from' => StateObject::STATE_COMMENTS,
-                        'to' =>  StateObject::STATE_FINISH,
-                        'metadata' => $endMetadata,
-                    ],
-
                     'vehicle-counts-to-finish' => [
                         'from' => StateObject::STATE_VEHICLE_COUNTS,
                         'to' =>  StateObject::STATE_FINISH,
                         'metadata' => $endMetadata,
                         'guard' => 'subject.hasWizardPreviouslyCompleted()',
+                    ],
+
+                    // Comments
+                    'comments-to-finish' => [
+                        'from' => StateObject::STATE_COMMENTS,
+                        'to' =>  StateObject::STATE_FINISH,
+                        'metadata' => $endMetadata,
                     ],
                 ]
             ],

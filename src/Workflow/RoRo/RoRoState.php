@@ -85,9 +85,11 @@ class RoRoState extends AbstractFormWizardState implements FormWizardStateInterf
     public function isValidAlternativeStartState($state): bool
     {
         return match($state) {
-            self::STATE_DATA_ENTRY, self::STATE_VEHICLE_COUNTS, self::STATE_COMMENTS =>
+            self::STATE_DATA_ENTRY, self::STATE_VEHICLE_COUNTS =>
                 $this->subject->getState() !== SurveyStateInterface::STATE_NEW &&
                 $this->subject->getIsActiveForPeriod(),
+            self::STATE_COMMENTS =>
+                $this->subject->getState() !== SurveyStateInterface::STATE_NEW,
             default => false
         };
     }

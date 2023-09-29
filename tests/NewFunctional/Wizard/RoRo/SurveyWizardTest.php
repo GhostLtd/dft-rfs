@@ -128,6 +128,15 @@ class SurveyWizardTest extends AbstractRoRoTest
             $options
         );
 
+        $this->formTestAction(
+            $url('/edit/comments'),
+            'comments_continue',
+            [
+                new FormTestCase([]),
+            ],
+            $options
+        );
+
         $this->pathTestAction($url('/view'), $options);
     }
 }
