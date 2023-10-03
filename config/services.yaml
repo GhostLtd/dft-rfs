@@ -32,7 +32,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $appEnvironment: '%env(APP_ENV)%'
-            $disableReminders: '%env(APP_DISABLE_NOTIFICATIONS)%'
+            $disableReminders: '%env(APP_DISABLE_REMINDERS)%'
             $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
             $frontendHostname: '%frontend_hostname%'
             $secret: '%env(APP_SECRET)%'
