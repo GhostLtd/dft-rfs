@@ -14,6 +14,7 @@ avoid perpetual requeue of failed messages.
 * **Fix**: Fix LCNI validation
 * **Fix**: Fix broken date text searches in admin, and allow date searching on IRHS admin list page
 * **Feature**: Roro screenshots
+* **Change:** Change port edit voter (can only edit ports that aren't a part of a route)
 
 ## 7th June 2023
 

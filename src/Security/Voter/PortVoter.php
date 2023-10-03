@@ -47,8 +47,10 @@ class PortVoter extends Voter
             // Ports can only be deleted if they're not in use either by routes or surveys
             self::CAN_DELETE_PORT => !$this->portAndRouteUsageHelper->isPortInUseBySurveyOrRoute($subject),
 
-            // Ports can be edited if they're not yet in use by a survey (or by a manager)
-            self::CAN_EDIT_PORT => $isManager || !$this->portAndRouteUsageHelper->isPortInUseBySurvey($subject),
+            // Ports can be edited:
+            //      a) If they're not yet in use by a route
+            //   OR b) By a manager (even if in use)
+            self::CAN_EDIT_PORT => $isManager || !$this->portAndRouteUsageHelper->isPortInUseByRoute($subject),
             default => false,
         };
     }
