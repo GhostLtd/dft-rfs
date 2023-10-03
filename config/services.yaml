@@ -17,6 +17,8 @@ parameters:
     env_label_colour: '%env(string:APP_ENV_LABEL_COLOUR)%'
     env_label_background: '%env(string:APP_ENV_LABEL_BACKGROUND)%'
 
+    disable_reminders: '%env(string:APP_DISABLE_REMINDERS)%'
+
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     app_features_empty: none
@@ -30,6 +32,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $appEnvironment: '%env(APP_ENV)%'
+            $disableReminders: '%env(APP_DISABLE_NOTIFICATIONS)%'
             $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
             $frontendHostname: '%frontend_hostname%'
             $secret: '%env(APP_SECRET)%'

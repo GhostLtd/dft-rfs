@@ -17,6 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AutomatedRoroRemindersHelper
 {
     public function __construct(
+        protected DisabledRemindersHelper $disabledRemindersHelper,
         protected EntityManagerInterface $entityManager,
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
@@ -26,6 +27,13 @@ class AutomatedRoroRemindersHelper
 
     public function sendReminders(): void
     {
+        $logPrefix = "Roro Reminders: ";
+
+        if ($this->disabledRemindersHelper->isDisabled(DisabledRemindersHelper::RORO)) {
+            $this->logger->info("{$logPrefix}Reminder sending disabled for RoRo. Exiting.");
+            return;
+        }
+
         $now = new \DateTime();
         foreach([1,2] as $reminderNumber) {
             $operators = $this->getRoroSurveysForReminderGroupedByOperatorAndRoute($reminderNumber);
@@ -39,6 +47,7 @@ class AutomatedRoroRemindersHelper
             ][$reminderNumber];
 
             foreach ($operators as $groupedOperator) {
+                /** @var Operator $operator */
                 $operator = $groupedOperator['operator'];
                 $routes = $groupedOperator['routes'];
                 $routeNames = [];
@@ -66,6 +75,8 @@ class AutomatedRoroRemindersHelper
 
                 sort($routeNames);
 
+                $routeNamesForEmail = join("\n", array_map(fn($name) => "* {$name}", $routeNames));
+
                 foreach($operator->getUsers() as $user) {
                     $this->messageBus->dispatch(new Email(
                         $eventType,
@@ -75,10 +86,12 @@ class AutomatedRoroRemindersHelper
                         $template,
                         [
                             'operator' => $operator->getName(),
-                            'route_names' => join("\n", array_map(fn($name) => "* {$name}", $routeNames)),
+                            'route_names' => $routeNamesForEmail,
                         ],
                     ));
                 }
+
+                $this->logger->info("{$logPrefix}Sending reminders for '{$operator->getName()}'");
             }
         }
 
