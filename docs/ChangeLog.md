@@ -16,6 +16,7 @@ avoid perpetual requeue of failed messages.
 * **Feature**: Roro screenshots
 * **Change:** Change port edit voter (can only edit ports that aren't a part of a route)
 * **Feature**: Add ability to be able to disable RoRo reminders with an environment variable
+* **Feature**: Implement log processors to add session_id and user_id to log entries
 
 ## 7th June 2023
 
