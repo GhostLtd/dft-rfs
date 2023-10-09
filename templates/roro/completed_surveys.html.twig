@@ -6,8 +6,16 @@
 }) -%}
 
 {% block content %}
-    {%- from "roro/macros.html.twig" import surveysTabsAndList -%}
-    <h1 class="govuk-heading-l">{{ 'roro.completed-surveys.title' | trans(titleParams) }}</h1>
+    {%- from "roro/macros.html.twig" import contactDetails, surveysTabsAndList -%}
 
-    {{ surveysTabsAndList(user, surveys, hasBookmarks, ['completed']) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h1 class="govuk-heading-l">{{ 'roro.completed-surveys.title' | trans(titleParams) }}</h1>
+            {{ surveysTabsAndList(user, surveys, hasBookmarks, ['completed']) }}
+            <a href="{{ path('app_roro_dashboard') }}" class="govuk-button govuk-button--secondary">{{ 'roro.back-to-dashboard' | trans }}</a>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop">
+            {{- contactDetails('govuk-!-padding-top-9') -}}
+        </div>
+    </div>
 {% endblock %}

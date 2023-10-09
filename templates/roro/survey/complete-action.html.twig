@@ -1,10 +1,20 @@
 {% set translation_prefix = 'roro.survey.complete' %}
-{% extends 'roro/form-base.html.twig' %}
 
 {%- set help_translation_parameters = {
     ukPort: subject.route.ukPort.name,
     foreignPort: subject.route.foreignPort.name,
     date: subject.surveyPeriodStart | date('format.date.year-and-month' | trans)
 } %}
+
+{% extends 'roro/base.html.twig' %}
+
+{% block content -%}
+    {%- include 'includes/form-page-content.html.twig' -%}
+{%- endblock %}
+
+{% set oneThirdColumnContent %}
+    {%- from "roro/macros.html.twig" import contactDetails -%}
+    {{- contactDetails() -}}
+{% endset %}
 
 

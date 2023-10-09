@@ -188,6 +188,7 @@ roro:
       heading: Login error
       title: Login error
     rate-limit: "Rate limit exceeded; try again later"
+  back-to-dashboard: Back to dashboard
   contact:
     email: roro.stats@dft.gov.uk
     phone: 020 7944 8233

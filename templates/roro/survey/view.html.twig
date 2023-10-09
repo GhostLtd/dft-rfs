@@ -65,13 +65,13 @@
                     <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_DATA_ENTRY')}) }}">{{ 'roro.survey.edit-vehicle-counts-advanced' | trans }}</a>
                 </li>
             </ul>
-
             {% endif %}
 
             {% if workflow_can(survey, 'complete') %}
             <a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>
             {% endif %}
         {% endif %}
+        <a class="govuk-button govuk-button--secondary" href="{{ path('app_roro_dashboard') }}">{{ 'roro.back-to-dashboard' | trans }}</a>
     {% endif %}
 {% endblock %}
 

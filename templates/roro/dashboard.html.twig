@@ -25,17 +25,7 @@
             </ul>
         </div>
         <div class="govuk-grid-column-one-third-from-desktop">
-            <h2 class="govuk-heading-m">{{ 'roro.dashboard.questions.header' | trans }}</h2>
-            <p class="govuk-body">{{ 'roro.dashboard.questions.text' | trans }}</p>
-            <ul class="govuk-list">
-                {%- set email = 'roro.contact.email' | trans -%}
-                {%- set email_label = 'roro.dashboard.questions.email' | trans -%}
-                {%- set phone = 'roro.contact.phone' | trans -%}
-                {%- set phone_label = 'roro.dashboard.questions.phone' | trans -%}
-
-                <li>{{ email_label }} <a href="mailto:{{ email }}" class="govuk-link">{{ email }}</a></li>
-                <li>{{ phone_label }} {{ phone }}</li>
-            </ul>
+            {{- contactDetails('govuk-!-padding-top-9') -}}
         </div>
     </div>
 {%- endblock -%}
