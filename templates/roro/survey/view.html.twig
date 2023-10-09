@@ -8,8 +8,9 @@
 } %}
 
 {% block content %}
-    {% set canEdit = is_granted(constant('\\App\\Security\\Voter\\SurveyVoter::EDIT'), survey) %}
-    {% from "@GhostGovUkFrontend/components/macros.html.twig" import actionlessSummaryListRow, summaryListRow %}
+    {%- set canEdit = is_granted(constant('\\App\\Security\\Voter\\SurveyVoter::EDIT'), survey) -%}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import summaryListRow -%}
+    {%- from "roro/macros.html.twig" import contactDetails -%}
     <h1 class="govuk-heading-l">
         {{- 'roro.survey.view.title' | trans(titleParams) -}}
     </h1>
@@ -18,45 +19,59 @@
     {%- set summarisedState = (isOutstanding ? 'roro.survey.view.states.outstanding' : 'roro.survey.view.states.completed') | trans -%}
 
     {% if survey.isActiveForPeriod is null %}
-        <dl class="govuk-summary-list">
-            {{ summaryListRow('roro.survey.view.state', summarisedState) }}
-        </dl>
-        {% if canEdit %}<a class="govuk-button" href="{{ path('app_roro_survey_edit', {surveyId: survey.id}) }}">Start</a>{% endif %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds-from-desktop">
+                <dl class="govuk-summary-list">
+                    {{ summaryListRow('roro.survey.view.state', summarisedState) }}
+                </dl>
+                {% if canEdit %}<a class="govuk-button" href="{{ path('app_roro_survey_edit', {surveyId: survey.id}) }}">Start</a>{% endif %}
+            </div>
+            <div class="govuk-grid-column-one-third-from-desktop">
+                {{- contactDetails() -}}
+            </div>
+        </div>
     {% else %}
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            {{ summaryListRow('roro.survey.view.state', summarisedState) }}
-            {{ summaryListRow(
-                'roro.survey.introduction.is-active',
-                (('common.choices.boolean.' ~ (survey.isActiveForPeriod ? 'yes' : 'no')) | trans),
-                canEdit ? {
-                    (path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_INTRODUCTION')})): 'common.actions.change'
-                } : {}
-            ) }}
-            {{ summaryListRow('roro.survey.view.comments', survey.comments ?? '-',
-                canEdit ? {
-                    (path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_COMMENTS')})): 'common.actions.change'
-                } : {}
-            ) }}
-        </dl>
+        {{ _self.view_survey(survey, canEdit, summarisedState) }}
+    {% endif %}
+{% endblock %}
 
-        {% if survey.isActiveForPeriod %}
-            <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.country.label' | trans }}</h2>
-            {{ _self.vehicleCounts(survey.countryVehicleCounts) }}
+{% macro view_survey(survey, canEdit, summarisedState) %}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import actionlessSummaryListRow, summaryListRow -%}
 
-            <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.other.label' | trans }}</h2>
-            {{ _self.vehicleCounts(survey.otherVehicleCounts) }}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        {{ summaryListRow('roro.survey.view.state', summarisedState) }}
+        {{ summaryListRow(
+            'roro.survey.introduction.is-active',
+            (('common.choices.boolean.' ~ (survey.isActiveForPeriod ? 'yes' : 'no')) | trans),
+        canEdit ? {
+            (path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_INTRODUCTION')})): 'common.actions.change'
+        } : {}
+        ) }}
+        {{ summaryListRow('roro.survey.view.comments', survey.comments ?? '-',
+            canEdit ? {
+                (path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_COMMENTS')})): 'common.actions.change'
+            } : {}
+        ) }}
+    </dl>
 
-            <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.totals.label' | trans }}</h2>
-            {{ _self.totals(survey) }}
-        {% endif %}
+    {% if survey.isActiveForPeriod %}
+        <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.country.label' | trans }}</h2>
+        {{ _self.vehicleCounts(survey.countryVehicleCounts) }}
 
-        {%- set canComplete = workflow_can(survey, 'complete') -%}
-        {%- set isActiveAndCanEdit = survey.isActiveForPeriod and canEdit -%}
+        <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.other.label' | trans }}</h2>
+        {{ _self.vehicleCounts(survey.otherVehicleCounts) }}
 
-        {% if canComplete or isActiveAndCanEdit %}
-            <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
+        <h2 class="govuk-heading-m">{{ 'roro.survey.vehicle-counts.totals.label' | trans }}</h2>
+        {{ _self.totals(survey) }}
+    {% endif %}
 
-            {% if isActiveAndCanEdit %}
+    {%- set canComplete = workflow_can(survey, 'complete') -%}
+    {%- set isActiveAndCanEdit = survey.isActiveForPeriod and canEdit -%}
+
+    {% if canComplete or isActiveAndCanEdit %}
+        <h2 class="govuk-heading-m">{{ 'common.headings.next-steps'|trans }}</h2>
+
+        {% if isActiveAndCanEdit %}
             <ul class="govuk-list govuk-!-margin-bottom-6">
                 <li>
                     <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_VEHICLE_COUNTS')}) }}">{{ 'roro.survey.edit-vehicle-counts' | trans }}</a>
@@ -65,16 +80,14 @@
                     <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_DATA_ENTRY')}) }}">{{ 'roro.survey.edit-vehicle-counts-advanced' | trans }}</a>
                 </li>
             </ul>
-            {% endif %}
-
-            {% if workflow_can(survey, 'complete') %}
-            <a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>
-            {% endif %}
         {% endif %}
-        <a class="govuk-button govuk-button--secondary" href="{{ path('app_roro_dashboard') }}">{{ 'roro.back-to-dashboard' | trans }}</a>
-    {% endif %}
-{% endblock %}
 
+        {% if workflow_can(survey, 'complete') %}
+            <a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>
+        {% endif %}
+    {% endif %}
+    <a class="govuk-button govuk-button--secondary" href="{{ path('app_roro_dashboard') }}">{{ 'roro.back-to-dashboard' | trans }}</a>
+{% endmacro %}
 
 {% macro vehicleCounts(vehicleCounts) %}
     {%- set vehicleCountColumns = vehicleCounts | to_lists(2) -%}
