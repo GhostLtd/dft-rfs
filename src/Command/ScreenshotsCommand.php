@@ -40,7 +40,9 @@ class ScreenshotsCommand extends Command
 
     protected static $defaultName = 'rfs:dev:screenshots';
     protected string $userId = 'screenshot';
-    protected string $roroUserId = 'screenshot@example.com';
+    protected string $roroUserIdOne = 'screenshot@example.com';
+    protected string $roroUserIdTwo = 'screenshot-other@example.com';
+
     protected string $userPassword = 'screenshot:password';
 
     public function __construct(
@@ -103,7 +105,7 @@ class ScreenshotsCommand extends Command
                 $roroUser = $this->getRoroUser();
                 $loginLink = $this->roroLoginLinkHandler->createLoginLink($roroUser);
 
-                $processArgs[] = "--email={$this->roroUserId}";
+                $processArgs[] = "--email={$this->roroUserIdOne}";
                 $processArgs[] = "--login-link={$loginLink}";
             } else {
                 $processArgs[] = "--username={$this->userId}";
@@ -172,7 +174,6 @@ class ScreenshotsCommand extends Command
                     $this->entityManager->remove($survey);
                 }
 
-
                 $this->entityManager->remove($roroUser);
                 $this->entityManager->remove($operator);
                 $this->entityManager->flush();
@@ -183,7 +184,7 @@ class ScreenshotsCommand extends Command
     protected function createUserAndSurvey(string $mode): void
     {
         if ($this->isDomesticInternationOrPreEnquiry([$mode])) {
-            $user = (new PasscodeUser())
+            $userOne = (new PasscodeUser())
                 ->setUsername($this->userId)
                 ->setPlainPassword($this->userPassword);
 
@@ -196,7 +197,7 @@ class ScreenshotsCommand extends Command
                     ->setIsNorthernIreland(true)
                     ->setSurveyPeriodStart($start)
                     ->setSurveyPeriodEnd($end)
-                    ->setPasscodeUser($user)
+                    ->setPasscodeUser($userOne)
                     ->setInvitationAddress(new LongAddress());
             } else if ($mode === self::MODE_INTERNATIONAL) {
                 $company = (new Company())
@@ -208,7 +209,7 @@ class ScreenshotsCommand extends Command
                     ->setCompany($company)
                     ->setSurveyPeriodStart($start)
                     ->setSurveyPeriodEnd($end)
-                    ->setPasscodeUser($user)
+                    ->setPasscodeUser($userOne)
                     ->setReferenceNumber('screenshots-test')
                     ->setInvitationAddress(new LongAddress());
             } else {
@@ -222,12 +223,12 @@ class ScreenshotsCommand extends Command
                 $survey = (new PreEnquiry())
                     ->setInvitationAddress($invitationAddress)
                     ->setCompanyName('Screenshot Tests Ltd')
-                    ->setPasscodeUser($user)
+                    ->setPasscodeUser($userOne)
                     ->setReferenceNumber('screenshots-test');
             }
 
             $this->entityManager->persist($survey);
-            $this->entityManager->persist($user);
+            $this->entityManager->persist($userOne);
             $this->entityManager->flush();
         }
 
@@ -237,25 +238,44 @@ class ScreenshotsCommand extends Command
                 ->setCode(999)
                 ->setIsActive(true);
 
-            $route = $this->entityManager
+            $routeOne = $this->entityManager
                 ->getRepository(Route::class)
                 ->getRouteByPortNames('Dover', 'Calais');
 
+            $routeTwo = $this->entityManager
+                ->getRepository(Route::class)
+                ->getRouteByPortNames('Dover', 'Dunkirk');
 
-            $user = (new RoRoUser())
+            $operator->addRoute($routeOne);
+            $operator->addRoute($routeTwo);
+
+            $userOne = (new RoRoUser())
                 ->setOperator($operator)
-                ->setUsername($this->roroUserId);
+                ->setUsername($this->roroUserIdOne);
+
+            // We need a second user to trigger the bookmark functionality
+            // (If an operator only has a single user, it doesn't show)
+            $userTwo = (new RoRoUser())
+                ->setOperator($operator)
+                ->setUsername($this->roroUserIdTwo);
 
             $this->entityManager->persist($operator);
-            $this->entityManager->persist($user);
+            $this->entityManager->persist($userOne);
+            $this->entityManager->persist($userTwo);
             $this->entityManager->flush();
 
-            $survey = $this->roroSurveyCreationHelper->createSurvey(
+            $surveyOne = $this->roroSurveyCreationHelper->createSurvey(
                 new DateTime(),
-                new OperatorRoute($operator->getId(), $route->getId())
+                new OperatorRoute($operator->getId(), $routeOne->getId())
             );
 
-            $this->entityManager->persist($survey);
+            $surveyTwo = $this->roroSurveyCreationHelper->createSurvey(
+                new DateTime(),
+                new OperatorRoute($operator->getId(), $routeTwo->getId())
+            );
+
+            $this->entityManager->persist($surveyOne);
+            $this->entityManager->persist($surveyTwo);
             $this->entityManager->flush();
         }
     }
@@ -275,6 +295,6 @@ class ScreenshotsCommand extends Command
     public function getRoroUser(): ?RoRoUser
     {
         $roroRepo = $this->entityManager->getRepository(RoRoUser::class);
-        return $roroRepo->findOneBy(['username' => $this->roroUserId]);
+        return $roroRepo->findOneBy(['username' => $this->roroUserIdOne]);
     }
 }
