@@ -12,6 +12,7 @@ use App\Utility\AlphagovNotify\Reference;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AutomatedRoroRemindersHelper
@@ -21,6 +22,7 @@ class AutomatedRoroRemindersHelper
         protected EntityManagerInterface $entityManager,
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
+        protected RouterInterface $router,
         protected SurveyRepository $surveyRepository,
         protected TranslatorInterface $translator,
     ) {}
@@ -87,6 +89,7 @@ class AutomatedRoroRemindersHelper
                         [
                             'operator' => $operator->getName(),
                             'route_names' => $routeNamesForEmail,
+                            'login_link' => $this->router->generate('app_roro_login'),
                         ],
                     ));
                 }
