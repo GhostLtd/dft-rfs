@@ -10,3 +10,7 @@ services:
     App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
     App\Utility\Cleanup\PersonalDataCleanupUtility: ~
     App\Utility\UrlSigner: ~
+
+    app.test.message_bus:
+        alias: Symfony\Component\Messenger\MessageBusInterface
+        public: true

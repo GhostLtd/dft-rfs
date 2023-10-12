@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AutomatedRoroRemindersHelper
@@ -22,12 +23,17 @@ class AutomatedRoroRemindersHelper
         protected EntityManagerInterface $entityManager,
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
+        protected LoginLinkHandlerInterface $roroLoginLinkHandler,
         protected RouterInterface $router,
         protected SurveyRepository $surveyRepository,
         protected TranslatorInterface $translator,
     ) {}
 
-    public function sendReminders(): void
+    public function sendReminders(
+        // These args are used for testing, so that fixtures can use static dates...
+        string $lastMonthDateString = 'first day of last month midnight',
+        string $thisMonthDateString = 'first day of this month midnight',
+    ): void
     {
         $logPrefix = "Roro Reminders: ";
 
@@ -38,7 +44,7 @@ class AutomatedRoroRemindersHelper
 
         $now = new \DateTime();
         foreach([1,2] as $reminderNumber) {
-            $operators = $this->getRoroSurveysForReminderGroupedByOperatorAndRoute($reminderNumber);
+            $operators = $this->getRoroSurveysForReminderGroupedByOperatorAndRoute($reminderNumber, $lastMonthDateString, $thisMonthDateString);
             $template = [
                 1 => Reference::EMAIL_RORO_REMINDER_1,
                 2 => Reference::EMAIL_RORO_REMINDER_2,
@@ -54,6 +60,9 @@ class AutomatedRoroRemindersHelper
                 $routes = $groupedOperator['routes'];
                 $routeNames = [];
 
+                $mostRecentSurveyMonth = null;
+                $mostRecentSurveyYear = null;
+
                 // N.B. PHPStorm doesn't seem to fully support nested arrays, so I need to repeat myself here
                 // https://youtrack.jetbrains.com/issue/WI-67555
                 /** @var array<string, array{route: Route, surveys: array<int, Survey>}> $routes */
@@ -67,6 +76,11 @@ class AutomatedRoroRemindersHelper
                     ]);
 
                     foreach($surveys as $survey) {
+                        $surveyPeriodStart = $survey->getSurveyPeriodStart();
+
+                        $mostRecentSurveyYear = max($mostRecentSurveyYear, intval($surveyPeriodStart->format('Y')));
+                        $mostRecentSurveyMonth = max($mostRecentSurveyMonth, intval($surveyPeriodStart->format('n')));
+
                         if ($reminderNumber === 1) {
                             $survey->setFirstReminderSentDate($now);
                         } elseif ($reminderNumber === 2) {
@@ -78,7 +92,9 @@ class AutomatedRoroRemindersHelper
                 sort($routeNames);
 
                 $routeNamesForEmail = join("\n", array_map(fn($name) => "* {$name}", $routeNames));
+                $formattedMostRecentSurveyMonth = (new \DateTime("{$mostRecentSurveyYear}-{$mostRecentSurveyMonth}-1 00:00:00"))->format('F');
 
+                $messageSentForUsers = [];
                 foreach($operator->getUsers() as $user) {
                     $this->messageBus->dispatch(new Email(
                         $eventType,
@@ -89,12 +105,21 @@ class AutomatedRoroRemindersHelper
                         [
                             'operator' => $operator->getName(),
                             'route_names' => $routeNamesForEmail,
-                            'login_link' => $this->router->generate('app_roro_login'),
+                            'login_link' => $this->roroLoginLinkHandler->createLoginLink($user)->getUrl(),
+                            'year' => $mostRecentSurveyYear,
+                            'month' => $formattedMostRecentSurveyMonth,
                         ],
                     ));
+
+                    $messageSentForUsers[] = $user->getEmail();
                 }
 
-                $this->logger->info("{$logPrefix}Sending reminders for '{$operator->getName()}'");
+                $this->logger->info("{$logPrefix}Sending reminders for '{$operator->getName()}'", [
+                    'route_names' => $routeNames,
+                    'year' => $mostRecentSurveyYear,
+                    'month' => $formattedMostRecentSurveyMonth,
+                    'users' => $messageSentForUsers,
+                ]);
             }
         }
 
@@ -104,7 +129,11 @@ class AutomatedRoroRemindersHelper
     /**
      * @return array<string, array{operator: Operator, routes: array<string, array{route: Route, surveys: array<int, Survey>}>}>
      */
-    protected function getRoroSurveysForReminderGroupedByOperatorAndRoute(int $reminderNumber): array
+    protected function getRoroSurveysForReminderGroupedByOperatorAndRoute(
+        int $reminderNumber,
+        string $lastMonthDateString,
+        string $thisMonthDateString,
+    ): array
     {
         $queryBuilder = $this->surveyRepository
             ->createQueryBuilder('survey')
@@ -114,7 +143,9 @@ class AutomatedRoroRemindersHelper
             ->join('survey.route', 'route')
             ->join('route.ukPort', 'ukPort')
             ->join('route.foreignPort', 'foreignPort')
-            ->where('survey.state IN (:nonCompletedStates)');
+            ->where('survey.state IN (:nonCompletedStates)')
+            ->andWhere('survey.surveyPeriodStart >= (:monthMoreThanOrEqualTo)')
+            ->andWhere('survey.surveyPeriodStart < (:monthLessThan)');
 
         if ($reminderNumber === 1) {
             $queryBuilder->andWhere('survey.firstReminderSentDate IS NULL');
@@ -127,11 +158,17 @@ class AutomatedRoroRemindersHelper
             $queryBuilder->setParameter('sevenDaysAgo', new \DateTime('7 days ago'));
         }
 
+        $surveyStartDate = new \DateTime($lastMonthDateString);
+        $surveyEndedDate = new \DateTime($thisMonthDateString);
+
         $surveys = $queryBuilder
             ->setParameter('nonCompletedStates', [
                 SurveyStateInterface::STATE_NEW,
                 SurveyStateInterface::STATE_IN_PROGRESS,
             ])
+            // N.B. If you pass times in addition to dates, this doesn't work (at least for sqlite)
+            ->setParameter('monthMoreThanOrEqualTo', $surveyStartDate->format('Y-m-d'))
+            ->setParameter('monthLessThan', $surveyEndedDate->format('Y-m-d'))
             ->getQuery()
             ->execute();
 

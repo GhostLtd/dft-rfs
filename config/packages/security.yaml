@@ -45,7 +45,7 @@ security:
             login_link:
                 check_route: app_roro_login_check
                 check_post_only: true
-                lifetime: 600
+                lifetime: 604800
                 max_uses: 1
                 signature_properties: ['email']
 
