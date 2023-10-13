@@ -15,6 +15,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -22,12 +23,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class AutomatedRemindersHelper
 {
-    private EntityManagerInterface $entityManager;
-    private MessageBusInterface $messageBus;
-    private PersonalisationHelper $personalisationHelper;
-
     private const TYPE_LETTER = 'letter';
     private const TYPE_EMAIL = 'email';
+
+    protected const LOG_PREFIX = 'Reminders: ';
+
     private const REMINDER_TEMPLATE_MAP = [
         1 => [
             DomesticSurvey::class => [
@@ -59,12 +59,13 @@ class AutomatedRemindersHelper
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, PersonalisationHelper $personalisationHelper)
-    {
-        $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
-        $this->personalisationHelper = $personalisationHelper;
-    }
+    public function __construct(
+        protected DisabledRemindersHelper $disabledRemindersHelper,
+        protected EntityManagerInterface $entityManager,
+        protected LoggerInterface $logger,
+        protected MessageBusInterface $messageBus,
+        protected PersonalisationHelper $personalisationHelper,
+    ) {}
 
     public function sendReminders(): void
     {
@@ -72,6 +73,7 @@ class AutomatedRemindersHelper
         foreach ($this->getSurveysForReminding() as $reminder => $surveyGroups) {
             foreach ($surveyGroups as $surveyClass => $surveys) {
                 $templateReferences = self::REMINDER_TEMPLATE_MAP[$reminder][$surveyClass] ?? false;
+                $this->logger->info(self::LOG_PREFIX."Starting batch; Reminder #{$reminder} for {$surveyClass}");
                 foreach ($surveys as $survey) {
                     if ($templateReferences) {
                         $this->sendReminderMessages($reminder, $templateReferences, $survey);
@@ -88,9 +90,12 @@ class AutomatedRemindersHelper
     {
         $eventType = ([1 => Reference::EVENT_REMINDER_1, 2 => Reference::EVENT_REMINDER_2])[$reminder];
 
+        $sentTypes = [];
+
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
         $letterTemplateReference = $templateReferences[self::TYPE_LETTER] ?? false;
+
         if ($addressIsFilled && $letterTemplateReference) {
             $this->messageBus->dispatch(new Letter(
                 $eventType,
@@ -100,12 +105,16 @@ class AutomatedRemindersHelper
                 $letterTemplateReference,
                 $this->personalisationHelper->getForEntity($survey),
             ));
+
+            $sentTypes[] = 'letter';
         }
 
         $emailTemplateReference = $templateReferences[self::TYPE_EMAIL] ?? false;
         if ($emailTemplateReference)
         {
-            foreach($survey->getArrayOfInvitationEmails() as $invitationEmail) {
+            $invitationEmails = $survey->getArrayOfInvitationEmails();
+
+            foreach($invitationEmails as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     $eventType,
                     get_class($survey),
@@ -115,22 +124,54 @@ class AutomatedRemindersHelper
                     $this->personalisationHelper->getForEntity($survey),
                 ));
             }
+
+            if (!empty($invitationEmails)) {
+                $sentTypes[] = 'email';
+            }
+        }
+
+        if (!empty($sentTypes)) {
+            $sentTypes = join(', ', $sentTypes);
+            $surveyId = $survey->getId();
+            $this->logger->info(self::LOG_PREFIX."Sending {$sentTypes} for Survey {$surveyId}");
         }
     }
 
     protected function getSurveysForReminding(): array
     {
+        $firstReminders = [];
+        $secondReminders = [];
+
+        $enabled = [];
+
+        if (!$this->disabledRemindersHelper->isDisabled(DisabledRemindersHelper::CSRGT)) {
+            $firstReminders[DomesticSurvey::class] = $this->getSurveysForReminder1(DomesticSurvey::class);
+            $secondReminders[DomesticSurvey::class] = $this->getSurveysForReminder2(DomesticSurvey::class);
+            $enabled[] = 'CSRGT';
+        }
+
+        if (!$this->disabledRemindersHelper->isDisabled(DisabledRemindersHelper::IRHS)) {
+            $firstReminders[InternationalSurvey::class] = $this->getSurveysForReminder1(InternationalSurvey::class);
+            $secondReminders[InternationalSurvey::class] = $this->getSurveysForReminder2(InternationalSurvey::class);
+            $enabled[] = 'IRHS';
+        }
+
+        if (!$this->disabledRemindersHelper->isDisabled(DisabledRemindersHelper::PRE_ENQUIRY)) {
+            $firstReminders[PreEnquiry::class] = $this->getPreEnquiriesForReminder1();
+            $secondReminders[PreEnquiry::class] = $this->getSurveysForReminder2(PreEnquiry::class);
+            $enabled[] = 'pre-enquiry';
+        }
+
+        if (empty($enabled)) {
+            $this->logger->info(self::LOG_PREFIX."Reminder sending disabled for CSRGT, IRHS and Pre-enquiry. Exiting.");
+        } else {
+            $enabledFor = join(', ', $enabled);
+            $this->logger->info(self::LOG_PREFIX."Reminder sending enabled for {$enabledFor}");
+        }
+
         return [
-            1 => [
-                DomesticSurvey::class => $this->getSurveysForReminder1(DomesticSurvey::class),
-                InternationalSurvey::class => $this->getSurveysForReminder1(InternationalSurvey::class),
-                PreEnquiry::class => $this->getPreEnquiriesForReminder1(),
-            ],
-            2 => [
-                DomesticSurvey::class => $this->getSurveysForReminder2(DomesticSurvey::class),
-                InternationalSurvey::class => $this->getSurveysForReminder2(InternationalSurvey::class),
-                PreEnquiry::class => $this->getSurveysForReminder2(PreEnquiry::class),
-            ],
+            1 => $firstReminders,
+            2 => $secondReminders,
         ];
     }
 

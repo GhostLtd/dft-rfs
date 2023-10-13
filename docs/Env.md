@@ -29,3 +29,9 @@ Currently these privileges only extend to being able to edit port names and code
 ```
 MANAGEMENT_DOMAINS='["example.com","example.org"]'
 ```
+
+### APP_DISABLE_REMINDERS
+
+This setting takes a comma-delimited set of values, allowing for the disabling of reminders for different surveys.
+
+Supported values are: csrgt, irhs, pre-enquiry and roro.

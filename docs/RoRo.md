@@ -64,11 +64,11 @@ Managers have access to more dangerous functionality. This currently only relate
 ## Reminders / Notifications
 
 * Reminders get sent out at 6am every morning.
-* If there are any non-completed surveys which **haven't** received an initial notification:
+* If there are any non-completed surveys from the previous month which **haven't** received an initial notification:
   * The survey will be included in an initial notification email.
   * The emails sent will list all outstanding surveys for the given Operator. 
     (i.e. a user will receive at most one of these per day) 
   * Every user of an Operator will receive these emails.
-* If there are any non-completed surveys which **have** received an initial notification **more than seven days ago**:
+* If there are any non-completed surveys from the previous month which **have** received an initial notification **more than seven days ago**:
   * The survey will be included in a reminder email.
   * These emails list all overdue surveys (i.e. max one reminder email per day).

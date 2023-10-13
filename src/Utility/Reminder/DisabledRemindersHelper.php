@@ -4,6 +4,9 @@ namespace App\Utility\Reminder;
 
 class DisabledRemindersHelper
 {
+    public const CSRGT = 'csrgt';
+    public const IRHS = 'irhs';
+    public const PRE_ENQUIRY = 'pre-enquiry';
     public const RORO = 'roro';
 
     protected array $disabledReminders;
