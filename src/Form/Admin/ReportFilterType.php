@@ -15,6 +15,7 @@ class ReportFilterType extends AbstractType
     public const TYPE_CSRGT_NI = 'csrgt-ni';
     public const TYPE_IRHS = 'irhs';
     public const TYPE_PRE_ENQUIRY = 'pre-enquiry';
+    public const TYPE_RORO = 'roro';
 
     public const CHOICE_TYPES = [
         'CSRGT (All)' => self::TYPE_CSRGT,
@@ -22,9 +23,10 @@ class ReportFilterType extends AbstractType
         'CSRGT (NI)' => self::TYPE_CSRGT_NI,
         'IRHS' => self::TYPE_IRHS,
         'Pre-Enquiry' => self::TYPE_PRE_ENQUIRY,
+        'RoRo' => self::TYPE_RORO,
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $quarters = [
             "Quarter 1" => 1,
@@ -59,7 +61,7 @@ class ReportFilterType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'maxYear' => intval((new \DateTime())->format('Y')) + 1,

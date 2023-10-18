@@ -416,6 +416,7 @@ admin:
         csrgt-ni: CSRGT (NI)
         irhs: IRHS
         pre-enquiry: Pre-Enquiry
+        roro: RoRo
       types:
         activity: Activity Status
         approvals: Approvals

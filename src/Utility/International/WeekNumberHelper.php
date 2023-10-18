@@ -14,7 +14,7 @@ class WeekNumberHelper extends AbstractWeekNumberHelper
         return $shortName ? 'Sun' : 'Sunday';
     }
 
-    public static function getWeekNumber(DateTime $date): int
+    public static function getWeekNumber(\DateTimeInterface $date): int
     {
         return intval(floor($date->diff(new DateTime(self::WEEK_ZERO))->days / 7));
     }

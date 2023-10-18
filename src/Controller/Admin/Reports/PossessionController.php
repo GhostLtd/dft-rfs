@@ -15,7 +15,7 @@ class PossessionController extends AbstractReportsController
      */
     public function possessionReportsDefaults(string $type): Response
     {
-        return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_possession_full');
+        return $this->handleRedirect($type);
     }
 
     /**
@@ -23,9 +23,9 @@ class PossessionController extends AbstractReportsController
      */
     public function possessionReports(Request $request, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
+        [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
 
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS, ReportFilterType::TYPE_PRE_ENQUIRY]);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_IRHS, ReportFilterType::TYPE_PRE_ENQUIRY, ReportFilterType::TYPE_RORO]);
 
         if ($form->isSubmitted()) {
             return new RedirectResponse($this->generateUrl('admin_reports_possession_full', $form->getData()));
@@ -33,13 +33,13 @@ class PossessionController extends AbstractReportsController
 
         switch($type) {
             case ReportFilterType::TYPE_CSRGT:
-                $stats = $this->domesticRepo->getPossessionReportStats(null, $start, $end);
+                $stats = $this->domesticReportsHelper->getPossessionReportStats(null, $start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_GB:
-                $stats = $this->domesticRepo->getPossessionReportStats(false, $start, $end);
+                $stats = $this->domesticReportsHelper->getPossessionReportStats(false, $start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_NI:
-                $stats = $this->domesticRepo->getPossessionReportStats(true, $start, $end);
+                $stats = $this->domesticReportsHelper->getPossessionReportStats(true, $start, $end);
                 break;
         }
 
@@ -48,5 +48,18 @@ class PossessionController extends AbstractReportsController
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
         ]));
+    }
+
+    protected function getRedirect(array $data): RedirectResponse
+    {
+        switch($data['type'] ?? null) {
+            case ReportFilterType::TYPE_CSRGT:
+            case ReportFilterType::TYPE_CSRGT_GB:
+            case ReportFilterType::TYPE_CSRGT_NI:
+                $data['quarter'] ??= 1;
+                return new RedirectResponse($this->generateUrl('admin_reports_possession_full', $data));
+        }
+
+        throw new \RuntimeException('Invalid type');
     }
 }

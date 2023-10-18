@@ -5,7 +5,9 @@ namespace App\Repository\AuditLog;
 use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\RoRo\Survey as RoroSurvey;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyStateInterface;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
@@ -167,8 +169,32 @@ class AuditLogRepository extends ServiceEntityRepository
     public function getDomesticApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null, ?bool $isNorthernIreland = null): array
     {
         [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(DomesticSurvey::class, $minStart, $maxStart, $isNorthernIreland);
+        return $this->generateStatsUsingStandardWeekNumbers($usernames, $approvalsResults, $minStart, $maxStart);
+    }
 
-        [$firstWeek, $lastWeek] = $this->getDomesticWeekRange($minStart, $maxStart);
+    /**
+     * @throws UnexpectedResultException
+     */
+    public function getPreEnquiryApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(PreEnquiry::class, $minStart, $maxStart);
+        return $this->generateStatsUsingStandardWeekNumbers($usernames, $approvalsResults, $minStart, $maxStart);
+    }
+
+    /**
+     * @throws UnexpectedResultException
+     */
+    public function getRoRoApprovalReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {
+        [$usernames, $approvalsResults] = $this->getApprovalUsernamesAndData(RoroSurvey::class, $minStart, $maxStart);
+        return $this->generateStatsUsingStandardWeekNumbers($usernames, $approvalsResults, $minStart, $maxStart);
+    }
+
+    /**
+     * @throws UnexpectedResultException
+     */
+    protected function generateStatsUsingStandardWeekNumbers(array $usernames, array $approvalsResults, ?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    {   [$firstWeek, $lastWeek] = $this->getDomesticWeekRange($minStart, $maxStart);
         $stats = [
             'usernames' => $usernames,
             'data' => $this->getEmptyApprovalQuarterData($usernames, $firstWeek, $lastWeek),

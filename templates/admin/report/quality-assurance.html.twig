@@ -4,30 +4,26 @@
 
 {% block statsTable %}
     {%- if type == 'irhs' -%}
-        {{- _self.displayIrhs(stats) -}}
+        {{ _self.displayTable(stats.data, stats.totals, stats.total, type) }}
     {%- else -%}
-        {{- _self.displayCsrgt(stats) -}}
+        {{- _self.displayYearly(stats, type) -}}
     {%- endif -%}
 {% endblock %}
 
-{% macro displayCsrgt(stats) %}
-    {% for year, yearStats in stats %}
-        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
+{% macro displayYearly(stats, type) %}
+    {% for year, yearStats in stats.data %}
+        {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total, type) }}
     {% endfor %}
 {% endmacro %}
 
-{% macro displayIrhs(stats) %}
-    {{ _self.displayTable(stats.data, stats.totals, stats.total) }}
-{% endmacro %}
-
-{% macro displayTable(stats, totals, totalOfTotals) %}
+{% macro displayTable(stats, totals, totalOfTotals, type) %}
     <p class="govuk-body">
         Stats shown for surveys that have been approved or exported
     </p>
     <table class="govuk-table rfs-admin-report-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Week</th>
+            <th scope="col" class="govuk-table__header">{% if type in ['roro'] %}Month{% else %}Week{% endif %}</th>
             <th scope="col" class="govuk-table__header">Quality-assured</th>
             <th scope="col" class="govuk-table__header">Non-quality-assured</th>
             <th scope="col" class="govuk-table__header">Total</th>

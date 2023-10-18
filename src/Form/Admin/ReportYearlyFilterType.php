@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Admin\PreEnquiry;
+namespace App\Form\Admin;
 
 use App\Form\Admin\ReportFilterType;
 use Symfony\Component\Form\AbstractType;
@@ -9,9 +9,9 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PreEnquiryReportFilterType extends AbstractType
+class ReportYearlyFilterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $years = range($options['minYear'], $options['maxYear']);
 
@@ -35,7 +35,7 @@ class PreEnquiryReportFilterType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'maxYear' => intval((new \DateTime())->format('Y')) + 1,

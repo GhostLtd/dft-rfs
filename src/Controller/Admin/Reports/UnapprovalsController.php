@@ -19,7 +19,7 @@ class UnapprovalsController extends AbstractReportsController
      */
     public function unapprovalsReportsDefaults(string $type): Response
     {
-        return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_unapprovals_full');
+        return $this->handleRedirect($type);
     }
 
     /**
@@ -49,5 +49,18 @@ class UnapprovalsController extends AbstractReportsController
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
         ]));
+    }
+
+
+    protected function getRedirect(array $data): RedirectResponse
+    {
+        switch($data['type'] ?? null) {
+            case ReportFilterType::TYPE_CSRGT:
+            case ReportFilterType::TYPE_IRHS:
+                $data['quarter'] ??= 1;
+                return new RedirectResponse($this->generateUrl('admin_reports_unapprovals_full', $data));
+        }
+
+        throw new \RuntimeException('Invalid type');
     }
 }

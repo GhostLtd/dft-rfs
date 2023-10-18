@@ -11,11 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ActivityStatusController extends AbstractReportsController
 {
     /**
-     * @Route("/activity-status/irhs", name="activity_status_type", requirements={"type": "irhs"})
+     * @Route("/activity-status/{type}}", name="activity_status_type", requirements={"type": "irhs"})
      */
-    public function activityStatusDefaults(): Response
+    public function activityStatusDefaults(string $type): Response
     {
-        return $this->redirectToCurrentQuarterAndYear('irhs', 'admin_reports_activity_status_full');
+        return $this->handleRedirect($type);
     }
 
     /**
@@ -23,7 +23,7 @@ class ActivityStatusController extends AbstractReportsController
      */
     public function activityStatusReports(Request $request, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
+        [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
 
         $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_CSRGT, ReportFilterType::TYPE_CSRGT_GB, ReportFilterType::TYPE_CSRGT_NI, ReportFilterType::TYPE_PRE_ENQUIRY]);
 
@@ -33,7 +33,7 @@ class ActivityStatusController extends AbstractReportsController
 
         switch($type) {
             case ReportFilterType::TYPE_IRHS:
-                $stats = $this->internationalRepo->getActivityStatusReportStats($start, $end);
+                $stats = $this->internationalReportsHelper->getActivityStatusReportStats($start, $end);
                 break;
         }
 
@@ -42,5 +42,16 @@ class ActivityStatusController extends AbstractReportsController
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
         ]));
+    }
+
+    public function getRedirect(array $data): RedirectResponse
+    {
+        switch($data['type'] ?? null) {
+            case ReportFilterType::TYPE_IRHS:
+                $data['quarter'] ??= 1;
+                return new RedirectResponse($this->generateUrl('admin_reports_activity_status_full', $data));
+        }
+
+        throw new \RuntimeException('Invalid type');
     }
 }
