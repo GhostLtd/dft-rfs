@@ -60,20 +60,29 @@ class OperatorRouteType extends AbstractType
                 ],
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ]);
+
+        $lastMonth = (new \DateTime('first day of last month'))->format('F');
 
         $builder
             ->add('backdateSurveys', BooleanChoiceType::class, [
                 'choice_options' => [
+                    'common.choices.boolean.no' => [
+                        'help' => "No surveys will be added for this route at this point in time.",
+                    ],
                     'common.choices.boolean.yes' => [
                         'conditional_form_name' => 'backdateSurveysGroup',
+                        'help' => "Surveys will immediately be added for the month you choose and then for each month up to and including {$lastMonth}."
                     ]
                 ],
                 'constraints' => [new NotNull],
                 'mapped' => false,
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('backdateSurveysGroup', FieldsetType::class, [
                 'label' => 'Start surveys on year / month',
+                'label_attr' => ['class' => 'govuk-label--s'],
             ]);
 
         $currentYear = intval((new \DateTime())->format('Y'));

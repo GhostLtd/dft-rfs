@@ -60,9 +60,8 @@ class OperatorRouteController extends AbstractController
                     $year = $backdateSurveys->get('year')->getData();
                     $month = $backdateSurveys->get('month')->getData();
                 } else {
-                    $oneMonthAgo = new \DateTime('1 month ago');
-                    $year = intval($oneMonthAgo->format('Y'));
-                    $month = intval($oneMonthAgo->format('n'));
+                    $this->entityManager->flush();
+                    return $redirectResponse;
                 }
 
                 try {
