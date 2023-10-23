@@ -71,7 +71,7 @@
 {% macro summaryListRow(key, value, actions, options) -%}
     <div class="govuk-summary-list__row {{ options.row_class | default('') }}">
         <dt class="govuk-summary-list__key">{% if options.key_translation ?? true %}{{ key | trans | nl2br }}{% else %}{{ key | nl2br }}{% endif %}</dt>
-        {% if value %}<dd class="govuk-summary-list__value">{{ value | nl2br }}</dd>{% endif %}
+        {% if value is not null %}<dd class="govuk-summary-list__value">{{ value | nl2br }}</dd>{% endif %}
         {% if not (options.hideActions | default(false)) %}
             <dd class="govuk-summary-list__actions">
                 {{- _self.actionLinks(actions) -}}
