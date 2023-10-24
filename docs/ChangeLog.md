@@ -2,7 +2,7 @@
 
 # Changelog
 
-## Upcoming
+## 24th October 2023 
 
 * **Feature:** [RoRo survey](./RoRo.md)
 * **Change:** Smartlook integration and removal of Wisdom.
