@@ -287,7 +287,11 @@ roro:
     advanced-data-entry.invalid: Unable to parse data
     vehicle-count.positive: Enter zero or a positive number
   user:
-    username.not-null: Enter an email address
+    username:
+      already-in-use: |
+        This email address is already in use within the RoRo system.
+        Choose a different email address.
+      not-null: Enter an email address
 
 routes:
   duplicate-route: This route already exists

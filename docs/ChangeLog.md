@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** RoRo - Fix duplicate email address error when adding a new operator user 
+
 ## 24th October 2023 
 
 * **Feature:** [RoRo survey](./RoRo.md)

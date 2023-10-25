@@ -9,6 +9,7 @@ use App\Repository\RoRoUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=RoRoUserRepository::class)
  * @ORM\Table(name="roro_user")
+ * @UniqueEntity("username", message="roro.user.username.already-in-use", groups={"admin_add_roro_user"})
  */
 class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
