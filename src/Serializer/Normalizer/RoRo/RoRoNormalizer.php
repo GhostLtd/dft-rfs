@@ -38,18 +38,26 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
 
         $extraMapping = $this->getExtraColumnNameMapping();
 
+        $isActive = $object->getIsActiveForPeriod();
+
         $head = [
             'Year' => intval($surveyStart->format('Y')),
             'Quarter' => $quarter,
             'Month' => $month,
             'RoRoNo' => $routeCode.$operatorCode,
             'OperatorId' => $operatorCode,
+            'IsActiveForMonth' => $isActive ? 1 : 0,
         ];
 
-        [
-            'total_powered' => $totalPoweredVehicles,
-            'total' => $totalVehicles,
-        ] = $object->getTotalVehicleCounts();
+        if ($isActive) {
+            [
+                'total_powered' => $totalPoweredVehicles,
+                'total' => $totalVehicles,
+            ] = $object->getTotalVehicleCounts();
+        } else {
+            $totalPoweredVehicles = null;
+            $totalVehicles = null;
+        }
 
         $countries = [];
         foreach($object->getCountryVehicleCounts() as $vehicleCount) {
@@ -61,13 +69,14 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             $totals[$columnName] = match($code) {
                 self::TOTAL_POWERED_VEHICLES => $totalPoweredVehicles,
                 self::TOTAL_VEHICLES => $totalVehicles,
-                default => $object->getVehicleCountByOtherCode($code)->getVehicleCount() ?? 0,
+                default => $object->getVehicleCountByOtherCode($code)->getVehicleCount(),
             };
         }
 
         $tail = [
             'UKPort' => $route->getUkPort()->getCode(),
             'ForeignPort' => $route->getForeignPort()->getCode(),
+            'Comments' => $object->getComments(),
         ];
 
         return array_merge($head, $countries, $totals, $tail);
