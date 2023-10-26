@@ -49,6 +49,7 @@ class VehicleCountsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'attr' => ['autocomplete' => "off"],
             'data_class' => Survey::class,
             'validation_groups' => 'roro.vehicle-counts',
         ]);
