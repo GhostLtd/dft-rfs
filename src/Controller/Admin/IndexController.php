@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
+use App\Repository\MaintenanceWarningRepository;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
 use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
@@ -16,7 +17,12 @@ class IndexController extends AbstractController
     /**
      * @Route("", name="admin_index")
      */
-    public function index(DomesticSurveyRepository $domesticRepo, InternationalSurveyRepository $internationalRepo, PreEnquiryRepository $preEnquiryRepo): Response
+    public function index(
+        DomesticSurveyRepository $domesticRepo,
+        InternationalSurveyRepository $internationalRepo,
+        PreEnquiryRepository $preEnquiryRepo,
+        MaintenanceWarningRepository $maintenanceWarningRepository,
+    ): Response
     {
         $now = new \DateTime();
 
@@ -36,6 +42,7 @@ class IndexController extends AbstractController
             'domesticNiOverdueCount' => $domesticRepo->getOverdueCount(true),
             'internationalInProgressCount' => $internationalRepo->getInProgressCount(),
             'internationalOverdueCount' => $internationalRepo->getOverdueCount(),
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 }

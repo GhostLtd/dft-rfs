@@ -84,7 +84,7 @@ class LoginController extends AbstractController
         return $this->render('roro/login.html.twig', [
             'form' => $form->createView(),
             'authenticationError' => $authenticationError,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBannerForFrontend(),
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

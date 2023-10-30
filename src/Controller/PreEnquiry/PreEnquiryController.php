@@ -5,6 +5,7 @@ namespace App\Controller\PreEnquiry;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Form\PreEnquiry\SubmitPreEnquiryType;
+use App\Repository\MaintenanceWarningRepository;
 use App\Security\Voter\SurveyVoter;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,7 +43,13 @@ class PreEnquiryController extends AbstractController
     /**
      * @Route("/pre-enquiry", name=PreEnquiryController::SUMMARY_ROUTE)
      */
-    public function index(Request $request, UserInterface $user, EntityManagerInterface $entityManager, WorkflowInterface $preEnquiryStateMachine): Response
+    public function index(
+        EntityManagerInterface $entityManager,
+        MaintenanceWarningRepository $maintenanceWarningRepository,
+        Request $request,
+        UserInterface $user,
+        WorkflowInterface $preEnquiryStateMachine,
+    ): Response
     {
         $preEnquiry = $this->getPreEnquiry($user);
 
@@ -74,6 +81,7 @@ class PreEnquiryController extends AbstractController
         return $this->render('pre_enquiry/summary.html.twig', [
             'preEnquiry' => $preEnquiry,
             'form' => $form->createView(),
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

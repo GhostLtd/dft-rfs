@@ -3,6 +3,7 @@
 namespace App\Controller\RoRo;
 
 use App\Entity\RoRoUser;
+use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRo\SurveyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,11 @@ class DashboardController extends AbstractController
 
 
     #[Route(name: "app_roro_dashboard")]
-    public function dashboard(UserInterface $user): Response
+    public function dashboard(MaintenanceWarningRepository $maintenanceWarningRepository, UserInterface $user): Response
     {
-        return $this->renderTemplate($user, 'roro/dashboard.html.twig');
+        return $this->renderTemplate($user, 'roro/dashboard.html.twig', [
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
+        ]);
     }
 
     #[Route("/completed-surveys", name: "app_roro_completed_surveys")]

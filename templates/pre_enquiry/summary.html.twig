@@ -4,6 +4,11 @@
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
+    {%- if maintenanceWarningBanner ?? false -%}
+        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
     {% import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents %}
     <h1 class="govuk-heading-xl">{{ (translation_prefix ~ '.heading')|trans }}</h1>
     <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.business-details')|trans }}</h2>

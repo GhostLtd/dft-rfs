@@ -4,7 +4,8 @@
 
 ## Upcoming
 
-* **Fix:** RoRo - Fix duplicate email address error when adding a new operator user 
+* **Fix:** RoRo - Fix duplicate email address error when adding a new operator user
+* **Update:** Maintenance banners now additionally shown on each survey's dashboard
 
 ## 24th October 2023 
 

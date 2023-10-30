@@ -24,6 +24,15 @@
             {% block beforeContent %}{% endblock %}
             <main class="govuk-grid-column-content govuk-main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
                 {% from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners %}
+                {%- if maintenanceWarningBanner ?? false -%}
+                    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds-from-wide">
+                    {{- notificationBanner(maintenanceWarningBanner) -}}
+                    </div>
+                </div>
+                {%- endif -%}
+
                 {{ flashNotificationBanners() }}
 
                 {% block adminContentIncludingHeader %}

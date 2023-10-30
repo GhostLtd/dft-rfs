@@ -20,7 +20,7 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
         $this->translator = $translator;
     }
 
-    public function getNotificationBannerForFrontend($warningPeriodDateModifier = '+1 week')
+    public function getNotificationBanner($warningPeriodDateModifier = '+1 week'): ?NotificationBanner
     {
         /** @var MaintenanceWarning $warning */
         $warning = $this->createQueryBuilder('maintenanceWarning')
@@ -34,9 +34,11 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
             ])
             ->getQuery()
             ->getOneOrNullResult();
+
         if ($warning) {
             $timeFormat = $this->translator->trans('format.time.default');
             $dateFormat = $this->translator->trans('format.date.full-with-year');
+
             return new NotificationBanner(
                 $this->translator->trans('maintenance-warning.banner.title'),
                 $this->translator->trans('maintenance-warning.banner.heading'),
@@ -47,6 +49,7 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
                 ])
             );
         }
-        return false;
+
+        return null;
     }
 }

@@ -30,7 +30,7 @@ class PasscodeSecurityController extends AbstractController
         return $this->render('security/login.html.twig', [
             'form' => $form->createView(),
             'error' => $error,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBannerForFrontend(),
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

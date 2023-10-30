@@ -10,7 +10,7 @@
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner -%}
     {%- from 'roro/macros.html.twig' import contactDetails -%}
 
-    {%- if maintenanceWarningBanner -%}
+    {%- if maintenanceWarningBanner ?? false -%}
         {{- notificationBanner(maintenanceWarningBanner) -}}
     {%- endif -%}
 

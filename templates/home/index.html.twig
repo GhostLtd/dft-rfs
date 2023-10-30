@@ -7,7 +7,7 @@ DfT - GOV.UK
 
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import startNow, notificationBanner %}
-    {%- if maintenanceWarningBanner -%}
+    {%- if maintenanceWarningBanner ?? false -%}
         {{- notificationBanner(maintenanceWarningBanner) -}}
     {%- endif -%}
 
