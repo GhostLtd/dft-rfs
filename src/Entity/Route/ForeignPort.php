@@ -37,6 +37,8 @@ class ForeignPort implements PortInterface
     /**
      * @ORM\Column(type="smallint", unique=true)
      * @Assert\NotNull(message="ports.code.not-null", groups={"admin_add_port", "admin_edit_port"})
+     * @Assert\Positive(message="common.number.positive", groups={"admin_add_port", "admin_edit_port"})
+     * @Assert\Range(max=65000, maxMessage="common.number.max", groups={"admin_add_port", "admin_edit_port"})
      */
     private ?int $code = null;
 
