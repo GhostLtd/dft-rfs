@@ -50,10 +50,10 @@ class Operator
     private Collection $users;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="smallint")
      * @Assert\NotNull(message="operators.code.not-null", groups={"admin_add_operator", "admin_edit_operator"})
      * @Assert\Positive(message="common.number.positive", groups={"admin_add_operator", "admin_edit_operator"})
-     * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"admin_add_operator", "admin_edit_operator"})
+     * @Assert\Range(max=65000, maxMessage="common.number.max", groups={"admin_add_operator", "admin_edit_operator"})
      */
     private ?int $code = null;
 
