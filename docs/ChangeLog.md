@@ -2,10 +2,13 @@
 
 # Changelog
 
-## Upcoming
+## 30th October 2023
 
-* **Fix:** RoRo - Fix duplicate email address error when adding a new operator user
-* **Update:** Maintenance banners now additionally shown on each survey's dashboard
+* **Update:** Maintenance banners now additionally shown on each survey's dashboard.
+* **Change:** RoRo - Export isActive and comments fields, making sure all count fields are NULL when isActive is false.
+* **Fix:** RoRo - Turn autocomplete off for country vehicle count form as Safari wants to autocomplete these fields.
+* **Fix:** RoRo - Fix duplicate email address error when adding a new operator user.
+* **Fix:** RoRo - Fix missing operator code and port code validation.
 
 ## 24th October 2023 
 
