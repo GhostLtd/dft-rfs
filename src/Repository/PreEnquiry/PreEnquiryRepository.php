@@ -33,11 +33,11 @@ class PreEnquiryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('pe')
             ->select('pe, per')
             ->leftJoin('pe.response', 'per')
-            ->where('pe.state = :state')
+            ->where('pe.state IN (:states)')
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
             ->setParameters([
-                'state' => SurveyStateInterface::STATE_CLOSED,
+                'states' => [SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED],
                 'monthStart' => $monthStart,
                 'monthEnd' => $monthEnd,
             ])

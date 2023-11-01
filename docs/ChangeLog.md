@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** Pre-enquiry - Fix export crash when unfilled survey closed by admin
+
 ## 30th October 2023
 
 * **Update:** Maintenance banners now additionally shown on each survey's dashboard.
