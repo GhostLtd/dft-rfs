@@ -140,7 +140,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->join('route.ukPort', 'uk_port')
             ->join('route.foreignPort', 'foreign_port')
             ->join('survey.vehicleCounts', 'vehicle_count')
-            ->where('survey.state IN :states')
+            ->where('survey.state IN (:states)')
             ->andWhere('survey.surveyPeriodStart >= :monthStart')
             ->andWhere('survey.surveyPeriodStart < :monthEnd')
             ->setParameters([
