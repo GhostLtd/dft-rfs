@@ -77,6 +77,7 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             'UKPort' => $route->getUkPort()->getCode(),
             'ForeignPort' => $route->getForeignPort()->getCode(),
             'Comments' => $object->getComments(),
+            'IsApproved' => $object->getState() === SurveyStateInterface::STATE_APPROVED ? 1 : 0,
         ];
 
         return array_merge($head, $countries, $totals, $tail);

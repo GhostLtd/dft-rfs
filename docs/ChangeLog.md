@@ -8,6 +8,7 @@
 * **Change:** Pre-enquiry - Disallow state change to CLOSED when survey not filled
 * **Change:** RoRo + Pre-enquiry - export surveys in both CLOSED and APPROVED states
 * **Change:** RoRo - remove the QA mechanism
+* **Change:** RoRo - export now includes isApproved flag
 
 ## 30th October 2023
 
