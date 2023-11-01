@@ -2,9 +2,12 @@
 
 # Changelog
 
-## Upcoming
+## 1st November 2023
 
 * **Fix:** Pre-enquiry - Fix export crash when unfilled survey closed by admin
+* **Change:** Pre-enquiry - Disallow state change to CLOSED when survey not filled
+* **Change:** RoRo + Pre-enquiry - export surveys in both CLOSED and APPROVED states
+* **Change:** RoRo - remove the QA mechanism
 
 ## 30th October 2023
 

@@ -20,11 +20,6 @@ class RoRoReportsHelper extends AbstractReportsHelper
         return $this->getStateReportStatsData('s.surveyPeriodStart', new YearAndMonth(), $minStart, $maxStart, $excludeFromTotals);
     }
 
-    public function getQualityAssuranceReportStats(\DateTime $minStart=null, \DateTime $maxStart=null): array
-    {
-        return $this->getQualityAssuranceReportStatsData('s.surveyPeriodStart', new YearAndMonth(),  $minStart, $maxStart);
-    }
-
     protected function addDateRelatedGroupAndOrder(QueryBuilder $qb): void
     {
         $qb

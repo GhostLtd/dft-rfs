@@ -4,7 +4,6 @@ namespace App\Entity\RoRo;
 
 use App\Entity\IdTrait;
 use App\Entity\NoteInterface;
-use App\Entity\QualityAssuranceInterface;
 use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
 use App\Repository\RoRo\SurveyRepository;
@@ -24,7 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     }
  * )
  */
-class Survey implements SurveyStateInterface, QualityAssuranceInterface
+class Survey implements SurveyStateInterface
 {
     const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
@@ -82,11 +81,6 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
     private Collection $notes;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $qualityAssured;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -350,17 +344,6 @@ class Survey implements SurveyStateInterface, QualityAssuranceInterface
             $this->notes[] = $note;
         }
 
-        return $this;
-    }
-
-    public function getQualityAssured(): ?bool
-    {
-        return $this->qualityAssured;
-    }
-
-    public function setQualityAssured(?bool $qualityAssured): self
-    {
-        $this->qualityAssured = $qualityAssured;
         return $this;
     }
 

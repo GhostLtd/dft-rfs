@@ -13,26 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class QualityAssuranceController extends AbstractReportsController
 {
     /**
-     * @Route("/quality-assurance/{type}", name="qa_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro"})
+     * @Route("/quality-assurance/{type}", name="qa_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry"})
      */
     public function qualityAssuranceReportsDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
-    }
-
-    /**
-     * @Route("/quality-assurance/{type}/{year}", name="qa_yearly_full", requirements={"type": "roro", "year": "\d{4}"})
-     */
-    public function yearlyQualityAssuranceReports(Request $request, string $type, int $year): Response
-    {
-        [$start, $end] = $this->getDateRangeForYear($year);
-        $form = $this->getReportsYearlyFilterForm($request, $year, $type, [ReportFilterType::TYPE_PRE_ENQUIRY]);
-
-        if ($form->isSubmitted()) {
-            return $this->getRedirect($form->getData());
-        }
-
-        return $this->qualityAssuranceReports($form, $type, $start, $end);
     }
 
     /**
@@ -64,9 +49,6 @@ class QualityAssuranceController extends AbstractReportsController
                 break;
             case ReportFilterType::TYPE_IRHS:
                 $stats = $this->internationalReportsHelper->getQualityAssuranceReportStats($start, $end);
-                break;
-            case ReportFilterType::TYPE_RORO:
-                $stats = $this->roRoReportsHelper->getQualityAssuranceReportStats($start, $end);
                 break;
         }
 

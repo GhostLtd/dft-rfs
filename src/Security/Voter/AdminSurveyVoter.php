@@ -47,7 +47,7 @@ class AdminSurveyVoter extends Voter
         // CSRGT, IRHS
         $haulageInterfaceSupport = $subject instanceof HaulageSurveyInterface && ($attribute == self::VIEW_UNFILLED_REASON);
 
-        // RoRo, CSRGT, IRHS
+        // CSRGT, IRHS
         $qaInterfaceSupport = $subject instanceof QualityAssuranceInterface && ($attribute == self::FLAG_QA);
 
         // CSRGT

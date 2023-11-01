@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 class SurveyViewController extends AbstractController
 {
     public function __construct(
@@ -46,9 +45,6 @@ class SurveyViewController extends AbstractController
             ]) ? false : $this->auditLogRepository->getApprovedBy($survey),
             'auditLogs' => $this->auditLogRepository->getLogs($survey->getId(), Survey::class),
             'survey' => $survey,
-            'qualityAssuredBy' => $survey->getQualityAssured() ?
-                $this->auditLogRepository->getQualityAssuredBy($survey) :
-                false,
         ]);
     }
 }

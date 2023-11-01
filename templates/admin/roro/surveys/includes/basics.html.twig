@@ -12,11 +12,9 @@
     {%- if showStatus ?? true -%}
         {% set status -%}
             {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
-            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
         {%- endset %}
         {{ actionlessSummaryListRow('Status', status, {html: true}) }}
         {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
-        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
     {%- endif -%}
 {#    {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount) }}#}
 </dl>

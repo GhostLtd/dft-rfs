@@ -148,17 +148,6 @@
             {{ _self.workflow_link(survey, 'complete', 'Complete') }}
             {{ _self.workflow_link(survey, 'approve', 'Approve') }}
             {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
-
-            {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
-                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
-                {%- with {
-                    attr: (options.attr ?? {}) | merge({
-                        href: path('admin_roro_surveys_flag_qa', {surveyId: survey.id}),
-                        class: ('govuk-button ' ~ (options.class | default('')) ) | trim
-                    })} -%}
-                    <a {{ attributes(attr) }}>Flag as QA'd</a>
-                {%- endwith -%}
-            {% endif %}
         </div>
     {% endif %}
 
