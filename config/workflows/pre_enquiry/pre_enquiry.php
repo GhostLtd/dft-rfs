@@ -47,6 +47,7 @@ return static function (ContainerConfigurator $container) {
                     'complete' => [
                         'from' => [StateObject::STATE_IN_PROGRESS, StateObject::STATE_INVITATION_SENT],
                         'to' => StateObject::STATE_CLOSED,
+                        'guard' => 'subject.getResponse() !== null',
                     ],
                     're_open' => [
                         'from' => StateObject::STATE_CLOSED,
