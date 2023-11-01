@@ -4,6 +4,7 @@ namespace App\Serializer\Normalizer\RoRo;
 
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRo\VehicleCount;
+use App\Entity\SurveyStateInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -32,9 +33,13 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
 
         $quarter = intval(ceil($month / 3));
 
+        $twoDigitPadded = fn(int $digits): string => str_pad(strval($digits), 2, "0",STR_PAD_LEFT);
+
         $route = $object->getRoute();
-        $routeCode = $route->getRouteCode();
-        $operatorCode = $object->getOperator()->getCode();
+
+        $ukCode = $twoDigitPadded($route->getUkPort()->getCode());
+        $foreignCode = $twoDigitPadded($route->getForeignPort()->getCode());
+        $operatorCode = $twoDigitPadded($object->getOperator()->getCode());
 
         $extraMapping = $this->getExtraColumnNameMapping();
 
@@ -44,7 +49,7 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             'Year' => intval($surveyStart->format('Y')),
             'Quarter' => $quarter,
             'Month' => $month,
-            'RoRoNo' => $routeCode.$operatorCode,
+            'RoRoNo' => $ukCode.$foreignCode.$operatorCode,
             'OperatorId' => $operatorCode,
             'IsActiveForMonth' => $isActive ? 1 : 0,
         ];
@@ -74,8 +79,8 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
         }
 
         $tail = [
-            'UKPort' => $route->getUkPort()->getCode(),
-            'ForeignPort' => $route->getForeignPort()->getCode(),
+            'UKPort' => $ukCode,
+            'ForeignPort' => $foreignCode,
             'Comments' => $object->getComments(),
             'IsApproved' => $object->getState() === SurveyStateInterface::STATE_APPROVED ? 1 : 0,
         ];

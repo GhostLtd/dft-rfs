@@ -51,7 +51,12 @@ class ExportController extends AbstractController
         file_put_contents($tmpFile, $serializer->serialize($surveys, 'sql-server-insert', [
             RoRoNormalizer::CONTEXT_KEY => true,
             SqlServerInsertEncoder::TABLE_NAME_KEY => 'tbl_roro',
-            SqlServerInsertEncoder::FORCE_STRING_FIELDS => [],
+            SqlServerInsertEncoder::FORCE_STRING_FIELDS => [
+                'RoRoNo',
+                'OperatorId',
+                'UKPort',
+                'ForeignPort',
+            ],
         ]));
 
         $now = new DateTime();

@@ -9,6 +9,7 @@
 * **Change:** RoRo + Pre-enquiry - export surveys in both CLOSED and APPROVED states
 * **Change:** RoRo - remove the QA mechanism
 * **Change:** RoRo - export now includes isApproved flag
+* **Fix:** RoRo - route + operator codes now 2-digit zero-padded in exports
 
 ## 30th October 2023
 
