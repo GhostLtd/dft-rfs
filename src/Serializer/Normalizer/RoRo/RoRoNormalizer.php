@@ -66,7 +66,9 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
 
         $countries = [];
         foreach($object->getCountryVehicleCounts() as $vehicleCount) {
-            $countries[$vehicleCount->getCountryCode()] = $vehicleCount->getVehicleCount();
+            $countries[$vehicleCount->getCountryCode()] = $isActive ?
+                ($vehicleCount->getVehicleCount() ?? 0) :
+                null;
         }
 
         $totals = [];
@@ -74,7 +76,7 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             $totals[$columnName] = match($code) {
                 self::TOTAL_POWERED_VEHICLES => $totalPoweredVehicles,
                 self::TOTAL_VEHICLES => $totalVehicles,
-                default => $object->getVehicleCountByOtherCode($code)->getVehicleCount(),
+                default => $isActive ? ($object->getVehicleCountByOtherCode($code)->getVehicleCount() ?? 0) : null,
             };
         }
 

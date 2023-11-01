@@ -10,6 +10,7 @@
 * **Change:** RoRo - remove the QA mechanism
 * **Change:** RoRo - export now includes isApproved flag
 * **Fix:** RoRo - route + operator codes now 2-digit zero-padded in exports
+* **Fix:** RoRo - when survey filled, empty counts should be exported as zero rather than NULL
 
 ## 30th October 2023
 
