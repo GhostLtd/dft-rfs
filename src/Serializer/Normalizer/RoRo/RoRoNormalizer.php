@@ -5,6 +5,7 @@ namespace App\Serializer\Normalizer\RoRo;
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRo\VehicleCount;
 use App\Entity\SurveyStateInterface;
+use App\Form\RoRo\IntroductionType;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -80,11 +81,20 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             };
         }
 
+        // Just rewrite this so that it comes out as NULL, manual or bulk (a term which will be more familiar with the
+        // team, than the internal-representation of "advanced")
+        $dataEntryMethod = $object->getDataEntryMethod();
+
+        if ($dataEntryMethod === IntroductionType::DATA_ENTRY_ADVANCED_CHOICE) {
+            $dataEntryMethod = 'bulk';
+        }
+
         $tail = [
             'UKPort' => $ukCode,
             'ForeignPort' => $foreignCode,
             'Comments' => $object->getComments(),
             'IsApproved' => $object->getState() === SurveyStateInterface::STATE_APPROVED ? 1 : 0,
+            'DataEntryMethod' => $dataEntryMethod,
         ];
 
         return array_merge($head, $countries, $totals, $tail);

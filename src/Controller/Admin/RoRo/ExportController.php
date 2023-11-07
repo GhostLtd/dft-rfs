@@ -56,6 +56,7 @@ class ExportController extends AbstractController
                 'OperatorId',
                 'UKPort',
                 'ForeignPort',
+                'DataEntryMethod',
             ],
         ]));
 

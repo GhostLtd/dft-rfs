@@ -5,6 +5,7 @@
 ## Upcoming
 
 * **Change:** RoRo - bulk data entry now accepts "unacc" as a key for unaccompanied trailer data
+* **Change:** RoRo - show data entry method used in admin when viewing survey, and also in exports
 
 ## 1st November 2023
 

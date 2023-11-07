@@ -37,6 +37,7 @@
                 -%}
 
                 {{ actionlessSummaryListRow('Survey is active for period?', isActiveForPeriod) }}
+                {{ actionlessSummaryListRow('Data entry method', survey.dataEntryMethod ? ("roro.survey.data-entry.choices.#{survey.dataEntryMethod}" | trans) : '-') }}
                 {{ actionlessSummaryListRow('Respondent comments', survey.comments ?? '-') }}
             </dl>
 
