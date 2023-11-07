@@ -112,6 +112,7 @@ class DataEntryTypeTest extends TypeTestCase
             'Unaccompanied trailers - variation #1' => ["Unaccompanied 502", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 502])],
             'Unaccompanied trailers - variation #2' => ["Unaccompanied trailer 503", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 503])],
             'Unaccompanied trailers - variation #3' => ["Unaccompanied trailers 504", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 504])],
+            'Unaccompanied trailers - variation #4' => ["unacc 505", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 505])],
             'Unknown countries - variation #1' => ["Unknown 302", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 302])],
             'Unknown countries - variation #2' => ["Unknown country 303", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 303])],
             'Unknown countries - variation #3' => ["Unknown countries 304", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 304])],

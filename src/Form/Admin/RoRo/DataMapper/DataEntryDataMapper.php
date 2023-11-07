@@ -137,7 +137,7 @@ class DataEntryDataMapper implements DataMapperInterface
                         $dataCountry = VehicleCount::OTHER_CODE_OTHER;
                     } elseif (in_array($dataCountry, ['unknown', 'unknown country', 'unknown countries'])) {
                         $dataCountry = VehicleCount::OTHER_CODE_UNKNOWN;
-                    } elseif (in_array($dataCountry, ['unaccompanied', 'unaccompanied trailer', 'unaccompanied trailers'])) {
+                    } elseif (in_array($dataCountry, ['unacc', 'unaccompanied', 'unaccompanied trailer', 'unaccompanied trailers'])) {
                         $dataCountry = VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS;
                     }
 

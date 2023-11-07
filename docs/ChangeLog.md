@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Change:** RoRo - bulk data entry now accepts "unacc" as a key for unaccompanied trailer data
+
 ## 1st November 2023
 
 * **Fix:** Pre-enquiry - Fix export crash when unfilled survey closed by admin
