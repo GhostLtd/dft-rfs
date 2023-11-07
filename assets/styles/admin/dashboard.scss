@@ -13,15 +13,14 @@
   display: flex;
 
   & + .info-row {
+    @include govuk-responsive-margin(2, "top");
+  }
+
+  &.info-row--csrgt-ni {
     @include govuk-responsive-margin(1, "top");
   }
 
-  &.info-row--csrgt,
-  &.info-row--irhs {
-    @include govuk-responsive-margin(4, "top");
-  }
-
-  &.info-row--irhs {
+  &.info-row--roro {
     @include govuk-responsive-margin(9, "bottom");
   }
 }

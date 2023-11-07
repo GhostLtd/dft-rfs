@@ -151,4 +151,30 @@ class SurveyRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function getOverdueCount(): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.surveyPeriodStart < :sevenDaysAgo')
+            ->andWhere('s.state IN (:states)')
+            ->setParameters([
+                'states' => SurveyStateInterface::ACTIVE_STATES,
+                'sevenDaysAgo' => (new \DateTime())->modify('-7 days'),
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getInProgressCount(): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s) AS count')
+            ->where('s.state IN (:states)')
+            ->setParameters([
+                'states' => SurveyStateInterface::ACTIVE_STATES,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

@@ -44,4 +44,30 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function getOverdueCount(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p) AS count')
+            ->where('p.state IN (:states)')
+            ->andWhere('p.invitationSentDate < :fourteenDaysAgo')
+            ->setParameters([
+                'states' => SurveyStateInterface::ACTIVE_STATES,
+                'fourteenDaysAgo' => (new \DateTime())->modify('-14 days'),
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getInProgressCount(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p) AS count')
+            ->where('p.state IN (:states)')
+            ->setParameters([
+                'states' => SurveyStateInterface::ACTIVE_STATES,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

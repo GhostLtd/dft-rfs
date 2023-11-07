@@ -6,6 +6,7 @@ use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
 use App\Repository\MaintenanceWarningRepository;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
+use App\Repository\RoRo\SurveyRepository as RoroSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
 use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,10 +19,11 @@ class IndexController extends AbstractController
      * @Route("", name="admin_index")
      */
     public function index(
-        DomesticSurveyRepository $domesticRepo,
+        DomesticSurveyRepository      $domesticRepo,
         InternationalSurveyRepository $internationalRepo,
-        PreEnquiryRepository $preEnquiryRepo,
-        MaintenanceWarningRepository $maintenanceWarningRepository,
+        PreEnquiryRepository          $preEnquiryRepo,
+        RoroSurveyRepository          $roroRepo,
+        MaintenanceWarningRepository  $maintenanceWarningRepository,
     ): Response
     {
         $now = new \DateTime();
@@ -42,6 +44,10 @@ class IndexController extends AbstractController
             'domesticNiOverdueCount' => $domesticRepo->getOverdueCount(true),
             'internationalInProgressCount' => $internationalRepo->getInProgressCount(),
             'internationalOverdueCount' => $internationalRepo->getOverdueCount(),
+            'preEnquiryInProgressCount' => $preEnquiryRepo->getInProgressCount(),
+            'preEnquiryOverdueCount' => $preEnquiryRepo->getOverdueCount(),
+            'roroInProgressCount' => $roroRepo->getInProgressCount(),
+            'roroOverdueCount' => $roroRepo->getOverdueCount(),
             'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
