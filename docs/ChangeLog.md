@@ -8,6 +8,7 @@
 * **Change:** RoRo - show data entry method used in admin when viewing survey, and also in exports
 * **Change:** Add admin dashboard entries for Pre-Enquiry / RoRo
 * **Fix:** RoRo - APP_DISABLE_REMINDERS environment var now correctly passed through to app
+* **Fix:** RoRo - reminder should be sent on day 8 rather than day 9
 
 ## 1st November 2023
 

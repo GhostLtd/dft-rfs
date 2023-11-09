@@ -155,7 +155,9 @@ class AutomatedRoroRemindersHelper
                 ->andWhere('survey.firstReminderSentDate <= :sevenDaysAgo')
                 ->andWhere('survey.secondReminderSentDate IS NULL');
 
-            $queryBuilder->setParameter('sevenDaysAgo', new \DateTime('7 days ago'));
+            // If we use exactly 7 days, we're likely to end up not sending the second remind until day 9 rather than
+            // day 8, so a lesser amount is used here to make sure we actually send on day 8.
+            $queryBuilder->setParameter('sevenDaysAgo', new \DateTime('6 days 12 hours ago'));
         }
 
         $surveyStartDate = new \DateTime($lastMonthDateString);
