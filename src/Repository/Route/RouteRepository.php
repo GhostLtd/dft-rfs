@@ -2,7 +2,6 @@
 
 namespace App\Repository\Route;
 
-use App\DTO\RoRo\UserRoute;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
@@ -58,12 +57,10 @@ class RouteRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<UserRoute>
+     * @return array<Route>
      */
     public function getRoutesForUser(RoRoUser $user): array
     {
-        $bookmarkedRouteIds = $this->getBookmarkedRouteIds($user);
-
         $isOperatorRoute = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('op_route.id')
@@ -75,44 +72,19 @@ class RouteRepository extends ServiceEntityRepository
 
         $queryBuilder = $this->createQueryBuilder('routes');
 
-        $results = $queryBuilder
-            ->select(<<<EOS
-routes AS route,
-CASE WHEN 
-    routes.id IN (:bookmarkedRouteIds) THEN 1 ELSE 0 
-END AS is_bookmarked
-EOS)
+        return $queryBuilder
+            ->select('route')
+            ->from(Route::class, 'route')
             ->join('routes.ukPort', 'uk_port')
             ->join('routes.foreignPort', 'foreign_port')
-            ->andWhere($queryBuilder->expr()->in('routes.id', $isOperatorRoute))
+            ->where($queryBuilder->expr()->in('routes.id', $isOperatorRoute))
             ->setParameters([
-                'bookmarkedRouteIds' => $bookmarkedRouteIds,
                 'operatorId' => $user->getOperator()->getId(),
             ])
             ->orderBy('uk_port.name')
             ->addOrderBy('foreign_port.name')
             ->getQuery()
             ->getResult();
-
-        return array_map(fn(array $result) => new UserRoute($result['route'], $result['is_bookmarked']), $results);
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getBookmarkedRouteIds(RoRoUser $user): array
-    {
-        return $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('route.id')
-            ->from(RoRoUser::class, 'user')
-            ->join('user.bookmarkedRoutes', 'route')
-            ->where('user.id = :userId')
-            ->getQuery()
-            ->setParameters([
-                'userId' => $user->getId(),
-            ])
-            ->getSingleColumnResult();
     }
 
     public function getRouteByPortNames(string $ukPort, string $foreignPort): ?Route

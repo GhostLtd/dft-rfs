@@ -41,7 +41,6 @@ class DashboardController extends AbstractController
         }
 
         return $this->render($template, array_merge($extraParameters, [
-            'hasBookmarks' => $user->getBookmarkedRoutes()->count() >= 1,
             'surveys' => $this->surveyRepository->getSurveysForUser($user),
             'user' => $user,
         ]));

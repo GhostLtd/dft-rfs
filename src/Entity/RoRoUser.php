@@ -45,17 +45,6 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Operator $operator = null;
 
     /**
-     * @var Collection<int, Route>
-     * @ORM\ManyToMany(targetEntity=Route::class)
-     * @ORM\JoinTable(
-     *     name="roro_user_route",
-     *     joinColumns={@ORM\JoinColumn(name="roro_user_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="route_id", referencedColumnName="id")}
-     * )
-     */
-    private Collection $bookmarkedRoutes;
-
-    /**
      * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
      * @ORM\JoinTable(
      *     name="roro_user_notify_api_responses",
@@ -67,7 +56,6 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->bookmarkedRoutes = new ArrayCollection();
         $this->apiResponses = new ArrayCollection();
     }
 
@@ -108,29 +96,6 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function setOperator(?Operator $operator): self
     {
         $this->operator = $operator;
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Route>
-     */
-    public function getBookmarkedRoutes(): Collection
-    {
-        return $this->bookmarkedRoutes;
-    }
-
-    public function addBookmarkedRoute(Route $route): self
-    {
-        if (!$this->bookmarkedRoutes->contains($route)) {
-            $this->bookmarkedRoutes[] = $route;
-        }
-
-        return $this;
-    }
-
-    public function removeBookmarkedRoute(Route $route): self
-    {
-        $this->bookmarkedRoutes->removeElement($route);
         return $this;
     }
 

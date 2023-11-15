@@ -194,8 +194,6 @@ roro:
     phone: 020 7944 8233
   dashboard:
     title: Dashboard for {operator}
-    bookmarked-routes: Bookmarked routes
-    edit-bookmarked-routes: &edit-bookmarked-routes Edit bookmarked routes
     other-routes: Other routes
     outstanding-surveys: Outstanding surveys
     questions:
@@ -205,15 +203,6 @@ roro:
       text: "If you have any queries, please contact us:"
     useful-links: Useful links
     view-completed-surveys: View submitted surveys
-  bookmarked-routes:
-    bookmark: Bookmark
-    bookmarked-routes: Bookmarked routes
-    no-bookmarked-routes: No bookmarked routes
-    no-other-routes: No other routes
-    other-routes: Other routes
-    remove-bookmark: Remove bookmark
-    save: Save bookmarks
-    title: *edit-bookmarked-routes
   completed-surveys:
     title: Submitted surveys
   login:

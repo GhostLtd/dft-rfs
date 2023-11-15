@@ -18,7 +18,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class AdminSurveyVoter extends Voter
 {
     const EDIT = 'EDIT';
-    const EDIT_BOOKMARKS = 'EDIT_BOOKMARKS';
     const EDIT_NOTES = 'EDIT_NOTES';
     const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
     const FLAG_QA = 'FLAG_QA';

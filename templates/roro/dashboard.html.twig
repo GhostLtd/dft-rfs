@@ -18,13 +18,10 @@
         <div class="govuk-grid-column-two-thirds-from-desktop">
             <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
 
-            {{- surveysTabsAndList(user, surveys, hasBookmarks, ['outstanding']) -}}
+            {{- surveysTabsAndList(user, surveys, ['outstanding']) -}}
 
             <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
             <ul class="govuk-list govuk-!-margin-bottom-8">
-                {%- if is_granted('EDIT_BOOKMARKS') -%}
-                    <li><a href="{{ path('app_roro_bookmarked_routes') }}" class="govuk-link">{{ 'roro.dashboard.edit-bookmarked-routes' | trans }}</a></li>
-                {%- endif -%}
                 <li><a href="{{ path('app_roro_completed_surveys') }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
             </ul>
         </div>

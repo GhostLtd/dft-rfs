@@ -1,24 +1,7 @@
-{%- macro surveysTabsAndList(user, surveys, hasBookmarks, filters) -%}
+{%- macro surveysTabsAndList(user, surveys, filters) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
 
-    {%- if not hasBookmarks -%}
-        {{- _self.surveyList(user, surveys, filters | merge(['non-bookmarked'])) -}}
-    {%- else -%}
-        <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
-            {{ tabsHead({
-                ('roro.dashboard.bookmarked-routes' | trans): "tab-bookmarked",
-                ('roro.dashboard.other-routes' | trans): "tab-other"
-            }) }}
-
-            <div class="govuk-tabs__panel" id="tab-bookmarked">
-                {{- _self.surveyList(user, surveys, filters | merge(['bookmarked'])) -}}
-            </div>
-
-            <div class="govuk-tabs__panel" id="tab-other">
-                {{- _self.surveyList(user, surveys, filters | merge(['non-bookmarked'])) -}}
-            </div>
-        </div>
-    {%- endif -%}
+    {{- _self.surveyList(user, surveys, filters) -}}
 {%- endmacro -%}
 
 {%- macro surveyList(user, surveys, filters) -%}
@@ -28,12 +11,6 @@
         {%- set surveys = surveys | filter(s => s.isCompleted) -%}
     {%- elseif 'outstanding' in filters -%}
         {%- set surveys = surveys | filter(s => not s.isCompleted) -%}
-    {%- endif -%}
-
-    {%- if 'bookmarked' in filters -%}
-        {%- set surveys = surveys | filter(s => user.bookmarkedRoutes.contains(s.route)) -%}
-    {%- elseif 'non-bookmarked' in filters -%}
-        {%- set surveys = surveys | filter(s => not user.bookmarkedRoutes.contains(s.route)) -%}
     {%- endif -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-8">

@@ -25,8 +25,6 @@ The Roll-on/roll-off survey is set to ferry operators.
 
 Users can log in and file returns for any RoRo Survey that has been issued to their Operator (i.e. Ferry company).
 
-Users can also "bookmark" routes so that they are shown more prominently on their dashboard. This is to facilitate operators where particular users are responsible for particular routes.
-
 ## Admin features
 
 ### Management domains

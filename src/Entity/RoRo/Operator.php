@@ -105,11 +105,6 @@ class Operator
     public function removeRoute(Route $route): self
     {
         $this->routes->removeElement($route);
-
-        foreach($this->users as $user) {
-            $user->removeBookmarkedRoute($route);
-        }
-
         return $this;
     }
 

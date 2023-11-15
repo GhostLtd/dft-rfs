@@ -16,13 +16,6 @@
     }]) -%}
 {%- endif -%}
 
-{%- if (breadcrumbToggle ?? null) == 'bookmarked-routes' -%}
-    {%- set breadcrumbItems = breadcrumbItems | merge([{
-        href: path('app_roro_bookmarked_routes'),
-        text: 'roro.bookmarked-routes.title' | trans
-    }]) -%}
-{%- endif -%}
-
 {%- if (breadcrumbToggle ?? null) == 'completed-surveys' -%}
     {%- set breadcrumbItems = breadcrumbItems | merge([{
         href: path('app_roro_completed_surveys'),

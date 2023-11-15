@@ -26,7 +26,7 @@ class RoRoUserRepository extends ServiceEntityRepository
                 ->createQueryBuilder('user')
                 ->select('user, operator, routes, uk_port, foreign_port')
                 ->join('user.operator', 'operator')
-                ->leftJoin('user.bookmarkedRoutes', 'routes')
+                ->leftJoin('operator.routes', 'routes')
                 ->leftJoin('routes.ukPort', 'uk_port')
                 ->leftJoin('routes.foreignPort', 'foreign_port')
                 ->where('user.id = :userId')
