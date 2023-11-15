@@ -6,6 +6,8 @@
     date: subject.surveyPeriodStart | date('format.date.year-and-month' | trans)
 } %}
 
+{%- set breadcrumbToggle = 'submit-survey' -%}
+
 {% extends 'roro/base.html.twig' %}
 
 {% block content -%}

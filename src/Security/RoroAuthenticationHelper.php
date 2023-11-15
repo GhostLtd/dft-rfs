@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\RoRoUser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
@@ -34,7 +36,11 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         $user = $request->request->get('user', '<none>');
         $this->logger->info("RoRo Login successful: {$user}");
 
-        return new RedirectResponse($this->urlGenerator->generate('app_roro_dashboard'));
+        if (!$user instanceof RoRoUser) {
+            throw new UnsupportedUserException();
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('app_roro_dashboard', ['operatorId' => $user->getOperator()->getId()]));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response

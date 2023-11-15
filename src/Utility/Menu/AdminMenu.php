@@ -62,6 +62,7 @@ class AdminMenu implements MenuInterface
 
             new RoleMenuItem('roro', 'menu.roro.root', null, [
                 new RoleMenuItem('dashboard', 'menu.roro.surveys', $this->router->generate('admin_roro_surveys_list'), [], []),
+                new RoleMenuItem('operator-groups', 'menu.roro.operator-groups', $this->router->generate('admin_operator_groups_list'), [], []),
                 new RoleMenuItem('operators', 'menu.roro.operators', $this->router->generate('admin_operators_list'), [], []),
                 new RoleMenuItem('export', 'menu.roro.export', $this->router->generate('admin_roro_export_list'), [], []),
             ]),

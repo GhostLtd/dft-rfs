@@ -8,7 +8,7 @@
 } %}
 
 {% block content %}
-    {%- set canEdit = is_granted(constant('\\App\\Security\\Voter\\SurveyVoter::EDIT'), survey) -%}
+    {%- set canEdit = is_granted('CAN_EDIT_RORO_SURVEY', survey) -%}
     {%- from "@GhostGovUkFrontend/components/macros.html.twig" import summaryListRow -%}
     {%- from "roro/macros.html.twig" import contactDetails -%}
     <h1 class="govuk-heading-l">
@@ -86,7 +86,7 @@
             <a class="govuk-button" href="{{ path('app_roro_survey_complete', {surveyId: survey.id}) }}">{{ 'roro.survey.submit-survey' | trans }}</a>
         {% endif %}
     {% endif %}
-    <a class="govuk-button govuk-button--secondary" href="{{ path('app_roro_dashboard') }}">{{ 'roro.back-to-dashboard' | trans }}</a>
+    <a class="govuk-button govuk-button--secondary" href="{{ path('app_roro_dashboard', {operatorId: survey.operator.id}) }}">{{ 'roro.back-to-dashboard' | trans }}</a>
 {% endmacro %}
 
 {% macro vehicleCounts(vehicleCounts) %}

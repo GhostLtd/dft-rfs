@@ -4,6 +4,12 @@
 
 ## Upcoming
 
+* **Feature:** RoRo - Operator Groups  
+  - Operators groups can be created by the admin
+  - Operators can then switch between Operators whose name starts with the Operator Group's name.
+    - e.g. Given Operator group "Toast Ferries" and operators "Toast Ferries - Plymouth" and "Toast Ferries - Portsmouth",
+           users of these operators would be able to switch between them (in order to administrate each other's surveys).
+  - As a part of this update, the "route bookmarking" feature has been removed, as it was intended to perform a similar role.
 * **Change:** RoRo - bulk data entry now accepts "unacc" as a key for unaccompanied trailer data
 * **Change:** RoRo - show data entry method used in admin when viewing survey, and also in exports
 * **Change:** Add admin dashboard entries for Pre-Enquiry / RoRo

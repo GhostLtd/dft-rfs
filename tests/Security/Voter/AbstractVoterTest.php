@@ -2,7 +2,6 @@
 
 namespace App\Tests\Security\Voter;
 
-use App\Entity\PasscodeUser;
 use Doctrine\Common\DataFixtures\Executor\AbstractExecutor;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
@@ -12,6 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\User\InMemoryUser;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 
 abstract class AbstractVoterTest extends WebTestCase
@@ -39,12 +39,13 @@ abstract class AbstractVoterTest extends WebTestCase
         return $fixtures;
     }
 
-    protected function createAndStorePasscodeUserToken(PasscodeUser $user) {
+    protected function createAndStorePasscodeUserToken(UserInterface $user): void
+    {
         $token = new PostAuthenticationToken($user, 'main', $user->getRoles());
         $this->tokenStorage->setToken($token);
     }
 
-    protected function createAndStoreAdminUserToken()
+    protected function createAndStoreAdminUserToken(): void
     {
         $user = new InMemoryUser('admin', '', ['ROLE_ADMIN_FORM_USER']);
         $token = new UsernamePasswordToken($user, 'admin', $user->getRoles());

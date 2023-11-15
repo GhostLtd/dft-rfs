@@ -2,7 +2,7 @@
 {%- set translation_prefix = 'roro.dashboard' -%}
 
 {%- set titleParams = ({
-    operator: user.operator.name
+    operator: operator.name
 }) -%}
 
 {% block content %}
@@ -11,8 +11,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
             <h1 class="govuk-heading-l">{{ 'roro.completed-surveys.title' | trans(titleParams) }}</h1>
-            {{ surveysTabsAndList(user, surveys, ['completed']) }}
-            <a href="{{ path('app_roro_dashboard') }}" class="govuk-button govuk-button--secondary">{{ 'roro.back-to-dashboard' | trans }}</a>
+            {{ surveysTabsAndList(surveys, ['completed']) }}
+            <a href="{{ path('app_roro_dashboard', {operatorId: operator.id}) }}" class="govuk-button govuk-button--secondary">{{ 'roro.back-to-dashboard' | trans }}</a>
         </div>
         <div class="govuk-grid-column-one-third-from-desktop">
             {{- contactDetails('govuk-!-padding-top-9') -}}

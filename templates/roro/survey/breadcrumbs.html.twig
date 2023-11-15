@@ -1,7 +1,7 @@
 {%- set breadcrumbItems = [
     {
-        href: path('app_roro_dashboard'),
-        text: 'roro.breadcrumbs.dashboard' | trans,
+        href: path('app_roro_dashboard', {operatorId: operator.id}),
+        text: 'roro.breadcrumbs.dashboard' | trans({name: operator.name}),
     }
 ] -%}
 
@@ -16,11 +16,18 @@
     }]) -%}
 {%- endif -%}
 
+{%- if (breadcrumbToggle ?? null) == 'submit-survey' -%}
+    {%- set breadcrumbItems = breadcrumbItems | merge([{
+        href: path('app_roro_survey_complete', {surveyId: survey.id}),
+        text: 'roro.breadcrumbs.submit-survey' | trans
+    }]) -%}
+{%- endif -%}
+
 {%- if (breadcrumbToggle ?? null) == 'completed-surveys' -%}
     {%- set breadcrumbItems = breadcrumbItems | merge([{
-        href: path('app_roro_completed_surveys'),
+        href: path('app_roro_completed_surveys', {operatorId: operator.id}),
         text: 'roro.completed-surveys.title' | trans({
-            operator: user.operator.name
+            operator: operator.name
         })
     }]) -%}
 {%- endif -%}

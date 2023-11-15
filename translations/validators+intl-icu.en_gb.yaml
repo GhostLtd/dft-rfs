@@ -253,6 +253,13 @@ notification:
   address-line:
     duplicate: Company name has already been used
 
+operator-groups:
+  name:
+    min-length: Must be at least {limit} characters in length
+    not-null: Enter a name
+    prefix: This name is already used as part of another longer name
+    unique: This name is already is use
+
 operators:
   name.not-null: Enter a name
   code.not-null: Enter a code

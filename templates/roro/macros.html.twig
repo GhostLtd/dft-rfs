@@ -1,10 +1,10 @@
-{%- macro surveysTabsAndList(user, surveys, filters) -%}
+{%- macro surveysTabsAndList(surveys, filters) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
 
-    {{- _self.surveyList(user, surveys, filters) -}}
+    {{- _self.surveyList(surveys, filters) -}}
 {%- endmacro -%}
 
-{%- macro surveyList(user, surveys, filters) -%}
+{%- macro surveyList(surveys, filters) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
 
     {%- if 'completed' in filters -%}

@@ -5,7 +5,6 @@ namespace App\Repository\RoRo;
 use App\DTO\RoRo\OperatorRoute;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey;
-use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -100,7 +99,7 @@ class SurveyRepository extends ServiceEntityRepository
     /**
      * @return array<Survey>
      */
-    public function getSurveysForUser(RoRoUser $user): array
+    public function getSurveysForOperator(Operator $operator): array
     {
         $queryBuilder = $this->createQueryBuilder('survey');
 
@@ -116,7 +115,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->addOrderBy('uk_port.name')
             ->addOrderBy('foreign_port.name')
             ->setParameters([
-                'operatorId' => $user->getOperator()->getId(),
+                'operatorId' => $operator->getId(),
             ])
             ->getQuery()
             ->getResult();

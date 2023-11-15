@@ -36,6 +36,7 @@ menu:
     export: Export
   roro:
     export: Export
+    operator-groups: Operator groups
     operators: Operators
     root: RoRo
     surveys: Surveys

@@ -9,5 +9,7 @@
 {%- block beforeContent -%}
     {{- parent() -}}
 
-    {{- include('roro/survey/breadcrumbs.html.twig') -}}
+    {%- if not (disable_breadcrumbs ?? false) -%}
+        {{- include('roro/survey/breadcrumbs.html.twig') -}}
+    {%- endif -%}
 {%- endblock -%}

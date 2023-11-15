@@ -3,6 +3,7 @@
 namespace App\Tests\NewFunctional\Wizard\RoRo;
 
 use App\Tests\DataFixtures\RoRo\UserFixtures;
+use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
 class LoginTest extends AbstractRoRoTest
@@ -52,7 +53,7 @@ class LoginTest extends AbstractRoRoTest
             [new FormTestCase([])]
         );
 
-        $this->pathTestAction('/roro');
+        $this->pathTestAction('#^/roro/operator/[^/]+$#', [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
         $header = $this->client
             ->getCrawler()

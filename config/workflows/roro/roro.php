@@ -6,7 +6,12 @@ use App\Workflow\RoRo\RoRoState as StateObject;
 return static function (ContainerConfigurator $container) {
     $endMetadata = [
         'persist' => true,
-        'redirectRoute' => ['routeName' => 'app_roro_survey_view', 'parameterMappings' => ['surveyId' => 'id']],
+        'redirectRoute' => [
+            'routeName' => 'app_roro_survey_view',
+            'parameterMappings' => [
+                'surveyId' => 'id',
+            ]
+        ],
     ];
 
     $container->extension('framework', [

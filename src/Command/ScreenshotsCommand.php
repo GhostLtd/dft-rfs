@@ -10,11 +10,13 @@ use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\RoRo\Operator;
+use App\Entity\RoRo\OperatorGroup;
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
 use App\Utility\Domestic\DeleteHelper as DomesticDeleteHelper;
 use App\Utility\PreEnquiry\DeleteHelper as PreEnquiryDeleteHelper;
+use App\Utility\RoRo\OperatorSwitchHelper;
 use App\Utility\RoRo\SurveyCreationHelper;
 use DateInterval;
 use DateTime;
@@ -41,14 +43,13 @@ class ScreenshotsCommand extends Command
     protected static $defaultName = 'rfs:dev:screenshots';
     protected string $userId = 'screenshot';
     protected string $roroUserIdOne = 'screenshot@example.com';
-    protected string $roroUserIdTwo = 'screenshot-other@example.com';
-
     protected string $userPassword = 'screenshot:password';
 
     public function __construct(
         protected EntityManagerInterface    $entityManager,
         protected DomesticDeleteHelper      $domDeleteHelper,
         protected LoginLinkHandlerInterface $roroLoginLinkHandler,
+        protected OperatorSwitchHelper      $operatorSwitchHelper,
         protected PreEnquiryDeleteHelper    $preEnquiryDeleteHelper,
         protected SurveyCreationHelper      $roroSurveyCreationHelper,
         protected string                    $frontendHostname,
@@ -165,17 +166,23 @@ class ScreenshotsCommand extends Command
 
             if ($roroUser instanceof RoRoUser) {
                 $operator = $roroUser->getOperator();
+                $operatorGroup = $this->operatorSwitchHelper->getOperatorGroup($operator);
+                $operators = $this->operatorSwitchHelper->getOperatorSwitchTargets($operator);
 
-                $surveys = $this->entityManager
-                    ->getRepository(Survey::class)
-                    ->getAllSurveysForOperator($operator);
+                foreach($operators as $op) {
+                    $surveys = $this->entityManager
+                        ->getRepository(Survey::class)
+                        ->getAllSurveysForOperator($op);
 
-                foreach ($surveys as $survey) {
-                    $this->entityManager->remove($survey);
+                    foreach ($surveys as $survey) {
+                        $this->entityManager->remove($survey);
+                    }
+
+                    $this->entityManager->remove($op);
                 }
 
                 $this->entityManager->remove($roroUser);
-                $this->entityManager->remove($operator);
+                $this->entityManager->remove($operatorGroup);
                 $this->entityManager->flush();
             }
         }
@@ -233,9 +240,17 @@ class ScreenshotsCommand extends Command
         }
 
         if ($mode === self::MODE_RORO) {
+            $operatorGroup = (new OperatorGroup())
+                ->setName('Test');
+
             $operator = (new Operator())
-                ->setName('Test operator')
+                ->setName('Test operator - Dover')
                 ->setCode(999)
+                ->setIsActive(true);
+
+            $operator2 = (new Operator())
+                ->setName('Test operator - Harwich')
+                ->setCode(998)
                 ->setIsActive(true);
 
             $routeOne = $this->entityManager
@@ -249,19 +264,20 @@ class ScreenshotsCommand extends Command
             $operator->addRoute($routeOne);
             $operator->addRoute($routeTwo);
 
-            $userOne = (new RoRoUser())
+            $routeThree = $this->entityManager
+                ->getRepository(Route::class)
+                ->getRouteByPortNames('Harwich', 'Cuxhaven');
+
+            $operator2->addRoute($routeThree);
+
+            $user = (new RoRoUser())
                 ->setOperator($operator)
                 ->setUsername($this->roroUserIdOne);
 
-            // We need a second user to trigger the bookmark functionality
-            // (If an operator only has a single user, it doesn't show)
-            $userTwo = (new RoRoUser())
-                ->setOperator($operator)
-                ->setUsername($this->roroUserIdTwo);
-
+            $this->entityManager->persist($operatorGroup);
             $this->entityManager->persist($operator);
-            $this->entityManager->persist($userOne);
-            $this->entityManager->persist($userTwo);
+            $this->entityManager->persist($operator2);
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             $surveyOne = $this->roroSurveyCreationHelper->createSurvey(
@@ -274,8 +290,14 @@ class ScreenshotsCommand extends Command
                 new OperatorRoute($operator->getId(), $routeTwo->getId())
             );
 
+            $surveyThree = $this->roroSurveyCreationHelper->createSurvey(
+                new DateTime(),
+                new OperatorRoute($operator2->getId(), $routeThree->getId())
+            );
+
             $this->entityManager->persist($surveyOne);
             $this->entityManager->persist($surveyTwo);
+            $this->entityManager->persist($surveyThree);
             $this->entityManager->flush();
         }
     }

@@ -121,6 +121,6 @@ class OperatorController extends AbstractController
             return $data;
         }
 
-        return $this->render("admin/roro/operators/delete-user.html.twig", $data);
+        return $this->render("admin/roro/operators/delete.html.twig", $data);
     }
 }

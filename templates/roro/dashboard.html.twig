@@ -2,7 +2,7 @@
 {%- set translation_prefix = 'roro.dashboard' -%}
 
 {%- set titleParams = ({
-    operator: user.operator.name
+    operator: operator.name
 }) -%}
 
 {%- block content -%}
@@ -18,11 +18,14 @@
         <div class="govuk-grid-column-two-thirds-from-desktop">
             <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
 
-            {{- surveysTabsAndList(user, surveys, ['outstanding']) -}}
+            {{- surveysTabsAndList(surveys, ['outstanding']) -}}
 
             <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
             <ul class="govuk-list govuk-!-margin-bottom-8">
-                <li><a href="{{ path('app_roro_completed_surveys') }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
+                {%- if is_granted('CAN_SWITCH_OPERATOR') -%}
+                    <li><a href="{{ path('app_roro_switch_operator') }}" class="govuk-link">Switch operator</a></li>
+                {%- endif -%}
+                <li><a href="{{ path('app_roro_completed_surveys', {operatorId: operator.id}) }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
             </ul>
         </div>
         <div class="govuk-grid-column-one-third-from-desktop">

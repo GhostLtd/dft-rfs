@@ -37,7 +37,7 @@ class LoginController extends AbstractController
         $user = $this->getUser();
 
         if ($user instanceof RoRoUser) {
-            return $this->redirectToRoute('app_roro_dashboard');
+            return $this->redirectToRoute('app_roro_dashboard', ['operatorId' => $user->getOperator()->getId()]);
         }
 
         $form = $this->createForm(RoRoLoginType::class);
