@@ -5,7 +5,6 @@ namespace App\Repository\RoRo;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\OperatorGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -61,22 +60,16 @@ class OperatorRepository extends ServiceEntityRepository
         // (i.e. not as per the ORM mapping)
         $conn = $this->getEntityManager()->getConnection();
 
-        $platform = $conn->getDatabasePlatform();
-        $isSqlite = $platform instanceof SqlitePlatform;
-
-        // We need to escape % and _ characters in the group name, as they will otherwise
-        // affect the operation of the LIKE statement
-        $condition = "REPLACE(og.name, '%', '\%')";
-        $condition = "REPLACE({$condition}, '_', '\_')";
-
-        $condition = $isSqlite ?
-            "op.name LIKE {$condition} || '%'" :      // Sqlite / testing
-            "op.name LIKE CONCAT({$condition}, '%')"; // MySQL  / default
-
         $groups = $conn->createQueryBuilder()
             ->select('og.*')
             ->from('roro_operator', 'op')
-            ->join('op', 'roro_operator_group', 'og', $condition)
+            ->join(
+                'op',
+                'roro_operator_group',
+                'og',
+                // LOWER() since Sqlite won't be case-insensitive...
+                "LOWER(og.name) = LOWER(SUBSTRING(op.name, 1, LENGTH(og.name)))"
+            )
             ->where('op.id = :operatorId')
             ->setParameter('operatorId', $operator->getId())
             ->executeQuery()

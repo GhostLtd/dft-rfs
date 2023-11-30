@@ -2,7 +2,6 @@
 
 namespace App\Repository\RoRo;
 
-use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\OperatorGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,8 +48,18 @@ class OperatorGroupRepository extends ServiceEntityRepository
         $slashedName = addcslashes($name, '%_');
 
         $qb = $this->createQueryBuilder('g')
-            ->select('g')
-            ->where('g.name LIKE :name');
+            ->select('g');
+
+        // N.B. Our mysql database may be case-insensitive for string comparisons, but sqlite isn't!
+        $qb->where(
+            $qb->expr()->orX(
+            // This one checks that the chosen name isn't a prefix of an existing group name
+                $qb->expr()->eq('LOWER(:name)', 'LOWER(SUBSTRING(g.name, 1, LENGTH(:name)))'),
+
+                // This one checks that an existing group name isn't a prefix of the chosen name
+                $qb->expr()->eq('LOWER(g.name)', 'LOWER(SUBSTRING(:name, 1, LENGTH(g.name)))'),
+            )
+        );
 
         if ($excluding) {
             $excludingGroupId = $excluding->getId();
@@ -63,7 +72,7 @@ class OperatorGroupRepository extends ServiceEntityRepository
         }
 
         $groups = $qb
-            ->setParameter('name', $slashedName . '%')
+            ->setParameter('name', $name)
             ->getQuery()
             ->execute();
 
