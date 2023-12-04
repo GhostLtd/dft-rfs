@@ -17,7 +17,7 @@
     {%- if authenticationError -%}
         {{- errorSummary({
             errorList: [
-                {text: authenticationError, href: '#ro_ro_login_username'}
+                {text: authenticationError.message, href: '#ro_ro_login_username'}
             ]
         }) -}}
     {% endif -%}

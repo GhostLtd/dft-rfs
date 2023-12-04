@@ -68,7 +68,8 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         $user = $request->request->get('user', '<none>');
         $this->logger->info("RoRo Login failed: {$user} - {$message}");
 
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $message);
+        $exception = new AuthenticationException($message);
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));
     }
 
