@@ -27,7 +27,7 @@ class NotificationInterceptionListPage extends AbstractListPage
         return [
             (new TextFilter('Business name', 'ni.primaryName'))->sortable(),
             (new TextFilter('Other names', 'cn.name'))->sortable(),
-            (new TextFilter('Email', 'ni.email'))->sortable(),
+            (new TextFilter('Email', 'ni.emails'))->sortable(),
         ];
     }
 
