@@ -6,7 +6,7 @@ use App\Entity\RoRo\Survey;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilter;
+use App\ListPage\Field\TextAndCodeFilter;
 use App\ListPage\RoRo\Field\MonthYearFilter;
 use App\Repository\RoRo\SurveyRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -25,9 +25,9 @@ class SurveyListPage extends AbstractListPage
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
         return [
             (new MonthYearFilter('Month', 'survey.surveyPeriodStart'))->sortable(),
-            (new TextFilter('Operator', 'operator.name'))->sortable(),
-            (new TextFilter('UK port', 'ukPort.name'))->sortable(),
-            (new TextFilter('Foreign port', 'foreignPort.name'))->sortable(),
+            (new TextAndCodeFilter('Operator', 'operator.name', 'operator.code'))->sortable(),
+            (new TextAndCodeFilter('UK port', 'ukPort.name', 'ukPort.code'))->sortable(),
+            (new TextAndCodeFilter('Foreign port', 'foreignPort.name', 'foreignPort.code'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
         ];
     }

@@ -11,11 +11,20 @@
     {{ listTableStart(data, form) }}
 
     {% for survey in data.entities %}
+        {% set operatorContent %}
+            {{ survey.operator.name }} <span class="code">({{ survey.operator.code }})</span>
+        {% endset %}
+        {% set ukPortContent %}
+            {{ survey.route.ukPort.name }} <span class="code">({{ survey.route.ukPort.code }})</span>
+        {% endset %}
+        {% set foreignPortContent %}
+            {{ survey.route.foreignPort.name }} <span class="code">({{ survey.route.foreignPort.code }})</span>
+        {% endset %}
         <tr class="govuk-table__row">
             {{ tableCell(survey.surveyPeriodStart | date ('Y/m')) }}
-            {{ tableCell(survey.operator.name ?? '-', {}) }}
-            {{ tableCell(survey.route.ukPort.name ?? '-', {}) }}
-            {{ tableCell(survey.route.foreignPort.name ?? '-', {}) }}
+            {{ tableCell(operatorContent, {html: true}) }}
+            {{ tableCell(ukPortContent, {html: true}) }}
+            {{ tableCell(foreignPortContent, {html: true}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
 
             {%- set date = survey.surveyPeriodStart | date('F Y') -%}
