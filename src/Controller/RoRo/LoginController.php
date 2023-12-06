@@ -75,9 +75,9 @@ class LoginController extends AbstractController
                 return $this->redirectToRoute('app_roro_login_check_email');
             }
             catch(RateLimitExceededException $exceededException) {
-                $authenticationError = $translator->trans('roro.auth.rate-limit', [
+                $authenticationError = new AuthenticationException($translator->trans('roro.auth.rate-limit', [
                     // 'retry_after' => $exceededException->getRateLimit()->getRetryAfter(),
-                ]);
+                ]));
                 $logger->info("RoRo Login submitted: {$email} - failure - rate-limit hit");
             }
         }
