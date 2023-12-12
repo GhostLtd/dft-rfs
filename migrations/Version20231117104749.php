@@ -34,8 +34,8 @@ final class Version20231117104749 extends AbstractMigration
 
         $operatorId = $this->createOperator('Stena Line - Irish', 26);
 
-        $this->moveRouteToOperator($routeIdMap['Heysham - Belfast'], $operatorIdMap['Stena Line - HQ'], $operatorId);
-        $this->moveRouteToOperator($routeIdMap['Liverpool - Belfast'], $operatorIdMap['Stena Line - HQ'], $operatorId);
+        $this->moveRouteToOperator($routeIdMap['Heysham - Belfast'] ?? null, $operatorIdMap['Stena Line - HQ'] ?? null, $operatorId);
+        $this->moveRouteToOperator($routeIdMap['Liverpool - Belfast'] ?? null, $operatorIdMap['Stena Line - HQ'] ?? null, $operatorId);
     }
 
     public function down(Schema $schema): void
@@ -49,8 +49,8 @@ final class Version20231117104749 extends AbstractMigration
         $operatorIdMap = $this->getOperatorIdMap($conn);
         $routeIdMap = $this->getRouteIdMap($conn);
 
-        $this->moveRouteToOperator($routeIdMap['Heysham - Belfast'], $operatorIdMap['Stena Line - Irish'], $operatorIdMap['Stena Line - HQ']);
-        $this->moveRouteToOperator($routeIdMap['Liverpool - Belfast'], $operatorIdMap['Stena Line - Irish'], $operatorIdMap['Stena Line - HQ']);
+        $this->moveRouteToOperator($routeIdMap['Heysham - Belfast'] ?? null, $operatorIdMap['Stena Line - Irish'] ?? null, $operatorIdMap['Stena Line - HQ'] ?? null);
+        $this->moveRouteToOperator($routeIdMap['Liverpool - Belfast'] ?? null, $operatorIdMap['Stena Line - Irish'] ?? null, $operatorIdMap['Stena Line - HQ'] ?? null);
 
         $this->deleteOperator($operatorIdMap['Stena Line - Irish']);
 
@@ -129,8 +129,13 @@ EOQ)->fetchAll(\PDO::FETCH_ASSOC);
         ]);
     }
 
-    public function moveRouteToOperator(string $routeId, string $oldOperatorId, string $newOperatorId): void
+    public function moveRouteToOperator(?string $routeId, ?string $oldOperatorId, ?string $newOperatorId): void
     {
+        if (!$routeId || !$oldOperatorId || !$newOperatorId) {
+            // Skip for non-existent route / operator
+            return;
+        }
+
         foreach(['roro_operator_route', 'roro_survey'] as $table) {
             $this->addSql("UPDATE {$table} SET operator_id = :newOperatorId WHERE operator_id = :oldOperatorId AND route_id = :routeId", [
                 'routeId' => $routeId,
