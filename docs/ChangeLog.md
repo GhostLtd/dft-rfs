@@ -2,7 +2,7 @@
 
 # Changelog
 
-## Upcoming
+## 19th December 2023
 
 * **Feature:** RoRo - Operator Groups  
   - Operators groups can be created by the admin
