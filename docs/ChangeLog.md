@@ -14,6 +14,7 @@
 * **Change:** RoRo - show data entry method used in admin when viewing survey, and also in exports
 * **Change:** Add admin dashboard entries for Pre-Enquiry / RoRo
 * **Change:** RoRo - show operator/port numbers on RoRo admin list page, and allow searching by them
+* **Change:** RoRo - Add OperatorGroup-related guidance text to the Operator view page
 * **Fix:** RoRo - APP_DISABLE_REMINDERS environment var now correctly passed through to app
 * **Fix:** RoRo - reminder should be sent on day 8 rather than day 9
 

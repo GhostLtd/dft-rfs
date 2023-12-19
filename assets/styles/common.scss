@@ -21,3 +21,11 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
     }
   }
 }
+
+li ul.govuk-list--indent {
+  margin-left: 40px;
+}
+
+.govuk-list--circle {
+  list-style-type: circle;
+}

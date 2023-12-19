@@ -10,12 +10,20 @@
     {%- set canEditOperator = is_granted('CAN_EDIT_OPERATOR', operator) -%}
 
     <dl class="govuk-summary-list">
+        {%- set operatorGroupCopy -%}
+            {%- if not operator_group -%}
+                {{- '-' -}}
+            {%- else -%}
+                <a href="{{ path('admin_operator_groups_view', {operatorGroupId: operator_group.id}) }}">{{ operator_group.name }}</a>
+            {%- endif -%}
+        {%- endset -%}
         {{ actionlessSummaryListRow('Name', operator.name) }}
         {{ actionlessSummaryListRow('Code', operator.code) }}
         {{ actionlessSummaryListRow('Is active?', operator.isActive ? 'Yes' : 'No') }}
+        {{ actionlessSummaryListRow('Matching operator group', operatorGroupCopy) }}
     </dl>
 
-    <div class="govuk-!-margin-bottom-9">
+    <div>
         {%- if canEditOperator -%}
             <a class="govuk-button govuk-button--{{ canEditOperator ? 'primary' : 'secondary' }}" href="{{ path('admin_operators_edit', {operatorId: operator.id}) }}">Edit operator</a>
         {%- endif -%}
@@ -23,6 +31,22 @@
             <a class="govuk-button govuk-button--{{ canDeleteOperator ? 'warning' : 'secondary' }}" href="{{ path('admin_operators_delete', {operatorId: operator.id}) }}">Delete operator</a>
         {%- endif -%}
     </div>
+
+    {%- if operator_group and operator_group_operators | length > 1 -%}
+        <div class="govuk-inset-text govuk-!-margin-bottom-9">
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Users from any of these Operators will have access to complete this Operator's surveys:
+                    <ul class="govuk-list govuk-list--circle govuk-list--indent">
+                        {% for operatorGroupOperator in operator_group_operators %}
+                            <li>{{ operatorGroupOperator.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li><strong>Only</strong> the users listed below will receive email notifications about this Operator's surveys</li>
+                <li>Users can only belong to a single Operator</li>
+            </ul>
+        </div>
+    {%- endif -%}
 
     <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Routes</h2>
 

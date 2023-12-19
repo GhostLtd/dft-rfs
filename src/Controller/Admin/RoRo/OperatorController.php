@@ -5,6 +5,7 @@ namespace App\Controller\Admin\RoRo;
 use App\Entity\RoRo\Operator;
 use App\Form\Admin\RoRo\OperatorType;
 use App\ListPage\RoRo\OperatorListPage;
+use App\Repository\RoRo\OperatorRepository;
 use App\Utility\ConfirmAction\RoRo\Admin\DeleteOperatorConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -54,10 +55,17 @@ class OperatorController extends AbstractController
     }
 
     #[Route("/{operatorId}", name: "view")]
-    public function view(Operator $operator): Response
+    public function view(Operator $operator, OperatorRepository $operatorRepository): Response
     {
+        $operatorGroup = $operatorRepository->findOperatorGroupForOperator($operator);
+        $operatorGroupOperators = $operatorGroup ?
+            $operatorRepository->findOperatorsWithNamePrefix($operatorGroup->getName()) :
+            null;
+
         return $this->render('admin/roro/operators/view.html.twig', [
             'operator' => $operator,
+            'operator_group' => $operatorGroup,
+            'operator_group_operators' => $operatorGroupOperators,
             'translation_parameters' => [
                 'name' => $operator->getName(),
                 'code' => $operator->getCode(),
