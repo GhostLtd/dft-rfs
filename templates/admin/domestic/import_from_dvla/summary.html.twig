@@ -7,6 +7,10 @@
     <p class="govuk-body">The following surveys have been created for the <strong>{{ surveyOptions.isNorthernIreland ? 'NI' : 'GB' }} region</strong>
         and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>
 
+    {% if surveyOptions.allowHistoricalDate ?? null %}
+        <p class="govuk-body">The <em>allow_backdated_survey</em> option was enabled, allowing the sending of a backdated survey.</p>
+    {% endif %}
+
     <dl class="govuk-summary-list govuk-!-margin-bottom-5">
         {% for survey in surveys %}
             {# @var survey \App\Entity\Domestic\Survey #}

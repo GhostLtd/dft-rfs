@@ -6,6 +6,7 @@ namespace App\Utility;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vfs\FileSystem;
 
@@ -24,12 +25,16 @@ abstract class AbstractBulkSurveyImporter
         $this->notificationInterception = $notificationInterception;
     }
 
-    public function getSurveys(FormInterface $form)
+    public function getSurveys(FormInterface $form, bool $allowHistoricalDate=false): array
     {
         /** @var UploadedFile $file */
         $file = $form->get('file')->getData();
 
         $surveyOptions = $this->getAggregateSurveyOptionsAndValidate($form);
+        if ($allowHistoricalDate) {
+            $surveyOptions['allowHistoricalDate'] = true;
+        }
+
         if ($form->isValid()) {
             $data = $this->getDataFromFilename($file->getRealPath());
             return array_merge($this->processData($data['valid'], $surveyOptions), [
@@ -41,16 +46,18 @@ abstract class AbstractBulkSurveyImporter
         return [];
     }
 
-    public function processData($data, $surveyOptions = []) {
+    public function processData($data, $surveyOptions = []): array
+    {
         $result = [
             'invalidData' => [],
             'invalidSurveys' => [],
             'surveys' => [],
         ];
+
         foreach ($data as $dataRow) {
             $survey = $this->createSurvey($dataRow, $surveyOptions);
             if ($survey) {
-                $violations = $this->validate($survey);
+                $violations = $this->validate($survey, $surveyOptions);
                 if ($violations->count() === 0) {
                     $result['surveys'][] = $survey;
                 } else {
@@ -66,18 +73,21 @@ abstract class AbstractBulkSurveyImporter
         return $result;
     }
 
-    protected function getOriginalFilename(?UploadedFile $file) {
+    protected function getOriginalFilename(?UploadedFile $file): ?string
+    {
         if (!$file) {
             return null;
         }
         return pathinfo($file->getClientOriginalName(), PATHINFO_BASENAME);
     }
 
-    public function getDataFromFilename($filename) {
+    public function getDataFromFilename($filename): array
+    {
         $surveyData = [
             'valid' => [],
             'invalid' => [],
         ];
+
         $handle = fopen($filename, "r");
         while(!feof($handle)){
             $line = trim(fgets($handle));
@@ -91,8 +101,14 @@ abstract class AbstractBulkSurveyImporter
         return $surveyData;
     }
 
-    protected function validate($survey)
+    protected function validate($survey, array $surveyOptions): ConstraintViolationListInterface
     {
-        return  $this->validator->validate($survey, null, ['import_survey', 'notify_api']);
+        $groups = ['import_survey', 'notify_api'];
+
+        if (($surveyOptions['allowHistoricalDate'] ?? false) === false) {
+            $groups[] = 'import_survey_non_historical';
+        }
+
+        return $this->validator->validate($survey, null, $groups);
     }
 }

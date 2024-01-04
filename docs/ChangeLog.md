@@ -2,6 +2,10 @@
 
 # Changelog
 
+## 4th January 2024
+
+* **Feature:** Add a checkbox to the CSRGT DVLA import screen allowing surveys to be created in the past 
+
 ## 19th December 2023
 
 * **Feature:** RoRo - Operator Groups  

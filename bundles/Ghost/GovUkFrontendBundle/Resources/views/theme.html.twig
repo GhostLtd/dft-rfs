@@ -342,6 +342,57 @@
     <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked | default(false) %} checked="checked"{% endif %} />
 {%- endblock -%}
 
+{%- block gds_checkbox_row %}
+    {%- set widget_context_overrides = {} -%}
+    {%- if help is not empty or errors is not empty -%}
+        {%- set widget_context_overrides = attr|merge({
+            attr: {
+                'aria-describedby': (
+                (help is not empty ? id ~"-hint " : '') ~
+                (errors is not empty ? id ~"-error " : '') ~
+                attr['aria-describedby']|default('')
+                ) | trim
+            }
+        }) -%}
+    {%- endif -%}
+    <div{% with {
+        attr: row_attr|merge({
+            'class': (
+            'govuk-form-group ' ~
+            (errors is not empty ? 'govuk-form-group--error ' : '') ~
+            row_attr.class|default('')
+            ) | trim
+        })
+    } %}{{ block('attributes') }}{% endwith %}>
+        {{- form_errors(form) -}}
+        <div class="govuk-checkboxes{% if small %} govuk-checkboxes--small{% endif %}" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                {{- block('gds_checkbox_inner_widget') -}}
+                {{- block('gds_checkbox_inner_label') -}}
+                {%- with {help_attr: help_attr | merge({
+                    class: ((help_attr.class ?? '') ~ ' govuk-checkboxes__hint') | trim,
+                })} -%}
+                    {{- block('form_help') -}}
+                {%- endwith -%}
+            </div>
+        </div>
+    </div>
+{%- endblock -%}
+
+{%- block gds_checkbox_inner_label -%}
+    {%- set label_attr = label_attr|merge({'class': ('govuk-checkboxes__label ' ~ label_attr.class|default(''))|trim}) -%}
+    {{- block('form_label') -}}
+{%- endblock -%}
+
+{%- block gds_checkbox_inner_widget -%}
+    {%- set attr = attr|merge({
+        class: ('govuk-checkboxes__input ' ~
+        attr.class|default(''))|trim
+    }) -%}
+    {% set ignoreForCodeAnalysisWarning %}<label>{% endset %}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked | default(false) %} checked="checked"{% endif %} />
+{%- endblock -%}
+
 {%- block gds_button_row -%}
     {{- form_widget(form) -}}
 {%- endblock -%}

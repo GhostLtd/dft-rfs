@@ -59,17 +59,22 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'error_bubbling' => true,
             ])
-            ;
+            ->add('allowHistoricalDate', Gds\CheckboxType::class, [
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'label' => 'Allow survey period start date in the past',
+                'help' => 'Check this box <strong>ONLY</strong> if you need to import a backdated import in extenuating circumstances',
+                'help_html' => true,
+            ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    public function mapDataToForms($viewData, $forms): void
     {
         $forms = iterator_to_array($forms);
         $forms['file']->setData($viewData['file'] ?? null);
         $forms['override_defaults']->setData($viewData['override_defaults'] ?? false);
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         $viewData['file'] = $forms['file']->getData();

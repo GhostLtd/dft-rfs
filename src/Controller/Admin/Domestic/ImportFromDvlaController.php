@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,14 +26,15 @@ class ImportFromDvlaController extends AbstractController
      * @Route("", name="index")
      * @Template()
      */
-    public function index(Request $request, Session $session, DvlaImporter $dvlaImporter)
+    public function index(Request $request, Session $session, DvlaImporter $dvlaImporter): RedirectResponse|array
     {
         $form = $this->createForm(ImportDvlaFileUploadType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted())
         {
-            $importDataAndOptions = $dvlaImporter->getSurveys($form);
+            $allowHistoricalDate = $form->get('survey_options')->get('allowHistoricalDate')->getData();
+            $importDataAndOptions = $dvlaImporter->getSurveys($form, $allowHistoricalDate);
 
             if ($form->isValid()) {
                 $session->set(self::SESSION_KEY, $importDataAndOptions);
@@ -49,7 +51,7 @@ class ImportFromDvlaController extends AbstractController
      * @Route("/review", name="review")
      * @Template()
      */
-    public function review(Request $request, Session $session, DvlaImporter $dvlaImporter, EntityManagerInterface $entityManager)
+    public function review(Request $request, Session $session, EntityManagerInterface $entityManager): RedirectResponse|array
     {
         // grab the data from the session
         $data = $session->get(self::SESSION_KEY, false);

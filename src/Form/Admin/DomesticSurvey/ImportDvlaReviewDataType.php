@@ -10,7 +10,8 @@ use App\Utility\RegistrationMarkHelper;
 
 class ImportDvlaReviewDataType extends AbstractImportReviewDataType
 {
-    protected function choiceLabel($data) {
+    protected function choiceLabel($data): string
+    {
         /** @var Survey $data */
         $regMark = new RegistrationMarkHelper($data->getRegistrationMark());
         $address1 = ucwords(strtolower($data->getInvitationAddress()->getLine1()));
