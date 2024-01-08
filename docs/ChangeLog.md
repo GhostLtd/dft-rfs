@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** CSRGT Admin - List page filters: Allow next year to be chosen, and don't break if week 53 selected on a year that doesn't have that week. 
+
 ## 4th January 2024
 
 * **Feature:** Add a checkbox to the CSRGT DVLA import screen allowing surveys to be created in the past 

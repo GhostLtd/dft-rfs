@@ -38,11 +38,18 @@ class WeekYearFilter extends Simple implements FilterableInterface
             return $queryBuilder;
         }
 
-        if (isset($formData['week']) && is_numeric($formData['year'])) {
+        if (isset($formData['week']) && is_numeric($formData['week'])) {
             $start = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
             $end = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
-            $end->modify('+7 days');
 
+            if (!$end) {
+                // Impossible year/week combo.
+                // Generally caused be "no week 53 in chosen year".
+                // Make sure no results shown.
+                return $queryBuilder->andWhere('1 = 0');
+            }
+
+            $end->modify('+7 days');
         } else {
             $start = WeekNumberHelper::getFirstDayOfYear($formData['year']);
             $end = WeekNumberHelper::getFirstDayOfYear($formData['year'] + 1);
