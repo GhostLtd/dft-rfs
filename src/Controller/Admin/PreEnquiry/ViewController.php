@@ -42,13 +42,7 @@ class ViewController extends AbstractController
 
         return $this->render('admin/pre_enquiry/view.html.twig', [
             'addNoteForm' => $addNotesForm->createView(),
-            'approvedBy' => in_array($preEnquiry->getState(), [
-                SurveyStateInterface::STATE_INVITATION_SENT,
-                SurveyStateInterface::STATE_NEW,
-                SurveyStateInterface::STATE_IN_PROGRESS,
-                SurveyStateInterface::STATE_REJECTED,
-                SurveyStateInterface::STATE_CLOSED,
-            ]) ? false : $this->auditLogRepository->getApprovedBy($preEnquiry),
+            'approvedBy' => false, // PreEnquiry has no APPROVED state
             'auditLogs' => $this->auditLogRepository->getLogs($preEnquiry->getId(), PreEnquiry::class),
 //          'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($preEnquiry),
             'preEnquiry' => $preEnquiry,

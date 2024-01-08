@@ -25,9 +25,7 @@ class StateReportHelper
                 SurveyStateInterface::STATE_CLOSED,
             ],
             ($isDomestic ? [DomesticSurvey::STATE_REISSUED] : []),
-            [
-                SurveyStateInterface::STATE_APPROVED,
-            ],
+            ($isDomestic || $isRoro ? [SurveyStateInterface::STATE_APPROVED,] : []),
             ($isRoro ? [] : [SurveyStateInterface::STATE_REJECTED]),
         );
 

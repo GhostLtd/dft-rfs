@@ -33,7 +33,6 @@ class PreEnquiry implements SurveyReminderInterface, SurveyInterface, SurveyStat
         self::STATE_INVITATION_FAILED,
         self::STATE_IN_PROGRESS,
         self::STATE_CLOSED,
-        self::STATE_APPROVED,
         self::STATE_REJECTED,
         self::STATE_EXPORTING,
         self::STATE_EXPORTED,

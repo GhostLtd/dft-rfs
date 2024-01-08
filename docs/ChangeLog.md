@@ -8,6 +8,8 @@
 * **Change:** CSRGT - update "The vehicle was not taxed" answer to mention "SORN".
 * **Change:** Roro Admin - Dev-mode auto-login is now a feature rather than having its own env flag.
 * **Feature:** Admin - add a simple utility to lookup user identifiers and find their corresponding CSRGT/IRHS/PreEnquiry survey.
+* **Change:** Pre-enquiry - remove approved state
+* **Change:** RoRo - add SurveyState to export data
 
 ## 4th January 2024
 

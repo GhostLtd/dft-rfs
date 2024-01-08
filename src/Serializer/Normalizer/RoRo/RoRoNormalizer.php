@@ -53,6 +53,7 @@ class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
             'RoRoNo' => $ukCode.$foreignCode.$operatorCode,
             'OperatorId' => $operatorCode,
             'IsActiveForMonth' => $isActive ? 1 : 0,
+            'SurveyState' => $object->getState(),
         ];
 
         if ($isActive) {

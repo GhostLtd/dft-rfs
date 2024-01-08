@@ -37,7 +37,7 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
             ->setParameters([
-                'states' => [SurveyStateInterface::STATE_CLOSED, SurveyStateInterface::STATE_APPROVED],
+                'states' => [SurveyStateInterface::STATE_CLOSED],
                 'monthStart' => $monthStart,
                 'monthEnd' => $monthEnd,
             ])

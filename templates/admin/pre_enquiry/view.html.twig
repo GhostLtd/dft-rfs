@@ -90,8 +90,8 @@
         </div>
     {%- endif -%}
 
-    {% if workflow_can(preEnquiry, 'approve') or workflow_can(preEnquiry, 'reject') or workflow_can(preEnquiry, 'complete')
-        or workflow_can(preEnquiry, 're_open') or workflow_can(preEnquiry, 'un_approve') or workflow_can(preEnquiry, 'un_reject')
+    {% if workflow_can(preEnquiry, 'reject') or workflow_can(preEnquiry, 'complete')
+        or workflow_can(preEnquiry, 're_open') or workflow_can(preEnquiry, 'un_reject')
     %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
@@ -100,8 +100,6 @@
             {{ _self.workflow_link(preEnquiry, 'complete', 'Complete') }}
             {{ _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
             {{ _self.workflow_link(preEnquiry, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(preEnquiry, 'approve', 'Approve') }}
-            {{ _self.workflow_link(preEnquiry, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
         </div>
     {% endif %}
 

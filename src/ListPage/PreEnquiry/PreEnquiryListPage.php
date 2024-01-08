@@ -2,7 +2,7 @@
 
 namespace App\ListPage\PreEnquiry;
 
-use App\Entity\International\Survey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
 use App\ListPage\Field\DateTextFilter;
@@ -25,7 +25,7 @@ class PreEnquiryListPage extends AbstractListPage
 
     protected function getFieldsDefinition(): array
     {
-        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
+        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), PreEnquiry::STATE_FILTER_CHOICES), PreEnquiry::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
             (new DateTextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
