@@ -2,14 +2,14 @@
 
 namespace App;
 
-use Exception;
-
 class Features
 {
+    public const DEV_RORO_AUTO_LOGIN = 'DEV_RORO_AUTO_LOGIN';
     public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
     public const SMARTLOOK_USER_SESSION_RECORDING = 'SMARTLOOK_USER_SESSION_RECORDING';
 
     public const FEATURE_MAP = [
+        'dev-roro-auto-login' => self::DEV_RORO_AUTO_LOGIN,
         'smartlook-user-session-recording' => self::SMARTLOOK_USER_SESSION_RECORDING,
     ];
 
@@ -26,7 +26,6 @@ class Features
      * @param $feature
      * @param bool $checkFeatureIsValid An optional safety check to ensure the feature being requested is even a defined feature
      * @return bool
-     * @throws Exception
      */
     public function isEnabled($feature, bool $checkFeatureIsValid = false): bool
     {
@@ -38,7 +37,6 @@ class Features
 
     /**
      * @param $feature
-     * @throws Exception
      */
     private function checkFeatureIsValid($feature): void
     {
@@ -48,7 +46,7 @@ class Features
         );
 
         if (!in_array($feature, $allFeatures)) {
-            throw new Exception("Unknown feature '${feature}'");
+            throw new \RuntimeException("Unknown feature '${feature}'");
         }
     }
 

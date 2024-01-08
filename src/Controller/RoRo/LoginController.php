@@ -3,6 +3,7 @@
 namespace App\Controller\RoRo;
 
 use App\Entity\RoRoUser;
+use App\Features;
 use App\Form\RoRoLoginType;
 use App\Messenger\AlphagovNotify\RoRoLoginEmail;
 use App\Repository\MaintenanceWarningRepository;
@@ -26,6 +27,7 @@ class LoginController extends AbstractController
 {
     #[Route("/login", name: "login")]
     public function login(
+        Features $features,
         LoginLinkHandlerInterface $loginLinkHandler,
         LoggerInterface $logger,
         MaintenanceWarningRepository $maintenanceWarningRepository,
@@ -57,7 +59,7 @@ class LoginController extends AbstractController
                     $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
 
                     if ($this->getParameter('kernel.environment') === 'dev' &&
-                        $this->getParameter('dev.roro.auto_login')
+                        $features->isEnabled(Features::DEV_RORO_AUTO_LOGIN)
                     ) {
                         $logger->info("RoRo Login submitted: {$email} - success - DEV mode auto-redirect");
                         return new RedirectResponse($loginLinkDetails->getUrl());

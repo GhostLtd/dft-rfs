@@ -4,8 +4,9 @@
 
 ## Upcoming
 
-* **Change:** CSRGT - update "The vehicle was not taxed" answer to mention "SORN"
 * **Fix:** CSRGT Admin - List page filters: Allow next year to be chosen, and don't break if week 53 selected on a year that doesn't have that week. 
+* **Change:** CSRGT - update "The vehicle was not taxed" answer to mention "SORN"
+* **Change:** Roro Admin - Dev-mode auto-login is now a feature rather than having its own env flag
 
 ## 4th January 2024
 
