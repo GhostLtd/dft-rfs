@@ -37,7 +37,7 @@ class SurveyAddController extends AbstractController
     {
         if ($originalSurveyId) {
             $originalSurvey = $this->surveyRepository->find($originalSurveyId);
-            $survey = $this->getSurvey($originalSurvey);
+            $survey = $this->createReissueSurveyFromOriginal($originalSurvey);
         } else {
             $originalSurvey = null;
             $survey = null;
@@ -88,7 +88,7 @@ class SurveyAddController extends AbstractController
         ]);
     }
 
-    protected function getSurvey(Survey $originalSurvey)
+    protected function createReissueSurveyFromOriginal(?Survey $originalSurvey): Survey
     {
         if (!$originalSurvey || !$this->domesticSurveyStateMachine->can($originalSurvey, 'reissue')) {
             throw new BadRequestHttpException();
@@ -104,11 +104,10 @@ class SurveyAddController extends AbstractController
                 ? LongAddress::createFromAddress($originalResponse->getNewOwnerName(), $originalResponse->getNewOwnerAddress())
                 : LongAddress::createFromAddress($originalResponse->getHireeName(), $originalResponse->getHireeAddress())
             )
-//              At the moment, email invitations are disabled
-//              ->setInvitationEmail($isSold
-//                    ? $originalResponse->getNewOwnerEmail()
-//                    : $originalResponse->getHireeEmail()
-//                )
+            ->setInvitationEmails($isSold
+                ? $originalResponse->getNewOwnerEmail()
+                : $originalResponse->getHireeEmail()
+            )
             ->setIsNorthernIreland($originalSurvey->getIsNorthernIreland())
             ->setSurveyPeriodStart($originalSurvey->getSurveyPeriodStart());
 

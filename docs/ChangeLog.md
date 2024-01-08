@@ -10,6 +10,7 @@
 * **Feature:** Admin - add a simple utility to lookup user identifiers and find their corresponding CSRGT/IRHS/PreEnquiry survey.
 * **Change:** Pre-enquiry - remove approved state
 * **Change:** RoRo - add SurveyState to export data
+* **Feature:** CSRGT - when reissuing a survey, autofill recipient email from hiree/new owner
 
 ## 4th January 2024
 
