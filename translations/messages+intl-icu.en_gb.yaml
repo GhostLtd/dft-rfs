@@ -928,7 +928,7 @@ domestic:
         label: ''
         help: Give details of why no journeys were carried out
       option:
-        not-taxed: 'The vehicle was not taxed'
+        not-taxed: 'The vehicle was not taxed / SORN'
         no-work: 'There was no work'
         repair: 'The vehicle was being repaired'
         site-work-only: 'The vehicle is used solely for site work'
