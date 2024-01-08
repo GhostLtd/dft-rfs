@@ -190,3 +190,8 @@ route:
     confirmed-notification:
       heading: Operation successful
       content: Route from {uk_port_name} to {foreign_port_name} was successfully deleted
+
+user-id:
+  lookup:
+    heading: User ID lookup
+    help: This utility allows a user ID (commonly found in the Google logs) to be more easily matched to a corresponding survey.

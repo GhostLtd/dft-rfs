@@ -37,4 +37,17 @@ class PasscodeUserRepository extends ServiceEntityRepository implements Password
         $entityManager->persist($user);
         $entityManager->flush();
     }
+
+    public function lookupUserByIdentifier(string $userIdentifier): ?PasscodeUser
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u, d, i, p')
+            ->leftJoin('u.domesticSurvey', 'd')
+            ->leftJoin('u.internationalSurvey', 'i')
+            ->leftJoin('u.preEnquiry', 'p')
+            ->where('u.username = :username')
+            ->setParameter('username', $userIdentifier)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

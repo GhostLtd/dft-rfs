@@ -76,6 +76,7 @@ class AdminMenu implements MenuInterface
             new MenuDivider(),
 
             new RoleMenuItem('maintenance-warnings', 'Maintenance warnings', $this->router->generate('admin_maintenance_warning_list'), [], []),
+            new RoleMenuItem('user-id-lookup', 'User ID lookup', $this->router->generate('admin_user_id_lookup'), [], []),
             new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], ['ROLE_ADMIN_FORM_USER']),
         ]);
     }
