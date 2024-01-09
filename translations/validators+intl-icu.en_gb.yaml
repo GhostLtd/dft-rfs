@@ -108,6 +108,9 @@ international:
       weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  survey:
+    reference-number:
+      correct-format: Enter a number followed by a dash, followed by a four-digit week number.
   survey-response:
     annual-international-journey-count:
       not-null: Estimate the number of trips

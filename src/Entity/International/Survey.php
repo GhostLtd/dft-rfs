@@ -19,7 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -65,6 +65,22 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
      * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
      */
     private $referenceNumber;
+
+    /**
+     * @Assert\Callback(groups={"add_survey"})
+     */
+    public function validateReferenceNumber(ExecutionContextInterface $context): void
+    {
+        if (
+            $this->referenceNumber &&
+            !preg_match('/^\d+\-\d{4}$/', $this->referenceNumber)
+        ) {
+            $context
+                ->buildViolation("international.survey.reference-number.correct-format")
+                ->atPath('referenceNumber')
+                ->addViolation();
+        }
+    }
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys", cascade={"persist"})
