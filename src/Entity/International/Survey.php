@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 /**
  * @ORM\Entity(repositoryClass=SurveyRepository::class)
@@ -291,5 +292,11 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         }
 
         return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
+    }
+
+    public function isEarlierThanSurveyPeriodEnd(): bool
+    {
+        $now = new \DateTime();
+        return $now < $this->getSurveyPeriodEnd();
     }
 }

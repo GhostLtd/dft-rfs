@@ -1334,6 +1334,14 @@ domestic:
   closing-details:
     start:
       heading: Final questions
+    early-response:
+      heading: Your survey period does not end until {finishDate}
+      is-correct:
+        label: Can you confirm there will be no further changes?
+        help: ''
+        no: I might want to make further changes. Do not submit the survey.
+        yes: I am sure there will be no further changes.
+
     missing-days:
       heading: Missing days
       help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
@@ -1586,6 +1594,13 @@ international:
   closing-details:
     confirm-submission:
       heading: Submit your survey
+    early-response:
+      heading: Your survey period does not end until {finishDate}
+      is-correct:
+        label: Can you confirm there will be no further changes?
+        help: ''
+        no: I might want to make further changes. Do not submit the survey.
+        yes: I am sure there will be no further changes.
 
   completed:
     heading: Survey complete
@@ -1594,7 +1609,7 @@ international:
 
   buttons:
     add-vehicles: Add Vehicles
-    submit-survey: Submit Survey
+    submit-survey: Submit survey
   help:
     text:
       phone-number: '0207 944 8580'

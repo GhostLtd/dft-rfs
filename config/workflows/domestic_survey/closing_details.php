@@ -17,6 +17,7 @@ return static function (ContainerConfigurator $container) {
                 'supports' => [StateObject::class],
                 'places' => [
                     StateObject::STATE_START,
+                    StateObject::STATE_EARLY_RESPONSE,
                     StateObject::STATE_MISSING_DAYS,
                     StateObject::STATE_REASON_EMPTY_SURVEY,
                     StateObject::STATE_VEHICLE_FUEL,
@@ -30,10 +31,50 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_END,
                 ],
                 'transitions' => [
+                    // Is early
+                    'is_early' => [
+                        'from' =>  StateObject::STATE_START,
+                        'to' => StateObject::STATE_EARLY_RESPONSE,
+                        'guard' => 'subject.getSubject().isInPossessionButIsEarlierThanSurveyPeriodEnd()',
+                    ],
+                    'is_early_to_dashboard' => [
+                        'from' => StateObject::STATE_EARLY_RESPONSE,
+                        'to' => StateObject::STATE_END,
+                        'metadata' => [
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => false]
+                        ],
+                    ],
+                    'is_early_to_missing_days' => [
+                        'from' =>  StateObject::STATE_EARLY_RESPONSE,
+                        'to' => StateObject::STATE_MISSING_DAYS,
+                        'guard' => 'subject.getSubject().isInPossessionButHasNotCompletedAllDays()',
+                        'metadata' => [
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
+                        ],
+                    ],
+                    'is_early_to_request_fuel' => [
+                        'from' =>  StateObject::STATE_EARLY_RESPONSE,
+                        'to' => StateObject::STATE_VEHICLE_FUEL,
+                        'guard' => '!subject.getSubject().isInPossessionButHasNotCompletedAllDays() && subject.getSubject().hasJourneys()',
+                        'metadata' => [
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
+                        ],
+                    ],
+                    'is_early_to_empty_survey' => [
+                        'from' =>  StateObject::STATE_EARLY_RESPONSE,
+                        'to' => StateObject::STATE_REASON_EMPTY_SURVEY,
+                        'guard' => '!subject.getSubject().isInPossessionButHasNotCompletedAllDays() && !subject.getSubject().hasJourneys()',
+                        'metadata' => [
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
+                        ],
+                    ],
+
+                    // Missing days
                     'missing_days' => [
                         'from' =>  StateObject::STATE_START,
                         'to' => StateObject::STATE_MISSING_DAYS,
-                        'guard' => 'subject.getSubject().getDays().count() !== 7 && subject.getSubject().getIsInPossessionOfVehicle() === "yes"',
+                        'guard' => '!subject.getSubject().isInPossessionButIsEarlierThanSurveyPeriodEnd() && subject.getSubject().isInPossessionButHasNotCompletedAllDays()',
                     ],
                     'back_to_dashboard' => [
                         'from' => StateObject::STATE_MISSING_DAYS,
@@ -59,10 +100,12 @@ return static function (ContainerConfigurator $container) {
                         ],
                         'guard' => '!subject.getSubject().hasJourneys()',
                     ],
+
+                    // Fuel request
                     'request_fuel_added_no_issues' => [
                         'from' =>  StateObject::STATE_START,
                         'to' => StateObject::STATE_VEHICLE_FUEL,
-                        'guard' => 'subject.getSubject().hasJourneys() && subject.getSubject().getDays().count() === 7'
+                        'guard' => '!subject.getSubject().isInPossessionButIsEarlierThanSurveyPeriodEnd() && subject.getSubject().isInPossessionAndHasCompletedAllDays() && subject.getSubject().hasJourneys()'
                     ],
 
 

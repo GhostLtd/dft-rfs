@@ -3,6 +3,7 @@
 namespace App\Workflow\InternationalSurvey;
 
 use App\Entity\International\Survey;
+use App\Form\InternationalSurvey\ClosingDetails\EarlyResponseType;
 use App\Form\InternationalSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
@@ -11,15 +12,18 @@ use InvalidArgumentException;
 class ClosingDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_START = 'start';
+    const STATE_EARLY_RESPONSE = 'early-response';
     const STATE_REASON_EMPTY_SURVEY = 'empty-survey';
     const STATE_CONFIRM = 'confirm';
     const STATE_END = 'end';
 
     private const FORM_MAP = [
+        self::STATE_EARLY_RESPONSE => EarlyResponseType::class,
         self::STATE_REASON_EMPTY_SURVEY => ReasonEmptySurveyType::class,
     ];
 
     private const TEMPLATE_MAP = [
+        self::STATE_EARLY_RESPONSE => 'international_survey/closing_details/form-early-response.html.twig',
         self::STATE_REASON_EMPTY_SURVEY => 'international_survey/closing_details/form-reason-for-empty-survey.html.twig',
         self::STATE_CONFIRM => 'international_survey/closing_details/confirm.html.twig',
     ];

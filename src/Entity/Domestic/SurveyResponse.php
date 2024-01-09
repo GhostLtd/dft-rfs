@@ -620,4 +620,26 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setReasonForEmptySurveyOther($responseToMerge->getReasonForEmptySurveyOther());
         return $this;
     }
+
+    public function isInPossessionButHasNotCompletedAllDays(): bool
+    {
+        return
+            $this->isInPossessionOfVehicle === self::IN_POSSESSION_YES &&
+            $this->getDays()->count() !== 7;
+    }
+
+    public function isInPossessionAndHasCompletedAllDays(): bool
+    {
+        return
+            $this->isInPossessionOfVehicle === self::IN_POSSESSION_YES &&
+            $this->getDays()->count() === 7;
+    }
+
+    public function isInPossessionButIsEarlierThanSurveyPeriodEnd(): bool
+    {
+        $now = new \DateTime();
+        return
+            $this->isInPossessionOfVehicle === self::IN_POSSESSION_YES &&
+            $now < $this->getSurvey()->getSurveyPeriodEnd();
+    }
 }

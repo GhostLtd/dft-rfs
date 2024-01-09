@@ -12,6 +12,7 @@
 * **Change:** RoRo - add SurveyState to export data
 * **Feature:** CSRGT - when reissuing a survey, autofill recipient email from hiree/new owner
 * **Feature:** IRHS - validate reference number when adding a survey manually, to make sure that it includes a week number
+* **Feature:** CSRGT / IRHS - Early response question in closing details
 
 ## 4th January 2024
 

@@ -15,12 +15,6 @@ abstract class AbstractRoRoTest extends AbstractProceduralWizardTest
     protected EntityManagerInterface $entityManager;
     protected Context $context;
 
-    public function initialiseClientAndLoadFixtures(array $fixtures, array $pantherOptions = []): void
-    {
-        parent::initialiseClientAndLoadFixtures($fixtures, array_merge([
-            'hostname' => 'rfs-frontend.localhost',
-        ], $pantherOptions));
-    }
 
     public function clickSummaryRowLink(string $summaryRowContains, string $linkText): void
     {

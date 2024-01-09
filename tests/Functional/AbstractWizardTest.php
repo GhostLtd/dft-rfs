@@ -19,7 +19,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         return $this->browser;
     }
 
-    protected function doWizardTest(KernelBrowser $browser, array $wizardTestCases)
+    protected function doWizardTest(KernelBrowser $browser, array $wizardTestCases): void
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
@@ -29,10 +29,8 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
 
             if ($wizardTestCase instanceof WizardStepUrlTestCase) {
                 $expectedUrl = $wizardTestCase->getExpectedUrl();
-                if ($expectedUrl !== null) {
-                    $actualUrl = $this->getUrl($crawler);
-                    $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
-                }
+                $actualUrl = $this->getUrl($crawler);
+                $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
 
                 $wizardSubmitButtonId = $wizardTestCase->getSubmitButtonId();
                 if ($wizardSubmitButtonId !== null) {
@@ -56,7 +54,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         }
     }
 
-    protected function checkErrors(Crawler $crawler, array $expectedErrors)
+    protected function checkErrors(Crawler $crawler, array $expectedErrors): void
     {
         if (empty($expectedErrors)) {
             return;

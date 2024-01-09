@@ -24,6 +24,7 @@ class PantherBugWorkaround
         $formElement = $form->getElement();
 
         foreach($formSubmissionData as $k => $data) {
+
             $element = $formElement->findElement(WebDriverBy::name($k));
 
             if (

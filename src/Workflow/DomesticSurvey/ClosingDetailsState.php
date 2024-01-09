@@ -5,6 +5,7 @@ namespace App\Workflow\DomesticSurvey;
 
 
 use App\Entity\Domestic\SurveyResponse;
+use App\Form\DomesticSurvey\ClosingDetails\EarlyResponseType;
 use App\Form\DomesticSurvey\ClosingDetails\MissingDaysType;
 use App\Form\DomesticSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
@@ -18,6 +19,7 @@ use App\Workflow\FormWizardStateInterface;
 class ClosingDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
     const STATE_START = 'start';
+    const STATE_EARLY_RESPONSE = 'early-response';
     const STATE_VEHICLE_FUEL = 'vehicle-fuel';
     const STATE_MISSING_DAYS = 'missing-days';
     const STATE_REASON_EMPTY_SURVEY = 'empty-survey';
@@ -33,6 +35,7 @@ class ClosingDetailsState extends AbstractFormWizardState implements FormWizardS
     const IN_POSSESSION_OF_VEHICLE_JUMP_IN_STATE = self::STATE_START;
 
     private const FORM_MAP = [
+        self::STATE_EARLY_RESPONSE => EarlyResponseType::class,
         self::STATE_MISSING_DAYS => MissingDaysType::class,
         self::STATE_VEHICLE_FUEL => VehicleFuelType::class,
         self::STATE_REASON_EMPTY_SURVEY => ReasonEmptySurveyType::class,
@@ -45,6 +48,7 @@ class ClosingDetailsState extends AbstractFormWizardState implements FormWizardS
 
     private const TEMPLATE_MAP = [
         self::STATE_START => 'domestic_survey/closing_details/start.html.twig',
+        self::STATE_EARLY_RESPONSE => 'domestic_survey/closing_details/form-early-response.html.twig',
         self::STATE_MISSING_DAYS => 'domestic_survey/closing_details/form-missing-days.html.twig',
         self::STATE_VEHICLE_FUEL => 'domestic_survey/closing_details/form-vehicle-fuel.html.twig',
         self::STATE_REASON_EMPTY_SURVEY => 'domestic_survey/closing_details/form-reason-for-empty-survey.html.twig',

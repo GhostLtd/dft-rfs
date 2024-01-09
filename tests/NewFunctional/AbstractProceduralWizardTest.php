@@ -12,6 +12,13 @@ abstract class AbstractProceduralWizardTest extends AbstractWizardTest
 {
     protected Context $context;
 
+    public function initialiseClientAndLoadFixtures(array $fixtures, array $pantherOptions = []): void
+    {
+        parent::initialiseClientAndLoadFixtures($fixtures, array_merge([
+            'hostname' => 'rfs-frontend.localhost',
+        ], $pantherOptions));
+    }
+
     protected function pathTestAction(string $expectedPath, array $options = []): void
     {
         $this->perform(new PathTestAction($expectedPath, $options));

@@ -108,6 +108,9 @@ international:
       weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  closing-details:
+    early-response:
+      not-null: Choose whether you are sure that the information submitted is final
   survey:
     reference-number:
       correct-format: Enter a number followed by a dash, followed by a four-digit week number.
@@ -177,6 +180,8 @@ domestic:
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
   closing-details:
+    early-response:
+      not-null: Choose whether you are sure that the information submitted is final
     missing-days:
       not-null: Choose whether the information listed on this page is correct or not
   day:
