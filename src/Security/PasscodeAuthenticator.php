@@ -61,8 +61,16 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
         $data = $form->getData();
         $csrfTokenId = $form->getConfig()->getOption('csrf_token_id');
 
+        $removeHashPrefixAndAnySpaces = function($str) {
+            $str = ltrim($str, '#');
+            return str_replace(' ', '', $str);
+        };
+
+        $username = $removeHashPrefixAndAnySpaces($data['0'] ?? '');
+        $password = $removeHashPrefixAndAnySpaces($data['1'] ?? '');
+
         return new Passport(
-            new UserBadge($data['0'] ?? ''),
+            new UserBadge($username),
             new CustomCredentials(function($credentials, UserInterface $user) {
                 if (!$user instanceof PasscodeUser) {
                     return false;
@@ -73,7 +81,7 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
                 return
                     hash_equals($credentials, $this->passcodeGenerator->getPasswordForUser($user)) ||
                     $this->passwordHasher->isPasswordValid($user, $credentials);
-            }, $data['1'] ?? ''),
+            }, $password),
             [
                 new CsrfTokenBadge($csrfTokenId, $data['token'] ?? ''),
             ]

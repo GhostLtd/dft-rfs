@@ -14,6 +14,7 @@
 * **Feature:** IRHS - validate reference number when adding a survey manually, to make sure that it includes a week number
 * **Feature:** CSRGT / IRHS - Early response question in closing details
 * **Change:** CSRGT - minor change to help text of initial details > contact details > business name
+* **Change:** CSRGT / IRHS / Pre-enquiry - make user/pass input fields tolerant of spaces and/or a prefixed # symbol
 
 ## 4th January 2024
 

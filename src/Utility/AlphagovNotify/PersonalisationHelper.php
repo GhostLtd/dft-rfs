@@ -61,9 +61,12 @@ class PersonalisationHelper
         if (!$survey->getPasscodeUser()) {
             throw new Exception('PasscodeUser entity expected');
         }
+
+        $formatPasscode = fn(string $p) => join(' ', str_split($p, 4));
+
         return [
-            'passcode1' => $survey->getPasscodeUser()->getUsername(),
-            'passcode2' => $this->passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
+            'passcode1' => $formatPasscode($survey->getPasscodeUser()->getUsername()),
+            'passcode2' => $formatPasscode($this->passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
         ];
     }
 

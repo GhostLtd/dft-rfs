@@ -24,21 +24,64 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
     public function dataProvider(): array
     {
         return [
-            ['user:frontend', 'test', true],
-            ['user:frontend', null, true],
-            ['user:frontend', 'password', false],
-            ['user:frontend:null-password', null, true],
-            ['user:frontend:null-password', 'password', false],
-            ['other', 'test', false],
+            ['user:frontend', 'test', true, false, false, false, false],
+            ['user:frontend', null, true, false, false, false, false],
+            ['user:frontend', 'password', false, false, false, false, false],
+            ['user:frontend:null-password', null, true, false, false, false, false],
+            ['user:frontend:null-password', 'password', false, false, false, false, false],
+            ['other', 'test', false, false, false, false, false],
+
+            // Test options for mangling the input (prefixed hash, or spaces in the password)
+            ['user:frontend', 'test', true, true, false, false, false],
+            ['user:frontend', 'test', true, false, true, false, false],
+            ['user:frontend', 'test', true, true, true, false, false],
+
+            ['user:frontend:null-password', null, true, true, false, false, false],
+            ['user:frontend:null-password', null, true, false, true, false, false],
+            ['user:frontend:null-password', null, true, true, true, false, false],
+
+            // Now do the same but with the username
+            ['user:frontend', 'test', true, false, false, true, false],
+            ['user:frontend', 'test', true, false, false, false, true],
+            ['user:frontend', 'test', true, false, false, true, true],
+
+            ['user:frontend:null-password', null, true, false, false, true, false],
+            ['user:frontend:null-password', null, true, false, false, false, true],
+            ['user:frontend:null-password', null, true, false, false, true, true],
         ];
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testLogin($usernameOrRef, $password, $expectedValidLogin)
+    public function testLogin(
+        string  $usernameOrRef,
+        ?string $password,
+        bool    $expectedValidLogin,
+        bool    $modifyPasswordByPrefixingHash,
+        bool    $modifyPasswordByAddingSpace,
+        bool    $modifyUsernameByPrefixingHash,
+        bool    $modifyUsernameByAddingSpace,
+    )
     {
         $this->loadFixtures([PasscodeLoginFixtures::class]);
+
+        $mangle = function(string $str, bool $prefixHash, bool $addSpace): string
+        {
+            if ($addSpace) {
+                $midpoint = intval(strlen($str) / 2);
+                $firstHalf = substr($str, 0, $midpoint);
+                $secondHalf = substr($str, $midpoint);
+
+                $str = "{$firstHalf} {$secondHalf}";
+            }
+
+            if ($prefixHash) {
+                $str = "#{$str}";
+            }
+
+            return $str;
+        };
 
         if ($this->fixtureReferenceRepository->hasReference($usernameOrRef)) {
             /** @var PasscodeUser $user */
@@ -49,11 +92,15 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
             $user = null;
         }
 
+        $username = $mangle($username, $modifyUsernameByPrefixingHash, $modifyUsernameByAddingSpace);
+
         // If dataProvider password is null, use regenerated one
         if ($password === null) {
             self::assertInstanceOf(PasscodeUser::class, $user);
             $password = $this->passcodeGenerator->getPasswordForUser($user);
         }
+
+        $password = $mangle($password, $modifyPasswordByPrefixingHash, $modifyPasswordByAddingSpace);
 
         $this->browser->request('GET', "https://{$_ENV['FRONTEND_HOSTNAME']}/login");
         $this->browser->submitForm('passcode_login_sign_in', [

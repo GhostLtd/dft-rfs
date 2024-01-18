@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = (new PasscodeUser())
             ->setUsername('test-null-password');
