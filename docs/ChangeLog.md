@@ -2,7 +2,7 @@
 
 # Changelog
 
-## Upcoming
+## 18th Jan 2024
 
 * **Fix:** CSRGT Admin - List page filters: Allow next year to be chosen, and don't break if week 53 selected on a year that doesn't have that week. 
 * **Change:** CSRGT - update "The vehicle was not taxed" answer to mention "SORN".
@@ -13,6 +13,7 @@
 * **Feature:** CSRGT - when reissuing a survey, autofill recipient email from hiree/new owner
 * **Feature:** IRHS - validate reference number when adding a survey manually, to make sure that it includes a week number
 * **Feature:** CSRGT / IRHS - Early response question in closing details
+* **Change:** CSRGT - minor change to help text of initial details > contact details > business name
 
 ## 4th January 2024
 

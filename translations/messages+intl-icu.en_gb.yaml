@@ -884,7 +884,7 @@ domestic:
       help: ''
       business-name:
         label: 'Business name'
-        help: 'The name of the business that owns the vehicle. If you are a sole trader, this is your operating name.'
+        help: 'The name of your business. If you are a sole trader, this is your operating name.'
       contact-name:
         label: 'Name'
         help: ''
