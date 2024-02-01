@@ -3,8 +3,6 @@
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\DateType as ExtendedDateType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateType extends ExtendedDateType
@@ -14,12 +12,7 @@ class DateType extends ExtendedDateType
         return 'gds_date';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::buildView($view, $form, $options);
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

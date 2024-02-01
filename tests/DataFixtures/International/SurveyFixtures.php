@@ -30,7 +30,6 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
             ->setInvitationEmails('sprockets@example.com')
             ->setReferenceNumber('101010-5059');
 
-        $manager->persist($user);
         $manager->persist($company);
         $manager->persist($survey);
 

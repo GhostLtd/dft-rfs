@@ -15,7 +15,7 @@ class BusinessDetailsType extends AbstractType
     const EMPLOYEES_PREFIX = self::PREFIX . '.number-of-employees';
     const NATURE_PREFIX = self::PREFIX . '.business-nature';
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
@@ -33,7 +33,7 @@ class BusinessDetailsType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

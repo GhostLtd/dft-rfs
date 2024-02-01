@@ -55,7 +55,6 @@ class Trip
      */
     private $destination;
 
-
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="international.trip.outbound.date-not-null")
@@ -186,21 +185,24 @@ class Trip
     /**
      * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
      */
-    public function validateOutboundCargoState(ExecutionContextInterface $context) {
+    public function validateOutboundCargoState(ExecutionContextInterface $context): void
+    {
         $this->validateCargoState($context, 'outbound');
     }
 
     /**
      * @Assert\Callback(groups={"trip_return_cargo_state", "admin_trip"})
      */
-    public function validateReturnCargoState(ExecutionContextInterface $context) {
+    public function validateReturnCargoState(ExecutionContextInterface $context): void
+    {
         $this->validateCargoState($context, 'return');
     }
 
     /**
      * @Assert\Callback(groups={"trip_dates", "admin_trip"})
      */
-    public function validateDates(ExecutionContextInterface $context) {
+    public function validateDates(ExecutionContextInterface $context): void
+    {
         $outboundDate = $this->getOutboundDate();
         $returnDate = $this->getReturnDate();
 
@@ -229,7 +231,8 @@ class Trip
      * @Assert\Callback(groups={"admin_trip"})
      * @param ExecutionContextInterface $context
      */
-    public function validateWeightsAdminOnly(ExecutionContextInterface $context) {
+    public function validateWeightsAdminOnly(ExecutionContextInterface $context): void
+    {
         if (!$this->canChangeWeights()) {
             return;
         }
@@ -247,7 +250,8 @@ class Trip
         }
     }
 
-    protected function validateCargoState(ExecutionContextInterface $context, string $direction) {
+    protected function validateCargoState(ExecutionContextInterface $context, string $direction): void
+    {
         $accessor = PropertyAccess::createPropertyAccessor();
 
         $wasEmpty = $accessor->getValue($this, "{$direction}WasEmpty");
@@ -283,7 +287,6 @@ class Trip
     public function setOutboundDate(?DateTimeInterface $outboundDate): self
     {
         $this->outboundDate = $outboundDate;
-
         return $this;
     }
 
@@ -295,7 +298,6 @@ class Trip
     public function setOutboundUkPort(?string $outboundUkPort): self
     {
         $this->outboundUkPort = $outboundUkPort;
-
         return $this;
     }
 
@@ -307,7 +309,6 @@ class Trip
     public function setOutboundForeignPort(?string $outboundForeignPort): self
     {
         $this->outboundForeignPort = $outboundForeignPort;
-
         return $this;
     }
 
@@ -319,7 +320,6 @@ class Trip
     public function setOutboundWasLimitedBySpace(?bool $outboundWasLimitedBySpace): self
     {
         $this->outboundWasLimitedBySpace = $outboundWasLimitedBySpace;
-
         return $this;
     }
 
@@ -331,7 +331,6 @@ class Trip
     public function setOutboundWasLimitedByWeight(?bool $outboundWasLimitedByWeight): self
     {
         $this->outboundWasLimitedByWeight = $outboundWasLimitedByWeight;
-
         return $this;
     }
 
@@ -343,7 +342,6 @@ class Trip
     public function setOutboundWasEmpty(?bool $outboundWasEmpty): self
     {
         $this->outboundWasEmpty = $outboundWasEmpty;
-
         return $this;
     }
 
@@ -355,7 +353,6 @@ class Trip
     public function setReturnDate(?DateTimeInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
-
         return $this;
     }
 
@@ -367,7 +364,6 @@ class Trip
     public function setReturnForeignPort(?string $returnForeignPort): self
     {
         $this->returnForeignPort = $returnForeignPort;
-
         return $this;
     }
 
@@ -379,7 +375,6 @@ class Trip
     public function setReturnUkPort(?string $returnUkPort): self
     {
         $this->returnUkPort = $returnUkPort;
-
         return $this;
     }
 
@@ -391,7 +386,6 @@ class Trip
     public function setReturnWasLimitedBySpace(?bool $returnWasLimitedBySpace): self
     {
         $this->returnWasLimitedBySpace = $returnWasLimitedBySpace;
-
         return $this;
     }
 
@@ -403,7 +397,6 @@ class Trip
     public function setReturnWasLimitedByWeight(?bool $returnWasLimitedByWeight): self
     {
         $this->returnWasLimitedByWeight = $returnWasLimitedByWeight;
-
         return $this;
     }
 
@@ -415,7 +408,6 @@ class Trip
     public function setReturnWasEmpty(?bool $returnWasEmpty): self
     {
         $this->returnWasEmpty = $returnWasEmpty;
-
         return $this;
     }
 
@@ -427,7 +419,6 @@ class Trip
     public function setRoundTripDistance(Distance $roundTripDistance): self
     {
         $this->roundTripDistance = $roundTripDistance;
-
         return $this;
     }
 
@@ -439,7 +430,6 @@ class Trip
     public function setCountriesTransitted(array $countriesTransitted): self
     {
         $this->countriesTransitted = $countriesTransitted;
-
         return $this;
     }
 
@@ -451,7 +441,6 @@ class Trip
     public function setCountriesTransittedOther(?string $countriesTransittedOther): self
     {
         $this->countriesTransittedOther = $countriesTransittedOther;
-
         return $this;
     }
 
@@ -463,12 +452,11 @@ class Trip
     public function setVehicle(?Vehicle $vehicle): self
     {
         $this->vehicle = $vehicle;
-
         return $this;
     }
 
     /**
-     * @return Collection|Action[]
+     * @return Collection<Action>
      */
     public function getActions(): Collection
     {
@@ -553,7 +541,7 @@ class Trip
         return join(', ', $countries);
     }
 
-    public function mergeTripChanges(Trip $trip)
+    public function mergeTripChanges(Trip $trip): void
     {
         $this->setOrigin($trip->getOrigin());
         $this->setDestination($trip->getDestination());
@@ -594,24 +582,19 @@ class Trip
     public function setIsSwappedTrailer(?bool $isSwappedTrailer): self
     {
         $this->isSwappedTrailer = $isSwappedTrailer;
-
         return $this;
     }
 
-    public function getChangeBodyTypeChoices()
+    public function getChangeBodyTypeChoices(): array
     {
-        $choices = VehicleLookup::BODY_CONFIGURATION_CHOICES;
-        $vehicleBodyType = $this->getVehicle()->getBodyType();
-
-        // filter original choice
-        $choices = array_filter($choices, function($value) use ($vehicleBodyType){
-            return $value !== $vehicleBodyType;
-        });
-
-        return $choices;
+        // Filter original choice
+        return array_filter(
+            VehicleLookup::BODY_CONFIGURATION_CHOICES,
+            fn($value) => $value !== $this->getVehicle()->getBodyType()
+        );
     }
 
-    public function getTrailerSwapChoices()
+    public function getTrailerSwapChoices(): array
     {
         $choices = [];
         $vehicleTrailerConfig = $this->getVehicle()->getTrailerConfiguration();
@@ -642,12 +625,10 @@ class Trip
         });
 
         // filter the choices so only the middle digit matches (or other in same category)
-        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
+        return array_filter($choices, function($value) use ($vehicleAxleConfig){
             return substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1)
                 || substr($value, 1, 2) === '99';
         });
-
-        return $choices;
     }
 
     public function getIsChangedBodyType(): ?bool
@@ -658,7 +639,6 @@ class Trip
     public function setIsChangedBodyType(?bool $isChangedBodyType): self
     {
         $this->isChangedBodyType = $isChangedBodyType;
-
         return $this;
     }
 
@@ -673,7 +653,7 @@ class Trip
         return $this;
     }
 
-    public function canChangeBodyType()
+    public function canChangeBodyType(): bool
     {
         if (!$this->getVehicle()) return false;
         return $this->getVehicle()->getTrailerConfiguration() === VehicleLookup::TRAILER_CONFIGURATION_ARTICULATED;
@@ -683,7 +663,7 @@ class Trip
      * This logic should exactly mirror that in
      * javascript GOVUK.rfsIrhsTrip.canChangeWeights()
      */
-    public function canChangeWeights()
+    public function canChangeWeights(): bool
     {
         return ($this->isSwappedTrailer || $this->isChangedBodyType);
     }

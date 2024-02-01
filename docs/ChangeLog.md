@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Feature:** Add functional tests for IRHS wizards: initial details, add vehicle, add trip, add action
+
 ## 18th Jan 2024
 
 * **Fix:** CSRGT Admin - List page filters: Allow next year to be chosen, and don't break if week 53 selected on a year that doesn't have that week. 

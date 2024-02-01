@@ -5,11 +5,11 @@ namespace App\Tests\NewFunctional\Wizard\International;
 use App\Entity\International\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Repository\International\SurveyRepository;
+use App\Tests\DataFixtures\International\ActionFixtures;
 use App\Tests\DataFixtures\International\EarlySurveyFixtures;
 use App\Tests\DataFixtures\International\ResponseCeasedTradingFixtures;
 use App\Tests\DataFixtures\International\ResponseDomesticOnlyFixtures;
 use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
-use App\Tests\DataFixtures\International\TripFixtures;
 use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
@@ -30,13 +30,13 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
     public function testFinalQuestionsWithFilledSurvey(): void
     {
-        $this->initialiseTest([TripFixtures::class]);
+        $this->initialiseTest([ActionFixtures::class]);
         $this->doFlowTest(false, false);
     }
 
     public function testFinalQuestionsWithFilledSurveyButEarly(): void
     {
-        $this->initialiseTest([TripFixtures::class, EarlySurveyFixtures::class]);
+        $this->initialiseTest([ActionFixtures::class, EarlySurveyFixtures::class]);
         $this->doFlowTest(true, false);
     }
 

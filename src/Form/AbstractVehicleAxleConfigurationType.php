@@ -13,12 +13,10 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractVehicleAxleConfigurationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options)
         {
-            $translationKeyPrefix = "{$options['translation_entity_key']}.vehicle-axle-configuration";
-
             if ($event->getData()) {
                 $vehicle = $this->getVehicle($event->getData());
 
@@ -26,33 +24,30 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
                     ->add('axleConfiguration', Gds\ChoiceType::class, [
                         'property_path' => $options['property_path'],
                         'choices' => Vehicle::AXLE_CONFIGURATION_CHOICES[$vehicle->getTrailerConfiguration()],
-                        'label' => "{$translationKeyPrefix}.axle-configuration.label",
-                        'help' => "{$translationKeyPrefix}.axle-configuration.help",
+                        'label' => $options['axle_configuration_label'],
+                        'help' => $options['axle_configuration_help'],
                         'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ])
                 ;
             }
-
         });
     }
 
     /**
-     * @param $formData
      * @return VehicleTrait
      */
-    abstract protected function getVehicle($formData);
+    abstract protected function getVehicle(mixed $formData);
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
-            'translation_entity_key',
+            'axle_configuration_label',
+            'axle_configuration_help',
         ]);
 
         $resolver->setDefaults([
             'property_path' => null,
             'validation_groups' => ['vehicle_axle_configuration'],
         ]);
-
-        $resolver->setAllowedValues("translation_entity_key", ['domestic.survey-response', 'international.vehicle']);
     }
 }

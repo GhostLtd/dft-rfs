@@ -37,40 +37,24 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         $this->portsHelper = $portsHelper;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $direction = $options['direction'];
         $this->portsData = $this->portsHelper->getData($direction);
-
-        $prefix = "international.trip.{$direction}-ports";
 
         $builder
             ->setDataMapper(new PortsAndCargoStateDataMapper($direction, $this->portsData->getPorts()))
             ->add('ports', Gds\ChoiceType::class, [
                 'expanded' => false,
-                'label' => "{$prefix}.ports.label",
-                'help' => "{$prefix}.ports.help",
+                'label' => $options['ports_label'],
+                'help' => $options['ports_help'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => $this->portsData->getPortChoices(),
-            ]);
-
-        $this->addCargoStateFields($builder, $direction, $options['at_capacity_null_message']);
-    }
-
-    protected function addCargoStateFields(FormBuilderInterface $builder, $direction, $atCapacityNullMessage)
-    {
-        $prefix = "international.trip.{$direction}-cargo-state";
-
-        $emptyPrefix = "{$prefix}.was-empty";
-
-        $limitedPrefix = "{$prefix}.was-limited";
-        $atCapacityPrefix = "{$prefix}.was-at-capacity";
-
-        $builder
+            ])
             ->add("wasAtCapacity", Gds\ChoiceType::class, [
-                'label' => "{$atCapacityPrefix}.label",
-                'help' => "{$atCapacityPrefix}.help",
+                'label' => $options['cargo_at_capacity_label'],
+                'help' => $options['cargo_at_capacity_help'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => self::CHOICES,
                 'choice_options' => [
@@ -82,27 +66,37 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                     ],
                 ],
                 'constraints' => new NotNull([
-                    'message' => $atCapacityNullMessage,
+                    'message' => $options['at_capacity_null_message'],
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ]),
             ])
             ->add("wasEmpty", Gds\ChoiceType::class, [
-                'label' => "{$emptyPrefix}.label",
-                'help' => "{$emptyPrefix}.help",
+                'label' => $options['cargo_empty_label'],
+                'help' => $options['cargo_empty_help'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => self::CHOICES,
             ])
             ->add('wasLimitedBy', LimitedByType::class, [
-                'label' => "{$limitedPrefix}.label",
-                'help' => "{$limitedPrefix}.help",
+                'label' => $options['cargo_limited_label'],
+                'help' => $options['cargo_limited_help'],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'direction',
+
+            'cargo_at_capacity_label',
+            'cargo_at_capacity_help',
+            'cargo_empty_label',
+            'cargo_empty_help',
+            'cargo_limited_label',
+            'cargo_limited_help',
+
+            'ports_label',
+            'ports_help',
         ]);
 
         $resolver->setAllowedValues('direction', [self::DIRECTION_OUTBOUND, self::DIRECTION_RETURN]);
@@ -118,7 +112,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         ]);
     }
 
-    public function validateCapacity(Trip $trip, ExecutionContextInterface $context)
+    public function validateCapacity(Trip $trip, ExecutionContextInterface $context): void
     {
         $form = $context->getRoot();
         if ($form instanceof FormInterface) {

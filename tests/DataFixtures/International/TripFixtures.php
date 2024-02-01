@@ -2,10 +2,7 @@
 
 namespace App\Tests\DataFixtures\International;
 
-use App\Entity\CargoType;
 use App\Entity\Distance;
-use App\Entity\HazardousGoods;
-use App\Entity\International\Action;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -47,29 +44,6 @@ class TripFixtures extends Fixture implements DependentFixtureInterface
         $vehicle->addTrip($trip);
         $manager->persist($trip);
         $this->setReference('trip:1', $trip);
-
-        $loading = (new Action())
-            ->setLoading(true)
-            ->setCountry('GB')
-            ->setName('Chichester')
-            ->setGoodsDescription('other-goods')
-            ->setGoodsDescriptionOther('Waste Chemicals')
-            ->setWeightOfGoods(23000)
-            ->setHazardousGoodsCode(HazardousGoods::CODE_8_CORROSIVE_SUBSTANCES)
-            ->setCargoTypeCode(CargoType::CODE_LB_LIQUID_BULK);
-
-        $trip->addAction($loading);
-        $manager->persist($loading);
-
-        $unloading = (new Action())
-            ->setLoading(false)
-            ->setCountry('DE')
-            ->setName('Duisburg')
-            ->setWeightUnloadedAll(true)
-            ->setLoadingAction($loading);
-
-        $trip->addAction($unloading);
-        $manager->persist($unloading);
 
         $manager->flush();
     }

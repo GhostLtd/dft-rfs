@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class AddAnotherType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('another', ChoiceType::class, [
@@ -33,7 +33,7 @@ class AddAnotherType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([

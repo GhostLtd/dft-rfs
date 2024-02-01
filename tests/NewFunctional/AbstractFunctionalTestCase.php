@@ -32,32 +32,15 @@ class AbstractFunctionalTestCase extends PantherTestCase
         return $this->fixtureReferenceRepository->getReference($reference);
     }
 
-    public function loginUser(?string $userIdentifier, ?string $password = 'password'): void
+    public function assertPathMatches(string $expectedPath, bool $isRegex, ?string $errorMessage = null): void
     {
-        $this->client->request('GET', '/');
-        $this->client->clickLink('Sign in');
-        $this->client->submitForm('user_login_sign_in', [
-            'user_login[group][email]' => $userIdentifier,
-            'user_login[group][password]' => $password,
-        ]);
-    }
-
-    public function loginOtpUser(?string $firstPasscode, ?string $secondPasscode): void
-    {
-        $this->client->request('GET', '/onboarding');
-        $this->client->submitForm('otp_login_sign_in', [
-            'otp_login[group][identifier]' => $firstPasscode,
-            'otp_login[group][passcode]' => $secondPasscode,
-        ]);
-    }
-
-    public function assertPathMatches(string $expectedPath, bool $isRegex, string $errorMessage = 'Page path does not match regex'): void
-    {
+        $errorMessage = $errorMessage ?? ('Page path does not match'. ($isRegex ? ' regex' : ''));
         $this->doAssertPathMatches($expectedPath, $isRegex, false, $errorMessage);
     }
 
-    public function assertPathNotMatches(string $expectedPath, bool $isRegex, string $errorMessage = 'Page path does not match regex'): void
+    public function assertPathNotMatches(string $expectedPath, bool $isRegex, ?string $errorMessage = null): void
     {
+        $errorMessage = $errorMessage ?? ('Page path does not match'. ($isRegex ? ' regex' : ''));
         $this->doAssertPathMatches($expectedPath, $isRegex, true, $errorMessage);
     }
 

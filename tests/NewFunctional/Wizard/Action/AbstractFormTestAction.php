@@ -3,7 +3,9 @@
 namespace App\Tests\NewFunctional\Wizard\Action;
 
 use App\Tests\NewFunctional\Wizard\Form\AbstractFormTestCase;
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverElement;
 use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\ServerExtension;
 
@@ -81,7 +83,7 @@ abstract class AbstractFormTestAction extends PathTestAction
         $script .= "
         JSON.parse('$formData').forEach(z => {
             let elem = document.getElementsByName(z[0])[0];
-            let type = elem.getAttribute('type');
+            let type = elem.getAttribute('type');false
             if (['checkbox','radio'].includes(type)) {
                 elem.checked = z[1];
             } else {
@@ -129,10 +131,45 @@ abstract class AbstractFormTestAction extends PathTestAction
                 }
 
                 $submitButtonNode = $client->getCrawler()->selectButton($submitButtonId);
-                $formSubmissionData = PantherBugWorkaround::clearMentionedMultiSelections($submitButtonNode, $formSubmissionData, $client);
 
-                // Fill form and submit as per Client->submitForm(), but with a screenshot taken in the middle...
-                $form = $submitButtonNode->form($formSubmissionData, 'POST');
+                try {
+                    $formSubmissionData = PantherBugWorkaround::clearMentionedMultiSelections($submitButtonNode, $formSubmissionData, $client);
+
+                    // Fill form and submit as per Client->submitForm(), but with a screenshot taken in the middle...
+                    $form = $submitButtonNode->form($formSubmissionData, 'POST');
+                }
+                catch(NoSuchElementException $e) {
+                    $formElements = $client->findElements(WebDriverBy::xpath('//input|//select|//textarea'));
+
+                    $formElementNames = [];
+
+                    foreach($formElements as $element) {
+                        $name = $element->getAttribute('name');
+                        $value = $element->getAttribute('value');
+                        $type = $element->getAttribute('type');
+
+                        if (!str_contains($name, '_token')) {
+                            if (in_array($type, ['radio', 'checkbox'])) {
+                                $formElementNames[$name] ??= [];
+                                $formElementNames[$name][] = $value;
+                            } else {
+                                $formElementNames[$name] ??= true;
+                            }
+                        }
+                    }
+
+                    $message = "NoSuchElement\nAvailable form elements:\n";
+                    foreach($formElementNames as $name => $values) {
+                        $message .= "  - $name";
+                        if (is_array($values)) {
+                            $possibilities = join(', ', $values);
+                            $message .= " (Choices: $possibilities)";
+                        }
+                        $message .= "\n";
+                    }
+
+                    throw new \Exception($message, 0, $e);
+                }
 
                 $this->outputPostFormFillDebug($context, $testCaseIdx);
 
@@ -140,7 +177,14 @@ abstract class AbstractFormTestAction extends PathTestAction
 
                 $this->outputPostFormSubmitDebug($context, $testCaseIdx);
             } catch (\InvalidArgumentException $e) {
-                throw new \InvalidArgumentException("Unable to fetch button with ID #$submitButtonId");
+                $buttons = $client->findElements(WebDriverBy::cssSelector('button'));
+                $buttonsWithIds = array_filter(array_map(fn(WebDriverElement $e) => $e->getAttribute('ID'), $buttons), fn($x) => $x !== null);
+
+                $hints = empty($buttonsWithIds) ?
+                    "(None available)" :
+                    "(Available buttons: ".join(', ', $buttonsWithIds).")";
+
+                throw new \InvalidArgumentException("Unable to fetch button with ID #{$submitButtonId} {$hints}");
             }
 
             $this->checkErrors($context, $testCaseIdx, array_flip($expectedErrorIds));
@@ -180,21 +224,21 @@ abstract class AbstractFormTestAction extends PathTestAction
         }
 
         if ($context->isAtLeastDebugLevel(4)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'pre-fill');
+            $this->takeDebugScreenshot($context, $testCaseIdx, 'A-pre-fill');
         }
     }
 
     protected function outputPostFormFillDebug(Context $context, int $testCaseIdx): void
     {
         if ($context->isAtLeastDebugLevel(3)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'post-fill');
+            $this->takeDebugScreenshot($context, $testCaseIdx, 'B-post-fill');
         }
     }
 
     protected function outputPostFormSubmitDebug(Context $context, int $testCaseIdx): void
     {
         if ($context->isAtLeastDebugLevel(5)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'post-sub');
+            $this->takeDebugScreenshot($context, $testCaseIdx, 'C-post-sub');
         }
     }
 

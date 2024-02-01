@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractVehicleTrailerConfigurationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "{$options['translation_entity_key']}.vehicle-trailer-configuration";
         $builder
@@ -24,7 +24,7 @@ abstract class AbstractVehicleTrailerConfigurationType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'translation_entity_key',

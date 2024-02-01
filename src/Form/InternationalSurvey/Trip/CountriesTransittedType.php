@@ -12,27 +12,25 @@ class CountriesTransittedType extends AbstractType
 {
     const COUNTRY_CHOICES = ['FR','BE','NL','DE','IE','IT','ES','CH','LU','AT'];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = 'international.trip.countries-transitted';
-
         $builder
             ->add('countriesTransitted', Gds\ChoiceType::class, [
                 'choices' => $this->getCountryChoices(),
-                'help' => "{$translationKeyPrefix}.countries-transitted.help",
-                'label' => "{$translationKeyPrefix}.countries-transitted.label",
+                'help' => "international.trip.countries-transitted.countries-transitted.help",
+                'label' => "international.trip.countries-transitted.countries-transitted.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'multiple' => true,
                 'expanded' => true,
             ])
             ->add('countriesTransittedOther', Gds\InputType::class, [
-                'help' => "{$translationKeyPrefix}.countries-transitted-other.help",
-                'label' => "{$translationKeyPrefix}.countries-transitted-other.label",
+                'help' => "international.trip.countries-transitted.countries-transitted-other.help",
+                'label' => "international.trip.countries-transitted.countries-transitted-other.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['trip_countries_transitted'],

@@ -10,15 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DistanceType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = 'international.trip.distance';
-
         $builder
             ->add('roundTripDistance', ValueUnitType::class, [
-                'label' => "{$translationKeyPrefix}.distance.label",
+                'label' => "international.trip.distance.distance.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => "{$translationKeyPrefix}.distance.help",
+                'help' => "international.trip.distance.distance.help",
                 'value_options' => [
                     'label' => 'Distance',
                     'is_decimal' => true,
@@ -32,7 +30,7 @@ class DistanceType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['trip_distance'],

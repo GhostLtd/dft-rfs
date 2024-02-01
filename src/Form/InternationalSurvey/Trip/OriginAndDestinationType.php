@@ -10,21 +10,19 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class OriginAndDestinationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = 'international.trip.places';
-
         $builder
             ->add('origin', Gds\InputType::class, [
-                'label' => "{$translationKeyPrefix}.origin.label",
-                'help' => "{$translationKeyPrefix}.origin.help",
+                'label' => "international.trip.places.origin.label",
+                'help' => "international.trip.places.origin.help",
                 'help_html' => 'markdown',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-20'],
             ])
             ->add('destination', Gds\InputType::class, [
-                'label' => "{$translationKeyPrefix}.destination.label",
-                'help' => "{$translationKeyPrefix}.destination.help",
+                'label' => "international.trip.places.destination.label",
+                'help' => "international.trip.places.destination.help",
                 'help_html' => 'markdown',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-20'],
@@ -32,7 +30,7 @@ class OriginAndDestinationType extends AbstractType
             ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Trip::class,
