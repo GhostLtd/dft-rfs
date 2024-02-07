@@ -83,7 +83,7 @@ abstract class AbstractFormTestAction extends PathTestAction
         $script .= "
         JSON.parse('$formData').forEach(z => {
             let elem = document.getElementsByName(z[0])[0];
-            let type = elem.getAttribute('type');false
+            let type = elem.getAttribute('type');
             if (['checkbox','radio'].includes(type)) {
                 elem.checked = z[1];
             } else {
