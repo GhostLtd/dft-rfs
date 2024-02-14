@@ -33,11 +33,20 @@ abstract class AbstractRoRoTest extends AbstractProceduralWizardTest
 
     protected function setUp(): void
     {
+        $mt = microtime(true);
+
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->emptyMessageQueue(); // Message table is outside the purview of fixtures
 
         $this->context = $this->createContext('');
         $this->client->request('GET', '/roro/logout'); // Make sure we're logged out
+
+        // Sleep until the next second to avoid "Login link may only be used once" on fast machines
+        // (Symfony's login link generates links with 1-second resolution, and so ends up generating the exact same link)
+        $nextSecond = ceil($mt);
+        if (microtime(true) <= $nextSecond) {
+            time_sleep_until($nextSecond);
+        }
     }
 
     protected function login(string $email): void
