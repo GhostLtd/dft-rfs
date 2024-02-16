@@ -22,19 +22,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class NotificationInterceptionController extends AbstractController
 {
-    const TYPE_ADD = 'add';
-    const TYPE_EDIT = 'edit';
+    const MODE_ADD = 'add';
+    const MODE_EDIT_ADDRESS = 'edit-address';
+    const MODE_EDIT_EMAILS = 'edit-emails';
 
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
-    protected TranslatorInterface $translator;
-
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, TranslatorInterface $translator)
-    {
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-        $this->translator = $translator;
-    }
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected RequestStack           $requestStack,
+        protected TranslatorInterface    $translator
+    ) {}
 
     /**
      * @Route("/", name="list")
@@ -50,10 +46,12 @@ class NotificationInterceptionController extends AbstractController
 
         return $this->render('admin/notification_interception/list.html.twig', [
             'add_route' => 'admin_domestic_notification_interception_add',
-            'edit_route' => 'admin_domestic_notification_interception_edit',
+            'edit_address_route' => 'admin_domestic_notification_interception_edit_address',
+            'edit_emails_route' => 'admin_domestic_notification_interception_edit_emails',
             'delete_route' => 'admin_domestic_notification_interception_delete',
             'data' => $listPage->getData(),
             'form' => $listPage->getFiltersForm()->createView(),
+            'survey_type' => 'domestic',
         ]);
     }
 
@@ -77,14 +75,20 @@ class NotificationInterceptionController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="edit")
-     * @Route("/add", name="add")
+     * @Route("/edit-address/{id}", name="edit_address", defaults={"mode": "edit-address"})
+     * @Route("/edit-emails/{id}", name="edit_emails", defaults={"mode": "edit-emails"})
+     * @Route("/add", name="add", defaults={"mode": "add"})
      */
-    public function edit(Request $request, ?NotificationInterception $notificationInterception = null): Response
+    public function edit(Request $request, ?NotificationInterception $notificationInterception, string $mode): Response
     {
-        $type = is_null($notificationInterception) ? self::TYPE_ADD : self::TYPE_EDIT;
+        $form = $this->createForm(NotificationInterceptionType::class, $notificationInterception, [
+            'edit_mode' => match ($mode) {
+                self::MODE_ADD => NotificationInterceptionType::EDIT_ALL,
+                self::MODE_EDIT_ADDRESS => NotificationInterceptionType::EDIT_ADDRESS,
+                self::MODE_EDIT_EMAILS => NotificationInterceptionType::EDIT_EMAILS,
+            },
+        ]);
 
-        $form = $this->createForm(NotificationInterceptionType::class, $notificationInterception);
         $form->handleRequest($request);
         $successUrl = $this->generateUrl('admin_domestic_notification_interception_list');
 
@@ -100,7 +104,7 @@ class NotificationInterceptionController extends AbstractController
                 $this->entityManager->persist($notificationInterception);
                 $this->entityManager->flush();
 
-                if ($type === self::TYPE_ADD) {
+                if ($mode === self::MODE_ADD) {
                     $banner = new NotificationBanner(
                         $this->translator->trans('common.notification.success'),
                         $this->translator->trans("notification-interception.add.confirmed-notification.heading", [], 'admin'),
@@ -117,7 +121,7 @@ class NotificationInterceptionController extends AbstractController
 
         return $this->render('admin/notification_interception/edit.html.twig', [
             'form' => $form->createView(),
-            'type' => $type,
+            'type' => $mode,
         ]);
     }
 }

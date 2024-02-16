@@ -30,6 +30,10 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->personalisationHelper = $container->get(PersonalisationHelper::class);
+
+        $this->entityManager->getConnection()->createQueryBuilder()
+            ->delete('messenger_messages')
+            ->executeStatement();
     }
 
     public function testSendLetterAccepted()
@@ -37,14 +41,19 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $survey = $this->getSurvey();
 
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getValidTestAddress()));
+
         $this->runAsyncNotifyMessengerConsumer();
 
         /** @var Survey $survey */
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
-        /** @var NotifyApiResponse $response */
+        /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
+
+        if ($response === false) {
+            $this->fail('No notify api responses found');
+        }
 
         self::assertSame(Reference::STATUS_ACCEPTED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
@@ -60,13 +69,17 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $survey = $this->entityManager->find(get_class($survey), $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
-        /** @var NotifyApiResponse $response */
+        /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
+
+        if ($response === false) {
+            $this->fail('No notify api responses found');
+        }
 
         self::assertSame(Reference::STATUS_FAILED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
-    protected function runAsyncNotifyMessengerConsumer()
+    protected function runAsyncNotifyMessengerConsumer(): void
     {
         $this->runCommand(
             'messenger:consume',
@@ -118,7 +131,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
         return $survey;
     }
 
-    protected function runCommand($command, $options)
+    protected function runCommand($command, $options): void
     {
         $application = new Application(static::$kernel);
         $application->setAutoExit(false);

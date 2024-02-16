@@ -5,6 +5,7 @@
 ## Upcoming
 
 * **Feature:** Add functional tests for IRHS wizards: initial details, add vehicle, add trip, add action
+* **Feature:** When deleting/updating/adding LCNI, update emails on relevant surveys
 
 ## 18th Jan 2024
 

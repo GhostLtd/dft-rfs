@@ -3,6 +3,7 @@
 namespace App\Repository\Domestic;
 
 use App\Doctrine\Hydrators\ColumnHydrator;
+use App\Entity\Domestic\NotificationInterception;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyStateInterface;
@@ -187,5 +188,50 @@ class SurveyRepository extends AbstractSurveyRepository
     public function getSurveysRequiringPersonalDataCleanup(DateTime $before): array {
         $states = [SurveyStateInterface::STATE_REJECTED, SurveyStateInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
         return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
+    }
+
+    /**
+     * @return Survey[]
+     */
+    public function findSurveysMatchingLcniAddressAndEmails(NotificationInterception $interception): array {
+        return $this->lcniFindQuery(
+            $interception,
+            fn(QueryBuilder $qb) => $qb
+                ->andWhere('s.invitationEmails = :emails')
+                ->setParameter('emails', $interception->getEmails())
+        );
+    }
+
+    /**
+     * @return Survey[]
+     */
+    public function findSurveysMatchingLcniAddressWithNoEmails(NotificationInterception $interception): array
+    {
+        return $this->lcniFindQuery(
+            $interception,
+            fn(QueryBuilder $qb) => $qb->andWhere('s.invitationEmails IS NULL')
+        );
+    }
+
+    protected function lcniFindQuery(NotificationInterception $interception, \Closure $callback): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('s')
+            ->where('s.invitationAddress.line1 = :addressLine')
+            ->andWhere('s.state IN (:states)')
+            ->setParameter('addressLine', $interception->getAddressLine())
+            ->setParameter('states', [
+                SurveyStateInterface::STATE_NEW,
+                SurveyStateInterface::STATE_INVITATION_FAILED,
+                SurveyStateInterface::STATE_INVITATION_PENDING,
+                SurveyStateInterface::STATE_INVITATION_SENT,
+                SurveyStateInterface::STATE_IN_PROGRESS,
+            ]);
+
+        $callback($qb);
+
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 }

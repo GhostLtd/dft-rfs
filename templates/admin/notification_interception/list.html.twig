@@ -21,10 +21,24 @@
             {%- set srHiddenSuffixParams = {
                 primaryName: ni.primaryName
             } -%}
-            {{ tableCell(actionLinks({
-                (url(edit_route, {id: ni.id})): {label: 'common.actions.edit', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
+            {%- set links = {} -%}
+
+            {%- if survey_type == 'domestic' -%}
+                {%- set links = links | merge({
+                    (url(edit_address_route, {id: ni.id})): {label: 'notification-interception.edit-address.label', labelTranslationDomain: 'admin', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
+                }) -%}
+            {%- elseif survey_type == 'international' -%}
+                {%- set links = links | merge({
+                    (url(edit_names_route, {id: ni.id})): {label: 'notification-interception.edit-names.label', labelTranslationDomain: 'admin', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
+                }) -%}
+            {%- endif -%}
+
+            {%- set links = links | merge({
+                (url(edit_emails_route, {id: ni.id})): {label: 'notification-interception.edit-emails.label', labelTranslationDomain: 'admin', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
                 (url(delete_route, {id: ni.id})): {label: 'common.actions.delete', labelTranslationDomain: 'messages', srHiddenSuffix: srHiddenSuffix, srHiddenSuffixParams: srHiddenSuffixParams, srHiddenSuffixDomain: 'admin'},
-            }), {}) }}
+            }) -%}
+
+            {{- tableCell(actionLinks(links), {}) -}}
         </tr>
     {% else %}
         {{ tableRowComplex({"No entries": {colSpan: data.fields|length + 1}}) }}

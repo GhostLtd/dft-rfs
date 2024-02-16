@@ -56,7 +56,6 @@ class NotificationInterceptionCompanyName implements NotificationInterceptionCom
     public function setNotificationInterception(?NotificationInterceptionInterface $notificationInterception): self
     {
         $this->notificationInterception = $notificationInterception;
-
         return $this;
     }
 }

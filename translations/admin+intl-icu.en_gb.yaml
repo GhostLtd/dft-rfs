@@ -112,7 +112,15 @@ notification-interception:
     cancelled-notification:
       heading: LCNI not deleted
       content: The request to delete the LCNI was cancelled
-  edit.heading: Edit LCNI
+  edit-address:
+    label: Edit address
+    heading: Edit LCNI address
+  edit-emails:
+    label: Edit emails
+    heading: Edit LCNI emails
+  edit-names:
+    label: Edit names
+    heading: Edit LCNI names
   form:
     business-name:
       label: Business name

@@ -362,6 +362,17 @@ admin:
       user: User
     cleanup-passcode: Removed passcode user
     cleanup-personal: Removed personal data
+    lcni:
+      add: "LCNI created - Added reminder emails: `{emails}`"
+      additional-name:
+        add: "LCNI additional name added - Added reminder emails: `{emails}`"
+        delete: "LCNI additional name removed - Deleted reminder emails; previously: `{emails}`"
+      delete: "LCNI removed - Deleted reminder emails; previously: `{emails}`"
+      update:
+        address:
+          add: "LCNI address updated - Added reminder emails `{emails}`"
+          remove: "LCNI address updated - Removed reminder emails `{emails}`"
+        emails: "LCNI emails updated - Changed reminder emails from `{old_emails}` to `{new_emails}`"
     manual-reminder: Sent manual reminder
     survey-qa: Flagged survey as QA checked
     survey-state: "Changed survey state from `{from}` to `{to}`"

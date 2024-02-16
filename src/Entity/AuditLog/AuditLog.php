@@ -15,7 +15,7 @@ class AuditLog
     use IdTrait;
 
     /**
-     * @ORM\Column(type="string", length=16)
+     * @ORM\Column(type="string", length=32)
      */
     private ?string $category;
 

@@ -22,7 +22,7 @@
 </dl>
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- _self.row('Email Address', '') -}}
+    {{- _self.row('Email Address', survey.invitationEmails ?? '-') -}}
     {{- _self.row('Initial invitation', _self.notificationStatus(survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
         'App\\Messenger\\AlphagovNotify\\Email',

@@ -10,21 +10,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NotificationInterceptionType extends AbstractType
 {
+    const EDIT_ALL = 'all';
+    const EDIT_ADDRESS = 'address';
+    const EDIT_EMAILS = 'emails';
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('addressLine', Gds\InputType::class, [
-                'label' => "notification-interception.form.business-name.label",
-                'help' => "notification-interception.form.business-name.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-30']
-            ])
-            ->add('emails', Gds\InputType::class, [
-                'label' => "notification-interception.form.emails.label",
-                'help' => "notification-interception.form.emails.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
-            ])
+        if (in_array($options['edit_mode'], [self::EDIT_ALL, self::EDIT_ADDRESS]))
+        {
+            $builder
+                ->add('addressLine', Gds\InputType::class, [
+                    'label' => "notification-interception.form.business-name.label",
+                    'help' => "notification-interception.form.business-name.help",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'attr' => ['class' => 'govuk-input--width-30']
+                ]);
+        }
 
+        if (in_array($options['edit_mode'], [self::EDIT_ALL, self::EDIT_EMAILS])) {
+            $builder
+                ->add('emails', Gds\InputType::class, [
+                    'label' => "notification-interception.form.emails.label",
+                    'help' => "notification-interception.form.emails.help",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                ]);
+        }
+
+        $builder
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => "notification-interception.form.submit",
@@ -42,6 +54,13 @@ class NotificationInterceptionType extends AbstractType
             'data_class' => NotificationInterception::class,
             'validation_groups' => ['notification_interception'],
             'translation_domain' => 'admin',
+            'edit_mode' => self::EDIT_ALL,
+        ]);
+
+        $resolver->setAllowedValues('edit_mode', [
+            self::EDIT_ALL,
+            self::EDIT_ADDRESS,
+            self::EDIT_EMAILS,
         ]);
     }
 }

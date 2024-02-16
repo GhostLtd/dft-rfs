@@ -116,6 +116,7 @@
                 ) | trim,
                 href: url
             }),
+            options: options
         } -%}
             <a {{- _self.attributes(attributes) -}}>
                 {{- action | trans(options.labelTranslationParams ?? {}, options.labelTranslationDomain ?? null) -}}

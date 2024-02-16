@@ -61,7 +61,7 @@ class NotificationInterception implements NotificationInterceptionAdvancedInterf
     public function addAdditionalName(NotificationInterceptionCompanyNameInterface $companyName): self
     {
         if (!$this->additionalNames->contains($companyName)) {
-            $this->additionalNames[] = $companyName;
+            $this->additionalNames->add($companyName);
             $companyName->setNotificationInterception($this);
         }
 
@@ -93,5 +93,13 @@ class NotificationInterception implements NotificationInterceptionAdvancedInterf
     {
         $this->primaryName = $primaryName;
         return $this;
+    }
+
+    public function getAllNames(): array
+    {
+        return [
+            $this->getPrimaryName(),
+            ...array_map(fn(NotificationInterceptionCompanyName $cn) => $cn->getName(), $this->getAdditionalNames()->toArray())
+        ];
     }
 }
