@@ -4,6 +4,7 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,11 +20,12 @@ class SurveyPasscodeController extends AbstractController
      * @Entity("survey", expr="repository.find(surveyId)")
      * @IsGranted(AdminSurveyVoter::RESET_PASSCODE, subject="survey")
      */
-    public function resetPasscodeSuccess(PasscodeGenerator $passcodeGenerator, Survey $survey): array
+    public function revealPasscode(PasscodeGenerator $passcodeGenerator, Survey $survey): array
     {
         return [
             'survey' => $survey,
-            'code' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
+            'code' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
+            'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUsername()),
         ];
     }
 }

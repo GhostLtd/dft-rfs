@@ -17,8 +17,8 @@
             <dd class="govuk-summary-list__value">
                 {%- if survey.invitationEmails -%}
 {%- set bodyText -%}
-Access code 1: {{ survey.passcodeUser.username }}
-Access code 2: {{ password }}
+First code: {{ username }}
+Second code: {{ password }}
 {%- endset -%}
                     {%- set mailLink = "mailto:#{survey.invitationEmails}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
                     <a href="{{ mailLink }}">{{ survey.invitationEmails }}</a>
@@ -29,7 +29,7 @@ Access code 2: {{ password }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.invitation-address', survey.invitationAddress.isFilled ?
             (survey.invitationAddress | formatAddress(true)) :
             '-', null) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', username, {'row_class': 'access-code'}) }}
         {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 

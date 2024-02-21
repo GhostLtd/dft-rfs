@@ -5,6 +5,7 @@ namespace App\Controller\Admin\International;
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\AddSurveyType;
 use App\Utility\NotificationInterceptionService;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +44,8 @@ class SurveyAddController extends AbstractController
 
                 return $this->render("admin/international/surveys/add-success.html.twig", [
                     'survey' => $survey,
-                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
+                    'password' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
+                    'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUsername()),
                 ]);
             }
         }

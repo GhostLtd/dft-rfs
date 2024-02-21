@@ -22,14 +22,13 @@ class PasscodeLoginType extends AbstractType
         $this->tokenManager = $tokenManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('passcode', FieldsetType::class, [
                 'label' => 'passcode.login.label',
                 'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => 'passcode.login.help',
-                'attr' => ['class' => 'govuk-fieldset__passcode'],
             ])
             ->add('token', HiddenType::class, [
                 'data' => $this->tokenManager->getToken($options['csrf_token_id'])
@@ -49,7 +48,7 @@ class PasscodeLoginType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.passcode',

@@ -4,6 +4,7 @@ namespace App\Controller\Admin\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Form\Admin\PreEnquiry\AddSurveyType;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,7 +39,8 @@ class AddController extends AbstractController
 
                 return $this->render("admin/pre_enquiry/add-success.html.twig", [
                     'preEnquiry' => $preEnquiry,
-                    'password' => $passcodeGenerator->getPasswordForUser($preEnquiry->getPasscodeUser()),
+                    'password' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($preEnquiry->getPasscodeUser())),
+                    'username' => PasscodeFormatter::formatPasscode($preEnquiry->getPasscodeUser()->getUsername()),
                 ]);
             }
         }

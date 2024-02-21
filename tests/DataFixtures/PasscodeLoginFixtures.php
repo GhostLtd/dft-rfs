@@ -14,7 +14,7 @@ class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $user = (new PasscodeUser())
-            ->setUsername('test-null-password');
+            ->setUsername('testnullpassword');
         $this->setReference('user:frontend:null-password', $user);
 
         (new Survey())

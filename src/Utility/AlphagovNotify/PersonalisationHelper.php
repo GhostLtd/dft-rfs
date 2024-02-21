@@ -1,28 +1,23 @@
 <?php
 
-
 namespace App\Utility\AlphagovNotify;
-
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use App\Utility\RegistrationMarkHelper;
 use Exception;
 
 class PersonalisationHelper
 {
-    private PasscodeGenerator $passcodeGenerator;
+    public function __construct(protected PasscodeGenerator $passcodeGenerator)
+    {}
 
-    public function __construct(PasscodeGenerator $passcodeGenerator)
-    {
-        $this->passcodeGenerator = $passcodeGenerator;
-    }
-
-    public function getForEntity($entity): array
+    public function getForEntity(object $entity): array
     {
         switch (true) {
             case ($entity instanceof DomesticSurvey):
@@ -62,11 +57,9 @@ class PersonalisationHelper
             throw new Exception('PasscodeUser entity expected');
         }
 
-        $formatPasscode = fn(string $p) => join(' ', str_split($p, 4));
-
         return [
-            'passcode1' => $formatPasscode($survey->getPasscodeUser()->getUsername()),
-            'passcode2' => $formatPasscode($this->passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
+            'passcode1' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUsername()),
+            'passcode2' => PasscodeFormatter::formatPasscode($this->passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
         ];
     }
 

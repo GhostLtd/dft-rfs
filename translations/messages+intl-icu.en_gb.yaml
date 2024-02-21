@@ -633,8 +633,8 @@ admin:
       period-end: Survey period end
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
     export:
       heading: CSRGT export
     export-confirm:
@@ -735,8 +735,8 @@ admin:
     survey-created:
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
   passcode-reset:
     heading: Reset passcode ({identifier})
     confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
@@ -790,8 +790,8 @@ admin:
       company-name: Company name
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
     edit-response:
       heading: "Edit Pre-enquiry response — {companyName}"
     enter-response:

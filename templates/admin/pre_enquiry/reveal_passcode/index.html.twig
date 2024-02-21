@@ -8,7 +8,7 @@
     {%- include "admin/pre_enquiry/includes/basics.html.twig" with {marginBottom: 5, showStatus: false, showUsername: false} -%}
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-1', username, {'row_class': 'access-code'}) }}
         {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-2', code, {'row_class': 'access-code'}) }}
     </dl>
 {% endblock %}

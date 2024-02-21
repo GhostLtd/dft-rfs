@@ -4,6 +4,7 @@ namespace App\Controller\Admin\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Security\Voter\AdminSurveyVoter;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,11 +20,12 @@ class PasscodeController extends AbstractController
      * @Entity("preEnquiry", expr="repository.find(preEnquiryId)")
      * @IsGranted(AdminSurveyVoter::RESET_PASSCODE, subject="preEnquiry")
      */
-    public function resetPasscodeSuccess(PasscodeGenerator $passcodeGenerator, PreEnquiry $preEnquiry): array
+    public function revealPasscode(PasscodeGenerator $passcodeGenerator, PreEnquiry $preEnquiry): array
     {
         return [
             'preEnquiry' => $preEnquiry,
-            'code' => $passcodeGenerator->getPasswordForUser($preEnquiry->getPasscodeUser()),
+            'code' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($preEnquiry->getPasscodeUser())),
+            'username' => PasscodeFormatter::formatPasscode($preEnquiry->getPasscodeUser()->getUsername()),
         ];
     }
 }

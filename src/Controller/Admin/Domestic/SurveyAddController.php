@@ -8,6 +8,7 @@ use App\Entity\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Repository\Domestic\SurveyRepository;
 use App\Utility\NotificationInterceptionService;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,7 +79,8 @@ class SurveyAddController extends AbstractController
 
                 return $this->render('admin/domestic/surveys/add-success.html.twig', [
                     'survey' => $survey,
-                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
+                    'password' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
+                    'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUsername()),
                 ]);
             }
         }

@@ -7,6 +7,7 @@
 * **Feature:** Add functional tests for IRHS wizards: initial details, add vehicle, add trip, add action
 * **Feature:** When deleting/updating/adding LCNI, update emails on relevant surveys
 * **Change:** Update govuk-frontend to 3.15 and start using the Tudor Crown branding
+* **Change:** Various minor changes to combat occasional user login-related confusions caused by copy/paste and letter/form differences
 
 ## 18th Jan 2024
 

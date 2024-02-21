@@ -18,8 +18,8 @@
                     {{ survey.invitationEmails }}
                 {% else %}
                     {%- set bodyText -%}
-                        Access code 1: {{ survey.passcodeUser.username }}
-                        Access code 2: {{ password }}
+                        First passcode: {{ username }}
+                        Second passcode: {{ password }}
                     {%- endset -%}
                     {%- set mailLink = "mailto:?subject=DfT International Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
                     <a href="{{ mailLink }}">email link</a>
@@ -29,7 +29,7 @@
         {{ actionlessSummaryListRow('admin.international.survey-created.invitation-address', survey.invitationAddress.isFilled ?
             (survey.invitationAddress | formatAddress(true)) :
         '-', null) }}
-        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
+        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-1', username, {'row_class': 'access-code'}) }}
         {{ actionlessSummaryListRow('admin.international.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
     </dl>
 
