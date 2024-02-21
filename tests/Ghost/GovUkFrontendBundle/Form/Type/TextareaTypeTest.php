@@ -1,16 +1,12 @@
 <?php
 
-
 namespace App\Tests\Ghost\GovUkFrontendBundle\Form\Type;
 
-
-use App\Tests\Ghost\GovUkFrontendBundle\Form\FormTestCase;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
-use Symfony\Component\Form\FormFactoryInterface;
 
-class TextareaTypeTest extends FormTestCase
+class TextareaTypeTest extends AbstractGovUkFrontendTest
 {
-    public function fixtureProvider()
+    public function fixtureProvider(): array
     {
         $ignoreFixtures = [];
         return $this->loadFixtures('textarea', $ignoreFixtures);
@@ -19,9 +15,9 @@ class TextareaTypeTest extends FormTestCase
     /**
      * @dataProvider fixtureProvider
      */
-    public function testTextareaFixtures($fixture)
+    public function testTextareaFixtures($fixture): void
     {
-        $form = $this->createAndTestForm(
+        $this->createAndTestForm(
             TextareaType::class,
             $fixture['options']['value'] ?? null,
             $this->mapJsonOptions($fixture['options'] ?? []),
@@ -29,7 +25,7 @@ class TextareaTypeTest extends FormTestCase
         );
     }
 
-    protected function mapJsonOptions($fixtureOptions)
+    protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in TextareaType
         $mappedOptions = ['disabled', 'label', 'text', 'html', 'classes', 'attributes', 'hint', 'rows',

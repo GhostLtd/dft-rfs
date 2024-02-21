@@ -1,18 +1,12 @@
 <?php
 
-
 namespace App\Tests\Ghost\GovUkFrontendBundle\Form\Type;
 
-
-use App\Tests\Ghost\GovUkFrontendBundle\Form\FormTestCase;
-use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormFactoryInterface;
 
-class ChoiceTypeTest extends FormTestCase
+class ChoiceTypeTest extends AbstractGovUkFrontendTest
 {
-    public function checkboxFixtureProvider()
+    public function checkboxFixtureProvider(): array
     {
         $ignoreTests = [
             'with conditional items',
@@ -33,7 +27,7 @@ class ChoiceTypeTest extends FormTestCase
      * @dataProvider checkboxFixtureProvider
      * @param $fixture
      */
-    public function testCheckboxesFixtures($fixture)
+    public function testCheckboxesFixtures($fixture): void
     {
         $this->createAndTestForm(
             ChoiceType::class,
@@ -47,7 +41,7 @@ class ChoiceTypeTest extends FormTestCase
         );
     }
 
-    protected function getCheckboxData($items = [])
+    protected function getCheckboxData($items = []): array
     {
         $data = [];
         foreach ($items as $item)
@@ -59,7 +53,7 @@ class ChoiceTypeTest extends FormTestCase
 
 
 
-    public function radioFixtureProvider()
+    public function radioFixtureProvider(): array
     {
         $ignoreTests = [
             'with a divider',
@@ -80,7 +74,7 @@ class ChoiceTypeTest extends FormTestCase
      * @dataProvider radioFixtureProvider
      * @param $fixture
      */
-    public function testRadioFixtures($fixture)
+    public function testRadioFixtures($fixture): void
     {
         $this->createAndTestForm(
             ChoiceType::class,
@@ -92,15 +86,16 @@ class ChoiceTypeTest extends FormTestCase
         );
     }
 
-    protected function getRadioData($items = [])
+    protected function getRadioData($items = []): ?string
     {
         foreach ($items as $item)
         {
             if ($item['checked'] ?? false) return $item['value'];
         }
+        return null;
     }
 
-    protected function mapJsonOptions($fixtureOptions)
+    protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in ChoiceType
         $mappedOptions = ['items', 'fieldset', 'hint', 'classes', 'attributes', 'formGroup'];
@@ -125,7 +120,6 @@ class ChoiceTypeTest extends FormTestCase
                                 $formOptions['choice_options'][$item['text']]['help'] = $item['hint']['text'];
                             }
                             if ($item['disabled'] ?? false) {
-//                                $formOptions['choice_attr'][$item['text']]['disabled'] = $item['disabled'];
                                 $formOptions['choice_options'][$item['text']]['disabled'] = $item['disabled'];
                             }
                             if ($item['attributes'] ?? false) {

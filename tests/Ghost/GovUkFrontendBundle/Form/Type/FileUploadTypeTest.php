@@ -1,18 +1,13 @@
 <?php
 
-
 namespace App\Tests\Ghost\GovUkFrontendBundle\Form\Type;
 
-
-use App\Tests\Ghost\GovUkFrontendBundle\Form\FormTestCase;
 use Ghost\GovUkFrontendBundle\Form\Type\FileUploadType;
-use Ghost\GovUkFrontendBundle\Form\Type\InputType;
-use Ghost\GovUkFrontendBundle\Form\Type\NumberType;
 use Symfony\Component\HttpFoundation\File\File;
 
-class FileUploadTypeTest extends FormTestCase
+class FileUploadTypeTest extends AbstractGovUkFrontendTest
 {
-    public function fixtureProvider()
+    public function fixtureProvider(): array
     {
         return $this->loadFixtures('file-upload', []);
     }
@@ -21,7 +16,7 @@ class FileUploadTypeTest extends FormTestCase
      * @dataProvider fixtureProvider
      * @param $fixture
      */
-    public function testFileUploadFixtures($fixture)
+    public function testFileUploadFixtures($fixture): void
     {
         $this->createAndTestForm(
             FileUploadType::class,
@@ -33,7 +28,7 @@ class FileUploadTypeTest extends FormTestCase
         );
     }
 
-    protected function mapJsonOptions($fixtureOptions)
+    protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in TextareaType
         $ignoredOptions = [];

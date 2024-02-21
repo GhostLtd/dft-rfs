@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ButtonType extends ExtendedButtonType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -17,12 +17,14 @@ class ButtonType extends ExtendedButtonType
             'prevent_double_click' => true,
             'type' => null,
             'label_html' => false,
+            'is_start_button' => false,
         ]);
 
         $resolver->setAllowedValues('type', [null, 'button', 'submit']);
+        $resolver->setAllowedTypes('is_start_button', 'bool');
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -41,6 +43,11 @@ class ButtonType extends ExtendedButtonType
             $view->vars['attr']['class'] = trim(($view->vars['attr']['class'] ?? "") . ' govuk-button--disabled');
         }
 
+        if ($options['is_start_button'] ?? false) {
+            $view->vars['attr']['class'] = trim(($view->vars['attr']['class'] ?? "") . ' govuk-button--start');
+        }
+
+        $view->vars['is_start_button'] = $options['is_start_button'];
         $view->vars['label_html'] = $options['label_html'];
     }
 

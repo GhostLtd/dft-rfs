@@ -9,7 +9,8 @@
     {% block headerBar %}
         {{ govuk.header({
             serviceName: ('service.name' | trans) ~ ' Admin',
-            serviceNameEnv: env_label_admin
+            serviceNameEnv: env_label_admin,
+            useTudorCrown: true
         }) }}
     {% endblock %}
 {% endblock %}

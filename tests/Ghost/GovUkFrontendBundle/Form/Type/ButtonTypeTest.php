@@ -1,16 +1,12 @@
 <?php
 
-
 namespace App\Tests\Ghost\GovUkFrontendBundle\Form\Type;
 
-
-use App\Tests\Ghost\GovUkFrontendBundle\Form\FormTestCase;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
-use Symfony\Component\Form\FormFactoryInterface;
 
-class ButtonTypeTest extends FormTestCase
+class ButtonTypeTest extends AbstractGovUkFrontendTest
 {
-    public function fixtureProvider()
+    public function fixtureProvider(): array
     {
         $ignoreFixtures = function($fixture) {
             return (isset($fixture['options']['href']) ||
@@ -23,9 +19,9 @@ class ButtonTypeTest extends FormTestCase
      * @dataProvider fixtureProvider
      * @param $fixture
      */
-    public function testButtonFixtures($fixture)
+    public function testButtonFixtures($fixture): void
     {
-        $buttonForm = $this->createAndTestForm(
+        $this->createAndTestForm(
             ButtonType::class,
             null,
             $this->mapJsonOptions($fixture['options'] ?? []),
@@ -33,10 +29,10 @@ class ButtonTypeTest extends FormTestCase
         );
     }
 
-    protected function mapJsonOptions($fixtureOptions)
+    protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in ButtonType
-        $mappedOptions = ['disabled', 'text', 'html', 'preventDoubleClick', 'classes', 'attributes', 'value', 'type'];
+        $mappedOptions = ['disabled', 'text', 'html', 'isStartButton', 'preventDoubleClick', 'classes', 'attributes', 'value', 'type'];
         $fixtureOptions = array_intersect_key($fixtureOptions, array_fill_keys($mappedOptions, 0));
 
         $formOptions = parent::mapJsonOptions($fixtureOptions);
@@ -46,6 +42,9 @@ class ButtonTypeTest extends FormTestCase
             {
                 case 'preventDoubleClick' :
                     $formOptions['prevent_double_click'] = $value;
+                    break;
+                case 'isStartButton':
+                    $formOptions['is_start_button'] = $value;
                     break;
                 case 'value' :
                     $formOptions['attr']['value'] = $value;

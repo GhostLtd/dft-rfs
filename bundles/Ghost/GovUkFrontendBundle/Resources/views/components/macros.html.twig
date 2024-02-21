@@ -8,6 +8,12 @@
     {% endstrict -%}
 {%- endmacro %}
 
+{% macro details(params) -%}
+    {%- strict false -%}
+        {%- include '@GhostGovUkFrontend/components/details/template.html.twig' -%}
+    {% endstrict -%}
+{%- endmacro %}
+
 {% macro errorSummary(params) -%}
     {%- strict false -%}
         {%- include '@GhostGovUkFrontend/components/error-summary/template.html.twig' -%}

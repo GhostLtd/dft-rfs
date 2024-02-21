@@ -1,16 +1,13 @@
 <?php
 
-
 namespace App\Tests\Ghost\GovUkFrontendBundle\Form\Type;
 
-
-use App\Tests\Ghost\GovUkFrontendBundle\Form\FormTestCase;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Ghost\GovUkFrontendBundle\Form\Type\NumberType;
 
-class InputTypeTest extends FormTestCase
+class InputTypeTest extends AbstractGovUkFrontendTest
 {
-    public function fixtureProvider()
+    public function fixtureProvider(): array
     {
         $ignoreFixtures = [
             'with prefix with attributes',
@@ -18,11 +15,7 @@ class InputTypeTest extends FormTestCase
             'with prefix with classes',
             'with suffix with classes',
         ];
-//        function ($fixture) {
-//            return false;
-//            // suffix/prefix not supported
-////            return preg_match('(suffix|prefix)', $fixture['name']) === 1;
-//        };
+
         return $this->loadFixtures('input', $ignoreFixtures);
     }
 
@@ -30,9 +23,9 @@ class InputTypeTest extends FormTestCase
      * @dataProvider fixtureProvider
      * @param $fixture
      */
-    public function testInputFixtures($fixture)
+    public function testInputFixtures($fixture): void
     {
-        $form = $this->createAndTestForm(
+        $this->createAndTestForm(
             $this->getInputType($fixture),
             $fixture['options']['value'] ?? null,
             $this->mapJsonOptions($fixture['options'] ?? []),
@@ -40,7 +33,7 @@ class InputTypeTest extends FormTestCase
         );
     }
 
-    protected function getInputType($fixture)
+    protected function getInputType($fixture): string
     {
         switch (true)
         {
@@ -51,7 +44,7 @@ class InputTypeTest extends FormTestCase
         return InputType::class;
     }
 
-    protected function mapJsonOptions($fixtureOptions)
+    protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in TextareaType
         $ignoredOptions = [];

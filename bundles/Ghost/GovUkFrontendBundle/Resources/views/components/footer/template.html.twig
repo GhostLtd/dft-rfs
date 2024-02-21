@@ -30,7 +30,7 @@
     {% endif %}
     <div class="govuk-footer__meta">
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-            {% if params.meta %}
+            {% if params.meta is defined %}
                 <h2 class="govuk-visually-hidden">{{ params.meta.visuallyHiddenTitle | default('Support links') }}</h2>
                 {% if params.meta.items %}
                     <ul class="govuk-footer__inline-list">
@@ -49,9 +49,11 @@
                     </div>
                 {% endif %}
             {% endif %}
-
+            {#- The SVG needs `focusable="false"` so that Internet Explorer does not
+                treat it as an interactive element - without this it will be
+                'focusable' when using the keyboard to navigate. #}
             <svg
-                    role="presentation"
+                    aria-hidden="true"
                     focusable="false"
                     class="govuk-footer__licence-logo"
                     xmlns="http://www.w3.org/2000/svg"
