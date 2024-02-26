@@ -10,7 +10,7 @@
     {% set stopCount = stops | length %}
     <tbody>
         {% for stop in stops %}
-            {% set link %}<a href="#stop-{{ stop.number }}">{{ stop.number }}</a>{% endset %}
+            {% set link %}<a href="#stop-{{ stop.number }}" class="govuk-link">{{ stop.number }}</a>{% endset %}
             {{ tableRowComplex({
                 'link': {html: linkRowNumbers, content: linkRowNumbers ? link : stop.number},
                 ((stop.originLocation | formatPotentialPostcode) ~ (stop | formatGoodsTransferDetails('loading', ' — '))): {},
