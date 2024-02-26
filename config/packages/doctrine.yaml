@@ -4,18 +4,22 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                schema_filter: '~^(?!messenger_messages|cache_items)~'
+                schema_filter: '~^(?!messenger_messages|cache_items|lock_keys)~'
 
     orm:
         auto_generate_proxy_classes: true
         default_entity_manager: default
+        enable_lazy_ghost_objects: true
+
         entity_managers:
             default:
 #                connection: default
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                report_fields_where_declared: true
+
                 mappings:
                     App:
-                        type: annotation
+                        type: attribute
                         dir: '%kernel.project_dir%/src/Entity'
                         prefix: 'App\Entity'
                         alias: App
@@ -25,6 +29,7 @@ doctrine:
                         MONTH: DoctrineExtensions\Query\Mysql\Month
                         YEAR: DoctrineExtensions\Query\Mysql\Year
                         GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
+                        GHOST_JSON_GET: App\Doctrine\Query\GhostJsonGet
                 hydrators:
                     App\Doctrine\Hydrators\ColumnHydrator: App\Doctrine\Hydrators\ColumnHydrator
                     App\Doctrine\Hydrators\DomesticSurveyExportHydrator: App\Doctrine\Hydrators\DomesticSurveyExportHydrator
@@ -32,9 +37,11 @@ doctrine:
             audit_log:
 #                connection: default
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                report_fields_where_declared: true
+
                 mappings:
                     AuditLog:
-                        type: annotation
+                        type: attribute
                         dir: '%kernel.project_dir%/src/Entity/AuditLog'
                         prefix: 'App\Entity\AuditLog'
                         alias: AuditLog

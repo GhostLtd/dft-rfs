@@ -19,7 +19,7 @@ use Symfony\Component\Workflow\Registry;
 
 class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 {
-    const STATUS_KEY = 'symfony_messenger_bus.govuk_notify_status';
+    public const STATUS_KEY = 'symfony_messenger_bus.govuk_notify_status';
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
@@ -88,7 +88,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
             $notifyApiResponse = (new NotifyApiResponse())
                 ->setEndpoint($message->getEndpoint())
                 ->setEventName($message->getEventName())
-                ->setMessageClass(get_class($message))
+                ->setMessageClass($message::class)
                 ->setData($apiResponseData)
                 ->setRecipient($message->getRecipient())
                 ->setRecipientHash($message->getRecipientHash())
@@ -147,6 +147,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         }
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

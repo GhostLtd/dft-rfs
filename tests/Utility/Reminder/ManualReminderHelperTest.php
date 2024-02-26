@@ -21,15 +21,16 @@ use App\Utility\Reminder\UnavailabilityReason;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
 
 class ManualReminderHelperTest extends KernelTestCase
 {
-    protected MockObject|AuditLogRepository $auditLogRepositoryMock;
+    protected AuditLogRepository&MockObject $auditLogRepositoryMock;
 
     protected ManualReminderHelper $manualReminderHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
@@ -285,7 +286,7 @@ class ManualReminderHelperTest extends KernelTestCase
         $four = new \DateTime('2021-07-01');
         $five = new \DateTime('2021-08-01');
 
-        $survey = function(
+        $getSurvey = function(
             ?\DateTime $invitationDate,
             ?\DateTime $firstReminderDate,
             ?\DateTime $secondReminderDate,
@@ -332,16 +333,16 @@ class ManualReminderHelperTest extends KernelTestCase
             //      pertain to automated reminders/events that are dispatched on not-yet-started surveys. Manual
             //      reminders can only be sent when the survey is in-progress (hence it only examines in_progress
             //      state change, the last manual reminder send date etc).
-            [$survey(null, null, null, null, null), [], null, null],
-            [$survey($one, $two, $three, $four, null), $logs($five), $five, 'in_progress'],
-            [$survey($one, $two, $three, $five, null), $logs($four), $five, 'manual_reminder'],
-            [$survey($one, $two, $five, $three, null), $logs($four), $four, 'in_progress'],
-            [$survey($one, $five, $two, $three, null), $logs($four), $four, 'in_progress'],
-            [$survey($three, $one, $two, $five, null), $logs($four), $five, 'manual_reminder'],
-            [$survey($one, null, $two, $three, null), [], $three, 'manual_reminder'],
+            [$getSurvey(null, null, null, null, null), [], null, null],
+            [$getSurvey($one, $two, $three, $four, null), $logs($five), $five, 'in_progress'],
+            [$getSurvey($one, $two, $three, $five, null), $logs($four), $five, 'manual_reminder'],
+            [$getSurvey($one, $two, $five, $three, null), $logs($four), $four, 'in_progress'],
+            [$getSurvey($one, $five, $two, $three, null), $logs($four), $four, 'in_progress'],
+            [$getSurvey($three, $one, $two, $five, null), $logs($four), $five, 'manual_reminder'],
+            [$getSurvey($one, null, $two, $three, null), [], $three, 'manual_reminder'],
 
-            [$survey($one, $two, $five, $three, $five), $logs($four), $five, 'was_chased'],
-            [$survey($one, $two, $five, $five, $four), $logs($four), $five, 'manual_reminder'],
+            [$getSurvey($one, $two, $five, $three, $five), $logs($four), $five, 'was_chased'],
+            [$getSurvey($one, $two, $five, $five, $four), $logs($four), $five, 'manual_reminder'],
         ];
     }
 

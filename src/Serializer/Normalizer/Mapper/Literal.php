@@ -4,13 +4,11 @@ namespace App\Serializer\Normalizer\Mapper;
 
 class Literal implements Mapper
 {
-    protected $data;
-
-    public function __construct($data)
+    public function __construct(protected $data)
     {
-        $this->data = $data;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         return $this->data;

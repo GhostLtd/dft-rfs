@@ -17,11 +17,13 @@ class CallbackIncludingErrorsFormTestCase extends AbstractFormTestCase
         parent::__construct([], $submitButtonId, $skipPageUrlChangeCheck);
     }
 
+    #[\Override]
     public function getFormData(Context $context): array
     {
         return ($this->formDataCallback)($context);
     }
 
+    #[\Override]
     public function getExpectedErrorIds(Context $context): array
     {
         return ($this->expectedErrorCallback)($context);

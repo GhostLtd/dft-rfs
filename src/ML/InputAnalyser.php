@@ -8,21 +8,13 @@ use RuntimeException;
 
 class InputAnalyser
 {
-    protected ConfigInterface $config;
-    protected ConsoleLogger $consoleLogger;
-    protected FileTypeMatcher $fileTypeMatcher;
-
     protected ?DuplicateAndContradictionTracker $duplicateAndConfusionTracker;
     protected array $filenames;
     protected ?FrequencyCounter $frequencyCounter;
     protected Stats $stats;
 
-    public function __construct(ConfigInterface $config, ConsoleLogger $consoleLogger, FileTypeMatcher $fileTypeMatcher)
+    public function __construct(protected ConfigInterface $config, protected ConsoleLogger $consoleLogger, protected FileTypeMatcher $fileTypeMatcher)
     {
-        $this->config = $config;
-        $this->consoleLogger = $consoleLogger;
-        $this->fileTypeMatcher = $fileTypeMatcher;
-
         $this->duplicateAndConfusionTracker = null;
         $this->frequencyCounter = null;
         $this->stats = new Stats();
@@ -91,7 +83,7 @@ class InputAnalyser
     }
 
     /**
-     * @return Generator<array, string>
+     * @return Generator<array>
      */
     protected function dataPointIterator(array $filenames, bool $recordStats): Generator
     {

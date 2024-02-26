@@ -6,6 +6,8 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,11 +38,11 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->where('pe.state IN (:states)')
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
-            ->setParameters([
-                'states' => [SurveyStateInterface::STATE_CLOSED],
-                'monthStart' => $monthStart,
-                'monthEnd' => $monthEnd,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', [SurveyStateInterface::STATE_CLOSED]),
+                new Parameter('monthStart', $monthStart),
+                new Parameter('monthEnd', $monthEnd),
+            ]))
             ->getQuery()
             ->execute();
     }
@@ -51,10 +53,10 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->select('count(p) AS count')
             ->where('p.state IN (:states)')
             ->andWhere('p.invitationSentDate < :fourteenDaysAgo')
-            ->setParameters([
-                'states' => SurveyStateInterface::ACTIVE_STATES,
-                'fourteenDaysAgo' => (new \DateTime())->modify('-14 days'),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('fourteenDaysAgo', (new \DateTime())->modify('-14 days')),
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -64,9 +66,7 @@ class PreEnquiryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('count(p) AS count')
             ->where('p.state IN (:states)')
-            ->setParameters([
-                'states' => SurveyStateInterface::ACTIVE_STATES,
-            ])
+            ->setParameter('states', SurveyStateInterface::ACTIVE_STATES)
             ->getQuery()
             ->getSingleScalarResult();
     }

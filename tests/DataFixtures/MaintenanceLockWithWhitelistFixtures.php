@@ -9,6 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class MaintenanceLockWithWhitelistFixtures extends Fixture implements FixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $maintenanceLock = (new MaintenanceLock())

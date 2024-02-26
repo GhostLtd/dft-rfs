@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, AuthenticationFailureHandlerInterface, AuthenticationSuccessHandlerInterface
@@ -29,6 +29,7 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         protected UrlGeneratorInterface $urlGenerator
     ) {}
 
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
         $this->roroLoginLimiter->reset($this->requestStack->getMainRequest());
@@ -43,6 +44,7 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         return new RedirectResponse($this->urlGenerator->generate('app_roro_dashboard', ['operatorId' => $user->getOperator()->getId()]));
     }
 
+    #[\Override]
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         $message = $exception->getPrevious()?->getMessage();
@@ -69,10 +71,11 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
         $this->logger->info("RoRo Login failed: {$user} - {$message}");
 
         $exception = new AuthenticationException($message);
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));
     }
 
+    #[\Override]
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         return new RedirectResponse($this->urlGenerator->generate('app_roro_login'));

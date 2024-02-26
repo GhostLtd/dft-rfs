@@ -7,15 +7,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class IntegerProperty implements Mapper
 {
-    protected string $propertyPath;
-    private bool $defaultValue;
-
-    public function __construct(string $propertyPath, $defaultValue = false)
+    public function __construct(protected string $propertyPath, private bool $defaultValue = false)
     {
-        $this->propertyPath = $propertyPath;
-        $this->defaultValue = $defaultValue;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -23,7 +19,7 @@ class IntegerProperty implements Mapper
         try {
             $value = $accessor->getValue($sourceData, $this->propertyPath);
             return intval(filter_var($value,FILTER_SANITIZE_NUMBER_INT));
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->defaultValue;
         }
     }

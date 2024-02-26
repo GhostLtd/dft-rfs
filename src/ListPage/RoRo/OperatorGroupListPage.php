@@ -23,6 +23,7 @@ class OperatorGroupListPage extends AbstractListPage
         parent::__construct($formFactory, $router);
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         return [
@@ -30,11 +31,13 @@ class OperatorGroupListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         return $this->operatorGroupRepository->createQueryBuilder('operatorGroup')->select('operatorGroup');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

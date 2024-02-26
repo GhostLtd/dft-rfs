@@ -3,30 +3,29 @@
 namespace App\Command;
 
 use App\Utility\RoRo\SurveyCreationHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('app:cron:roro:create-surveys')]
 class CronCreateRoRoSurveysCommand extends Command
 {
-    protected static $defaultName = 'app:cron:roro:create-surveys';
-
-    protected SurveyCreationHelper $surveyCreationHelper;
-
-    public function __construct(SurveyCreationHelper $surveyCreationHelper)
+    public function __construct(protected SurveyCreationHelper $surveyCreationHelper)
     {
         parent::__construct();
-        $this->surveyCreationHelper = $surveyCreationHelper;
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates the necessary surveys for all active operators/routes in the current period')
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

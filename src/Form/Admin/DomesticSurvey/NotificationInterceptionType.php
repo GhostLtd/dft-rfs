@@ -10,10 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NotificationInterceptionType extends AbstractType
 {
-    const EDIT_ALL = 'all';
-    const EDIT_ADDRESS = 'address';
-    const EDIT_EMAILS = 'emails';
+    public const EDIT_ALL = 'all';
+    public const EDIT_ADDRESS = 'address';
+    public const EDIT_EMAILS = 'emails';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (in_array($options['edit_mode'], [self::EDIT_ALL, self::EDIT_ADDRESS]))
@@ -48,6 +49,7 @@ class NotificationInterceptionType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

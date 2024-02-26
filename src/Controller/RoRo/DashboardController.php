@@ -5,22 +5,25 @@ namespace App\Controller\RoRo;
 use App\Entity\RoRo\Operator;
 use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRo\SurveyRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route("/roro/operator/{operatorId}")]
-#[Entity("operator", expr: "repository.find(operatorId)")]
-#[Security("is_granted('CAN_VIEW_RORO_DASHBOARD', operator)")]
+#[IsGranted("CAN_VIEW_RORO_DASHBOARD", "operator")]
 class DashboardController extends AbstractController
 {
     public function __construct(protected SurveyRepository $surveyRepository)
     {}
 
     #[Route(name: "app_roro_dashboard")]
-    public function dashboard(MaintenanceWarningRepository $maintenanceWarningRepository, Operator $operator): Response
+    public function dashboard(
+        MaintenanceWarningRepository $maintenanceWarningRepository,
+        #[MapEntity(expr: "repository.find(operatorId)")]
+        Operator $operator
+    ): Response
     {
         return $this->renderTemplate($operator, 'roro/dashboard.html.twig', [
             'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
@@ -28,14 +31,22 @@ class DashboardController extends AbstractController
     }
 
     #[Route("/completed-surveys", name: "app_roro_completed_surveys")]
-    public function completedSurveys(Operator $operator): Response
+    public function completedSurveys(
+        #[MapEntity(expr: "repository.find(operatorId)")]
+        Operator $operator
+    ): Response
     {
         return $this->renderTemplate($operator, 'roro/completed_surveys.html.twig', [
             'breadcrumbToggle' => 'completed-surveys',
         ]);
     }
 
-    public function renderTemplate(Operator $operator, string $template, array $extraParameters = []): Response
+    public function renderTemplate(
+        #[MapEntity(expr: "repository.find(operatorId)")]
+        Operator $operator,
+        string $template,
+        array $extraParameters = []
+    ): Response
     {
         return $this->render($template, array_merge($extraParameters, [
             'operator' => $operator,

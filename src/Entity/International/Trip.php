@@ -10,197 +10,138 @@ use App\Repository\International\TripRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @ORM\Entity(repositoryClass=TripRepository::class)
- * @ORM\Table(name="international_trip")
- * @AppAssert\TripRoute(message="international.trip.outbound.ports-not-null", groups={"trip_outbound_ports"}, direction="outbound")
- * @AppAssert\TripRoute(message="international.trip.return.ports-not-null", groups={"trip_return_ports"}, direction="return")
- * @AppAssert\TripRoute(groups={"admin_trip"}, direction="outbound", formField="outboundPorts")
- * @AppAssert\TripRoute(groups={"admin_trip"}, direction="return", formField="returnPorts")
- */
+#[AppAssert\TripRoute(message: "international.trip.outbound.ports-not-null", groups: ["trip_outbound_ports"], direction: "outbound")]
+#[AppAssert\TripRoute(message: "international.trip.return.ports-not-null", groups: ["trip_return_ports"], direction: "return")]
+#[AppAssert\TripRoute(groups: ["admin_trip"], direction: "outbound", formField: "outboundPorts")]
+#[AppAssert\TripRoute(groups: ["admin_trip"], direction: "return", formField: "returnPorts")]
+#[ORM\Table(name: 'international_trip')]
+#[ORM\Entity(repositoryClass: TripRepository::class)]
 class Trip
 {
     use SimpleVehicleTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
-     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTime $exportDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $exportDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="international.trip.origin.not-blank", groups={"trip_places", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
-     */
-    private $origin;
+    #[Assert\NotBlank(message: 'international.trip.origin.not-blank', groups: ['trip_places', 'admin_trip'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_places', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $origin = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="international.trip.destination.not-blank", groups={"trip_places", "admin_trip"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_places", "admin_trip"})
-     */
-    private $destination;
+    #[Assert\NotBlank(message: 'international.trip.destination.not-blank', groups: ['trip_places', 'admin_trip'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_places', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $destination = null;
 
-    /**
-     * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="international.trip.outbound.date-not-null")
-     */
-    private $outboundDate;
+    #[Assert\NotBlank(message: 'international.trip.outbound.date-not-null', groups: ['trip_dates', 'admin_trip'])]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $outboundDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
-     */
-    private $outboundUkPort;
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_outbound_ports', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $outboundUkPort = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_outbound_ports", "admin_trip"})
-     */
-    private $outboundForeignPort;
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_outbound_ports', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $outboundForeignPort = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $outboundWasLimitedBySpace;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $outboundWasLimitedBySpace = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $outboundWasLimitedByWeight;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $outboundWasLimitedByWeight = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $outboundWasEmpty;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $outboundWasEmpty = null;
 
-    /**
-     * @ORM\Column(type="date")
-     * @Assert\NotBlank(groups={"trip_dates", "admin_trip"}, message="international.trip.return.date-not-null")
-     */
-    private $returnDate;
+    #[Assert\NotBlank(message: 'international.trip.return.date-not-null', groups: ['trip_dates', 'admin_trip'])]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $returnDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
-     */
-    private $returnForeignPort;
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_return_ports', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $returnForeignPort = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"trip_return_ports", "admin_trip"})
-     */
-    private $returnUkPort;
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['trip_return_ports', 'admin_trip'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $returnUkPort = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $returnWasLimitedBySpace;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $returnWasLimitedBySpace = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $returnWasLimitedByWeight;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $returnWasLimitedByWeight = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $returnWasEmpty;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $returnWasEmpty = null;
 
-    /**
-     * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(groups={"trip_distance", "admin_trip"})
-     */
+    #[AppAssert\ValidValueUnit(groups: ["trip_distance", "admin_trip"])]
+    #[ORM\Embedded(class: Distance::class)]
     private $roundTripDistance;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: Types::JSON)]
     private $countriesTransitted = [];
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\Length(max=2000, maxMessage="common.string.max-length", groups={"trip_countries_transitted", "admin_trip"})
-     */
-    private $countriesTransittedOther;
+    #[Assert\Length(max: 2000, maxMessage: 'common.string.max-length', groups: ['trip_countries_transitted', 'admin_trip'])]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $countriesTransittedOther = null;
+
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Vehicle::class, inversedBy: 'trips')]
+    private ?Vehicle $vehicle = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Vehicle::class, inversedBy="trips")
-     * @ORM\JoinColumn(nullable=false)
+     * @var Collection<int, Action>
      */
-    private $vehicle;
+    #[ORM\OneToMany(mappedBy: 'trip', targetEntity: Action::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['number' => 'ASC'])]
+    private Collection $actions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Action::class, mappedBy="trip", cascade={"persist","remove"})
-     * @ORM\OrderBy({"number" = "ASC"})
-     */
-    private $actions;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="international.trip.trailer-swap.not-null", groups={"trip_swapped_trailer"})
-     */
-    private $isSwappedTrailer;
+    #[Assert\NotNull(message: 'international.trip.trailer-swap.not-null', groups: ['trip_swapped_trailer'])]
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isSwappedTrailer = null;
 
     /**
      * Redefined here for Validation purposes
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Expression(
-     *     expression="(this.getIsSwappedTrailer() === false) || !is_empty(value)",
-     *     groups={"trip_swapped_trailer"},
-     *     message="common.vehicle.axle-configuration.not-blank"
-     * )
      */
-    private $axleConfiguration;
+    #[Assert\Expression(expression: '(this.getIsSwappedTrailer() === false) || !is_empty(value)', message: 'common.vehicle.axle-configuration.not-blank', groups: ['trip_swapped_trailer'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $axleConfiguration = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isChangedBodyType;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $isChangedBodyType = null;
 
-    /**
-     * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\Expression(
-     *     expression="(this.getIsChangedBodyType() === false) || !is_empty(value)",
-     *     groups={"trip_changed_body_type"},
-     *     message="common.vehicle.body-type.not-blank"
-     * )
-     */
-    private $bodyType;
+    #[Assert\Expression(expression: '(this.getIsChangedBodyType() === false) || !is_empty(value)', message: 'common.vehicle.body-type.not-blank', groups: ['trip_changed_body_type'])]
+    #[ORM\Column(type: Types::STRING, length: 24, nullable: true)]
+    private ?string $bodyType = null;
 
-    /**
-     * @Assert\Callback(groups={"trip_outbound_cargo_state", "admin_trip"})
-     */
+    #[Assert\Callback(groups: ['trip_outbound_cargo_state', 'admin_trip'])]
     public function validateOutboundCargoState(ExecutionContextInterface $context): void
     {
         $this->validateCargoState($context, 'outbound');
     }
 
-    /**
-     * @Assert\Callback(groups={"trip_return_cargo_state", "admin_trip"})
-     */
+    #[Assert\Callback(groups: ['trip_return_cargo_state', 'admin_trip'])]
     public function validateReturnCargoState(ExecutionContextInterface $context): void
     {
         $this->validateCargoState($context, 'return');
     }
 
-    /**
-     * @Assert\Callback(groups={"trip_dates", "admin_trip"})
-     */
+    #[Assert\Callback(groups: ['trip_dates', 'admin_trip'])]
     public function validateDates(ExecutionContextInterface $context): void
     {
         $outboundDate = $this->getOutboundDate();
@@ -227,10 +168,7 @@ class Trip
         }
     }
 
-    /**
-     * @Assert\Callback(groups={"admin_trip"})
-     * @param ExecutionContextInterface $context
-     */
+    #[Assert\Callback(groups: ['admin_trip'])]
     public function validateWeightsAdminOnly(ExecutionContextInterface $context): void
     {
         if (!$this->canChangeWeights()) {
@@ -277,6 +215,12 @@ class Trip
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function setId(?string $id): self
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getOutboundDate(): ?DateTimeInterface
@@ -526,17 +470,13 @@ class Trip
 
     public function getAllCountriesTransitted(): string {
         $countries = array_unique(array_merge(
-            array_map(function($code) {
-                return Countries::getName($code);
-            }, $this->countriesTransitted),
+            array_map(fn($code) => Countries::getName($code), $this->countriesTransitted),
             array_map('trim', explode(',', $this->countriesTransittedOther))
         ));
 
         sort($countries);
 
-        $countries = array_filter($countries, function($str) {
-            return $str !== '';
-        });
+        $countries = array_filter($countries, fn($str) => $str !== '');
 
         return join(', ', $countries);
     }
@@ -615,20 +555,16 @@ class Trip
         $vehicleAxleConfig = $this->getVehicle()->getAxleConfiguration();
 
         // filter original choice
-        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
-            return $value !== $vehicleAxleConfig;
-        });
+        $choices = array_filter($choices, fn($value) => $value !== $vehicleAxleConfig);
 
         // Remove Rigid other (unless original was rigid other + trailer) as we can never swap to that!
-        $choices = array_filter($choices, function($value) use ($vehicleAxleConfig){
-            return $value !== 199 || $vehicleAxleConfig === 299;
-        });
+        $choices = array_filter($choices, fn($value) => $value !== 199 || $vehicleAxleConfig === 299);
 
         // filter the choices so only the middle digit matches (or other in same category)
-        return array_filter($choices, function($value) use ($vehicleAxleConfig){
-            return substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1)
-                || substr($value, 1, 2) === '99';
-        });
+        return array_filter($choices, fn($value) =>
+            substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1) ||
+            substr($value, 1, 2) === '99'
+        );
     }
 
     public function getIsChangedBodyType(): ?bool

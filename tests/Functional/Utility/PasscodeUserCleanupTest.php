@@ -12,6 +12,7 @@ class PasscodeUserCleanupTest extends AbstractCleanupTest
 {
     protected ?PasscodeUserCleanupUtility $cleanupUtility = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

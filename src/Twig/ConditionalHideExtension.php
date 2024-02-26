@@ -8,10 +8,11 @@ use Twig\TwigFunction;
 
 class ConditionalHideExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('namesToIds', [$this, 'namesToIds']),
+            new TwigFunction('namesToIds', $this->namesToIds(...)),
         ];
     }
 

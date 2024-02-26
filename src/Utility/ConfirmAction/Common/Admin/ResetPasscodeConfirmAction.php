@@ -14,17 +14,14 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
 {
     /** @var PasscodeUser */
     protected $subject;
-    protected PasscodeGenerator $passcodeGenerator;
-    protected EntityManagerInterface $entityManager;
-    protected ?string $passcode;
+    protected ?string $passcode = null;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, PasscodeGenerator $passcodeGenerator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected PasscodeGenerator $passcodeGenerator, protected EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
-        $this->passcodeGenerator = $passcodeGenerator;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -34,11 +31,13 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'admin.passcode-reset';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->subject->setPassword(null);

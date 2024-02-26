@@ -4,14 +4,11 @@ namespace App\ML;
 
 class Contradiction
 {
-    protected mixed $sourceData;
-
     /** @var array<string> */
     protected array $contradictions;
 
-    public function __construct(mixed $sourceData)
+    public function __construct(protected mixed $sourceData)
     {
-        $this->sourceData = $sourceData;
     }
 
     public function addContradiction(string $targetData): self
@@ -26,7 +23,7 @@ class Contradiction
         return $this->sourceData;
     }
 
-    /** @return array<string,int> */
+    /** @return array<int,string> */
     public function getContradictions(): array
     {
         arsort($this->contradictions);

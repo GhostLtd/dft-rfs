@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class DriverAvailabilityWagesPeriodValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof DriverAvailabilityWagesPeriod) {
             throw new UnexpectedTypeException($constraint, DriverAvailabilityWagesPeriod::class);

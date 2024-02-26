@@ -11,6 +11,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class VehicleDetailsType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "international.vehicle.vehicle-details";
@@ -30,6 +31,7 @@ class VehicleDetailsType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

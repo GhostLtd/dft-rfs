@@ -2,16 +2,15 @@
 
 namespace App\Utility\Menu;
 
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 trait RoleFilterTrait
 {
     /**
-     * @param Security $security
-     * @param MenuItemInterface[] $menuItems
-     * @return MenuItemInterface[]
+     * @param array<MenuItemInterface> $menuItems
+     * @return array<MenuItemInterface>
      */
-    protected function filterMenuItemsByRole(Security $security, array $menuItems)
+    protected function filterMenuItemsByRole(Security $security, array $menuItems): array
     {
         $filteredMenuItems = [];
 

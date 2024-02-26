@@ -5,17 +5,18 @@ namespace App\Controller\InternationalSurvey;
 use App\Entity\International\Vehicle;
 use App\Repository\International\VehicleRepository;
 use App\Utility\ConfirmAction\International\DeleteVehicleConfirmAction;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class VehicleController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -25,17 +26,12 @@ class VehicleController extends AbstractController
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const VEHICLE_ROUTE = self::ROUTE_PREFIX.'view';
 
-    protected VehicleRepository $vehicleRepository;
-
-    public function __construct(VehicleRepository $vehicleRepository)
+    public function __construct(protected VehicleRepository $vehicleRepository)
     {
-        $this->vehicleRepository = $vehicleRepository;
     }
 
-    /**
-     * @Route("/international-survey/vehicles/{vehicleId}", name=self::VEHICLE_ROUTE)
-     */
-    public function vehicle(string $vehicleId)
+    #[Route(path: '/international-survey/vehicles/{vehicleId}', name: self::VEHICLE_ROUTE)]
+    public function vehicle(string $vehicleId): Response
     {
         $vehicle = $this->getVehicle($vehicleId);
 
@@ -44,11 +40,9 @@ class VehicleController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/international-survey/vehicles/{vehicleId}/delete", name=self::DELETE_ROUTE)
-     * @Template("international_survey/vehicle/delete.html.twig")
-     */
-    public function delete(string $vehicleId, Request $request, DeleteVehicleConfirmAction $confirmAction)
+    #[Route(path: '/international-survey/vehicles/{vehicleId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('international_survey/vehicle/delete.html.twig')]
+    public function delete(string $vehicleId, Request $request, DeleteVehicleConfirmAction $confirmAction): RedirectResponse|array
     {
         $vehicle = $this->getVehicle($vehicleId);
 
@@ -60,9 +54,7 @@ class VehicleController extends AbstractController
             ->controller(
                 $request,
                 fn() => $this->generateUrl(IndexController::SUMMARY_ROUTE),
-                function() use ($vehicleId) {
-                    return $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]);
-                },
+                fn() => $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]),
             );
     }
 

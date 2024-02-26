@@ -23,10 +23,12 @@ class MessageHandlerTest extends AbstractFunctionalTest
     private EntityManagerInterface $entityManager;
     private PersonalisationHelper $personalisationHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-        $container = static::getContainer()->get('test.service_container');
+        $container = static::getContainer();
+
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->personalisationHelper = $container->get(PersonalisationHelper::class);
@@ -45,7 +47,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->runAsyncNotifyMessengerConsumer();
 
         /** @var Survey $survey */
-        $survey = $this->entityManager->find(get_class($survey), $survey->getId());
+        $survey = $this->entityManager->find($survey::class, $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
         /** @var NotifyApiResponse|false $response */
@@ -66,7 +68,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->runAsyncNotifyMessengerConsumer();
 
         /** @var Survey $survey */
-        $survey = $this->entityManager->find(get_class($survey), $survey->getId());
+        $survey = $this->entityManager->find($survey::class, $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
         /** @var NotifyApiResponse|false $response */
@@ -114,7 +116,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
     {
         return new Letter(
             Reference::EVENT_INVITE,
-            get_class($survey),
+            $survey::class,
             $survey->getId(),
             $address,
             Reference::LETTER_DOMESTIC_SURVEY_INVITE,
@@ -126,7 +128,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
     {
         $this->loadFixtures([MessageHandlerSurveyFixtures::class]);
         /** @var Survey $survey */
-        $survey = $this->getFixtureByReference('survey:notify-message-handler');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:notify-message-handler', Survey::class);
         $survey->getPasscodeUser()->setPlainPassword('test');
         return $survey;
     }

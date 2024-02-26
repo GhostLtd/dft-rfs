@@ -7,16 +7,15 @@ use App\ListPage\RoRo\OperatorGroupListPage;
 use App\Repository\RoRo\OperatorRepository;
 use App\Utility\ConfirmAction\RoRo\Admin\DeleteOperatorGroupConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/operator-groups", name: "admin_operator_groups_")]
-#[Entity("operatorGroup", expr: "repository.findOneById(operatorGroupId)")]
 class OperatorGroupController extends AbstractController
 {
     public function __construct(
@@ -38,14 +37,17 @@ class OperatorGroupController extends AbstractController
 
         return $this->render('admin/roro/operator-groups/list.html.twig', [
             'data' => $listPageData,
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
         ]);
     }
 
     // Note: The requirement can be replaced after upgrading to Symfony 6.1
     //       https://symfony.com/blog/new-in-symfony-6-1-improved-routing-requirements-and-utf-8-parameters#a-collection-of-common-routing-requirements
     #[Route("/{operatorGroupId}", name: "view", requirements: ['operatorGroupId' => '[0-9a-f]{8}-[0-9a-f]{4}-[1-6][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'])]
-    public function view(OperatorGroup $operatorGroup): Response
+    public function view(
+        #[MapEntity(expr: "repository.findOneById(operatorGroupId)")]
+        OperatorGroup $operatorGroup
+    ): Response
     {
         return $this->render('admin/roro/operator-groups/view.html.twig', [
             'operatorGroup' => $operatorGroup,
@@ -58,7 +60,11 @@ class OperatorGroupController extends AbstractController
 
     #[Route("/{operatorGroupId}/delete", name: "delete")]
     #[IsGranted("CAN_DELETE_OPERATOR_GROUP", subject: "operatorGroup")]
-    public function delete(Request $request, OperatorGroup $operatorGroup): Response
+    public function delete(
+        Request       $request,
+        #[MapEntity(expr: "repository.findOneById(operatorGroupId)")]
+        OperatorGroup $operatorGroup
+    ): Response
     {
         $data = $this->deleteOperatorGroupConfirmAction
             ->setSubject($operatorGroup)

@@ -10,22 +10,24 @@ use InvalidArgumentException;
 
 class OperatorGroupState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_CHOOSE_NAME = 'choose-name';
-    const STATE_PREVIEW = 'preview';
-    const STATE_FINISH = 'finish';
+    public const STATE_CHOOSE_NAME = 'choose-name';
+    public const STATE_PREVIEW = 'preview';
+    public const STATE_FINISH = 'finish';
 
     private OperatorGroup $subject;
     protected string $mode;
 
+    #[\Override]
     public function getSubject(): OperatorGroup
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (get_class($subject) !== OperatorGroup::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . OperatorGroup::class);
+        if ($subject::class !== OperatorGroup::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . OperatorGroup::class);
         }
         $this->subject = $subject;
         return $this;
@@ -42,6 +44,7 @@ class OperatorGroupState extends AbstractFormWizardState implements FormWizardSt
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap(): array
     {
         return [
@@ -49,6 +52,7 @@ class OperatorGroupState extends AbstractFormWizardState implements FormWizardSt
         ];
     }
 
+    #[\Override]
     public function getStateTemplateMap(): array
     {
         return [
@@ -57,11 +61,13 @@ class OperatorGroupState extends AbstractFormWizardState implements FormWizardSt
         ];
     }
 
+    #[\Override]
     public function getDefaultTemplate(): ?string
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         return false;

@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class EditType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -23,6 +24,7 @@ class EditType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return VehicleCountsType::class;

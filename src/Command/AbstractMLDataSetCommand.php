@@ -17,27 +17,22 @@ abstract class AbstractMLDataSetCommand extends Command
     abstract protected function doExecute(InputInterface $input, OutputInterface $output): int;
 
     protected ConsoleLogger $consoleLogger;
-
-    protected FileTypeMatcher $fileTypeMatcher;
-    protected Nst2007 $nst2007;
     protected SymfonyStyle $io;
     protected ?string $outputFile;
     protected int $logLevel;
     protected bool $showFrequencies;
     protected bool $showMemoryUsage;
 
-    public function __construct(FileTypeMatcher $fileTypeMatcher, Nst2007 $nst2007)
+    public function __construct(protected FileTypeMatcher $fileTypeMatcher, protected Nst2007 $nst2007)
     {
-        $this->fileTypeMatcher = $fileTypeMatcher;
-        $this->nst2007 = $nst2007;
         $this->outputFile = null;
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this
-            ->setDescription(static::$defaultDescription)
             ->addArgument('output', InputArgument::REQUIRED, 'Output CSV')
 
             ->addOption('log-level', 'l', InputOption::VALUE_OPTIONAL, 'Log level - bitmask - 1: error, 2: invalid text, 4: invalid code, 8: duplicate, 16: contradictory')
@@ -45,6 +40,7 @@ abstract class AbstractMLDataSetCommand extends Command
             ->addOption('show-memory-usage', 'u', InputOption::VALUE_NONE, 'Show memory usage');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -77,8 +73,8 @@ abstract class AbstractMLDataSetCommand extends Command
     protected function displayMemoryUsage(): void
     {
         $readableBytes = function(int $size): string {
-            $sizeNames = array(" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB");
-            return $size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) .$sizeNames[$i] : '0 Bytes';
+            $sizeNames = [" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"];
+            return $size ? round($size/1024 ** ($i = floor(log($size, 1024))), 2) .$sizeNames[$i] : '0 Bytes';
         };
 
         $usage = $readableBytes(memory_get_peak_usage());

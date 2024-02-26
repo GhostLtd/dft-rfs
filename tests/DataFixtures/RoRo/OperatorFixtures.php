@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class OperatorFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $operator = (new Operator())

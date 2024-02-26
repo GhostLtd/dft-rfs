@@ -15,7 +15,7 @@ class CspInlineScriptHelper
     public function getNonce(string $context): string
     {
         if (!isset($this->nonces[$context])) {
-            $rand = rand();
+            $rand = random_int(0, mt_getrandmax());
             $this->nonces[$context] = hash_hmac('sha1', "$context-$rand", $this->secret);
         }
         return $this->nonces[$context];

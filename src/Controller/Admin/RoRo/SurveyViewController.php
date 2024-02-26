@@ -8,12 +8,12 @@ use App\Entity\RoRo\SurveyNote;
 use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\RoRo\VehicleCountHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SurveyViewController extends AbstractController
 {
@@ -24,8 +24,11 @@ class SurveyViewController extends AbstractController
     ) {}
 
     #[Route("/roro/surveys/{surveyId}", name: "admin_roro_surveys_view")]
-    #[Entity("survey", expr: "repository.find(surveyId)")]
-    public function view(Survey $survey, Request $request): Response
+    public function view(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        Request $request
+    ): Response
     {
         $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);
         if ($this->addNotesHelper->formSubmittedAndProcessed($request, $survey, $addNotesForm)) {
@@ -35,7 +38,7 @@ class SurveyViewController extends AbstractController
         $this->vehicleCountHelper->setVehicleCountLabels($survey->getVehicleCounts());
 
         return $this->render('admin/roro/surveys/view.html.twig', [
-            'addNoteForm' => $addNotesForm->createView(),
+            'addNoteForm' => $addNotesForm,
             'approvedBy' => in_array($survey->getState(), [
                 SurveyStateInterface::STATE_INVITATION_SENT,
                 SurveyStateInterface::STATE_NEW,

@@ -88,7 +88,7 @@ class Context
     }
 
     public function outputHeader(string $header, ?int $minDebugLevel=null): self {
-        $actionIndex = str_pad((($this->get('_actionIndex') ?? 0) + 1).'.', 4);
+        $actionIndex = str_pad(((intval($this->get('_actionIndex'))) + 1).'.', 4);
         return $this->output("{$actionIndex}<info>{$header}</info>", $minDebugLevel);
     }
 

@@ -12,6 +12,7 @@ abstract class AbstractProceduralWizardTest extends AbstractWizardTest
 {
     protected Context $context;
 
+    #[\Override]
     public function initialiseClientAndLoadFixtures(array $fixtures, array $pantherOptions = []): void
     {
         parent::initialiseClientAndLoadFixtures($fixtures, array_merge([

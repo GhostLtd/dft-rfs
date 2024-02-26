@@ -9,7 +9,8 @@ use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use PHPUnit\Runner\BaseTestRunner;
 use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\PantherTestCase;
-use Symfony\Component\Panther\ServerExtension;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Panther\ServerExtensionLegacy;
 
 class AbstractFunctionalTestCase extends PantherTestCase
 {
@@ -27,20 +28,15 @@ class AbstractFunctionalTestCase extends PantherTestCase
         $this->client = static::createPantherClient($pantherOptions);
     }
 
-    protected function getFixtureByReference($reference): object
-    {
-        return $this->fixtureReferenceRepository->getReference($reference);
-    }
-
     public function assertPathMatches(string $expectedPath, bool $isRegex, ?string $errorMessage = null): void
     {
-        $errorMessage = $errorMessage ?? ('Page path does not match'. ($isRegex ? ' regex' : ''));
+        $errorMessage ??= 'Page path does not match'. ($isRegex ? ' regex' : '');
         $this->doAssertPathMatches($expectedPath, $isRegex, false, $errorMessage);
     }
 
     public function assertPathNotMatches(string $expectedPath, bool $isRegex, ?string $errorMessage = null): void
     {
-        $errorMessage = $errorMessage ?? ('Page path does not match'. ($isRegex ? ' regex' : ''));
+        $errorMessage ??= 'Page path does not match'. ($isRegex ? ' regex' : '');
         $this->doAssertPathMatches($expectedPath, $isRegex, true, $errorMessage);
     }
 
@@ -198,6 +194,7 @@ class AbstractFunctionalTestCase extends PantherTestCase
     /**
      * Overridden from PantherTestCase, as some test names have unusable characters in
      */
+    #[\Override]
     public function takeScreenshotIfTestFailed(): void
     {
         if (!\in_array($this->getStatus(), [BaseTestRunner::STATUS_ERROR, BaseTestRunner::STATUS_FAILURE], true)) {
@@ -207,6 +204,49 @@ class AbstractFunctionalTestCase extends PantherTestCase
         $type = BaseTestRunner::STATUS_FAILURE === $this->getStatus() ? 'failure' : 'error';
         $test = md5($this->toString());
 
-        ServerExtension::takeScreenshots($type, $test);
+        // It's deprecated, but at least phpstan can detect the method on the class
+        ServerExtensionLegacy::takeScreenshots($type, $test);
+    }
+
+    protected function assertSummaryListData(array $expectedData): void
+    {
+        $summaryData = $this->getSummaryListData();
+        foreach ($expectedData as $key => $expectedValue) {
+            $this->assertSummaryData($summaryData, $key, $expectedValue);
+        }
+    }
+
+    protected function assertSummaryData(array $summaryData, string $key, string $expectedValue): void
+    {
+        foreach ($summaryData as $summaryDataRow) {
+            if (str_contains($summaryDataRow[0], $key)) {
+                $this->assertEquals($expectedValue, $summaryDataRow[1]);
+                return;
+            }
+        }
+        $this->fail("Failed to find summaryData row with key '{$key}'");
+    }
+
+    protected function assertDataMatches(object $object, array $expectedData, string $path = 'root'): void
+    {
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($expectedData as $key => $expectedValue) {
+            $actualValue = $accessor->getValue($object, $key);
+            $currentPath = "{$path}.{$key}";
+
+            if (is_array($expectedValue)) {
+                if (is_array($actualValue)) {
+                    $this->assertEqualsCanonicalizing($expectedValue, $actualValue);
+                    continue;
+                } else if (!is_object($actualValue)) {
+                    $type = gettype($actualValue);
+                    $this->fail("Expected object at path {$currentPath}, but got {$type}");
+                }
+
+                $this->assertDataMatches($actualValue, $expectedValue, $currentPath);
+            } else {
+                $this->assertEquals($expectedValue, $actualValue, "Values do not match at path {$currentPath}");
+            }
+        }
     }
 }

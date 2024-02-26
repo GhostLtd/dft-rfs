@@ -7,11 +7,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateType extends ExtendedDateType
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_date';
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

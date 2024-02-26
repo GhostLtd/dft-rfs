@@ -13,14 +13,13 @@ class DeleteOperatorConfirmAction extends AbstractConfirmAction
 {
     /** @var Operator */
     protected $subject;
-    protected EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -30,6 +29,7 @@ class DeleteOperatorConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         return [
@@ -38,16 +38,19 @@ class DeleteOperatorConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'operator.delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);

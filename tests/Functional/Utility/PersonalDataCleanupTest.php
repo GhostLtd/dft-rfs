@@ -11,6 +11,7 @@ class PersonalDataCleanupTest extends AbstractCleanupTest
 {
     protected ?PersonalDataCleanupUtility $cleanupUtility;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

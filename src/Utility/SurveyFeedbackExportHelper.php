@@ -13,26 +13,32 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class SurveyFeedbackExportHelper
 {
-    protected EntityManagerInterface $entityManager;
-    protected SerializerInterface $serializer;
-
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    protected SerializerInterface|NormalizerInterface $serializer;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        SerializerInterface    $serializer,
+    )
     {
-        $this->entityManager = $entityManager;
+        if (!$serializer instanceof NormalizerInterface) {
+            throw new \RuntimeException('Passed serializer must implement NormalizerInterface');
+        }
+
         $this->serializer = $serializer;
     }
 
-    public function exportAll(string $exportPath = 'php://output')
+    public function exportAll(string $exportPath = 'php://output'): void
     {
         $feedback = $this->getFeedbackQueryBuilder()->getQuery()->execute();
         $this->exportFeedback($feedback, $exportPath);
     }
 
-    public function exportExisting(\DateTime $date, $exportPath = 'php://output')
+    public function exportExisting(\DateTime $date, $exportPath = 'php://output'): void
     {
         $query = $this->getFeedbackQueryBuilder()
             ->andWhere('f.exportedAt = :exportedAt')
@@ -48,7 +54,7 @@ class SurveyFeedbackExportHelper
         $this->exportFeedback($feedback, $exportPath);
     }
 
-    public function exportNew(\DateTime $exportDate, $exportPath = 'php://output')
+    public function exportNew(\DateTime $exportDate, $exportPath = 'php://output'): void
     {
         // get the ones with no exported date
         $query = $this->getFeedbackQueryBuilder()
@@ -68,7 +74,7 @@ class SurveyFeedbackExportHelper
     /**
      * @throws ExceptionInterface
      */
-    protected function exportFeedback(array $feedback, string $exportPath)
+    protected function exportFeedback(array $feedback, string $exportPath): void
     {
         $feedbackIds = $this->getIds($feedback);
         $allNormalizedFeedback = [];
@@ -83,13 +89,6 @@ class SurveyFeedbackExportHelper
         fclose($handle);
     }
 
-    protected function _legacyExportFeedback($feedback, $exportPath)
-    {
-        $handle = fopen($exportPath, 'w');
-        fputs($handle, $this->serializer->serialize($feedback, 'csv', []));
-        fclose($handle);
-    }
-
     /* ---------------------- */
 
     protected function getIds(array $entities): array
@@ -97,7 +96,7 @@ class SurveyFeedbackExportHelper
         return array_map(fn($entity) => $entity->getId(), $entities);
     }
 
-    protected function getSurveyQueryBuilder(string $surveyClass, $feedbackIds): QueryBuilder
+    protected function getSurveyQueryBuilder(string $surveyClass, array $feedbackIds): QueryBuilder
     {
         return $this->entityManager
             ->createQueryBuilder()
@@ -107,8 +106,6 @@ class SurveyFeedbackExportHelper
             ->setParameter('feedbackIds', $feedbackIds)
         ;
     }
-
-    /* ---------------------- */
 
     public function getPastExportDates(): array
     {

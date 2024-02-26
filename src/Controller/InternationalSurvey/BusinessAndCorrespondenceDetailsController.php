@@ -6,33 +6,29 @@ use App\Form\InternationalSurvey\ConfirmationType;
 use App\Repository\International\SurveyRepository;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class BusinessAndCorrespondenceDetailsController extends AbstractController
 {
     use SurveyHelperTrait;
 
     public const SUMMARY_ROUTE = 'app_internationalsurvey_correspondence_and_business_details';
 
-    protected SurveyRepository $surveyRepo;
-
-    public function __construct(SurveyRepository $surveyRepo)
+    public function __construct(protected SurveyRepository $surveyRepo)
     {
-        $this->surveyRepo = $surveyRepo;
     }
 
-    /**
-     * @Route("/international-survey/correspondence-and-business-details", name=self::SUMMARY_ROUTE)
-     */
-    public function index(Request $request, EntityManagerInterface $entityManager, WorkflowInterface $internationalSurveyStateMachine) {
+    #[Route(path: '/international-survey/correspondence-and-business-details', name: self::SUMMARY_ROUTE)]
+    public function index(Request $request, EntityManagerInterface $entityManager, WorkflowInterface $internationalSurveyStateMachine): Response
+    {
         $survey = $this->getSurvey();
 
         if (!$survey->isInitialDetailsComplete()) {
@@ -85,7 +81,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
         return $this->render('international_survey/correspondence-and-business-details.html.twig', [
             'survey' => $survey,
             'detailsComplete' => $detailsComplete,
-            'form' => $form ? $form->createView() : null,
+            'form' => $form,
         ]);
     }
 }

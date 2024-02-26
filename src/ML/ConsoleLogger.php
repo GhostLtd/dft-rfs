@@ -13,13 +13,8 @@ class ConsoleLogger
     public const LEVEL_DUPLICATE = 8;
     public const LEVEL_CONTRADICTORY = 16;
 
-    protected SymfonyStyle $io;
-    protected int $logLevel;
-
-    public function __construct(SymfonyStyle $io, int $logLevel=1)
+    public function __construct(protected SymfonyStyle $io, protected int $logLevel=1)
     {
-        $this->io = $io;
-        $this->logLevel = $logLevel;
     }
 
     public function log(string $message, int $logLevel): void

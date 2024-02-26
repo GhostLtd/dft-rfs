@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
-
 
 use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\DriverAvailability;
@@ -15,7 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BonusesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.driver-availability.bonuses";
 
@@ -60,7 +59,8 @@ class BonusesType extends AbstractType
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['driver-availability.bonuses']

@@ -165,15 +165,5 @@ services:
     App\Doctrine\Migrations\Version\ProjectMigrationFactory:
         arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
 
-    App\EventSubscriber\RedirectAnnotationSubscriber:
-        arguments:
-            - '@framework_extra_bundle.argument_name_convertor'
-            - '@sensio_framework_extra.security.expression_language.default'
-            - '@security.authentication.trust_resolver'
-            - '@security.role_hierarchy'
-            - '@security.token_storage'
-            - '@security.authorization_checker'
-            - '@logger'
-
     Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface $roroLoginLinkHandler:
         '@security.authenticator.login_link_handler.roro'

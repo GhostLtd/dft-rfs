@@ -17,14 +17,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CorrespondenceAddressType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => 'yes',
         self::CHOICE_NO => 'no',
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = "pre-enquiry.correspondence-address";
 
@@ -69,6 +70,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -85,6 +87,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         ]);
     }
 
+    #[\Override]
     public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
@@ -114,6 +117,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
+    #[\Override]
     public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);

@@ -31,6 +31,7 @@ abstract class AbstractRoRoTest extends AbstractProceduralWizardTest
         $this->client->click($node->selectLink($linkText)->link());
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $mt = microtime(true);

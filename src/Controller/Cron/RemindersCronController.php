@@ -5,13 +5,11 @@ namespace App\Controller\Cron;
 use App\Utility\Reminder\AutomatedRemindersHelper;
 use App\Utility\Reminder\AutomatedRoroRemindersHelper;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class RemindersCronController extends AbstractCronController
 {
-    /**
-     * @Route("/reminders/process", name="reminderprocessor")
-     */
+    #[Route(path: '/reminders/process', name: 'reminderprocessor')]
     public function reminderProcessor(
         AutomatedRemindersHelper $automatedRemindersHelper,
         AutomatedRoroRemindersHelper $automatedRoroRemindersHelper

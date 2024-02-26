@@ -7,21 +7,17 @@ use App\Serializer\Encoder\SqlServerInsertEncoder;
 use App\Serializer\Normalizer\RoRo\RoRoNormalizer;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @Route("/roro/export", name="admin_roro_export_")
- */
+#[Route(path: '/roro/export', name: 'admin_roro_export_')]
 class ExportController extends AbstractController
 {
-    /**
-     * @Route("", name="list")
-     * @Template("admin/roro/export/list.html.twig")
-     */
+    #[Route(path: '', name: 'list')]
+    #[Template('admin/roro/export/list.html.twig')]
     public function list(): array
     {
         // list last 12 months from last month
@@ -35,11 +31,7 @@ class ExportController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/{year}-{month}", name="month",
-     *     requirements={"year": "20\d{2}", "month": "(0[1-9]|1[0-2])"}
-     * )
-     */
+    #[Route(path: '/{year}-{month}', name: 'month', requirements: ['year' => '20\d{2}', 'month' => '(0[1-9]|1[0-2])'])]
     public function month(SerializerInterface $serializer, EntityManagerInterface $em, int $year, int $month): Response
     {
         // select surveys that were completed in given month

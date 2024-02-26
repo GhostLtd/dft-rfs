@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoiceTypeExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [
@@ -25,12 +26,11 @@ class ChoiceTypeExtension extends AbstractTypeExtension
         ];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (is_array($options['choice_attr'])) {
-            $options['choice_attr'] = function($value, $key) use ($options) {
-                return $options['choice_attr'][$key] ?? [];
-            };
+            $options['choice_attr'] = fn($value, $key) => $options['choice_attr'][$key] ?? [];
         }
 
         $choiceOptions = $options['choice_options'];
@@ -46,6 +46,7 @@ class ChoiceTypeExtension extends AbstractTypeExtension
         ));
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['has_conditional'] = false;
@@ -66,6 +67,7 @@ class ChoiceTypeExtension extends AbstractTypeExtension
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

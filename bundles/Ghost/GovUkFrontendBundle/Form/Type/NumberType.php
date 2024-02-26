@@ -11,17 +11,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NumberType extends InputType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return InputType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_number';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -34,7 +37,8 @@ class NumberType extends InputType
         if (!$options['is_decimal']) $view->vars['type'] = 'number';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -45,7 +49,8 @@ class NumberType extends InputType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([

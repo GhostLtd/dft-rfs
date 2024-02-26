@@ -27,6 +27,7 @@ class AutomatedRoroRemindersHelperTest extends KernelTestCase
     protected ReferenceRepository $referenceRepository;
     protected SurveyCreationHelper $surveyCreationHelper;
 
+    #[\Override]
     public function setUp(): void
     {
         $container = static::getContainer();
@@ -173,14 +174,14 @@ class AutomatedRoroRemindersHelperTest extends KernelTestCase
     public function testReminder(?array $expectedPersonalisation, array $surveyRoutesAndDates): void
     {
         // Add surveys for given routes and dates
-        $operator = $this->referenceRepository->getReference('roro:operator:1');
+        $operator = $this->referenceRepository->getReference('roro:operator:1', Operator::class);
         $this->assertInstanceOf(Operator::class, $operator);
 
         foreach ($surveyRoutesAndDates as $surveyRouteAndDates) {
             $routeReference = $surveyRouteAndDates[0];
             $surveyDateTimes = $surveyRouteAndDates[1];
 
-            $route = $this->referenceRepository->getReference($routeReference);
+            $route = $this->referenceRepository->getReference($routeReference, Route::class);
             $this->assertInstanceOf(Route::class, $route);
 
             $operatorRoute = new OperatorRoute($operator->getId(), $route->getId());

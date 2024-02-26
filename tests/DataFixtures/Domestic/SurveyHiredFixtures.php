@@ -13,10 +13,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SurveyHiredFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var PasscodeUser $user */
-        $user = $this->getReference('user:frontend');
+        $user = $this->getReference('user:frontend', PasscodeUser::class);
 
         $response = (new SurveyResponse())
             ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_ON_HIRE)
@@ -42,6 +43,7 @@ class SurveyHiredFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [UserFixtures::class];

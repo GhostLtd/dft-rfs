@@ -13,25 +13,17 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/csrgt/export", name="admin_domestic_export_")
- */
+#[Route(path: '/csrgt/export', name: 'admin_domestic_export_')]
 class ExportController extends AbstractController
 {
-    protected ExportHelper $exportHelper;
-
-    public function __construct(ExportHelper $exportHelper)
+    public function __construct(protected ExportHelper $exportHelper)
     {
-        $this->exportHelper = $exportHelper;
     }
 
-    /**
-     * @Route("", name="list")
-     */
+    #[Route(path: '', name: 'list')]
     public function list(): Response
     {
         return $this->render('admin/domestic/export/list.html.twig', [
@@ -39,9 +31,7 @@ class ExportController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{year}/{quarter}", name="quarter", requirements={"year": "\d{4}", "quarter": "[1-4]{1}"})
-     */
+    #[Route(path: '/{year}/{quarter}', name: 'quarter', requirements: ['year' => '\d{4}', 'quarter' => '[1-4]{1}'])]
     public function exportQuarter(Request $request, string $year, string $quarter, DataExporter $exporter, TranslatorInterface $translator): Response
     {
         $form = $this->createForm(ConfirmationType::class, null, [
@@ -76,7 +66,7 @@ class ExportController extends AbstractController
         return $this->render('admin/domestic/export/confirm.html.twig', [
             'quarter' => $quarter,
             'year' => $year,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

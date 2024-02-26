@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AuditLogPass implements CompilerPassInterface
 {
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->has(AuditLogger::class)) {

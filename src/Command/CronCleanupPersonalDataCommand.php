@@ -3,30 +3,29 @@
 namespace App\Command;
 
 use App\Utility\Cleanup\PersonalDataCleanupUtility;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('app:cron:cleanup:personal-data')]
 class CronCleanupPersonalDataCommand extends Command
 {
-    protected static $defaultName = 'app:cron:cleanup:personal-data';
-
-    protected PersonalDataCleanupUtility $cleanupUtility;
-
-    public function __construct(PersonalDataCleanupUtility $cleanupUtility)
+    public function __construct(protected PersonalDataCleanupUtility $cleanupUtility)
     {
         parent::__construct();
-        $this->cleanupUtility = $cleanupUtility;
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Deletes personal data for exported,reissued and rejected surveys after six months')
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

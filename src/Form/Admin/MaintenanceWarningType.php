@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin;
-
 
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -10,7 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class MaintenanceWarningType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('start', Gds\DateTimeType::class,[

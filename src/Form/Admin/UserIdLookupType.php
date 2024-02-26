@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class UserIdLookupType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

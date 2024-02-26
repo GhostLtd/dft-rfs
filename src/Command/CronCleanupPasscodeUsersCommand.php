@@ -3,30 +3,29 @@
 namespace App\Command;
 
 use App\Utility\Cleanup\PasscodeUserCleanupUtility;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('app:cron:cleanup:passcode-users')]
 class CronCleanupPasscodeUsersCommand extends Command
 {
-    protected static $defaultName = 'app:cron:cleanup:passcode-users';
-
-    protected PasscodeUserCleanupUtility $cleanupUtility;
-
-    public function __construct(PasscodeUserCleanupUtility $cleanupUtility)
+    public function __construct(protected PasscodeUserCleanupUtility $cleanupUtility)
     {
         parent::__construct();
-        $this->cleanupUtility = $cleanupUtility;
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Deletes passcode users for rejected surveys after six months')
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

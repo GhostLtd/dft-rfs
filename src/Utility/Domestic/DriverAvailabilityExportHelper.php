@@ -4,6 +4,7 @@ namespace App\Utility\Domestic;
 
 use App\Entity\Domestic\DriverAvailability;
 use App\Entity\SurveyStateInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -11,9 +12,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class DriverAvailabilityExportHelper
 {
-    protected EntityManagerInterface $entityManager;
-
-    private const UNWANTED_STATES = [
+    private const array UNWANTED_STATES = [
         SurveyStateInterface::STATE_INVITATION_FAILED,
         SurveyStateInterface::STATE_INVITATION_PENDING,
         SurveyStateInterface::STATE_INVITATION_SENT,
@@ -21,9 +20,8 @@ class DriverAvailabilityExportHelper
         SurveyStateInterface::STATE_REJECTED,
     ];
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     public function exportAll(string $exportPath = 'php://output')
@@ -65,17 +63,17 @@ class DriverAvailabilityExportHelper
             ->set('d.exportedDate', ':exportedDate')
             ->where('d.id in (:ids)')
             ->getQuery()
-            ->setParameters([
-                'exportedDate' => $exportDate,
-                'ids' => $ids,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Query\Parameter('exportedDate', $exportDate),
+                new Query\Parameter('ids', $ids),
+            ]))
             ->execute();
 
         // export
         $this->exportResponses($responses, $exportPath);
     }
 
-    protected function exportResponses($responses, $exportPath)
+    protected function exportResponses($responses, $exportPath): void
     {
         $handle = fopen($exportPath, 'w');
 
@@ -103,7 +101,7 @@ class DriverAvailabilityExportHelper
         fclose($handle);
     }
 
-    protected function setParametersAndGetArrayResult(Query $query, $additionalParameters = [])
+    protected function setParametersAndGetArrayResult(Query $query, $additionalParameters = []): array
     {
         return $query->setParameters(array_merge($additionalParameters, [
             'unwantedStates' => self::UNWANTED_STATES

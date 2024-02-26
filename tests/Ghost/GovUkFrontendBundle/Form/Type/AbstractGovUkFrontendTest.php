@@ -30,10 +30,6 @@ abstract class AbstractGovUkFrontendTest extends AbstractFixtureTest
         $this->renderAndCompare($fixture, $form);
     }
 
-    /**
-     * @param $fixture
-     * @param FormInterface $componentForm
-     */
     private function renderAndCompare($fixture, FormInterface $componentForm): void
     {
         /** @var Environment $twig */

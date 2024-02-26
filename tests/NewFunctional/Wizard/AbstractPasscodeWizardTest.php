@@ -17,11 +17,14 @@ abstract class AbstractPasscodeWizardTest extends AbstractProceduralWizardTest
         $this->passcodeLogin('test', 'test');
     }
 
+    #[\Override]
     public function tearDown(): void
     {
         try {
             $this->client->request('GET', '/logout');
         } catch(\Exception) {}
+
+        parent::tearDown();
     }
 
     protected function passcodeLogin(string $passcodeOne, string $passcodeTwo, bool $logoutFirst = true): void

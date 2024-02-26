@@ -10,13 +10,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class UniqueNotificationInterceptionNameValidator extends ConstraintValidator
 {
-    private NotificationInterceptionService $notificationInterceptionService;
-
-    public function __construct(NotificationInterceptionService $notificationInterceptionService)
+    public function __construct(protected NotificationInterceptionService $notificationInterceptionService)
     {
-        $this->notificationInterceptionService = $notificationInterceptionService;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueNotificationInterceptionName) {

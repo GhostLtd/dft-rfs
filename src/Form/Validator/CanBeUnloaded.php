@@ -4,17 +4,17 @@ namespace App\Form\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class CanBeUnloaded extends Constraint
 {
-    public $message = "international.action.unloading.must-load-first";
+    public string $message = "international.action.unloading.must-load-first";
 
+    #[\Override]
     public function validatedBy() : string {
         return static::class.'Validator';
     }
 
+    #[\Override]
     public function getTargets(): string|array {
         return self::CLASS_CONSTRAINT;
     }

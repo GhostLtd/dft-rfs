@@ -12,6 +12,7 @@ abstract class AbstractNotificationInterceptionServiceTest extends WebTestCase
     protected EntityManagerInterface $entityManager;
     protected NotificationInterceptionService $interceptService;
 
+    #[\Override]
     public function setUp(): void
     {
         $container = static::getContainer();

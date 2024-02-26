@@ -8,50 +8,42 @@ use App\Entity\Route\Route;
 use App\Repository\RoRoUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=RoRoUserRepository::class)
- * @ORM\Table(name="roro_user")
- * @UniqueEntity("username", message="roro.user.username.already-in-use", groups={"admin_add_roro_user"})
- */
+#[UniqueEntity('username', message: 'roro.user.username.already-in-use', groups: ['admin_add_roro_user'])]
+#[ORM\Table(name: 'roro_user')]
+#[ORM\Entity(repositoryClass: RoRoUserRepository::class)]
 class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const ROLE_RORO_USER = 'ROLE_RORO_USER';
+    public const ROLE_RORO_USER = 'ROLE_RORO_USER';
 
     use IdTrait;
     use NotifyApiResponseTrait;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="roro.user.username.not-null", groups={"admin_add_roro_user"})
-     */
+    #[Assert\NotBlank(message: 'roro.user.username.not-null', groups: ['admin_add_roro_user'])]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private ?string $username = null;
 
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $lastLogin = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Operator::class, inversedBy="users")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Operator::class, inversedBy: 'users')]
     private ?Operator $operator = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
-     * @ORM\JoinTable(
-     *     name="roro_user_notify_api_responses",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
-     * )
+     * @var Collection<int, NotifyApiResponse>
      */
+    #[ORM\JoinTable(name: 'roro_user_notify_api_responses')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
     protected Collection $apiResponses;
 
     public function __construct()
@@ -59,9 +51,10 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
         $this->apiResponses = new ArrayCollection();
     }
 
-    public function getUserIdentifier(): ?string
+    #[\Override]
+    public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->username ?? '';
     }
 
     public function getUsername(): string
@@ -83,6 +76,7 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[\Override]
     public function getRoles(): array
     {
         return [self::ROLE_RORO_USER];
@@ -104,35 +98,23 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    #[\Override]
     public function eraseCredentials(): void
     {
     }
 
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword(?string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
-
-        // To make sure that entityManager tries to flush this change, so that the password-hash subscriber gets triggered.
-        $this->password = null;
-        return $this;
-    }
-
-    public function getLastLogin(): ?\DateTimeInterface
+    public function getLastLogin(): ?\DateTime
     {
         return $this->lastLogin;
     }
 
-    public function setLastLogin(?\DateTimeInterface $lastLogin): self
+    public function setLastLogin(?\DateTime $lastLogin): self
     {
         $this->lastLogin = $lastLogin;
         return $this;
     }
 
+    #[\Override]
     public function getPassword(): ?string
     {
         return null;

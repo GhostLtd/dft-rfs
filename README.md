@@ -1,7 +1,7 @@
 # Gov.uk / DfT - Road Freight Survey
 
 ## Requirements
-- PHP 8.1+
+- PHP 8.3+
 - Mysql / MariaDB
 - Node 14 (to build CSS/JS assets)
 - Gov.uk Notify API key

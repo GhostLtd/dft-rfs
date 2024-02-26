@@ -15,7 +15,7 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
 
     public function getSessionKey(): string
     {
-        return "wizard." . get_class($this);
+        return "wizard." . static::class;
     }
 
     public function __construct(FormWizardManager $formWizardManager, EntityManagerInterface $entityManager, LoggerInterface $log, RequestStack $requestStack)
@@ -24,12 +24,14 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
         $this->session = $requestStack->getSession();
     }
 
-    protected function setFormWizard(FormWizardStateInterface $formWizard)
+    #[\Override]
+    protected function setFormWizard(FormWizardStateInterface $formWizard): void
     {
         $this->session->set($this->getSessionKey(), $formWizard);
     }
 
-    protected function cleanUp()
+    #[\Override]
+    protected function cleanUp(): void
     {
         $this->session->remove($this->getSessionKey());
     }

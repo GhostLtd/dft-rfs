@@ -7,7 +7,8 @@ use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
 
 class NumberOfTripsDataMapper extends DataMapper
 {
-    public function mapFormsToData(iterable $forms, &$data): void
+    #[\Override]
+    public function mapFormsToData(\Traversable $forms, &$data): void
     {
         parent::mapFormsToData($forms, $data);
 

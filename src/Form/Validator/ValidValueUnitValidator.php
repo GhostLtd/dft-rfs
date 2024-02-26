@@ -12,7 +12,8 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class ValidValueUnitValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidValueUnit) {
             throw new UnexpectedTypeException($constraint, ValidValueUnit::class);

@@ -19,8 +19,9 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 {
     use MicroKernelTrait;
 
-    private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+    private const string CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    #[\Override]
     public function registerBundles(): iterable
     {
         $contents = require $this->getProjectDir().'/config/bundles.php';
@@ -31,12 +32,14 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         }
     }
 
+    #[\Override]
     public function getProjectDir(): string
     {
         return \dirname(__DIR__);
     }
 
-    protected function build(ContainerBuilder $container)
+    #[\Override]
+    protected function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -65,6 +68,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS);
     }
 
+    #[\Override]
     public function getCacheDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
@@ -73,6 +77,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         return parent::getCacheDir();
     }
 
+    #[\Override]
     public function getLogDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
@@ -81,7 +86,8 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         return parent::getLogDir();
     }
 
-    public function process(ContainerBuilder $container)
+    #[\Override]
+    public function process(ContainerBuilder $container): void
     {
         if ($container->hasDefinition('workflow.security.expression_language')) {
             $definition = $container->findDefinition('workflow.security.expression_language');
@@ -95,7 +101,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
             $providers = $container->findTaggedServiceIds('validator.expression_language_provider');
 
             $expressionLanguage = (new Definition(ExpressionLanguage::class, [
-                null, array_map(function($service){return new Reference($service);}, array_keys($providers))
+                null, array_map(fn($service) => new Reference($service), array_keys($providers))
             ]));
             $definition->setArguments([$expressionLanguage]);
         }
@@ -106,5 +112,3 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         }
     }
 }
-
-

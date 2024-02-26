@@ -7,16 +7,13 @@ use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Symfony\Component\Panther\Client;
-use Symfony\Component\Panther\ServerExtension;
+use Symfony\Component\Panther\ServerExtensionLegacy;
 
 abstract class AbstractFormTestAction extends PathTestAction
 {
-    protected ?string $submitButtonId;
-
-    public function __construct(string $expectedPath, string $submitButtonId = null, array $options = [])
+    public function __construct(string $expectedPath, protected ?string $submitButtonId = null, array $options = [])
     {
         parent::__construct($expectedPath, $options);
-        $this->submitButtonId = $submitButtonId;
     }
 
     public function getSubmitButtonId(): ?string
@@ -144,16 +141,30 @@ abstract class AbstractFormTestAction extends PathTestAction
                     $formElementNames = [];
 
                     foreach($formElements as $element) {
+                        $tagName = strtolower($element->getTagName());
                         $name = $element->getAttribute('name');
                         $value = $element->getAttribute('value');
-                        $type = $element->getAttribute('type');
 
-                        if (!str_contains($name, '_token')) {
-                            if (in_array($type, ['radio', 'checkbox'])) {
-                                $formElementNames[$name] ??= [];
-                                $formElementNames[$name][] = $value;
-                            } else {
-                                $formElementNames[$name] ??= true;
+                        if ($tagName === 'select') {
+                            $options = $element->findElements(WebDriverBy::xpath('option'));
+                            $formElementNames[$name] ??= [];
+
+                            foreach($options as $option) {
+                                $optionValue = $option->getAttribute('value');
+                                $optionName = $option->getText();
+
+                                $formElementNames[$name][] = "{$optionValue}: '{$optionName}'";
+                            }
+                        } else {
+                            $type = $element->getAttribute('type');
+
+                            if (!str_contains($name, '_token')) {
+                                if (in_array($type, ['radio', 'checkbox'])) {
+                                    $formElementNames[$name] ??= [];
+                                    $formElementNames[$name][] = $value;
+                                } else {
+                                    $formElementNames[$name] ??= true;
+                                }
                             }
                         }
                     }
@@ -253,7 +264,7 @@ abstract class AbstractFormTestAction extends PathTestAction
         if ($dataSetName !== null) {
             $dataSetName = str_replace(array_merge(
                 array_map('chr', range(0, 31)),
-                array('<', '>', ':', '"', '/', '\\', '|', '?', '*')
+                ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
             ), '', $dataSetName);
         }
 
@@ -262,6 +273,7 @@ abstract class AbstractFormTestAction extends PathTestAction
             "  "
         );
 
-        ServerExtension::takeScreenshots("{$actionIdx}{$testCaseLetter}-{$typeSuffix}", $dataSetName ?? 'no-set');
+        // It's deprecated, but at least phpstan can detect the method on the class
+        ServerExtensionLegacy::takeScreenshots("{$actionIdx}{$testCaseLetter}-{$typeSuffix}", $dataSetName ?? 'no-set');
     }
 }

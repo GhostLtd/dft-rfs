@@ -21,8 +21,6 @@ class ContextualOptionsFormListener implements EventSubscriberInterface
      *  - $name name of the child
      *  - array $options the initial options of the child
      * The callback must return an array with the final options of the child.
-     *
-     * @param callable $callback
      */
     public function __construct(callable $callback)
     {
@@ -32,16 +30,14 @@ class ContextualOptionsFormListener implements EventSubscriberInterface
     /**
      * @return array The event names to listen to
      */
-    public static function getSubscribedEvents()
+    #[\Override]
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -57,7 +53,7 @@ class ContextualOptionsFormListener implements EventSubscriberInterface
             $innerType = $child->getConfig()->getType()->getInnerType();
             $form->add(
                 $name,
-                is_object($innerType) ? get_class($innerType) : $innerType,
+                is_object($innerType) ? $innerType::class : $innerType,
                 call_user_func($this->callback, $event, $name, $child->getConfig()->getOptions())
             );
         }

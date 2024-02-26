@@ -6,21 +6,17 @@ use App\Form\Admin\ReportFilterType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ActivityStatusController extends AbstractReportsController
 {
-    /**
-     * @Route("/activity-status/{type}}", name="activity_status_type", requirements={"type": "irhs"})
-     */
+    #[Route(path: '/activity-status/{type}}', name: 'activity_status_type', requirements: ['type' => 'irhs'])]
     public function activityStatusDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/activity-status/{type}/{year}/{quarter}", name="activity_status_full", requirements={"type": "irhs", "year": "\d{4}", "quarter": "1|2|3|4"})
-     */
+    #[Route(path: '/activity-status/{type}/{year}/{quarter}', name: 'activity_status_full', requirements: ['type' => 'irhs', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
     public function activityStatusReports(Request $request, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
@@ -44,6 +40,7 @@ class ActivityStatusController extends AbstractReportsController
         ]));
     }
 
+    #[\Override]
     public function getRedirect(array $data): RedirectResponse
     {
         switch($data['type'] ?? null) {

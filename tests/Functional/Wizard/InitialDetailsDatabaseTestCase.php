@@ -10,31 +10,11 @@ use PHPUnit\Framework\TestCase;
 
 class InitialDetailsDatabaseTestCase implements DatabaseTestCase
 {
-    protected ?string $contactName;
-    protected ?string $contactEmail;
-    protected ?string $isInPossessionOfVehicle;
-    protected ?string $hireeName;
-    protected ?string $hireeEmail;
-    protected ?Address $hireeAddress;
-    protected ?\DateTime $unableToCompleteDate;
-    protected ?string $newOwnerName;
-    protected ?string $newOwnerEmail;
-    protected ?Address $newOwnerAddress;
-
-    public function __construct(?string $contactName, ?string $contactEmail, ?string $isInPossessionOfVehicle, ?string $hireeName, ?string $hireeEmail, ?Address $hireeAddress, ?\DateTime $unableToCompleteDate, ?string $newOwnerName, ?string $newOwnerEmail, ?Address $newOwnerAddress)
+    public function __construct(protected ?string $contactName, protected ?string $contactEmail, protected ?string $isInPossessionOfVehicle, protected ?string $hireeName, protected ?string $hireeEmail, protected ?Address $hireeAddress, protected ?\DateTime $unableToCompleteDate, protected ?string $newOwnerName, protected ?string $newOwnerEmail, protected ?Address $newOwnerAddress)
     {
-        $this->contactName = $contactName;
-        $this->contactEmail = $contactEmail;
-        $this->isInPossessionOfVehicle = $isInPossessionOfVehicle;
-        $this->hireeName = $hireeName;
-        $this->hireeEmail = $hireeEmail;
-        $this->hireeAddress = $hireeAddress;
-        $this->unableToCompleteDate = $unableToCompleteDate;
-        $this->newOwnerName = $newOwnerName;
-        $this->newOwnerEmail = $newOwnerEmail;
-        $this->newOwnerAddress = $newOwnerAddress;
     }
 
+    #[\Override]
     public function checkDatabaseAsExpected(EntityManagerInterface $entityManager, TestCase $test): void
     {
         /** @var SurveyResponseRepository $repo */

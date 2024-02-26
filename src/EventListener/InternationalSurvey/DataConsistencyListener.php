@@ -13,8 +13,8 @@ use Doctrine\ORM\UnitOfWork;
 
 class DataConsistencyListener
 {
-    protected ?EntityManagerInterface $entityManager;
-    protected ?UnitOfWork $uow;
+    protected ?EntityManagerInterface $entityManager = null;
+    protected ?UnitOfWork $uow = null;
 
     public function onFlush(OnFlushEventArgs $event): void
     {
@@ -97,7 +97,7 @@ class DataConsistencyListener
 
     public function recomputeChangeSetFor($entity): void
     {
-        $metaData = $this->entityManager->getClassMetadata(get_class($entity));
+        $metaData = $this->entityManager->getClassMetadata($entity::class);
         $this->uow->recomputeSingleEntityChangeSet($metaData, $entity);
     }
 }

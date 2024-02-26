@@ -35,7 +35,7 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->loadFixtures([RoRoVoterFixtures::class]);
 
         /** @var RoRoUser $user */
-        $user = $this->fixtureReferenceRepository->getReference($userRef);
+        $user = $this->fixtureReferenceRepository->getReference($userRef, RoRoUser::class);
 
         $this->createAndStorePasscodeUserToken($user);
 
@@ -71,10 +71,10 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->loadFixtures([RoRoVoterFixtures::class]);
 
         /** @var RoRoUser $user */
-        $user = $this->fixtureReferenceRepository->getReference($userRef);
+        $user = $this->fixtureReferenceRepository->getReference($userRef, RoRoUser::class);
 
         /** @var Operator $operator */
-        $operator = $this->fixtureReferenceRepository->getReference($operatorRef);
+        $operator = $this->fixtureReferenceRepository->getReference($operatorRef, Operator::class);
 
         $this->createAndStorePasscodeUserToken($user);
 
@@ -111,10 +111,10 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->loadFixtures([RoRoVoterFixtures::class]);
 
         /** @var RoRoUser $user */
-        $user = $this->fixtureReferenceRepository->getReference($userRef);
+        $user = $this->fixtureReferenceRepository->getReference($userRef, RoRoUser::class);
 
         /** @var Survey $survey */
-        $survey = $this->fixtureReferenceRepository->getReference($surveyRef);
+        $survey = $this->fixtureReferenceRepository->getReference($surveyRef, Survey::class);
 
         $this->createAndStorePasscodeUserToken($user);
 
@@ -150,10 +150,10 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->loadFixtures([RoRoVoterFixtures::class]);
 
         /** @var RoRoUser $user */
-        $user = $this->fixtureReferenceRepository->getReference($userRef);
+        $user = $this->fixtureReferenceRepository->getReference($userRef, RoRoUser::class);
 
         /** @var Survey $survey */
-        $survey = $this->fixtureReferenceRepository->getReference($surveyRef);
+        $survey = $this->fixtureReferenceRepository->getReference($surveyRef, Survey::class);
 
         $this->createAndStorePasscodeUserToken($user);
 

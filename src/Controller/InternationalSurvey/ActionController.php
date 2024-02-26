@@ -17,25 +17,25 @@ use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ActionState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Route("/international-survey")
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
+#[Route(path: '/international-survey')]
 class ActionController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
 
-    private const ROUTE_PREFIX = 'app_internationalsurvey_action';
+    private const string ROUTE_PREFIX = 'app_internationalsurvey_action';
 
     public const START_ROUTE = self::ROUTE_PREFIX.'_add_start';
     public const WIZARD_ROUTE = self::ROUTE_PREFIX.'_add_state';
@@ -52,23 +52,16 @@ class ActionController extends AbstractSessionStateWorkflowController
     protected ?Trip $trip = null;
     protected ?Action $action = null;
     protected string $mode;
-
-    protected ActionRepository $actionRepository;
-    protected TripRepository $tripRepository;
     protected FormWizardManager $formWizardManager;
 
-    public function __construct(FormWizardManager $formWizardManager, ActionRepository $actionRepository, TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RequestStack $requestStack)
+    public function __construct(FormWizardManager $formWizardManager, protected ActionRepository $actionRepository, protected TripRepository $tripRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RequestStack $requestStack)
     {
         parent::__construct($formWizardManager, $entityManager, $logger, $requestStack);
-        $this->actionRepository = $actionRepository;
-        $this->tripRepository = $tripRepository;
         $this->formWizardManager = $formWizardManager;
     }
 
-    /**
-     * @Route("/trips/{tripId}/add-action/{state}", name=self::WIZARD_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
-     * @Route("/trips/{tripId}/add-action", name=self::START_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
-     */
+    #[Route(path: '/trips/{tripId}/add-action/{state}', name: self::WIZARD_ROUTE, requirements: ['tripId' => Utility::UUID_REGEX])]
+    #[Route(path: '/trips/{tripId}/add-action', name: self::START_ROUTE, requirements: ['tripId' => Utility::UUID_REGEX])]
     public function add(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, string $tripId, ?string $state = null): Response
     {
         $this->loadSurveyAndTrip($tripId);
@@ -88,18 +81,15 @@ class ActionController extends AbstractSessionStateWorkflowController
         return $result;
     }
 
-    /**
-     * @Route("/trips/{tripId}/add-another-action", name=self::ADD_ANOTHER_ROUTE, requirements={"tripId" = Utility::UUID_REGEX})
-     */
+    #[Route(path: '/trips/{tripId}/add-another-action', name: self::ADD_ANOTHER_ROUTE, requirements: ['tripId' => Utility::UUID_REGEX])]
     public function addAnother(string $tripId): Response
     {
         return $this->redirectToRoute(self::START_ROUTE, ['tripId' => $tripId]);
     }
 
-    /**
-     * @Route("/actions/{actionId}", name=self::VIEW_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
-     */
-    public function view(string $actionId) {
+    #[Route(path: '/actions/{actionId}', name: self::VIEW_ROUTE, requirements: ['actionId' => Utility::UUID_REGEX])]
+    public function view(string $actionId): Response
+    {
         $this->loadSurveyAndAction($actionId);
 
         return $this->render('international_survey/action/view.html.twig', [
@@ -107,11 +97,9 @@ class ActionController extends AbstractSessionStateWorkflowController
         ]);
     }
 
-    /**
-     * @Route("/actions/{actionId}/delete", name=self::DELETE_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
-     * @Template("international_survey/action/delete.html.twig")
-     */
-    public function delete(Request $request, string $actionId, DeleteActionConfirmAction $confirmAction)
+    #[Route(path: '/actions/{actionId}/delete', name: self::DELETE_ROUTE, requirements: ['actionId' => Utility::UUID_REGEX])]
+    #[Template('international_survey/action/delete.html.twig')]
+    public function delete(Request $request, string $actionId, DeleteActionConfirmAction $confirmAction): RedirectResponse|array
     {
         $this->loadSurveyAndAction($actionId);
         $tripId = $this->action->getTrip()->getId();
@@ -123,18 +111,12 @@ class ActionController extends AbstractSessionStateWorkflowController
             ])
             ->controller(
                 $request,
-                function() use ($tripId) {
-                    return $this->generateUrl(TripController::TRIP_ROUTE, ['id' => $tripId]);
-                },
-                function() use ($actionId) {
-                    return $this->generateUrl(self::VIEW_ROUTE, ['actionId' => $actionId]);
-                },
+                fn() => $this->generateUrl(TripController::TRIP_ROUTE, ['id' => $tripId]),
+                fn() => $this->generateUrl(self::VIEW_ROUTE, ['actionId' => $actionId]),
             );
     }
 
-    /**
-     * @Route("/actions/{actionId}/edit/{state}", name=self::EDIT_ROUTE, requirements={"actionId" = Utility::UUID_REGEX})
-     */
+    #[Route(path: '/actions/{actionId}/edit/{state}', name: self::EDIT_ROUTE, requirements: ['actionId' => Utility::UUID_REGEX])]
     public function edit(WorkflowInterface $internationalSurveyActionStateMachine, Request $request, string $actionId, string $state): Response
     {
         $this->loadSurveyAndAction($actionId);
@@ -142,9 +124,7 @@ class ActionController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyActionStateMachine, $request, $state);
     }
 
-    /**
-     * @Route("/trips/{tripId}/reorder-actions", name=self::REORDER_ROUTE)
-     */
+    #[Route(path: '/trips/{tripId}/reorder-actions', name: self::REORDER_ROUTE)]
     public function reorder( Request $request, string $tripId): Response
     {
         $this->loadSurveyAndTrip($tripId);
@@ -157,9 +137,7 @@ class ActionController extends AbstractSessionStateWorkflowController
         /** @var Action[] $sortedActions */
         $sortedActions = ReorderUtils::getSortedItems($actions, $mappingParam);
 
-        $mapping = array_map(function(Action $action) {
-            return $action->getNumber();
-        }, $sortedActions);
+        $mapping = array_map(fn(Action $action) => $action->getNumber(), $sortedActions);
 
         foreach($mapping as $i => $newPosition) {
             $actions[$newPosition - 1]->setNumber($i + 1);
@@ -201,11 +179,12 @@ class ActionController extends AbstractSessionStateWorkflowController
             'mapping' => $mapping,
             'trip' => $this->trip,
             'sortedActions' => $sortedActions,
-            'form' => $form->createView(),
+            'form' => $form,
             'unloadedBeforeLoaded' => $unloadedBeforeLoaded,
         ]);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var FormWizardStateInterface $formWizard */
@@ -239,6 +218,7 @@ class ActionController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->mode === self::MODE_EDIT ?
@@ -246,6 +226,7 @@ class ActionController extends AbstractSessionStateWorkflowController
             $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return ($this->action && $this->action->getId())

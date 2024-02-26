@@ -18,16 +18,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ResponseType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => 'yes',
         self::CHOICE_NO => 'no',
     ];
 
-    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
+    private const array nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $companyNamePrefix = 'pre-enquiry.company-name';
         $correspondenceDetailsPrefix = "pre-enquiry.correspondence-details";
@@ -151,7 +152,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
@@ -170,7 +172,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
         if (null === $viewData) {
@@ -213,7 +216,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
         $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */

@@ -12,6 +12,7 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
 {
     private PasscodeGenerator $passcodeGenerator;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -116,9 +117,9 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
     {
         $this->loadFixtures([PasscodeLoginFixtures::class]);
 
-        if ($this->fixtureReferenceRepository->hasReference($usernameOrRef)) {
+        if ($this->fixtureReferenceRepository->hasReference($usernameOrRef, PasscodeUser::class)) {
             /** @var PasscodeUser $user */
-            $user = $this->fixtureReferenceRepository->getReference($usernameOrRef);
+            $user = $this->fixtureReferenceRepository->getReference($usernameOrRef, PasscodeUser::class);
             $username = $user->getUsername();
         } else {
             $username = $usernameOrRef;

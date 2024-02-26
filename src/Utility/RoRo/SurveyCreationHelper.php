@@ -16,24 +16,8 @@ use Psr\Log\LoggerInterface;
 
 class SurveyCreationHelper
 {
-    protected EntityManagerInterface $entityManager;
-    protected LoggerInterface $logger;
-    protected RouteRepository $routeRepository;
-    protected SurveyRepository $surveyRepository;
-    private CountryRepository $countryRepository;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
-        RouteRepository $routeRepository,
-        SurveyRepository $surveyRepository,
-        CountryRepository $countryRepository
-    ) {
-        $this->entityManager = $entityManager;
-        $this->logger = $logger;
-        $this->routeRepository = $routeRepository;
-        $this->surveyRepository = $surveyRepository;
-        $this->countryRepository = $countryRepository;
+    public function __construct(protected EntityManagerInterface $entityManager, protected LoggerInterface $logger, protected RouteRepository $routeRepository, protected SurveyRepository $surveyRepository, private CountryRepository $countryRepository)
+    {
     }
 
     public function createSurveysForPreviousMonth(): void

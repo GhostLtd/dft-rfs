@@ -6,10 +6,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RedirectResponseException extends \Exception
 {
-    private RedirectResponse $redirectResponse;
-
-    public function __construct(RedirectResponse $redirectResponse, $message = '', $code = 0, \Exception $previousException = null) {
-        $this->redirectResponse = $redirectResponse;
+    public function __construct(private RedirectResponse $redirectResponse, $message = '', $code = 0, \Exception $previousException = null) {
         parent::__construct($message, $code, $previousException);
     }
 

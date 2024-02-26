@@ -13,15 +13,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class PasscodeLoginType extends AbstractType
 {
-    protected string $appEnvironment;
-    protected CsrfTokenManagerInterface $tokenManager;
-
-    public function __construct(string $appEnvironment, CsrfTokenManagerInterface $tokenManager)
+    public function __construct(protected string $appEnvironment, protected CsrfTokenManagerInterface $tokenManager)
     {
-        $this->appEnvironment = $appEnvironment;
-        $this->tokenManager = $tokenManager;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -48,6 +44,7 @@ class PasscodeLoginType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

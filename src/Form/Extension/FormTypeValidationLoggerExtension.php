@@ -9,13 +9,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FormTypeValidationLoggerExtension extends AbstractTypeExtension
 {
-    private FormValidationLoggerSubscriber $eventSubscriber;
-
-    public function __construct(FormValidationLoggerSubscriber $eventSubscriber)
+    public function __construct(protected FormValidationLoggerSubscriber $eventSubscriber)
     {
-        $this->eventSubscriber = $eventSubscriber;
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [
@@ -23,7 +21,8 @@ class FormTypeValidationLoggerExtension extends AbstractTypeExtension
         ];
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this->eventSubscriber);
     }

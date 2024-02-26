@@ -10,15 +10,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TimeType extends AbstractType
 {
-    const AM = 'am';
-    const PM = 'pm';
+    public const AM = 'am';
+    public const PM = 'pm';
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_time';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $subFieldOptions = [
             'error_bubbling' => true,
@@ -44,7 +46,8 @@ class TimeType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

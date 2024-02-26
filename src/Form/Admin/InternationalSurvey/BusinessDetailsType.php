@@ -13,7 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper(new BusinessDetailsDataMapper())
@@ -65,7 +66,8 @@ class BusinessDetailsType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => function(FormInterface $form) {

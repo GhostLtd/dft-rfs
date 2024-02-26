@@ -14,16 +14,12 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class AdminLoginType extends AbstractType
 {
-    protected string $appEnvironment;
-    protected CsrfTokenManagerInterface $tokenManager;
-
-    public function __construct(string $appEnvironment, CsrfTokenManagerInterface $tokenManager)
+    public function __construct(protected string $appEnvironment, protected CsrfTokenManagerInterface $tokenManager)
     {
-        $this->appEnvironment = $appEnvironment;
-        $this->tokenManager = $tokenManager;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('credentials', FieldsetType::class, [
@@ -51,7 +47,8 @@ class AdminLoginType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.admin',

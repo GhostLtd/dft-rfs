@@ -8,20 +8,16 @@ use App\Form\Admin\RoRo\OperatorRouteType;
 use App\Utility\ConfirmAction\RoRo\Admin\UnassignRouteConfirmAction;
 use App\Utility\RoRo\SurveyCreationHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/operators", name="admin_operators_")
- * @Entity("route", expr="repository.findOneById(routeId)")
- * @Entity("operator", expr="repository.findOneById(operatorId)")
- */
+#[Route(path: '/operators', name: 'admin_operators_')]
 class OperatorRouteController extends AbstractController
 {
     public function __construct(
@@ -30,10 +26,12 @@ class OperatorRouteController extends AbstractController
         protected UnassignRouteConfirmAction $unassignRouteConfirmAction,
     ) {}
 
-    /**
-     * @Route("/{operatorId}/route/assign", name="assign_route")
-     */
-    public function assignRoute(Request $request, Operator $operator): Response
+    #[Route(path: '/{operatorId}/route/assign', name: 'assign_route')]
+    public function assignRoute(
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator
+    ): Response
     {
         $form = $this->createForm(OperatorRouteType::class, null, [
             'operator' => $operator,
@@ -77,7 +75,7 @@ class OperatorRouteController extends AbstractController
         }
 
         return $this->render('admin/roro/operators/assign-route.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'operator' => $operator,
             'translation_parameters' => [
                 'code' => $operator->getCode(),
@@ -86,10 +84,14 @@ class OperatorRouteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{operatorId}/route/{routeId}/unassign", name="unassign_route")
-     */
-    public function unassignRoute(Request $request, Operator $operator, RouteEntity $route): Response
+    #[Route(path: '/{operatorId}/route/{routeId}/unassign', name: 'unassign_route')]
+    public function unassignRoute(
+        #[MapEntity(expr: "repository.findOneById(routeId)")]
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator,
+        RouteEntity $route
+    ): Response
     {
         $data = $this->unassignRouteConfirmAction
             ->setSubject([

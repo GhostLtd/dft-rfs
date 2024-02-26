@@ -45,7 +45,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
             } else if ($wizardTestCase instanceof DatabaseTestCase) {
                 $wizardTestCase->checkDatabaseAsExpected($entityManager, $this);
             } else {
-                $wizardTestCaseClass = get_class($wizardTestCase);
+                $wizardTestCaseClass = $wizardTestCase::class;
                 $this->fail("Unknown wizard test case type - '{$wizardTestCaseClass}'");
             }
 
@@ -102,10 +102,6 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         $browser->submit($form, [], []);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return string
-     */
     protected function getTitle(Crawler $crawler): string
     {
         $node = $crawler->filterXPath('//h1');
@@ -118,10 +114,6 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         return $actualTitle;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return string
-     */
     protected function getUrl(Crawler $crawler): string
     {
         $url = parse_url($crawler->getUri());

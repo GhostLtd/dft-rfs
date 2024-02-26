@@ -26,6 +26,7 @@ class ReportFilterType extends AbstractType
         'RoRo' => self::TYPE_RORO,
     ];
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $quarters = [
@@ -36,9 +37,7 @@ class ReportFilterType extends AbstractType
         ];
         $years = range($options['minYear'], $options['maxYear']);
 
-        $choices = array_filter(self::CHOICE_TYPES, function(string $choice) use ($options) {
-            return !in_array($choice, $options['excludeChoices']);
-        });
+        $choices = array_filter(self::CHOICE_TYPES, fn(string $choice) => !in_array($choice, $options['excludeChoices']));
 
         $builder
             ->add('type', Gds\ChoiceType::class, [
@@ -61,6 +60,7 @@ class ReportFilterType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -74,10 +74,8 @@ class ReportFilterType extends AbstractType
 
         $resolver->setAllowedTypes('excludeChoices', 'array');
 
-        $resolver->setNormalizer('minYear', function(Options $options, ?int $minYear) {
-            return $minYear === null ?
-                intval((new \DateTime())->format('Y')) :
-                $minYear;
-        });
+        $resolver->setNormalizer('minYear',
+            fn(Options $options, ?int $minYear) => $minYear ?? intval((new \DateTime())->format('Y'))
+        );
     }
 }

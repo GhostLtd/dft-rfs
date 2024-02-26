@@ -22,6 +22,7 @@ class FormTestCallbackAction extends AbstractFormTestAction
         return ($this->formTestCallback)($context);
     }
 
+    #[\Override]
     public function perform(Context $context): void
     {
         $this->performFormTestAction($context, $this->getFormTestCases($context));

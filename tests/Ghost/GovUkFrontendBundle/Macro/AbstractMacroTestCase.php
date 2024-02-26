@@ -10,6 +10,7 @@ abstract class AbstractMacroTestCase extends AbstractFixtureTest
 {
     protected Environment $twig;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->twig = static::getContainer()->get('twig');

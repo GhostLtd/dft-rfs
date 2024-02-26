@@ -31,6 +31,7 @@ class CostTransformer implements DataTransformerInterface
      * @param mixed $value
      * @return mixed
      */
+    #[\Override]
     public function transform($value)
     {
         if (null === $value) {
@@ -55,6 +56,7 @@ class CostTransformer implements DataTransformerInterface
      * @param mixed $value
      * @return mixed
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ('' === $value) {

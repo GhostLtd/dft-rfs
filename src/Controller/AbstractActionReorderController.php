@@ -15,11 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractActionReorderController extends AbstractController
 {
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     abstract protected function getRedirectResponse(Trip $trip): RedirectResponse;
@@ -35,9 +32,7 @@ abstract class AbstractActionReorderController extends AbstractController
         /** @var Action[] $sortedActions */
         $sortedActions = ReorderUtils::getSortedItems($actions, $mappingParam);
 
-        $mapping = array_map(function(Action $action) {
-            return $action->getNumber();
-        }, $sortedActions);
+        $mapping = array_map(fn(Action $action) => $action->getNumber(), $sortedActions);
 
         foreach($mapping as $i => $newPosition) {
             $actions[$newPosition - 1]->setNumber($i + 1);
@@ -78,7 +73,7 @@ abstract class AbstractActionReorderController extends AbstractController
             'mapping' => $mapping,
             'trip' => $trip,
             'sortedActions' => $sortedActions,
-            'form' => $form->createView(),
+            'form' => $form,
             'unloadedBeforeLoaded' => $unloadedBeforeLoaded,
         ]);
     }

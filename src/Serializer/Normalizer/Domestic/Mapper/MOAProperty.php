@@ -8,15 +8,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class MOAProperty implements Mapper
 {
-    protected string $cargoTypeCodePropertyPath;
-    protected string $goodsDescriptionPath;
-
-    public function __construct(string $cargoTypeCodePropertyPath = 'cargoTypeCode', string $goodsDescriptionPath = 'goodsDescription')
+    public function __construct(protected string $cargoTypeCodePropertyPath = 'cargoTypeCode', protected string $goodsDescriptionPath = 'goodsDescription')
     {
-        $this->cargoTypeCodePropertyPath = $cargoTypeCodePropertyPath;
-        $this->goodsDescriptionPath = $goodsDescriptionPath;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

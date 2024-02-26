@@ -7,15 +7,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class BooleanProperty implements Mapper
 {
-    protected string $propertyPath;
-    protected $trueIfEquals;
-
-    public function __construct(string $propertyPath, $trueIfEquals = true)
+    public function __construct(protected string $propertyPath, protected $trueIfEquals = true)
     {
-        $this->propertyPath = $propertyPath;
-        $this->trueIfEquals = $trueIfEquals;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

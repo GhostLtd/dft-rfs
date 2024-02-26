@@ -15,7 +15,8 @@ use Traversable;
 
 abstract class AbstractGoodsDescriptionType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "{$options['translation_entity_key']}.goods-description";
 
@@ -39,7 +40,8 @@ abstract class AbstractGoodsDescriptionType extends AbstractType implements Data
             ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired("translation_entity_key");
         $resolver->setDefaults([
@@ -48,34 +50,32 @@ abstract class AbstractGoodsDescriptionType extends AbstractType implements Data
         ]);
     }
 
-    public function mapDataToForms($data, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
-        if (!$data instanceof GoodsDescriptionInterface) {
-            throw new UnexpectedTypeException($data, GoodsDescriptionInterface::class);
+        if (!$viewData instanceof GoodsDescriptionInterface) {
+            throw new UnexpectedTypeException($viewData, GoodsDescriptionInterface::class);
         }
 
         if (!isset($forms['goodsDescription'])) {
             return;
         }
 
-        $forms['goodsDescription']->setData($data->getGoodsDescription());
-        $forms['goodsDescriptionOther']->setData($data->getGoodsDescriptionOther());
+        $forms['goodsDescription']->setData($viewData->getGoodsDescription());
+        $forms['goodsDescriptionOther']->setData($viewData->getGoodsDescriptionOther());
     }
 
-    /**
-     * @param FormInterface[]|Traversable $forms
-     * @param GoodsDescriptionInterface $data
-     */
-    public function mapFormsToData($forms, &$data)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
-        if (!$data instanceof GoodsDescriptionInterface) {
-            throw new UnexpectedTypeException($data, GoodsDescriptionInterface::class);
+        if (!$viewData instanceof GoodsDescriptionInterface) {
+            throw new UnexpectedTypeException($viewData, GoodsDescriptionInterface::class);
         }
 
         if (!isset($forms['goodsDescription'])) {
@@ -86,7 +86,7 @@ abstract class AbstractGoodsDescriptionType extends AbstractType implements Data
         $goodsDescriptionOther = $goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER ?
             $forms['goodsDescriptionOther']->getData() : null;
 
-        $data
+        $viewData
             ->setGoodsDescription($goodsDescription)
             ->setGoodsDescriptionOther($goodsDescriptionOther);
     }

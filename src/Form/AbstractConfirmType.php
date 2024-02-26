@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 abstract class AbstractConfirmType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -33,6 +34,7 @@ abstract class AbstractConfirmType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

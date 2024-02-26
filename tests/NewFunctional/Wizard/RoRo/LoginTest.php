@@ -8,6 +8,7 @@ use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
 class LoginTest extends AbstractRoRoTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initialiseClientAndLoadFixtures([

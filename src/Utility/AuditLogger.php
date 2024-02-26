@@ -9,28 +9,19 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Throwable;
 
 class AuditLogger
 {
-    protected string $appEnvironment;
-    protected EntityManagerInterface $auditLogEntityManager;
-    protected LoggerInterface $log;
-    protected Security $security;
-
     /** @var AuditEntityLogger[] */
     protected array $entityLoggers;
 
     protected array $entityChangeSets;
 
-    public function __construct(EntityManagerInterface $auditLogEntityManager, LoggerInterface $log, Security $security, string $appEnvironment)
+    public function __construct(protected EntityManagerInterface $auditLogEntityManager, protected LoggerInterface $log, protected Security $security, protected string $appEnvironment)
     {
-        $this->appEnvironment = $appEnvironment;
-        $this->auditLogEntityManager = $auditLogEntityManager;
         $this->entityLoggers = [];
-        $this->log = $log;
-        $this->security = $security;
 
         $this->entityChangeSets = [];
     }
@@ -44,11 +35,11 @@ class AuditLogger
     {
         try {
             $user = $this->security->getUser();
-            $username = $user ? ($user instanceof PasscodeUser ? 'survey-user' : $user->getUsername()) : '-';
+            $username = $user ? ($user instanceof PasscodeUser ? 'survey-user' : $user->getUserIdentifier()) : '-';
 
             $this->processChanges($entityManager, $username);
         } catch (Throwable $e) {
-            $this->log->error(sprintf("[AuditLogger] %s: %s (%s Line %s)", get_class($e), $e->getMessage(), $e->getFile(), $e->getLine()));
+            $this->log->error(sprintf("[AuditLogger] %s: %s (%s Line %s)", $e::class, $e->getMessage(), $e->getFile(), $e->getLine()));
             if ($this->appEnvironment === 'dev') {
                 throw $e;
             }
@@ -95,7 +86,7 @@ class AuditLogger
     protected function groupByClass(UnitOfWork $unitOfWork, array &$changedEntities, string $type, array $entities): void
     {
         foreach($entities as $entity) {
-            $className = get_class($entity);
+            $className = $entity::class;
             $changeSet = [];
 
             if ($type !== ChangeSet::TYPE_DELETE) {

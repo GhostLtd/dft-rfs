@@ -21,20 +21,20 @@ use App\Workflow\FormWizardStateInterface;
 
 class DaySummaryState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_INTRO = 'introduction';
-    const STATE_ORIGIN = 'day-start';
-    const STATE_DESTINATION = 'day-end';
-    const STATE_BORDER_CROSSING = 'border-crossing';
-    const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
-    const STATE_FURTHEST_STOP = 'furthest-stop';
-    const STATE_GOODS_DESCRIPTION = 'goods-description';
-    const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
-    const STATE_CARGO_TYPE = 'cargo-type';
-    const STATE_GOODS_WEIGHT = 'goods-weight';
-    const STATE_NUMBER_OF_STOPS = 'number-of-stops';
-    const STATE_END = 'end';
+    public const STATE_INTRO = 'introduction';
+    public const STATE_ORIGIN = 'day-start';
+    public const STATE_DESTINATION = 'day-end';
+    public const STATE_BORDER_CROSSING = 'border-crossing';
+    public const STATE_DISTANCE_TRAVELLED = 'distance-travelled';
+    public const STATE_FURTHEST_STOP = 'furthest-stop';
+    public const STATE_GOODS_DESCRIPTION = 'goods-description';
+    public const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
+    public const STATE_CARGO_TYPE = 'cargo-type';
+    public const STATE_GOODS_WEIGHT = 'goods-weight';
+    public const STATE_NUMBER_OF_STOPS = 'number-of-stops';
+    public const STATE_END = 'end';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_ORIGIN => OriginType::class,
         self::STATE_DESTINATION => DestinationType::class,
         self::STATE_BORDER_CROSSING => BorderCrossingType::class,
@@ -47,7 +47,7 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardState
         self::STATE_NUMBER_OF_STOPS => NumberOfStopsType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_INTRO => 'domestic_survey/day_summary/intro.html.twig',
         self::STATE_ORIGIN => 'domestic_survey/day_summary/form-origin.html.twig',
         self::STATE_DESTINATION => 'domestic_survey/day_summary/form-destination.html.twig',
@@ -64,33 +64,41 @@ class DaySummaryState extends AbstractFormWizardState implements FormWizardState
     /** @var DaySummary */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === DaySummary::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . DaySummary::class);
+        if ($subject::class !== DaySummary::class) {
+            throw new \InvalidArgumentException("Got " . $subject::class . ", expected " . DaySummary::class);
+        }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         if ($this->subject->getId()) {

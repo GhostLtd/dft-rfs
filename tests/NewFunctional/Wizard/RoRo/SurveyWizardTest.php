@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class SurveyWizardTest extends AbstractRoRoTest
 {
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initialiseClientAndLoadFixtures([
@@ -65,7 +66,7 @@ class SurveyWizardTest extends AbstractRoRoTest
         );
 
         /** @var Survey $survey */
-        $survey = $this->getFixtureByReference('roro:survey:1');
+        $survey = $this->fixtureReferenceRepository->getReference('roro:survey:1', Survey::class);
         $albania = $survey->getVehicleCounts()->findFirst(fn(string $id, VehicleCount $count) => $count->getCountryCode() === 'AL');
         $albaniaId = $albania->getId();
 

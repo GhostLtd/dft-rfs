@@ -9,14 +9,12 @@ use Doctrine\ORM\QueryBuilder;
 
 class MonthYearFilter extends Simple implements FilterableInterface
 {
-    private array $formOptions;
-
-    public function __construct(string $label, string $propertyPath, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, private array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -24,11 +22,13 @@ class MonthYearFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return MonthYearFilterType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         if (!isset($formData['year']) || !is_numeric($formData['year'])) {

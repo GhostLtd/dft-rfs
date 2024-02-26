@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin\InternationalSurvey;
-
 
 use App\Entity\International\Survey;
 use App\Entity\PreEnquiry\PreEnquiry;
@@ -11,26 +9,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportSampleReviewDataType extends AbstractImportReviewDataType
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(protected TranslatorInterface $translator)
     {
-        $this->translator = $translator;
     }
 
+    #[\Override]
     protected function choiceLabel($data): string
     {
-        switch (get_class($data)) {
-            case Survey::class:
-                return $this->internationalChoiceLabel($data);
-
-            case PreEnquiry::class:
-                return $this->preEnquiryChoiceLabel($data);
-        }
-        return '';
+        return match ($data::class) {
+            Survey::class => $this->internationalChoiceLabel($data),
+            PreEnquiry::class => $this->preEnquiryChoiceLabel($data),
+            default => '',
+        };
     }
 
     protected function internationalChoiceLabel($data): string

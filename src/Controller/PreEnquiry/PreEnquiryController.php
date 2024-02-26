@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -25,9 +25,7 @@ class PreEnquiryController extends AbstractController
     public const SUMMARY_ROUTE = 'app_pre_enquiry_summary';
     public const COMPLETED_ROUTE = 'app_pre_enquiry_completed';
 
-    /**
-     * @Route("/pre-enquiry/completed", name=self::COMPLETED_ROUTE)
-     */
+    #[Route(path: '/pre-enquiry/completed', name: self::COMPLETED_ROUTE)]
     public function completed(UserInterface $user): Response {
         $preEnquiry = $this->getPreEnquiry($user);
 
@@ -40,9 +38,7 @@ class PreEnquiryController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/pre-enquiry", name=PreEnquiryController::SUMMARY_ROUTE)
-     */
+    #[Route(path: '/pre-enquiry', name: PreEnquiryController::SUMMARY_ROUTE)]
     public function index(
         EntityManagerInterface $entityManager,
         MaintenanceWarningRepository $maintenanceWarningRepository,
@@ -80,7 +76,7 @@ class PreEnquiryController extends AbstractController
 
         return $this->render('pre_enquiry/summary.html.twig', [
             'preEnquiry' => $preEnquiry,
-            'form' => $form->createView(),
+            'form' => $form,
             'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
@@ -89,11 +85,10 @@ class PreEnquiryController extends AbstractController
     {
         $preEnquiry = ($user instanceof PasscodeUser) ? $user->getPreEnquiry() : null;
 
-        if (!$preEnquiry || !$preEnquiry instanceof PreEnquiry) {
+        if (!$preEnquiry instanceof PreEnquiry) {
             throw new AccessDeniedHttpException('No such pre-enquiry');
         }
 
         return $preEnquiry;
     }
-
 }

@@ -17,11 +17,13 @@ class SurveyCompleteConfirmAction extends SurveyWorkflowConfirmAction
         $this->setTransition('complete');
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'messages';
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'roro.survey.complete';

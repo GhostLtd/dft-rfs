@@ -6,13 +6,13 @@ use App\Entity\Domestic\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Utility\Reports\DateSeries\DateSeriesGeneratorInterface;
 use App\Utility\StateReportHelper;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 abstract class AbstractReportsHelper
 {
     public function __construct(
-        protected ServiceEntityRepositoryInterface $repository,
+        protected EntityRepository $repository,
         protected StateReportHelper $stateReportHelper
     ) {}
 

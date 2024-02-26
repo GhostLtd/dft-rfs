@@ -12,14 +12,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RoRoLoginType extends AbstractType
 {
-    protected string $appEnvironment;
-
-    public function __construct(string $appEnvironment)
+    public function __construct(protected string $appEnvironment)
     {
-        $this->appEnvironment = $appEnvironment;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('username', InputType::class, [
@@ -38,7 +36,8 @@ class RoRoLoginType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         if ($this->appEnvironment !== 'dev') {
             $resolver->setDefault('attr', ['autocomplete' => 'off']);

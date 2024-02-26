@@ -8,10 +8,10 @@ class ButtonTypeTest extends AbstractGovUkFrontendTest
 {
     public function fixtureProvider(): array
     {
-        $ignoreFixtures = function($fixture) {
-            return (isset($fixture['options']['href']) ||
-                ($fixture['options']['element'] ?? 'button') !== 'button');
-        };
+        $ignoreFixtures = fn($fixture) =>
+            isset($fixture['options']['href']) ||
+            ($fixture['options']['element'] ?? 'button') !== 'button';
+
         return $this->loadFixtures('button', $ignoreFixtures);
     }
 
@@ -29,6 +29,7 @@ class ButtonTypeTest extends AbstractGovUkFrontendTest
         );
     }
 
+    #[\Override]
     protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in ButtonType

@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Vehicle;
-use App\Entity\VehicleTrait;
+use App\Entity\VehicleInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,6 +13,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractVehicleAxleConfigurationType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options)
@@ -33,11 +34,9 @@ abstract class AbstractVehicleAxleConfigurationType extends AbstractType
         });
     }
 
-    /**
-     * @return VehicleTrait
-     */
-    abstract protected function getVehicle(mixed $formData);
+    abstract protected function getVehicle(mixed $formData): VehicleInterface;
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([

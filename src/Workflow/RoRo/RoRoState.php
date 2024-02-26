@@ -14,24 +14,26 @@ use InvalidArgumentException;
 
 class RoRoState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_INTRODUCTION = 'introduction';
-    const STATE_DATA_ENTRY = 'data-entry';
-    const STATE_VEHICLE_COUNTS = 'vehicle-counts';
-    const STATE_COMMENTS = 'comments';
-    const STATE_FINISH = 'finish';
+    public const STATE_INTRODUCTION = 'introduction';
+    public const STATE_DATA_ENTRY = 'data-entry';
+    public const STATE_VEHICLE_COUNTS = 'vehicle-counts';
+    public const STATE_COMMENTS = 'comments';
+    public const STATE_FINISH = 'finish';
 
     private Survey $subject;
     private bool $hasWizardPreviouslyCompleted = false;
 
+    #[\Override]
     public function getSubject(): Survey
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (get_class($subject) !== Survey::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . Survey::class);
+        if ($subject::class !== Survey::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . Survey::class);
         }
         $this->subject = $subject;
         return $this;
@@ -57,6 +59,7 @@ class RoRoState extends AbstractFormWizardState implements FormWizardStateInterf
         return $this->hasWizardPreviouslyCompleted;
     }
 
+    #[\Override]
     public function getStateFormMap(): array
     {
         return [
@@ -67,6 +70,7 @@ class RoRoState extends AbstractFormWizardState implements FormWizardStateInterf
         ];
     }
 
+    #[\Override]
     public function getStateTemplateMap(): array
     {
         return [
@@ -77,11 +81,13 @@ class RoRoState extends AbstractFormWizardState implements FormWizardStateInterf
         ];
     }
 
+    #[\Override]
     public function getDefaultTemplate(): ?string
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         return match($state) {

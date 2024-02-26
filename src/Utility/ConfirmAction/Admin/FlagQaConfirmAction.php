@@ -16,29 +16,31 @@ class FlagQaConfirmAction extends AbstractConfirmAction
 
     /** @var Survey */
     protected $subject;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     function getTranslationParameters(): array
     {
         return [];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return "common.survey.flag-qa";
     }
 
+    #[\Override]
     public function doConfirmedAction($formData): void
     {
         $survey = $this->getSubject();

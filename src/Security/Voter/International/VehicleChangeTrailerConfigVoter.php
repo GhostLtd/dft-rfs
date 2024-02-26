@@ -8,22 +8,22 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class VehicleChangeTrailerConfigVoter extends Voter
 {
-    const EDIT_TRAILER_CONFIGS = 'EDIT_TRAILER_CONFIGS';
+    public const EDIT_TRAILER_CONFIGS = 'EDIT_TRAILER_CONFIGS';
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, [self::EDIT_TRAILER_CONFIGS])
             && $subject instanceof Vehicle;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         /** @var Vehicle $subject */
-        switch ($attribute) {
-            case self::EDIT_TRAILER_CONFIGS:
-                return $subject->getTrips()->count() === 0;
-        }
-
-        return false;
+        return match ($attribute) {
+            self::EDIT_TRAILER_CONFIGS => $subject->getTrips()->count() === 0,
+            default => false,
+        };
     }
 }

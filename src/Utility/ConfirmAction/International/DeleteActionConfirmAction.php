@@ -13,14 +13,13 @@ class DeleteActionConfirmAction extends AbstractConfirmAction
 {
     /** @var Action */
     protected $subject;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -30,11 +29,13 @@ class DeleteActionConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'international.action-delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $trip = $this->subject->getTrip();

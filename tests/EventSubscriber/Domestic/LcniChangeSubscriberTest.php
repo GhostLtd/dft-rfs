@@ -14,7 +14,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class LcniChangeSubscriberTest extends KernelTestCase
 {
@@ -23,6 +23,7 @@ class LcniChangeSubscriberTest extends KernelTestCase
     protected ReferenceRepository $referenceRepository;
     protected SurveyRepository $surveyRepository;
 
+    #[\Override]
     public function setUp(): void
     {
         $container = static::getContainer();
@@ -38,7 +39,7 @@ class LcniChangeSubscriberTest extends KernelTestCase
         $securityMock->method('getUser')
             ->willReturn($user);
 
-        $container->set(Security::class, $securityMock);
+        $container->set('app.test.security', $securityMock);
 
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->auditLogRepository = $this->entityManager->getRepository(AuditLog::class);
@@ -99,7 +100,8 @@ class LcniChangeSubscriberTest extends KernelTestCase
 
     public function testDeleteLcni(): void
     {
-        $lcni = $this->referenceRepository->getReference('intercept');
+        /** @var NotificationInterception $lcni */
+        $lcni = $this->referenceRepository->getReference('intercept', NotificationInterception::class);
 
         $this->entityManager->remove($lcni);
         $this->entityManager->flush();
@@ -137,7 +139,7 @@ class LcniChangeSubscriberTest extends KernelTestCase
     public function testChangeLcniAddress(): void
     {
         /** @var NotificationInterception $lcni */
-        $lcni = $this->referenceRepository->getReference('intercept');
+        $lcni = $this->referenceRepository->getReference('intercept', NotificationInterception::class);
         $lcni->setAddressLine('234 Blue Road');
 
         $this->entityManager->flush();
@@ -209,7 +211,7 @@ class LcniChangeSubscriberTest extends KernelTestCase
     public function testChangeLcniEmails(): void
     {
         /** @var NotificationInterception $lcni */
-        $lcni = $this->referenceRepository->getReference('intercept');
+        $lcni = $this->referenceRepository->getReference('intercept', NotificationInterception::class);
         $lcni->setEmails('lcni@example.com');
 
         $this->entityManager->flush();

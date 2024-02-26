@@ -15,10 +15,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class DayStopFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var SurveyResponse $response */
-        $response = $this->getReference('response:simple');
+        $response = $this->getReference('response:simple', SurveyResponse::class);
 
         $day = (new Day())
             ->setNumber(1)
@@ -76,6 +77,7 @@ class DayStopFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [VehicleFixtures::class];

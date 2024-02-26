@@ -1,31 +1,27 @@
 <?php
 
-
 namespace App\Utility;
 
-
+use App\Entity\SurveyInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Vfs\FileSystem;
 
 abstract class AbstractBulkSurveyImporter
 {
-    private $validator;
-    protected NotificationInterceptionService $notificationInterception;
-
     abstract protected function parseLine($line);
-    abstract public function createSurvey($surveyData, $surveyOptions = null);
+
+    abstract public function createSurvey($surveyData, $surveyOptions = null): ?SurveyInterface;
+
     abstract protected function getAggregateSurveyOptionsAndValidate(FormInterface $form);
 
-    public function __construct(ValidatorInterface $validator, NotificationInterceptionService $notificationInterception)
-    {
-        $this->validator = $validator;
-        $this->notificationInterception = $notificationInterception;
-    }
+    public function __construct(
+        protected ValidatorInterface              $validator,
+        protected NotificationInterceptionService $notificationInterception,
+    ) {}
 
-    public function getSurveys(FormInterface $form, bool $allowHistoricalDate=false): array
+    public function getSurveys(FormInterface $form, bool $allowHistoricalDate = false): array
     {
         /** @var UploadedFile $file */
         $file = $form->get('file')->getData();
@@ -89,7 +85,7 @@ abstract class AbstractBulkSurveyImporter
         ];
 
         $handle = fopen($filename, "r");
-        while(!feof($handle)){
+        while (!feof($handle)) {
             $line = trim(fgets($handle));
             if (empty($line)) continue;
             if ($lineData = $this->parseLine($line)) {

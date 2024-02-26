@@ -12,10 +12,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadingActionFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Trip $trip */
-        $trip = $this->getReference('trip:1');
+        $trip = $this->getReference('trip:1', Trip::class);
 
         $loading = (new Action())
             ->setLoading(true)
@@ -35,6 +36,7 @@ class LoadingActionFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [TripFixtures::class];

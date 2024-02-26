@@ -3,6 +3,7 @@
 namespace App\Tests\Repository;
 
 use App\Entity\RoRo\OperatorGroup;
+use App\Repository\RoRo\OperatorGroupRepository;
 use App\Tests\DataFixtures\TestSpecific\OperatorGroupRepositoryFixtures;
 
 class OperatorGroupRepositoryTest extends AbstractRepositoryTest
@@ -32,8 +33,10 @@ class OperatorGroupRepositoryTest extends AbstractRepositoryTest
         $this->loadFixtures([OperatorGroupRepositoryFixtures::class]);
         $repo = $this->getRepository(OperatorGroup::class);
 
+        $this->assertInstanceOf(OperatorGroupRepository::class, $repo);
+
         $excludingGroup = $excludingGroupRef ?
-            $this->fixtureReferenceRepository->getReference($excludingGroupRef) :
+            $this->fixtureReferenceRepository->getReference($excludingGroupRef, OperatorGroup::class) :
             null;
 
         $this->assertEquals($expectedToBeInUse, $repo->isNamePrefixAlreadyInUse($name, $excludingGroup));

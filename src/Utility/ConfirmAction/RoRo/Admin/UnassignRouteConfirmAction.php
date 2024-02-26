@@ -14,14 +14,13 @@ class UnassignRouteConfirmAction extends AbstractConfirmAction
 {
     /** @var array{operator: Operator, route: Route} */
     protected $subject;
-    protected EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -41,6 +40,7 @@ class UnassignRouteConfirmAction extends AbstractConfirmAction
         return $this->subject['route'];
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         $operator = $this->getOperator();
@@ -53,16 +53,19 @@ class UnassignRouteConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'operator.route.unassign';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData): void
     {
         $this->getOperator()->removeRoute($this->getRoute());

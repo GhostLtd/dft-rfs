@@ -10,6 +10,7 @@ use Twig\TokenParser\AbstractTokenParser;
 
 class StrictTokenParser extends AbstractTokenParser
 {
+    #[\Override]
     public function parse(Token $token): Node
     {
         $lineno = $token->getLine();
@@ -26,7 +27,7 @@ class StrictTokenParser extends AbstractTokenParser
 
         $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
 
-        $body = $this->parser->subparse([$this, 'decideBlockEnd'], true);
+        $body = $this->parser->subparse($this->decideBlockEnd(...), true);
 
         $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
 
@@ -38,6 +39,7 @@ class StrictTokenParser extends AbstractTokenParser
         return $token->test('endstrict');
     }
 
+    #[\Override]
     public function getTag(): string
     {
         return 'strict';

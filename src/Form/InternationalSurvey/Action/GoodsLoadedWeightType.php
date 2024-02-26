@@ -10,7 +10,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class GoodsLoadedWeightType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "international.action.goods-weight-loaded";
         $builder
@@ -25,7 +26,8 @@ class GoodsLoadedWeightType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Action::class,

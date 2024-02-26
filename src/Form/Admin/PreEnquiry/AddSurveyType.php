@@ -13,7 +13,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class AddSurveyType extends AbstractType implements DataTransformerInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->addModelTransformer($this)
@@ -63,7 +64,8 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiry::class,
@@ -75,6 +77,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function transform($value)
     {
         return $value;
@@ -83,6 +86,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ($value instanceof PreEnquiry) {

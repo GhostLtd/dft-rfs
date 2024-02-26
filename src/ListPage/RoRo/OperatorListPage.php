@@ -14,14 +14,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 class OperatorListPage extends AbstractListPage
 {
-    protected OperatorRepository $operatorRepository;
-
-    public function __construct(OperatorRepository $operatorRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(protected OperatorRepository $operatorRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->operatorRepository = $operatorRepository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         return [
@@ -34,6 +32,7 @@ class OperatorListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->operatorRepository->createQueryBuilder('operator');
@@ -42,6 +41,7 @@ class OperatorListPage extends AbstractListPage
             ->leftJoin('operator.routes', 'route');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

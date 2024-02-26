@@ -9,6 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ResponseDomesticOnlyFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var SurveyResponse $response */
@@ -18,6 +19,7 @@ class ResponseDomesticOnlyFixtures extends Fixture implements DependentFixtureIn
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [ResponseStillActiveFixtures::class];

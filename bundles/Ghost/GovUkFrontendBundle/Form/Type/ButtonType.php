@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ButtonType extends ExtendedButtonType
 {
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
@@ -24,6 +25,7 @@ class ButtonType extends ExtendedButtonType
         $resolver->setAllowedTypes('is_start_button', 'bool');
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
@@ -51,11 +53,13 @@ class ButtonType extends ExtendedButtonType
         $view->vars['label_html'] = $options['label_html'];
     }
 
+    #[\Override]
     public function getParent(): ?string
     {
         return ExtendedButtonType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_button';

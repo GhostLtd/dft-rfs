@@ -9,7 +9,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 #[AsMessageHandler]
-class LoginMessageHandler implements MessageHandlerInterface
+class LoginMessageHandler
 {
     public function __construct(protected Client $alphagovNotify)
     {}

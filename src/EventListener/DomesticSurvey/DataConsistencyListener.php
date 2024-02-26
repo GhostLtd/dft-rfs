@@ -9,15 +9,17 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Volume;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Proxy;
 
 class DataConsistencyListener
 {
-    protected ?EntityManagerInterface $entityManager;
-    protected ?UnitOfWork $uow;
+    protected ?EntityManagerInterface $entityManager = null;
+    protected ?UnitOfWork $uow = null;
 
     public function onFlush(OnFlushEventArgs $event): void
     {
@@ -172,7 +174,7 @@ class DataConsistencyListener
 
     public function recomputeChangeSetFor($entity): void
     {
-        $metaData = $this->entityManager->getClassMetadata(get_class($entity));
+        $metaData = $this->entityManager->getClassMetadata($entity::class);
         $this->uow->recomputeSingleEntityChangeSet($metaData, $entity);
     }
 }

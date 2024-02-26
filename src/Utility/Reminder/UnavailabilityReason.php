@@ -11,16 +11,8 @@ class UnavailabilityReason
     public const NO_NOTIFY_TEMPLATE = 'no-notify-template';
     public const TOO_SOON = 'too-soon';
 
-    protected string $reason;
-    protected ?string $eventType;
-
-    protected ?DateInterval $interval;
-
-    public function __construct(string $reason, ?string $eventType = null, ?DateInterval $interval = null)
+    public function __construct(protected string $reason, protected ?string $eventType = null, protected ?DateInterval $interval = null)
     {
-        $this->reason = $reason;
-        $this->eventType = $eventType;
-        $this->interval = $interval;
     }
 
     public function getReason(): string

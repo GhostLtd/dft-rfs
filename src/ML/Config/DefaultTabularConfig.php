@@ -7,16 +7,19 @@ use App\ML\ValidationException;
 
 class DefaultTabularConfig extends AbstractDefaultConfig
 {
+    #[\Override]
     public function getName(): string
     {
         return 'default-tabular';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Business type, MOA, Dangerous goods, Type of goods -> Type of goods code';
     }
 
+    #[\Override]
     public function getFiletypesAndColumnsConfig(): array
     {
         return [
@@ -42,10 +45,12 @@ class DefaultTabularConfig extends AbstractDefaultConfig
         ];
     }
 
+    #[\Override]
     public function getTargetColumnName(): string {
         return "TypeOfGoods_Code";
     }
 
+    #[\Override]
     public function normalizeAndErrorCheck(array $row): array {
         $codeColumn = 'TypeOfGoods_Code';
         $textColumn = 'TypeOfGoods';
@@ -233,6 +238,7 @@ class DefaultTabularConfig extends AbstractDefaultConfig
         return $row;
     }
 
+    #[\Override]
     public function shouldOutputHeader(): bool
     {
         return false;

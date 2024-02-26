@@ -10,32 +10,31 @@ use App\Utility\AddNotesHelper;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/csrgt/surveys/{surveyId}")
- * @Entity("survey", expr="repository.find(surveyId)")
- */
+#[Route(path: '/csrgt/surveys/{surveyId}')]
 class SurveyViewController extends AbstractController
 {
     public function __construct(
-        protected AddNotesHelper $addNotesHelper,
+        protected AddNotesHelper     $addNotesHelper,
         protected AuditLogRepository $auditLogRepository,
-        protected PdfHelper $pdfHelper,
+        protected PdfHelper          $pdfHelper,
     ) {}
 
-    /**
-     * @Route("", name=SurveyController::VIEW_ROUTE)
-     */
-    public function viewDetails(Survey $survey, Request $request): Response
+    #[Route(path: '', name: SurveyController::VIEW_ROUTE)]
+    public function viewDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey  $survey,
+        Request $request,
+    ): Response
     {
         $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);
         if ($this->addNotesHelper->formSubmittedAndProcessed($request, $survey, $addNotesForm)) {
@@ -43,7 +42,7 @@ class SurveyViewController extends AbstractController
         }
 
         return $this->render('admin/domestic/surveys/view.html.twig', [
-            'addNoteForm' => $addNotesForm->createView(),
+            'addNoteForm' => $addNotesForm,
             'approvedBy' => in_array($survey->getState(), [
                 SurveyStateInterface::STATE_INVITATION_SENT,
                 SurveyStateInterface::STATE_NEW,
@@ -60,12 +59,16 @@ class SurveyViewController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/notes/{note}/delete", name=SurveyController::DELETE_NOTE_ROUTE)
-     * @Template("admin/notes/delete.html.twig")
-     * @IsGranted(AdminSurveyVoter::EDIT_NOTES, subject="survey")
-     */
-    public function deleteNote(Request $request, DeleteSurveyNoteConfirmAction $deleteSurveyNoteConfirmAction, Survey $survey, SurveyNote $note): Response|array
+    #[Route(path: '/notes/{note}/delete', name: SurveyController::DELETE_NOTE_ROUTE)]
+    #[Template('admin/notes/delete.html.twig')]
+    #[IsGranted(AdminSurveyVoter::EDIT_NOTES, subject: 'survey')]
+    public function deleteNote(
+        Request                       $request,
+        DeleteSurveyNoteConfirmAction $deleteSurveyNoteConfirmAction,
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey                        $survey,
+        SurveyNote                    $note
+    ): Response|array
     {
         // check note is part of survey
         if ($note->getSurvey()->getId() !== $survey->getId()) {
@@ -80,7 +83,7 @@ class SurveyViewController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#tab-notes"
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#tab-notes"
             );
     }
 }

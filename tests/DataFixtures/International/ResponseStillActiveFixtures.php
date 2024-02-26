@@ -11,10 +11,12 @@ use Doctrine\Persistence\ObjectManager;
 
 class ResponseStillActiveFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Survey $survey */
         $survey = $this->getReference('survey:int:simple', Survey::class);
+
         $response = (new SurveyResponse())
             ->setContactName('Tom')
             ->setContactEmail('tom@example.com')
@@ -36,6 +38,7 @@ class ResponseStillActiveFixtures extends Fixture implements DependentFixtureInt
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [SurveyFixtures::class];

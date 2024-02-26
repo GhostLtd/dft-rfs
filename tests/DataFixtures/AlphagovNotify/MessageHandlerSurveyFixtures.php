@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class MessageHandlerSurveyFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $survey = new Survey();

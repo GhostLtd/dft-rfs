@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $operator = $this->getReference('roro:operator:1', Operator::class);
@@ -25,6 +26,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

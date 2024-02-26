@@ -9,16 +9,18 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class OperatorSwitchVoter extends Voter
 {
-    const CAN_SWITCH_OPERATOR = "CAN_SWITCH_OPERATOR";
+    public const CAN_SWITCH_OPERATOR = "CAN_SWITCH_OPERATOR";
 
     public function __construct(protected OperatorSwitchHelper $operatorSwitchHelper)
     {}
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return ($attribute === self::CAN_SWITCH_OPERATOR && $subject === null);
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

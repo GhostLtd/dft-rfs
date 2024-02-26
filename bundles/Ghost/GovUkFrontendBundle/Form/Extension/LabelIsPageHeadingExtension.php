@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LabelIsPageHeadingExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [
@@ -25,6 +26,7 @@ class LabelIsPageHeadingExtension extends AbstractTypeExtension
         ];
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -33,6 +35,7 @@ class LabelIsPageHeadingExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];

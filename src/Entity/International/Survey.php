@@ -9,6 +9,7 @@ use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
@@ -17,21 +18,20 @@ use App\Utility\International\WeekNumberHelper;
 use App\Utility\NotifyApiResponseCleaner;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
-/**
- * @ORM\Entity(repositoryClass=SurveyRepository::class)
- * @ORM\Table(name="international_survey")
- */
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyReminderInterface, SurveyStateInterface
+#[ORM\Table(name: 'international_survey')]
+#[ORM\Entity(repositoryClass: SurveyRepository::class)]
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
     use NotifyApiResponseTrait;
 
-    const STATE_FILTER_CHOICES = [
+    public const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_INVITATION_PENDING,
         self::STATE_INVITATION_SENT,
@@ -44,15 +44,15 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
 //        self::STATE_EXPORTED,
     ];
 
-    const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
-    const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
-    const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
-    const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
-    const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
+    public const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
+    public const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
+    public const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
+    public const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    public const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
 
-    const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
-    const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
-    const REASON_FOR_EMPTY_SURVEY_CHOICES = [
+    public const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
+    public const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
+    public const REASON_FOR_EMPTY_SURVEY_CHOICES = [
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK => self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
@@ -60,16 +60,12 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_OTHER => self::REASON_FOR_EMPTY_SURVEY_OTHER,
     ];
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
-     * @Assert\Length (max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
-     */
-    private $referenceNumber;
+    #[Assert\NotBlank(message: 'common.string.not-blank', groups: ['add_survey', 'import_survey'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['add_survey', 'import_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $referenceNumber = null;
 
-    /**
-     * @Assert\Callback(groups={"add_survey"})
-     */
+    #[Assert\Callback(groups: ['add_survey'])]
     public function validateReferenceNumber(ExecutionContextInterface $context): void
     {
         if (
@@ -83,50 +79,40 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         }
     }
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="surveys", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\Valid(groups={"add_survey", "import_survey"})
-     */
-    private $company;
+    #[Assert\Valid(groups: ['add_survey', 'import_survey'])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Company::class, cascade: ['persist'], inversedBy: 'surveys')]
+    private ?Company $company = null;
+
+    #[ORM\OneToOne(targetEntity: SurveyResponse::class, mappedBy: 'survey', cascade: ['persist', 'remove'])]
+    private ?SurveyResponse $response = null;
+
+    #[ORM\OneToOne(targetEntity: PasscodeUser::class, mappedBy: 'internationalSurvey', cascade: ['persist', 'remove'], fetch: 'LAZY')]
+    private ?PasscodeUser $passcodeUser = null;
 
     /**
-     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist", "remove"})
+     * @var Collection<SurveyNote>
      */
-    private $response;
+    #[ORM\OneToMany(targetEntity: SurveyNote::class, mappedBy: 'survey')]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    private Collection $notes;
+
+    #[Assert\NotNull(message: 'common.choice.invalid', groups: ['reason_for_empty_survey', 'admin_reason_for_empty_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 24, nullable: true)]
+    private ?string $reasonForEmptySurvey = null;
+
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['reason_for_empty_survey', 'admin_reason_for_empty_survey'])]
+    #[Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\\\App\\\\Entity\\\\International\\\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')) || value != null", message: 'international.survey-response.reason-for-empty-survey-other.not-null', groups: ['reason_for_empty_survey', 'admin_reason_for_empty_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $reasonForEmptySurveyOther = null;
 
     /**
-     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="internationalSurvey", cascade={"persist", "remove"}, fetch="LAZY")
+     * @var Collection<int, NotifyApiResponse>
      */
-    private $passcodeUser;
-
-    /**
-     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
-     * @ORM\OrderBy({"createdAt" = "ASC"})
-     */
-    private ?Collection $notes;
-
-    /**
-     * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotNull(groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"}, message="common.choice.invalid")
-     */
-    private ?string $reasonForEmptySurvey;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
-     * @Assert\Expression("(this.getReasonForEmptySurvey() != constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')) || value != null", message="international.survey-response.reason-for-empty-survey-other.not-null", groups={"reason_for_empty_survey", "admin_reason_for_empty_survey"})
-     */
-    private ?string $reasonForEmptySurveyOther;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
-     * @ORM\JoinTable(
-     *     name="international_survey_notify_api_responses",
-     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
-     * )
-     */
+    #[ORM\JoinTable(name: 'international_survey_notify_api_responses')]
+    #[ORM\JoinColumn(name: 'survey_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
     protected Collection $apiResponses;
 
     public function __construct()
@@ -174,11 +160,13 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         return $this;
     }
 
+    #[\Override]
     public function getPasscodeUser(): ?PasscodeUser
     {
         return $this->passcodeUser;
     }
 
+    #[\Override]
     public function setPasscodeUser(?PasscodeUser $passcodeUser): self
     {
         $this->passcodeUser = $passcodeUser;
@@ -202,20 +190,24 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         return WeekNumberHelper::getWeekNumber($this->getSurveyPeriodStart());
     }
 
-    public function getNotes(): ?Collection
+    #[\Override]
+    public function getNotes(): Collection
     {
         return $this->notes;
     }
 
-    public function getChasedCount(): int
+    #[\Override]
+    public function setNotes(Collection $notes): self
     {
-        return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
+        $this->notes = $notes;
+        return $this;
     }
 
+    #[\Override]
     public function addNote(NoteInterface $note): self
     {
         if (!$note instanceof SurveyNote) {
-            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".SurveyNote::class);
+            throw new \RuntimeException("Got a ".$note::class.", but expected a ".SurveyNote::class);
         }
 
         if (!$this->notes->contains($note)) {
@@ -224,6 +216,18 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         }
 
         return $this;
+    }
+
+    #[\Override]
+    public function createNote(): NoteInterface
+    {
+        return new SurveyNote();
+    }
+
+    #[\Override]
+    public function getChasedCount(): int
+    {
+        return array_reduce($this->getNotes()->toArray(), fn($c, NoteInterface $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
     public function getReasonForEmptySurvey(): ?string
@@ -298,5 +302,11 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
     {
         $now = new \DateTime();
         return $now < $this->getSurveyPeriodEnd();
+    }
+
+    #[\Override]
+    public function getResponseContactEmail(): ?string
+    {
+        return $this->getResponse()?->getContactEmail();
     }
 }

@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Entity;
 
-
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,27 +10,21 @@ trait NoteTrait
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="text", nullable=false)
-     * @Assert\NotNull(message="common.string.not-blank", groups={"admin_comment"})
-     */
+    #[Assert\NotNull(message: 'common.string.not-blank', groups: ['admin_comment'])]
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
     private ?string $note;
 
     /**
      * username of creator
-     * @ORM\Column(type="string", length=255, nullable=false)
      */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $createdBy;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=false)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
     private ?\DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=false)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"admin_comment"})
-     */
+    #[Assert\NotNull(message: 'common.choice.not-null', groups: ['admin_comment'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private ?bool $wasChased;
 
     public function getNote(): ?string
@@ -45,37 +38,23 @@ trait NoteTrait
         return $this;
     }
 
-    /**
-     * @param string|null $createdBy
-     * @return NoteTrait
-     */
     public function setCreatedBy(?string $createdBy): self
     {
         $this->createdBy = $createdBy;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCreatedBy(): ?string
     {
         return $this->createdBy;
     }
 
-    /**
-     * @param \DateTime|null $createdAt
-     * @return NoteTrait
-     */
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;

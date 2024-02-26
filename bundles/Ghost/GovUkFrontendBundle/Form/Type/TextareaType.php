@@ -11,17 +11,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextareaType extends ExtendedTextareaType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return ExtendedTextareaType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_textarea';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'max_length' => null,
@@ -44,7 +47,8 @@ class TextareaType extends ExtendedTextareaType
         });
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -52,9 +56,10 @@ class TextareaType extends ExtendedTextareaType
 
         $characterCountOptions = ['max_length', 'max_words', 'threshold'];
 
-        $characterCountEnabled = array_reduce($characterCountOptions, function ($carry, $optName) use ($options) {
-            return $carry || ($options[$optName] ?? null);
-        });
+        $characterCountEnabled = array_reduce(
+            $characterCountOptions,
+            fn($carry, $optName) => $carry || ($options[$optName] ?? null)
+        );
 
         if ($characterCountEnabled) {
             $view->vars['character_count'] = 'enabled';

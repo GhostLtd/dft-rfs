@@ -6,34 +6,22 @@ use Alphagov\Notifications\Client;
 use Alphagov\Notifications\Exception\ApiException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 #[AsMessageHandler]
-class NotificationMessageHandler implements MessageHandlerInterface
+class NotificationMessageHandler
 {
-    private Client $alphagovNotify;
-
-    public function __construct(Client $alphagovNotify)
-    {
-        $this->alphagovNotify = $alphagovNotify;
-    }
+    public function __construct(protected Client $alphagovNotify)
+    {}
 
     public function __invoke(AbstractSendMessage $message): ?array
     {
         try {
-            switch(get_class($message)) {
-                case Email::class :
-                    return $this->alphagovNotify->sendEmail(...$message->getSendMethodParameters());
-
-                case Sms::class :
-                    return $this->alphagovNotify->sendSms(...$message->getSendMethodParameters());
-
-                case Letter::class :
-                    return $this->alphagovNotify->sendLetter(...$message->getSendMethodParameters());
-
-                default :
-                    throw new \UnexpectedValueException(get_class($message));
-            }
+            return match ($message::class) {
+                Email::class => $this->alphagovNotify->sendEmail(...$message->getSendMethodParameters()),
+                Sms::class => $this->alphagovNotify->sendSms(...$message->getSendMethodParameters()),
+                Letter::class => $this->alphagovNotify->sendLetter(...$message->getSendMethodParameters()),
+                default => throw new \UnexpectedValueException($message::class),
+            };
         } catch (ApiException $apiException) {
             if (in_array($apiException->getCode(), [400, 403])) {
                 throw new UnrecoverableMessageHandlingException('', 0, $apiException);

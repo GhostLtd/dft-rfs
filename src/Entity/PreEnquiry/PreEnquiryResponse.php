@@ -6,97 +6,70 @@ use App\Entity\IdTrait;
 use App\Entity\LongAddress;
 use App\Form\Validator as AppAssert;
 use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @ORM\Entity(repositoryClass=PreEnquiryResponseRepository::class)
- * @ORM\Table(name="pre_enquiry_response")
- */
+#[ORM\Table(name: 'pre_enquiry_response')]
+#[ORM\Entity(repositoryClass: PreEnquiryResponseRepository::class)]
 class PreEnquiryResponse
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isCorrectCompanyName;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isCorrectCompanyName = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(groups={"correspondence_address", "is_correct_address"}, message="pre-enquiry.pre-enquiry-response.is-correct-address")
-     */
-    private $isCorrectAddress;
+    #[Assert\NotNull(message: 'pre-enquiry.pre-enquiry-response.is-correct-address', groups: ['correspondence_address', 'is_correct_address'])]
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isCorrectAddress = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $companyName;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $companyName = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-name")
-     */
-    private $contactName;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.contact-name', groups: ['correspondence_details'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $contactName = null;
 
-    /**
-     * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"correspondence_address"}, validatePostcode=true, includeAddressee=false)
-     */
+    #[AppAssert\ValidAddress(groups: ["correspondence_address"], validatePostcode: true, includeAddressee: false)]
+    #[ORM\Embedded(class: LongAddress::class)]
     private $contactAddress;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-telephone")
-     */
-    private $contactTelephone;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.contact-telephone', groups: ['correspondence_details'])]
+    #[ORM\Column(type: Types::STRING, length: 50)]
+    private ?string $contactTelephone = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"correspondence_details"}, message="pre-enquiry.pre-enquiry-response.contact-email")
-     * @Assert\Email(groups={"correspondence_details"})
-     */
-    private $contactEmail;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.contact-email', groups: ['correspondence_details'])]
+    #[Assert\Email(groups: ['correspondence_details'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $contactEmail = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.vehicle-count")
-     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
-     */
-    private $totalVehicleCount;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.vehicle-count', groups: ['vehicle_questions'])]
+    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
+    #[ORM\Column(type: Types::INTEGER)]
+    private ?int $totalVehicleCount = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank")
-     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
-     */
-    private $internationalJourneyVehicleCount;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank', groups: ['vehicle_questions'])]
+    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
+    #[ORM\Column(type: Types::INTEGER)]
+    private ?int $internationalJourneyVehicleCount = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotBlank(groups={"business_details"}, message="pre-enquiry.pre-enquiry-response.number-of-employees")
-     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details"})
-     */
-    private $numberOfEmployees;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.number-of-employees', groups: ['business_details'])]
+    #[Assert\Length(max: 20, maxMessage: 'common.string.max-length', groups: ['business_details'])]
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    private ?string $numberOfEmployees = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"vehicle_questions"}, message="pre-enquiry.pre-enquiry-response.annual-journey-estimate")
-     * @Assert\PositiveOrZero(groups={"vehicle_questions"})
-     */
-    private $annualJourneyEstimate;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.annual-journey-estimate', groups: ['vehicle_questions'])]
+    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
+    #[ORM\Column(type: Types::INTEGER)]
+    private ?int $annualJourneyEstimate = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="response", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $preEnquiry;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(inversedBy: 'response', targetEntity: PreEnquiry::class, cascade: ['persist'])]
+    private ?PreEnquiry $preEnquiry = null;
 
-    /**
-     * @Assert\Callback(groups={"vehicle_questions"})
-     */
-    public function validateVehicleDetails(ExecutionContextInterface $context)
+    #[Assert\Callback(groups: ['vehicle_questions'])]
+    public function validateVehicleDetails(ExecutionContextInterface $context): void
     {
         if ($this->getInternationalJourneyVehicleCount() !== null &&
             $this->getTotalVehicleCount() !== null &&
@@ -108,10 +81,8 @@ class PreEnquiryResponse
         }
     }
 
-    /**
-     * @Assert\Callback(groups={"company_name"})
-     */
-    public function validateCompanyName(ExecutionContextInterface $context)
+    #[Assert\Callback(groups: ['company_name'])]
+    public function validateCompanyName(ExecutionContextInterface $context): void
     {
         if ($this->isCorrectCompanyName === null) {
             $context
@@ -158,7 +129,6 @@ class PreEnquiryResponse
     public function setCompanyName(?string $companyName): self
     {
         $this->companyName = $companyName;
-
         return $this;
     }
 
@@ -170,7 +140,6 @@ class PreEnquiryResponse
     public function setContactName(?string $contactName): self
     {
         $this->contactName = $contactName;
-
         return $this;
     }
 
@@ -182,7 +151,6 @@ class PreEnquiryResponse
     public function setContactAddress(?LongAddress $contactAddress): self
     {
         $this->contactAddress = $contactAddress;
-
         return $this;
     }
 
@@ -194,7 +162,6 @@ class PreEnquiryResponse
     public function setContactTelephone(?string $contactTelephone): self
     {
         $this->contactTelephone = $contactTelephone;
-
         return $this;
     }
 
@@ -206,7 +173,6 @@ class PreEnquiryResponse
     public function setContactEmail(?string $contactEmail): self
     {
         $this->contactEmail = $contactEmail;
-
         return $this;
     }
 
@@ -218,7 +184,6 @@ class PreEnquiryResponse
     public function setTotalVehicleCount(?int $totalVehicleCount): self
     {
         $this->totalVehicleCount = $totalVehicleCount;
-
         return $this;
     }
 
@@ -230,7 +195,6 @@ class PreEnquiryResponse
     public function setInternationalJourneyVehicleCount(?int $internationalJourneyVehicleCount): self
     {
         $this->internationalJourneyVehicleCount = $internationalJourneyVehicleCount;
-
         return $this;
     }
 
@@ -253,7 +217,6 @@ class PreEnquiryResponse
     public function setAnnualJourneyEstimate(?int $annualJourneyEstimate): self
     {
         $this->annualJourneyEstimate = $annualJourneyEstimate;
-
         return $this;
     }
 
@@ -265,7 +228,6 @@ class PreEnquiryResponse
     public function setPreEnquiry(PreEnquiry $preEnquiry): self
     {
         $this->preEnquiry = $preEnquiry;
-
         return $this;
     }
 

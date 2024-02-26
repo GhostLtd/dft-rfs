@@ -28,31 +28,17 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
 {
     public const LOGIN_ROUTE = 'app_login';
 
-    protected EntityManagerInterface $entityManager;
-    protected FormFactoryInterface $formFactory;
-    protected PasscodeGenerator $passcodeGenerator;
-    protected UserPasswordHasherInterface $passwordHasher;
-    protected UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        FormFactoryInterface $formFactory,
-        PasscodeGenerator $passcodeGenerator,
-        UserPasswordHasherInterface $passwordHasher,
-        UrlGeneratorInterface $urlGenerator
-    ) {
-        $this->entityManager = $entityManager;
-        $this->formFactory = $formFactory;
-        $this->passcodeGenerator = $passcodeGenerator;
-        $this->passwordHasher = $passwordHasher;
-        $this->urlGenerator = $urlGenerator;
+    public function __construct(protected EntityManagerInterface $entityManager, protected FormFactoryInterface $formFactory, protected PasscodeGenerator $passcodeGenerator, protected UserPasswordHasherInterface $passwordHasher, protected UrlGeneratorInterface $urlGenerator)
+    {
     }
 
+    #[\Override]
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 
+    #[\Override]
     public function authenticate(Request $request): Passport
     {
         $form = $this->formFactory->create(PasscodeLoginType::class, []);
@@ -61,9 +47,7 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
         $data = $form->getData();
         $csrfTokenId = $form->getConfig()->getOption('csrf_token_id');
 
-        $removeHashesDashesAndSpaces = function($str) {
-            return str_replace(['#', '-', ' '], ['', '', ''], $str);
-        };
+        $removeHashesDashesAndSpaces = fn($str) => str_replace(['#', '-', ' '], ['', '', ''], $str);
 
         $username = $removeHashesDashesAndSpaces($data['0'] ?? '');
         $password = $removeHashesDashesAndSpaces($data['1'] ?? '');
@@ -87,6 +71,7 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         /** @var PasscodeUser $user */
@@ -95,19 +80,11 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
         $this->entityManager->flush();
 
         $roles = $user->getRoles();
-
-        switch (true)
-        {
-            case in_array(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER, $roles):
-                return new RedirectResponse($this->urlGenerator->generate(DomesticIndexController::SUMMARY_ROUTE));
-
-            case in_array(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER, $roles):
-                return new RedirectResponse($this->urlGenerator->generate(InternationalIndexController::SUMMARY_ROUTE));
-
-            case in_array(PasscodeUser::ROLE_PRE_ENQUIRY_USER, $roles):
-                return new RedirectResponse($this->urlGenerator->generate(PreEnquiryController::SUMMARY_ROUTE));
-        }
-
-        throw new AuthenticationException();
+        return match (true) {
+            in_array(PasscodeUser::ROLE_DOMESTIC_SURVEY_USER, $roles) => new RedirectResponse($this->urlGenerator->generate(DomesticIndexController::SUMMARY_ROUTE)),
+            in_array(PasscodeUser::ROLE_INTERNATIONAL_SURVEY_USER, $roles) => new RedirectResponse($this->urlGenerator->generate(InternationalIndexController::SUMMARY_ROUTE)),
+            in_array(PasscodeUser::ROLE_PRE_ENQUIRY_USER, $roles) => new RedirectResponse($this->urlGenerator->generate(PreEnquiryController::SUMMARY_ROUTE)),
+            default => throw new AuthenticationException(),
+        };
     }
 }

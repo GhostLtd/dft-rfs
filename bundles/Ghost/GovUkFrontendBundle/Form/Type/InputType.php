@@ -9,12 +9,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InputType extends ExtendedTextType
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_input';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -24,7 +26,8 @@ class InputType extends ExtendedTextType
         $view->vars['suffix_html'] = $options['suffix_html'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

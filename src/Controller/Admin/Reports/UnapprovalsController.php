@@ -10,23 +10,17 @@ use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class UnapprovalsController extends AbstractReportsController
 {
-    /**
-     * @Route("/unapprovals/{type}", name="unapprovals_type", requirements={"type": "csrgt|irhs"})
-     */
+    #[Route(path: '/unapprovals/{type}', name: 'unapprovals_type', requirements: ['type' => 'csrgt|irhs'])]
     public function unapprovalsReportsDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/unapprovals/{type}/{year}/{quarter}", name="unapprovals_full",
-     *     requirements={"type": "csrgt|irhs", "year": "\d{4}", "quarter": "1|2|3|4"}
-     * )
-     */
+    #[Route(path: '/unapprovals/{type}/{year}/{quarter}', name: 'unapprovals_full', requirements: ['type' => 'csrgt|irhs', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
     public function unApprovalsReport(Request $request, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = $type === 'irhs'
@@ -45,13 +39,14 @@ class UnapprovalsController extends AbstractReportsController
         );
 
         return $this->render('admin/report/unapprovals.html.twig', array_merge($form->getData(), [
-            'stats' => $stats ?? null,
+            'stats' => $stats,
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
         ]));
     }
 
 
+    #[\Override]
     protected function getRedirect(array $data): RedirectResponse
     {
         switch($data['type'] ?? null) {

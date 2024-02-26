@@ -16,15 +16,8 @@ abstract class AbstractPdfHelper
     abstract protected function getPrefix(SurveyInterface $survey): string;
     abstract protected function getPdfObject(object $entity, StorageObject $obj): ?PdfObjectInterface;
 
-    protected Environment $twig;
-    protected Bucket $bucket;
-    protected LoggerInterface $logger;
-
-    public function __construct(Environment $twig, Bucket $exportBucket, LoggerInterface $logger)
+    public function __construct(protected Environment $twig, protected Bucket $exportBucket, protected LoggerInterface $logger)
     {
-        $this->twig = $twig;
-        $this->bucket = $exportBucket;
-        $this->logger = $logger;
     }
 
     public function generateAndUploadPdfIfNotExists(SurveyInterface $survey): void
@@ -36,14 +29,14 @@ abstract class AbstractPdfHelper
 
     public function generateAndUploadPdf(SurveyInterface $survey): ?StorageObject
     {
-        if (!$this->bucket->name()) {
+        if (!$this->exportBucket->name()) {
             // Bucket isn't configured
             return null;
         }
 
         $pdf = $this->generatePDF($survey)->output();
 
-        return $this->bucket->upload($pdf, [
+        return $this->exportBucket->upload($pdf, [
             'resumable' => true,
             'name' => $this->getName($survey),
         ]);
@@ -82,13 +75,13 @@ abstract class AbstractPdfHelper
      */
     public function getExistingSurveyPDFs(SurveyInterface $survey): array
     {
-        if (!$this->bucket->name()) {
+        if (!$this->exportBucket->name()) {
             // Bucket isn't configured
             return [];
         }
 
         $pdfs = [];
-        $iterator = $this->bucket->objects([
+        $iterator = $this->exportBucket->objects([
             'delimiter' => '/',
             'prefix' => $this->getPrefix($survey),
         ]);

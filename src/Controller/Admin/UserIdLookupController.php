@@ -6,16 +6,13 @@ use App\Form\Admin\UserIdLookupType;
 use App\Repository\PasscodeUserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class UserIdLookupController extends AbstractController
 {
-    /**
-     * @Route("/user-id-lookup", name="admin_user_id_lookup")
-     */
+    #[Route(path: '/user-id-lookup', name: 'admin_user_id_lookup')]
     public function lookup(Request $request, PasscodeUserRepository $userRepository): Response
     {
         $form = $this->createForm(UserIdLookupType::class);
@@ -43,7 +40,7 @@ class UserIdLookupController extends AbstractController
         }
 
         return $this->render('admin/user_id_lookup/lookup.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

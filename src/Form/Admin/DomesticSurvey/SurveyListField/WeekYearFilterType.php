@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormEvents;
 
 class WeekYearFilterType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $weeks = range(1, 53);

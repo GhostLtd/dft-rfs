@@ -8,6 +8,7 @@ use DateTimeInterface;
 
 class WeekNumberHelper extends AbstractWeekNumberHelper
 {
+    #[\Override]
     public static function getFirstDayOfWeek(bool $shortName): string
     {
         return $shortName ? 'Mon' : 'Monday';

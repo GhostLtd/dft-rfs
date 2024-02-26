@@ -16,13 +16,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class FormWizardCleanupSubscriber implements EventSubscriberInterface
 {
-    private RequestStack $requestStack;
-    private LoggerInterface $log;
-
-    public function __construct(RequestStack $requestStack, LoggerInterface $log)
+    public function __construct(private RequestStack $requestStack, private LoggerInterface $log)
     {
-        $this->requestStack = $requestStack;
-        $this->log = $log;
     }
 
     public function kernelControllerEvent(ControllerEvent $event): void
@@ -33,7 +28,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
 
         if (!is_array($event->getController())) return;
         $controller = $event->getController()[0];
-        $controllerClass = get_class($controller);
+        $controllerClass = $controller::class;
         if (
             in_array($controllerClass, $controllerBlacklist)
             || !str_starts_with($controllerClass, "App\\Controller\\")
@@ -68,6 +63,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
         }
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

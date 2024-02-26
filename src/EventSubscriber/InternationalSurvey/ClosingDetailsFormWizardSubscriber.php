@@ -10,13 +10,11 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 {
-    private WorkflowInterface $internationalSurveyStateMachine;
-
-    public function __construct(WorkflowInterface $internationalSurveyStateMachine)
+    public function __construct(private WorkflowInterface $internationalSurveyStateMachine)
     {
-        $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         $prefix = 'workflow.international_survey_closing_details';

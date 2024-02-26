@@ -3,34 +3,23 @@
 namespace App\Controller\Admin\Reports;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\SurveyStateInterface;
 use App\Form\Admin\ReportFilterType;
-use App\Repository\AuditLog\AuditLogRepository;
-use App\Repository\International\SurveyRepository as InternationalRepository;
-use App\Utility\Reports\DomesticReportsHelper;
-use App\Utility\Reports\PreEnquiryReportsHelper;
-use App\Utility\Reports\RoRoReportsHelper;
-use App\Utility\Domestic\WeekNumberHelper;
 use App\Utility\StateReportHelper;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class StateController extends AbstractReportsController
 {
-    /**
-     * @Route("/state/{type}", name="state_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro"})
-     */
+    #[Route(path: '/state/{type}', name: 'state_type', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro'])]
     public function stateReportsDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/state/{type}/{year}", name="state_yearly_full", requirements={"type": "pre-enquiry|roro", "year": "\d{4}"})
-     */
+    #[Route(path: '/state/{type}/{year}', name: 'state_yearly_full', requirements: ['type' => 'pre-enquiry|roro', 'year' => '\d{4}'])]
     public function yearlyStateReports(StateReportHelper $stateReportHelper, Request $request, string $type, int $year): Response
     {
         [$start, $end] = $this->getDateRangeForYear($year);
@@ -44,9 +33,7 @@ class StateController extends AbstractReportsController
         return $this->stateReports($stateReportHelper, $form, $type, $start, $end);
     }
 
-    /**
-     * @Route("/state/{type}/{year}/{quarter}", name="state_full", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|roro", "year": "\d{4}", "quarter": "1|2|3|4"})
-     */
+    #[Route(path: '/state/{type}/{year}/{quarter}', name: 'state_full', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|roro', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
     public function quarterlyStateReports(StateReportHelper $stateReportHelper, Request $request, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
@@ -96,6 +83,7 @@ class StateController extends AbstractReportsController
         ]));
     }
 
+    #[\Override]
     protected function getRedirect(array $data): RedirectResponse
     {
         switch($data['type'] ?? null) {

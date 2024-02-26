@@ -8,9 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 abstract class AbstractSurveyRepository extends ServiceEntityRepository
 {
     protected function doGetSurveysRequiringPasscodeUserCleanup(\DateTime $before, string $tableName): array {
-        $statement = $this->getEntityManager()
-            ->getConnection()
-            ->getNativeConnection()
+        $statement = $this->getNativeConnection()
             ->prepare(<<<EOQ
 SELECT s.id FROM audit_log a
 INNER JOIN (
@@ -26,7 +24,7 @@ WHERE NOT EXISTS (
     WHERE a2.category = "cleanup-passcode"
     AND a2.entity_id = s.id
 )
-AND a.data LIKE "%""to"":""rejected""%" 
+AND a.data ->> '$.to' = 'rejected' 
 AND s.state = "rejected"
 AND a.timestamp < :rejected_before
 EOQ
@@ -56,7 +54,7 @@ EOQ
 
         $stateParts = [];
         foreach($states as $i => $state) {
-            $stateParts[] = '(a.data LIKE :stateLike'.$i.' AND s.state=:state'.$i.')';
+            $stateParts[] = "(a.data ->> '$.to' = :stateTo{$i} AND s.state=:state{$i})";
         }
 
         $statesPart = 'AND ('.join(' OR ', $stateParts).')';
@@ -79,15 +77,13 @@ WHERE NOT EXISTS (
 AND a.timestamp < :timestamp
 EOQ;
 
-        $statement = $this->getEntityManager()
-            ->getConnection()
-            ->getNativeConnection()
+        $statement = $this->getNativeConnection()
             ->prepare($sql);
 
         $statement->bindValue('timestamp', $before->format('Y-m-d H:i:s'));
 
         foreach($states as $i => $state) {
-            $statement->bindValue("stateLike{$i}", '%"to":"'.$state.'"%');
+            $statement->bindValue("stateTo{$i}", $state);
             $statement->bindValue("state{$i}", $state);
         }
 
@@ -106,5 +102,17 @@ EOQ;
             ->setParameter('ids', $surveyIds)
             ->getQuery()
             ->execute();
+    }
+
+    protected function getNativeConnection(): \PDO
+    {
+        $nativeConnection = $this->getEntityManager()
+            ->getConnection()
+            ->getNativeConnection();
+
+        if (!$nativeConnection instanceof \PDO) {
+            throw new \RuntimeException('Expected an instance of PDO');
+        }
+        return $nativeConnection;
     }
 }

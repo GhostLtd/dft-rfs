@@ -7,17 +7,20 @@ use Symfony\Component\Form\FormView;
 
 class PasswordType extends InputType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return InputType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_password';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 

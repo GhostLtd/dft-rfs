@@ -6,27 +6,25 @@ use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Common\Admin\SendReminderConfirmAction;
 use App\Utility\Reminder\ManualReminderHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SurveyManualReminderController extends AbstractController
 {
-    /**
-     * @Route("/csrgt/manual-reminder/{id}", name="admin_domestic_survey_manual_reminder")
-     * @IsGranted(AdminSurveyVoter::MANUAL_REMINDER_BUTTON, subject="survey")
-     * @Template("admin/domestic/send_reminder/send-reminder.html.twig")
-     */
+    #[Route(path: '/csrgt/manual-reminder/{id}', name: 'admin_domestic_survey_manual_reminder')]
+    #[IsGranted(AdminSurveyVoter::MANUAL_REMINDER_BUTTON, subject: 'survey')]
+    #[Template('admin/domestic/send_reminder/send-reminder.html.twig')]
     public function sendReminder(
-        ManualReminderHelper $reminderHelper,
-        Request $request,
-        Security $security,
+        ManualReminderHelper      $reminderHelper,
+        Request                   $request,
+        Security                  $security,
         SendReminderConfirmAction $confirmAction,
-        Survey $survey,
+        Survey                    $survey,
     ): array|Response
     {
         if (!$security->isGranted(AdminSurveyVoter::MANUAL_REMINDER, $survey)) {

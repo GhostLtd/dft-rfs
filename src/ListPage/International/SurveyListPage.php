@@ -16,17 +16,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SurveyListPage extends AbstractListPage
 {
-    /**
-     * @var SurveyRepository
-     */
-    private SurveyRepository $repository;
-
-    public function __construct(SurveyRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(private SurveyRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $routeRepository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
@@ -46,6 +41,7 @@ class SurveyListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('survey');
@@ -58,6 +54,7 @@ class SurveyListPage extends AbstractListPage
             ->leftJoin('vehicle.trips', 'trip');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

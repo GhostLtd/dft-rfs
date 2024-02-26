@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class InPossessionFilter extends ChoiceFilter
 {
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         if ($formData === 'yes-exempt' || $formData === 'yes') {

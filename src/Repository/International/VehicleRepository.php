@@ -6,7 +6,9 @@ use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
 use App\Utility\ExportHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
@@ -19,12 +21,9 @@ use RuntimeException;
  */
 class VehicleRepository extends ServiceEntityRepository
 {
-    protected ExportHelper $exportHelper;
-
-    public function __construct(ManagerRegistry $registry, ExportHelper $exportHelper)
+    public function __construct(ManagerRegistry $registry, protected ExportHelper $exportHelper)
     {
         parent::__construct($registry, Vehicle::class);
-        $this->exportHelper = $exportHelper;
     }
 
     public function registrationMarkAlreadyExists(Vehicle $vehicle)
@@ -34,10 +33,10 @@ class VehicleRepository extends ServiceEntityRepository
         $isCommitted = !!$vehicle->getId();
 
         try {
-            $params = [
-                'registrationMark' => $vehicle->getRegistrationMark(),
-                'responseId' => $responseId,
-            ];
+            $params = new ArrayCollection([
+                new Parameter('registrationMark', $vehicle->getRegistrationMark()),
+                new Parameter('responseId', $responseId),
+            ]);
 
             $qb = $this->createQueryBuilder('v')
                 ->select('count(r)')
@@ -46,7 +45,7 @@ class VehicleRepository extends ServiceEntityRepository
                 ->andWhere('v.registrationMark = :registrationMark');
 
             if ($isCommitted) {
-                $params['vehicleId'] = $vehicle->getId();
+                $params->add(new Parameter('vehicleId', $vehicle->getId()));
                 $qb = $qb->andWhere('v.id != :vehicleId');
             }
 
@@ -72,12 +71,12 @@ class VehicleRepository extends ServiceEntityRepository
                 ->where('v.id = :id')
                 ->andWhere('r = :response')
                 ->getQuery()
-                ->setParameters([
-                    'id' => $id,
-                    'response' => $response,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('id', $id),
+                    new Parameter('response', $response),
+                ]))
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }

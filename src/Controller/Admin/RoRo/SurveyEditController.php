@@ -8,18 +8,16 @@ use App\Entity\RoRo\Survey;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\RoRo\VehicleCountHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/roro/surveys/{surveyId}", name: "admin_roro_surveys_")]
-#[Entity("survey", expr: "repository.find(surveyId)")]
 #[IsGranted(AdminSurveyVoter::EDIT, subject: "survey")]
 class SurveyEditController extends AbstractController
 {
@@ -27,7 +25,12 @@ class SurveyEditController extends AbstractController
     {}
 
     #[Route("/edit", name: "edit")]
-    public function edit(Request $request, Survey $survey, VehicleCountHelper $vehicleCountHelper): Response
+    public function edit(
+        Request $request,
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        VehicleCountHelper $vehicleCountHelper
+    ): Response
     {
         $vehicleCountHelper->setVehicleCountLabels($survey->getVehicleCounts());
 
@@ -40,7 +43,11 @@ class SurveyEditController extends AbstractController
     }
 
     #[Route("/edit-active-state", name: "edit_is_active")]
-    public function editIsActiveState(Request $request, Survey $survey): Response
+    public function editIsActiveState(
+        Request $request,
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         return $this->handlePostAndGenerateResponse(
             $survey,
@@ -72,7 +79,7 @@ class SurveyEditController extends AbstractController
         }
 
         return $this->render($template, [
-            'form' => $form->createView(),
+            'form' => $form,
             'survey' => $survey,
         ]);
     }

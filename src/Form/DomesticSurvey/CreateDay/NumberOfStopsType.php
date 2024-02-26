@@ -11,7 +11,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class NumberOfStopsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.day.number-of-stops";
         $builder
@@ -45,7 +46,8 @@ class NumberOfStopsType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('day_number');
     }

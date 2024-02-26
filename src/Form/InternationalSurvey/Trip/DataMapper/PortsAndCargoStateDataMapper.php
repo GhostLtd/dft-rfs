@@ -11,16 +11,12 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class PortsAndCargoStateDataMapper implements DataMapperInterface
 {
-    protected string $direction;
-    protected array $ports;
-
-    public function __construct(string $direction, array $ports)
+    public function __construct(protected string $direction, protected array $ports)
     {
-        $this->direction = $direction;
-        $this->ports = $ports;
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -70,11 +66,12 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
         $forms['wasAtCapacity']->setData($isAtCapacity);
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
-
         /** @var FormInterface[] $forms */
+
         if (!$viewData instanceof Trip) {
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }

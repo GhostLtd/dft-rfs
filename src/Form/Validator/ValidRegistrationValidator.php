@@ -15,14 +15,12 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class ValidRegistrationValidator extends ConstraintValidator
 {
-    protected $entityManager;
-
-    public function __construct(EntityManagerInterface  $entityManager)
+    public function __construct(protected EntityManagerInterface  $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidRegistration) {
             throw new UnexpectedTypeException($constraint, ValidRegistration::class);

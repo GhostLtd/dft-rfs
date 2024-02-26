@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormInterface;
 
 class WagesTypeMapper implements DataMapperInterface
 {
-    public function mapDataToForms($viewData, \Traversable $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, \Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
@@ -30,7 +31,8 @@ class WagesTypeMapper implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData(\Traversable $forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData(\Traversable $forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */

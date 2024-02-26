@@ -10,10 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class BusinessFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var SurveyResponse $response */
-        $response = $this->getReference('response:simple');
+        $response = $this->getReference('response:simple', SurveyResponse::class);
 
         $response
             ->setNumberOfEmployees(BaseSurveyResponse::EMPLOYEES_10_TO_49)
@@ -22,6 +23,7 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [ResponseFixtures::class];

@@ -11,19 +11,22 @@ use Google\Cloud\Storage\StorageObject;
 
 class PdfHelper extends AbstractPdfHelper
 {
-    const PREFIX = 'irhs-pdf/';
+    public const PREFIX = 'irhs-pdf/';
 
+    #[\Override]
     protected function getTemplate(): string
     {
         return 'international_survey/view-whole-survey.html.twig';
     }
 
+    #[\Override]
     protected function getName(SurveyInterface $survey): string
     {
         $timestamp = (new DateTime())->format('U');
         return $this->getPrefix($survey)."_".$timestamp.".pdf";
     }
 
+    #[\Override]
     protected function getPrefix(SurveyInterface $survey): string
     {
         assert($survey instanceof InternationalSurvey);
@@ -33,6 +36,7 @@ class PdfHelper extends AbstractPdfHelper
         return self::PREFIX."{$firmReference}_{$week}";
     }
 
+    #[\Override]
     protected function getPdfObject(object $entity, StorageObject $obj): ?PdfObjectInterface
     {
         $regex = '#^'. preg_quote(self::PREFIX) . "(?P<firmReference>[A-Za-z0-9-]+)_(?P<week>\d+)_(?P<timestamp>\d+)\.pdf$#";

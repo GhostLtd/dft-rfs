@@ -11,6 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class DomesticLcniChangeSubscriberFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $intercept = (new NotificationInterception())

@@ -8,8 +8,12 @@ security:
             cost: 8
         App\Entity\RoRoUser:
             algorithm: 'auto'
+        Symfony\Component\Security\Core\User\InMemoryUser:
+            algorithm: 'auto'
+            cost: 8
         Symfony\Component\Security\Core\User\User:
             algorithm: 'auto'
+
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -96,10 +100,10 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## General
-        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
-        - { host: '^%frontend_hostname%$', path: ^/roro/authenticate, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
-        - { host: '^%frontend_hostname%$', path: ^/roro/check-email, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
-        - { host: '^%frontend_hostname%$', path: ^/roro/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { path: '^/login$', roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/authenticate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/check-email, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/login, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## RoRo firewall
         - { host: '^%frontend_hostname%$', path: ^/roro(/.*)?$, roles: ROLE_RORO_USER, requires_channel: '%env(SECURE_SCHEME)%' }

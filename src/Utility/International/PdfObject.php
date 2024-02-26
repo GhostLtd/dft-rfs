@@ -9,19 +9,8 @@ use Google\Cloud\Storage\StorageObject;
 
 class PdfObject implements PdfObjectInterface
 {
-    protected Survey $survey;
-    protected ?StorageObject $storageObject;
-    protected string $firmReference;
-    protected int $dispatchWeek;
-    protected int $timestamp;
-
-    public function __construct(Survey $survey, ?StorageObject $storageObject, string $firmReference, int $dispatchWeek, int $timestamp)
+    public function __construct(protected Survey $survey, protected ?StorageObject $storageObject, protected string $firmReference, protected int $dispatchWeek, protected int $timestamp)
     {
-        $this->survey = $survey;
-        $this->storageObject = $storageObject;
-        $this->firmReference = $firmReference;
-        $this->dispatchWeek = $dispatchWeek;
-        $this->timestamp = $timestamp;
     }
 
     public function getSurvey(): Survey
@@ -29,6 +18,7 @@ class PdfObject implements PdfObjectInterface
         return $this->survey;
     }
 
+    #[\Override]
     public function getStorageObject(): ?StorageObject
     {
         return $this->storageObject;
@@ -44,11 +34,13 @@ class PdfObject implements PdfObjectInterface
         return $this->dispatchWeek;
     }
 
+    #[\Override]
     public function getTimestamp(): int
     {
         return $this->timestamp;
     }
 
+    #[\Override]
     public function getComparator(): string
     {
         return $this->timestamp."-".$this->dispatchWeek."-".$this->getFirmReference();

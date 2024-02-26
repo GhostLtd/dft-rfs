@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller\Admin\Domestic;
 
 use App\Form\Admin\DomesticSurvey\ImportDvlaFileUploadType;
@@ -8,24 +7,20 @@ use App\Form\Admin\DomesticSurvey\ImportDvlaReviewDataType;
 use App\Utility\Domestic\DvlaImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/csrgt/dvla-import", name="admin_domestic_importdvla_")
- */
+#[Route(path: '/csrgt/dvla-import', name: 'admin_domestic_importdvla_')]
 class ImportFromDvlaController extends AbstractController
 {
-    const SESSION_KEY = 'domestic-survey-import-data';
+    public const SESSION_KEY = 'domestic-survey-import-data';
 
-    /**
-     * @Route("", name="index")
-     * @Template()
-     */
+    #[Route(path: '', name: 'index')]
+    #[Template('admin/domestic/import_from_dvla/index.html.twig')]
     public function index(Request $request, Session $session, DvlaImporter $dvlaImporter): RedirectResponse|array
     {
         $form = $this->createForm(ImportDvlaFileUploadType::class);
@@ -47,10 +42,8 @@ class ImportFromDvlaController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/review", name="review")
-     * @Template()
-     */
+    #[Route(path: '/review', name: 'review')]
+    #[Template('admin/domestic/import_from_dvla/review.html.twig')]
     public function review(Request $request, Session $session, EntityManagerInterface $entityManager): RedirectResponse|array
     {
         // grab the data from the session
@@ -87,11 +80,9 @@ class ImportFromDvlaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/summary", name="summary")
-     * @Template()
-     */
-    public function summary(Session $session)
+    #[Route(path: '/summary', name: 'summary')]
+    #[Template('admin/domestic/import_from_dvla/summary.html.twig')]
+    public function summary(Session $session): RedirectResponse|array
     {
         $data = $session->getFlashBag()->get('summary', []);
         if (!empty($data)) {

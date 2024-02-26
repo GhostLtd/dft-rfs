@@ -11,10 +11,10 @@ use Doctrine\Persistence\ObjectManager;
 
 abstract class AbstractResponseFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function loadSurveyAndVehicle(ObjectManager $manager, SurveyResponse $response, string $surveyState = Survey::STATE_IN_PROGRESS)
+    public function loadSurveyAndVehicle(ObjectManager $manager, SurveyResponse $response, string $surveyState = Survey::STATE_IN_PROGRESS): void
     {
         /** @var Survey $survey */
-        $survey = $this->getReference('survey:simple');
+        $survey = $this->getReference('survey:simple', Survey::class);
 
         $survey
             ->setResponse($response)

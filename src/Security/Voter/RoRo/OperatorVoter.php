@@ -4,24 +4,20 @@ namespace App\Security\Voter\RoRo;
 
 use App\Entity\RoRo\Operator;
 use App\Utility\RoRo\OperatorUsageHelper;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
 
 class OperatorVoter extends Voter
 {
-    const CAN_EDIT_OPERATOR = "CAN_EDIT_OPERATOR";
-    const CAN_DELETE_OPERATOR = "CAN_DELETE_OPERATOR";
+    public const CAN_EDIT_OPERATOR = "CAN_EDIT_OPERATOR";
+    public const CAN_DELETE_OPERATOR = "CAN_DELETE_OPERATOR";
 
-    protected OperatorUsageHelper $operatorUsageHelper;
-    protected Security $security;
-
-    public function __construct(OperatorUsageHelper $operatorUsageHelper, Security $security)
+    public function __construct(protected OperatorUsageHelper $operatorUsageHelper, protected Security $security)
     {
-        $this->operatorUsageHelper = $operatorUsageHelper;
-        $this->security = $security;
     }
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return
@@ -35,6 +31,7 @@ class OperatorVoter extends Voter
     /**
      * @param Operator $subject
      */
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->security->isGranted('ROLE_ADMIN_USER')) {

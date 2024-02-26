@@ -8,7 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoiceOrOther extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('choice', ChoiceType::class, array_merge(
@@ -19,7 +20,8 @@ class ChoiceOrOther extends AbstractType
             ));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'inherit_data' => true,

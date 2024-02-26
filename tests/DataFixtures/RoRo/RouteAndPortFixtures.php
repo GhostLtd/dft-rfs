@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class RouteAndPortFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $ukPortOne = $this->createUkPort($manager, 'Portfoot', 12, 'roro:port:uk:1');

@@ -89,6 +89,7 @@ class DomesticReportsHelper extends AbstractReportsHelper
         return $qb;
     }
 
+    #[\Override]
     protected function addDateRelatedGroupAndOrder(QueryBuilder $qb): void
     {
         $qb

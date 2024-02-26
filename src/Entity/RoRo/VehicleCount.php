@@ -4,42 +4,32 @@ namespace App\Entity\RoRo;
 
 use App\Entity\IdTrait;
 use App\Repository\RoRo\CountryVehicleCountRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
-/**
- * @ORM\Entity(repositoryClass=CountryVehicleCountRepository::class)
- * @ORM\Table(name="roro_vehicle_count", uniqueConstraints={
- *     @UniqueConstraint(columns={"survey_id", "country_code", "other_code"})
- * })
- */
+#[ORM\Table(name: 'roro_vehicle_count')]
+#[UniqueConstraint(columns: ['survey_id', 'country_code', 'other_code'])]
+#[ORM\Entity(repositoryClass: CountryVehicleCountRepository::class)]
 class VehicleCount
 {
-    const OTHER_CODE_OTHER = 'other';
-    const OTHER_CODE_UNKNOWN = 'unknown';
-    const OTHER_CODE_UNACCOMPANIED_TRAILERS = 'trailers';
+    public const OTHER_CODE_OTHER = 'other';
+    public const OTHER_CODE_UNKNOWN = 'unknown';
+    public const OTHER_CODE_UNACCOMPANIED_TRAILERS = 'trailers';
 
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=2, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 2, nullable: true)]
     private ?string $countryCode = null;
 
-    /**
-     * @ORM\Column(type="string", length=16, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 16, nullable: true)]
     private ?string $otherCode = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $vehicleCount = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Survey::class, inversedBy="vehicleCounts")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'vehicleCounts')]
     private ?Survey $survey = null;
 
     protected ?string $label = null;

@@ -7,15 +7,8 @@ use ValueError;
 
 class UrlSigner
 {
-    protected string $secret;
-    protected string $algorithm;
-    protected CacheItemPoolInterface $cache;
-
-    public function __construct(CacheItemPoolInterface $urlSignerCache, string $secret, string $algorithm = 'ripemd128')
+    public function __construct(protected CacheItemPoolInterface $cache, protected string $secret, protected string $algorithm = 'ripemd128')
     {
-        $this->algorithm = $algorithm;
-        $this->secret = $secret;
-        $this->cache = $urlSignerCache;
     }
 
     public function sign(string $url, int $validFor = 0, ?int $overrideCurrentSecs = null, ?int $overrideCurrentNano = null): string

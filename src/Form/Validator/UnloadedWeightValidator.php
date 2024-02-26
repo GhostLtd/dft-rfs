@@ -3,7 +3,6 @@
 namespace App\Form\Validator;
 
 use App\Entity\International\Action;
-use App\Repository\International\ActionRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
@@ -15,13 +14,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class UnloadedWeightValidator extends ConstraintValidator
 {
-    protected $actionRepository;
-
-    public function __construct(ActionRepository $actionRepository)
-    {
-        $this->actionRepository = $actionRepository;
-    }
-
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof UnloadedWeight) {

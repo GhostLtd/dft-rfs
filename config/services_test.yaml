@@ -10,8 +10,13 @@ services:
     App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
     App\Utility\Cleanup\PersonalDataCleanupUtility: ~
     App\Utility\UrlSigner: ~
-    Symfony\Component\Security\Core\Security: ~
 
+    # Alias these services to make sure they are not removed when the container is
+    # compiled, and so that they can be replaced with mocks via their alias name.
     app.test.message_bus:
         alias: Symfony\Component\Messenger\MessageBusInterface
+        public: true
+
+    app.test.security:
+        alias: Symfony\Component\Security\Core\Security
         public: true

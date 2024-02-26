@@ -8,4 +8,5 @@ interface PdfObjectInterface
 {
     public function getStorageObject(): ?StorageObject;
     public function getComparator(): string;
+    public function getTimestamp(): int;
 }

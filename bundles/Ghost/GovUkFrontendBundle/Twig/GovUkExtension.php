@@ -16,15 +16,17 @@ use function twig_trim_filter;
 
 class GovUkExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFilters(): array
     {
         return [
-            new TwigFilter('njIndent', [$this, 'indent']),
-            new TwigFilter('njTrim', [$this, 'trim']),
-            new TwigFilter('form_views_to_errors', [$this, 'formViewsToErrors']),
+            new TwigFilter('njIndent', $this->indent(...)),
+            new TwigFilter('njTrim', $this->trim(...)),
+            new TwigFilter('form_views_to_errors', $this->formViewsToErrors(...)),
         ];
     }
 
+    #[\Override]
     public function getTokenParsers(): array
     {
         return [
@@ -43,11 +45,13 @@ class GovUkExtension extends AbstractExtension
         $lines = explode("\n", $string);
         $prefix = str_repeat(' ', $width);
 
-        $replacement = join('', array_map(function ($line, $i) use ($prefix, $indentFirst) {
-            return (0 === $i && !$indentFirst) ?
-                "{$line}\n" :
-                "{$prefix}{$line}\n";
-        }, $lines, array_keys($lines)));
+        $replacement = join('', array_map(
+            fn($line, $i) =>
+                (0 === $i && !$indentFirst) ?
+                    "{$line}\n" :
+                    "{$prefix}{$line}\n",
+            $lines, array_keys($lines)
+        ));
 
         return $this->applyFilterRetainingSafeStatus($string, $replacement);
     }

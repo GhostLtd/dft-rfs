@@ -9,53 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class DayStopDatabaseTestCase implements DatabaseTestCase
 {
-    protected ?bool $goodsLoaded;
-    protected ?string $originLocation;
-    protected ?bool $goodsUnloaded;
-    protected ?string $destinationLocation;
-    protected ?string $borderCrossing;
-    protected ?string $distanceTravelledValue;
-    protected ?string $distanceTravelledUnit;
-    protected ?string $goodsDescription;
-    protected ?string $goodsDescriptionOther;
-    protected ?string $hazardousGoodsCode;
-    protected ?string $cargoTypeCode;
-    protected ?string $weightOfGoods;
-    protected ?bool $atCapacityBySpace;
-    protected ?bool $atCapacityByWeight;
-
-    public function __construct(
-        bool $goodsLoaded,
-        string $originLocation,
-        ?bool $goodsUnloaded,
-        ?string $destinationLocation,
-        ?string $borderCrossing,
-        ?string $distanceTravelledValue,
-        ?string $distanceTravelledUnit,
-        ?string $goodsDescription,
-        ?string $goodsDescriptionOther,
-        ?string $hazardousGoodsCode,
-        ?string $cargoTypeCode,
-        ?string $weightOfGoods,
-        ?bool $atCapacityBySpace,
-        ?bool $atCapacityByWeight
-    ) {
-        $this->goodsLoaded = $goodsLoaded;
-        $this->originLocation = $originLocation;
-        $this->goodsUnloaded = $goodsUnloaded;
-        $this->destinationLocation = $destinationLocation;
-        $this->borderCrossing = $borderCrossing;
-        $this->distanceTravelledValue = $distanceTravelledValue;
-        $this->distanceTravelledUnit = $distanceTravelledUnit;
-        $this->goodsDescription = $goodsDescription;
-        $this->goodsDescriptionOther = $goodsDescriptionOther;
-        $this->hazardousGoodsCode = $hazardousGoodsCode;
-        $this->cargoTypeCode = $cargoTypeCode;
-        $this->weightOfGoods = $weightOfGoods;
-        $this->atCapacityBySpace = $atCapacityBySpace;
-        $this->atCapacityByWeight = $atCapacityByWeight;
+    public function __construct(protected ?bool $goodsLoaded, protected ?string $originLocation, protected ?bool $goodsUnloaded, protected ?string $destinationLocation, protected ?string $borderCrossing, protected ?string $distanceTravelledValue, protected ?string $distanceTravelledUnit, protected ?string $goodsDescription, protected ?string $goodsDescriptionOther, protected ?string $hazardousGoodsCode, protected ?string $cargoTypeCode, protected ?string $weightOfGoods, protected ?bool $atCapacityBySpace, protected ?bool $atCapacityByWeight)
+    {
     }
 
+    #[\Override]
     public function checkDatabaseAsExpected(EntityManagerInterface $entityManager, TestCase $test): void
     {
         /** @var DayStopRepository $repo */

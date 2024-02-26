@@ -23,10 +23,12 @@ abstract class AbstractFunctionalTest extends WebTestCase
     protected ReferenceRepository $fixtureReferenceRepository;
     protected KernelBrowser $browser;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->browser = self::createClient();
         $this->browser->followRedirects(true);
+        $this->browser->setMaxRedirects(10);
 
         $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
 
@@ -37,15 +39,11 @@ abstract class AbstractFunctionalTest extends WebTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->databaseTool);
-    }
-
-    protected function getFixtureByReference($reference)
-    {
-        return $this->fixtureReferenceRepository->getReference($reference);
     }
 
     protected function loadFixtures(array $classNames = [], bool $append = false): ?AbstractExecutor

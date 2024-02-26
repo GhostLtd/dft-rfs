@@ -6,6 +6,7 @@ use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\OperatorGroup;
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRoUser;
+use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\RoRo\OperatorRouteFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -18,6 +19,7 @@ class RoRoVoterFixtures extends Fixture implements DependentFixtureInterface
 
     protected ObjectManager $manager;
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;
@@ -75,7 +77,7 @@ class RoRoVoterFixtures extends Fixture implements DependentFixtureInterface
         $this->addReference("operator:{$refName}", $operator);
         $this->addReference("user:{$refName}", $user);
 
-        $route = $this->getReference('roro:route:1');
+        $route = $this->getReference('roro:route:1', Route::class);
         $operator->addRoute($route);
         $operator->addUser($user);
 
@@ -94,6 +96,7 @@ class RoRoVoterFixtures extends Fixture implements DependentFixtureInterface
         return str_replace(' ', '-', strtolower($name));
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

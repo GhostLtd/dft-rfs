@@ -6,27 +6,36 @@ use App\Entity\RoRo\Survey;
 use App\Entity\RoRo\VehicleCount;
 use App\Entity\SurveyStateInterface;
 use App\Form\RoRo\IntroductionType;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class RoRoNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+class RoRoNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
-    const CONTEXT_KEY = 'for-export';
-    const TOTAL_POWERED_VEHICLES = 'TotalPoweredVehicles';
-    const TOTAL_VEHICLES = 'TotalVehicles';
+    public const CONTEXT_KEY = 'for-export';
+    public const TOTAL_POWERED_VEHICLES = 'TotalPoweredVehicles';
+    public const TOTAL_VEHICLES = 'TotalVehicles';
 
     use NormalizerAwareTrait;
 
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Survey::class => false,
+        ];
     }
 
     /**
      * @param Survey $object
      * @return array
      */
+    #[\Override]
     public function normalize($object, $format = null, array $context = []): array
     {
         $surveyStart = $object->getSurveyPeriodStart();

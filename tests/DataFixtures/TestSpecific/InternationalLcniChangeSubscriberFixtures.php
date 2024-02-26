@@ -12,6 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class InternationalLcniChangeSubscriberFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $name = (new NotificationInterceptionCompanyName())

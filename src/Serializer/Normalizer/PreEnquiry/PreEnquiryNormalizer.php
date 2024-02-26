@@ -1,31 +1,38 @@
 <?php
 
-
 namespace App\Serializer\Normalizer\PreEnquiry;
-
 
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Serializer\Normalizer\Utils;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class PreEnquiryNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+class PreEnquiryNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
-    const CONTEXT_KEY = 'for-export';
+    public const CONTEXT_KEY = 'for-export';
 
     use NormalizerAwareTrait;
 
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof PreEnquiry && ($context[self::CONTEXT_KEY] ?? false) === true;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            PreEnquiry::class => false,
+        ];
     }
 
     /**
      * @param PreEnquiry $object
      * @return array
      */
+    #[\Override]
     public function normalize($object, $format = null, array $context = []): array
     {
         $response = $object->getResponse();

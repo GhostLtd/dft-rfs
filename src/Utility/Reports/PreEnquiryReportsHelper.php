@@ -20,6 +20,7 @@ class PreEnquiryReportsHelper extends AbstractReportsHelper
         return $this->getStateReportStatsData('s.dispatchDate', new YearAndMonth(), $minStart, $maxStart, $excludeFromTotals);
     }
 
+    #[\Override]
     protected function addDateRelatedGroupAndOrder(QueryBuilder $qb): void
     {
         $qb

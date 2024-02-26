@@ -17,6 +17,7 @@ abstract class AbstractRepositoryTest extends KernelTestCase
     protected EntityManagerInterface $entityManager;
     protected ReferenceRepository $fixtureReferenceRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         static::bootKernel();

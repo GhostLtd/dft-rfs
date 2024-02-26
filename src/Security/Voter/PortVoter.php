@@ -4,24 +4,20 @@ namespace App\Security\Voter;
 
 use App\Entity\Route\PortInterface;
 use App\Utility\RoRo\PortAndRouteUsageHelper;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
 
 class PortVoter extends Voter
 {
-    const CAN_DELETE_PORT = "CAN_DELETE_PORT";
-    const CAN_EDIT_PORT = "CAN_EDIT_PORT";
+    public const CAN_DELETE_PORT = "CAN_DELETE_PORT";
+    public const CAN_EDIT_PORT = "CAN_EDIT_PORT";
 
-    protected Security $security;
-    protected PortAndRouteUsageHelper $portAndRouteUsageHelper;
-
-    public function __construct(Security $security, PortAndRouteUsageHelper $portAndRouteUsageHelper)
+    public function __construct(protected Security $security, protected PortAndRouteUsageHelper $portAndRouteUsageHelper)
     {
-        $this->security = $security;
-        $this->portAndRouteUsageHelper = $portAndRouteUsageHelper;
     }
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return
@@ -35,6 +31,7 @@ class PortVoter extends Voter
     /**
      * @param PortInterface $subject
      */
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->security->isGranted('ROLE_ADMIN_USER')) {

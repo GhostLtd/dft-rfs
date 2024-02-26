@@ -6,7 +6,9 @@ use App\Entity\RoRo\Operator;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,7 +39,7 @@ class RouteRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->setParameter('id', $id)
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
@@ -78,9 +80,7 @@ class RouteRepository extends ServiceEntityRepository
             ->join('routes.ukPort', 'uk_port')
             ->join('routes.foreignPort', 'foreign_port')
             ->where($queryBuilder->expr()->in('routes.id', $isOperatorRoute))
-            ->setParameters([
-                'operatorId' => $user->getOperator()->getId(),
-            ])
+            ->setParameter('operatorId', $user->getOperator()->getId())
             ->orderBy('uk_port.name')
             ->addOrderBy('foreign_port.name')
             ->getQuery()
@@ -94,10 +94,10 @@ class RouteRepository extends ServiceEntityRepository
             ->join('route.foreignPort', 'foreign_port')
             ->where('uk_port.name = :uk_port_name')
             ->andWhere('foreign_port.name = :foreign_port_name')
-            ->setParameters([
-                'uk_port_name' => $ukPort,
-                'foreign_port_name' => $foreignPort,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('uk_port_name', $ukPort),
+                new Parameter('foreign_port_name', $foreignPort),
+            ]))
             ->getQuery()
             ->getOneOrNullResult();
     }

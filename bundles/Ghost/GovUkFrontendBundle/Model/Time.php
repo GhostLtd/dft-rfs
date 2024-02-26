@@ -16,6 +16,7 @@ class Time extends \DateTime
         return (new \DateTime())->setTimestamp($this->getTimestamp());
     }
 
+    #[\Override]
     public static function createFromFormat($format, $time, DateTimeZone $timezone = null)
     {
         return self::fromDateTime(\DateTime::createFromFormat($format, $time, $timezone));

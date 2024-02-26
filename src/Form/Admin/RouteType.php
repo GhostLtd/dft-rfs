@@ -17,23 +17,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RouteType extends AbstractType
 {
-    protected ForeignPortRepository $foreignPortRepository;
-    protected UkPortRepository $ukPortRepository;
-
-    public function __construct(ForeignPortRepository $foreignPortRepository, UkPortRepository $ukPortRepository)
+    public function __construct(protected ForeignPortRepository $foreignPortRepository, protected UkPortRepository $ukPortRepository)
     {
-        $this->foreignPortRepository = $foreignPortRepository;
-        $this->ukPortRepository = $ukPortRepository;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $getChoices = function(ServiceEntityRepository $r) {
-            return $r->createQueryBuilder('p')
-                ->orderBy('p.name')
-                ->getQuery()
-                ->getResult();
-        };
+        $getChoices = fn(ServiceEntityRepository $r) => $r->createQueryBuilder('p')
+            ->orderBy('p.name')
+            ->getQuery()
+            ->getResult();
 
         $builder
             ->add('ports', FieldsetType::class, [
@@ -70,7 +64,8 @@ class RouteType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'add' => false,

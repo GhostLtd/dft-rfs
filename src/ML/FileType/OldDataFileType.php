@@ -4,6 +4,7 @@ namespace App\ML\FileType;
 
 class OldDataFileType implements FileTypeInterface
 {
+    #[\Override]
     public function getColumnsNames(): array
     {
         return [
@@ -15,6 +16,7 @@ class OldDataFileType implements FileTypeInterface
         ];
     }
 
+    #[\Override]
     public function getName(): string
     {
         return 'old';

@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\PasscodeUser;
 use App\Features;
 use App\PreKernelFeatures;
 use Exception;
@@ -20,14 +21,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class GoogleIapAuthenticator extends AbstractAuthenticator
 {
-    const EXTRA_FIELD_USER_ID = 'IAPid';
+    public const EXTRA_FIELD_USER_ID = 'IAPid';
     protected bool $isGaeEnvironment;
-    protected ManagementUserHelper $managementUserHelper;
 
-    public function __construct(ManagementUserHelper $managementUserHelper)
+    public function __construct(protected ManagementUserHelper $managementUserHelper)
     {
         $this->isGaeEnvironment = PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT);
-        $this->managementUserHelper = $managementUserHelper;
     }
 
     protected function getUserEmail(Request $request): string
@@ -45,11 +44,13 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
         return $request->headers->get('X-Goog-Authenticated-User-Id', 'no-id');
     }
 
+    #[\Override]
     public function supports(Request $request): ?bool
     {
         return $request->headers->has('X-Goog-Iap-Jwt-Assertion');
     }
 
+    #[\Override]
     public function authenticate(Request $request): Passport
     {
         $email = $this->getUserEmail($request);
@@ -70,13 +71,9 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
                 $credentials['assertion'],
                 [$role],
                 true,
-                true,
-                true,
-                true,
-                [self::EXTRA_FIELD_USER_ID => $credentials['userId']]
             )),
             new CustomCredentials(
-                [$this, 'customAuthenticator'],
+                $this->customAuthenticator(...),
                 $credentials
             ),
         );
@@ -84,21 +81,20 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
 
     public function customAuthenticator($credentials, UserInterface $user): bool
     {
-        if ($user->getPassword() === false) {
+        if (
+            !$user instanceof InMemoryUser ||
+            $user->getPassword() === false ||
+            !$this->isGaeEnvironment
+        ) {
             return false;
         }
 
-        if (!$this->isGaeEnvironment) {
-            return false;
-        }
-
-        /** @var InMemoryUser $user */
         try {
             $metadata = new Metadata();
             $audience = "/projects/{$metadata->getNumericProjectId()}/apps/{$metadata->getProjectId()}";
             $assertionId = $this->validateAssertion($user->getPassword(), $audience);
             return $assertionId === $credentials['userId'];
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -130,11 +126,13 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
     }
 
 
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return null;
     }
 
+    #[\Override]
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         return null;

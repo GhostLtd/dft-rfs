@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin\DomesticSurvey;
-
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -13,7 +11,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setDataMapper($this);
         $builder
@@ -67,6 +66,7 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
             ]);
     }
 
+    #[\Override]
     public function mapDataToForms($viewData, $forms): void
     {
         $forms = iterator_to_array($forms);
@@ -74,6 +74,7 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
         $forms['override_defaults']->setData($viewData['override_defaults'] ?? false);
     }
 
+    #[\Override]
     public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);

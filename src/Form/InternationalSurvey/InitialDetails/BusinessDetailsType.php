@@ -11,10 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessDetailsType extends AbstractType
 {
-    const PREFIX = "international.survey-response.business-details";
-    const EMPLOYEES_PREFIX = self::PREFIX . '.number-of-employees';
-    const NATURE_PREFIX = self::PREFIX . '.business-nature';
+    public const PREFIX = "international.survey-response.business-details";
+    public const EMPLOYEES_PREFIX = self::PREFIX . '.number-of-employees';
+    public const NATURE_PREFIX = self::PREFIX . '.business-nature';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -33,6 +34,7 @@ class BusinessDetailsType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

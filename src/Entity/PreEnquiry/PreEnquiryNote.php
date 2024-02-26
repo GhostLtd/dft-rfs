@@ -6,19 +6,15 @@ use App\Entity\NoteInterface;
 use App\Entity\NoteTrait;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table("pre_enquiry_note")
- */
+#[ORM\Table('pre_enquiry_note')]
+#[ORM\Entity]
 class PreEnquiryNote implements NoteInterface
 {
     use NoteTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PreEnquiry::class, inversedBy="notes")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private ?PreEnquiry $preEnquiry;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: PreEnquiry::class, inversedBy: 'notes')]
+    private ?PreEnquiry $preEnquiry = null;
 
     public function getPreEnquiry(): ?PreEnquiry
     {

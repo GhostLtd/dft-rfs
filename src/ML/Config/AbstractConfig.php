@@ -10,11 +10,13 @@ abstract class AbstractConfig implements ConfigInterface
         $this->assertTargetColumnPresentInAllFileTypes();
     }
 
+    #[\Override]
     public function getColumnsForFileTypeConfig(string $type): ?array
     {
         return $this->getFiletypesAndColumnsConfig()[$type] ?? null;
     }
 
+    #[\Override]
     public function getCombinedColumnNames(): array
     {
         $columns = [];

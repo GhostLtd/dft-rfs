@@ -7,13 +7,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SurveyListController extends AbstractController
 {
-    /**
-     * @Route("/csrgt/surveys-{type}/", requirements={"type": "gb|ni"}, name=SurveyController::LIST_ROUTE)
-     */
+    #[Route(path: '/csrgt/surveys-{type}/', name: SurveyController::LIST_ROUTE, requirements: ['type' => 'gb|ni'])]
     public function list(SurveyListPage $listPage, Request $request, string $type): Response
     {
         $listPage
@@ -27,7 +25,7 @@ class SurveyListController extends AbstractController
         return $this->render('admin/domestic/surveys/list.html.twig', [
             'type' => $type,
             'data' => $listPage->getData(),
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
         ]);
     }
 }

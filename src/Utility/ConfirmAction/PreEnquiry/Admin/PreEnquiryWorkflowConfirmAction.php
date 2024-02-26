@@ -16,8 +16,6 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
 
     /** @var PreEnquiry */
     protected $subject;
-    private WorkflowInterface $preEnquiryStateMachine;
-    private EntityManagerInterface $entityManager;
 
     public function getTransition(): string
     {
@@ -30,18 +28,18 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
         return $this;
     }
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, WorkflowInterface $preEnquiryStateMachine, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $preEnquiryStateMachine, private EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->preEnquiryStateMachine = $preEnquiryStateMachine;
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     function getTranslationParameters(): array
     {
         return [
@@ -50,11 +48,13 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return "common.survey.workflow-transition";
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->preEnquiryStateMachine->apply($this->getSubject(), $this->transition);

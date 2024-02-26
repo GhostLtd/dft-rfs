@@ -6,6 +6,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReturnPortsAndCargoStateType extends AbstractPortsAndCargoStateType
 {
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

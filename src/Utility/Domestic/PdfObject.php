@@ -9,23 +9,8 @@ use Google\Cloud\Storage\StorageObject;
 
 class PdfObject implements PdfObjectInterface
 {
-    protected Survey $survey;
-    protected ?StorageObject $storageObject;
-    protected string $registrationMark;
-    protected string $region;
-    protected int $year;
-    protected int $timestamp;
-    private bool $isReissue;
-
-    public function __construct(Survey $survey, ?StorageObject $storageObject, string $registrationMark, string $region, int $year, bool $isReissue, int $timestamp)
+    public function __construct(protected Survey $survey, protected ?StorageObject $storageObject, protected string $registrationMark, protected string $region, protected int $year, private bool $isReissue, protected int $timestamp)
     {
-        $this->survey = $survey;
-        $this->storageObject = $storageObject;
-        $this->registrationMark = $registrationMark;
-        $this->region = $region;
-        $this->year = $year;
-        $this->timestamp = $timestamp;
-        $this->isReissue = $isReissue;
     }
 
     public function getSurvey(): Survey
@@ -33,6 +18,7 @@ class PdfObject implements PdfObjectInterface
         return $this->survey;
     }
 
+    #[\Override]
     public function getStorageObject(): ?StorageObject
     {
         return $this->storageObject;
@@ -53,11 +39,13 @@ class PdfObject implements PdfObjectInterface
         return $this->year;
     }
 
+    #[\Override]
     public function getTimestamp(): int
     {
         return $this->timestamp;
     }
 
+    #[\Override]
     public function getComparator(): string
     {
         return $this->timestamp."-".$this->registrationMark."-".$this->getRegion();

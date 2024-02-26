@@ -2,6 +2,7 @@
 
 namespace App\Tests\NewFunctional\Wizard\Action;
 
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverSelect;
@@ -24,7 +25,12 @@ class PantherBugWorkaround
         $formElement = $form->getElement();
 
         foreach($formSubmissionData as $k => $data) {
-            $element = $formElement->findElement(WebDriverBy::name($k));
+            try {
+                $element = $formElement->findElement(WebDriverBy::name($k));
+            }
+            catch(NoSuchElementException) {
+                $element = $formElement->findElement(WebDriverBy::name($k.'[]'));
+            }
 
             if (
                 strtolower($element->getTagName()) !== 'input' ||

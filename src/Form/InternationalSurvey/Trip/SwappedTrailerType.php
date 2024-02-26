@@ -15,13 +15,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SwappedTrailerType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -36,6 +37,11 @@ class SwappedTrailerType extends AbstractType implements DataMapperInterface
                         'conditional_form_name' => 'axleConfiguration',
                     ],
                 ],
+                'choice_value' => fn($x) => match($x) {
+                    true => 'yes',
+                    false => 'no',
+                    null => null,
+                },
             ])
             ;
 
@@ -53,6 +59,7 @@ class SwappedTrailerType extends AbstractType implements DataMapperInterface
         });
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -61,6 +68,7 @@ class SwappedTrailerType extends AbstractType implements DataMapperInterface
         ]);
     }
 
+    #[\Override]
     public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
@@ -81,6 +89,7 @@ class SwappedTrailerType extends AbstractType implements DataMapperInterface
         $forms['axleConfiguration']->setData($viewData->getAxleConfiguration());
     }
 
+    #[\Override]
     public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);

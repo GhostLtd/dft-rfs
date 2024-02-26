@@ -20,6 +20,7 @@ class SurveyListPage extends AbstractListPage
         parent::__construct($formFactory, $router);
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
@@ -32,6 +33,7 @@ class SurveyListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->surveyRepository->createQueryBuilder('survey');
@@ -43,6 +45,7 @@ class SurveyListPage extends AbstractListPage
             ->join('route.foreignPort', 'foreignPort');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

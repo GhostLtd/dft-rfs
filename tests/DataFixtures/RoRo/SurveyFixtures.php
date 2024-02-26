@@ -16,6 +16,7 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
     public function __construct(protected SurveyCreationHelper $surveyCreationHelper)
     {}
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $manager->persist($this->createSurvey('roro:route:3', 'roro:operator:1', '2020-08-01', 'roro:survey:1'));
@@ -23,6 +24,7 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

@@ -5,21 +5,23 @@ namespace App\Controller\Admin\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Utility\Domestic\PdfHelper;
 use DateTime;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SurveyPdfController extends AbstractController
 {
-    /**
-     * @Route("/csrgt/surveys/{surveyId}.pdf")
-     * @Entity("survey", expr="repository.find(surveyId)")
-     */
-    public function pdf(Survey $survey, PdfHelper $pdfHelper, Request $request): Response
+    #[Route(path: '/csrgt/surveys/{surveyId}.pdf')]
+    public function pdf(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey    $survey,
+        PdfHelper $pdfHelper,
+        Request   $request
+    ): Response
     {
         $pdf = $pdfHelper->getExistingSurveyPdfByTimestamp($survey, $request->query->get('timestamp'));
 

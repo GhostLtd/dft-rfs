@@ -20,6 +20,7 @@ class RoRoReportsHelper extends AbstractReportsHelper
         return $this->getStateReportStatsData('s.surveyPeriodStart', new YearAndMonth(), $minStart, $maxStart, $excludeFromTotals);
     }
 
+    #[\Override]
     protected function addDateRelatedGroupAndOrder(QueryBuilder $qb): void
     {
         $qb

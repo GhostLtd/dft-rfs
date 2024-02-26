@@ -8,6 +8,8 @@ use App\Entity\SurveyStateInterface;
 use App\Repository\AbstractSurveyRepository;
 use App\Repository\DashboardStatsTrait;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -35,9 +37,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->leftJoin('t.actions', 'a')
             ->leftJoin('s.passcodeUser', 'p')
             ->where('s.id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
+            ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -92,10 +92,10 @@ class SurveyRepository extends AbstractSurveyRepository
             ->andWhere('s.surveyPeriodEnd >= :minDate')
             ->andWhere('s.surveyPeriodEnd < :maxDate')
             ->getQuery()
-            ->setParameters([
-                'minDate' => $minDate,
-                'maxDate' => $maxDate,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('minDate', $minDate),
+                new Parameter('maxDate', $maxDate),
+            ]))
             ->execute();
     }
 

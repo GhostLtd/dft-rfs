@@ -13,7 +13,7 @@ abstract class AbstractFixtureTest extends WebTestCase
      */
     protected function loadFixtures(string $component, array|callable $ignoreTests): array
     {
-        $file = __DIR__ . "/../../../node_modules/govuk-frontend/govuk/components/${component}/fixtures.json";
+        $file = __DIR__ . "/../../../node_modules/govuk-frontend/govuk/components/{$component}/fixtures.json";
         $fixtures = json_decode(file_get_contents($file), true);
         $this->assertEquals($component, $fixtures['component']);
         $fixtures = $fixtures['fixtures'];

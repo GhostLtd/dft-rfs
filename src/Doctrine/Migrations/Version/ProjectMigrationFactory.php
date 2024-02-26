@@ -10,17 +10,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProjectMigrationFactory implements MigrationFactory
 {
-    private MigrationFactory $migrationFactory;
-    private Bucket $exportBucket;
-    private ContainerInterface $container;
-
-    public function __construct(MigrationFactory $migrationFactory, Bucket $exportBucket, ContainerInterface $container)
+    public function __construct(private MigrationFactory $migrationFactory, private Bucket $exportBucket, private ContainerInterface $container)
     {
-        $this->migrationFactory = $migrationFactory;
-        $this->exportBucket = $exportBucket;
-        $this->container = $container;
     }
 
+    #[\Override]
     public function createVersion(string $migrationClassName): AbstractMigration
     {
         $instance = $this->migrationFactory->createVersion($migrationClassName);

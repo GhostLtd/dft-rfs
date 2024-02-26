@@ -222,7 +222,7 @@ class DayStopEditTest extends AbstractWizardTest
                     new WizardStepUrlTestCase("{$this->baseUrl}/hazardous-goods", "hazardous_goods_continue", [
                         new FormTestCase([
                             "hazardous_goods" => [
-                                "isHazardousGoods" => "1",
+                                "isHazardousGoods" => "yes",
                                 "hazardousGoodsCode" => HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL,
                             ],
                         ]),
@@ -238,7 +238,7 @@ class DayStopEditTest extends AbstractWizardTest
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,
-                                "wasAtCapacity" => "1",
+                                "wasAtCapacity" => "yes",
                                 "wasLimitedBy" => [
                                     1 => "weight",
                                 ],
@@ -249,7 +249,7 @@ class DayStopEditTest extends AbstractWizardTest
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => "7613",
-                                "wasAtCapacity" => "1",
+                                "wasAtCapacity" => "yes",
                                 "wasLimitedBy" => [
                                     1 => "weight",
                                 ],
@@ -280,7 +280,7 @@ class DayStopEditTest extends AbstractWizardTest
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,
-                                "wasAtCapacity" => "1",
+                                "wasAtCapacity" => "yes",
                                 "wasLimitedBy" => [
                                     0 => "space",
                                     1 => "weight",
@@ -292,7 +292,7 @@ class DayStopEditTest extends AbstractWizardTest
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => "8843",
-                                "wasAtCapacity" => "1",
+                                "wasAtCapacity" => "yes",
                                 "wasLimitedBy" => [
                                     0 => "space",
                                     1 => "weight",

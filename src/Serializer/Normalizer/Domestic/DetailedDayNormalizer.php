@@ -17,11 +17,20 @@ use App\Serializer\Normalizer\Mapper\ZeroIsNullProperty;
 
 class DetailedDayNormalizer extends AbstractExportNormalizer
 {
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof DayStop;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            DayStop::class => true,
+        ];
+    }
+
+    #[\Override]
     protected function getMapping(): array
     {
         return [

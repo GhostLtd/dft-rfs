@@ -7,8 +7,9 @@ use PDO;
 
 class ColumnHydrator extends AbstractHydrator
 {
+    #[\Override]
     protected function hydrateAllData(): array
     {
-        return $this->_stmt->fetchFirstColumn();
+        return $this->stmt->fetchFirstColumn();
     }
 }

@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,15 +33,14 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
+#[AsCommand('rfs:dev:screenshots')]
 class ScreenshotsCommand extends Command
 {
-    const MODE_ALL = 'all';
-    const MODE_DOMESTIC = 'domestic';
-    const MODE_INTERNATIONAL = 'international';
-    const MODE_PRE_ENQUIRY = 'pre-enquiry';
-    const MODE_RORO = 'roro';
-
-    protected static $defaultName = 'rfs:dev:screenshots';
+    public const MODE_ALL = 'all';
+    public const MODE_DOMESTIC = 'domestic';
+    public const MODE_INTERNATIONAL = 'international';
+    public const MODE_PRE_ENQUIRY = 'pre-enquiry';
+    public const MODE_RORO = 'roro';
     protected string $userId = 'screenshot';
     protected string $roroUserIdOne = 'screenshot@example.com';
     protected string $userPassword = 'screenshot:password';
@@ -58,6 +58,7 @@ class ScreenshotsCommand extends Command
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setDescription('Execute the (external) screenshots utility')
@@ -66,6 +67,7 @@ class ScreenshotsCommand extends Command
             ->addOption('protocol', null, InputOption::VALUE_OPTIONAL, 'http or https', 'https');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($this->appEnvironment !== 'staging') {

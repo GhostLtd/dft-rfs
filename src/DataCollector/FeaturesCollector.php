@@ -9,13 +9,11 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 class FeaturesCollector extends DataCollector
 {
-    protected Features $features;
-
-    public function __construct(Features $features)
+    public function __construct(protected Features $features)
     {
-        $this->features = $features;
     }
 
+    #[\Override]
     public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         $this->data = [
@@ -23,11 +21,13 @@ class FeaturesCollector extends DataCollector
         ];
     }
 
+    #[\Override]
     public function getName(): string
     {
         return 'app.features_collector';
     }
 
+    #[\Override]
     public function reset(): void
     {
         $this->data = [];

@@ -5,34 +5,30 @@ namespace App\Controller\Admin\RoRo;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRoUser;
 use App\Form\Admin\RoRo\OperatorUserType;
+use App\Utility\ConfirmAction\RoRo\Admin\DeleteUserConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/operators", name="admin_operators_")
- * @Entity("operator", expr="repository.findOneById(operatorId)")
- */
+#[Route(path: '/operators', name: 'admin_operators_')]
 class OperatorUserController extends AbstractController
 {
-    protected EntityManagerInterface $entityManager;
-    protected \App\Utility\ConfirmAction\RoRo\Admin\DeleteUserConfirmAction $deleteUserConfirmAction;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected DeleteUserConfirmAction $deleteUserConfirmAction
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager, \App\Utility\ConfirmAction\RoRo\Admin\DeleteUserConfirmAction $deleteUserConfirmAction)
-    {
-        $this->entityManager = $entityManager;
-        $this->deleteUserConfirmAction = $deleteUserConfirmAction;
-    }
-
-    /**
-     * @Route("/{operatorId}/users/create", name="add_user")
-     */
-    public function addUser(Request $request, Operator $operator): Response
+    #[Route(path: '/{operatorId}/users/create', name: 'add_user')]
+    public function addUser(
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator
+    ): Response
     {
         $user = (new RoRoUser())->setOperator($operator);
         $form = $this->createForm(OperatorUserType::class, $user);
@@ -54,7 +50,7 @@ class OperatorUserController extends AbstractController
         }
 
         return $this->render('admin/roro/operators/add-user.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'operator' => $operator,
             'translation_parameters' => [
                 'code' => $operator->getCode(),
@@ -63,11 +59,14 @@ class OperatorUserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{operatorId}/users/{userId}/delete", name="delete_user")
-     * @Entity("user", expr="repository.findOneByOperatorIdAndUserId(operatorId, userId)")
-     */
-    public function deleteUser(Request $request, Operator $operator, RoRoUser $user): Response
+    #[Route(path: '/{operatorId}/users/{userId}/delete', name: 'delete_user')]
+    public function deleteUser(
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator,
+        #[MapEntity(expr: "repository.findOneByOperatorIdAndUserId(operatorId, userId)")]
+        RoRoUser $user
+    ): Response
     {
         $data = $this->deleteUserConfirmAction
             ->setSubject($user)

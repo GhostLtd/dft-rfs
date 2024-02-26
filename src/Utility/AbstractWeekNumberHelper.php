@@ -12,7 +12,7 @@ use DateTimeInterface;
  */
 abstract class AbstractWeekNumberHelper implements ReportQuarterHelperInterface
 {
-    const QUARTERS = [
+    public const QUARTERS = [
         1 => 1,
         2 => 14,
         3 => 27,
@@ -68,6 +68,7 @@ abstract class AbstractWeekNumberHelper implements ReportQuarterHelperInterface
     /**
      * Returns an array comprising two dates - the start of the quarter and the start of the next quarter
      */
+    #[\Override]
     public static function getDateRangeForYearAndQuarter(int $year, int $quarter): array
     {
         $startDate = static::getDateForYearAndWeek($year, self::QUARTERS[$quarter]);
@@ -98,6 +99,7 @@ abstract class AbstractWeekNumberHelper implements ReportQuarterHelperInterface
     /**
      * Given a date, returns the corresponding quarter and year
      */
+    #[\Override]
     public static function getQuarterAndYear(DateTimeInterface $dateTime): array
     {
         [$week, $year] = self::getYearlyWeekNumberAndYear($dateTime);

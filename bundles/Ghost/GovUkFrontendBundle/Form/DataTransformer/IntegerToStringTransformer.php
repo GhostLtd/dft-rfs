@@ -26,6 +26,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function transform($value)
     {
         if ($value === null || $value === '') {
@@ -42,6 +43,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ($value === null || '' === trim($value)) {

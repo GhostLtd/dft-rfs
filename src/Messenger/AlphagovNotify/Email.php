@@ -5,15 +5,14 @@ namespace App\Messenger\AlphagovNotify;
 class Email extends AbstractSendMessage
 {
     protected string $emailAddress;
-    protected ?string $emailReplyToId;
 
-    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $emailAddress, string $templateId, array $personalisation = [], ?string $reference = null, ?string $senderId = null)
+    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $emailAddress, string $templateId, array $personalisation = [], ?string $reference = null, protected ?string $emailReplyToId = null)
     {
         parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $emailAddress, $personalisation, $reference);
         $this->emailAddress = $emailAddress;
-        $this->emailReplyToId = $senderId;
     }
 
+    #[\Override]
     public function getSendMethodParameters(): array
     {
         return [
@@ -25,6 +24,7 @@ class Email extends AbstractSendMessage
         ];
     }
 
+    #[\Override]
     public function getEndpoint(): string
     {
         return '/v2/notifications/email';

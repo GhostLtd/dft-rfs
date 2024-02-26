@@ -11,6 +11,7 @@ abstract class AbstractCleanupTest extends AbstractFunctionalTest
 {
     protected EntityManagerInterface $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -15,7 +15,8 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class ValidAddressValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidAddress) {
             throw new UnexpectedTypeException($constraint, ValidAddress::class);
@@ -59,7 +60,7 @@ class ValidAddressValidator extends ConstraintValidator
             ];
 
             if ($constraint->validatePostcode) {
-                $postcodeValidators[] = new Postcode();
+                $postcodeValidators[] = new Postcode(groups: ['Default']);
             } else {
                 $postcodeValidators[] = new Length(['max' => 10, 'maxMessage' => $constraint->maxLengthMessage]);
             }

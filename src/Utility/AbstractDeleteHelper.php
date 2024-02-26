@@ -7,12 +7,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractDeleteHelper
 {
-    protected EntityManagerInterface $entityManager;
-    protected TranslatorInterface $translator;
-
-    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function __construct(protected EntityManagerInterface $entityManager, protected TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
     }
 }

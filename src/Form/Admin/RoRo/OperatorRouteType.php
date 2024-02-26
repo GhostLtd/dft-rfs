@@ -20,11 +20,12 @@ use Symfony\Component\Validator\Constraints\Range;
 
 class OperatorRouteType extends AbstractType
 {
-    const ROUTE_BACKDATE_SURVEYS = 'route_backdate_surveys';
+    public const ROUTE_BACKDATE_SURVEYS = 'route_backdate_surveys';
 
     public function __construct(protected RouteRepository $routeRepository)
     {}
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Operator $operator */
@@ -44,11 +45,9 @@ class OperatorRouteType extends AbstractType
             ->add('route', ChoiceType::class, [
                 'placeholder' => '-',
                 'choices' => $routeChoices,
-                'choice_attr' => function(Route $route) use ($routeIdsToExclude) {
-                    return in_array($route->getId(), $routeIdsToExclude) ?
-                        ['disabled' => 'disabled'] :
-                        [];
-                },
+                'choice_attr' => fn(Route $route) => in_array($route->getId(), $routeIdsToExclude) ?
+                    ['disabled' => 'disabled'] :
+                    [],
                 'choice_label' => function(Route $route) use ($routeIdsToExclude) {
                     $label = $route->getUkPort()->getName().' / '.$route->getForeignPort()->getName();
                     $label .= in_array($route->getId(), $routeIdsToExclude) ? ' (already assigned)' : '';
@@ -121,6 +120,7 @@ class OperatorRouteType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['operator']);

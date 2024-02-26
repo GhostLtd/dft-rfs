@@ -12,7 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DistanceTravelledType extends AbstractDistanceTravelledType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.day-stop.distance-travelled";
         $builder
@@ -28,7 +29,8 @@ class DistanceTravelledType extends AbstractDistanceTravelledType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([

@@ -6,12 +6,14 @@ abstract class AbstractAction implements WizardAction
 {
     protected ?string $name = null;
 
+    #[\Override]
     public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
+    #[\Override]
     public function getName(): ?string
     {
         return $this->name;

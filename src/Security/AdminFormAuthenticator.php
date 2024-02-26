@@ -19,20 +19,17 @@ class AdminFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     public const LOGIN_ROUTE = 'admin_login';
 
-    protected FormFactoryInterface $formFactory;
-    protected UrlGeneratorInterface $urlGenerator;
-
-    public function __construct(FormFactoryInterface $formFactory, UrlGeneratorInterface $urlGenerator)
+    public function __construct(protected FormFactoryInterface $formFactory, protected UrlGeneratorInterface $urlGenerator)
     {
-        $this->formFactory = $formFactory;
-        $this->urlGenerator = $urlGenerator;
     }
 
+    #[\Override]
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 
+    #[\Override]
     public function authenticate(Request $request): Passport
     {
         $form = $this->formFactory->create(AdminLoginType::class, []);
@@ -50,6 +47,7 @@ class AdminFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
 // TODO: Reinstate this mechanism?

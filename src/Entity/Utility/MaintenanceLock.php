@@ -3,18 +3,15 @@
 namespace App\Entity\Utility;
 
 use App\Entity\IdTrait;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class MaintenanceLock
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $whitelistedIps = [];
 
     public function getWhitelistedIps(): ?array
@@ -25,7 +22,6 @@ class MaintenanceLock
     public function setWhitelistedIps(?array $whitelistedIps): self
     {
         $this->whitelistedIps = $whitelistedIps;
-
         return $this;
     }
 }

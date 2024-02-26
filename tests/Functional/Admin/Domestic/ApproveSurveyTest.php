@@ -13,9 +13,9 @@ use App\Tests\Functional\AbstractAdminFunctionalTest;
 
 class ApproveSurveyTest extends AbstractAdminFunctionalTest
 {
-    const BUTTON_ONLY_FORM_NAME = 'confirm_action';
-    const FINAL_DETAILS_FORM_NAME = 'final_details';
-    const UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
+    public const BUTTON_ONLY_FORM_NAME = 'confirm_action';
+    public const FINAL_DETAILS_FORM_NAME = 'final_details';
+    public const UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
 
     public function dataProvider(): array
     {

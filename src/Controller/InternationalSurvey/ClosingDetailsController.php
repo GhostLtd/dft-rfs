@@ -6,15 +6,14 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Survey;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\ClosingDetailsState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class ClosingDetailsController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
@@ -24,10 +23,8 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
 
     protected Survey $survey;
 
-    /**
-     * @Route("/international-survey/closing-details/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/international-survey/closing-details", name=self::START_ROUTE)
-     */
+    #[Route(path: '/international-survey/closing-details/{state}', name: self::WIZARD_ROUTE)]
+    #[Route(path: '/international-survey/closing-details', name: self::START_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, string $state = null): Response
     {
         $this->survey = $this->getSurvey();
@@ -54,6 +51,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyClosingDetailsStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var FormWizardStateInterface $formWizard */
@@ -66,11 +64,13 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return null;

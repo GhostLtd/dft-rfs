@@ -3,26 +3,21 @@
 namespace App\Controller\Admin\Reports;
 
 use App\Form\Admin\ReportFilterType;
-use App\Utility\Domestic\WeekNumberHelper;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class QualityAssuranceController extends AbstractReportsController
 {
-    /**
-     * @Route("/quality-assurance/{type}", name="qa_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry"})
-     */
+    #[Route(path: '/quality-assurance/{type}', name: 'qa_type', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry'])]
     public function qualityAssuranceReportsDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/quality-assurance/{type}/{year}/{quarter}", name="qa_full", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs", "year": "\d{4}", "quarter": "1|2|3|4"})
-     */
+    #[Route(path: '/quality-assurance/{type}/{year}/{quarter}', name: 'qa_full', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
     public function quarterlyQualityAssuranceReports(Request $request, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
@@ -59,6 +54,7 @@ class QualityAssuranceController extends AbstractReportsController
         ]));
     }
 
+    #[\Override]
     protected function getRedirect(array $data): RedirectResponse
     {
         switch($data['type'] ?? null) {

@@ -10,16 +10,17 @@ use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRoUserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/roro', name: "app_roro_")]
@@ -76,7 +77,7 @@ class LoginController extends AbstractController
 
                 return $this->redirectToRoute('app_roro_login_check_email');
             }
-            catch(RateLimitExceededException $exceededException) {
+            catch(RateLimitExceededException) {
                 $authenticationError = new AuthenticationException($translator->trans('roro.auth.rate-limit', [
                     // 'retry_after' => $exceededException->getRateLimit()->getRetryAfter(),
                 ]));
@@ -85,7 +86,7 @@ class LoginController extends AbstractController
         }
 
         return $this->render('roro/login.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'authenticationError' => $authenticationError,
             'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
@@ -119,7 +120,7 @@ class LoginController extends AbstractController
     }
 
     #[Route("/logout", name: "logout")]
-    public function logout()
+    public function logout(): never
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
@@ -127,8 +128,8 @@ class LoginController extends AbstractController
     public function getAuthenticationError(Request $request): ?AuthenticationException
     {
         $session = $request->getSession();
-        $authenticationError = $session->get(Security::AUTHENTICATION_ERROR);
-        $session->remove(Security::AUTHENTICATION_ERROR);
+        $authenticationError = $session->get(SecurityRequestAttributes::AUTHENTICATION_ERROR);
+        $session->remove(SecurityRequestAttributes::AUTHENTICATION_ERROR);
 
         return $authenticationError;
     }

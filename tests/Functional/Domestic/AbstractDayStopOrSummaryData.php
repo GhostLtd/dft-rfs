@@ -68,7 +68,7 @@ abstract class AbstractDayStopOrSummaryData
         if ($isHazardous) {
             $hazardousTests[] = new FormTestCase([
                 "hazardous_goods" => [
-                    "isHazardousGoods" => "1",
+                    "isHazardousGoods" => "yes",
                 ]
             ], [
                 "#hazardous_goods_hazardousGoodsCode",
@@ -76,14 +76,14 @@ abstract class AbstractDayStopOrSummaryData
 
             $hazardousTests[] = new FormTestCase([
                 "hazardous_goods" => [
-                    "isHazardousGoods" => "1",
+                    "isHazardousGoods" => "yes",
                     "hazardousGoodsCode" => "7", // Radioactive bread
                 ]
             ]);
         } else {
             $hazardousTests[] = new FormTestCase([
                 "hazardous_goods" => [
-                    "isHazardousGoods" => "0",
+                    "isHazardousGoods" => "no",
                 ]
             ]);
         }

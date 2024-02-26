@@ -5,7 +5,7 @@ namespace App\Form\DomesticSurvey;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
-use App\Entity\Domestic\StopTrait;
+use App\Entity\Domestic\StopInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -14,7 +14,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractOriginType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.origin";
         $portsTranslationKeyPrefix = "domestic.{$options['translation_entity_key']}.origin-ports";
@@ -47,13 +48,14 @@ abstract class AbstractOriginType extends AbstractType
         configureOptions as traitConfigureOptions;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $this->traitConfigureOptions($resolver);
 
         $resolver->setDefaults([
             'validation_groups' => function(FormInterface $form) {
-                /** @var StopTrait $data */
+                /** @var StopInterface $data */
                 $data = $form->getData();
                 $groups = [];
 

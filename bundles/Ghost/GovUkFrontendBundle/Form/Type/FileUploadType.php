@@ -12,17 +12,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileUploadType extends FileType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return InputType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_file_upload';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
@@ -32,7 +35,7 @@ class FileUploadType extends FileType
         $view->vars['type'] = 'file';
         $view->vars['blockClass'] = 'govuk-file-upload';
 
-        // The built in symfony FileType clears the `value` var, but we need it to pass the GDS fixture tests
+        // The built-in symfony FileType clears the `value` var, but we need it to pass the GDS fixture tests
         $view->vars['value'] = $form->getData();
     }
 }

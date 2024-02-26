@@ -4,26 +4,26 @@ namespace App\Entity;
 
 abstract class Vehicle
 {
-    const OPERATION_TYPE_FOR_HIRE_AND_REWARD = 'for-hire-and-reward';
-    const OPERATION_TYPE_ON_OWN_ACCOUNT = 'on-own-account';
-    const OPERATION_TYPE_TRANSLATION_PREFIX = 'vehicle.operation-type.';
+    public const OPERATION_TYPE_FOR_HIRE_AND_REWARD = 'for-hire-and-reward';
+    public const OPERATION_TYPE_ON_OWN_ACCOUNT = 'on-own-account';
+    public const OPERATION_TYPE_TRANSLATION_PREFIX = 'vehicle.operation-type.';
 
-    const OPERATION_TYPE_CHOICES = [
+    public const OPERATION_TYPE_CHOICES = [
         self::OPERATION_TYPE_TRANSLATION_PREFIX . self::OPERATION_TYPE_FOR_HIRE_AND_REWARD => self::OPERATION_TYPE_FOR_HIRE_AND_REWARD,
         self::OPERATION_TYPE_TRANSLATION_PREFIX . self::OPERATION_TYPE_ON_OWN_ACCOUNT => self::OPERATION_TYPE_ON_OWN_ACCOUNT,
     ];
 
-    const TRAILER_CONFIGURATION_RIGID = 100;
-    const TRAILER_CONFIGURATION_RIGID_TRAILER = 200;
-    const TRAILER_CONFIGURATION_ARTICULATED = 300;
+    public const TRAILER_CONFIGURATION_RIGID = 100;
+    public const TRAILER_CONFIGURATION_RIGID_TRAILER = 200;
+    public const TRAILER_CONFIGURATION_ARTICULATED = 300;
 
-    const TRAILER_CONFIGURATION_CHOICES = [
+    public const TRAILER_CONFIGURATION_CHOICES = [
         'vehicle.axle.articulated.label' => self::TRAILER_CONFIGURATION_ARTICULATED,
         'vehicle.axle.rigid.label' => self::TRAILER_CONFIGURATION_RIGID,
         'vehicle.axle.rigid-and-trailer.label' => self::TRAILER_CONFIGURATION_RIGID_TRAILER,
     ];
 
-    const AXLE_CONFIGURATION_CHOICES = [
+    public const AXLE_CONFIGURATION_CHOICES = [
         self::TRAILER_CONFIGURATION_ARTICULATED => [
             'vehicle.axle.articulated.2.1' => 321,
             'vehicle.axle.articulated.2.2' => 322,
@@ -48,19 +48,19 @@ abstract class Vehicle
         ],
     ];
 
-    const BODY_TYPE_FLAT_DROP = 'flat-drop';
-    const BODY_TYPE_BOX = 'box';
-    const BODY_TYPE_TEMPERATURE_CONTROLLED = 'temperature-controlled';
-    const BODY_TYPE_CURTAIN_SIDED = 'curtain-sided';
-    const BODY_TYPE_LIQUID = 'liquid';
-    const BODY_TYPE_SOLID_BULK = 'solid-bulk';
-    const BODY_TYPE_LIVESTOCK = 'livestock';
-    const BODY_TYPE_CAR = 'car';
-    const BODY_TYPE_TIPPER = 'tipper';
-    const BODY_TYPE_OTHER = 'other';
+    public const BODY_TYPE_FLAT_DROP = 'flat-drop';
+    public const BODY_TYPE_BOX = 'box';
+    public const BODY_TYPE_TEMPERATURE_CONTROLLED = 'temperature-controlled';
+    public const BODY_TYPE_CURTAIN_SIDED = 'curtain-sided';
+    public const BODY_TYPE_LIQUID = 'liquid';
+    public const BODY_TYPE_SOLID_BULK = 'solid-bulk';
+    public const BODY_TYPE_LIVESTOCK = 'livestock';
+    public const BODY_TYPE_CAR = 'car';
+    public const BODY_TYPE_TIPPER = 'tipper';
+    public const BODY_TYPE_OTHER = 'other';
 
-    const BODY_CONFIGURATION_TRANSLATION_PREFIX = 'vehicle.body.';
-    const BODY_CONFIGURATION_CHOICES = [
+    public const BODY_CONFIGURATION_TRANSLATION_PREFIX = 'vehicle.body.';
+    public const BODY_CONFIGURATION_CHOICES = [
         self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_BOX => self::BODY_TYPE_BOX,
         self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_CAR => self::BODY_TYPE_CAR,
         self::BODY_CONFIGURATION_TRANSLATION_PREFIX . self::BODY_TYPE_CURTAIN_SIDED => self::BODY_TYPE_CURTAIN_SIDED,

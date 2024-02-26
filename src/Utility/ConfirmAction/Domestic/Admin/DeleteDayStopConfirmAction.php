@@ -13,14 +13,13 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
 {
     /** @var DayStop */
     protected $subject;
-    private DeleteHelper $deleteHelper;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, DeleteHelper $deleteHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private DeleteHelper $deleteHelper)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->deleteHelper = $deleteHelper;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -30,6 +29,7 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         return [
@@ -38,11 +38,13 @@ class DeleteDayStopConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'domestic.day-stop-delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->deleteHelper->deleteDayStop($this->subject);

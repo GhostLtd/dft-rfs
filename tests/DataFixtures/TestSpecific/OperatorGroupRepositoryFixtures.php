@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class OperatorGroupRepositoryFixtures extends Fixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $addGroup = function(string $name) use ($manager): void {

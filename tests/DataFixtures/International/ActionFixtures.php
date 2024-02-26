@@ -2,8 +2,6 @@
 
 namespace App\Tests\DataFixtures\International;
 
-use App\Entity\CargoType;
-use App\Entity\HazardousGoods;
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -12,13 +10,14 @@ use Doctrine\Persistence\ObjectManager;
 
 class ActionFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Trip $trip */
-        $trip = $this->getReference('trip:1');
+        $trip = $this->getReference('trip:1', Trip::class);
 
         /** @var Action $loading */
-        $loading = $this->getReference('action:loading:1');
+        $loading = $this->getReference('action:loading:1', Action::class);
 
         $unloading = (new Action())
             ->setLoading(false)
@@ -35,6 +34,7 @@ class ActionFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadingActionFixtures::class];

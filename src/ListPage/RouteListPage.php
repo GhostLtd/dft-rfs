@@ -12,14 +12,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 class RouteListPage extends AbstractListPage
 {
-    protected RouteRepository $routeRepository;
-
-    public function __construct(RouteRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(protected RouteRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->routeRepository = $routeRepository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         return [
@@ -32,6 +30,7 @@ class RouteListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->routeRepository->createQueryBuilder('route');
@@ -41,6 +40,7 @@ class RouteListPage extends AbstractListPage
             ->join('route.foreignPort', 'foreignPort');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

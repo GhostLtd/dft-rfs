@@ -8,26 +8,20 @@ use App\ListPage\RoRo\OperatorListPage;
 use App\Repository\RoRo\OperatorRepository;
 use App\Utility\ConfirmAction\RoRo\Admin\DeleteOperatorConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/operators", name: "admin_operators_")]
-#[Entity("operator", expr: "repository.findOneById(operatorId)")]
 class OperatorController extends AbstractController
 {
-    protected DeleteOperatorConfirmAction $deleteOperatorConfirmAction;
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(DeleteOperatorConfirmAction $deleteOperatorConfirmAction, EntityManagerInterface $entityManager)
+    public function __construct(protected DeleteOperatorConfirmAction $deleteOperatorConfirmAction, protected EntityManagerInterface $entityManager)
     {
-        $this->deleteOperatorConfirmAction = $deleteOperatorConfirmAction;
-        $this->entityManager = $entityManager;
     }
 
     #[Route("", name: "list")]
@@ -44,7 +38,7 @@ class OperatorController extends AbstractController
 
         return $this->render('admin/roro/operators/list.html.twig', [
             'data' => $listPageData,
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
         ]);
     }
 
@@ -55,7 +49,11 @@ class OperatorController extends AbstractController
     }
 
     #[Route("/{operatorId}", name: "view")]
-    public function view(Operator $operator, OperatorRepository $operatorRepository): Response
+    public function view(
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator,
+        OperatorRepository $operatorRepository
+    ): Response
     {
         $operatorGroup = $operatorRepository->findOperatorGroupForOperator($operator);
         $operatorGroupOperators = $operatorGroup ?
@@ -75,7 +73,11 @@ class OperatorController extends AbstractController
 
     #[Route("/{operatorId}/edit", name: "edit")]
     #[IsGranted("CAN_EDIT_OPERATOR", subject: "operator")]
-    public function edit(Request $request, Operator $operator): Response
+    public function edit(
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator
+    ): Response
     {
         return $this->addOrEdit($request, $operator);
     }
@@ -110,13 +112,17 @@ class OperatorController extends AbstractController
         }
 
         return $this->render('admin/roro/operators/'.($isAdd ? 'add' : 'edit').'.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
     #[Route("/{operatorId}/delete", name: "delete")]
     #[IsGranted("CAN_DELETE_OPERATOR", subject: "operator")]
-    public function delete(Request $request, Operator $operator): Response
+    public function delete(
+        Request $request,
+        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        Operator $operator
+    ): Response
     {
         $data = $this->deleteOperatorConfirmAction
             ->setSubject($operator)

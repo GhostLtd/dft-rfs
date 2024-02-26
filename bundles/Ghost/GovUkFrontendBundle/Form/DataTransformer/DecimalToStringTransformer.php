@@ -30,6 +30,7 @@ class DecimalToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function transform($value)
     {
         if ($value === null || $value === '') {
@@ -40,7 +41,7 @@ class DecimalToStringTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Invalid decimal string', 0, null, $this->invalidMessage, $this->invalidMessageParameters);
         }
 
-        if (false !== strpos($value, '.')) {
+        if (str_contains($value, '.')) {
             $value = rtrim($value, '0');
             return rtrim($value, '.');
         } else {
@@ -51,6 +52,7 @@ class DecimalToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ($value === null || '' === trim($value)) {

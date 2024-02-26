@@ -17,6 +17,7 @@ class ReportQuarterHelper implements ReportQuarterHelperInterface
         ];
     }
 
+    #[\Override]
     public static function getQuarterAndYear(DateTimeInterface $dateTime): array
     {
         $year = (int)$dateTime->format('Y');
@@ -27,10 +28,11 @@ class ReportQuarterHelper implements ReportQuarterHelperInterface
                     return [$quarter, $year];
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception) {}
         throw new \RuntimeException('Unable to convert datetime to quarter and year');
     }
 
+    #[\Override]
     public static function getDateRangeForYearAndQuarter(int $year, int $quarter): array
     {
         $quarterBoundaries = self::getQuarterBoundaries($year);
@@ -43,7 +45,7 @@ class ReportQuarterHelper implements ReportQuarterHelperInterface
                     (new \DateTime($upperBounds)),
                 ];
             }
-        } catch(\Exception $e) {}
+        } catch(\Exception) {}
 
         throw new \RuntimeException('Unable to convert quarter and year to datetime');
     }

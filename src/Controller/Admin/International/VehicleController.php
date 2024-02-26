@@ -8,9 +8,8 @@ use App\Form\Admin\InternationalSurvey\VehicleType;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\International\DeleteVehicleConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,34 +17,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/irhs")
- */
+#[Route(path: '/irhs')]
 class VehicleController extends AbstractController
 {
-    private const ROUTE_PREFIX = "admin_international_vehicle_";
+    private const string ROUTE_PREFIX = "admin_international_vehicle_";
 
     public const ADD_ROUTE = self::ROUTE_PREFIX."add";
     public const DELETE_ROUTE = self::ROUTE_PREFIX . "delete";
     public const EDIT_ROUTE = self::ROUTE_PREFIX."edit";
 
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
-
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected RequestStack $requestStack,
+    )
     {
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
     }
 
-    /**
-     * @Route("/survey/{surveyId}/add-vehicle", name=self::ADD_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
-     */
-    public function add(Survey $survey): Response
+    #[Route(path: '/survey/{surveyId}/add-vehicle', name: self::ADD_ROUTE)]
+    #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
+    public function add(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+    ) : Response
     {
         $response = $survey->getResponse();
 
@@ -59,11 +55,11 @@ class VehicleController extends AbstractController
         return $this->handleRequest($vehicle, 'admin/international/vehicle/add.html.twig', ['placeholders' => true]);
     }
 
-    /**
-     * @Route("/vehicle/{vehicleId}/edit", name=self::EDIT_ROUTE)
-     * @Entity("vehicle", expr="repository.find(vehicleId)")
-     */
-    public function edit(Vehicle $vehicle): Response
+    #[Route(path: '/vehicle/{vehicleId}/edit', name: self::EDIT_ROUTE)]
+    public function edit(
+        #[MapEntity(expr: "repository.find(vehicleId)")]
+        Vehicle $vehicle
+    ): Response
     {
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
         return $this->handleRequest($vehicle, 'admin/international/vehicle/edit.html.twig');
@@ -96,16 +92,18 @@ class VehicleController extends AbstractController
 
         return $this->render($template, [
             'vehicle' => $unmodifiedVehicle,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @Route("/vehicle/{vehicleId}/delete", name=self::DELETE_ROUTE)
-     * @Entity("vehicle", expr="repository.find(vehicleId)")
-     * @Template("admin/international/vehicle/delete.html.twig")
-     */
-    public function delete(Vehicle $vehicle, Request $request, DeleteVehicleConfirmAction $confirmAction)
+    #[Route(path: '/vehicle/{vehicleId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('admin/international/vehicle/delete.html.twig')]
+    public function delete(
+        #[MapEntity(expr: "repository.find(vehicleId)")]
+        Vehicle $vehicle,
+        Request $request,
+        DeleteVehicleConfirmAction $confirmAction
+    ): RedirectResponse|array
     {
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $vehicle->getSurveyResponse()->getSurvey());
         $survey = $vehicle->getSurveyResponse()->getSurvey();
@@ -117,9 +115,7 @@ class VehicleController extends AbstractController
             ])
             ->controller(
                 $request,
-                function() use ($survey) {
-                    return $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]);
-                }
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
             );
     }
 }

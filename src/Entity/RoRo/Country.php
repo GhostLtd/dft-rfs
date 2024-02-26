@@ -4,20 +4,17 @@ namespace App\Entity\RoRo;
 
 use App\Entity\IdTrait;
 use App\Repository\RoRo\CountryRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CountryRepository::class)
- * @ORM\Table(name="roro_country")
- */
+#[ORM\Table(name: 'roro_country')]
+#[ORM\Entity(repositoryClass: CountryRepository::class)]
 class Country
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=8, nullable=false)
-     */
-    private ?string $code;
+    #[ORM\Column(type: Types::STRING, length: 8, nullable: false)]
+    private ?string $code = null;
 
     public function getCode(): ?string
     {

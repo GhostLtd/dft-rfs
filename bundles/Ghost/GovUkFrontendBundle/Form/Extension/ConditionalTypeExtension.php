@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConditionalTypeExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [
@@ -20,6 +21,7 @@ class ConditionalTypeExtension extends AbstractTypeExtension
         ];
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
@@ -33,6 +35,7 @@ class ConditionalTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('conditional_hide_form_names', ['null', 'string[]']);
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);

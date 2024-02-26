@@ -6,6 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class QaChoiceFilter extends ChoiceFilter
 {
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         return $formData === false ?

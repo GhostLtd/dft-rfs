@@ -16,22 +16,22 @@ use InvalidArgumentException;
 
 class VehicleState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_REQUEST_VEHICLE_DETAILS = 'vehicle-registration';
-    const STATE_REQUEST_CONFIRM_DATES = 'confirm-dates';
-    const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';
-    const STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION = 'axle-configuration';
-    const STATE_REQUEST_VEHICLE_BODY = 'vehicle-body';
-    const STATE_REQUEST_VEHICLE_WEIGHT = 'vehicle-weight';
+    public const STATE_REQUEST_VEHICLE_DETAILS = 'vehicle-registration';
+    public const STATE_REQUEST_CONFIRM_DATES = 'confirm-dates';
+    public const STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION = 'trailer-configuration';
+    public const STATE_REQUEST_VEHICLE_AXLE_CONFIGURATION = 'axle-configuration';
+    public const STATE_REQUEST_VEHICLE_BODY = 'vehicle-body';
+    public const STATE_REQUEST_VEHICLE_WEIGHT = 'vehicle-weight';
 
-    const STATE_CHANGE_VEHICLE_DETAILS = 'change-vehicle-registration';
-    const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-trailer-configuration';
-    const STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION = 'change-axle-configuration';
-    const STATE_CHANGE_VEHICLE_BODY = 'change-vehicle-body';
-    const STATE_CHANGE_VEHICLE_WEIGHT = 'change-vehicle-weight';
+    public const STATE_CHANGE_VEHICLE_DETAILS = 'change-vehicle-registration';
+    public const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-trailer-configuration';
+    public const STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION = 'change-axle-configuration';
+    public const STATE_CHANGE_VEHICLE_BODY = 'change-vehicle-body';
+    public const STATE_CHANGE_VEHICLE_WEIGHT = 'change-vehicle-weight';
 
-    const STATE_SUMMARY = 'summary';
+    public const STATE_SUMMARY = 'summary';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_REQUEST_VEHICLE_DETAILS => VehicleDetailsType::class,
         self::STATE_REQUEST_CONFIRM_DATES => ConfirmDatesType::class,
         self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => VehicleTrailerConfigurationType::class,
@@ -46,7 +46,7 @@ class VehicleState extends AbstractFormWizardState implements FormWizardStateInt
         self::STATE_CHANGE_VEHICLE_WEIGHT => VehicleWeightType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_REQUEST_VEHICLE_DETAILS => 'international_survey/vehicle/form-vehicle-registration.html.twig',
         self::STATE_REQUEST_CONFIRM_DATES => 'international_survey/vehicle/form-confirm-dates.html.twig',
         self::STATE_REQUEST_VEHICLE_TRAILER_CONFIGURATION => 'international_survey/vehicle/form-trailer-configuration.html.twig',
@@ -61,38 +61,44 @@ class VehicleState extends AbstractFormWizardState implements FormWizardStateInt
         self::STATE_CHANGE_VEHICLE_WEIGHT => 'international_survey/vehicle/form-vehicle-weight.html.twig',
     ];
 
-    /** @var SurveyResponse */
+    /** @var Vehicle */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === SurveyResponse::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        if ($subject::class !== Vehicle::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . Vehicle::class);
         }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         if (!$this->subject instanceof Vehicle) {

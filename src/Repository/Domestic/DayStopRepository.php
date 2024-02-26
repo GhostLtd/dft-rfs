@@ -6,7 +6,9 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,12 +25,9 @@ class DayStopRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Survey $survey
-     * @param $dayNumber
-     * @return DaySummary
      * @throws NonUniqueResultException
      */
-    public function getBySurveyAndDayNumber(Survey $survey, $dayNumber)
+    public function getBySurveyAndDayNumber(Survey $survey, int $dayNumber): DayStop
     {
         $dayStop = $this->createQueryBuilder('day_stop')
             ->select('day_stop, day')
@@ -36,10 +35,10 @@ class DayStopRepository extends ServiceEntityRepository
             ->leftJoin('day.response', 'response')
             ->where('day.number = :dayNumber')
             ->andWhere('response.survey = :survey')
-            ->setParameters([
-                'dayNumber' => $dayNumber,
-                'survey' => $survey,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('dayNumber', $dayNumber),
+                new Parameter('survey', $survey),
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -76,12 +75,10 @@ class DayStopRepository extends ServiceEntityRepository
                 ->leftJoin('ds.day', 'day')
                 ->leftJoin('day.stops', 'stops')
                 ->where('ds.id = :stopId')
-                ->setParameters([
-                    'stopId' => $stopId,
-                ])
+                ->setParameter('stopId', $stopId)
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }

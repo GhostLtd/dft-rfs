@@ -10,6 +10,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractVehicleBodyType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "{$options['translation_entity_key']}.vehicle-body";
@@ -24,6 +25,7 @@ abstract class AbstractVehicleBodyType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([

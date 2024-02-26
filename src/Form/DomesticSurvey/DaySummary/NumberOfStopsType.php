@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 
 class NumberOfStopsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.day-summary.number-of-stops";
 
@@ -41,7 +42,8 @@ class NumberOfStopsType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => DaySummary::class,

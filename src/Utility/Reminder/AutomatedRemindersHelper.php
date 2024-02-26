@@ -23,12 +23,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class AutomatedRemindersHelper
 {
-    private const TYPE_LETTER = 'letter';
-    private const TYPE_EMAIL = 'email';
+    private const string TYPE_LETTER = 'letter';
+    private const string TYPE_EMAIL = 'email';
 
     protected const LOG_PREFIX = 'Reminders: ';
 
-    private const REMINDER_TEMPLATE_MAP = [
+    private const array REMINDER_TEMPLATE_MAP = [
         1 => [
             DomesticSurvey::class => [
                 self::TYPE_LETTER => Reference::LETTER_DOMESTIC_SURVEY_REMINDER_1,
@@ -99,7 +99,7 @@ class AutomatedRemindersHelper
         if ($addressIsFilled && $letterTemplateReference) {
             $this->messageBus->dispatch(new Letter(
                 $eventType,
-                get_class($survey),
+                $survey::class,
                 $survey->getId(),
                 $address,
                 $letterTemplateReference,
@@ -117,7 +117,7 @@ class AutomatedRemindersHelper
             foreach($invitationEmails as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     $eventType,
-                    get_class($survey),
+                    $survey::class,
                     $survey->getId(),
                     $invitationEmail,
                     $emailTemplateReference,

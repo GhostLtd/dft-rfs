@@ -4,6 +4,7 @@ namespace App\ML\FileType;
 
 class CsrgtFileType implements FileTypeInterface
 {
+    #[\Override]
     public function getColumnsNames(): array
     {
         return [
@@ -27,6 +28,7 @@ class CsrgtFileType implements FileTypeInterface
         ];
     }
 
+    #[\Override]
     public function getName(): string
     {
         return 'csrgt';

@@ -13,16 +13,14 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class LoadingPlaceType extends AbstractType
 {
-    protected $loadingPlaceHelper;
-
-    public function __construct(LoadingPlaceHelper $loadingPlaceHelper)
+    public function __construct(protected LoadingPlaceHelper $loadingPlaceHelper)
     {
-        $this->loadingPlaceHelper = $loadingPlaceHelper;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Action $action */
             $action = $event->getData();
 
@@ -38,11 +36,13 @@ class LoadingPlaceType extends AbstractType
                     'help' => "{$prefix}.help",
                     'choices' => $choices,
                     'choice_options' => $choiceOptions,
+                    'choice_value' => fn(?Action $a) => $a ? "action-{$a->getNumber()}" : null,
                 ]);
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Action::class,

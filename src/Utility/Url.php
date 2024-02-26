@@ -2,7 +2,7 @@
 
 namespace App\Utility;
 
-class Url
+class Url implements \Stringable
 {
     protected ?string $scheme;
     protected ?string $host;
@@ -149,6 +149,7 @@ class Url
         return $this;
     }
 
+    #[\Override]
     public function __toString(): string {
         $queryParts = [];
 

@@ -19,28 +19,32 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractPortsAndCargoStateType extends AbstractType
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    const DIRECTION_OUTBOUND = 'outbound';
-    const DIRECTION_RETURN = 'return';
-
-    protected PortsDataFactory $portsHelper;
+    public const DIRECTION_OUTBOUND = 'outbound';
+    public const DIRECTION_RETURN = 'return';
     protected PortsDataSet $portsData;
 
-    public function __construct(PortsDataFactory $portsHelper)
+    public function __construct(protected PortsDataFactory $portsHelper)
     {
-        $this->portsHelper = $portsHelper;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $direction = $options['direction'];
         $this->portsData = $this->portsHelper->getData($direction);
+
+        $booleanChoiceMapper = fn($x) => match ($x) {
+            true => 'yes',
+            false => 'no',
+            null => null,
+        };
 
         $builder
             ->setDataMapper(new PortsAndCargoStateDataMapper($direction, $this->portsData->getPorts()))
@@ -65,6 +69,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                         'conditional_form_name' => 'wasLimitedBy',
                     ],
                 ],
+                'choice_value' => $booleanChoiceMapper,
                 'constraints' => new NotNull([
                     'message' => $options['at_capacity_null_message'],
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
@@ -75,6 +80,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                 'help' => $options['cargo_empty_help'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => self::CHOICES,
+                'choice_value' => $booleanChoiceMapper,
             ])
             ->add('wasLimitedBy', LimitedByType::class, [
                 'label' => $options['cargo_limited_label'],
@@ -83,6 +89,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
@@ -104,7 +111,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
             'data_class' => Trip::class,
             'constraints' => [
                 new Callback([
-                    'callback' => [$this, 'validateCapacity'],
+                    'callback' => $this->validateCapacity(...),
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ])
             ],

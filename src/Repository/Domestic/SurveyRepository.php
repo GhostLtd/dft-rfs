@@ -13,6 +13,7 @@ use App\Utility\Domestic\WeekNumberHelper;
 use App\Utility\StateReportHelper;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
@@ -46,8 +47,7 @@ class SurveyRepository extends AbstractSurveyRepository
     }
 
     /**
-     * @param bool $isNorthernIreland
-     * @return Survey[]
+     * @return array<Survey>
      */
     public function findByTypeWithResponseAndVehicle(bool $isNorthernIreland = false): array
     {
@@ -74,23 +74,23 @@ class SurveyRepository extends AbstractSurveyRepository
             ->andWhere('survey.state IN (:states)')
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')
-            ->setParameters([
-                'quarterStart' => $dateRange[0],
-                'quarterEnd' => $dateRange[1],
-                'states' => [
+            ->setParameters(new ArrayCollection([
+                new Parameter('quarterStart', $dateRange[0]),
+                new Parameter('quarterEnd', $dateRange[1]),
+                new Parameter('states', [
                     Survey::STATE_NEW, Survey::STATE_INVITATION_PENDING, Survey::STATE_INVITATION_FAILED,
                     Survey::STATE_INVITATION_SENT, Survey::STATE_IN_PROGRESS, Survey::STATE_CLOSED,
                     Survey::STATE_APPROVED,
-                ],
-            ])
+                ]),
+            ]))
             ->getQuery()
             ->getResult(ColumnHydrator::class);
     }
 
     /**
-     * @return Survey[] | ArrayCollection
+     * @return array<Survey>
      */
-    public function findForExport($surveyIDs)
+    public function findForExport($surveyIDs): array
     {
         $counts = $this->createQueryBuilder('survey')
             ->select('survey.id, COUNT(summary) as summaryCount, COUNT(stops) as stopCount')
@@ -115,9 +115,7 @@ class SurveyRepository extends AbstractSurveyRepository
             ->where('survey.id IN (:surveyIDs)')
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')
-            ->setParameters([
-                'surveyIDs' => $surveyIDs,
-            ])
+            ->setParameter('surveyIDs', $surveyIDs)
             ->getQuery()
             ->getResult();
 
@@ -128,18 +126,16 @@ class SurveyRepository extends AbstractSurveyRepository
             throw new RuntimeException("survey count mismatch");
         }
 
-        /** @var Survey $survey */
         foreach ($counts as $count) {
-            if (!isset($surveys[$count['id']])) {
-                throw new RuntimeException("Survey not found: {$survey->getId()}");
+            $surveyId = $count['id'];
+            if (!isset($surveys[$surveyId])) {
+                throw new RuntimeException("Survey not found: {$surveyId}");
             }
-            if ($surveys[$count['id']]->getResponse()) {
-                $surveys[$count['id']]->getResponse()->_summaryCountForExport = $count['summaryCount'];
-                $surveys[$count['id']]->getResponse()->_stopCountForExport = $count['stopCount'];
+            if ($surveys[$surveyId]->getResponse()) {
+                $surveys[$surveyId]->getResponse()->_summaryCountForExport = $count['summaryCount'];
+                $surveys[$surveyId]->getResponse()->_stopCountForExport = $count['stopCount'];
             }
         }
-
-//        $this->_em->clear();
 
         return $surveys;
     }
@@ -151,11 +147,11 @@ class SurveyRepository extends AbstractSurveyRepository
             ->where('s.isNorthernIreland = :isNorthernIreland')
             ->andWhere('s.surveyPeriodEnd < :now')
             ->andWhere('s.state IN (:activeStates)')
-            ->setParameters([
-                'now' => new DateTime(),
-                'activeStates' => SurveyStateInterface::ACTIVE_STATES,
-                'isNorthernIreland' => $isNortherIreland,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('now', new DateTime()),
+                new Parameter('activeStates', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('isNorthernIreland', $isNortherIreland),
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -166,16 +162,16 @@ class SurveyRepository extends AbstractSurveyRepository
             ->select('count(s) AS count')
             ->where('s.isNorthernIreland = :isNorthernIreland')
             ->andWhere('s.state IN (:activeStates)')
-            ->setParameters([
-                'activeStates' => SurveyStateInterface::ACTIVE_STATES,
-                'isNorthernIreland' => $isNortherIreland,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('activeStates', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('isNorthernIreland', $isNortherIreland),
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     /**
-     * @return Survey[]|array
+     * @return array<Survey>
      */
     public function getSurveysRequiringPasscodeUserCleanup(DateTime $before): array
     {
@@ -183,7 +179,7 @@ class SurveyRepository extends AbstractSurveyRepository
     }
 
     /**
-     * @return Survey[]|array
+     * @return array<Survey>
      */
     public function getSurveysRequiringPersonalDataCleanup(DateTime $before): array {
         $states = [SurveyStateInterface::STATE_REJECTED, SurveyStateInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
@@ -191,7 +187,7 @@ class SurveyRepository extends AbstractSurveyRepository
     }
 
     /**
-     * @return Survey[]
+     * @return array<Survey>
      */
     public function findSurveysMatchingLcniAddressAndEmails(NotificationInterception $interception): array {
         return $this->lcniFindQuery(
@@ -203,7 +199,7 @@ class SurveyRepository extends AbstractSurveyRepository
     }
 
     /**
-     * @return Survey[]
+     * @return array<Survey>
      */
     public function findSurveysMatchingLcniAddressWithNoEmails(NotificationInterception $interception): array
     {
@@ -213,6 +209,9 @@ class SurveyRepository extends AbstractSurveyRepository
         );
     }
 
+    /**
+     * @return array<Survey>
+     */
     protected function lcniFindQuery(NotificationInterception $interception, \Closure $callback): array
     {
         $qb = $this->createQueryBuilder('s')

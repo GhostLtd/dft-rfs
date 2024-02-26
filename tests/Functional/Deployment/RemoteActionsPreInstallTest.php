@@ -6,7 +6,6 @@ use App\Tests\DataFixtures\DoctrineMigrationFixtures;
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\RemoteActions;
-use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
@@ -15,6 +14,7 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 {
     private array $addedMigrations = [];
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -69,7 +69,7 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
     }
 
 
-    private function generateMigration()
+    private function generateMigration(): void
     {
         // create new migration file
         $process = new Process(['bin/console', 'doctrine:migrations:generate']);

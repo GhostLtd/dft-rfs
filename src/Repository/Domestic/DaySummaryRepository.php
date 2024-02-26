@@ -6,7 +6,9 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,12 +25,9 @@ class DaySummaryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Survey $survey
-     * @param Day $day
-     * @return DaySummary
      * @throws NonUniqueResultException
      */
-    public function getBySurveyAndDay(Survey $survey, Day $day)
+    public function getBySurveyAndDay(Survey $survey, Day $day): ?DaySummary
     {
         return $this->createQueryBuilder('day_summary')
             ->select('day_summary, day')
@@ -36,10 +35,10 @@ class DaySummaryRepository extends ServiceEntityRepository
             ->leftJoin('day.response', 'response')
             ->where('day = :day')
             ->andWhere('response.survey = :survey')
-            ->setParameters([
-                'day' => $day,
-                'survey' => $survey,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('day', $day),
+                new Parameter('survey', $survey),
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

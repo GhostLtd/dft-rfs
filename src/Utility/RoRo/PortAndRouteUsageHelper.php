@@ -19,21 +19,11 @@ class PortAndRouteUsageHelper
     protected array $portUsageInRouteCounts;
     protected array $routeUsageCounts;
 
-    protected ForeignPortRepository $foreignPortRepository;
-    protected RouteRepository $routeRepository;
-    protected SurveyRepository $surveyRepository;
-    protected UkPortRepository $ukPortRepository;
-
-    public function __construct(ForeignPortRepository $foreignPortRepository, RouteRepository $routeRepository, SurveyRepository $surveyRepository, UkPortRepository $ukPortRepository)
+    public function __construct(protected ForeignPortRepository $foreignPortRepository, protected RouteRepository $routeRepository, protected SurveyRepository $surveyRepository, protected UkPortRepository $ukPortRepository)
     {
         $this->portUsageInSurveyCounts = [];
         $this->portUsageInRouteCounts = [];
         $this->routeUsageCounts = [];
-
-        $this->foreignPortRepository = $foreignPortRepository;
-        $this->routeRepository = $routeRepository;
-        $this->surveyRepository = $surveyRepository;
-        $this->ukPortRepository = $ukPortRepository;
     }
 
     public function isPortInUseBySurveyOrRoute(PortInterface $port): bool
@@ -47,7 +37,7 @@ class PortAndRouteUsageHelper
         $count = $this->portUsageInRouteCounts[$id] ?? null;
 
         if ($count === null) {
-            $portJoin = $this->getJoinForPortClass(get_class($port));
+            $portJoin = $this->getJoinForPortClass($port::class);
 
             $count = $this->routeRepository
                 ->createQueryBuilder('r')
@@ -70,7 +60,7 @@ class PortAndRouteUsageHelper
         $count = $this->portUsageInSurveyCounts[$id] ?? null;
 
         if ($count === null) {
-            $portJoin = $this->getJoinForPortClass(get_class($port));
+            $portJoin = $this->getJoinForPortClass($port::class);
 
             $count = $this->getBaseUsageQueryBuilder()
                 ->join($portJoin, 'p')

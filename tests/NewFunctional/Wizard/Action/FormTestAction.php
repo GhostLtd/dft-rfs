@@ -6,17 +6,15 @@ use App\Tests\NewFunctional\Wizard\Form\AbstractFormTestCase;
 
 class FormTestAction extends AbstractFormTestAction
 {
-    protected ?string $submitButtonId;
+    protected ?string $submitButtonId = null;
 
-    /** @var AbstractFormTestCase[]|array */
-    protected array $formTestCases;
-
-    public function __construct(string $expectedPath, string $submitButtonId = null, array $formTestCases = [], array $options = [])
+    public function __construct(string $expectedPath, string $submitButtonId = null, /** @var AbstractFormTestCase[]|array */
+    protected array $formTestCases = [], array $options = [])
     {
         parent::__construct($expectedPath, $submitButtonId, $options);
-        $this->formTestCases = $formTestCases;
     }
 
+    #[\Override]
     public function getSubmitButtonId(): ?string
     {
         return $this->submitButtonId;
@@ -30,6 +28,7 @@ class FormTestAction extends AbstractFormTestAction
         return $this->formTestCases;
     }
 
+    #[\Override]
     public function perform(Context $context): void
     {
         $this->performFormTestAction($context, $this->getFormTestCases());

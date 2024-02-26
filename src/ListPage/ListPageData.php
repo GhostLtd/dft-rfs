@@ -8,31 +8,8 @@ use Closure;
 
 class ListPageData
 {
-    protected int $page;
-    protected int $numPages;
-    protected int $numRecords;
-    protected iterable $entities;
-    protected ?string $nextUrl;
-    protected ?string $previousUrl;
-    protected array $paginationUrls;
-    protected Closure $orderUrlGenerator;
-    protected array $fields;
-    protected ?string $order;
-    protected ?string $orderDirection;
-
-    public function __construct(int $page, int $numPages, int $numRecords, iterable $entities, ?string $nextUrl, ?string $previousUrl, array $paginationUrls, array $fields, Closure $orderUrlGenerator, ?string $order, ?string $orderDirection)
+    public function __construct(protected int $page, protected int $numPages, protected int $numRecords, protected iterable $entities, protected ?string $nextUrl, protected ?string $previousUrl, protected array $paginationUrls, protected array $fields, protected Closure $orderUrlGenerator, protected ?string $order, protected ?string $orderDirection)
     {
-        $this->page = $page;
-        $this->numPages = $numPages;
-        $this->numRecords = $numRecords;
-        $this->entities = $entities;
-        $this->nextUrl = $nextUrl;
-        $this->previousUrl = $previousUrl;
-        $this->paginationUrls = $paginationUrls;
-        $this->fields = $fields;
-        $this->orderUrlGenerator = $orderUrlGenerator;
-        $this->order = $order;
-        $this->orderDirection = $orderDirection;
     }
 
     public function getPage(): int

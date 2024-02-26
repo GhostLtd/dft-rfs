@@ -22,16 +22,9 @@ use Symfony\Component\Workflow\Event\GuardEvent;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
-    private MessageBusInterface $messageBus;
-    private DomesticPdfHelper $domesticPdfHelper;
-    private InternationalPdfHelper $internationalPdfHelper;
-    private AuditLogRepository $auditLogRepository;
-    private PersonalisationHelper $personalisationHelper;
-
-    private const TYPE_LETTER = 'letter';
-    private const TYPE_EMAIL = 'email';
-    private const TEMPLATE_MAP = [
+    private const string TYPE_LETTER = 'letter';
+    private const string TYPE_EMAIL = 'email';
+    private const array TEMPLATE_MAP = [
         DomesticSurvey::class => [
             self::TYPE_LETTER => Reference::LETTER_DOMESTIC_SURVEY_INVITE,
             self::TYPE_EMAIL => Reference::EMAIL_DOMESTIC_SURVEY_INVITE,
@@ -46,14 +39,14 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository, PersonalisationHelper $personalisationHelper) {
-        $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
-        $this->domesticPdfHelper = $domesticPdfHelper;
-        $this->internationalPdfHelper = $internationalPdfHelper;
-        $this->auditLogRepository = $auditLogRepository;
-        $this->personalisationHelper = $personalisationHelper;
-    }
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected MessageBusInterface    $messageBus,
+        protected DomesticPdfHelper      $domesticPdfHelper,
+        protected InternationalPdfHelper $internationalPdfHelper,
+        protected AuditLogRepository     $auditLogRepository,
+        protected PersonalisationHelper  $personalisationHelper
+    ) {}
 
     public function guardInviteUser(GuardEvent $event): void
     {
@@ -71,25 +64,25 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
-        if ($addressIsFilled && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER]) {
+        if ($addressIsFilled && self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER]) {
             $this->messageBus->dispatch(new Letter(
                 Reference::EVENT_INVITE,
-                get_class($survey),
+                $survey::class,
                 $survey->getId(),
                 $address,
-                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER],
+                self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER],
                 $personalisation,
             ));
         }
 
-        if (self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
-            foreach($survey->getArrayOfInvitationEmails() as $invitationEmail) {
+        if (self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL]) {
+            foreach ($survey->getArrayOfInvitationEmails() as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     Reference::EVENT_INVITE,
-                    get_class($survey),
+                    $survey::class,
                     $survey->getId(),
                     $invitationEmail,
-                    self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
+                    self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL],
                     $personalisation,
                 ));
             }
@@ -112,7 +105,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             // Do nothing...
             return;
         } else {
-            throw new \RuntimeException("Unsupported survey class".get_class($survey));
+            throw new \RuntimeException("Unsupported survey class" . $survey::class);
         }
     }
 
@@ -132,7 +125,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
     {
         $survey = $event->getSubject();
         if (!$survey instanceof SurveyInterface) {
-            throw new \LogicException("unhandled survey class: ". get_class($survey));
+            throw new \LogicException("unhandled survey class: " . $survey::class);
         }
         return $survey;
     }
@@ -150,6 +143,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $event->setBlocked(!$hasPreviouslyBeenInClosedState && !$isExemptVehicleType);
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -177,9 +171,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param SurveyInterface $survey
-     */
     public function deletePasscodeUser(SurveyInterface $survey): void
     {
         $passcodeUser = $survey->getPasscodeUser();

@@ -11,6 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class TripFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Vehicle $vehicle */
@@ -26,10 +27,10 @@ class TripFixtures extends Fixture implements DependentFixtureInterface
             ->setReturnDate(new \DateTime('2021-05-03'))
             ->setIsChangedBodyType(false)
             ->setIsSwappedTrailer(false)
-            ->setOutboundUkPort('Dover')
-            ->setOutboundForeignPort('Calais')
-            ->setReturnForeignPort('Calais')
-            ->setReturnUkPort('Dover')
+            ->setOutboundUkPort('Portfoot')
+            ->setOutboundForeignPort('Waspwerp')
+            ->setReturnForeignPort('Waspwerp')
+            ->setReturnUkPort('Portfoot')
             ->setRoundTripDistance($distance)
             ->setCountriesTransitted(["FR","BE","NL","DE"])
             ->setReturnWasEmpty(false)
@@ -48,6 +49,7 @@ class TripFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [VehicleFixtures::class];

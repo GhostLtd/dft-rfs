@@ -10,46 +10,29 @@ use App\ListPage\PortListPage;
 use App\Utility\ConfirmAction\DeletePortConfirmAction;
 use App\Utility\RoRo\PortAndRouteUsageHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/ports", name="admin_ports_")
- * @Entity("port", expr="repository.find(portId)")
- */
+#[Route(path: '/ports', name: 'admin_ports_')]
 class PortController extends AbstractController
 {
-    protected DeletePortConfirmAction $deletePortConfirmAction;
-    protected EntityManagerInterface $entityManager;
-    protected PortAndRouteUsageHelper $portAndRouteUsageHelper;
-
-    public function __construct(
-        DeletePortConfirmAction $deletePortConfirmAction,
-        EntityManagerInterface $entityManager,
-        PortAndRouteUsageHelper $portAndRouteUsageHelper
-    ) {
-        $this->deletePortConfirmAction = $deletePortConfirmAction;
-        $this->entityManager = $entityManager;
-        $this->portAndRouteUsageHelper = $portAndRouteUsageHelper;
+    public function __construct(protected DeletePortConfirmAction $deletePortConfirmAction, protected EntityManagerInterface $entityManager, protected PortAndRouteUsageHelper $portAndRouteUsageHelper)
+    {
     }
 
-    /**
-     * @Route("/uk", name="uk_list")
-     */
+    #[Route(path: '/uk', name: 'uk_list')]
     public function ukList(PortListPage $listPage, Request $request): Response
     {
         return $this->list($listPage, $request, PortListPage::TYPE_PORT_UK);
     }
 
-    /**
-     * @Route("/foreign", name="foreign_list")
-     */
+    #[Route(path: '/foreign', name: 'foreign_list')]
     public function foreignList(PortListPage $listPage, Request $request): Response
     {
         return $this->list($listPage, $request, PortListPage::TYPE_PORT_FOREIGN);
@@ -70,59 +53,63 @@ class PortController extends AbstractController
 
         return $this->render('admin/ports/list.html.twig', [
             'data' => $listPageData,
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
             'portType' => $portType,
         ]);
     }
 
-    /**
-     * @Route("/uk/add", name="uk_add")
-     */
+    #[Route(path: '/uk/add', name: 'uk_add')]
     public function ukAdd(Request $request): Response
     {
         return $this->addOrEdit($request, PortListPage::TYPE_PORT_UK);
     }
 
-    /**
-     * @Route("/uk/{portId}/edit", name="uk_edit")
-     * @IsGranted("CAN_EDIT_PORT", subject="port")
-     */
-    public function ukEdit(Request $request, UkPort $port): Response
+    #[Route(path: '/uk/{portId}/edit', name: 'uk_edit')]
+    #[IsGranted('CAN_EDIT_PORT', subject: 'port')]
+    public function ukEdit(
+        Request $request,
+        #[MapEntity(expr: "repository.find(portId)")]
+        UkPort $port
+    ): Response
     {
         return $this->addOrEdit($request, PortListPage::TYPE_PORT_UK, $port);
     }
 
-    /**
-     * @Route("/uk/{portId}/delete", name="uk_delete")
-     * @IsGranted("CAN_DELETE_PORT", subject="port")
-     */
-    public function ukDelete(Request $request, UkPort $port): Response
+    #[Route(path: '/uk/{portId}/delete', name: 'uk_delete')]
+    #[IsGranted('CAN_DELETE_PORT', subject: 'port')]
+    public function ukDelete(
+        Request $request,
+        #[MapEntity(expr: "repository.find(portId)")]
+        UkPort $port
+    ): Response
     {
         return $this->delete($request, $port);
     }
 
-    /**
-     * @Route("/foreign/add", name="foreign_add")
-     */
+    #[Route(path: '/foreign/add', name: 'foreign_add')]
     public function foreignAdd(Request $request): Response
     {
         return $this->addOrEdit($request, PortListPage::TYPE_PORT_FOREIGN);
     }
 
-    /**
-     * @Route("/foreign/{portId}/edit", name="foreign_edit")
-     * @IsGranted("CAN_EDIT_PORT", subject="port")
-     */
-    public function foreignEdit(Request $request, ForeignPort $port): Response
+    #[Route(path: '/foreign/{portId}/edit', name: 'foreign_edit')]
+    #[IsGranted('CAN_EDIT_PORT', subject: 'port')]
+    public function foreignEdit(
+        Request $request,
+        #[MapEntity(expr: "repository.find(portId)")]
+        ForeignPort $port
+    ): Response
     {
         return $this->addOrEdit($request, PortListPage::TYPE_PORT_FOREIGN, $port);
     }
 
-    /**
-     * @Route("/foreign/{portId}/delete", name="foreign_delete")
-     * @IsGranted("CAN_DELETE_PORT", subject="port")
-     */
-    public function foreignDelete(Request $request, ForeignPort $port): Response
+    #[Route(path: '/foreign/{portId}/delete', name: 'foreign_delete')]
+    #[IsGranted('CAN_DELETE_PORT', subject: 'port')]
+    public function foreignDelete(
+        Request $request,
+        #[MapEntity(expr: "repository.find(portId)")]
+        ForeignPort $port
+    ): Response
     {
         return $this->delete($request, $port);
     }
@@ -163,7 +150,7 @@ class PortController extends AbstractController
         }
 
         return $this->render('admin/ports/'.($isAdd ? 'add' : 'edit').'.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'portType' => $portType,
         ]);
     }
@@ -174,7 +161,7 @@ class PortController extends AbstractController
             ->setSubject($port)
             ->controller(
                 $request,
-                fn() => $this->getListPagePathForPortClass(get_class($port))
+                fn() => $this->getListPagePathForPortClass($port::class)
             );
 
         if ($data instanceof RedirectResponse) {

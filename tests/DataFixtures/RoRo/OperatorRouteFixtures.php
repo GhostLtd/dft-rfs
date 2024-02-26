@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class OperatorRouteFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Operator $operator */
@@ -27,6 +28,7 @@ class OperatorRouteFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

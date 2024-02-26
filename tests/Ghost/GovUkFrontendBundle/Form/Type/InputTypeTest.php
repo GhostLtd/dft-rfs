@@ -35,15 +35,17 @@ class InputTypeTest extends AbstractGovUkFrontendTest
 
     protected function getInputType($fixture): string
     {
-        switch (true)
-        {
-            case ($fixture['options']['type'] ?? false) === 'number' :
-            case !empty($fixture['options']['inputmode']) :
-                return NumberType::class;
+        if (
+            ($fixture['options']['type'] ?? false) === 'number' ||
+            !empty($fixture['options']['inputmode'])
+        ) {
+            return NumberType::class;
+        } else {
+            return InputType::class;
         }
-        return InputType::class;
     }
 
+    #[\Override]
     protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in TextareaType

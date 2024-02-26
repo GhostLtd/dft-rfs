@@ -14,6 +14,7 @@ class TripStateTest extends WebTestCase
     private TripState $tripState;
     private WorkflowInterface $workflow;
 
+    #[\Override]
     protected function setUp(): void
     {
         static::bootKernel();

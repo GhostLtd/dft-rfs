@@ -37,7 +37,7 @@ class MoneyTypeTest extends TestCase
      */
     public function testTransformer($intValue, $stringValue, $decimalPlaces = 2)
     {
-        $transformer = new CostTransformer(pow(10, $decimalPlaces));
+        $transformer = new CostTransformer(10 ** $decimalPlaces);
         self::assertSame($stringValue, $transformer->transform($intValue));
         self::assertSame($intValue, $transformer->reverseTransform($stringValue));
     }

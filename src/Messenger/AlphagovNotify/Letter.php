@@ -14,6 +14,7 @@ class Letter extends AbstractSendMessage
         $this->address = $address;
     }
 
+    #[\Override]
     public function getSendMethodParameters(): array
     {
         return [
@@ -23,11 +24,13 @@ class Letter extends AbstractSendMessage
         ];
     }
 
+    #[\Override]
     public function getEndpoint(): string
     {
         return '/v2/notifications/letter';
     }
 
+    #[\Override]
     public function getPersonalisation(): ?array
     {
         return array_merge(parent::getPersonalisation(), $this->getAddressForPersonalisation());

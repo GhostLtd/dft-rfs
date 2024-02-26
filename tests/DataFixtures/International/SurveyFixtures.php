@@ -6,6 +6,7 @@ use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
+use App\Tests\DataFixtures\RoRo\RouteAndPortFixtures;
 use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -13,6 +14,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class SurveyFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var PasscodeUser $user */
@@ -38,8 +40,9 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
-        return [UserFixtures::class];
+        return [UserFixtures::class, RouteAndPortFixtures::class];
     }
 }

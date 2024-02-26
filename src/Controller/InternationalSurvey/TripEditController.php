@@ -7,27 +7,24 @@ use App\Entity\International\Trip;
 use App\Repository\International\TripRepository;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class TripEditController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
 
     public const WIZARD_ROUTE = 'app_internationalsurvey_trip_edit_state';
 
-    protected ?Trip $trip;
+    protected ?Trip $trip = null;
 
-    /**
-     * @Route("/international-survey/trips/{tripId}/edit/{state}", name=self::WIZARD_ROUTE)
-     */
+    #[Route(path: '/international-survey/trips/{tripId}/edit/{state}', name: self::WIZARD_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           Request $request,
                           TripRepository $tripRepository,
@@ -44,6 +41,7 @@ class TripEditController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var FormWizardStateInterface $formWizard */
@@ -56,11 +54,13 @@ class TripEditController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);

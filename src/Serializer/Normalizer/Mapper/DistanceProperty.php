@@ -7,17 +7,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class DistanceProperty implements Mapper
 {
-    protected string $propertyPath;
-    private $defaultValue;
-    private $inUnits;
-
-    public function __construct(string $propertyPath, string $inUnits = null, $defaultValue = null)
+    public function __construct(protected string $propertyPath, private ?string $inUnits = null, private $defaultValue = null)
     {
-        $this->propertyPath = $propertyPath;
-        $this->defaultValue = $defaultValue;
-        $this->inUnits = $inUnits;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -25,7 +19,7 @@ class DistanceProperty implements Mapper
             /* @var Distance $distance */
             $distance = $accessor->getValue($sourceData, "{$this->propertyPath}");
             return $distance->getValueNormalized($this->inUnits) ?? 0;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->defaultValue;
         }
     }

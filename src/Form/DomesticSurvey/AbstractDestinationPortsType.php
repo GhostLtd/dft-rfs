@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractDestinationPortsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.destination-ports";
         $builder
@@ -28,7 +29,8 @@ abstract class AbstractDestinationPortsType extends AbstractType
         configureOptions as traitConfigureOptions;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $this->traitConfigureOptions($resolver);
 

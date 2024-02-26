@@ -14,15 +14,14 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
 {
     /** @var DomesticSurveyNote | InternationalSurveyNote */
     protected $subject;
-    protected EntityManagerInterface $entityManager;
     protected array $extraViewData;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -32,11 +31,13 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'admin.delete-survey-note';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);

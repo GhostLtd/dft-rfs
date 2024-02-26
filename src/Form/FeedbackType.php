@@ -21,7 +21,8 @@ class FeedbackType extends AbstractType
     public const TIME_CHOICES = ['5-less-time', '3-same', '1-more-time'];
     public const ISSUES_CHOICES = ['no', 'yes-solved', self::ISSUES_UNSOLVED];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setDataMapper(new FeedbackTypeDataMapper());
 
@@ -93,7 +94,8 @@ class FeedbackType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Feedback::class,

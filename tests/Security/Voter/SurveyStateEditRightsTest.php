@@ -32,8 +32,9 @@ class SurveyStateEditRightsTest extends AbstractVoterTest
     public function testPasscodeUserAccess($state, $canEdit)
     {
         $this->loadFixtures([SurveyFixtures::class]);
+
         /** @var Survey $survey */
-        $survey = $this->fixtureReferenceRepository->getReference('survey:simple');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:simple', Survey::class);
 
         $this->createAndStorePasscodeUserToken($survey->getPasscodeUser());
 
@@ -65,7 +66,7 @@ class SurveyStateEditRightsTest extends AbstractVoterTest
     {
         $this->loadFixtures([SurveyFixtures::class]);
         /** @var Survey $survey */
-        $survey = $this->fixtureReferenceRepository->getReference('survey:simple');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:simple', Survey::class);
         $survey->setState($state);
 
         $this->createAndStoreAdminUserToken();

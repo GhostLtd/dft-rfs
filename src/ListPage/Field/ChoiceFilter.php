@@ -7,16 +7,12 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class ChoiceFilter extends Simple implements FilterableInterface
 {
-    protected array $choices;
-    private array $formOptions;
-
-    public function __construct(string $label, string $propertyPath, array $choices, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, protected array $choices, private array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
-        $this->choices = $choices;
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -26,11 +22,13 @@ class ChoiceFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return Gds\ChoiceType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         return $queryBuilder

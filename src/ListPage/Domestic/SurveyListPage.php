@@ -14,7 +14,7 @@ use App\ListPage\Field\Simple;
 use App\ListPage\Field\SpaceStrippingTextFilter;
 use App\ListPage\Field\TextFilter;
 use App\Repository\Domestic\SurveyRepository;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -23,12 +23,10 @@ use Symfony\Component\Routing\RouterInterface;
 class SurveyListPage extends AbstractListPage
 {
     protected bool $isNorthernIreland;
-    protected SurveyRepository $repository;
 
-    public function __construct(SurveyRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(protected SurveyRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $routeRepository;
     }
 
     public function setIsNorthernIreland(bool $isNorthernIreland): self
@@ -37,6 +35,7 @@ class SurveyListPage extends AbstractListPage
         return $this;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
@@ -64,30 +63,36 @@ class SurveyListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('survey');
         return $queryBuilder
-            ->select('survey, response, user, day, stop, summary')
+            ->select('survey, response, user, day, stop, summary, reissuedSurvey')
             ->leftJoin('survey.response', 'response')
             ->leftJoin('survey.passcodeUser', 'user')
             ->leftJoin('response.days', 'day')
             ->leftJoin('day.stops', 'stop')
             ->leftJoin('day.summary', 'summary')
+
+            // N.B. We don't have any choice but to join this, as it's a one-to-one and we're not on the owning
+            //      side, so either we fetch here, or Doctrine will do another n separate fetches.
+            //
+            //      Additionally partial loads are now deprecated, so that's no longer a possibility.
+            ->leftJoin('survey.reissuedSurvey', 'reissuedSurvey')
+
             ->andWhere('survey.isNorthernIreland = :isNorthernIreland')
             ->setParameter('isNorthernIreland', $this->isNorthernIreland);
     }
 
+    #[\Override]
     protected function prePaginatorQueryAdjustments(Query $query): void
     {
         // Override these nasty fetch=EAGER flags causing extra fetches!
-        $query->setFetchMode(Survey::class, "driverAvailability", ClassMetadataInfo::FETCH_LAZY);
-
-        // This one stops it from loading the one-to-ones that we don't explicitly choose to load
-        // (Namely originalSurvey/reissuedSurvey)
-        $query->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true);
+        $query->setFetchMode(Survey::class, "driverAvailability", ClassMetadata::FETCH_LAZY);
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

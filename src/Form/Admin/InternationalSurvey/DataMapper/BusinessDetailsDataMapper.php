@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormInterface;
 
 class BusinessDetailsDataMapper implements DataMapperInterface
 {
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -19,8 +20,8 @@ class BusinessDetailsDataMapper implements DataMapperInterface
             throw new UnexpectedTypeException($viewData, SurveyResponse::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
 
         // initialize form field values
         $forms['activityStatus']->setData($viewData->getActivityStatus());
@@ -29,10 +30,11 @@ class BusinessDetailsDataMapper implements DataMapperInterface
         $forms['annualInternationalJourneyCount']->setData($viewData->getAnnualInternationalJourneyCount());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
 
         if (!$viewData instanceof SurveyResponse) {
             throw new UnexpectedTypeException($viewData, SurveyResponse::class);

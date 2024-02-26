@@ -9,6 +9,7 @@ class WeekNumberHelper extends AbstractWeekNumberHelper
 {
     protected const WEEK_ZERO = '1991-09-22';
 
+    #[\Override]
     public static function getFirstDayOfWeek(bool $shortName): string
     {
         return $shortName ? 'Sun' : 'Sunday';

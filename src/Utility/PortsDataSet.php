@@ -8,14 +8,10 @@ use App\Repository\Route\RouteRepository;
 
 class PortsDataSet
 {
-    protected RouteRepository $routeRepository;
-    protected string $direction;
     protected array $ports;
 
-    public function __construct(RouteRepository $routeRepository, string $direction)
+    public function __construct(protected RouteRepository $routeRepository, protected string $direction)
     {
-        $this->routeRepository = $routeRepository;
-        $this->direction = $direction;
     }
 
     public function getDirection(): string

@@ -13,22 +13,20 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SurveyVoter extends Voter
 {
-    const ELIGIBLE_TO_FILL_SURVEY_WEEK = "ELIGIBLE_TO_FILL_SURVEY_WEEK";
-    const CLOSE_SURVEY_EXEMPT = 'CLOSE_SURVEY_EXEMPT';
-    const CLOSE_SURVEY_NOT_IN_POSSESSION = 'CLOSE_SURVEY_NOT_IN_POSSESSION';
-    const EDIT = 'EDIT';
-    const CLOSING_DETAILS = 'CLOSING_DETAILS';
-    const PROVIDE_FEEDBACK = "PROVIDE_FEEDBACK";
-    const VIEW_FEEDBACK_SUMMARY = "VIEW_FEEDBACK_SUMMARY";
-    const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
+    public const ELIGIBLE_TO_FILL_SURVEY_WEEK = "ELIGIBLE_TO_FILL_SURVEY_WEEK";
+    public const CLOSE_SURVEY_EXEMPT = 'CLOSE_SURVEY_EXEMPT';
+    public const CLOSE_SURVEY_NOT_IN_POSSESSION = 'CLOSE_SURVEY_NOT_IN_POSSESSION';
+    public const EDIT = 'EDIT';
+    public const CLOSING_DETAILS = 'CLOSING_DETAILS';
+    public const PROVIDE_FEEDBACK = "PROVIDE_FEEDBACK";
+    public const VIEW_FEEDBACK_SUMMARY = "VIEW_FEEDBACK_SUMMARY";
+    public const VIEW_SUBMISSION_SUMMARY = 'VIEW_SUBMISSION_SUMMARY';
 
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(private AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->authorizationChecker = $authorizationChecker;
     }
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, [
@@ -46,6 +44,7 @@ class SurveyVoter extends Voter
     /**
      * @param SurveyInterface $subject
      */
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->authorizationChecker->isGranted(PasscodeUser::ROLE_PASSCODE_USER)) {

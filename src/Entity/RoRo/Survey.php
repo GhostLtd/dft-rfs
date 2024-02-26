@@ -5,27 +5,23 @@ namespace App\Entity\RoRo;
 use App\Entity\IdTrait;
 use App\Entity\NoteInterface;
 use App\Entity\Route\Route;
+use App\Entity\SurveyNotesInterface;
 use App\Entity\SurveyStateInterface;
 use App\Repository\RoRo\SurveyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @ORM\Entity(repositoryClass=SurveyRepository::class)
- * @ORM\Table(
- *     name="roro_survey",
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="roro_operation_route_date_index", columns={"operator_id", "route_id", "survey_period_start"})
- *     }
- * )
- */
-class Survey implements SurveyStateInterface
+#[ORM\Table(name: 'roro_survey')]
+#[ORM\UniqueConstraint(name: 'roro_operation_route_date_index', columns: ['operator_id', 'route_id', 'survey_period_start'])]
+#[ORM\Entity(repositoryClass: SurveyRepository::class)]
+class Survey implements SurveyNotesInterface, SurveyStateInterface
 {
-    const STATE_FILTER_CHOICES = [
+    public const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_IN_PROGRESS,
         self::STATE_CLOSED,
@@ -34,74 +30,55 @@ class Survey implements SurveyStateInterface
 
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $surveyPeriodStart = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Operator::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Operator::class)]
     private ?Operator $operator = null;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     * @Assert\Expression("this.getIsActiveForPeriod() !== true or this.getDataEntryMethod() !== null", message="roro.survey.data-entry-method.not-null", groups={"roro.data-entry-method"})
-     */
+    #[Assert\Expression('this.getIsActiveForPeriod() !== true or this.getDataEntryMethod() !== null', message: 'roro.survey.data-entry-method.not-null', groups: ['roro.data-entry-method'])]
+    #[ORM\Column(type: Types::STRING, length: 10, nullable: true)]
     private ?string $dataEntryMethod = null;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private ?string $state = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Route::class, inversedBy="surveys")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Route::class, inversedBy: 'surveys')]
     private ?Route $route = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=VehicleCount::class, mappedBy="survey", orphanRemoval=true, cascade={"persist"}, indexBy="id")
-     * @ORM\OrderBy({"otherCode" = "ASC", "countryCode" = "ASC"})
-     * @Assert\Valid(groups={"roro.vehicle-counts"})
      * @var Collection<int, VehicleCount>
      */
+    #[Assert\Valid(groups: ['roro.vehicle-counts'])]
+    #[ORM\OneToMany(mappedBy: 'survey', targetEntity: VehicleCount::class, cascade: ['persist'], orphanRemoval: true, indexBy: 'id')]
+    #[ORM\OrderBy(['otherCode' => 'ASC', 'countryCode' => 'ASC'])]
     private Collection $vehicleCounts;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"roro.is-active"})
-     */
+    #[Assert\NotNull(message: 'common.choice.not-null', groups: ['roro.is-active'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $isActiveForPeriod = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
-     * @ORM\OrderBy({"createdAt" = "ASC"})
+     * @var Collection<SurveyNote>
      */
+    #[ORM\OneToMany(targetEntity: SurveyNote::class, mappedBy: 'survey')]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $notes;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTime $firstReminderSentDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $firstReminderSentDate = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTime $secondReminderSentDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $secondReminderSentDate = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comments = null;
 
     private ?DataEntryDebugInfo $dataEntryDebugInfo = null;
 
-    /**
-     * @Assert\Callback(groups={"roro.vehicle-counts"})
-     */
+    #[Assert\Callback(groups: ['roro.vehicle-counts'])]
     public function validateVehicleCount(ExecutionContextInterface $context): void
     {
         foreach($this->vehicleCounts as $vehicleCount) {
@@ -125,9 +102,7 @@ class Survey implements SurveyStateInterface
         }
     }
 
-    /**
-     * @Assert\Callback(groups={"roro.survey.data-entry"})
-     */
+    #[Assert\Callback(groups: ['roro.survey.data-entry'])]
     public function validateDataEntry(ExecutionContextInterface $context): void
     {
         $debug = $this->getDataEntryDebugInfo();
@@ -193,11 +168,13 @@ class Survey implements SurveyStateInterface
         return $this;
     }
 
+    #[\Override]
     public function getState(): ?string
     {
         return $this->state;
     }
 
+    #[\Override]
     public function setState(?string $state): self
     {
         $this->state = $state;
@@ -271,7 +248,7 @@ class Survey implements SurveyStateInterface
     protected function getVehicleCountOrderCriteria(): Criteria
     {
         return Criteria::create()
-            ->orderBy(array("label" => Criteria::ASC));
+            ->orderBy(["label" => 'ASC']);
     }
 
     public function addCountryVehicleCount(VehicleCount $countryVehicleCount): self
@@ -322,21 +299,24 @@ class Survey implements SurveyStateInterface
         return $this;
     }
 
+    #[\Override]
     public function getNotes(): Collection
     {
         return $this->notes;
     }
 
+    #[\Override]
     public function setNotes(Collection $notes): self
     {
         $this->notes = $notes;
         return $this;
     }
 
+    #[\Override]
     public function addNote(NoteInterface $note): self
     {
         if (!$note instanceof SurveyNote) {
-            throw new \RuntimeException("Got a ".get_class($note).", but expected a ".SurveyNote::class);
+            throw new \RuntimeException("Got a ".$note::class.", but expected a ".SurveyNote::class);
         }
 
         if (!$this->notes->contains($note)) {
@@ -345,6 +325,12 @@ class Survey implements SurveyStateInterface
         }
 
         return $this;
+    }
+
+    #[\Override]
+    public function createNote(): NoteInterface
+    {
+        return new SurveyNote();
     }
 
     public function getFirstReminderSentDate(): ?\DateTime
@@ -402,9 +388,10 @@ class Survey implements SurveyStateInterface
         ]);
     }
 
+    #[\Override]
     public function getChasedCount(): int
     {
-        return array_reduce($this->notes->toArray(), fn($c, SurveyNote $i) => $c + ($i->getWasChased() ? 1 : 0)) ?? 0;
+        return array_reduce($this->getNotes()->toArray(), fn($c, NoteInterface $i) => $c + ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
     public function merge(?Survey $survey): void

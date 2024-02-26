@@ -4,6 +4,7 @@ namespace App\ML\FileType;
 
 class IrhsFileType implements FileTypeInterface
 {
+    #[\Override]
     public function getColumnsNames(): array
     {
         return [
@@ -21,6 +22,7 @@ class IrhsFileType implements FileTypeInterface
         ];
     }
 
+    #[\Override]
     public function getName(): string
     {
         return 'irhs';

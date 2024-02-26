@@ -19,15 +19,12 @@ class PersonalisationHelper
 
     public function getForEntity(object $entity): array
     {
-        switch (true) {
-            case ($entity instanceof DomesticSurvey):
-                return $this->getForDomesticSurvey($entity);
-            case ($entity instanceof InternationalSurvey):
-                return $this->getForInternationalSurvey($entity);
-            case ($entity instanceof PreEnquiry):
-                return $this->getForPreEnquiry($entity);
-        }
-        throw new \LogicException("unexpected entity class: " . get_class($entity));
+        return match (true) {
+            $entity instanceof DomesticSurvey => $this->getForDomesticSurvey($entity),
+            $entity instanceof InternationalSurvey => $this->getForInternationalSurvey($entity),
+            $entity instanceof PreEnquiry => $this->getForPreEnquiry($entity),
+            default => throw new \LogicException("unexpected entity class: " . $entity::class),
+        };
     }
 
     private function getForDomesticSurvey(DomesticSurvey $survey): array

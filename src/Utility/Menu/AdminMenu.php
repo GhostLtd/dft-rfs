@@ -5,26 +5,21 @@ namespace App\Utility\Menu;
 use App\Controller\Admin\Domestic\SurveyController as DomSurveyController;
 use App\Controller\Admin\International\SurveyController as IntSurveyController;
 use App\Controller\Admin\PreEnquiry\EditController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
 
 class AdminMenu implements MenuInterface
 {
     use RoleFilterTrait;
 
-    protected Security $security;
-    protected RouterInterface $router;
-
-    public function __construct(Security $security, RouterInterface $router)
+    public function __construct(protected Security $security, protected RouterInterface $router)
     {
-        $this->security = $security;
-        $this->router = $router;
     }
 
     /**
      * @return array<int, MenuItemInterface>
      */
+    #[\Override]
     public function getMenuItems(): array
     {
         return $this->filterMenuItemsByRole($this->security, [

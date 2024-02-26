@@ -46,7 +46,7 @@ class Features
         );
 
         if (!in_array($feature, $allFeatures)) {
-            throw new \RuntimeException("Unknown feature '${feature}'");
+            throw new \RuntimeException("Unknown feature '{$feature}'");
         }
     }
 

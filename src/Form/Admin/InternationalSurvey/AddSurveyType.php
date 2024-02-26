@@ -12,6 +12,7 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class AddSurveyType extends AbstractType implements DataTransformerInterface
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "admin.international.survey";
@@ -65,6 +66,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -74,11 +76,13 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
         ]);
     }
 
+    #[\Override]
     public function transform($value): mixed
     {
         return $value;
     }
 
+    #[\Override]
     public function reverseTransform($value): mixed
     {
         if ($value instanceof Survey) {

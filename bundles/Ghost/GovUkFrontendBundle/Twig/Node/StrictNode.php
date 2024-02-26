@@ -12,6 +12,7 @@ class StrictNode extends Node
         parent::__construct(['body' => $body], ['enabled' => $enabled], $lineno, $tag);
     }
 
+    #[\Override]
     public function compile(Compiler $compiler): void
     {
         $compiler->write("\$_strictVars = \$this->env->isStrictVariables();\n");

@@ -6,25 +6,22 @@ namespace Ghost\GovUkFrontendBundle\Model;
 
 class NotificationBanner
 {
-    const FLASH_BAG_TYPE = 'notification-banner';
-    const STYLE_SUCCESS = 'success';
-
-    public $title;
-    public $heading;
-    public $content;
+    public const FLASH_BAG_TYPE = 'notification-banner';
+    public const STYLE_SUCCESS = 'success';
 
     /**
-     * Valid options are:
-     *  - type: false | 'success'
-     * @var array
+     * @param mixed[] $options
      */
-    public $options;
-
-    public function __construct($title, $heading, $content, $options = [])
+    public function __construct(
+        public $title,
+        public $heading,
+        public $content,
+        /**
+         * Valid options are:
+         *  - type: false | 'success'
+         */
+        public $options = []
+    )
     {
-        $this->title = $title;
-        $this->heading = $heading;
-        $this->content = $content;
-        $this->options = $options;
     }
 }

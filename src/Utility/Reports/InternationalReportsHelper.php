@@ -70,6 +70,7 @@ class InternationalReportsHelper extends AbstractReportsHelper
         );
     }
 
+    #[\Override]
     protected function addDateRelatedGroupAndOrder(QueryBuilder $qb): void
     {
         $qb

@@ -5,18 +5,19 @@ namespace App\Controller\InternationalSurvey;
 use App\Entity\International\Trip;
 use App\Repository\International\TripRepository;
 use App\Utility\ConfirmAction\International\DeleteTripConfirmAction;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class TripController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -26,36 +27,27 @@ class TripController extends AbstractController
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const TRIP_ROUTE = self::ROUTE_PREFIX.'view';
 
-    protected TranslatorInterface $translator;
-    protected TripRepository $tripRepository;
-
-    public function __construct(TranslatorInterface $translator, TripRepository $tripRepository)
+    public function __construct(protected TranslatorInterface $translator, protected TripRepository $tripRepository)
     {
-        $this->translator = $translator;
-        $this->tripRepository = $tripRepository;
     }
 
-    /**
-     * @Route("/international-survey/trips/{id}", name=self::TRIP_ROUTE)
-     */
-    public function trip(string $id) {
+    #[Route(path: '/international-survey/trips/{id}', name: self::TRIP_ROUTE)]
+    public function trip(string $id): Response {
         return $this->render('international_survey/trip/trip.html.twig', [
             'trip' => $this->getTrip($id),
         ]);
     }
 
-    /**
-     * @Route("/international-survey/trips/{tripId}/delete", name=self::DELETE_ROUTE)
-     * @Template("international_survey/trip/delete.html.twig")
-     */
-    public function delete(DeleteTripConfirmAction $deleteTripConfirmAction, Request $request, $tripId)
+    #[Route(path: '/international-survey/trips/{tripId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('international_survey/trip/delete.html.twig')]
+    public function delete(DeleteTripConfirmAction $deleteTripConfirmAction, Request $request, $tripId): RedirectResponse|array
     {
         $trip = $this->getTrip($tripId);
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
             $request,
-            function () use ($trip) {return $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]);},
-            function () use ($trip) {return $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]);},
+            fn() => $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]),
+            fn() => $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]),
         );
     }
 

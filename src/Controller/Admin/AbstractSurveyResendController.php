@@ -45,7 +45,7 @@ abstract class AbstractSurveyResendController extends AbstractController
         }
 
         return $this->render($templatePath."/resend.html.twig", [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

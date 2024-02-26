@@ -8,6 +8,8 @@ use App\Entity\RoRo\Survey;
 use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -71,12 +73,12 @@ class SurveyRepository extends ServiceEntityRepository
             ->andWhere('survey.surveyPeriodStart >= :start')
             ->andWhere('survey.surveyPeriodStart <= :end')
             ->getQuery()
-            ->setParameters([
-                'operatorId' => $operator->getId(),
-                'routeId' => $route->getId(),
-                'start' => $start,
-                'end' => $end,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('operatorId', $operator->getId()),
+                new Parameter('routeId', $route->getId()),
+                new Parameter('start', $start),
+                new Parameter('end', $end),
+            ]))
             ->getResult();
     }
 
@@ -90,9 +92,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->join('survey.operator', 'operator')
             ->where('operator.id = :operatorId')
             ->getQuery()
-            ->setParameters([
-                'operatorId' => $operator->getId(),
-            ])
+            ->setParameter('operatorId', $operator->getId())
             ->getResult();
     }
 
@@ -114,9 +114,7 @@ class SurveyRepository extends ServiceEntityRepository
             ->orderBy('survey.surveyPeriodStart')
             ->addOrderBy('uk_port.name')
             ->addOrderBy('foreign_port.name')
-            ->setParameters([
-                'operatorId' => $operator->getId(),
-            ])
+            ->setParameter('operatorId', $operator->getId())
             ->getQuery()
             ->getResult();
     }
@@ -142,11 +140,11 @@ class SurveyRepository extends ServiceEntityRepository
             ->where('survey.state IN (:states)')
             ->andWhere('survey.surveyPeriodStart >= :monthStart')
             ->andWhere('survey.surveyPeriodStart < :monthEnd')
-            ->setParameters([
-                'states' => [SurveyStateInterface::STATE_APPROVED, SurveyStateInterface::STATE_CLOSED],
-                'monthStart' => $monthStart,
-                'monthEnd' => $monthEnd,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', [SurveyStateInterface::STATE_APPROVED, SurveyStateInterface::STATE_CLOSED]),
+                new Parameter('monthStart', $monthStart),
+                new Parameter('monthEnd', $monthEnd),
+            ]))
             ->getQuery()
             ->execute();
     }
@@ -157,10 +155,10 @@ class SurveyRepository extends ServiceEntityRepository
             ->select('count(s) AS count')
             ->where('s.surveyPeriodStart < :sevenDaysAgo')
             ->andWhere('s.state IN (:states)')
-            ->setParameters([
-                'states' => SurveyStateInterface::ACTIVE_STATES,
-                'sevenDaysAgo' => (new \DateTime())->modify('-7 days'),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('sevenDaysAgo', (new \DateTime())->modify('-7 days')),
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -170,9 +168,7 @@ class SurveyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->select('count(s) AS count')
             ->where('s.state IN (:states)')
-            ->setParameters([
-                'states' => SurveyStateInterface::ACTIVE_STATES,
-            ])
+            ->setParameter('states', SurveyStateInterface::ACTIVE_STATES)
             ->getQuery()
             ->getSingleScalarResult();
     }

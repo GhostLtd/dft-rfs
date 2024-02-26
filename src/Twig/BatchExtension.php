@@ -7,10 +7,11 @@ use Twig\TwigFilter;
 
 class BatchExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFilters(): array
     {
         return [
-            new TwigFilter('to_lists', [$this, 'toLists']),
+            new TwigFilter('to_lists', $this->toLists(...)),
         ];
     }
 

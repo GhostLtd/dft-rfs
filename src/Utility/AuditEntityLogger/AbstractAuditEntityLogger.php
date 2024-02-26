@@ -21,7 +21,7 @@ abstract class AbstractAuditEntityLogger implements AuditEntityLogger
             ->setCategory($this->getCategory())
             ->setUsername($username)
             ->setEntityId($this->getEntityId($entity))
-            ->setEntityClass($entity instanceof Proxy ? current(class_parents($entity)) : get_class($entity))
+            ->setEntityClass($entity instanceof Proxy ? current(class_parents($entity)) : $entity::class)
             ->setTimestamp(new DateTime())
             ->setData($data);
     }

@@ -5,6 +5,7 @@ namespace App\Command;
 use App\ML\ConsoleLogger;
 use App\ML\Config\DefaultTabularConfig;
 use App\ML\InputAnalyser;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
@@ -15,11 +16,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 // TODO: Combine with parent class (there is no longer needs to be a text/tabular command split)
+#[AsCommand('rfs:ml:prepare-data-set', 'Process the input CSVs for a dataset')]
 class RfsMLPrepareDataSetCommand extends AbstractMLDataSetCommand
 {
-    protected static $defaultName = 'rfs:ml:prepare-data-set';
-    protected static $defaultDescription = 'Process the input CSVs for a dataset';
-
+    #[\Override]
     protected function configure(): void
     {
         parent::configure();
@@ -29,6 +29,7 @@ class RfsMLPrepareDataSetCommand extends AbstractMLDataSetCommand
             ->addOption('show-contradictions', 'c', InputOption::VALUE_NONE, 'Show contradictions');
     }
 
+    #[\Override]
     protected function doExecute(InputInterface $input, OutputInterface $output): int
     {
         $showContradictions = $input->getOption('show-contradictions') ?? false;

@@ -95,6 +95,7 @@ class ChoiceTypeTest extends AbstractGovUkFrontendTest
         return null;
     }
 
+    #[\Override]
     protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in ChoiceType
@@ -139,7 +140,7 @@ class ChoiceTypeTest extends AbstractGovUkFrontendTest
                     $formOptions['label_html'] = !empty($value['legend']['html']);
                     if ($value['legend']['classes'] ?? false)
                     {
-                        $formOptions['label_attr'] = $formOptions['label_attr'] ?? [];
+                        $formOptions['label_attr'] ??= [];
                         $formOptions['label_attr']['class'] = trim(($formOptions['label_attr']['class'] ?? "") . " {$value['legend']['classes']}");
                     }
                     $formOptions['label_is_page_heading'] = $value['legend']['isPageHeading'] ?? false;

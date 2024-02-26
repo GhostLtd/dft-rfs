@@ -10,35 +10,32 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractConfirmAction implements ConfirmActionInterface
 {
     protected $subject;
-    protected FormFactoryInterface $formFactory;
-    protected RequestStack $requestStack;
-    protected TranslatorInterface $translator;
     protected array $extraViewData;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator)
+    public function __construct(protected FormFactoryInterface $formFactory, protected RequestStack $requestStack, protected TranslatorInterface $translator)
     {
-        $this->formFactory = $formFactory;
-        $this->requestStack = $requestStack;
-        $this->translator = $translator;
         $this->extraViewData = [];
     }
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
-    public function setSubject($subject): self
+    public function setSubject($subject): static
     {
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getConfirmedBanner(): NotificationBanner
     {
         return new NotificationBanner(
@@ -49,6 +46,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         );
     }
 
+    #[\Override]
     public function getCancelledBanner(): NotificationBanner
     {
         return new NotificationBanner(
@@ -63,6 +61,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         return $this->translator->trans($key, $this->getTranslationParameters(), $this->getTranslationDomain());
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return [
@@ -72,11 +71,13 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         ];
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return null;
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         return [];
@@ -93,8 +94,6 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
     }
 
     /**
-     * @param Request $request
-     * @param callable $confirmedActionUrlCallback
      * @param null|callable $cancelledActionUrlCallback if omitted, will use the same callback as for confirmed
      * @return array|RedirectResponse
      */
@@ -106,18 +105,22 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
             $form->handleRequest($request);
 
             $confirm = $form->get('confirm');
-            $flashBag = $this->requestStack->getSession()->getBag('flashes');
+
+            $session = $this->requestStack->getSession();
+            $flashBag = ($session instanceof FlashBagAwareSessionInterface) ?
+                $session->getFlashBag() :
+                null;
 
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
                 if ($form->isValid()) {
                     $this->doConfirmedAction($form->getData());
                     $redirectUrl = $confirmedActionUrlCallback();
 
-                    $flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
+                    $flashBag?->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
                     return new RedirectResponse($redirectUrl);
                 }
             } else {
-                $flashBag->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
+                $flashBag?->add(NotificationBanner::FLASH_BAG_TYPE, $this->getCancelledBanner());
                 return new RedirectResponse($cancelledActionUrlCallback ? $cancelledActionUrlCallback() : $confirmedActionUrlCallback());
             }
         }
@@ -131,12 +134,14 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         ]);
     }
 
+    #[\Override]
     public function getExtraViewData(): array
     {
         return $this->extraViewData;
     }
 
-    public function setExtraViewData(array $extraViewData): self
+    #[\Override]
+    public function setExtraViewData(array $extraViewData): static
     {
         $this->extraViewData = $extraViewData;
         return $this;

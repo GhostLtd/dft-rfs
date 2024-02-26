@@ -8,59 +8,44 @@ use App\Entity\Route\Route;
 use App\Repository\RoRo\OperatorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=OperatorRepository::class)
- * @ORM\Table(name="roro_operator")
- * @UniqueEntity(
- *     fields={"name"},
- *     message="operators.duplicate-name",
- *     groups={"admin_add_operator", "admin_edit_operator"}
- * )
- * @UniqueEntity(
- *     fields={"code"},
- *     message="operators.duplicate-code",
- *     groups={"admin_add_operator", "admin_edit_operator"}
- * )
- */
+#[UniqueEntity(fields: ['name'], message: 'operators.duplicate-name', groups: ['admin_add_operator', 'admin_edit_operator'])]
+#[UniqueEntity(fields: ['code'], message: 'operators.duplicate-code', groups: ['admin_add_operator', 'admin_edit_operator'])]
+#[ORM\Table(name: 'roro_operator')]
+#[ORM\Entity(repositoryClass: OperatorRepository::class)]
 class Operator
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull(message="operators.name.not-null", groups={"admin_add_operator", "admin_edit_operator"})
-     */
+    #[Assert\NotNull(message: 'operators.name.not-null', groups: ['admin_add_operator', 'admin_edit_operator'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $name = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Route::class, inversedBy="roroOperators")
-     * @ORM\JoinTable(name="roro_operator_route")
      * @var Collection<Route>
      */
+    #[ORM\JoinTable(name: 'roro_operator_route')]
+    #[ORM\ManyToMany(targetEntity: Route::class, inversedBy: 'roroOperators')]
     private Collection $routes;
 
     /**
-     * @ORM\OneToMany(targetEntity=RoRoUser::class, mappedBy="operator", orphanRemoval=true)
      * @var Collection<RoRoUser>
      */
+    #[ORM\OneToMany(mappedBy: 'operator', targetEntity: RoRoUser::class, orphanRemoval: true)]
     private Collection $users;
 
-    /**
-     * @ORM\Column(type="smallint")
-     * @Assert\NotNull(message="operators.code.not-null", groups={"admin_add_operator", "admin_edit_operator"})
-     * @Assert\Positive(message="common.number.positive", groups={"admin_add_operator", "admin_edit_operator"})
-     * @Assert\Range(max=65000, maxMessage="common.number.max", groups={"admin_add_operator", "admin_edit_operator"})
-     */
+    #[Assert\NotNull(message: 'operators.code.not-null', groups: ['admin_add_operator', 'admin_edit_operator'])]
+    #[Assert\Positive(message: 'common.number.positive', groups: ['admin_add_operator', 'admin_edit_operator'])]
+    #[Assert\Range(maxMessage: 'common.number.max', max: 65000, groups: ['admin_add_operator', 'admin_edit_operator'])]
+    #[ORM\Column(type: Types::SMALLINT)]
     private ?int $code = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=false)
-     * @Assert\NotNull(message="operators.is-active.not-null", groups={"admin_add_operator", "admin_edit_operator"})
-     */
+    #[Assert\NotNull(message: 'operators.is-active.not-null', groups: ['admin_add_operator', 'admin_edit_operator'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private ?bool $isActive = true;
 
     public function __construct()

@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class PostcodeValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof Postcode) {
             throw new UnexpectedTypeException($constraint, Postcode::class);

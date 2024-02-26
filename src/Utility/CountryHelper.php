@@ -9,11 +9,8 @@ use Symfony\Component\Intl\Countries;
 
 class CountryHelper
 {
-    protected RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(protected RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
     public function getCountryLabel(CountryInterface $entity): ?string

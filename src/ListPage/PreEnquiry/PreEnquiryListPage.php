@@ -15,14 +15,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PreEnquiryListPage extends AbstractListPage
 {
-    private PreEnquiryRepository $repository;
-
-    public function __construct(PreEnquiryRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(private PreEnquiryRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $routeRepository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), PreEnquiry::STATE_FILTER_CHOICES), PreEnquiry::STATE_FILTER_CHOICES);
@@ -35,6 +33,7 @@ class PreEnquiryListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('preEnquiry');
@@ -44,6 +43,7 @@ class PreEnquiryListPage extends AbstractListPage
             ->leftJoin('preEnquiry.passcodeUser', 'user');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

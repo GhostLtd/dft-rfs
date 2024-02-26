@@ -9,16 +9,14 @@ class DuplicateAndContradictionTracker
     protected array $duplicates;
     protected array $outputtedDuplicates;
     protected array $seen;
-    protected Stats $stats;
 
-    public function __construct(Stats $stats)
+    public function __construct(protected Stats $stats)
     {
         $this->resetOutputtedDuplicates();
 
         $this->contradictions = [];
         $this->duplicates = [];
         $this->seen = [];
-        $this->stats = $stats;
     }
 
     public function resetOutputtedDuplicates(): void {
@@ -90,9 +88,9 @@ class DuplicateAndContradictionTracker
     }
 
     public function getContradictionsAndConfusions(): \Generator {
-        uasort($this->contradictions, function(Contradiction $a, Contradiction $b) {
-            return $b->getTotal() <=> $a->getTotal();
-        });
+        uasort($this->contradictions, fn(Contradiction $a, Contradiction $b) =>
+            $b->getTotal() <=> $a->getTotal()
+        );
 
         foreach($this->contradictions as $contradiction) {
             yield $contradiction;

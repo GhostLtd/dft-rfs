@@ -21,11 +21,10 @@ abstract class AbstractVoterTest extends WebTestCase
     protected ReferenceRepository $fixtureReferenceRepository;
     protected TokenStorageInterface $tokenStorage;
 
+    #[\Override]
     protected function setUp(): void
     {
-        static::bootKernel();
-
-        $container = static::getContainer()->get('test.service_container');
+        $container = static::getContainer();
         $this->authChecker = $container->get('security.authorization_checker');
         $this->databaseTool = $container->get(DatabaseToolCollection::class)->get();
         $this->tokenStorage = $container->get('security.token_storage');

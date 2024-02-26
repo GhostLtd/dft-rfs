@@ -20,13 +20,22 @@ use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
-    const CONTEXT_KEY = 'for-export';
+    public const CONTEXT_KEY = 'for-export';
 
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Survey::class => false,
+        ];
+    }
+
+    #[\Override]
     protected function getMapping(): array
     {
         $true = new BooleanLiteral(true);

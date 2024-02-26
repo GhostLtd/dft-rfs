@@ -11,7 +11,8 @@ class VehicleWeightType extends AbstractType
 {
     protected string $translationKeyPrefix = "international.vehicle.vehicle-weight";
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
@@ -32,7 +33,8 @@ class VehicleWeightType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['vehicle_weight'],

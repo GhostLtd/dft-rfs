@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\RoRoUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +21,7 @@ class RoRoUserRepository extends ServiceEntityRepository
         parent::__construct($registry, RoRoUser::class);
     }
 
+    #[\Override]
     public function find($id, $lockMode = null, $lockVersion = null): ?RoRoUser
     {
         try {
@@ -30,12 +33,10 @@ class RoRoUserRepository extends ServiceEntityRepository
                 ->leftJoin('routes.ukPort', 'uk_port')
                 ->leftJoin('routes.foreignPort', 'foreign_port')
                 ->where('user.id = :userId')
-                ->setParameters([
-                    'userId' => $id
-                ])
+                ->setParameter('userId', $id)
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
@@ -49,10 +50,10 @@ class RoRoUserRepository extends ServiceEntityRepository
                 ->join('u.operator', 'o')
                 ->where('u.id = :userId')
                 ->andWhere('o.id = :operatorId')
-                ->setParameters([
-                    'operatorId' => $operatorId,
-                    'userId' => $userId,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('operatorId', $operatorId),
+                    new Parameter('userId', $userId),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult();
         } catch (NonUniqueResultException) {

@@ -11,6 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = (new PasscodeUser())
@@ -29,6 +30,7 @@ class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [SurveyFixtures::class];

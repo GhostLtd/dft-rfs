@@ -38,11 +38,13 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         parent::__construct($formFactory, $requestStack, $translator);
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     function getTranslationParameters(): array
     {
         return [
@@ -51,11 +53,13 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return "common.survey.workflow-transition";
     }
 
+    #[\Override]
     public function doConfirmedAction($formData): void
     {
         $this->roroSurveyStateMachine->apply($this->getSubject(), $this->transition);

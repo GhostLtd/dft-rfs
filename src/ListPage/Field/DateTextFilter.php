@@ -7,24 +7,24 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class DateTextFilter extends Simple implements FilterableInterface
 {
-    protected array $formOptions;
-
-    public function __construct(string $label, string $propertyPath, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, protected array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return $this->formOptions;
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return Gds\InputType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         $normalisedDate = $this->normaliseDate(trim($formData));

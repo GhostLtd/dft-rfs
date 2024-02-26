@@ -15,12 +15,14 @@ class InternationalWeek implements DateSeriesGeneratorInterface
     public function __construct(protected int $weekMode = 0)
     {}
 
+    #[\Override]
     public function dateToParts(\DateTimeInterface $dateTime): array
     {
         $weekNum = WeekNumberHelper::getWeekNumber($dateTime);
         return [$weekNum];
     }
 
+    #[\Override]
     public function getPartsCount(): int
     {
         return 1;
@@ -29,6 +31,7 @@ class InternationalWeek implements DateSeriesGeneratorInterface
     /**
      * @return \Generator<array>
      */
+    #[\Override]
     public function dateRangeGenerator(?\DateTime $minStart, ?\DateTime $maxStart): \Generator
     {
         [$firstWeek] = $this->dateToParts($minStart);
@@ -39,6 +42,7 @@ class InternationalWeek implements DateSeriesGeneratorInterface
         }
     }
 
+    #[\Override]
     public function addToQueryBuilder(QueryBuilder $qb, string $field): QueryBuilder
     {
         return $qb

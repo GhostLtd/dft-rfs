@@ -10,7 +10,8 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class GoodsUnloadedWeightDataMapper implements DataMapperInterface
 {
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -20,8 +21,8 @@ class GoodsUnloadedWeightDataMapper implements DataMapperInterface
             throw new Exception\UnexpectedTypeException($viewData, Action::class);
         }
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
 
         if (!isset($forms['weightOfGoods'])) {
             return;
@@ -40,10 +41,11 @@ class GoodsUnloadedWeightDataMapper implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+        /** @var FormInterface[] $forms */
 
         if (!$viewData instanceof Action) {
             throw new Exception\UnexpectedTypeException($viewData, Action::class);

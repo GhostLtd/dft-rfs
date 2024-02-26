@@ -10,14 +10,12 @@ use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 
 class DaysFilter extends Simple implements FilterableInterface
 {
-    private array $formOptions;
-
-    public function __construct(string $label, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, private array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, null, $cellOptions);
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -30,11 +28,13 @@ class DaysFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return ChoiceType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         if (!isset($formData)) {

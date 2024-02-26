@@ -17,19 +17,19 @@ use InvalidArgumentException;
 
 class ActionState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_PLACE = 'place';
-    const STATE_GOODS_DESCRIPTION = 'goods-description';
-    const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
-    const STATE_CARGO_TYPE = 'cargo-type';
-    const STATE_WEIGHT_LOADED = 'weight-loaded';
+    public const STATE_PLACE = 'place';
+    public const STATE_GOODS_DESCRIPTION = 'goods-description';
+    public const STATE_HAZARDOUS_GOODS = 'hazardous-goods';
+    public const STATE_CARGO_TYPE = 'cargo-type';
+    public const STATE_WEIGHT_LOADED = 'weight-loaded';
 
-    const STATE_CONSIGNMENT_UNLOADED = 'consignment-unloaded';
-    const STATE_WEIGHT_UNLOADED = 'weight-unloaded';
+    public const STATE_CONSIGNMENT_UNLOADED = 'consignment-unloaded';
+    public const STATE_WEIGHT_UNLOADED = 'weight-unloaded';
 
-    const STATE_ADD_ANOTHER = 'add-another';
-    const STATE_END = 'end';
+    public const STATE_ADD_ANOTHER = 'add-another';
+    public const STATE_END = 'end';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_PLACE => PlaceType::class,
         self::STATE_GOODS_DESCRIPTION => GoodsDescriptionType::class,
         self::STATE_HAZARDOUS_GOODS => HazardousGoodsType::class,
@@ -42,7 +42,7 @@ class ActionState extends AbstractFormWizardState implements FormWizardStateInte
         self::STATE_ADD_ANOTHER => AddAnotherType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_PLACE => 'international_survey/action/form-place.html.twig',
         self::STATE_GOODS_DESCRIPTION => 'international_survey/action/form-goods-description.html.twig',
         self::STATE_HAZARDOUS_GOODS => 'international_survey/action/form-hazardous-goods.html.twig',
@@ -56,35 +56,41 @@ class ActionState extends AbstractFormWizardState implements FormWizardStateInte
     /** @var Action */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === Action::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . Action::class);
+        if ($subject::class !== Action::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . Action::class);
         }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         if (!$this->subject instanceof Action) {

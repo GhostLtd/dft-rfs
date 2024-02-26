@@ -13,24 +13,25 @@ class ApproveSurveyConfirmAction extends AbstractConfirmAction
 {
     /** @var Survey */
     protected $subject;
-    private WorkflowInterface $internationalSurveyStateMachine;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, WorkflowInterface $internationalSurveyStateMachine)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $internationalSurveyStateMachine)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'international.approve-survey';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->internationalSurveyStateMachine->apply($this->getSubject(), 'approve');

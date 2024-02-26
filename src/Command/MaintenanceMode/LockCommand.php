@@ -4,25 +4,25 @@ namespace App\Command\MaintenanceMode;
 
 use App\Entity\Utility\MaintenanceLock;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('rfs:maintenance-mode:lock')]
 class LockCommand extends Command
 {
-    protected static $defaultName = 'rfs:maintenance-mode:lock';
     private SymfonyStyle $io;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
         parent::__construct();
-        $this->entityManager = $entityManager;
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Lock the website for maintenance')
@@ -31,6 +31,7 @@ class LockCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -50,7 +51,7 @@ class LockCommand extends Command
         return 0;
     }
 
-    protected function lock(array $whitelistIps)
+    protected function lock(array $whitelistIps): void
     {
         $this->entityManager->beginTransaction();
         $this->entityManager->createQueryBuilder()
@@ -65,7 +66,7 @@ class LockCommand extends Command
         $this->entityManager->commit();
     }
 
-    protected function validateIps(array $ips)
+    protected function validateIps(array $ips): bool
     {
         $result = array_diff($ips, filter_var_array($ips, FILTER_VALIDATE_IP));
         if (empty($result)) {

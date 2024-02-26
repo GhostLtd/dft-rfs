@@ -10,10 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class VehicleFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var Vehicle $vehicle */
-        $vehicle = $this->getReference('vehicle:simple');
+        $vehicle = $this->getReference('vehicle:simple', Vehicle::class);
 
         $vehicle
             ->setAxleConfiguration(232)
@@ -26,6 +27,7 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [BusinessFixtures::class];

@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Validation;
 
 class CommaSeparatedEmailsValidatorTest extends WebTestCase
 {
+    #[\Override]
     public function setUp(): void
     {
         static::bootKernel();

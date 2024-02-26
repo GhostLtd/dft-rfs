@@ -8,22 +8,12 @@ use Doctrine\Common\Util\ClassUtils;
 abstract class AbstractSendMessage extends AbstractMessage
 {
     protected ?string $originatingEntityClass;
-    protected ?string $originatingEntityId;
-    protected ?string $templateId;
-    protected ?array $personalisation;
-    protected ?string $recipient;
     protected ?string $reference;
-    protected ?string $eventName;
 
-    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $templateId, string $recipient, array $personalisation = [], ?string $reference = null)
+    public function __construct(protected ?string $eventName, string $originatingEntityClass, protected ?string $originatingEntityId, protected ?string $templateId, protected ?string $recipient, protected ?array $personalisation = [], ?string $reference = null)
     {
         $this->originatingEntityClass = ClassUtils::getRealClass($originatingEntityClass);
-        $this->originatingEntityId = $originatingEntityId;
-        $this->templateId = $templateId;
-        $this->personalisation = $personalisation;
-        $this->recipient = $recipient;
         $this->reference = $reference ?? $this->buildReference();
-        $this->eventName = $eventName;
     }
 
     public function buildReference(): string

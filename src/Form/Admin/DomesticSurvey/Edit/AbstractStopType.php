@@ -26,18 +26,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractStopType extends AbstractType implements DataMapperInterface
 {
-    private TranslatorInterface $translator;
-    private HazardousGoodsHelper $hazardousGoodsHelper;
+    protected string $dataClass;
 
-    private string $dataClass;
+    public function __construct(protected TranslatorInterface $translator, protected HazardousGoodsHelper $hazardousGoodsHelper)
+    {}
 
-    public function __construct(TranslatorInterface $translator, HazardousGoodsHelper $hazardousGoodsHelper)
-    {
-        $this->translator = $translator;
-        $this->hazardousGoodsHelper = $hazardousGoodsHelper;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->dataClass = $options['data_class'];
         $builder->setDataMapper($this);
@@ -45,11 +40,12 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $isNorthernIreland = $this->isNorthernIreland($event->getData());
 
-            $transferChoices = array_merge(array_flip(array_map(function ($v) {
-                return "Yes, via " . strtolower($this->translator->trans($v));
-            }, array_flip(Day::TRANSFER_CHOICES))), [
-                'No' => false,
-            ]);
+            $yesTransferChoices = array_flip(array_map(
+                fn($v) => "Yes, via " . strtolower($this->translator->trans($v)),
+                array_flip(Day::TRANSFER_CHOICES)
+            ));
+
+            $transferChoices = array_merge($yesTransferChoices, ['No' => false]);
 
             if ($options['is_add_form']) {
                 $transferChoices = ['' => null] + $transferChoices;
@@ -188,13 +184,12 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         return $stop->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setAllowedValues('data_class', [DayStop::class, DaySummary::class]);
 
-        $resolver->setDefault('is_northern_ireland', function(FormInterface $form) {
-            return $this->isNorthernIreland($form->getData());
-        });
+        $resolver->setDefault('is_northern_ireland', fn(FormInterface $form) => $this->isNorthernIreland($form->getData()));
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
             /** @var DayStop $stop */
@@ -230,9 +225,10 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
-        if ($viewData === null || !$viewData instanceof $this->dataClass) {
+        if (!$viewData instanceof $this->dataClass) {
             return;
         }
 
@@ -242,26 +238,30 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
         foreach ($forms as $name => $field) {
             switch ($name) {
                 case 'goodsTransferredFrom':
-                    $forms[$name]->setData($viewData->getGoodsLoaded() !== false ? $viewData->getGoodsTransferredFrom() : false);
+                    $field->setData($viewData->getGoodsLoaded() !== false ? $viewData->getGoodsTransferredFrom() : false);
                     break;
                 case 'goodsTransferredTo':
-                    $forms[$name]->setData($viewData->getGoodsUnloaded() !== false ? $viewData->getGoodsTransferredTo() : false);
+                    $field->setData($viewData->getGoodsUnloaded() !== false ? $viewData->getGoodsTransferredTo() : false);
                     break;
                 case 'submit':
                 case 'cancel':
                     break;
                 default:
-                    $forms[$name]->setData($accessor->getValue($viewData, $name));
+                    $field->setData($accessor->getValue($viewData, $name));
             }
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
+        if (!$viewData instanceof DayStop && !$viewData instanceof DaySummary) {
+            return;
+        }
+
         $forms = iterator_to_array($forms);
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        /** @var DayStop | DaySummary $viewData */
         foreach ($forms as $name => $field) {
             switch ($name) {
                 case 'goodsTransferredFrom':

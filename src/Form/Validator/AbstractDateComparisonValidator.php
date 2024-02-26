@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Form\Validator;
 
 use DateTime;
@@ -12,6 +11,7 @@ use Symfony\Component\Validator\Constraints\AbstractComparisonValidator;
 
 abstract class AbstractDateComparisonValidator extends AbstractComparisonValidator
 {
+    #[\Override]
     protected function formatValue($value, $format = 0): string
     {
         if ($value instanceof DateTimeInterface) {

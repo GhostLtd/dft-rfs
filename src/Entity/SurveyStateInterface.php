@@ -6,16 +6,16 @@ use Doctrine\Common\Collections\Collection;
 
 interface SurveyStateInterface
 {
-    const STATE_NEW = 'new';
-    const STATE_INVITATION_PENDING = 'invitation pending';
-    const STATE_INVITATION_SENT = 'invited';
-    const STATE_INVITATION_FAILED = 'invitation failed';
-    const STATE_IN_PROGRESS = 'in-progress';
-    const STATE_CLOSED = 'closed';
-    const STATE_APPROVED = 'approved';
-    const STATE_REJECTED = 'rejected';
-    const STATE_EXPORTING = 'exporting';
-    const STATE_EXPORTED = 'exported';
+    public const STATE_NEW = 'new';
+    public const STATE_INVITATION_PENDING = 'invitation pending';
+    public const STATE_INVITATION_SENT = 'invited';
+    public const STATE_INVITATION_FAILED = 'invitation failed';
+    public const STATE_IN_PROGRESS = 'in-progress';
+    public const STATE_CLOSED = 'closed';
+    public const STATE_APPROVED = 'approved';
+    public const STATE_REJECTED = 'rejected';
+    public const STATE_EXPORTING = 'exporting';
+    public const STATE_EXPORTED = 'exported';
 
     public const ACTIVE_STATES = [
         self::STATE_INVITATION_SENT,

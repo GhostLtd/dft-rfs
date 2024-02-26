@@ -11,6 +11,7 @@ class TimeStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function transform($value)
     {
         if (!$value) {
@@ -35,6 +36,7 @@ class TimeStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if (!is_array($value)) {

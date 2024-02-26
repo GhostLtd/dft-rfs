@@ -10,11 +10,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PersonalDataCleanupUtility
 {
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     public function cleanupPersonalDataBefore(\DateTime $before): int
@@ -59,7 +56,7 @@ class PersonalDataCleanupUtility
             ->setCategory('cleanup-personal')
             ->setUsername('-')
             ->setEntityId($survey->getId())
-            ->setEntityClass(get_class($survey))
+            ->setEntityClass($survey::class)
             ->setTimestamp(new \DateTime())
             ->setData([]);
     }

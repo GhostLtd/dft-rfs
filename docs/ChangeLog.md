@@ -4,9 +4,14 @@
 
 ## Upcoming
 
+* **Change:** Upgrade to Symfony 6.4 and PHP 8.3
+* **Change:** Utilise Rector and Phpstan to improve code quality and add further tests
+
+## 26th Mar 2024
+
 * **Feature:** Add functional tests for IRHS wizards: initial details, add vehicle, add trip, add action
 * **Feature:** When deleting/updating/adding LCNI, update emails on relevant surveys
-* **Change:** Update govuk-frontend to 3.15 and start using the Tudor Crown branding
+* **Change:** Upgrade govuk-frontend to 3.15 and start using the Tudor Crown branding
 * **Change:** Various minor changes to combat occasional user login-related confusions caused by copy/paste and letter/form differences
 
 ## 18th Jan 2024

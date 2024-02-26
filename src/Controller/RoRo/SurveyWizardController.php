@@ -7,16 +7,15 @@ use App\Entity\RoRo\Survey;
 use App\Utility\RoRo\VehicleCountHelper;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\RoRo\RoRoState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route("/roro/survey/{surveyId}/edit/{state}", name: "app_roro_survey_")]
-#[Entity("survey", expr: "repository.find(surveyId)")]
-#[Security("is_granted('CAN_EDIT_RORO_SURVEY', survey)")]
+#[IsGranted("CAN_EDIT_RORO_SURVEY", "survey")]
 class SurveyWizardController extends AbstractSessionStateWorkflowController
 {
     protected Survey $databaseSurvey;
@@ -25,6 +24,7 @@ class SurveyWizardController extends AbstractSessionStateWorkflowController
     public function wizard(
         WorkflowInterface $roroStateMachine,
         Request $request,
+        #[MapEntity(expr: "repository.find(surveyId)")]
         Survey $survey,
         VehicleCountHelper $vehicleCountHelper,
         ?string $state = null
@@ -38,6 +38,7 @@ class SurveyWizardController extends AbstractSessionStateWorkflowController
         ]);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var RoRoState $formWizard */
@@ -58,6 +59,7 @@ class SurveyWizardController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute('app_roro_survey_edit', [
@@ -66,6 +68,7 @@ class SurveyWizardController extends AbstractSessionStateWorkflowController
         ]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->redirectToRoute('app_roro_survey_view', [

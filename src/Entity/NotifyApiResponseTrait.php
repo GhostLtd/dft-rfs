@@ -6,8 +6,6 @@ use Doctrine\Common\Collections\Collection;
 
 trait NotifyApiResponseTrait
 {
-    protected Collection $apiResponses;
-
     public function getNotifyApiResponses(): Collection
     {
         return $this->apiResponses;

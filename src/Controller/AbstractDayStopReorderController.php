@@ -18,11 +18,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class AbstractDayStopReorderController extends AbstractController
 {
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     abstract protected function getRedirectResponse(Day $day): RedirectResponse;
@@ -35,12 +32,12 @@ abstract class AbstractDayStopReorderController extends AbstractController
         try {
             return $dayRepository->getBySurveyAndDayNumber($survey, intval($dayNumber));
         }
-        catch(NonUniqueResultException $exception) {}
+        catch(NonUniqueResultException) {}
 
         throw new NotFoundHttpException();
     }
 
-    public function reorder(Request $request, Day $day): Response
+    protected function reorder(Request $request, Day $day): Response
     {
         /** @var DayStop[] $stops */
         $stops = array_values($day->getStops()->toArray());
@@ -50,9 +47,7 @@ abstract class AbstractDayStopReorderController extends AbstractController
         /** @var DayStop[] $sortedStops */
         $sortedStops = ReorderUtils::getSortedItems($stops, $mappingParam);
 
-        $mapping = array_map(function(DayStop $dayStop) {
-            return $dayStop->getNumber();
-        }, $sortedStops);
+        $mapping = array_map(fn(DayStop $dayStop) => $dayStop->getNumber(), $sortedStops);
 
         foreach($mapping as $i => $newPosition) {
             $stops[$newPosition - 1]->setNumber($i + 1);
@@ -61,7 +56,6 @@ abstract class AbstractDayStopReorderController extends AbstractController
         $form = $this->createForm(ConfirmationType::class, null, [
             'yes_label' => 'domestic.day-stop.re-order.save',
             'no_label' => 'common.actions.cancel',
-            'yes_disabled' => !empty($unloadedBeforeLoaded),
         ]);
 
         if ($request->getMethod() === Request::METHOD_POST) {
@@ -85,7 +79,7 @@ abstract class AbstractDayStopReorderController extends AbstractController
             'day' => $day,
             'survey' => $day->getResponse()->getSurvey(),
             'sortedStops' => $sortedStops,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

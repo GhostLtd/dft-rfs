@@ -8,10 +8,10 @@ use Twig\Extension\EscaperExtension;
 
 class SqlServerInsertEncoder implements EncoderInterface
 {
-    const FORMAT = 'sql-server-insert';
-    const TABLE_NAME_KEY = 'table-name';
-    const FORCE_STRING_FIELDS = 'force-string-fields';
-    const ROWS_PER_INSERT = 'rows-per-insert';
+    public const FORMAT = 'sql-server-insert';
+    public const TABLE_NAME_KEY = 'table-name';
+    public const FORCE_STRING_FIELDS = 'force-string-fields';
+    public const ROWS_PER_INSERT = 'rows-per-insert';
 
     private array $defaultContext = [
         self::TABLE_NAME_KEY => 'table_a',
@@ -26,7 +26,7 @@ class SqlServerInsertEncoder implements EncoderInterface
         $this->twig = $twig;
         $this->twig
             ->getExtension(EscaperExtension::class)
-            ->setEscaper('sql', [$this, 'sqlEscape']);
+            ->setEscaper('sql', $this->sqlEscape(...));
     }
 
     public function __construct(array $defaultContext = [])
@@ -37,6 +37,7 @@ class SqlServerInsertEncoder implements EncoderInterface
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function encode($data, $format, array $context = []): string
     {
         if (count($data) === 0) {
@@ -54,6 +55,7 @@ class SqlServerInsertEncoder implements EncoderInterface
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function supportsEncoding($format): bool
     {
         return self::FORMAT === $format;

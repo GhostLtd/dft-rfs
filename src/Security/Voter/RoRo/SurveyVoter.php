@@ -19,6 +19,7 @@ class SurveyVoter extends Voter
     public function __construct(protected OperatorSwitchHelper $operatorSwitchHelper)
     {}
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return (
@@ -31,6 +32,7 @@ class SurveyVoter extends Voter
     }
 
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

@@ -14,6 +14,7 @@ class OperatorGroupNameNotPrefixOfExistingValidator extends ConstraintValidator
         protected OperatorGroupRepository $operatorGroupRepository
     ) {}
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof OperatorGroupNameNotPrefixOfExisting) {

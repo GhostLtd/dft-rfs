@@ -14,14 +14,12 @@ class NotificationInterceptionListPage extends AbstractListPage
 {
     protected bool $isNorthernIreland;
 
-    private NotificationInterceptionRepository $repository;
-
-    public function __construct(NotificationInterceptionRepository $routeRepository, FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(private NotificationInterceptionRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
     {
         parent::__construct($formFactory, $router);
-        $this->repository = $routeRepository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         return [
@@ -30,11 +28,13 @@ class NotificationInterceptionListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         return $this->repository->createQueryBuilder('ni')->select('ni');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

@@ -7,24 +7,21 @@ use App\Form\Admin\InternationalSurvey\ImportSampleReviewDataType;
 use App\Utility\International\SampleImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/irhs/sample-import", name="admin_international_sampleimport_")
- */
+#[Route(path: '/irhs/sample-import', name: 'admin_international_sampleimport_')]
 class SampleImportController extends AbstractController
 {
-    const SESSION_KEY = 'international-survey-import-data';
+    public const SESSION_KEY = 'international-survey-import-data';
 
-    /**
-     * @Route("", name="start")
-     * @Template()
-     */
-    public function index(Request $request, SampleImporter $sampleImporter)
+    #[Route(path: '', name: 'start')]
+    #[Template('admin/international/sample_import/index.html.twig')]
+    public function index(Request $request, SampleImporter $sampleImporter): RedirectResponse|array
     {
         $form = $this->createForm(ImportSampleFileUploadType::class);
         $form->handleRequest($request);
@@ -45,11 +42,9 @@ class SampleImportController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/review", name="review")
-     * @Template()
-     */
-    public function review(Request $request, Session $session, EntityManagerInterface $entityManager)
+    #[Route(path: '/review', name: 'review')]
+    #[Template('admin/international/sample_import/review.html.twig')]
+    public function review(Request $request, Session $session, EntityManagerInterface $entityManager): RedirectResponse|array
     {
         // grab the data from the session
         $data = $session->get(self::SESSION_KEY, false);
@@ -84,11 +79,9 @@ class SampleImportController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/summary", name="summary")
-     * @Template()
-     */
-    public function summary(Session $session)
+    #[Route(path: '/summary', name: 'summary')]
+    #[Template('admin/international/sample_import/summary.html.twig')]
+    public function summary(Session $session): RedirectResponse|array
     {
         $data = $session->getFlashBag()->get('summary', []);
         if (!empty($data)) {

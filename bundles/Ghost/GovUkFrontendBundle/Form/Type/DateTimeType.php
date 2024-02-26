@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ghost\GovUkFrontendBundle\Form\Type;
-
 
 use Ghost\GovUkFrontendBundle\Model\Time;
 use Symfony\Component\Form\AbstractType;
@@ -19,12 +17,14 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class DateTimeType extends AbstractType
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_datetime';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('date', DateType::class, [
@@ -35,12 +35,10 @@ class DateTimeType extends AbstractType
                 'help' => null,
             ])
             ->addModelTransformer(new CallbackTransformer(
-                function($data) {
-                    return [
-                        'date' => $data,
-                        'time' => $data ? Time::fromDateTime($data) : null,
-                    ];
-                }, function($data) {
+                fn($data) => [
+                    'date' => $data,
+                    'time' => $data ? Time::fromDateTime($data) : null,
+                ], function($data) {
                     /** @var \DateTime[] $data */
                     if (is_null($data['time']) && is_null($data['date'])) {
                         return null;
@@ -61,7 +59,8 @@ class DateTimeType extends AbstractType
             ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

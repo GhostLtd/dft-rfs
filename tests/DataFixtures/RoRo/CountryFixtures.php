@@ -54,6 +54,7 @@ class CountryFixtures extends Fixture
         'GB', // United Kingdom
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach(self::COUNTRY_CODES as $code) {

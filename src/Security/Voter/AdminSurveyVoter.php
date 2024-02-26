@@ -9,6 +9,7 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\QualityAssuranceInterface;
 use App\Entity\RoRo\Survey as RoroSurvey;
 use App\Entity\SurveyInterface;
+use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Utility\Reminder\ManualReminderHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -17,22 +18,23 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AdminSurveyVoter extends Voter
 {
-    const EDIT = 'EDIT';
-    const EDIT_NOTES = 'EDIT_NOTES';
-    const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
-    const FLAG_QA = 'FLAG_QA';
-    const MANUAL_REMINDER = 'MANUAL_REMINDER';
-    const MANUAL_REMINDER_BUTTON = 'MANUAL_REMINDER_BUTTON';
-    const RESEND = 'RESEND';
-    const RESET_PASSCODE = 'RESET_PASSCODE';
-    const TRANSITION = 'TRANSITION';
-    const VIEW_UNFILLED_REASON = 'VIEW_UNFILLED_REASON';
+    public const EDIT = 'EDIT';
+    public const EDIT_NOTES = 'EDIT_NOTES';
+    public const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
+    public const FLAG_QA = 'FLAG_QA';
+    public const MANUAL_REMINDER = 'MANUAL_REMINDER';
+    public const MANUAL_REMINDER_BUTTON = 'MANUAL_REMINDER_BUTTON';
+    public const RESEND = 'RESEND';
+    public const RESET_PASSCODE = 'RESET_PASSCODE';
+    public const TRANSITION = 'TRANSITION';
+    public const VIEW_UNFILLED_REASON = 'VIEW_UNFILLED_REASON';
 
     public function __construct(
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected ManualReminderHelper $manualReminderHelper)
     {}
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         // RoRo, Pre-enquiry, CSRGT, IRHS
@@ -40,7 +42,10 @@ class AdminSurveyVoter extends Voter
             && $subject instanceof SurveyStateInterface;
 
         // Pre-enquiry, CSRGT, IRHS
-        $surveyInterfaceSupport = in_array($attribute, [self::MANUAL_REMINDER, self::MANUAL_REMINDER_BUTTON, self::RESET_PASSCODE, self::RESEND])
+        $manuallyReminderSupport = in_array($attribute, [self::MANUAL_REMINDER, self::MANUAL_REMINDER_BUTTON])
+            && $subject instanceof SurveyManualReminderInterface;
+
+        $surveyInterfaceSupport = in_array($attribute, [self::RESET_PASSCODE, self::RESEND])
             && $subject instanceof SurveyInterface;
 
         // CSRGT, IRHS
@@ -52,9 +57,10 @@ class AdminSurveyVoter extends Voter
         // CSRGT
         $domesticOnlySupport = $subject instanceof DomesticSurvey && ($attribute === self::ENTER_BUSINESS_AND_VEHICLE_DETAILS);
 
-        return $surveyStateInterfaceSupport || $surveyInterfaceSupport || $haulageInterfaceSupport || $qaInterfaceSupport || $domesticOnlySupport;
+        return $surveyStateInterfaceSupport || $surveyInterfaceSupport || $manuallyReminderSupport || $haulageInterfaceSupport || $qaInterfaceSupport || $domesticOnlySupport;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         if (!$this->authorizationChecker->isGranted('ROLE_ADMIN_USER')) {
@@ -76,7 +82,6 @@ class AdminSurveyVoter extends Voter
             SurveyStateInterface::STATE_REJECTED,
         ]);
 
-        /** @var $subject SurveyInterface */
         $state = $subject->getState();
 
         if ($subject instanceof RoroSurvey && $attribute === self::EDIT) {

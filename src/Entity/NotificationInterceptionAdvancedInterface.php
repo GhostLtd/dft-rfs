@@ -5,9 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\Collection;
 use App\Form\Validator as AppAssert;
 
-/**
- * @AppAssert\UniqueNotificationInterceptionName(groups={"notification_interception"})
- */
+#[AppAssert\UniqueNotificationInterceptionName(groups: ['notification_interception'])]
 interface NotificationInterceptionAdvancedInterface extends NotificationInterceptionInterface
 {
     public function getAdditionalNames(): ?Collection;

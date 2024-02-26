@@ -16,24 +16,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyAddController extends AbstractController
 {
-    private SurveyRepository $surveyRepository;
-    private WorkflowInterface $domesticSurveyStateMachine;
-
-    public function __construct(SurveyRepository $surveyRepository, WorkflowInterface $domesticSurveyStateMachine)
+    public function __construct(protected SurveyRepository $surveyRepository, protected WorkflowInterface $domesticSurveyStateMachine)
     {
-        $this->surveyRepository = $surveyRepository;
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
     }
 
-    /**
-     * @Route("/csrgt/survey-add/", name=SurveyController::ADD_ROUTE)
-     * @Route("/csrgt/survey-reissue/{originalSurveyId}", name="admin_domestic_survey_reissue")
-     */
+    #[Route(path: '/csrgt/survey-add/', name: SurveyController::ADD_ROUTE)]
+    #[Route(path: '/csrgt/survey-reissue/{originalSurveyId}', name: 'admin_domestic_survey_reissue')]
     public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception, string $originalSurveyId = null): Response
     {
         if ($originalSurveyId) {
@@ -80,13 +73,13 @@ class SurveyAddController extends AbstractController
                 return $this->render('admin/domestic/surveys/add-success.html.twig', [
                     'survey' => $survey,
                     'password' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
-                    'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUsername()),
+                    'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUserIdentifier()),
                 ]);
             }
         }
 
         return $this->render('admin/domestic/surveys/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

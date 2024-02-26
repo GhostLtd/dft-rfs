@@ -11,14 +11,14 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class GeneralExpressionProvider implements ExpressionFunctionProviderInterface
 {
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new ExpressionFunction('is_empty', function($str) {
-                return "is_empty(null)";
-            }, function($arguments, $str) {
-                return empty($str);
-            }),
+            new ExpressionFunction('is_empty',
+                fn($str) => "is_empty(null)",
+                fn($arguments, $str) => empty($str)
+            ),
         ];
     }
 }

@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class DayFullOfSummaryFixtures extends AbstractDaySummaryFixture
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         for($dayNumber=1; $dayNumber<=7; $dayNumber++) {
@@ -14,6 +15,7 @@ class DayFullOfSummaryFixtures extends AbstractDaySummaryFixture
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [VehicleFixtures::class];

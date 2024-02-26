@@ -98,7 +98,7 @@ class AutomatedRoroRemindersHelper
                 foreach($operator->getUsers() as $user) {
                     $this->messageBus->dispatch(new Email(
                         $eventType,
-                        get_class($user),
+                        $user::class,
                         $user->getId(),
                         $user->getEmail(),
                         $template,

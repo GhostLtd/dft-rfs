@@ -12,10 +12,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SurveyFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var PasscodeUser $user */
-        $user = $this->getReference('user:frontend');
+        $user = $this->getReference('user:frontend', PasscodeUser::class);
 
         $survey = (new Survey())
             ->setSurveyPeriodStart(new \DateTime('2021-05-01'))
@@ -32,6 +33,7 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [UserFixtures::class];

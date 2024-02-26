@@ -8,20 +8,17 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 class TextAndCodeFilter extends Simple implements FilterableInterface
 {
     protected string $codeId;
-    protected string $codePropertyPath;
-    protected array $formOptions;
 
     /**
      * N.B. $propertyPath is the one used for ordering
      */
-    public function __construct(string $label, string $propertyPath, string $codePropertyPath, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, protected string $codePropertyPath, protected array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
         $this->codeId = self::generateId($label.' code');
-        $this->codePropertyPath = $codePropertyPath;
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -29,11 +26,13 @@ class TextAndCodeFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return Gds\InputType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         $trimmed = trim($formData);

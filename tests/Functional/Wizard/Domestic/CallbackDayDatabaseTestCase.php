@@ -9,15 +9,14 @@ use PHPUnit\Framework\TestCase;
 
 class CallbackDayDatabaseTestCase implements DatabaseTestCase
 {
-    protected int $dayNumber;
     protected $callback;
 
-    public function __construct(int $dayNumber, callable $callback)
+    public function __construct(protected int $dayNumber, callable $callback)
     {
-        $this->dayNumber = $dayNumber;
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function checkDatabaseAsExpected(EntityManagerInterface $entityManager, TestCase $testCase): void
     {
         $repo = $entityManager->getRepository(Day::class);

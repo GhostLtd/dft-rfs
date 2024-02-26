@@ -12,11 +12,9 @@ class FileUserProvider implements UserProviderInterface
 {
     /** @var InMemoryUser[] */
     protected array $users = [];
-    protected ManagementUserHelper $managementUserHelper;
 
-    public function __construct(?string $usersFile, ManagementUserHelper $managementUserHelper)
+    public function __construct(?string $usersFile, protected ManagementUserHelper $managementUserHelper)
     {
-        $this->managementUserHelper = $managementUserHelper;
         $this->loadUsersFromFile($usersFile);
     }
 
@@ -45,6 +43,7 @@ class FileUserProvider implements UserProviderInterface
         }
     }
 
+    #[\Override]
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         if (array_key_exists($identifier, $this->users)) {
@@ -61,17 +60,19 @@ class FileUserProvider implements UserProviderInterface
         return $this->loadUserByIdentifier($username);
     }
 
+    #[\Override]
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof InMemoryUser) {
             throw new UnsupportedUserException(
-                sprintf('Instances of "%s" are not supported.', get_class($user))
+                sprintf('Instances of "%s" are not supported.', $user::class)
             );
         }
 
         return $this->loadUserByIdentifier($user->getUserIdentifier());
     }
 
+    #[\Override]
     public function supportsClass($class): bool
     {
         return $class === InMemoryUser::class;

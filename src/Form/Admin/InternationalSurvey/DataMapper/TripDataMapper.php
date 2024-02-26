@@ -13,15 +13,13 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TripDataMapper implements DataMapperInterface
 {
-    /** @var PortsDataSet[] $portDataSets */
-    protected array $portsDataSets;
+    public function __construct(
+        /** @var array<PortsDataSet> $portDataSets */
+        protected array $portsDataSets
+    ) {}
 
-    public function __construct(array $portsDataSets)
-    {
-        $this->portsDataSets = $portsDataSets;
-    }
-
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -83,7 +81,8 @@ class TripDataMapper implements DataMapperInterface
         $forms['carrying_capacity']->setData($viewData->getCarryingCapacity());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
 

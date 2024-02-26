@@ -10,7 +10,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class GoodsWeightType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.day-summary.goods-weight";
         $builder
@@ -31,7 +32,8 @@ class GoodsWeightType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => DaySummary::class,

@@ -19,7 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class InitialDetailsType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
@@ -69,7 +70,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
@@ -97,7 +99,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -141,7 +144,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
 
@@ -159,12 +163,10 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
 
         // If you say "hire", it'll give you the "sold" fields. If you say "scrapped", it'll give you "sold" + "hire" fields etc.
-        $getFieldsExcluding = function(string $excludeGroup) {
-            return array_merge(...array_values(array_filter([
-                'hire' => ['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'],
-                'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
-            ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
-        };
+        $getFieldsExcluding = fn(string $excludeGroup) => array_merge(...array_values(array_filter([
+            'hire' => ['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'],
+            'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
+        ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
 
         switch ($isInPossession) {
             case SurveyResponse::IN_POSSESSION_YES:

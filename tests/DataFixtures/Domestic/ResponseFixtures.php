@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ResponseFixtures extends AbstractResponseFixtures
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $response = (new SurveyResponse())
@@ -19,6 +20,7 @@ class ResponseFixtures extends AbstractResponseFixtures
         $this->loadSurveyAndVehicle($manager, $response);
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [SurveyFixtures::class];

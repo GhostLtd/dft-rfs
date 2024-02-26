@@ -7,10 +7,8 @@ use Doctrine\DBAL\Exception;
 
 class DateRangeHelper
 {
-    protected Connection $connection;
-
-    public function __construct(Connection $defaultConnection) {
-        $this->connection = $defaultConnection;
+    public function __construct(protected Connection $connection)
+    {
     }
 
     public function getMinAndMaxYearsForAllSurveys(): array

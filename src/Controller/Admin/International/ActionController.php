@@ -9,22 +9,20 @@ use App\Form\Admin\InternationalSurvey\ActionUnloadType;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\International\DeleteActionConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/irhs")
- */
+#[Route(path: '/irhs')]
 class ActionController extends AbstractController
 {
-    private const ROUTE_PREFIX = "admin_international_action_";
+    private const string ROUTE_PREFIX = "admin_international_action_";
 
     public const ADD_LOADING_ROUTE = self::ROUTE_PREFIX . "add_loading";
     public const ADD_UNLOADING_ROUTE = self::ROUTE_PREFIX . "add_unloading";
@@ -32,20 +30,16 @@ class ActionController extends AbstractController
     public const EDIT_ROUTE = self::ROUTE_PREFIX . "edit";
     public const REORDER_ROUTE = self::ROUTE_PREFIX . "reorder";
 
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected RequestStack           $requestStack
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
-    {
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @Route("/trip/{tripId}/add-loading-action", name=self::ADD_LOADING_ROUTE)
-     * @Entity("trip", expr="repository.find(tripId)")
-     */
-    public function addLoadingAction(Trip $trip): Response
+    #[Route(path: '/trip/{tripId}/add-loading-action', name: self::ADD_LOADING_ROUTE)]
+    public function addLoadingAction(
+        #[MapEntity(expr: "repository.find(tripId)")]
+        Trip $trip
+    ): Response
     {
         $action = (new Action())->setLoading(true);
         $trip->addAction($action);
@@ -54,11 +48,11 @@ class ActionController extends AbstractController
         return $this->handleRequest($action, 'admin/international/action/add-loading.html.twig', ['placeholders' => true]);
     }
 
-    /**
-     * @Route("/trip/{tripId}/add-unloading-action", name=self::ADD_UNLOADING_ROUTE)
-     * @Entity("trip", expr="repository.find(tripId)")
-     */
-    public function addUnloadingAction(Trip $trip): Response
+    #[Route(path: '/trip/{tripId}/add-unloading-action', name: self::ADD_UNLOADING_ROUTE)]
+    public function addUnloadingAction(
+        #[MapEntity(expr: "repository.find(tripId)")]
+        Trip $trip
+    ): Response
     {
         $action = (new Action())->setLoading(false);
         $trip->addAction($action);
@@ -67,11 +61,11 @@ class ActionController extends AbstractController
         return $this->handleRequest($action, 'admin/international/action/add-unloading.html.twig');
     }
 
-    /**
-     * @Route("/action/{actionId}/edit", name=self::EDIT_ROUTE)
-     * @Entity("action", expr="repository.find(actionId)")
-     */
-    public function edit(Action $action): Response
+    #[Route(path: '/action/{actionId}/edit', name: self::EDIT_ROUTE)]
+    public function edit(
+        #[MapEntity(expr: "repository.find(actiondId)")]
+        Action $action
+    ): Response
     {
         $template = $action->getLoading() ?
             'admin/international/action/edit-loading.html.twig' :
@@ -80,7 +74,12 @@ class ActionController extends AbstractController
         return $this->handleRequest($action, $template);
     }
 
-    protected function handleRequest(Action $action, string $template, array $formOptions = []): Response
+    protected function handleRequest(
+        #[MapEntity(expr: "repository.find(actionId)")]
+        Action $action,
+        string $template,
+        array  $formOptions = []
+    ): Response
     {
         $survey = $action->getTrip()->getVehicle()->getSurveyResponse()->getSurvey();
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
@@ -112,16 +111,18 @@ class ActionController extends AbstractController
 
         return $this->render($template, [
             'action' => $unmodifiedAction,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @Route("/action/{actionId}/delete", name=self::DELETE_ROUTE)
-     * @Entity("action", expr="repository.findOneByIdWithRelatedActions(actionId)")
-     * @Template("admin/international/action/delete.html.twig")
-     */
-    public function delete(Action $action, Request $request, DeleteActionConfirmAction $confirmAction)
+    #[Route(path: '/action/{actionId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('admin/international/action/delete.html.twig')]
+    public function delete(
+        #[MapEntity(expr: "repository.findOneByIdWithRelatedActions(actionId)")]
+        Action                    $action,
+        Request                   $request,
+        DeleteActionConfirmAction $confirmAction
+    ): RedirectResponse|array
     {
         $trip = $action->getTrip();
         $survey = $trip->getVehicle()->getSurveyResponse()->getSurvey();
@@ -134,9 +135,7 @@ class ActionController extends AbstractController
             ])
             ->controller(
                 $request,
-                function() use ($survey, $trip) {
-                    return $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]).'#actions-' . $trip->getId();
-                }
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . '#actions-' . $trip->getId()
             );
     }
 }

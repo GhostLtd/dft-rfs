@@ -55,7 +55,7 @@ final class Version20210803134342 extends AbstractMigration
 
                 $apiResponses = json_encode($apiResponses);
 
-                $this->addSql("UPDATE ${tableName} SET notify_api_responses = :api_responses WHERE id = :id", [
+                $this->addSql("UPDATE {$tableName} SET notify_api_responses = :api_responses WHERE id = :id", [
                     'api_responses' => $apiResponses,
                     'id' => $id,
                 ]);

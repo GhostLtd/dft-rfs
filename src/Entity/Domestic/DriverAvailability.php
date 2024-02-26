@@ -2,45 +2,23 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\CurrencyOrPercentage;
 use App\Repository\Domestic\DriverAvailabilityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Form\Validator as AppAssert;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=DriverAvailabilityRepository::class)
- * @ORM\Table("domestic_driver_availablity")
- *
- * @AppAssert\OtherNotBlank(
- *     selectField="reasonsForDriverVacancies",
- *     groups={"driver-availability.drivers-and-vacancies"},
- *     message="driver-availability.reasons-for-driver-vacancies.other"
- * )
- *
- * @AppAssert\OtherNotBlank(
- *     selectField="wageIncreasePeriod",
- *     groups={"driver-availability.wages"},
- *     message="driver-availability.wages.period.other"
- * )
- *
- * @AppAssert\OtherNotBlank(
- *     selectField="reasonsForWageIncrease",
- *     groups={"driver-availability.wages"},
- *     message="driver-availability.wages.increase-reason.other"
- * )
- *
- * @AppAssert\DriverAvailabilityWagesPeriod(
- *     triggerField="averageWageIncrease",
- *     targetField="wageIncreasePeriod",
- *     groups={"driver-availability.wages"},
- *     message="driver-availability.wages.increase-period"
- * )
- */
+#[AppAssert\OtherNotBlank(selectField: "reasonsForDriverVacancies", message: "driver-availability.reasons-for-driver-vacancies.other", groups: ["driver-availability.drivers-and-vacancies"])]
+#[AppAssert\OtherNotBlank(selectField: "wageIncreasePeriod", message: "driver-availability.wages.period.other", groups: ["driver-availability.wages"])]
+#[AppAssert\OtherNotBlank(selectField: "reasonsForWageIncrease", message: "driver-availability.wages.increase-reason.other", groups: ["driver-availability.wages"])]
+#[AppAssert\DriverAvailabilityWagesPeriod(triggerField: "averageWageIncrease", targetField: "wageIncreasePeriod", message: "driver-availability.wages.increase-period", groups: ["driver-availability.wages"])]
+#[ORM\Table('domestic_driver_availablity')]
+#[ORM\Entity(repositoryClass: DriverAvailabilityRepository::class)]
 class DriverAvailability
 {
-    const VACANCY_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.drivers.reasons-for-vacancies.choices.';
-    const VACANCY_REASON_CHOICES = [
+    public const VACANCY_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.drivers.reasons-for-vacancies.choices.';
+    public const VACANCY_REASON_CHOICES = [
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'lured-away' => 'lured-away',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'covid' => 'covid',
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'retirement' => 'retirement',
@@ -54,24 +32,24 @@ class DriverAvailability
         self::VACANCY_REASON_TRANSLATION_PREFIX . 'other' => 'other',
     ];
 
-    const YES_NO_PLAN_TO_TRANSLATION_PREFIX = 'domestic.driver-availability.yes-no-plan-to.choices.';
-    const YES_NO_PLAN_TO_CHOICES = [
+    public const YES_NO_PLAN_TO_TRANSLATION_PREFIX = 'domestic.driver-availability.yes-no-plan-to.choices.';
+    public const YES_NO_PLAN_TO_CHOICES = [
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'yes' => 'yes',
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'no' => 'no',
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'plan-to' => 'plan-to',
         self::YES_NO_PLAN_TO_TRANSLATION_PREFIX . 'do-not-know' => 'do-not-know',
     ];
 
-    const WAGE_INCREASE_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.reasons-for-wage-increase.choices.';
-    const WAGE_INCREASE_REASON_CHOICES = [
+    public const WAGE_INCREASE_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.reasons-for-wage-increase.choices.';
+    public const WAGE_INCREASE_REASON_CHOICES = [
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'planned' => 'planned',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'retain-existing' => 'retain-existing',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'attract-new' => 'attract-new',
         self::WAGE_INCREASE_REASON_TRANSLATION_PREFIX . 'other' => 'other',
     ];
 
-    const WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.wage-increase-period.choices.';
-    const WAGE_INCREASE_PERIOD_CHOICES = [
+    public const WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX = 'domestic.driver-availability.wages.wage-increase-period.choices.';
+    public const WAGE_INCREASE_PERIOD_CHOICES = [
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'hourly' => 'hourly',
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'weekly' => 'weekly',
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'monthly' => 'monthly',
@@ -79,156 +57,110 @@ class DriverAvailability
         self::WAGE_INCREASE_PERIOD_TRANSLATION_PREFIX . 'other' => 'other',
     ];
 
-    const BONUS_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.bonuses.reasons-for-bonuses.choices.';
-    const BONUS_REASON_CHOICES = [
+    public const BONUS_REASON_TRANSLATION_PREFIX = 'domestic.driver-availability.bonuses.reasons-for-bonuses.choices.';
+    public const BONUS_REASON_CHOICES = [
         self::BONUS_REASON_TRANSLATION_PREFIX . 'recruit' => 'recruit',
         self::BONUS_REASON_TRANSLATION_PREFIX . 'retain' => 'retain',
     ];
 
-    const TRISTATE_TRANSLATION_PREFIX = 'common.choices.boolean.';
-    const TRISTATE_CHOICES = [
+    public const TRISTATE_TRANSLATION_PREFIX = 'common.choices.boolean.';
+    public const TRISTATE_CHOICES = [
         self::TRISTATE_TRANSLATION_PREFIX.'yes' => 'yes',
         self::TRISTATE_TRANSLATION_PREFIX.'no' => 'no',
         self::TRISTATE_TRANSLATION_PREFIX.'do-not-know' => 'do-not-know',
     ];
 
-    const MISSING_DELIVERY_TRANSLATION_PREFIX = 'domestic.driver-availability.deliveries.missed-deliveries.';
-    const MISSING_DELIVERY_CHOICES = [
+    public const MISSING_DELIVERY_TRANSLATION_PREFIX = 'domestic.driver-availability.deliveries.missed-deliveries.';
+    public const MISSING_DELIVERY_CHOICES = [
         self::MISSING_DELIVERY_TRANSLATION_PREFIX.'no' => 'no',
         self::MISSING_DELIVERY_TRANSLATION_PREFIX.'no-with-workarounds' => 'no-with-workarounds',
         self::MISSING_DELIVERY_TRANSLATION_PREFIX.'yes' => 'yes',
         self::MISSING_DELIVERY_TRANSLATION_PREFIX.'do-not-know' => 'do-not-know',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="string", unique=true, length=36, options={"fixed" = true})
-     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.drivers-and-vacancies'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfDriversEmployed = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotNull(groups={"driver-availability.drivers-and-vacancies"}, message="common.choice.not-null")
-     */
+    #[Assert\NotNull(message: 'common.choice.not-null', groups: ['driver-availability.drivers-and-vacancies'])]
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
     private ?string $hasVacancies = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.drivers-and-vacancies'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfDriverVacancies = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $reasonsForDriverVacancies = [];
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.drivers-and-vacancies"})
-     */
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['driver-availability.drivers-and-vacancies'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $reasonsForDriverVacanciesOther = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.drivers-and-vacancies"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.drivers-and-vacancies'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfDriversThatHaveLeft = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
     private ?string $haveWagesIncreased = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.wages"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.wages'])]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $averageWageIncrease = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?string $legacyAverageWageIncreasePercentage = null;
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $legacyAverageWageIncreasePercentage = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
-     */
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['driver-availability.wages'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $wageIncreasePeriod = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
-     */
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['driver-availability.wages'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $wageIncreasePeriodOther = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $reasonsForWageIncrease = [];
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"driver-availability.wages"})
-     */
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['driver-availability.wages'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $reasonsForWageIncreaseOther = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
     private ?string $hasPaidBonus = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.bonuses"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.bonuses'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $averageBonus = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $reasonsForBonuses = [];
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.deliveries'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfLorriesOperated = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.deliveries'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfParkedLorries = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
     private ?string $hasMissedDeliveries = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\PositiveOrZero(groups={"driver-availability.deliveries"})
-     */
+    #[Assert\PositiveOrZero(groups: ['driver-availability.deliveries'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $numberOfMissedDeliveries = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="driverAvailability")
-     */
+    #[ORM\OneToOne(mappedBy: 'driverAvailability', targetEntity: Survey::class)]
     private ?Survey $survey = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $exportedDate = null;
 
     public function getId(): ?string
@@ -491,12 +423,12 @@ class DriverAvailability
         return $this;
     }
 
-    public function getLegacyAverageWageIncreasePercentage(): ?string
+    public function getLegacyAverageWageIncreasePercentage(): ?int
     {
         return $this->legacyAverageWageIncreasePercentage;
     }
 
-    public function setLegacyAverageWageIncreasePercentage(?string $legacyAverageWageIncreasePercentage): self
+    public function setLegacyAverageWageIncreasePercentage(?int $legacyAverageWageIncreasePercentage): self
     {
         $this->legacyAverageWageIncreasePercentage = $legacyAverageWageIncreasePercentage;
         return $this;

@@ -12,16 +12,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntroductionType extends AbstractType
 {
-    const DATA_ENTRY_MANUAL = 'roro.survey.data-entry.choices.manual';
-    const DATA_ENTRY_ADVANCED = 'roro.survey.data-entry.choices.advanced';
+    public const DATA_ENTRY_MANUAL = 'roro.survey.data-entry.choices.manual';
+    public const DATA_ENTRY_ADVANCED = 'roro.survey.data-entry.choices.advanced';
 
-    const DATA_ENTRY_MANUAL_CHOICE = 'manual';
-    const DATA_ENTRY_ADVANCED_CHOICE = 'advanced';
-    const DATA_ENTRY_CHOICES = [
+    public const DATA_ENTRY_MANUAL_CHOICE = 'manual';
+    public const DATA_ENTRY_ADVANCED_CHOICE = 'advanced';
+    public const DATA_ENTRY_CHOICES = [
         self::DATA_ENTRY_MANUAL => self::DATA_ENTRY_MANUAL_CHOICE,
         self::DATA_ENTRY_ADVANCED => self::DATA_ENTRY_ADVANCED_CHOICE,
     ];
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $showDataEntryQuestion = $options['show_data_entry_question'];
@@ -53,6 +54,7 @@ class IntroductionType extends AbstractType
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

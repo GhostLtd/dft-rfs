@@ -11,31 +11,31 @@ use App\Workflow\RoRo\OperatorGroupState;
 use App\Workflow\RoRo\RoRoState;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route("/operator-groups", name: "admin_operator_groups_")]
-#[Entity("operatorGroup", expr: "repository.findOneById(operatorGroupId)")]
 class OperatorGroupWizardController extends AbstractSessionStateWorkflowController
 {
-    private const MODE_ADD = 'add';
-    private const MODE_EDIT = 'edit';
+    private const string MODE_ADD = 'add';
+    private const string MODE_EDIT = 'edit';
 
     protected string $mode;
     protected OperatorGroup $databaseOperatorGroup;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        FormWizardManager $formWizardManager,
-        LoggerInterface $log,
-        RequestStack $requestStack,
+        EntityManagerInterface       $entityManager,
+        FormWizardManager            $formWizardManager,
+        LoggerInterface              $log,
+        RequestStack                 $requestStack,
         protected OperatorRepository $operatorRepository,
-    ) {
+    )
+    {
         parent::__construct($formWizardManager, $entityManager, $log, $requestStack);
     }
 
@@ -58,7 +58,13 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
     #[Route("/{operatorGroupId}/edit/{state}", name: "edit_place")]
     #[Route("/{operatorGroupId}/edit", name: "edit_start")]
     #[IsGranted("CAN_EDIT_OPERATOR_GROUP", subject: "operatorGroup")]
-    public function edit(WorkflowInterface $operatorGroupStateMachine, Request $request, OperatorGroup $operatorGroup, ?string $state = null): Response
+    public function edit(
+        WorkflowInterface $operatorGroupStateMachine,
+        Request           $request,
+        #[MapEntity(expr: "repository.findOneById(operatorGroupId)")]
+        OperatorGroup     $operatorGroup,
+        ?string           $state = null
+    ): Response
     {
         $this->mode = self::MODE_EDIT;
         $this->databaseOperatorGroup = $operatorGroup;
@@ -69,7 +75,7 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
     {
         $name = $this->getFormWizard()->getSubject()->getName();
 
-        return match($state) {
+        return match ($state) {
             OperatorGroupState::STATE_PREVIEW => [
                 'mode' => $this->mode,
                 'name' => $name,
@@ -81,6 +87,7 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
         };
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var RoRoState $formWizard */
@@ -101,6 +108,7 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return match ($this->mode) {
@@ -109,6 +117,7 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
         };
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return match ($this->mode) {

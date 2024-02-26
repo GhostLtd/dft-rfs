@@ -10,7 +10,8 @@ use Symfony\Component\Form\FormEvents;
 
 class MonthYearFilterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $thisYear = intval((new \DateTime())->format('Y'));
         $years = range($thisYear, 2020);

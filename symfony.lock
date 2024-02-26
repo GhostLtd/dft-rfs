@@ -23,18 +23,6 @@
     "composer/xdebug-handler": {
         "version": "1.4.5"
     },
-    "doctrine/annotations": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "a2759dd6123694c8d901d0ec80006e044c2e6457"
-        },
-        "files": [
-            "config/routes/annotations.yaml"
-        ]
-    },
     "doctrine/cache": {
         "version": "1.10.2"
     },
@@ -207,15 +195,6 @@
     "php": {
         "version": "7.4"
     },
-    "php-http/guzzle6-adapter": {
-        "version": "v2.0.1"
-    },
-    "php-http/httplug": {
-        "version": "2.2.0"
-    },
-    "php-http/promise": {
-        "version": "1.1.0"
-    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },
@@ -257,9 +236,6 @@
     "psr/container": {
         "version": "1.0.0"
     },
-    "psr/http-client": {
-        "version": "1.0.1"
-    },
     "psr/http-message": {
         "version": "1.0.1"
     },
@@ -286,18 +262,6 @@
     },
     "seld/phar-utils": {
         "version": "1.1.1"
-    },
-    "sensio/framework-extra-bundle": {
-        "version": "5.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "5.2",
-            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
-        },
-        "files": [
-            "config/packages/sensio_framework_extra.yaml"
-        ]
     },
     "symfony/asset": {
         "version": "v4.4.15"
@@ -433,7 +397,7 @@
         "version": "v4.4.15"
     },
     "symfony/lock": {
-        "version": "5.4",
+        "version": "6.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -549,9 +513,6 @@
     "symfony/polyfill-php80": {
         "version": "v1.18.1"
     },
-    "symfony/polyfill-php81": {
-        "version": "v1.23.0"
-    },
     "symfony/process": {
         "version": "v4.4.15"
     },
@@ -652,6 +613,18 @@
     },
     "symfony/twig-pack": {
         "version": "v1.0.2"
+    },
+    "symfony/uid": {
+        "version": "6.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.2",
+            "ref": "d294ad4add3e15d7eb1bae0221588ca89b38e558"
+        },
+        "files": [
+            "config/packages/uid.yaml"
+        ]
     },
     "symfony/validator": {
         "version": "4.3",

@@ -13,20 +13,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ActionLoadType extends AbstractType
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    protected HazardousGoodsHelper $hazardousGoodsHelper;
-
-    public function __construct(HazardousGoodsHelper $hazardousGoodsHelper)
+    public function __construct(protected HazardousGoodsHelper $hazardousGoodsHelper)
     {
-        $this->hazardousGoodsHelper = $hazardousGoodsHelper;
     }
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         [$goodsChoices, $goodsChoiceOptions] = AbstractGoodsDescription::getFormChoicesAndOptions(true);
         [$hazardousChoices, $hazardousChoiceOptions] = $this->hazardousGoodsHelper->getFormChoicesAndOptions(true, true, false);
@@ -87,7 +85,8 @@ class ActionLoadType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['admin_action_load'],

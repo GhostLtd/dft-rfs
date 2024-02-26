@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class YearAndMonth implements DateSeriesGeneratorInterface
 {
+    #[\Override]
     public function dateToParts(\DateTimeInterface $dateTime): array
     {
         return [
@@ -15,6 +16,7 @@ class YearAndMonth implements DateSeriesGeneratorInterface
         ];
     }
 
+    #[\Override]
     public function getPartsCount(): int
     {
         return 2;
@@ -23,6 +25,7 @@ class YearAndMonth implements DateSeriesGeneratorInterface
     /**
      * @return \Generator<array>
      */
+    #[\Override]
     public function dateRangeGenerator(?\DateTime $minStart, ?\DateTime $maxStart): \Generator
     {
         [$firstYear, $firstMonth] = $this->dateToParts($minStart);
@@ -48,6 +51,7 @@ class YearAndMonth implements DateSeriesGeneratorInterface
         }
     }
 
+    #[\Override]
     public function addToQueryBuilder(QueryBuilder $qb, string $field): QueryBuilder
     {
         return $qb

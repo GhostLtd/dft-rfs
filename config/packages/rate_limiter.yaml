@@ -4,6 +4,7 @@ services:
     arguments:
       $globalFactory: '@limiter.ip'
       $localFactory: '@limiter.ip_and_username'
+      $secret: '%env(APP_SECRET)%'
 
 # Cache overridden in cache.yaml
 framework:

@@ -15,12 +15,14 @@ class YearAndWeek implements DateSeriesGeneratorInterface
     public function __construct(protected int $weekMode = 5)
     {}
 
+    #[\Override]
     public function dateToParts(\DateTimeInterface $dateTime): array
     {
         [$weekNum, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear($dateTime);
         return [$year, $weekNum];
     }
 
+    #[\Override]
     public function getPartsCount(): int
     {
         return 2;
@@ -29,6 +31,7 @@ class YearAndWeek implements DateSeriesGeneratorInterface
     /**
      * @return \Generator<array>
      */
+    #[\Override]
     public function dateRangeGenerator(?\DateTime $minStart, ?\DateTime $maxStart): \Generator
     {
         [$firstYear, $firstWeek] = $this->dateToParts($minStart);
@@ -54,6 +57,7 @@ class YearAndWeek implements DateSeriesGeneratorInterface
         }
     }
 
+    #[\Override]
     public function addToQueryBuilder(QueryBuilder $qb, string $field): QueryBuilder
     {
         return $qb

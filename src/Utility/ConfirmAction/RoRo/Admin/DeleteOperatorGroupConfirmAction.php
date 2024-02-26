@@ -24,6 +24,7 @@ class DeleteOperatorGroupConfirmAction extends AbstractConfirmAction
         parent::__construct($formFactory, $requestStack, $translator);
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -33,6 +34,7 @@ class DeleteOperatorGroupConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         return [
@@ -40,16 +42,19 @@ class DeleteOperatorGroupConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'messages';
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'admin.operator-groups.delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData): void
     {
         $this->entityManager->remove($this->subject);

@@ -11,11 +11,9 @@ use Symfony\Component\Intl\Countries;
 class TripActionsExportNormalizer
 {
     protected array $normalized;
-    protected EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     /**

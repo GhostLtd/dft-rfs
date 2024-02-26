@@ -15,10 +15,10 @@ use Doctrine\Persistence\ObjectManager;
 
 abstract class AbstractDaySummaryFixture  extends Fixture implements DependentFixtureInterface
 {
-    protected function addDaySummary(ObjectManager $manager, int $dayNumber)
+    protected function addDaySummary(ObjectManager $manager, int $dayNumber): void
     {
         /** @var SurveyResponse $response */
-        $response = $this->getReference('response:simple');
+        $response = $this->getReference('response:simple', SurveyResponse::class);
 
         $day = (new Day())
             ->setNumber($dayNumber)

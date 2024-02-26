@@ -37,7 +37,7 @@ class OperatorRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->setParameter('id', $id)
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
@@ -47,9 +47,7 @@ class OperatorRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('operator', 'operator.id')
             ->where('operator.name like :prefix')
             ->orderBy('operator.name', 'asc')
-            ->setParameters([
-                'prefix' => addcslashes($prefix, '%_') . '%'
-            ])
+            ->setParameter('prefix', addcslashes($prefix, '%_') . '%')
             ->getQuery()
             ->execute();
     }

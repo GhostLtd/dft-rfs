@@ -9,6 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class EarlySurveyFixtures extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Survey $survey */
@@ -18,6 +19,7 @@ class EarlySurveyFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

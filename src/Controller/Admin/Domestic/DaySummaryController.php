@@ -10,9 +10,8 @@ use App\Repository\Domestic\DayRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,35 +19,30 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/csrgt")
- */
+#[Route(path: '/csrgt')]
 class DaySummaryController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_domestic_daysummary_';
+    private const string ROUTE_PREFIX = 'admin_domestic_daysummary_';
     public const ADD_DAY_AND_SUMMARY_ROUTE = self::ROUTE_PREFIX . 'add_day_and_summary';
     public const DELETE_ROUTE = self::ROUTE_PREFIX . 'delete';
     public const EDIT_ROUTE = self::ROUTE_PREFIX . 'edit';
 
-    protected DayRepository $dayRepository;
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected RequestStack           $requestStack,
+        protected DayRepository          $dayRepository
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, DayRepository $dayRepository)
-    {
-        $this->dayRepository = $dayRepository;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @Route("/surveys/{surveyId}/{dayNumber}/add-day-summary", name=self::ADD_DAY_AND_SUMMARY_ROUTE, requirements={"dayNumber": "\d+"})
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
-     */
-    public function addDayAndStop(Survey $survey, int $dayNumber): Response
+    #[Route(path: '/surveys/{surveyId}/{dayNumber}/add-day-summary', name: self::ADD_DAY_AND_SUMMARY_ROUTE, requirements: ['dayNumber' => '\d+'])]
+    #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
+    public function addDayAndStop(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        int    $dayNumber
+    ): Response
     {
         $existingDay = $this->dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
 
@@ -74,16 +68,16 @@ class DaySummaryController extends AbstractController
         return $this->handleRequest($summary, "admin/domestic/summary/add.html.twig", ['is_add_form' => true]);
     }
 
-    /**
-     * @Route("/day-summaries/{summaryId}", name=self::EDIT_ROUTE)
-     * @Entity("summary", expr="repository.find(summaryId)")
-     */
-    public function edit(DaySummary $summary)
+    #[Route(path: '/day-summaries/{summaryId}', name: self::EDIT_ROUTE)]
+    public function edit(
+        #[MapEntity(expr: "repository.find(summaryId)")]
+        DaySummary $summary
+    ): Response
     {
         return $this->handleRequest($summary, "admin/domestic/summary/edit.html.twig");
     }
 
-    protected function handleRequest(DaySummary $summary, string $template, array $formOptions = [])
+    protected function handleRequest(DaySummary $summary, string $template, array $formOptions = []): Response
     {
         $survey = $summary->getDay()->getResponse()->getSurvey();
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
@@ -108,16 +102,18 @@ class DaySummaryController extends AbstractController
 
         return $this->render($template, [
             'survey' => $survey,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @Route("/day-summaries/{summaryId}/delete", name=self::DELETE_ROUTE)
-     * @Entity("summary", expr="repository.find(summaryId)")
-     * @Template("admin/domestic/summary/delete.html.twig")
-     */
-    public function delete(DaySummary $summary, DeleteDaySummaryConfirmAction $confirmAction, Request $request)
+    #[Route(path: '/day-summaries/{summaryId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('admin/domestic/summary/delete.html.twig')]
+    public function delete(
+        #[MapEntity(expr: "repository.find(summaryId)")]
+        DaySummary                    $summary,
+        DeleteDaySummaryConfirmAction $confirmAction,
+        Request                       $request
+    ): RedirectResponse|array
     {
         $day = $summary->getDay();
         $survey = $day->getResponse()->getSurvey();
@@ -127,7 +123,7 @@ class DaySummaryController extends AbstractController
             ->setSubject($summary)
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}"
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#{$day->getId()}"
             );
     }
 }

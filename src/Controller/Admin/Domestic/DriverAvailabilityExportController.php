@@ -1,32 +1,23 @@
 <?php
 
-
 namespace App\Controller\Admin\Domestic;
 
-
 use App\Utility\Domestic\DriverAvailabilityExportHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/csrgt/driver-availability-export", name="admin_domestic_driveravailabilityexport_")
- */
+#[Route(path: '/csrgt/driver-availability-export', name: 'admin_domestic_driveravailabilityexport_')]
 class DriverAvailabilityExportController extends AbstractController
 {
-    private DriverAvailabilityExportHelper $driverAvailabilityExportHelper;
-
-    public function __construct(DriverAvailabilityExportHelper $driverAvailabilityExportHelper)
+    public function __construct(protected DriverAvailabilityExportHelper $driverAvailabilityExportHelper)
     {
-        $this->driverAvailabilityExportHelper = $driverAvailabilityExportHelper;
     }
 
-    /**
-     * @Route("", name="index")
-     * @Template("admin/domestic/driver_availability_export/index.html.twig")
-     */
+    #[Route(path: '', name: 'index')]
+    #[Template('admin/domestic/driver_availability_export/index.html.twig')]
     public function index(): array
     {
         return [
@@ -35,9 +26,7 @@ class DriverAvailabilityExportController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/all", name="all")
-     */
+    #[Route(path: '/all', name: 'all')]
     public function all(): Response
     {
         $response = new StreamedResponse(function() {
@@ -47,9 +36,7 @@ class DriverAvailabilityExportController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/new", name="new")
-     */
+    #[Route(path: '/new', name: 'new')]
     public function new(): Response
     {
         $exportDate = new \DateTime();
@@ -60,9 +47,7 @@ class DriverAvailabilityExportController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/existing/{date}", name="existing")
-     */
+    #[Route(path: '/existing/{date}', name: 'existing')]
     public function existing($date): Response
     {
         $exportDate = new \DateTime($date);
@@ -73,7 +58,7 @@ class DriverAvailabilityExportController extends AbstractController
         return $response;
     }
 
-    protected function addDownloadResponseHeaders(Response $response, \DateTime $date, $filenamePostfix = false)
+    protected function addDownloadResponseHeaders(Response $response, \DateTime $date, $filenamePostfix = false): void
     {
         $filename = "csrgt-driver-availability-export"
             . ($filenamePostfix ? "-{$filenamePostfix}" : "")

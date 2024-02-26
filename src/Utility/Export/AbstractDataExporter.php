@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Utility\Export;
-
 
 use App\Entity\SurveyInterface;
 use Doctrine\Common\Collections\Collection;
@@ -11,13 +9,8 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractDataExporter
 {
-    protected WorkflowInterface $workflow;
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(WorkflowInterface $workflow, EntityManagerInterface $entityManager)
+    public function __construct(protected WorkflowInterface $workflow, protected EntityManagerInterface $entityManager)
     {
-        $this->workflow = $workflow;
-        $this->entityManager = $entityManager;
     }
 
     /**

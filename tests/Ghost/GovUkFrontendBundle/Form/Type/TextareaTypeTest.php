@@ -25,6 +25,7 @@ class TextareaTypeTest extends AbstractGovUkFrontendTest
         );
     }
 
+    #[\Override]
     protected function mapJsonOptions($fixtureOptions): array
     {
         // All of the options we want to support in TextareaType

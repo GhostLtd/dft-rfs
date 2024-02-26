@@ -31,7 +31,7 @@ class NotificationInterceptionService
     protected function getRepositoryByNotificationInterception(NotificationInterceptionInterface $notificationInterception): NotificationInterceptionRepositoryInterface
     {
         foreach ($this->repositories as $repository) {
-            if ($repository->getClassName() === get_class($notificationInterception)) {
+            if ($repository->getClassName() === $notificationInterception::class) {
                 return $repository;
             }
         }
@@ -64,6 +64,6 @@ class NotificationInterceptionService
 
     protected function findInterception(SurveyInterface $survey): ?NotificationInterceptionInterface
     {
-        return $this->repositories[get_class($survey)]->findOneBySurvey($survey);
+        return $this->repositories[$survey::class]->findOneBySurvey($survey);
     }
 }

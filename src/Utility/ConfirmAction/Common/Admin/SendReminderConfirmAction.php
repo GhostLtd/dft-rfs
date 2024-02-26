@@ -14,17 +14,14 @@ class SendReminderConfirmAction extends AbstractConfirmAction
 {
     /** @var SurveyInterface */
     protected $subject;
-    protected EntityManagerInterface $entityManager;
-    protected ?string $passcode;
-    protected ManualReminderHelper $reminderHelper;
+    protected ?string $passcode = null;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, EntityManagerInterface $entityManager, ManualReminderHelper $reminderHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager, protected ManualReminderHelper $reminderHelper)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->entityManager = $entityManager;
-        $this->reminderHelper = $reminderHelper;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -34,11 +31,13 @@ class SendReminderConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'admin.send-reminder';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->reminderHelper->sendManualReminder($this->subject);

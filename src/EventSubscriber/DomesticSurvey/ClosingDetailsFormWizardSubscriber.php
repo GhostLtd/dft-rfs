@@ -12,6 +12,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
 {
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         $prefix = 'workflow.domestic_survey_closing_details';
@@ -22,7 +23,7 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
     }
 
 
-    public function transitionFinish(Event $event)
+    public function transitionFinish(Event $event): void
     {
         $stateObject = $this->getStateObject($event);
         $survey = $stateObject->getSubject()->getSurvey();
@@ -32,19 +33,16 @@ class ClosingDetailsFormWizardSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * Needed to close the domestic survey
-     * @var WorkflowInterface
-     */
-    private $domesticSurveyStateMachine;
-
-    public function __construct(WorkflowInterface $domesticSurveyStateMachine)
+    public function __construct(
+        /**
+         * Needed to close the domestic survey
+         */
+        private WorkflowInterface $domesticSurveyStateMachine
+    )
     {
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
     }
 
     /**
-     * @param Event $event
      * @return ClosingDetailsState | object
      */
     protected function getStateObject(Event $event)

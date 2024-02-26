@@ -20,32 +20,30 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 
     /** @var Survey */
     protected $subject;
-    private WorkflowInterface $domesticSurveyStateMachine;
-    private EntityManagerInterface $entityManager;
 
     public function getTransition(): string
     {
         return $this->transition;
     }
 
-    public function setTransition(string $transition): self
+    public function setTransition(string $transition): static
     {
         $this->transition = $transition;
         return $this;
     }
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $domesticSurveyStateMachine, private EntityManagerInterface $entityManager)
     {
         parent::__construct($formFactory, $requestStack, $translator);
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
-        $this->entityManager = $entityManager;
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     function getTranslationParameters(): array
     {
         return [
@@ -54,11 +52,13 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return "common.survey.workflow-transition";
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         $survey = $this->getSurvey();
@@ -76,6 +76,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return ConfirmActionType::class;
     }
 
+    #[\Override]
     public function getForm(): FormInterface
     {
         $formClass = $this->getFormClass();
@@ -106,6 +107,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return $this->formFactory->create($formClass, $data, $formOptions);
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $survey = $this->getSurvey();

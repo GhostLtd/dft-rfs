@@ -8,17 +8,15 @@ use Twig\TwigFunction;
 
 class WorkflowExtraExtension extends AbstractExtension
 {
-    private Registry $workflowRegistry;
-
-    public function __construct(Registry $workflowRegistry)
+    public function __construct(private Registry $workflowRegistry)
     {
-        $this->workflowRegistry = $workflowRegistry;
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('workflow_can_any', [$this, 'canTransitionToAny']),
+            new TwigFunction('workflow_can_any', $this->canTransitionToAny(...)),
         ];
     }
 

@@ -10,11 +10,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PasscodeUserCleanupUtility
 {
-    protected EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -62,7 +59,7 @@ class PasscodeUserCleanupUtility
             ->setCategory('cleanup-passcode')
             ->setUsername('-')
             ->setEntityId($survey->getId())
-            ->setEntityClass(get_class($survey))
+            ->setEntityClass($survey::class)
             ->setTimestamp(new \DateTime())
             ->setData([]);
     }

@@ -4,15 +4,15 @@ namespace App\Command;
 
 use App\Utility\Reminder\AutomatedRemindersHelper;
 use App\Utility\Reminder\AutomatedRoroRemindersHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('app:cron:reminders:process')]
 class CronProcessRemindersCommand extends Command
 {
-    protected static $defaultName = 'app:cron:reminders:process';
-
     public function __construct(
         protected AutomatedRemindersHelper $automatedRemindersHelper,
         protected AutomatedRoroRemindersHelper $automatedRoroRemindersHelper,
@@ -20,6 +20,7 @@ class CronProcessRemindersCommand extends Command
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -27,6 +28,7 @@ class CronProcessRemindersCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

@@ -6,13 +6,10 @@ use DateTime;
 
 class SessionTimeoutHelper
 {
-    const DATE_FORMAT = 'Y-m-d H:i:s';
+    public const DATE_FORMAT = 'Y-m-d H:i:s';
 
-    protected int $warningThreshold;
-
-    public function __construct(int $warningThreshold = 300)
+    public function __construct(protected int $warningThreshold = 300)
     {
-        $this->warningThreshold = $warningThreshold;
     }
 
     public function getExpiryTime(): string
@@ -27,8 +24,8 @@ class SessionTimeoutHelper
         return (new DateTime("{$maxLifetime} seconds"))->format(self::DATE_FORMAT);
     }
 
-    protected function getMaxLifetime(): string
+    protected function getMaxLifetime(): int
     {
-        return ini_get('session.gc_maxlifetime');
+        return intval(ini_get('session.gc_maxlifetime'));
     }
 }

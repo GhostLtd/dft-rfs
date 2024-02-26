@@ -13,10 +13,12 @@ use Symfony\Component\Intl\Countries;
 
 class DataEntryDataMapper implements DataMapperInterface
 {
+    #[\Override]
     public function mapDataToForms($viewData, $forms): void
     {
     }
 
+    #[\Override]
     public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);

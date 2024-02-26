@@ -10,13 +10,15 @@ use Symfony\Component\Finder\Finder;
 
 class DoctrineMigrationFixtures extends Fixture implements FixtureInterface
 {
-    /**
-     * @param EntityManagerInterface $manager
-     */
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         $finder = new Finder();
         $finder->files()->in('migrations');
+
+        if (!$manager instanceof EntityManagerInterface) {
+            throw new \RuntimeException('Expected ObjectManager to be instance of EntityManagerInterface');
+        }
 
         $connection = $manager->getConnection();
         $connection->beginTransaction();

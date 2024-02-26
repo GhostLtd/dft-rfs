@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Normalizer\Domestic;
-
 
 use App\Entity\Distance;
 use App\Entity\Domestic\Day;
@@ -18,11 +16,19 @@ use App\Serializer\Normalizer\Mapper\ZeroIsNullProperty;
 
 class SummaryDayNormalizer extends AbstractExportNormalizer
 {
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof DaySummary;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            DaySummary::class => true,
+        ];
+    }
+    #[\Override]
     protected function getMapping(): array
     {
         return [

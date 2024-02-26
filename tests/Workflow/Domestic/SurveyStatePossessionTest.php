@@ -11,6 +11,7 @@ class SurveyStatePossessionTest extends WebTestCase
 {
     private WorkflowInterface $workflow;
 
+    #[\Override]
     protected function setUp(): void
     {
         static::bootKernel();

@@ -10,7 +10,7 @@ use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class InitialDetailsTest extends AbstractPasscodeWizardTest
+class InitialDetailsTest extends AbstractInitialDetailsTest
 {
     public function testZeroJourneysAndStillActive(): void
     {
@@ -20,16 +20,19 @@ class InitialDetailsTest extends AbstractPasscodeWizardTest
         $this->annualJourneyCount(0);
         $this->activityStatus('still-active');
         $this->businessDetails('1-9', 'Testing websites');
-        $this->assertAtDashboard();
-        $this->assertDatabaseCorrect(
-            'My name',
-            'email@example.com',
-            'My telephone',
-            0,
-            'still-active',
-            '1-9',
-            'Testing websites',
-        );
+
+        $data = [
+            'contactName' => 'My name',
+            'contactEmail' => 'email@example.com',
+            'contactTelephone' => 'My telephone',
+            'annualInternationalJourneyCount' => 0,
+            'activityStatus' => 'still-active',
+            'numberOfEmployees' => '1-9',
+            'businessNature' => 'Testing websites',
+        ];
+
+        $this->assertDashboardMatchesData($data);
+        $this->assertDatabaseMatchesData($data);
     }
 
     public function testZeroJourneysAndCeasedTrading(): void
@@ -39,16 +42,19 @@ class InitialDetailsTest extends AbstractPasscodeWizardTest
         $this->introAndContactDetails();
         $this->annualJourneyCount(0);
         $this->activityStatus('ceased-trading');
-        $this->assertAtDashboard();
-        $this->assertDatabaseCorrect(
-            'My name',
-            'email@example.com',
-            'My telephone',
-            0,
-            'ceased-trading',
-            null,
-            null,
-        );
+
+        $data = [
+            'contactName' => 'My name',
+            'contactEmail' => 'email@example.com',
+            'contactTelephone' => 'My telephone',
+            'annualInternationalJourneyCount' => 0,
+            'activityStatus' => 'ceased-trading',
+            'numberOfEmployees' => null,
+            'businessNature' => null,
+        ];
+
+        $this->assertDashboardMatchesData($data);
+        $this->assertDatabaseMatchesData($data);
     }
 
     public function testZeroJourneysAndOnlyDomesticWork(): void
@@ -58,16 +64,19 @@ class InitialDetailsTest extends AbstractPasscodeWizardTest
         $this->introAndContactDetails();
         $this->annualJourneyCount(0);
         $this->activityStatus('only-domestic-work');
-        $this->assertAtDashboard();
-        $this->assertDatabaseCorrect(
-            'My name',
-            'email@example.com',
-            'My telephone',
-            0,
-            'only-domestic-work',
-            null,
-            null,
-        );
+
+        $data = [
+            'contactName' => 'My name',
+            'contactEmail' => 'email@example.com',
+            'contactTelephone' => 'My telephone',
+            'annualInternationalJourneyCount' => 0,
+            'activityStatus' => 'only-domestic-work',
+            'numberOfEmployees' => null,
+            'businessNature' => null,
+        ];
+
+        $this->assertDashboardMatchesData($data);
+        $this->assertDatabaseMatchesData($data);
     }
 
     public function testManyJourneys(): void
@@ -77,16 +86,19 @@ class InitialDetailsTest extends AbstractPasscodeWizardTest
         $this->introAndContactDetails();
         $this->annualJourneyCount(30);
         $this->businessDetails('1-9', 'Testing websites');
-        $this->assertAtDashboard();
-        $this->assertDatabaseCorrect(
-            'My name',
-            'email@example.com',
-            'My telephone',
-            30,
-            'still-active',
-            '1-9',
-            'Testing websites',
-        );
+
+        $data = [
+            'contactName' => 'My name',
+            'contactEmail' => 'email@example.com',
+            'contactTelephone' => 'My telephone',
+            'annualInternationalJourneyCount' => 30,
+            'activityStatus' => 'still-active',
+            'numberOfEmployees' => '1-9',
+            'businessNature' => 'Testing websites',
+        ];
+
+        $this->assertDashboardMatchesData($data);
+        $this->assertDatabaseMatchesData($data);
     }
 
     protected function introAndContactDetails(): void
@@ -130,45 +142,5 @@ class InitialDetailsTest extends AbstractPasscodeWizardTest
                 'business_details[businessNature]' => $businessNature,
             ]),
         ]);
-    }
-
-    protected function assertAtDashboard(): void
-    {
-        $this->pathTestAction('/international-survey/correspondence-and-business-details');
-    }
-
-    protected function assertDatabaseCorrect(
-        string $name,
-        string $email,
-        string $telephone,
-        int $annualJourneyCount,
-        string $activityStatus,
-        ?string $numberOfEmployees,
-        ?string $businessNature,
-    ): void
-    {
-        $this->callbackTestAction(function (Context $context) use ($name, $email, $telephone, $annualJourneyCount, $activityStatus, $numberOfEmployees, $businessNature) {
-            $entityManager = $context->getEntityManager();
-
-            /** @var SurveyRepository $repo */
-            $repo = $entityManager->getRepository(Survey::class);
-            $entityManager->clear();
-            $surveys = $repo->findAll();
-
-            $test = $context->getTestCase();
-            $test->assertCount(1, $surveys, 'Expected a single surveyResponse to be in the database');
-
-            $survey = $surveys[0];
-            $test->assertEquals(SurveyStateInterface::STATE_IN_PROGRESS, $survey->getState());
-
-            $response = $survey->getResponse();
-            $test->assertEquals($activityStatus, $response->getActivityStatus());
-            $test->assertEquals($name, $response->getContactName());
-            $test->assertEquals($email, $response->getContactEmail());
-            $test->assertEquals($telephone, $response->getContactTelephone());
-            $test->assertEquals($numberOfEmployees, $response->getNumberOfEmployees());
-            $test->assertEquals($annualJourneyCount, $response->getAnnualInternationalJourneyCount());
-            $test->assertEquals($businessNature, $response->getBusinessNature());
-        });
     }
 }

@@ -15,6 +15,7 @@ class CallbackAction extends AbstractAction
         $this->descriptionCallback = null;
     }
 
+    #[\Override]
     public function perform(Context $context): void
     {
         $this->outputHeader($context);

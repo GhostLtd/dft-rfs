@@ -5,70 +5,53 @@ namespace App\Entity\Domestic;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
 use App\Entity\GoodsDescriptionInterface;
+use App\Entity\HazardousGoodsInterface;
 use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\DayStopRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=DayStopRepository::class)
- * @ORM\Table("domestic_day_stop")
- */
-class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
+#[ORM\Table('domestic_day_stop')]
+#[ORM\Entity(repositoryClass: DayStopRepository::class)]
+class DayStop implements BorderCrossingInterface, GoodsDescriptionInterface, HazardousGoodsInterface, StopInterface
 {
     use StopTrait {
         setGoodsDescription as traitSetGoodsDescription;
     }
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $number;
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $number = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotNull(message="domestic.day-stop.goods-weight.not-null", groups={"goods-weight", "admin-day-stop-not-empty"})
-     * @Assert\PositiveOrZero (message="common.number.positive", groups={"goods-weight", "admin-day-stop-not-empty"})
-     * @Assert\Range(max=2000000000, maxMessage="common.number.max", groups={"goods-weight", "admin-day-stop-not-empty"})
-     */
-    private $weightOfGoodsCarried;
+    #[Assert\NotNull(message: 'domestic.day-stop.goods-weight.not-null', groups: ['goods-weight', 'admin-day-stop-not-empty'])]
+    #[Assert\PositiveOrZero(message: 'common.number.positive', groups: ['goods-weight', 'admin-day-stop-not-empty'])]
+    #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['goods-weight', 'admin-day-stop-not-empty'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $weightOfGoodsCarried = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(message="domestic.day-stop.was-at-capacity.not-null", groups={"at-capacity", "admin-day-stop-not-empty"})
-     */
-    private $wasAtCapacity;
+    #[Assert\NotNull(message: 'domestic.day-stop.was-at-capacity.not-null', groups: ['at-capacity', 'admin-day-stop-not-empty'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $wasAtCapacity = null;
 
     /**
      * !! unused - needed for validation attachment
-     * @Assert\Expression("!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())",
-     *     groups={"at-capacity", "admin-day-stop-not-empty"},
-     *     message="domestic.day-stop.was-at-capacity.invalid"
-     * )
      */
+    #[Assert\Expression('!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())', message: 'domestic.day-stop.was-at-capacity.invalid', groups: ['at-capacity', 'admin-day-stop-not-empty'])]
     private $wasLimitedBy;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $wasLimitedByWeight;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $wasLimitedByWeight = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $wasLimitedBySpace;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $wasLimitedBySpace = null;
 
-    /**
-     * @ORM\Embedded(class=Distance::class)
-     * @AppAssert\ValidValueUnit(groups={"day-stop.distance-travelled", "admin-day-stop"})
-     */
+    #[AppAssert\ValidValueUnit(groups: ["day-stop.distance-travelled", "admin-day-stop"])]
+    #[ORM\Embedded(class: Distance::class)]
     private $distanceTravelled;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Day::class, inversedBy="stops")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $day;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Day::class, inversedBy: 'stops')]
+    private ?Day $day = null;
 
     public function getNumber(): ?int
     {
@@ -78,7 +61,6 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setNumber(int $number): self
     {
         $this->number = $number;
-
         return $this;
     }
 
@@ -90,7 +72,6 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setWeightOfGoodsCarried(?int $weightOfGoodsCarried): self
     {
         $this->weightOfGoodsCarried = $weightOfGoodsCarried;
-
         return $this;
     }
 
@@ -116,7 +97,6 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setWasLimitedByWeight(?bool $wasLimitedByWeight): self
     {
         $this->wasLimitedByWeight = $wasLimitedByWeight;
-
         return $this;
     }
 
@@ -143,7 +123,6 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setWasLimitedBySpace(?bool $wasLimitedBySpace): self
     {
         $this->wasLimitedBySpace = $wasLimitedBySpace;
-
         return $this;
     }
 
@@ -155,7 +134,6 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setDistanceTravelled(?Distance $distanceTravelledLoaded): self
     {
         $this->distanceTravelled = $distanceTravelledLoaded;
-
         return $this;
     }
 
@@ -167,10 +145,10 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     public function setDay(?Day $day): self
     {
         $this->day = $day;
-
         return $this;
     }
 
+    #[\Override]
     public function setGoodsDescription(?string $goodsDescription): self
     {
         if ($goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY) {
@@ -184,24 +162,42 @@ class DayStop implements GoodsDescriptionInterface, BorderCrossingInterface
     }
 
     // transition callbacks
-    public function transitionGoodsNotUnloadedNICallback()
+    public function transitionGoodsNotUnloadedNICallback(): bool
     {
         return
             $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
-            && !$this->getGoodsUnloaded()
-            ;
+            && !$this->getGoodsUnloaded();
     }
 
-    public function transitionGoodsNotUnloadedGBCallback()
+    public function transitionGoodsNotUnloadedGBCallback(): bool
     {
         return
             !$this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland()
-            && !$this->getGoodsUnloaded()
-            ;
+            && !$this->getGoodsUnloaded();
     }
 
-    public function isNorthernIrelandSurvey()
+    public function isNorthernIrelandSurvey(): ?bool
     {
         return $this->getDay()->getResponse()->getSurvey()->getIsNorthernIreland();
+    }
+
+    public function merge(DayStop $dayStopToMerge): void
+    {
+        $this->setOriginLocation($dayStopToMerge->getOriginLocation());
+        $this->setGoodsLoaded($dayStopToMerge->getGoodsLoaded());
+        $this->setGoodsTransferredFrom($dayStopToMerge->getGoodsTransferredFrom());
+        $this->setDestinationLocation($dayStopToMerge->getDestinationLocation());
+        $this->setGoodsUnloaded($dayStopToMerge->getGoodsUnloaded());
+        $this->setGoodsTransferredTo($dayStopToMerge->getGoodsTransferredTo());
+        $this->setBorderCrossed($dayStopToMerge->getBorderCrossed());
+        $this->setBorderCrossingLocation($dayStopToMerge->getBorderCrossingLocation());
+        $this->setDistanceTravelled($dayStopToMerge->getDistanceTravelled());
+        $this->setGoodsDescription($dayStopToMerge->getGoodsDescription());
+        $this->setGoodsDescriptionOther($dayStopToMerge->getGoodsDescriptionOther());
+        $this->setHazardousGoodsCode($dayStopToMerge->getHazardousGoodsCode());
+        $this->setCargoTypeCode($dayStopToMerge->getCargoTypeCode());
+        $this->setWeightOfGoodsCarried($dayStopToMerge->getWeightOfGoodsCarried());
+        $this->setWasAtCapacity($dayStopToMerge->getWasAtCapacity());
+        $this->setWasLimitedBy($dayStopToMerge->getWasLimitedBy());
     }
 }

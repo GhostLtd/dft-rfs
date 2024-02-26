@@ -15,6 +15,7 @@ class VehicleCountsType extends AbstractType
     public function __construct(protected TranslatorInterface $translator)
     {}
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Survey $data */
@@ -46,6 +47,7 @@ class VehicleCountsType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

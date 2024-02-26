@@ -14,17 +14,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/irhs/notification-interception", name="admin_international_notification_interception_")
- */
+#[Route(path: '/irhs/notification-interception', name: 'admin_international_notification_interception_')]
 class NotificationInterceptionController extends AbstractController
 {
-    const MODE_ADD = 'add';
-    const MODE_EDIT_EMAILS = 'edit-emails';
-    const MODE_EDIT_NAMES = 'edit-names';
+    public const MODE_ADD = 'add';
+    public const MODE_EDIT_EMAILS = 'edit-emails';
+    public const MODE_EDIT_NAMES = 'edit-names';
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
@@ -32,9 +31,7 @@ class NotificationInterceptionController extends AbstractController
         protected TranslatorInterface    $translator
     ) {}
 
-    /**
-     * @Route("/", name="list")
-     */
+    #[Route(path: '/', name: 'list')]
     public function list(NotificationInterceptionListPage $listPage, Request $request): Response
     {
         $listPage
@@ -50,14 +47,12 @@ class NotificationInterceptionController extends AbstractController
             'edit_emails_route' => 'admin_international_notification_interception_edit_emails',
             'delete_route' => 'admin_international_notification_interception_delete',
             'data' => $listPage->getData(),
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
             'survey_type' => 'international',
         ]);
     }
 
-    /**
-     * @Route("/delete/{id}", name="delete")
-     */
+    #[Route(path: '/delete/{id}', name: 'delete')]
     public function delete(Request $request, DeleteNotificationInterceptionConfirmAction $confirmAction, NotificationInterception $notificationInterception): Response
     {
         $data = $confirmAction
@@ -74,11 +69,9 @@ class NotificationInterceptionController extends AbstractController
         return $this->render("admin/notification_interception/delete.html.twig", $data);
     }
 
-    /**
-     * @Route("/edit-names/{id}", name="edit_names", defaults={"mode": "edit-names"})
-     * @Route("/edit-emails/{id}", name="edit_emails", defaults={"mode": "edit-emails"})
-     * @Route("/add", name="add", defaults={"mode": "add"})
-     */
+    #[Route(path: '/edit-names/{id}', name: 'edit_names', defaults: ['mode' => 'edit-names'])]
+    #[Route(path: '/edit-emails/{id}', name: 'edit_emails', defaults: ['mode' => 'edit-emails'])]
+    #[Route(path: '/add', name: 'add', defaults: ['mode' => 'add'])]
     public function edit(Request $request, ?NotificationInterception $notificationInterception, string $mode): Response
     {
         $form = $this->createForm(NotificationInterceptionType::class, $notificationInterception, [
@@ -111,7 +104,10 @@ class NotificationInterceptionController extends AbstractController
                         ['style' => NotificationBanner::STYLE_SUCCESS]
                     );
 
-                    $this->requestStack->getSession()->getBag('flashes')->add(NotificationBanner::FLASH_BAG_TYPE, $banner);
+                    $session = $this->requestStack->getSession();
+                    if ($session instanceof FlashBagAwareSessionInterface) {
+                        $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, $banner);
+                    }
                 }
 
                 return new RedirectResponse($successUrl);
@@ -119,7 +115,7 @@ class NotificationInterceptionController extends AbstractController
         }
 
         return $this->render('admin/notification_interception/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'type' => $mode,
         ]);
     }

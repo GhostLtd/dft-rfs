@@ -7,6 +7,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -15,63 +16,41 @@ trait SurveyTrait
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $invitationSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $firstReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $secondReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $latestManualReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $responseStartDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $submissionDate;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=false)
-     */
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: false)]
     private ?string $state;
 
-    /**
-     * @ORM\Column(type="string", length=1024, nullable=true)
-     * @AppAssert\CommaSeparatedEmails(groups={"add_survey", "import_survey"}, message="common.email.list-contains-invalid")
-     * @Assert\Length(max=1024, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
-     */
+    #[Assert\Length(max: 1024, maxMessage: 'common.string.max-length', groups: ['add_survey', 'import_survey'])]
+    #[AppAssert\CommaSeparatedEmails(message: "common.email.list-contains-invalid", groups: ["add_survey", "import_survey"])]
+    #[ORM\Column(type: Types::STRING, length: 1024, nullable: true)]
     private ?string $invitationEmails = null;
 
-    /**
-     * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"add_survey", "import_survey"}, validatePostcode=true, allowBlank=true)
-     * @Assert\Valid(groups={"add_srvuey", "import_survey", "notify_api"})
-     */
+    #[Assert\Valid(groups: ['add_srvuey', 'import_survey', 'notify_api'])]
+    #[AppAssert\ValidAddress(groups: ["add_survey", "import_survey"], validatePostcode: true, allowBlank: true)]
+    #[ORM\Embedded(class: LongAddress::class)]
     private ?LongAddress $invitationAddress;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Feedback::class, cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: Feedback::class, cascade: ['persist', 'remove'])]
     private ?Feedback $feedback;
 
-    /**
-     * @Assert\Callback(groups={"add_survey.not-enabled"})
-     */
+    #[Assert\Callback(groups: ['add_survey.not-enabled'])]
     public function validInvitationDetails(ExecutionContextInterface $context): void
     {
         if (!$this->invitationEmails && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {

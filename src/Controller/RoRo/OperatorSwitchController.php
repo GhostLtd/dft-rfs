@@ -4,15 +4,15 @@ namespace App\Controller\RoRo;
 
 use App\Entity\RoRoUser;
 use App\Utility\RoRo\OperatorSwitchHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/roro/switch-operator", name: "app_roro_switch_operator")]
-#[Security("is_granted('CAN_SWITCH_OPERATOR')")]
+#[IsGranted("CAN_SWITCH_OPERATOR")]
 class OperatorSwitchController extends AbstractController
 {
     public function __invoke(

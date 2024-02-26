@@ -9,24 +9,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MoneyType extends AbstractType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return InputType::class;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
         $builder->addViewTransformer(new CostTransformer($options['divisor']));
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gds_money';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 

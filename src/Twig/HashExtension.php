@@ -7,10 +7,11 @@ use Twig\TwigFilter;
 
 class HashExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFilters(): array
     {
         return [
-            new TwigFilter('hash', [$this, 'hash']),
+            new TwigFilter('hash', $this->hash(...)),
         ];
     }
 

@@ -21,11 +21,13 @@ class NotificationInterceptionRepository extends ServiceEntityRepository impleme
         parent::__construct($registry, NotificationInterception::class);
     }
 
+    #[\Override]
     public function findOneBySurvey(SurveyInterface $survey): ?NotificationInterception
     {
         return $this->findOneBy(['addressLine' => $survey->getInvitationAddress()->getLine1()]);
     }
 
+    #[\Override]
     public function findByAllNames($excludeId, array $names = []): array
     {
         return [];

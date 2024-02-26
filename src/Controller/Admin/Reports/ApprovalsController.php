@@ -9,23 +9,17 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ApprovalsController extends AbstractReportsController
 {
-    /**
-     * @Route("/approvals/{type}", name="approvals_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro"})
-     */
+    #[Route(path: '/approvals/{type}', name: 'approvals_type', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro'])]
     public function approvalsReportsDefaults(string $type): Response
     {
         return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/approvals/{type}/{year}/{quarter}", name="approvals_full",
-     *     requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro", "year": "\d{4}", "quarter": "1|2|3|4"}
-     * )
-     */
+    #[Route(path: '/approvals/{type}/{year}/{quarter}', name: 'approvals_full', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry|roro', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
     public function quarterlyApprovalsReport(Request $request, string $type, int $year, int $quarter): Response
     {
         [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
@@ -70,6 +64,7 @@ class ApprovalsController extends AbstractReportsController
         ]));
     }
 
+    #[\Override]
     public function getRedirect(array $data): RedirectResponse
     {
         switch($data['type'] ?? null) {
