@@ -40,7 +40,7 @@ class IntegerToStringTransformerTest extends TestCase
             $this->expectException(TransformationFailedException::class);
         }
 
-        $transformer = new IntegerToStringTransformer('Error!', []);
+        $transformer = new IntegerToStringTransformer('Error!');
         self::assertSame($expectedStringValue, $transformer->transform($integerValue));
     }
 
@@ -75,7 +75,7 @@ class IntegerToStringTransformerTest extends TestCase
             $this->expectException(TransformationFailedException::class);
         }
 
-        $transformer = new IntegerToStringTransformer('Error!', []);
+        $transformer = new IntegerToStringTransformer('Error!');
         self::assertEquals($expectedIntValue, $transformer->reverseTransform($stringValue));
     }
 }

@@ -20,7 +20,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class GoogleIapAuthenticator extends AbstractAuthenticator
 {
-    const EXTRA_FIELD_USER_ID = 'IAPid';
     protected bool $isGaeEnvironment;
     protected ManagementUserHelper $managementUserHelper;
 
@@ -77,10 +76,6 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
                 $credentials['assertion'],
                 [$role],
                 true,
-                true,
-                true,
-                true,
-                [self::EXTRA_FIELD_USER_ID => $credentials['userId']]
             )),
             new CustomCredentials(
                 [$this, 'customAuthenticator'],
@@ -91,6 +86,10 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
 
     public function customAuthenticator($credentials, UserInterface $user): bool
     {
+        if (!$user instanceof InMemoryUser) {
+            return false;
+        }
+
         if ($user->getPassword() === false) {
             return false;
         }
@@ -99,13 +98,12 @@ class GoogleIapAuthenticator extends AbstractAuthenticator
             return true;
         }
 
-        /** @var InMemoryUser $user */
         try {
             $metadata = new Metadata();
             $audience = "/projects/{$metadata->getNumericProjectId()}/apps/{$metadata->getProjectId()}";
             $assertionId = $this->validateAssertion($user->getPassword(), $audience);
             return $assertionId === $credentials['userId'];
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
