@@ -2,10 +2,11 @@
 
 # Changelog
 
-## Upcoming
+## 2nd April 2024
 
 * **Change:** Upgrade to Symfony 6.4 and PHP 8.3
 * **Change:** Utilise Rector and Phpstan to improve code quality and add further tests
+* **Fix:** Fix problem with DecimalToStringTransformer that caused an error  
 
 ## 26th Mar 2024
 

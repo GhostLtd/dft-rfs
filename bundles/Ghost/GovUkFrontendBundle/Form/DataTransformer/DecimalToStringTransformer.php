@@ -7,39 +7,25 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class DecimalToStringTransformer implements DataTransformerInterface
 {
-    /** @var string */
-    protected $invalidMessage;
-
-    /** @var array */
-    protected $invalidMessageParameters;
-
-    /** @var int */
-    protected $precision;
-
-    /** @var int */
-    protected $scale;
-
-    public function __construct(string $invalidMessage, array $invalidMessageParameters = [], int $precision = 8, int $scale = 2)
-    {
-        $this->invalidMessage = $invalidMessage;
-        $this->invalidMessageParameters = $invalidMessageParameters;
-        $this->precision = $precision;
-        $this->scale = $scale;
-    }
+    public function __construct(
+        protected string $messageInvalid = 'common.number.invalid',
+        protected string $messageTooLargeWholePart = 'common.number.too-large.whole',
+        protected string $messageTooLargeDecimals = 'common.number.too-large.decimal',
+        protected int    $precision = 8,
+        protected int    $scale = 2
+    )
+    {}
 
     /**
      * @return mixed
      */
-    #[\Override]
     public function transform($value)
     {
         if ($value === null || $value === '') {
             return '';
         }
 
-        if (!preg_match($this->getRegex(), $value, $matches)) {
-            throw new TransformationFailedException('Invalid decimal string', 0, null, $this->invalidMessage, $this->invalidMessageParameters);
-        }
+        $this->parseNumber($value);
 
         if (str_contains($value, '.')) {
             $value = rtrim($value, '0');
@@ -52,28 +38,48 @@ class DecimalToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
-    #[\Override]
     public function reverseTransform($value)
     {
         if ($value === null || '' === trim($value)) {
             return null;
         }
 
-        if (!preg_match($this->getRegex(), $value, $matches)) {
-            throw new TransformationFailedException('Invalid decimal amount', 0, null, $this->invalidMessage, $this->invalidMessageParameters);
-        }
-
-        $sign = ($matches['sign'] ?? null) === '-' ? -1 : 1;
-        $int = $sign * $matches['int'];
-        $dec = $matches['dec'] ?? '';
+        ['sign' => $sign, 'wholePart' => $wholePart, 'decimalPart' => $decimalPart] = $this->parseNumber($value);
 
         return $this->scale > 0 ?
-            $int.'.'.str_pad($dec, $this->scale, '0') : $int;
+            ("{$sign}{$wholePart}.".str_pad($decimalPart, $this->scale, '0')) :
+            "{$sign}{$wholePart}";
     }
 
-    protected function getRegex()
+    /**
+     * @return array{sign: string, wholePart: string, decimalPart: string}
+     */
+    protected function parseNumber(string $value): array
     {
-        $scaleRegex = $this->scale > 0 ? ('\d{1,'.$this->scale.'}') : '';
-        return '#^(?P<sign>-)?(?P<int>\d{1,'.$this->precision.'}+)(?:\.(?P<dec>'.$scaleRegex.'))?$#';
+        $regex = '#^(?P<sign>-)?(?P<int>\d+)(?:\.(?P<dec>\d+))?$#';
+
+        if (!preg_match($regex, $value, $matches)) {
+            throw new TransformationFailedException('Invalid decimal amount', 0, null, $this->messageInvalid);
+        }
+
+        $sign = $matches['sign'];
+        $wholePart = $matches['int'];
+        $decimalPart = $matches['dec'] ?? '';
+
+        $maxWholeDigits = ($this->precision - $this->scale);
+        $translationParameters = [
+            'maxWholeDigits' => $maxWholeDigits,
+            'maxDecimalDigits' => $this->scale,
+        ];
+
+        if (strlen($wholePart) > $maxWholeDigits) {
+            throw new TransformationFailedException('Too many digits (whole part)', 0, null, $this->messageTooLargeWholePart, $translationParameters);
+        }
+
+        if (strlen($decimalPart) > $this->scale) {
+            throw new TransformationFailedException('Too many digits (decimal part)', 0, null, $this->messageTooLargeDecimals, $translationParameters);
+        }
+
+        return ['sign' => $sign, 'wholePart' => $wholePart, 'decimalPart' => $decimalPart];
     }
 }

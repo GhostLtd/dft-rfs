@@ -11,22 +11,13 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class IntegerToStringTransformer implements DataTransformerInterface
 {
-    /** @var string */
-    protected $invalidMessage;
-
-    /** @var array */
-    protected $invalidMessageParameters;
-
-    public function __construct(string $invalidMessage, array $invalidMessageParameters = [])
-    {
-        $this->invalidMessage = $invalidMessage;
-        $this->invalidMessageParameters = $invalidMessageParameters;
-    }
+    public function __construct(
+        protected string $messageInvalid = 'common.number.invalid',
+    ) {}
 
     /**
      * @return mixed
      */
-    #[\Override]
     public function transform($value)
     {
         if ($value === null || $value === '') {
@@ -34,7 +25,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
         }
 
         if (!preg_match('#^-?\d+$#', $value, $matches)) {
-            throw new TransformationFailedException('Invalid integer amount', 0, null, $this->invalidMessage, $this->invalidMessageParameters);
+            throw new TransformationFailedException('Invalid integer amount', 0, null, $this->messageInvalid);
         }
 
         return (string) $value;
@@ -43,7 +34,6 @@ class IntegerToStringTransformer implements DataTransformerInterface
     /**
      * @return mixed
      */
-    #[\Override]
     public function reverseTransform($value)
     {
         if ($value === null || '' === trim($value)) {
@@ -51,7 +41,7 @@ class IntegerToStringTransformer implements DataTransformerInterface
         }
 
         if (!preg_match('#^-?\d+$#', $value, $matches)) {
-            throw new TransformationFailedException('Invalid integer amount', 0, null, $this->invalidMessage, $this->invalidMessageParameters);
+            throw new TransformationFailedException('Invalid integer amount', 0, null, $this->messageInvalid);
         }
 
         return intval($value);

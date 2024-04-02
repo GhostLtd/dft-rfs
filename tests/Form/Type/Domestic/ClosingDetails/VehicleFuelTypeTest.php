@@ -52,15 +52,15 @@ class VehicleFuelTypeTest extends AbstractTypeTest
                 'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '99999999.99', 'unit' => 'litres']],
+                ['fuelQuantity' => ['value' => '999999.99', 'unit' => 'litres']],
                 true,
-                '99999999.99',
+                '999999.99',
                 'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '999999999.99', 'unit' => 'litres']],
+                ['fuelQuantity' => ['value' => '9999999.99', 'unit' => 'litres']],
                 false, // Field has precision 8, scale 2
-                '999999999.99',
+                '9999999.99',
                 'litres',
             ],
             [

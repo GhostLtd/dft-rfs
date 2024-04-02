@@ -33,9 +33,9 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
                     'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
                 ],
                 true,
-                '27.00',
+                '27.0',
                 'miles',
-                '34.00',
+                '34.0',
                 'miles',
             ],
             [
@@ -44,9 +44,9 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
                     'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
                 ],
                 true,
-                '27.00',
+                '27.0',
                 'kilometres',
-                '34.00',
+                '34.0',
                 'miles',
             ],
             [
@@ -64,48 +64,46 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
                     'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
                 ],
                 true,
-                '0.00',
+                '0.0',
                 'miles',
-                '34.00',
+                '34.0',
                 'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '27.5', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
+                ],
+                true,
+                '27.5',
+                'miles',
+                '34.0',
+                'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '999999999.9', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
+                ],
+                true,
+                '999999999.9',
+                'miles',
+                '34.0',
+                'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '9999999999.9', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
+                ],
+                false, // Field has precision 10, scale 1
             ],
             [
                 [
                     'distanceTravelledLoaded' => ['value' => '27.53', 'unit' => 'miles'],
                     'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
                 ],
-                true,
-                '27.53',
-                'miles',
-                '34.00',
-                'miles',
-            ],
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '99999999.99', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
-                ],
-                true,
-                '99999999.99',
-                'miles',
-                '34.00',
-                'miles',
-            ],
-            // TODO: Either column declaration or transformer usage needs changing
-            //       Currently column is (10,1) whereas transformer is (8,2)
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '999999999.99', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
-                ],
-                false,
-            ],
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '27.531', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '34', 'unit' => 'miles'],
-                ],
-                false, // Field has scale 2
+                false, // Field has scale 1
             ],
             [
                 [
@@ -129,46 +127,46 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
                     'distanceTravelledUnloaded' => ['value' => '0', 'unit' => 'miles'],
                 ],
                 true,
-                '34.00',
+                '34.0',
                 'miles',
-                '0.00',
+                '0.0',
                 'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '27.5', 'unit' => 'miles'],
+                ],
+                true,
+                '34.0',
+                'miles',
+                '27.5',
+                'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '999999999.9', 'unit' => 'miles'],
+                ],
+                true,
+                '34.0',
+                'miles',
+                '999999999.9',
+                'miles',
+            ],
+            [
+                [
+                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
+                    'distanceTravelledUnloaded' => ['value' => '9999999999.9', 'unit' => 'miles'],
+                ],
+                false, // Field has precision 10, scale 1
             ],
             [
                 [
                     'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
                     'distanceTravelledUnloaded' => ['value' => '27.53', 'unit' => 'miles'],
                 ],
-                true,
-                '34.00',
-                'miles',
-                '27.53',
-                'miles',
-            ],
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '99999999.99', 'unit' => 'miles'],
-                ],
-                true,
-                '34.00',
-                'miles',
-                '99999999.99',
-                'miles',
-            ],
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '999999999.99', 'unit' => 'miles'],
-                ],
-                false,
-            ],
-            [
-                [
-                    'distanceTravelledLoaded' => ['value' => '34', 'unit' => 'miles'],
-                    'distanceTravelledUnloaded' => ['value' => '27.531', 'unit' => 'miles'],
-                ],
-                false, // Field has scale 2
+                false, // Field has scale 1
             ],
             [
                 [

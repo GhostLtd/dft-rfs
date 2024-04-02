@@ -2,13 +2,9 @@
 
 namespace Ghost\GovUkFrontendBundle\Form\Type;
 
-use Ghost\GovUkFrontendBundle\Form\DataTransformer\DecimalToStringTransformer;
-use Ghost\GovUkFrontendBundle\Form\DataTransformer\IntegerToStringTransformer;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileUploadType extends FileType
 {

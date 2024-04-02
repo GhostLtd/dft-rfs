@@ -22,8 +22,6 @@ security:
             entity:
                 class: App\Entity\PasscodeUser
                 property: username
-        passwd_file:
-            id: App\Security\FileUserProvider
         roro:
             entity:
                 class: App\Entity\RoRoUser
@@ -72,7 +70,9 @@ security:
         admin:
             host: '^%admin_hostname%$'
             lazy: true
-            provider: null_provider
+            stateless: true
+            custom_authenticators:
+                - App\Security\GoogleIapAuthenticator
             logout:
                 path: admin_logout
                 target: admin_login

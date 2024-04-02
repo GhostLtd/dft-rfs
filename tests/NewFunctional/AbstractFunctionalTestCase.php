@@ -25,6 +25,20 @@ class AbstractFunctionalTestCase extends PantherTestCase
         $fixtures = $databaseTool->loadFixtures($fixtures);
         $this->fixtureReferenceRepository = $fixtures->getReferenceRepository();
 
+        if (static::$webServerManager?->isStarted()) {
+            $reflClass = new \ReflectionClass(static::$webServerManager);
+            $hostname = $reflClass->getProperty('hostname')->getValue(static::$webServerManager);
+
+            if ($hostname !== ($pantherOptions['hostname'] ?? null)) {
+                // The webserver's already running but not with the hostname that we want, so let's stop it
+                // so that it then gets spun up again with the correct hostname...
+                static::stopWebServer();
+
+                // A possibly-better alternative would be to manage the webservers ourselves and
+                // then instead use the external_base_uri option to dictate which server to use
+            }
+        }
+
         $this->client = static::createPantherClient($pantherOptions);
     }
 
@@ -89,7 +103,7 @@ class AbstractFunctionalTestCase extends PantherTestCase
         // Doing things this way seems to mean that we don't need to use client->waitFor()
         // (compared with client->findElement->click)
         $textContains = str_replace("'", "\'", $textContains);
-        $xpath = $xpathBase.'a[contains(text(), "' . $textContains . '")]';
+        $xpath = $xpathBase.'a[contains(., "' . $textContains . '")]';
 
         $links = $this->client->getCrawler()->filterXPath($xpath)->links();
         $link = $links[$index] ?? null;

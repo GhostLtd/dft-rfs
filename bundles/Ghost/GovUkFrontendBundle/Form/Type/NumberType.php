@@ -44,8 +44,8 @@ class NumberType extends InputType
 
         $builder->addModelTransformer(
             $options['is_decimal'] ?
-                new DecimalToStringTransformer($options['transformer_invalid_message']) :
-                new IntegerToStringTransformer($options['transformer_invalid_message'])
+                new DecimalToStringTransformer(...$options['transformer_options']) :
+                new IntegerToStringTransformer(...$options['transformer_options'])
         );
     }
 
@@ -54,10 +54,11 @@ class NumberType extends InputType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'transformer_invalid_message' => 'common.number.invalid',
+            'transformer_options' => [],
             'is_decimal' => false,
         ]);
 
         $resolver->setAllowedTypes('is_decimal', ['bool']);
+        $resolver->setAllowedTypes('transformer_options', ['array']);
     }
 }

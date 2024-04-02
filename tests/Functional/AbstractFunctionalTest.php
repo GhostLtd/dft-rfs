@@ -26,7 +26,7 @@ abstract class AbstractFunctionalTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->browser = self::createClient();
+        $this->browser = self::createClient([], $this->getServerParameters());
         $this->browser->followRedirects(true);
         $this->browser->setMaxRedirects(10);
 
@@ -37,6 +37,11 @@ abstract class AbstractFunctionalTest extends WebTestCase
 //        $entityManager->clear();
 
         parent::setUp();
+    }
+
+    protected function getServerParameters(): array
+    {
+        return [];
     }
 
     #[\Override]

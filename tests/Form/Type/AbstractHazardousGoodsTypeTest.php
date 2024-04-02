@@ -91,12 +91,6 @@ abstract class AbstractHazardousGoodsTypeTest extends AbstractTypeTest
         $this->assertTrue($form->isSynchronized());
         $this->assertTrue($form->isSubmitted());
 
-        if ($expectedValid !== $form->isValid()) {
-            foreach ($form->getErrors(true) as $e) {
-                dump($e->getMessage());
-            }
-        }
-
         $this->assertEquals($expectedValid, $form->isValid());
 
         if ($expectedValid) {

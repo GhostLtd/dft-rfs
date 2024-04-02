@@ -1,5 +1,0 @@
-security:
-    firewalls:
-        admin:
-            provider: passwd_file
-            custom_authenticator: App\Security\AdminFormAuthenticator

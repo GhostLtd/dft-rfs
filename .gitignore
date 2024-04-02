@@ -26,13 +26,7 @@ yarn-error.log
 /.idea
 /.gitattributes
 
-/admin-passwords
 /public/.htaccess
-
 /local/
 /*keys.json
 /drivers/
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###

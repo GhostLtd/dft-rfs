@@ -136,10 +136,6 @@ services:
             - { name: 'workflow.expression_language_provider' }
             - { name: 'validator.expression_language_provider' }
 
-    App\Security\FileUserProvider:
-        arguments:
-            $usersFile: '%env(resolve:default::ADMIN_USERS_PASSWORD_FILE)%'
-
     App\Security\ManagementUserHelper:
         arguments:
             $managementDomains: '%env(json:default::MANAGEMENT_DOMAINS)%'

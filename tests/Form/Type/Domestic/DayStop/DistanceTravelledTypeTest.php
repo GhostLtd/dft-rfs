@@ -19,66 +19,54 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
             [
                 ['distanceTravelled' => ['value' => '27', 'unit' => 'miles']],
                 true,
-                '27.00',
+                '27.0',
                 'miles',
             ],
             [
                 ['distanceTravelled' => ['value' => '27', 'unit' => 'kilometres']],
                 true,
-                '27.00',
+                '27.0',
                 'kilometres',
             ],
             [
                 ['distanceTravelled' => ['value' => '27', 'unit' => 'bananas']],
                 false,
-                '27.00',
-                null,
             ],
 
             // Number extremities
             [
                 ['distanceTravelled' => ['value' => '0', 'unit' => 'miles']],
                 true,
-                '0.00',
+                '0.0',
                 'miles',
+            ],
+            [
+                ['distanceTravelled' => ['value' => '27.5', 'unit' => 'miles']],
+                true,
+                '27.5',
+                'miles',
+            ],
+            [
+                ['distanceTravelled' => ['value' => '999999999.9', 'unit' => 'miles']],
+                true,
+                '999999999.9',
+                'miles',
+            ],
+            [
+                ['distanceTravelled' => ['value' => '9999999999.9', 'unit' => 'miles']],
+                false, // Field has precision 10, scale 1
             ],
             [
                 ['distanceTravelled' => ['value' => '27.53', 'unit' => 'miles']],
-                true,
-                '27.53',
-                'miles',
-            ],
-            [
-                ['distanceTravelled' => ['value' => '99999999.99', 'unit' => 'miles']],
-                true,
-                '99999999.99',
-                'miles',
-            ],
-            // TODO: Either column declaration or transformer usage needs changing
-            //       Currently column is (10,1) whereas transformer is (8,2)
-            [
-                ['distanceTravelled' => ['value' => '999999999.99', 'unit' => 'miles']],
-                false, // Field has precision 8, scale 2
-                '999999999.99',
-                'miles',
-            ],
-            [
-                ['distanceTravelled' => ['value' => '27.531', 'unit' => 'miles']],
-                false, // Field has scale 2
-                null,
-                'miles',
+                false, // Field has scale 1
             ],
             [
                 ['distanceTravelled' => ['value' => '-1.2', 'unit' => 'miles']],
                 false,
-                null,
-                'miles',
             ],
             [
                 ['distanceTravelled' => ['value' => '2e5', 'unit' => 'miles']],
                 false,
-                null,
-                'miles',
             ],
         ];
     }

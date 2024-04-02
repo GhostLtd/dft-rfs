@@ -8,16 +8,6 @@ On GCP deployed instances, this configuration is set via the environment (Consol
 
 ## Options
 
-### ADMIN_USERS_PASSWORD_FILE
-
-If present, this sets a path to a file containing "username: hash" pairs, which are used to authenticate users for the admin, when the site is running in DEV mode (only!):
-
-```
-wibble@example.com: $argon2id$v=19$m=65536,t=4,p=1$1MlYOr5ya0r4jRutXITJ1w$rtaS3vGchiKhMmShlkzqastgmGv2RWGw6BeAcPmJ38c
-```
-
-The hash strings for these pairs can be generated via the *security:encode-password* console command.
-
 ### MANAGEMENT_DOMAINS
 
 If present, this setting contains a JSON string representing an array of domains. It is used to nominate users with the given domain names to be given maintenance privileges.

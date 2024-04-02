@@ -20,7 +20,7 @@ common:
     greater-than-or-equal: Enter a date on or after {compared_value}
     invalid: Enter a valid date
   hazardous-goods:
-    not-null: Choose whether the goods being transported were classifed as dangerous or hazardous
+    not-null: Choose whether the goods being transported were classified as dangerous or hazardous
     type-not-null: Choose the code for the hazardous goods that were carried
   number:
     invalid: Enter a number
@@ -28,6 +28,9 @@ common:
     positive-or-zero: Enter a positive number or zero
     positive: Enter a positive number
     max: "Cannot be more than {limit, number}"
+    too-large:
+      whole: Enter a maximum of {maxWholeDigits} digits and {maxDecimalDigits} decimal places
+      decimal: Enter a maximum of {maxDecimalDigits} decimal places
   place:
     place: Enter a place
     country: Enter a country
