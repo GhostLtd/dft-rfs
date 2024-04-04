@@ -114,6 +114,8 @@ international:
   closing-details:
     early-response:
       not-null: Choose whether you are sure that the information submitted is final
+    loading-without-unloading:
+      not-null: Choose whether the information listed on this page is correct or not
   survey:
     reference-number:
       correct-format: Enter a number followed by a dash, followed by a four-digit week number.

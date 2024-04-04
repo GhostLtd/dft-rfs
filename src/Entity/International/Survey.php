@@ -258,7 +258,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         return !$response || (!$response->isNoLongerActive() && $response->getTotalNumberOfTrips() === 0);
     }
 
-    public function mergeClosingDetails(Survey $survey)
+    public function mergeClosingDetails(Survey $survey): void
     {
         $this->setReasonForEmptySurvey($survey->getReasonForEmptySurvey());
         $this->setReasonForEmptySurveyOther($survey->getReasonForEmptySurveyOther());

@@ -75,7 +75,7 @@ class Vehicle implements VehicleInterface
         return $this;
     }
 
-    public function mergeVehicleChanges(Vehicle $vehicle)
+    public function mergeVehicleChanges(Vehicle $vehicle): void
     {
         $this->setRegistrationMark($vehicle->getRegistrationMark());
         $this->setOperationType($vehicle->getOperationType());

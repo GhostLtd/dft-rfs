@@ -31,7 +31,7 @@ class LoadingActionFixtures extends Fixture implements DependentFixtureInterface
         $this->setReference('action:loading:1', $loading);
 
         $trip->addAction($loading);
-        $manager->persist($loading);;
+        $manager->persist($loading);
 
         $manager->flush();
     }

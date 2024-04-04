@@ -19,6 +19,7 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_START,
                     StateObject::STATE_EARLY_RESPONSE,
                     StateObject::STATE_REASON_EMPTY_SURVEY,
+                    StateObject::STATE_LOADING_WITHOUT_UNLOADING,
                     StateObject::STATE_CONFIRM,
                     StateObject::STATE_END,
                 ],
@@ -37,10 +38,18 @@ return static function (ContainerConfigurator $container) {
                             'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
                         ],
                     ],
+                    'early_response_to_loading_without_unloading' => [
+                        'from' => StateObject::STATE_EARLY_RESPONSE,
+                        'to' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
+                        'guard' => '!subject.getSubject().shouldAskWhyEmptySurvey() && irhs_has_loading_without_unloading(subject.getSubject())',
+                        'metadata' => [
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
+                        ],
+                    ],
                     'early_response_to_filled_out' => [
                         'from' => StateObject::STATE_EARLY_RESPONSE,
                         'to' => StateObject::STATE_CONFIRM,
-                        'guard' => '!subject.getSubject().shouldAskWhyEmptySurvey()',
+                        'guard' => '!subject.getSubject().shouldAskWhyEmptySurvey() && !irhs_has_loading_without_unloading(subject.getSubject())',
                         'metadata' => [
                             'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
                         ],
@@ -63,6 +72,30 @@ return static function (ContainerConfigurator $container) {
                     'request_confirmation' => [
                         'from' => StateObject::STATE_REASON_EMPTY_SURVEY,
                         'to' => StateObject::STATE_CONFIRM,
+                    ],
+
+                    // Loading without unloading
+                    'start_to_loading_but_not_unloading' => [
+                        'from' => StateObject::STATE_START,
+                        'to' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
+                        'guard' => '!subject.getSubject().isEarlierThanSurveyPeriodEnd() && !subject.getSubject().shouldAskWhyEmptySurvey() && irhs_has_loading_without_unloading(subject.getSubject())'
+                    ],
+
+                    'loading_but_not_unloading' => [
+                        'from' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
+                        'to' => StateObject::STATE_CONFIRM,
+                        'metadata' => [
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
+                        ],
+                    ],
+
+                    'loading_but_not_unloading_to_dashboard' => [
+                        'from' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
+                        'to' => StateObject::STATE_END,
+                        'metadata' => [
+                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
+                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => false]
+                        ],
                     ],
 
                     // Filled out

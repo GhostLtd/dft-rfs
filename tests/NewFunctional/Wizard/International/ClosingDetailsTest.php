@@ -7,6 +7,7 @@ use App\Entity\SurveyStateInterface;
 use App\Repository\International\SurveyRepository;
 use App\Tests\DataFixtures\International\ActionFixtures;
 use App\Tests\DataFixtures\International\EarlySurveyFixtures;
+use App\Tests\DataFixtures\International\LoadingActionFixtures;
 use App\Tests\DataFixtures\International\ResponseCeasedTradingFixtures;
 use App\Tests\DataFixtures\International\ResponseDomesticOnlyFixtures;
 use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
@@ -19,25 +20,38 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
     public function testFinalQuestionsWithEmptySurvey(): void
     {
         $this->initialiseTest([ResponseStillActiveFixtures::class]);
-        $this->doFlowTest(false, true);
+        $this->doFlowTest(false, true, false);
     }
 
     public function testFinalQuestionsWithEmptySurveyButEarly(): void
     {
         $this->initialiseTest([ResponseStillActiveFixtures::class, EarlySurveyFixtures::class]);
-        $this->doFlowTest(true, true);
+        $this->doFlowTest(true, true, false);
     }
+
+    public function testFinalQuestionsWithLoadedWithoutUnloaded(): void
+    {
+        $this->initialiseTest([LoadingActionFixtures::class]);
+        $this->doFlowTest(false, false, true);
+    }
+
+    public function testFinalQuestionsWithLoadedWithoutUnloadedButEarly(): void
+    {
+        $this->initialiseTest([LoadingActionFixtures::class, EarlySurveyFixtures::class]);
+        $this->doFlowTest(true, false, true);
+    }
+
 
     public function testFinalQuestionsWithFilledSurvey(): void
     {
         $this->initialiseTest([ActionFixtures::class]);
-        $this->doFlowTest(false, false);
+        $this->doFlowTest(false, false, false);
     }
 
     public function testFinalQuestionsWithFilledSurveyButEarly(): void
     {
         $this->initialiseTest([ActionFixtures::class, EarlySurveyFixtures::class]);
-        $this->doFlowTest(true, false);
+        $this->doFlowTest(true, false, false);
     }
 
     public function testFinalQuestionsWithDomesticOnly(): void
@@ -78,6 +92,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
     protected function doFlowTest(
         bool $expectedEarlyResponse,
         bool $expectedEmptySurvey,
+        bool $expectedLoadedButNotUnloaded,
     ): void
     {
         $this->pathTestAction('/international-survey');
@@ -104,6 +119,19 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
                     new FormTestCase([], ['#reason_empty_survey_reasonForEmptySurvey']),
                     new FormTestCase([
                         'reason_empty_survey[reasonForEmptySurvey]' => 'no-international-work'
+                    ]),
+                ]
+            );
+        }
+
+        if ($expectedLoadedButNotUnloaded) {
+            $this->formTestAction(
+                '/international-survey/closing-details/loading-without-unloading',
+                'loading_without_unloading_continue',
+                [
+                    new FormTestCase([], ['#loading_without_unloading_is_correct']),
+                    new FormTestCase([
+                        'loading_without_unloading[is_correct]' => 'true'
                     ]),
                 ]
             );

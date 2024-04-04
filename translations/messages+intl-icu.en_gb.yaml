@@ -1612,6 +1612,13 @@ international:
         help: ''
         no: I might want to make further changes. Do not submit the survey.
         yes: I am sure there will be no further changes.
+    loading-without-unloading:
+      heading: "Some cargo has been unloaded, but not unloaded:"
+      is-correct:
+        label: Is this information correct?
+        help: ''
+        no: No, cancel the survey submission - I need to make more edits.
+        yes: Yes, continue with survey submission.
 
   completed:
     heading: Survey complete

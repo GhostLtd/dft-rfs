@@ -3,6 +3,7 @@
 namespace App\Tests\Form\Type;
 
 use App\ExpressionLanguage\GeneralExpressionProvider;
+use App\Utility\International\LoadingWithoutUnloadingHelper;
 use Ghost\GovUkFrontendBundle\Form\Extension\ChoiceTypeExtension;
 use Ghost\GovUkFrontendBundle\Form\Extension\ConditionalTypeExtension;
 use Ghost\GovUkFrontendBundle\Form\Extension\FormTypeExtension;
@@ -56,7 +57,7 @@ abstract class AbstractTypeTest extends TypeTestCase
     protected function getValidators(): array
     {
         $expressionLanguage = new ExpressionLanguage(null, [
-            new GeneralExpressionProvider(),
+            new GeneralExpressionProvider(new LoadingWithoutUnloadingHelper()),
         ]);
 
         return [

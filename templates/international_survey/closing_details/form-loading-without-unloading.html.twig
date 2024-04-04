@@ -1,0 +1,29 @@
+{%- set translation_prefix = 'international.closing-details.loading-without-unloading' -%}
+{%- extends 'international_survey/form-base.html.twig' -%}
+
+{%- set useThirdsColumns = false -%}
+
+{% set preFormContent %}
+    {% from "@GhostGovUkFrontend/components/macros.html.twig" import tableHeadComplex, tableRowComplex %}
+    <table class="govuk-table govuk-!-margin-bottom-9">
+        {{ tableHeadComplex(false, {
+            'Vehicle': {},
+            'Dates': {},
+            'Cargo': {},
+            'Location': {},
+            'Loaded': {numeric: true},
+            'Unloaded': {numeric: true},
+        }) }}
+    {% for lwu in irhs_get_loading_without_unloading(subject) %}
+        {%- set action = lwu.action -%}
+        {{ tableRowComplex({
+            (lwu.vehicle.registrationMark | formatRegMark): {},
+            (lwu.trip.outboundDate | date('d/m/Y')) ~ ' - ' ~ (lwu.trip.returnDate | date('d/m/Y')): {},
+            (formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther)): {},
+            ('common.action.place-name'|trans({name: action.name, country: action.country})): {},
+            ('common.weight.kilograms'|trans({value: lwu.weightLoaded})): {numeric: true},
+            ('common.weight.kilograms'|trans({value: lwu.weightUnloaded})): {numeric: true},
+        }) }}
+    {% endfor %}
+    </table>
+{% endset %}
