@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** Fix bug on RoRo admin unassign route screen
+
 ## 2nd April 2024
 
 * **Change:** Upgrade to Symfony 6.4 and PHP 8.3

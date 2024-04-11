@@ -86,10 +86,10 @@ class OperatorRouteController extends AbstractController
 
     #[Route(path: '/{operatorId}/route/{routeId}/unassign', name: 'unassign_route')]
     public function unassignRoute(
-        #[MapEntity(expr: "repository.findOneById(routeId)")]
         Request $request,
         #[MapEntity(expr: "repository.findOneById(operatorId)")]
         Operator $operator,
+        #[MapEntity(expr: "repository.findOneById(routeId)")]
         RouteEntity $route
     ): Response
     {
