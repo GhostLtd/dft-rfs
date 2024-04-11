@@ -22,14 +22,13 @@ class OperatorRouteController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected SurveyCreationHelper $surveyCreationHelper,
-        protected UnassignRouteConfirmAction $unassignRouteConfirmAction,
     ) {}
 
     #[Route(path: '/{operatorId}/route/assign', name: 'assign_route')]
     public function assignRoute(
         Request $request,
-        #[MapEntity(expr: "repository.findOneById(operatorId)")]
+        SurveyCreationHelper $surveyCreationHelper,
+        #[MapEntity(id: "operatorId")]
         Operator $operator
     ): Response
     {
@@ -64,7 +63,7 @@ class OperatorRouteController extends AbstractController
 
                 try {
                     // N.B. surveyCreationHelper does a flush()
-                    $this->surveyCreationHelper->createSurveysForGivenOperatorAndRouteStartingAt($operator, $route, $year, $month);
+                    $surveyCreationHelper->createSurveysForGivenOperatorAndRouteStartingAt($operator, $route, $year, $month);
                     return $redirectResponse;
                 } catch (\Exception $e) {
                     $form
@@ -87,13 +86,12 @@ class OperatorRouteController extends AbstractController
     #[Route(path: '/{operatorId}/route/{routeId}/unassign', name: 'unassign_route')]
     public function unassignRoute(
         Request $request,
-        #[MapEntity(expr: "repository.findOneById(operatorId)")]
-        Operator $operator,
-        #[MapEntity(expr: "repository.findOneById(routeId)")]
-        RouteEntity $route
+        UnassignRouteConfirmAction $unassignRouteConfirmAction,
+        #[MapEntity(id: "operatorId")] Operator $operator,
+        #[MapEntity(id: "routeId")] RouteEntity $route
     ): Response
     {
-        $data = $this->unassignRouteConfirmAction
+        $data = $unassignRouteConfirmAction
             ->setSubject([
                 'operator' => $operator,
                 'route' => $route
