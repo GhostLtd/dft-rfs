@@ -6,6 +6,7 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
+use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use App\Workflow\DomesticSurvey\DayStopState;
@@ -43,7 +44,12 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $additionalViewData['exampleDayStops'] = $this->getExampleDayStops();
         }
 
-        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+        try {
+            return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+        }
+        catch(DayTypeMismatchException) {
+            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+        }
     }
 
     protected function getExampleDayStops(): array
@@ -143,6 +149,11 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $day = $dayRepository->getBySurveyAndDayNumber($this->getSurvey(), $this->dayNumber);
 
             if ($day) {
+                if ($day->getSummary() !== null) {
+                    // This is already a summary day, so you can't use the stops wizard
+                    throw new DayTypeMismatchException();
+                }
+
                 if ($this->stopNumber === 'add') {
                     $this->dayStop = new DayStop();
                     $day->addStop($this->dayStop);

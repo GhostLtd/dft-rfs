@@ -6,6 +6,7 @@
 
 * **Fix:** Fix bug on RoRo admin unassign route screen
 * **Fix:** Fix "Session was used while the request was declared stateless" error in dev environment
+* **Fix:** Fix bug on Domestic where crash could be caused by visiting summary wizard on a stop day or vice-versa
 
 ## 2nd April 2024
 

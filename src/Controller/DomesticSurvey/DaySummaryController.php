@@ -8,6 +8,7 @@ use App\Entity\CargoType;
 use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
+use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
@@ -46,7 +47,12 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             $additionalViewData['exampleSummaryDay'] = $this->getExampleDay();
         }
 
-        return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state, $additionalViewData);
+        try {
+            return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state, $additionalViewData);
+        }
+        catch(DayTypeMismatchException) {
+            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+        }
     }
 
     protected function getExampleDay(): Day
@@ -137,6 +143,11 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             $daySummary = null;
 
             if ($day) {
+                if (!$day->getStops()->isEmpty()) {
+                    // This is already a detailed day (one with stops), so you can't use the summary wizard
+                    throw new DayTypeMismatchException();
+                }
+
                 $daySummary = $daySummaryRepository->getBySurveyAndDay($survey, $day);
             }
 

@@ -59,9 +59,9 @@ class AbstractFunctionalTestCase extends PantherTestCase
         return parse_url($this->client->getCurrentURL(), PHP_URL_PATH);
     }
 
-    protected function getHeading(): string
+    protected function getHeading(string $tagName='h1'): string
     {
-        return $this->client->findElement(WebDriverBy::xpath('//*[@id="main-content"]/h1'))->getText();
+        return $this->client->findElement(WebDriverBy::xpath('//*[@id="main-content"]/'.$tagName))->getText();
     }
 
     protected function getTableData(string $xpathToTableRows = '//*[@id="main-content"]/table/tbody/tr'): array

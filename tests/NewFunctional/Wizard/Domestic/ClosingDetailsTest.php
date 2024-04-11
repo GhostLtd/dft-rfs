@@ -5,7 +5,7 @@ namespace App\Tests\NewFunctional\Wizard\Domestic;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyStateInterface;
 use App\Repository\Domestic\SurveyResponseRepository;
-use App\Tests\DataFixtures\Domestic\DayFullOfSummaryFixtures;
+use App\Tests\DataFixtures\Domestic\DaysFullOfSummaryFixtures;
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 use App\Tests\DataFixtures\Domestic\DaySummaryFixtures;
 use App\Tests\DataFixtures\Domestic\EarlySurveyFixtures;
@@ -34,7 +34,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
     public function testFinalQuestionsWithFilledDay(): void
     {
         // We also test the driver-availability flow on this test (no need to do that more than once)
-        $this->initialiseTest([DayFullOfSummaryFixtures::class]);
+        $this->initialiseTest([DaysFullOfSummaryFixtures::class]);
         $this->doFlowTest(false, false, false, true, true);
     }
 
@@ -67,7 +67,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
     public function testFinalQuestionsWithFilledDayButEarly(): void
     {
-        $this->initialiseTest([DayFullOfSummaryFixtures::class, EarlySurveyFixtures::class]);
+        $this->initialiseTest([DaysFullOfSummaryFixtures::class, EarlySurveyFixtures::class]);
         $this->doFlowTest(true, false, false, true, false);
     }
 

@@ -46,8 +46,14 @@ class DayController extends AbstractController
     }
 
     #[Route(path: '/add', name: self::ADD_ROUTE)]
-    public function add(Request $request, $dayNumber): Response
+    public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
     {
+        $day = $entityManager->getRepository(Day::class)->findOneBy(['number' => $dayNumber, 'response' => $this->getSurvey()->getResponse()]);
+
+        if ($day && (!$day->getStops()->isEmpty() || $day->getSummary() !== null)) {
+            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+        }
+
         /** @var Form $form */
         $form = $this->createForm(NumberOfStopsType::class, null, ['day_number' => $dayNumber]);
 
