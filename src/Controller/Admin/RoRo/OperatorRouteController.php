@@ -20,16 +20,12 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(path: '/operators', name: 'admin_operators_')]
 class OperatorRouteController extends AbstractController
 {
-    public function __construct(
-        protected EntityManagerInterface $entityManager,
-    ) {}
-
     #[Route(path: '/{operatorId}/route/assign', name: 'assign_route')]
     public function assignRoute(
+        EntityManagerInterface $entityManager,
         Request $request,
         SurveyCreationHelper $surveyCreationHelper,
-        #[MapEntity(id: "operatorId")]
-        Operator $operator
+        #[MapEntity(id: "operatorId")] Operator $operator
     ): Response
     {
         $form = $this->createForm(OperatorRouteType::class, null, [
@@ -57,7 +53,7 @@ class OperatorRouteController extends AbstractController
                     $year = $backdateSurveys->get('year')->getData();
                     $month = $backdateSurveys->get('month')->getData();
                 } else {
-                    $this->entityManager->flush();
+                    $entityManager->flush();
                     return $redirectResponse;
                 }
 
