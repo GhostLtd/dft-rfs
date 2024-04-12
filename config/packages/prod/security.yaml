@@ -1,6 +1,0 @@
-security:
-    firewalls:
-        admin:
-            stateless: true
-            custom_authenticators:
-                - App\Security\GoogleIapAuthenticator

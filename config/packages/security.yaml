@@ -73,9 +73,6 @@ security:
             stateless: true
             custom_authenticators:
                 - App\Security\GoogleIapAuthenticator
-            logout:
-                path: admin_logout
-                target: admin_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

@@ -14,6 +14,7 @@ admin:
         - '../../src/Controller/Admin/Reports/'
     type: attribute
     host: '%admin_hostname%'
+    stateless: false
 
 admin_reports:
     resource: ../../src/Controller/Admin/Reports/
@@ -21,6 +22,7 @@ admin_reports:
     host: '%admin_hostname%'
     name_prefix: 'admin_reports_'
     prefix: /reports
+    stateless: false
 
 cron:
     resource: ../../src/Controller/Cron/

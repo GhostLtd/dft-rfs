@@ -5,6 +5,7 @@
 ## Upcoming
 
 * **Fix:** Fix bug on RoRo admin unassign route screen
+* **Fix:** Fix "Session was used while the request was declared stateless" error in dev environment
 
 ## 2nd April 2024
 
