@@ -47,6 +47,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'RegMark' => new Property('registrationMark'),
             'CarryingCapacity' => new Property('response.vehicle.carryingCapacity'),
             'CarryingCapacityNotEntered' => new BooleanEquivalencyProperty('response.vehicle.carryingCapacity', false, true),
+            'GrossWeight' => new Property('response.vehicle.grossWeight'),
             'OnOwnAccount' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
             'ForHireReward' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
             'MainlyOperatedNotEntered' => $false,
