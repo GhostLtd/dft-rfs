@@ -25,6 +25,8 @@ doctrine:
                         alias: App
                 dql:
                     string_functions:
+                        CAST: DoctrineExtensions\Query\Mysql\Cast
+                        IF: DoctrineExtensions\Query\Mysql\IfElse
                         WEEK: DoctrineExtensions\Query\Mysql\Week
                         MONTH: DoctrineExtensions\Query\Mysql\Month
                         YEAR: DoctrineExtensions\Query\Mysql\Year

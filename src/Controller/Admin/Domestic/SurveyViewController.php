@@ -8,6 +8,7 @@ use App\Entity\SurveyStateInterface;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
+use App\Utility\Domestic\OnHireStatsProvider;
 use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -27,13 +28,16 @@ class SurveyViewController extends AbstractController
         protected AddNotesHelper     $addNotesHelper,
         protected AuditLogRepository $auditLogRepository,
         protected PdfHelper          $pdfHelper,
-    ) {}
+    )
+    {
+    }
 
     #[Route(path: '', name: SurveyController::VIEW_ROUTE)]
     public function viewDetails(
         #[MapEntity(expr: "repository.find(surveyId)")]
-        Survey  $survey,
-        Request $request,
+        Survey              $survey,
+        Request             $request,
+        OnHireStatsProvider $hireStatsProvider
     ): Response
     {
         $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);
@@ -56,6 +60,7 @@ class SurveyViewController extends AbstractController
                 $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,
             'survey' => $survey,
+            'hireStatsProvider' => $hireStatsProvider,
         ]);
     }
 

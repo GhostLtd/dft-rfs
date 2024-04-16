@@ -4,8 +4,9 @@
 
 ## Upcoming
 
-* **Feature:** IRHS: Loading without unloading checks
-* **Feature:** CSRGT: Add GrossWeight to the export
+* **Feature:** IRHS - Loading without unloading checks
+* **Feature:** CSRGT - Add GrossWeight to the export
+* **Feature:** CSRGT Admin - add a flag for likely hire companies on the list screen and survey view screen  
 * **Fix:** Fix bug on RoRo admin unassign route screen
 * **Fix:** Fix "Session was used while the request was declared stateless" error in dev environment
 * **Fix:** Fix bug on Domestic where crash could be caused by visiting summary wizard on a stop day or vice-versa

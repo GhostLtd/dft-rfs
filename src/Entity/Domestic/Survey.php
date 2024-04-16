@@ -442,4 +442,9 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
     {
         return $this->getResponse()?->getContactEmail();
     }
+
+    public function getCompanyNameFromInvitationAddress(): ?string
+    {
+        return $this->getInvitationAddress()?->getLine1();
+    }
 }

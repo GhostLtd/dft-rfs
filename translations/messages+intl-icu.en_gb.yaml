@@ -541,6 +541,8 @@ admin:
       heading: "{uk_port_name} to {foreign_port_name}"
 
   survey:
+    on-hire-flag: govuk-tag--red
+
     state:
       in-progress: govuk-tag--yellow
       new: govuk-tag--grey

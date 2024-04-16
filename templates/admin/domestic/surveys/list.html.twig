@@ -9,10 +9,16 @@
 
     {{ listTableStart(data, form) }}
     {% for survey in data.entities %}
+        {%- set companyNameData -%}
+            {{- survey.invitationAddress.line1 ?? '-' -}}
+            {%- if hireStatsProvider.likelyHireCompany(survey.companyNameFromInvitationAddress) -%}
+                {{- tag({text: 'HIRE', classes: ('admin.survey.on-hire-flag' | trans) ~ ' govuk-!-margin-left-2'}) -}}
+            {%- endif -%}
+        {%- endset -%}
         <tr class="govuk-table__row">
             {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
             {{ tableCell("#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}", {}) }}
-            {{ tableCell(survey.invitationAddress.line1 ?? '-', {}) }}
+            {{ tableCell(companyNameData, {html: true}) }}
             {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
             {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
             {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}

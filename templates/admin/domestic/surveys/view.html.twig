@@ -83,7 +83,17 @@
             {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
         {%- endif -%}
         {% if survey.invitationAddress.line1 ?? false %}
-            {% set businessLink %}<a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">{{ survey.invitationAddress.line1 }}</a>{% endset %}
+            {%- set businessLink -%}
+                <a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">
+                    {{- survey.invitationAddress.line1 -}}
+                </a>
+                {%- set companyName = survey.companyNameFromInvitationAddress -%}
+                {%- if hireStatsProvider.likelyHireCompany(companyName) -%}
+                    {% set hireStats = hireStatsProvider.onHireStats(companyName) -%}
+                    {{- tag({text: 'HIRE', classes: ('admin.survey.on-hire-flag' | trans) ~ ' govuk-!-margin-left-2'}) -}}
+                    <div class="govuk-body-s">{{- hireStats.onHireCount }} / {{ hireStats.total }} of surveys on hire ({{ hireStats.percentage | number_format(0) }}%)</div>
+                {%- endif -%}
+            {%- endset -%}
             {{- actionlessSummaryListRow('Business name', businessLink) -}}
         {% endif %}
         {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount ? survey.chasedCount : '-') }}
