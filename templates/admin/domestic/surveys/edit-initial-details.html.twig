@@ -10,8 +10,6 @@
 
 {% block _initial_details_isInPossessionOfVehicle_widget %}
     {%- from "@GhostGovUkFrontend/components/macros.html.twig" import warningText -%}
-    {{- warningText("Changing the in-possession state has the potential to clear all journeys! (e.g. if not in possession, or exempt)", {
-        iconFallbackText: "Warning",
-    }) -}}
+    {{- warningText({text: "Changing the in-possession state has the potential to clear all journeys! (e.g. if not in possession, or exempt)"}) -}}
     {{- form_widget(form) -}}
 {% endblock %}

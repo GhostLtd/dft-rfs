@@ -4,7 +4,6 @@
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, tableCell, tableHead -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
     {%- if maintenanceWarningBanner ?? false -%}

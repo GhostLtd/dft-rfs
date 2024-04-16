@@ -1,6 +1,10 @@
-@import "~govuk-frontend/govuk/base";
+@import "node_modules/govuk-frontend/dist/govuk/base";
 
 .list-table {
+  .govuk-select {
+    min-width: auto;
+  }
+
   .govuk-table__header {
     vertical-align: middle;
     > div {

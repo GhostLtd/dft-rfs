@@ -1,52 +1,61 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 {%- set showActions = showActions ?? true -%}
 
-{%- set numberOfTripsChangeLink = {
-    (wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS')):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.survey-response.number-of-trips.heading'}
-} -%}
-{%- set activityStatusChangeLink = {
-    (wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS')):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.survey-response.activity-status.change-link-sr-suffix'}
-} -%}
-{%- set businessDetailsChangeLink = {
-    (wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS')):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.correspondence-and-business-details.business-details'}
-} -%}
+{%- set numberOfTripsChangeLink = [
+    {
+        href: wizardUrl('international-initial-details', 'STATE_REQUEST_NUMBER_OF_TRIPS'),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.survey-response.number-of-trips.heading' | trans
+    }
+] -%}
+{%- set activityStatusChangeLink = [
+    {
+        href: wizardUrl('international-initial-details', 'STATE_REQUEST_ACTIVITY_STATUS'),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.survey-response.activity-status.change-link-sr-suffix' | trans
+    }
+] -%}
+{%- set businessDetailsChangeLink = [
+    {
+        href: wizardUrl('international-initial-details', 'STATE_REQUEST_BUSINESS_DETAILS'),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.correspondence-and-business-details.business-details' | trans
+    }
+] -%}
 
 {% if showTitle ?? true %}
     <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
 {% endif %}
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
 
-    {{- row(showActions,
-        'international.correspondence-and-business-details.number-of-trips',
-        ('common.number.plain'|trans({value: response.annualInternationalJourneyCount})),
-        numberOfTripsChangeLink
-    ) -}}
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'international.correspondence-and-business-details.number-of-trips' | trans,
+        value: ('common.number.plain'|trans({value: response.annualInternationalJourneyCount})),
+        actions: showActions ? numberOfTripsChangeLink : []
+    }, showActions) -}}
     {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
     {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
 
     {%- if response.isNoLongerActive or response.annualInternationalJourneyCount == 0 -%}
-    {{- row(showActions,
-        'international.correspondence-and-business-details.still-active',
-        activityStatus,
-        activityStatusChangeLink
-    ) -}}
+    {{- summaryListRow({
+        key: 'international.correspondence-and-business-details.still-active' | trans,
+        value: activityStatus,
+        actions: showActions ? activityStatusChangeLink : []
+    }, showActions) -}}
     {%- endif -%}
     {%- if not response.isNoLongerActive -%}
         {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
         {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
 
-        {{- row(showActions,
-            'international.correspondence-and-business-details.nature-of-business',
-            response.businessNature,
-            businessDetailsChangeLink
-        ) -}}
-        {{- row(showActions,
-            'international.correspondence-and-business-details.number-of-employees',
-            numberOfEmployees | default('-'),
-            businessDetailsChangeLink
-        ) -}}
+        {{- summaryListRow({
+            key: 'international.correspondence-and-business-details.nature-of-business' | trans,
+            value: response.businessNature,
+            actions: showActions ? businessDetailsChangeLink : []
+        }, showActions) -}}
+        {{- summaryListRow({
+            key: 'international.correspondence-and-business-details.number-of-employees' | trans,
+            value: numberOfEmployees | default('-'),
+            actions: showActions ? businessDetailsChangeLink : []
+        }, showActions) -}}
     {%- endif -%}
-</dl>
+{{- summaryListEnd() -}}

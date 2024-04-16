@@ -17,6 +17,7 @@ class OperatorGroupType extends AbstractType
         $builder
             ->add('name', InputType::class, [
                 'label' => 'Name',
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ]);
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ghost\GovUkFrontendBundle\Model\ValueUnitInterface;
 
 #[ORM\Embeddable]
 class CurrencyOrPercentage implements ValueUnitInterface
@@ -51,7 +52,7 @@ class CurrencyOrPercentage implements ValueUnitInterface
     }
 
     #[\Override]
-    public function isBlank(): bool
+    public function getIsBlank(): bool
     {
         return empty($this->value);
     }

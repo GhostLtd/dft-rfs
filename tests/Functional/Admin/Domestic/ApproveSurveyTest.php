@@ -56,7 +56,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
 
         $browser->request('GET', '/csrgt/surveys-ni/');
-        $browser->clickLink('view: survey for AB01ABC started 01/05/2021');
+        $browser->clickLink('view survey for AB01ABC started 01/05/2021');
 
         $crawler = $browser->clickLink('Approve survey');
 

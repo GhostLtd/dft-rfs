@@ -2,20 +2,20 @@
 
 {% set translation_prefix = "admin.send-reminder-unavailable" %}
 
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
 
 {% block adminContent %}
     <div class="govuk-width-container">
         {%- include "admin/domestic/includes/survey-basics.html.twig" -%}
 
         <div class="send-reminder-unavailable">
-        {{- warningText((translation_prefix ~ '.warning.' ~ reason.reason) | trans({
-                eventType: reason.eventType,
-                interval: reason.interval ? reason.interval.format('%d days, %h hours, %i minutes') : null,
+        {{- warningText({
+                markdown: (translation_prefix ~ '.warning.' ~ reason.reason) | trans({
+                    eventType: reason.eventType,
+                    interval: reason.interval ? reason.interval.format('%d days, %h hours, %i minutes') : null,
+                })
             })
-        , {
-            markdown: true,
-        }) -}}
+        -}}
         </div>
 
         <a class="govuk-button govuk-button--secondary" href="{{ path('admin_domestic_survey_view', {surveyId: survey.id}) }}">Back</a>

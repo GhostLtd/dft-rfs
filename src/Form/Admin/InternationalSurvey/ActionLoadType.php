@@ -70,7 +70,7 @@ class ActionLoadType extends AbstractType
                 'label' => "How were the goods carried?",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('weightOfGoods', Gds\NumberType::class, [
+            ->add('weightOfGoods', Gds\IntegerType::class, [
                 'label' => "Weight of goods loaded",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],

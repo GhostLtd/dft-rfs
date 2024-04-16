@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+const path = require("path");
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -63,7 +64,12 @@ Encore
     })
 
     // enables Sass/SCSS support
-    .enableSassLoader()
+    .enableSassLoader((options) => {
+        // Silence the noise complaining about primitive division/multiplication usage in govuk-frontend:
+        // https://frontend.design-system.service.gov.uk/importing-css-assets-and-javascript/#silence-deprecation-warnings-from-dependencies-in-dart-sass
+        options.sassOptions = options.sassOptions || {};
+        options.sassOptions.quietDeps = true
+    })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -82,17 +88,29 @@ Encore
 
     .copyFiles({
         from: 'assets/icons',
-
-        // optional target path, relative to the output dir
         to: 'icons/[name].[ext]',
     })
 
     .copyFiles({
-        from: './node_modules/govuk-frontend/govuk/assets/images',
-
-        // optional target path, relative to the output dir
+        from: './node_modules/govuk-frontend/dist/govuk/assets/images',
         to: 'images/[name].[ext]',
     })
 ;
 
-module.exports = Encore.getWebpackConfig();
+var config = Encore.getWebpackConfig();
+
+let govukAssetsPath = path.resolve('./node_modules/govuk-frontend/dist/govuk/assets/');
+
+for(let rule of config.module.rules) {
+    if (rule.test.toString().match(/s\[ac]ss/)) {
+        for(let one of rule.oneOf) {
+            for(let tool of one.use) {
+                if (tool.loader.includes('/sass-loader/')) {
+                    tool.options.additionalData = '$govuk-assets-path: "' + govukAssetsPath + '/";';
+                }
+            }
+        }
+    }
+}
+
+module.exports = config;

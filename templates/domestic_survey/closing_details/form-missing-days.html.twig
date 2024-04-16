@@ -2,7 +2,7 @@
 {% set useThirdsColumns = false %}
 {% extends 'domestic_survey/form-base.html.twig' %}
 {% from 'domestic_survey/includes/macros.html.twig' import dayText %}
-{% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow %}
+{% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow %}
 
 {% block content %}
     {%- include 'includes/form-page-content.html.twig' with {
@@ -13,15 +13,18 @@
 {% endblock %}
 
 {% block preFormContent %}
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
         {% for dayNumber in 1..7 %}
             {% set day = subject.survey.response.dayByNumber(dayNumber) %}
             {% if not (day | default(false)) %}
-                {{ actionlessSummaryListRow(
-                    (translation_prefix ~ '.day-x')|trans({dayNumber: dayNumber, date: (subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('format.date.full' | trans)) }),
-                    dayText(day),
-                ) }}
+                {{- summaryListRow({
+                    key: (translation_prefix ~ '.day-x') | trans({
+                        dayNumber: dayNumber,
+                        date: subject.survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day') | date('format.date.full' | trans)
+                    }),
+                    value: dayText(day),
+                }) -}}
             {% endif %}
         {% endfor %}
-    </dl>
+    {{- summaryListEnd() -}}
 {% endblock %}

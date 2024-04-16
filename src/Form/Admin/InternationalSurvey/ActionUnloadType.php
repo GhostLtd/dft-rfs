@@ -62,7 +62,7 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
                             ],
                         ],
                     ])
-                    ->add('weightOfGoods', Gds\NumberType::class, [
+                    ->add('weightOfGoods', Gds\IntegerType::class, [
                         'label' => "Weight of goods unloaded",
                         'label_attr' => ['class' => 'govuk-label--s'],
                         'attr' => ['class' => 'govuk-input--width-10'],

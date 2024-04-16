@@ -4,6 +4,10 @@
 
 ## Upcoming
 
+* **Feature:** Use extracted govuk-frontend-bundle and in the process upgrade to govuk-frontend 5.3.1
+
+## 17th April 2024
+
 * **Feature:** IRHS - Loading without unloading checks
 * **Feature:** CSRGT - Add GrossWeight to the export
 * **Feature:** CSRGT Admin - add a flag for likely hire companies on the list screen and survey view screen  

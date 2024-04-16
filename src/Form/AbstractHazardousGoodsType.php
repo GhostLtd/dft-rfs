@@ -30,7 +30,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
             ->add('isHazardousGoods', Gds\ChoiceType::class, [
                 'label' => "{$translationKeyPrefix}.is-hazardous-goods.label",
                 'help' => "{$translationKeyPrefix}.is-hazardous-goods.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => [
                     "common.choices.boolean.yes" => true,
                     "common.choices.boolean.no" => false,

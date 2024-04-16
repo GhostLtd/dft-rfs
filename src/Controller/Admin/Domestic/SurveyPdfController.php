@@ -32,15 +32,17 @@ class SurveyPdfController extends AbstractController
         return new RedirectResponse($pdf->getStorageObject()->signedUrl(new DateTime('+30 seconds')));
     }
 
-//    /**
-//     * @Route("/csrgt/surveys/{surveyId}.pdf/generate")
-//     * @Entity("survey", expr="repository.find(surveyId)")
-//     *
-//     * Generates a PDF and displays it immediately in the browser
-//     */
-//    public function generate(Survey $survey, PdfHelper $pdfHelper): Response
-//    {
-//        $dompdf = $pdfHelper->generatePDF($survey);
-//        return new Response($dompdf->output(), 200, ['content-type' => 'application/pdf']);
-//    }
+    /**
+     * Generates a PDF and displays it immediately in the browser
+     */
+    #[Route(path: '/csrgt/surveys/{surveyId}.pdf/generate')]
+    public function generate(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        PdfHelper $pdfHelper
+    ): Response
+    {
+        $dompdf = $pdfHelper->generatePDF($survey);
+        return new Response($dompdf->output(), 200, ['content-type' => 'application/pdf']);
+    }
 }

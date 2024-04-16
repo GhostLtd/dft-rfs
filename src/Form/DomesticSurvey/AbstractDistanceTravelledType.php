@@ -9,12 +9,9 @@ class AbstractDistanceTravelledType extends AbstractType
 {
     public const VALUE_OPTIONS = [
         'label' => 'Distance',
-        'is_decimal' => true,
         'attr' => ['class' => 'govuk-input--width-5'],
-        'transformer_options' => [
-            'precision' => 10,
-            'scale' => 1,
-        ],
+        'precision' => 10,
+        'scale' => 1,
     ];
     public const UNIT_OPTIONS = [
         'label' => 'Unit',

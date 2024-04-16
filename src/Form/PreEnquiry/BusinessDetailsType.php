@@ -19,7 +19,7 @@ class BusinessDetailsType extends AbstractType
                 'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
                 'label' => "pre-enquiry.business-details.number-of-employees.label",
                 'help' => "pre-enquiry.business-details.number-of-employees.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'expanded' => true,
             ])

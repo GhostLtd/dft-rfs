@@ -71,4 +71,28 @@ class ListPageData
     {
         return $this->orderDirection;
     }
+
+    public function getPaginationData(): array
+    {
+        $page = $this->getPage();
+
+        $items = array_map(
+            function(array $entry) use ($page) {
+                [$number, $href] = $entry;
+
+                return match($number) {
+                    '...' => ['ellipsis' => true],
+                    default => $page === $number ?
+                        ['number' => $number, 'href' => $href, 'current' => true] :
+                        ['number' => $number, 'href' => $href]
+                };
+            }, $this->getPaginationUrls()
+        );
+
+        return [
+            'previous' => ['href' => $this->getPreviousUrl()],
+            'next' => ['href' => $this->getNextUrl()],
+            'items' => $items,
+        ];
+    }
 }

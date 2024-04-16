@@ -10,19 +10,19 @@
         and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>
     </p>
 
-    {{ warningText('An invitation letter will be sent to each Survey recipient') }}
+    {{ warningText({text: 'An invitation letter will be sent to each Survey recipient'}) }}
 
     {% if surveyOptions.overriddenRegion ?? false %}
-        {{ warningText('The survey region selected does not match the region that was auto-detected from the filename') }}
+        {{ warningText({text: 'The survey region selected does not match the region that was auto-detected from the filename'}) }}
     {% endif %}
 
     {% if surveyOptions.surveyPeriodStart < date('today') %}
-        {{ warningText('The survey start date is in the past') }}
+        {{ warningText({text: 'The survey start date is in the past'}) }}
     {% endif %}
 
     {% set failedCount = (invalidLines | length) + (invalidData | length) + (invalidSurveys | length) %}
     {% if failedCount > 0 %}
-        {{ warningText("#{failedCount} surveys failed to import") }}
+        {{ warningText({text: "#{failedCount} surveys failed to import"}) }}
         <p class="govuk-body">
         {% for failed in invalidLines %}
             <kbd>{{ failed }}</kbd><br>

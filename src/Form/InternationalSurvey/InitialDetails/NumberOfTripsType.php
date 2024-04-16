@@ -15,7 +15,7 @@ class NumberOfTripsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('annualInternationalJourneyCount', Gds\NumberType::class, [
+            ->add('annualInternationalJourneyCount', Gds\IntegerType::class, [
                 'label' => 'international.survey-response.number-of-trips.annual-international-journey-count.label',
                 'help' => 'international.survey-response.number-of-trips.annual-international-journey-count.help',
                 'attr' => [

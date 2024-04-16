@@ -43,9 +43,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
                     $form
                         ->add('isCorrectAddress', Gds\ChoiceType::class, [
                             'label' => "{$correctAddressPrefix}.label",
-                            'label_attr' => [
-                                'class' => 'govuk-label--s',
-                            ],
+                            'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                             'help' => "{$correctAddressPrefix}.help",
                             'choices' => self::CHOICES,
                             'choice_options' => [
@@ -61,7 +59,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
                     ->add('contactAddress', LongAddressType::class, [
                         'label' => "{$translationPrefix}.address.label",
                         'label_attr' => [
-                            'class' => 'govuk-label--m',
+                            'class' => 'govuk-label--s',
                         ],
                         'help' => "{$translationPrefix}.address.help",
                         'include_addressee' => false,

@@ -13,7 +13,7 @@ class UserIdLookupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('user_id', Gds\NumberType::class, [
+            ->add('user_id', Gds\IntegerType::class, [
                 'label' => 'User identifier',
                 'label_attr' => [
                     'class' => 'govuk-label--s'

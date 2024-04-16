@@ -22,7 +22,7 @@ class DatesType extends AbstractType
             ->add($fieldName, Gds\DateType::class, [
                 'label' => "{$prefix}.label",
                 'help' => "{$prefix}.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ]);
     }
 

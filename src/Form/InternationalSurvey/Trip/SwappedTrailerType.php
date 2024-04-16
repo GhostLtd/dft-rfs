@@ -29,7 +29,7 @@ class SwappedTrailerType extends AbstractType implements DataMapperInterface
             ->setDataMapper($this)
             ->add('isSwappedTrailer', Gds\ChoiceType::class, [
                 'choices' => self::CHOICES,
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'label' => "international.trip.swapped-trailer.is-swapped-trailer.label",
                 'help' => "international.trip.swapped-trailer.is-swapped-trailer.help",
                 'choice_options' => [

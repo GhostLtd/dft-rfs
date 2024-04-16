@@ -6,7 +6,7 @@
 } %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
@@ -230,13 +230,13 @@
             {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
 
             {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
-                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
                 {%- with {
                     attr: (options.attr ?? {}) | merge({
                     href: path('admin_international_survey_flag_qa', {surveyId: survey.id}),
                     class: ('govuk-button ' ~ (options.class | default('')) ) | trim
                 })} -%}
-                    <a {{ attributes(attr) }}>Flag as QA'd</a>
+                    <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
                 {%- endwith -%}
             {% endif %}
         </div>
@@ -245,13 +245,13 @@
 {%- endblock -%}
 
 {% macro workflow_link(survey, transitionName, transitionText, options) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
             href: path('admin_international_survey_transition', {surveyId: survey.id, transition: transitionName}),
             class: ('govuk-button ' ~ (options.class | default('')) ) | trim
         })
     } -%}
-        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
     {%- endwith -%}
 {%- endmacro %}

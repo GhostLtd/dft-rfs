@@ -17,7 +17,7 @@
             {%- include "domestic_survey/includes/day-stop.html.twig" -%}
         {%- endwith -%}
 
-        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+        {{- warningText({text: "#{translation_prefix}.delete" | trans }) -}}
 
         {{- form(form) -}}
     {%- endwith -%}

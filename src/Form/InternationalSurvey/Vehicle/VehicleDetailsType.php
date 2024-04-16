@@ -25,7 +25,7 @@ class VehicleDetailsType extends AbstractType
             ->add('operationType', Gds\ChoiceType::class, [
                 'label' => "{$translationKeyPrefix}.operation-type.label",
                 'help' => "{$translationKeyPrefix}.operation-type.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => Vehicle::OPERATION_TYPE_CHOICES,
             ])
         ;

@@ -3,12 +3,19 @@
 {% set translation_prefix = 'admin.international.sample-import-summary' %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
     <p class="govuk-body">The following surveys have been created</p>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-        {% for survey in surveys %}
-            {{ actionlessSummaryListRow("#{survey.surveyPeriodStart | date('format.date.default' | trans)} (#{survey.surveyPeriodEnd.diff(survey.surveyPeriodStart).days + 1} days)", (survey.invitationAddress | formatAddress) ~ (survey.invitationEmails ? ("\r\n" ~ survey.invitationEmails) : '')) }}
-        {% endfor %}
-    </dl>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 5)}) -}}
+        {%- for survey in surveys -%}
+            {{- summaryListRow({
+                key: "#{survey.surveyPeriodStart | date('format.date.default' | trans)} (#{survey.surveyPeriodEnd.diff(survey.surveyPeriodStart).days + 1} days)",
+                value: (survey.invitationAddress | formatAddress) ~ (
+                    survey.invitationEmails ?
+                        ("\r\n" ~ survey.invitationEmails) :
+                        ''
+                )
+            }) -}}
+        {%- endfor -%}
+    {{- summaryListEnd() -}}
 {% endblock %}

@@ -17,7 +17,7 @@ class CommentsType extends AbstractType
             ->add('comments', TextareaType::class, [
                 'label_is_page_heading' => true,
                 'label' => 'roro.survey.comments.comments.label',
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => 'roro.survey.comments.comments.help',
             ]);
     }

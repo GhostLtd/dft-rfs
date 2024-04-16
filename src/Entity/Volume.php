@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ghost\GovUkFrontendBundle\Model\ValueUnitInterface;
 
 #[ORM\Embeddable]
 class Volume implements ValueUnitInterface
@@ -51,7 +52,7 @@ class Volume implements ValueUnitInterface
     }
 
     #[\Override]
-    public function isBlank(): bool
+    public function getIsBlank(): bool
     {
         return empty($this->value);
     }

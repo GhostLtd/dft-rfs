@@ -31,6 +31,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ->add('isInPossessionOfVehicle', Gds\ChoiceType::class, [
                 'choices' => SurveyResponse::IN_POSSESSION_CHOICES,
                 'label' => "domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choice_options' => [
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_YES => ['conditional_form_name' => 'isExemptVehicleType'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_ON_HIRE => ['conditional_form_name' => 'hiree_details'],
@@ -42,6 +43,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ->add('isExemptVehicleType', Gds\ChoiceType::class, [
                 'choices' => SurveyResponse::IS_EXEMPT_CHOICES,
                 'label' => "domestic.survey-response.is-exempt-vehicle-type.label",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "domestic.survey-response.is-exempt-vehicle-type.help",
             ])
             ->add('hiree_details', HireeDetailsType::class, [

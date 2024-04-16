@@ -20,7 +20,7 @@ class CountriesTransittedType extends AbstractType
                 'choices' => $this->getCountryChoices(),
                 'help' => "international.trip.countries-transitted.countries-transitted.help",
                 'label' => "international.trip.countries-transitted.countries-transitted.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'multiple' => true,
                 'expanded' => true,
             ])

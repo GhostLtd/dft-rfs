@@ -16,7 +16,7 @@
             {{ displayNote(note, deleteRoute, deleteParams, {hideActions: true}) }}
         </dl>
 
-        {{- warningText("#{translation_prefix}.confirmation" | trans) -}}
+        {{- warningText({text: "#{translation_prefix}.confirmation" | trans }) -}}
 
         {{- form(form) -}}
     {%- endwith -%}

@@ -1,42 +1,63 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableCell, actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableStart, tableBodyStart, tableEndIncludingBody, tableRow, summaryListActionsList -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
 
-<table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- tableHeadComplex(false, {
-        ('international.summary.registration'): {},
-        ('international.summary.status'): {},
-        ('international.summary.type-and-configuration'): {},
-        ('common.vehicle.operation-type'): {},
-        ('common.vehicle.body-type'): {},
-        ('common.vehicle.gross-weight'): {numeric: true},
-        ('common.vehicle.carrying-capacity'): {numeric: true},
-        ('common.actions.table-heading' | trans): {html: true},
-    }) -}}
+{{- tableStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- tableHead([
+        'international.summary.registration' | trans,
+        'international.summary.status' | trans,
+        'international.summary.type-and-configuration' | trans,
+        'common.vehicle.operation-type' | trans,
+        'common.vehicle.body-type' | trans,
+        {
+            text: 'common.vehicle.gross-weight' | trans,
+            classes: 'govuk-table__cell--numeric'
+        },
+        {
+            text: 'common.vehicle.carrying-capacity' | trans,
+            classes: 'govuk-table__cell--numeric'
+        },
+        {html: 'common.actions.table-heading' | trans}
+    ]) -}}
     {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
     {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
-    <tbody class="govuk-table__body">
+
+    {{- tableBodyStart() -}}
     {%- for vehicle in vehicles -%}
-        <tr class="govuk-table__row">
-            {{- tableCell(vehicle.formattedRegistrationMark) -}}
-            {{- tableCell('-') -}}
-            {{- tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) -}}
-            {{- tableCell(choiceLabel(operationChoices, vehicle.operationType) | trans) -}}
-            {{- tableCell(choiceLabel(bodyChoices, vehicle.bodyType) | trans) -}}
-            {{- tableCell(("common.weight.kilograms" | trans({value: vehicle.grossWeight})), {numeric: true}) -}}
-            {{- tableCell(("common.weight.kilograms" | trans({value: vehicle.carryingCapacity})), {numeric: true}) -}}
-            {%- if showActions -%}
-                {%- set viewContents = actionLinks({
-                    ('#' ~ vehicle.id): {label: 'View', class: 'govuk-link--no-visited-state', srHiddenSuffix: "Vehicle #{vehicle.registrationMark}"},
-                }) -%}
-                {{- tableCell(viewContents, {actions: true}) -}}
-            {%- endif -%}
-        </tr>
+        {%- set actions = [
+            {
+                href: ('#' ~ vehicle.id),
+                text: 'View',
+                visuallyHiddenText: "Vehicle #{vehicle.registrationMark}",
+                classes: 'govuk-link--no-visited-state',
+            }
+        ] -%}
+
+        {{- tableRow([
+            vehicle.formattedRegistrationMark,
+            '-',
+            displayAxleConfiguration(vehicle.axleConfiguration),
+            choiceLabel(operationChoices, vehicle.operationType) | trans,
+            choiceLabel(bodyChoices, vehicle.bodyType) | trans,
+            {
+                text: "common.weight.kilograms" | trans({value: vehicle.grossWeight}),
+                classes: ''
+            },
+            {
+                text: "common.weight.kilograms" | trans({value: vehicle.carryingCapacity}),
+                classes: ''
+            },
+            showActions ?
+                {html: summaryListActionsList(actions)} :
+                null,
+        ]) -}}
     {%- else -%}
-        <tr class="govuk-table__row">
-            {{- tableCell('international.summary.no-vehicles'|trans, {colSpan: showActions ? 8 : 7}) -}}
-        </tr>
+        {{- tableRow([
+            {
+                text: 'international.summary.no-vehicles' | trans,
+                colspan: showActions ? 8 : 7,
+            }
+        ]) -}}
     {%- endfor -%}
-    </tbody>
-</table>
+{{- tableEndIncludingBody() -}}

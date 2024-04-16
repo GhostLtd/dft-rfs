@@ -30,7 +30,7 @@ class ChangedBodyTypeType extends AbstractType implements DataMapperInterface
             ->setDataMapper($this)
             ->add('isChangedBodyType', Gds\ChoiceType::class, [
                 'choices' => self::CHOICES,
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'label' => "international.trip.changed-body-type.is-changed-body-type.label",
                 'help' => "international.trip.changed-body-type.is-changed-body-type.help",
                 'choice_options' => [

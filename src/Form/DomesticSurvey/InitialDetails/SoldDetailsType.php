@@ -18,7 +18,7 @@ class SoldDetailsType extends AbstractType
             ->add('soldDate', Gds\DateType::class, [
                 'label' => 'domestic.survey-response.sold-details.date.label',
                 'help' => 'domestic.survey-response.sold-details.date.help',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'property_path' => $options['date_property_path'],
             ])
             ->add('newOwnerName', Gds\InputType::class, [
@@ -40,7 +40,7 @@ class SoldDetailsType extends AbstractType
             ->add('newOwnerAddress', AddressType::class, [
                 'label' => 'domestic.survey-response.sold-details.new-owner-address.label',
                 'help' => 'domestic.survey-response.sold-details.new-owner-address.help',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
         ;
     }

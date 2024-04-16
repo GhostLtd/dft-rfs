@@ -63,7 +63,7 @@ class ActionController extends AbstractController
 
     #[Route(path: '/action/{actionId}/edit', name: self::EDIT_ROUTE)]
     public function edit(
-        #[MapEntity(expr: "repository.find(actiondId)")]
+        #[MapEntity(expr: "repository.find(actionId)")]
         Action $action
     ): Response
     {

@@ -4,7 +4,7 @@ namespace App\Form\Admin\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Volume;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,9 +34,11 @@ class FinalDetailsType extends AbstractType
                             'label' => "domestic.survey-response.vehicle-fuel.fuel-quantity.label",
                             'property_path' => 'vehicle.fuelQuantity',
                             'label_attr' => ['class' => 'govuk-label--s'],
+                            'value_form_type' => Gds\DecimalType::class,
                             'value_options' => [
                                 'label' => 'Quantity',
-                                'is_decimal' => true,
+                                'precision' => 8,
+                                'scale' => 2,
                                 'attr' => ['class' => 'govuk-input--width-5']
                             ],
                             'unit_options' => [

@@ -22,7 +22,7 @@ abstract class AbstractCargoTypeType extends AbstractType
                 'choice_options' => $choiceOptions,
                 'label' => "{$translationKeyPrefix}.cargo-type-code.label",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => "{$translationKeyPrefix}.cargo-type-code.help",
             ])
             ;

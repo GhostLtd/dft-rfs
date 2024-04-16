@@ -18,14 +18,14 @@
         {%- set filter = [action.id] -%}
     {%- endif -%}
 
-    {%- with {isAdmin: true, showActions: false, trip: action.trip, filter: filter} -%}
+    {%- with {isAdmin: false, showActions: false, trip: action.trip, filter: filter} -%}
         {%- include "international_survey/includes/actions.html.twig" -%}
     {%- endwith -%}
 
     {%- if action.loading -%}
-        {{ warningText("#{translation_prefix}.delete-loading"|trans) }}
+        {{ warningText({text: "#{translation_prefix}.delete-loading" | trans }) }}
     {%- else -%}
-        {{ warningText("#{translation_prefix}.delete-unloading"|trans) }}
+        {{ warningText({text: "#{translation_prefix}.delete-unloading" | trans }) }}
     {%- endif -%}
 
     {{ form(form) }}

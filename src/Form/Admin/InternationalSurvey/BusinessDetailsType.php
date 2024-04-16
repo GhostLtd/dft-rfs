@@ -57,7 +57,7 @@ class BusinessDetailsType extends AbstractType
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'expanded' => false,
             ])
-            ->add('annualInternationalJourneyCount', Gds\NumberType::class, [
+            ->add('annualInternationalJourneyCount', Gds\IntegerType::class, [
                 'label' => 'Estimated number of international trips that will be made by the firm in the next 12 months',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => [

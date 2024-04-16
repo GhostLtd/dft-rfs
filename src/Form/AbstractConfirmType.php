@@ -40,7 +40,7 @@ abstract class AbstractConfirmType extends AbstractType
         $resolver->setDefaults([
             'mapped' => false,
             'field_options' => [
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ],
             'null_message' => 'common.choice.not-null',
         ]);

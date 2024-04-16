@@ -9,7 +9,7 @@ use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
-use Ghost\GovUkFrontendBundle\Form\Type\NumberType;
+use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -67,10 +67,10 @@ class OperatorRouteType extends AbstractType
         $builder
             ->add('backdateSurveys', BooleanChoiceType::class, [
                 'choice_options' => [
-                    'common.choices.boolean.no' => [
+                    'boolean.false' => [
                         'help' => "No surveys will be added for this route at this point in time.",
                     ],
-                    'common.choices.boolean.yes' => [
+                    'boolean.true' => [
                         'conditional_form_name' => 'backdateSurveysGroup',
                         'help' => "Surveys will immediately be added for the month you choose and then for each month up to and including {$lastMonth}."
                     ]
@@ -89,7 +89,7 @@ class OperatorRouteType extends AbstractType
 
         $backdateSurveysGroup = $builder->get('backdateSurveysGroup');
         $backdateSurveysGroup
-            ->add('year', NumberType::class, [
+            ->add('year', IntegerType::class, [
                 'attr' => ['class' => 'govuk-input--width-5'],
                 'label' => 'Year',
                 'mapped' => false,
@@ -98,7 +98,7 @@ class OperatorRouteType extends AbstractType
                     new Range(['min' => $lastYear, 'max' => $currentYear]),
                 ],
             ])
-            ->add('month', NumberType::class, [
+            ->add('month', IntegerType::class, [
                 'attr' => ['class' => 'govuk-input--width-5'],
                 'label' => 'Month',
                 'mapped' => false,

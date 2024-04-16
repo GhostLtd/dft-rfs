@@ -8,7 +8,7 @@
 } %}
 
 {%- block adminContent -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     {%- set showActions = subject.actions|length > 0 -%}
 
     {%- with {showActions: false, trip: subject, marginBottom: showActions ? 9 : 4} -%}
@@ -21,9 +21,9 @@
             {%- include "international_survey/includes/actions.html.twig" -%}
         {%- endwith -%}
 
-        {{ warningText('This will permanently delete this trip and all related consignment actions (shown above).') }}
+        {{ warningText({text: 'This will permanently delete this trip and all related consignment actions (shown above).'}) }}
     {%- else -%}
-        {{ warningText('This will permanently delete this trip.') }}
+        {{ warningText({text: 'This will permanently delete this trip.'}) }}
     {%- endif -%}
 
     {{ form(form) }}

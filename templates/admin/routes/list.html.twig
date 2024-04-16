@@ -1,54 +1,42 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
-{% set translation_prefix = "admin.routes" %}
+{%- set translation_prefix = "admin.routes" -%}
 
-{% block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock %}
+{%- block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock -%}
 
-{% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListActionsList, tableHead, tableRow, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
     {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
-    {{ listTableStart(data, form) }}
+    {{- listTableStart(data, form) -}}
 
     <p class="govuk-body govuk-!-margin-bottom-5">
         <a href="{{ path('admin_routes_add') }}" class="govuk-link">Add route</a>
     </p>
 
-    {% for route in data.entities %}
-        <tr class="govuk-table__row">
-            {{ tableCell(route.ukPort.name ?? '-', {}) }}
-            {{ tableCell(route.foreignPort.name ?? '-', {}) }}
-            {{ tableCell(route.isActive ? 'Yes' : 'No') }}
+    {%- for route in data.entities -%}
+        {%- set linksContent = summaryListActionsList([
+            {
+                href: path('admin_routes_view', {routeId: route.id}),
+                label: 'view',
+                visuallyHiddenText: "route between #{route.ukPort.name} and #{route.foreignPort.name}"
+            }
+        ]) -%}
 
-            {%- set links = {} -%}
-            {%- set links = links | merge({
-                (path('admin_routes_view', {routeId: route.id})): {
-                    label: 'view',
-                    srHiddenSuffix: "route between #{route.ukPort.name} and #{route.foreignPort.name}"
-                }
-            }) -%}
-
-{#            {%- if is_granted('CAN_EDIT_ROUTE', route) -%}#}
-{#                {%- set links = links | merge({#}
-{#                    (path('admin_routes_edit', {routeId: route.id})): {#}
-{#                        label: 'edit',#}
-{#                        srHiddenSuffix: "route between #{route.ukPort.name} and #{route.foreignPort.name}"#}
-{#                    }#}
-{#                }) -%}#}
-{#            {%- endif -%}#}
-{#            {%- if is_granted('CAN_DELETE_ROUTE', route) -%}#}
-{#                {%- set links = links | merge({#}
-{#                    (path('admin_routes_delete', {routeId: route.id})): {#}
-{#                        label: 'delete',#}
-{#                        srHiddenSuffix: "route between #{route.ukPort.name} and #{route.foreignPort.name}"#}
-{#                    }#}
-{#                }) -%}#}
-{#            {%- endif -%}#}
-            {{- tableCell(links is empty ? '' : actionLinks(links)) -}}
-        </tr>
-    {% else %}
-        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
-    {% endfor %}
-    {{ listTableEnd(data, form) }}
-{% endblock %}
+        {{- tableRow([
+            route.ukPort.name ?? '-',
+            route.foreignPort.name ?? '-',
+            route.isActive ? 'Yes' : 'No',
+            {html: linksContent}
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans,
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
+{%- endblock -%}

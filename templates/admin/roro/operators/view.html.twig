@@ -4,24 +4,36 @@
 {% set headingParams = translation_parameters %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
     {%- set canDeleteOperator = is_granted('CAN_DELETE_OPERATOR', operator) -%}
     {%- set canEditOperator = is_granted('CAN_EDIT_OPERATOR', operator) -%}
 
-    <dl class="govuk-summary-list">
-        {%- set operatorGroupCopy -%}
+    {{- summaryListStart() -}}
+        {%- set operatorGroupValue -%}
             {%- if not operator_group -%}
                 {{- '-' -}}
             {%- else -%}
                 <a href="{{ path('admin_operator_groups_view', {operatorGroupId: operator_group.id}) }}">{{ operator_group.name }}</a>
             {%- endif -%}
         {%- endset -%}
-        {{ actionlessSummaryListRow('Name', operator.name) }}
-        {{ actionlessSummaryListRow('Code', operator.code) }}
-        {{ actionlessSummaryListRow('Is active?', operator.isActive ? 'Yes' : 'No') }}
-        {{ actionlessSummaryListRow('Matching operator group', operatorGroupCopy) }}
-    </dl>
+        {{- summaryListRow({
+            key: 'Name',
+            value: operator.name
+        }) -}}
+        {{- summaryListRow({
+            key: 'Code',
+            value: operator.code
+        }) -}}
+        {{- summaryListRow({
+            key: 'Is active?',
+            value: operator.isActive ? 'Yes' : 'No'
+        }) -}}
+        {{- summaryListRow({
+            key: 'Matching operator group',
+            value: {html: operatorGroupValue}
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <div>
         {%- if canEditOperator -%}
@@ -50,17 +62,23 @@
 
     <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Routes</h2>
 
-    <dl class="govuk-summary-list">
+    {{- summaryListStart() -}}
         {%- for route in operator.routes -%}
-            {{ summaryListRow("#{route.ukPort.name} to #{route.foreignPort.name}", '',
-                {
-                    (path('admin_operators_unassign_route', {operatorId: operator.id, routeId: route.id})): 'unassign',
-                }
-            ) }}
+            {{- summaryListRow({
+                key: "#{route.ukPort.name} to #{route.foreignPort.name}",
+                value: '',
+                actions: [
+                    {
+                        href: path('admin_operators_unassign_route', {operatorId: operator.id, routeId: route.id}),
+                        text: 'unassign',
+                        visuallyHiddenText: "#{route.ukPort.name} to #{route.foreignPort.name}"
+                    }
+                ]
+            }) -}}
         {%- else -%}
             No routes
         {%- endfor -%}
-    </dl>
+    {{- summaryListEnd() -}}
 
     <div class="govuk-!-margin-bottom-9">
         <a class="govuk-button govuk-button--primary" href="{{ path('admin_operators_assign_route', {operatorId: operator.id}) }}">Assign route</a>
@@ -68,17 +86,23 @@
 
     <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Users</h2>
 
-    <dl class="govuk-summary-list">
+    {{- summaryListStart() -}}
         {%- for user in operator.users -%}
-            {{ summaryListRow("#{user.UserIdentifier}", '',
-                {
-                    (path('admin_operators_delete_user', {operatorId: operator.id, userId: user.id})): 'delete',
-                }
-            ) }}
+            {{- summaryListRow({
+                key: "#{user.UserIdentifier}",
+                value: '',
+                actions: [
+                    {
+                        href: path('admin_operators_delete_user', {operatorId: operator.id, userId: user.id}),
+                        text: 'delete',
+                        visuallyHiddenText: "#{user.UserIdentifier}"
+                    }
+                ]
+            }) -}}
         {%- else -%}
             No users
         {%- endfor -%}
-    </dl>
+    {{- summaryListEnd() -}}
 
     <div class="govuk-!-margin-bottom-9">
         <a class="govuk-button govuk-button--primary" href="{{ path('admin_operators_add_user', {operatorId: operator.id}) }}">Add user</a>

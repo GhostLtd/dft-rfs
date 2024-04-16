@@ -59,7 +59,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
             ->add("wasAtCapacity", Gds\ChoiceType::class, [
                 'label' => $options['cargo_at_capacity_label'],
                 'help' => $options['cargo_at_capacity_help'],
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => self::CHOICES,
                 'choice_options' => [
                     self::CHOICE_NO => [
@@ -78,14 +78,14 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
             ->add("wasEmpty", Gds\ChoiceType::class, [
                 'label' => $options['cargo_empty_label'],
                 'help' => $options['cargo_empty_help'],
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => self::CHOICES,
                 'choice_value' => $booleanChoiceMapper,
             ])
             ->add('wasLimitedBy', LimitedByType::class, [
                 'label' => $options['cargo_limited_label'],
                 'help' => $options['cargo_limited_help'],
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ]);
     }
 

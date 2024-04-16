@@ -14,7 +14,7 @@ class VehicleQuestionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('totalVehicleCount', Gds\NumberType::class, [
+            ->add('totalVehicleCount', Gds\IntegerType::class, [
                 'label' => 'pre-enquiry.vehicle-questions.total-vehicle-count.label',
                 'help' => 'pre-enquiry.vehicle-questions.total-vehicle-count.help',
                 'attr' => [
@@ -22,7 +22,7 @@ class VehicleQuestionsType extends AbstractType
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('internationalJourneyVehicleCount', Gds\NumberType::class, [
+            ->add('internationalJourneyVehicleCount', Gds\IntegerType::class, [
                 'label' => 'pre-enquiry.vehicle-questions.international-journey-vehicle-count.label',
                 'help' => 'pre-enquiry.vehicle-questions.international-journey-vehicle-count.help',
                 'attr' => [
@@ -30,7 +30,7 @@ class VehicleQuestionsType extends AbstractType
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('annualJourneyEstimate', Gds\NumberType::class, [
+            ->add('annualJourneyEstimate', Gds\IntegerType::class, [
                 'label' => "pre-enquiry.vehicle-questions.annual-journey-estimate.label",
                 'help' => "pre-enquiry.vehicle-questions.annual-journey-estimate.help",
                 'label_attr' => ['class' => 'govuk-label--s'],

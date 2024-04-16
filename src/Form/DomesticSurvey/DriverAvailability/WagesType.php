@@ -2,9 +2,7 @@
 
 namespace App\Form\DomesticSurvey\DriverAvailability;
 
-use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\DriverAvailability;
-use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +22,7 @@ class WagesType extends AbstractType
             ->add('haveWagesIncreased', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.haveWagesIncreased',
                 'label' => "{$translationKeyPrefix}.have-wages-increased.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.have-wages-increased.help",
                 'choices' => DriverAvailability::YES_NO_PLAN_TO_CHOICES,
                 'choice_options' => [
@@ -39,7 +37,7 @@ class WagesType extends AbstractType
             ])
             ;
         $builder->get('increased_wages_yes')
-            ->add('averageWageIncrease', Gds\MoneyType::class, [
+            ->add('averageWageIncrease', Gds\DecimalMoneyType::class, [
                 'property_path' => 'survey.driverAvailability.averageWageIncrease',
                 'label' => "{$translationKeyPrefix}.average-wage-increase.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -50,7 +48,7 @@ class WagesType extends AbstractType
             ->add('wageIncreasePeriod', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.wageIncreasePeriod',
                 'label' => "{$translationKeyPrefix}.wage-increase-period.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.wage-increase-period.help",
                 'choices' => DriverAvailability::WAGE_INCREASE_PERIOD_CHOICES,
                 'choice_options' => [
@@ -69,7 +67,7 @@ class WagesType extends AbstractType
                 'property_path' => 'survey.driverAvailability.reasonsForWageIncrease',
                 'multiple' => true,
                 'label' => "{$translationKeyPrefix}.reasons-for-wage-increase.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-wage-increase.help",
                 'choices' => DriverAvailability::WAGE_INCREASE_REASON_CHOICES,
                 'choice_options' => [

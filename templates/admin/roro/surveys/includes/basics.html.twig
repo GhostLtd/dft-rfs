@@ -1,20 +1,33 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tag -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- actionlessSummaryListRow('admin.roro.survey.survey-start.label', survey.surveyPeriodStart | date('format.date.year-and-month' | trans)) -}}
-    {{- actionlessSummaryListRow('admin.roro.survey.operator.label', survey.operator.name) -}}
-
-    {{- actionlessSummaryListRow('admin.roro.survey.route.label', 'roro.route' | trans({
-        ukPort: survey.route.ukPort.name,
-        foreignPort: survey.route.foreignPort.name,
-    })) -}}
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'admin.roro.survey.survey-start.label' | trans,
+        value: survey.surveyPeriodStart | date('format.date.year-and-month' | trans)
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.roro.survey.operator.label' | trans,
+        value: survey.operator.name
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.roro.survey.route.label' | trans,
+        value: 'roro.route' | trans({
+            ukPort: survey.route.ukPort.name,
+            foreignPort: survey.route.foreignPort.name,
+        })
+    }) -}}
 
     {%- if showStatus ?? true -%}
-        {% set status -%}
-            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
-        {%- endset %}
-        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+        {{- summaryListRow({
+            key: 'Status',
+            value: {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})}
+        }) -}}
+        {%- if approvedBy | default(false) -%}
+            {{- summaryListRow({
+                key: 'Approved by',
+                value: "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
     {%- endif -%}
-{#    {{ actionlessSummaryListRow('Contact with haulier', survey.chasedCount) }}#}
-</dl>
+    {# {{- summaryListRow({key: 'Contact with haulier', value: survey.chasedCount}) -}} #}
+{{- summaryListEnd() -}}

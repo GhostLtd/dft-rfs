@@ -1,100 +1,141 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
 
 {%- set params = {tripId: trip.id} -%}
-{%- set placesChangeLink = {(wizardUrl('international-trip', 'STATE_ORIGIN_AND_DESTINATION', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.places'} }-%}
-{%- set dateChangeLink = {(wizardUrl('international-trip', 'STATE_DATES', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.dates'} }-%}
-{%- set outboundChangeLink = {(wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.outbound-journey'} }-%}
-{%- set returnChangeLink = {(wizardUrl('international-trip', 'STATE_RETURN_PORTS', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.return-journey'} }-%}
-{%- set trailerChangeLink = {(wizardUrl('international-trip', 'STATE_SWAPPED_TRAILER', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.change-link-sr-suffix.swapped-trailer'} }-%}
-{%- set distanceChangeLink = {(wizardUrl('international-trip', 'STATE_DISTANCE', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.distance'} }-%}
-{%- set countriesTransittedChangeLink = {(wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params)):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.trip.summary.countries-transitted'} }-%}
+{%- set placesChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_ORIGIN_AND_DESTINATION', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.places' | trans
+    }
+] -%}
+{%- set dateChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_DATES', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.dates' | trans
+    }
+] -%}
+{%- set outboundChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_OUTBOUND_PORTS', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.outbound-journey' | trans
+    }
+] -%}
+{%- set returnChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_RETURN_PORTS', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.return-journey' | trans
+    }
+] -%}
+{%- set trailerChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_SWAPPED_TRAILER', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.change-link-sr-suffix.swapped-trailer' | trans
+    }
+] -%}
+{%- set distanceChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_DISTANCE', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.distance' | trans
+    }
+] -%}
+{%- set countriesTransittedChangeLink = [
+    {
+        href: wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.trip.summary.countries-transitted' | trans
+    }
+] -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
-    {{ row(showActions, 'international.trip.summary.places',
-        'international.trip.summary.origin-to-destination'|trans({
-            'origin': trip.origin|capitalize|formatPotentialPostcode,
-            'destination': trip.destination|capitalize|formatPotentialPostcode,
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'international.trip.summary.places' | trans,
+        value: 'international.trip.summary.origin-to-destination'|trans({
+            origin: trip.origin | capitalize | formatPotentialPostcode,
+            destination: trip.destination | capitalize | formatPotentialPostcode,
         }),
-        placesChangeLink
-    ) }}
-    {{ row(showActions, 'international.trip.summary.dates' | trans,
-        ('international.trip.summary.date-until-date'|trans({
-            'from': trip.outboundDate|date('format.date.default' | trans),
-            'until': trip.returnDate|date('format.date.default' | trans),
+        actions: showActions ? placesChangeLink : [],
+    }) -}}
+    {{- summaryListRow({
+        key: 'international.trip.summary.dates' | trans | trans,
+        value: ('international.trip.summary.date-until-date'|trans({
+            from: trip.outboundDate | date('format.date.default' | trans),
+            until: trip.returnDate | date('format.date.default' | trans),
         })),
-        dateChangeLink
-    ) }}
-    {{ row(showActions, 'international.trip.summary.outbound-journey',
-        'international.trip.summary.origin-to-destination'|trans({
-            'origin': trip.outboundUkPort|capitalize,
-            'destination': trip.outboundForeignPort|capitalize,
+        actions: showActions ? dateChangeLink : [],
+    }) -}}
+    {{- summaryListRow({
+        key: 'international.trip.summary.outbound-journey' | trans,
+        value: 'international.trip.summary.origin-to-destination' | trans({
+            origin: trip.outboundUkPort | capitalize,
+            destination: trip.outboundForeignPort | capitalize,
         }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.outboundCargoState)|trans|lower ~ ")",
-        outboundChangeLink
-    ) }}
-    {{ row(showActions, 'international.trip.summary.return-journey',
-        'international.trip.summary.origin-to-destination'|trans({
-            'origin': trip.returnForeignPort|capitalize,
-            'destination': trip.returnUkPort|capitalize,
+        actions: showActions ? outboundChangeLink : [],
+    }) -}}
+    {{- summaryListRow({
+        key: 'international.trip.summary.return-journey' | trans,
+        value: 'international.trip.summary.origin-to-destination' | trans({
+            origin: trip.returnForeignPort | capitalize,
+            destination: trip.returnUkPort | capitalize,
         }) ~ " (" ~ ('international.trip.summary.cargo-state.' ~ trip.returnCargoState)|trans|lower ~ ")",
-        returnChangeLink
-    ) }}
+        actions: showActions ? returnChangeLink : [],
+    }) -}}
 
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">{{ 'international.trip.summary.swapped-trailer' | trans }}</dt>
-        <dd class="govuk-summary-list__value">
-            {{- "common.choices.boolean.#{trip.isSwappedTrailer ? 'yes' : 'no'}" | trans -}}
-            {%- if trip.isSwappedTrailer -%}<br>{{- displayAxleConfiguration(trip.axleConfiguration) -}}{%- endif -%}
-        </dd>
-        {% if showActions %}
-            <dd class="govuk-summary-list__actions">{{ actionLinks(trailerChangeLink) }}</dd>
-        {% endif %}
-    </div>
 
-    {% if trip.canChangeBodyType %}
-        {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">{{ 'international.trip.summary.changed-body-type' | trans }}</dt>
-            <dd class="govuk-summary-list__value">
-                {{- "common.choices.boolean.#{trip.isChangedBodyType ? 'yes' : 'no'}" | trans -}}
-                {%- if trip.isChangedBodyType %} &mdash; {{ choiceLabel(bodyChoices, trip.bodyType) | trans -}}{%- endif -%}
-            </dd>
-            {% if showActions %}
-                <dd class="govuk-summary-list__actions">{{ actionLinks(trailerChangeLink) }}</dd>
-            {% endif %}
-        </div>
-    {% endif %}
-    {% if trip.canChangeWeights %}
-        {{ row(showActions, 'international.trip.summary.gross-weight',
-            ('common.weight.kilograms'|trans({value: trip.grossWeight})),
-            trailerChangeLink
-        ) }}
-        {{ row(showActions, 'international.trip.summary.carrying-capacity',
-            ('common.weight.kilograms'|trans({value: trip.carryingCapacity})),
-            trailerChangeLink
-        ) }}
-    {% endif %}
+    {%- set swappedTrailerValue -%}
+        {{- "common.choices.boolean.#{trip.isSwappedTrailer ? 'yes' : 'no'}" | trans -}}
+        {%- if trip.isSwappedTrailer -%}<br>{{- displayAxleConfiguration(trip.axleConfiguration) -}}{%- endif -%}
+    {%- endset -%}
+    {{- summaryListRow({
+        key: 'international.trip.summary.swapped-trailer' | trans,
+        value: {html: swappedTrailerValue},
+        actions: showActions ? trailerChangeLink : [],
+    }) -}}
 
-    {{ row(showActions, 'international.trip.summary.distance',
-        ("common.distance.#{trip.roundTripDistance.unit}" |
+    {%- if trip.canChangeBodyType -%}
+        {%- set changedBodyTypeValue -%}
+            {{- "common.choices.boolean.#{trip.isChangedBodyType ? 'yes' : 'no'}" | trans -}}
+            {%- if trip.isChangedBodyType %} &mdash; {{ choiceLabel(constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES'), trip.bodyType) | trans -}}{%- endif -%}
+        {%- endset -%}
+
+        {{- summaryListRow({
+            key: 'international.trip.summary.changed-body-type' | trans,
+            value: {html: changedBodyTypeValue},
+            actions: showActions ? trailerChangeLink : [],
+        }) -}}
+    {%- endif -%}
+
+    {%- if trip.canChangeWeights -%}
+        {{- summaryListRow({
+            key: 'international.trip.summary.gross-weight' | trans,
+            value: ('common.weight.kilograms' | trans({value: trip.grossWeight})),
+            actions: showActions ? trailerChangeLink : [],
+        }) -}}
+        {{- summaryListRow({
+            key: 'international.trip.summary.carrying-capacity' | trans,
+            value: ('common.weight.kilograms' | trans({value: trip.carryingCapacity})),
+            actions: showActions ? trailerChangeLink : [],
+        }) -}}
+    {%- endif -%}
+
+    {{- summaryListRow({
+        key: 'international.trip.summary.distance' | trans,
+        value: ("common.distance.#{trip.roundTripDistance.unit}" |
         trans({value: trip.roundTripDistance.value})),
-        distanceChangeLink
-    ) }}
-    {{ row(
-        showActions,
-        'international.trip.summary.countries-transitted',
-        trip.allCountriesTransitted|default('-'),
-        countriesTransittedChangeLink
-    ) }}
-</dl>
+        actions: showActions ? distanceChangeLink : [],
+    }) -}}
+    {{- summaryListRow({
+        key: 'international.trip.summary.countries-transitted' | trans,
+        value: trip.allCountriesTransitted|default('-'),
+        actions: showActions ? countriesTransittedChangeLink : [],
+    }) -}}
+{{- summaryListEnd() -}}

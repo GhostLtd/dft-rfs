@@ -5,7 +5,7 @@
 {% set translation_prefix = 'domestic.summary' %}
 
 {% block content %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionlessSummaryListRow %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow %}
 
     {%- if maintenanceWarningBanner ?? false -%}
         {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
@@ -14,10 +14,16 @@
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.summary.heading'|trans }}</h1>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('domestic.summary.vehicle', survey.registrationMark|formatRegMark) }}
-        {{ actionlessSummaryListRow('domestic.summary.start-date', survey.surveyPeriodStart | date('format.date.full-with-year' | trans)) }}
-    </dl>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'domestic.summary.vehicle' | trans,
+            value: survey.registrationMark|formatRegMark
+        }) -}}
+        {{- summaryListRow({
+            key: 'domestic.summary.start-date' | trans,
+            value: survey.surveyPeriodStart | date('format.date.full-with-year' | trans)
+        }) -}}
+    {{- summaryListEnd() }}
 
     {# N.B. We don't get to this template unless initialDetails are complete, which also means that response is always present #}
     {% if not is_granted(constant('App\\Security\\Voter\\SurveyVoter::ELIGIBLE_TO_FILL_SURVEY_WEEK'), survey) %}
@@ -50,11 +56,22 @@
         <dl class="govuk-summary-list govuk-!-margin-bottom-7">
             {% for dayNumber in 1..7 %}
                 {% set day = survey.response.dayByNumber(dayNumber) %}
-                {{ summaryListRow(
-                    'domestic.summary.day-x-date'|trans({dayNumber: dayNumber, date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')|date('format.date.full' | trans)) }),
-                    dayText(day),
-                    {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): {label: 'common.actions.change', srHiddenSuffix: 'domestic.summary.day-x', srHiddenSuffixParams: {dayNumber: dayNumber}} }
-                ) }}
+                {{ summaryListRow({
+                    key: 'domestic.summary.day-x-date' | trans({
+                        dayNumber: dayNumber,
+                        date: (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day') | date('format.date.full' | trans))
+                    }),
+                    value: dayText(day),
+                    actions: [
+                        {
+                            href: url('app_domesticsurvey_day_view', {dayNumber: dayNumber}),
+                            text: 'common.actions.change' | trans,
+                            visuallyHiddenText: 'domestic.summary.day-x' | trans({dayNumber: dayNumber})
+                        }
+                    ]
+                }) }}
+
+                {# actions: {(url('app_domesticsurvey_day_view', {dayNumber: dayNumber})): {label: 'common.actions.change', srHiddenSuffix: 'domestic.summary.day-x', srHiddenSuffixParams: {dayNumber: dayNumber}} } #}
             {% endfor %}
         </dl>
 

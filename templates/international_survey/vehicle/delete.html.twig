@@ -13,7 +13,7 @@
         {%- include "international_survey/includes/vehicle.html.twig" -%}
     {%- endwith -%}
 
-    {{ warningText("#{translation_prefix}.delete"|trans) }}
+    {{ warningText({text: "#{translation_prefix}.delete" | trans}) }}
 
     {{ form(form) }}
 {%- endblock -%}

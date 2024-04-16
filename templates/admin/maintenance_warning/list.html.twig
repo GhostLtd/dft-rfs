@@ -1,28 +1,40 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
-{% set translation_prefix = "admin.maintenance-warning" %}
+{%- set translation_prefix = "admin.maintenance-warning" -%}
 
-{% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableRow, summaryListActionsList, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
     {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
     <p class="govuk-body">Maintenance Warnings show warnings of upcoming maintenance periods (when the service will be down) on the frontend.</p>
 
-    {{ listTableStart(data, form) }}
-    {% for warning in data.entities %}
-        <tr class="govuk-table__row">
-            {{ tableCell(warning.start | date ('format.date.default' | trans), {}) }}
-            {{ tableCell(warning.start | date ('format.time.default' | trans), {}) }}
-            {{ tableCell(warning.end | date ('format.time.default' | trans), {}) }}
-            {{ tableCell(actionLinks({
-                (path('admin_maintenance_warning_delete', {id: warning.id})): {label: 'Delete'},
-                (path('admin_maintenance_warning_edit', {id: warning.id})): {label: 'Edit'},
-            }), {}) }}
-        </tr>
-    {% else %}
-        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
-    {% endfor %}
-    {{ listTableEnd(data, form) }}
+    {{- listTableStart(data, form) -}}
+    {%- for warning in data.entities -%}
+        {%- set actions = [
+            {
+                href: path('admin_maintenance_warning_delete', {id: warning.id}),
+                text: 'Delete',
+            },
+            {
+                href: path('admin_maintenance_warning_edit', {id: warning.id}),
+                text: 'Edit',
+            },
+        ] -%}
+        {{- tableRow([
+            warning.start | date('format.date.default' | trans),
+            warning.start | date('format.time.default' | trans),
+            warning.end | date('format.time.default' | trans),
+            {html: summaryListActionsList(actions)},
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans({}, 'messages'),
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
     <a class="govuk-button" href="{{ path('admin_maintenance_warning_add') }}">Add maintenance warning</a>
-{% endblock %}
+{%- endblock -%}

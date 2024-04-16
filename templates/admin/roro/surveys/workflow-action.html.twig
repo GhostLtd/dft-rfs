@@ -4,7 +4,6 @@
 {%- set headingParams = translation_parameters %}
 
 {%- block adminContent -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     {%- with {showStatus: false, survey: subject, marginBottom: 4} -%}
         {%- include "admin/roro/surveys/includes/basics.html.twig" -%}
     {%- endwith -%}

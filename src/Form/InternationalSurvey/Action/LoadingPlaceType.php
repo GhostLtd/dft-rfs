@@ -24,16 +24,14 @@ class LoadingPlaceType extends AbstractType
             /** @var Action $action */
             $action = $event->getData();
 
-            $prefix = 'international.action.unloading';
-
             [$choices, $choiceOptions] = $this->loadingPlaceHelper->getChoicesAndOptionsForPlace($action, true);
 
             $event->getForm()
                 ->add('loadingAction', Gds\ChoiceType::class, [
                     'label_is_page_heading' => true,
-                    'label' => "{$prefix}.label",
-                    'label_attr' => ['class' => 'govuk-label--xl'],
-                    'help' => "{$prefix}.help",
+                    'label' => "international.action.unloading.label",
+                    'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                    'help' => "international.action.unloading.help",
                     'choices' => $choices,
                     'choice_options' => $choiceOptions,
                     'choice_value' => fn(?Action $a) => $a ? "action-{$a->getNumber()}" : null,

@@ -3,7 +3,7 @@
 {% set translation_prefix = "admin.reports.dashboard" %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLink %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList %}
 
     {%- set csrgtAll = 1 %}{% set csrgtGB = 2 %}{% set csrgtNI = 4 %}{% set irhs = 8 -%}{% set preEnquiry = 16 -%}{% set roro = 32 -%}
     {%- set reportTypeRef = {(csrgtAll): 'csrgt', (csrgtGB): 'csrgt-gb', (csrgtNI): 'csrgt-ni', (irhs): 'irhs', (preEnquiry): 'pre-enquiry', (roro): 'roro'} -%}
@@ -42,32 +42,39 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-wide">
-            <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-            {{- tableHead(null, [
+            {{- tableStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+            {{- tableHead([
                 '',
-                'admin.reports.dashboard.surveys.csrgt',
-                'admin.reports.dashboard.surveys.csrgt-gb',
-                'admin.reports.dashboard.surveys.csrgt-ni',
-                'admin.reports.dashboard.surveys.irhs',
-                'admin.reports.dashboard.surveys.pre-enquiry',
-                'admin.reports.dashboard.surveys.roro',
+                'admin.reports.dashboard.surveys.csrgt' | trans(),
+                'admin.reports.dashboard.surveys.csrgt-gb' | trans(),
+                'admin.reports.dashboard.surveys.csrgt-ni' | trans(),
+                'admin.reports.dashboard.surveys.irhs' | trans(),
+                'admin.reports.dashboard.surveys.pre-enquiry' | trans(),
+                'admin.reports.dashboard.surveys.roro' | trans(),
             ]) -}}
-            <tbody class="govuk-table__body">
+            {{- tableBodyStart() -}}
             {%- for config in reportConfig -%}
-                <tr class="govuk-table__row">
-                    {{- tableCell(config.title | trans, {class: 'govuk-table__header'}) -}}
-                    {% for col in [csrgtAll, csrgtGB, csrgtNI, irhs, preEnquiry, roro] %}
-                        {%- if (config.active b-and col) -%}
-                            {%- set link = actionLink(path(config.route, {type: reportTypeRef[col]}), 'admin.reports.dashboard.view') -%}
-                            {{- tableCell(link, {html: true}) -}}
-                        {%- else -%}
-                            {{- tableCell('') -}}
-                        {%- endif -%}
-                    {%- endfor -%}
-                </tr>
+                {%- set row = [
+                    config.title | trans
+                ] -%}
+
+                {% for col in [csrgtAll, csrgtGB, csrgtNI, irhs, preEnquiry, roro] %}
+                    {%- if (config.active b-and col) -%}
+                        {%- set link = summaryListActionsList([
+                            {
+                                href: path(config.route, {type: reportTypeRef[col]}),
+                                text: 'admin.reports.dashboard.view' | trans
+                            }
+                        ]) -%}
+                        {%- set row = row | merge([link]) -%}
+                    {%- else -%}
+                        {%- set row = row | merge(['']) -%}
+                    {%- endif -%}
+                {%- endfor -%}
+
+                {{- tableRow(row, {firstCellIsHeader: true}) -}}
             {%- endfor -%}
-            </tbody>
-        </table>
+            {{- tableEndIncludingBody() -}}
         </div>
     </div>
 {% endblock %}

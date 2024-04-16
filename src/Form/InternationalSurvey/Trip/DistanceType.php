@@ -3,7 +3,8 @@
 namespace App\Form\InternationalSurvey\Trip;
 
 use App\Entity\Distance;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\DecimalType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,11 +17,13 @@ class DistanceType extends AbstractType
         $builder
             ->add('roundTripDistance', ValueUnitType::class, [
                 'label' => "international.trip.distance.distance.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "international.trip.distance.distance.help",
+                'value_form_type' => DecimalType::class,
                 'value_options' => [
+                    'precision' => 10,
+                    'scale' => 1,
                     'label' => 'Distance',
-                    'is_decimal' => true,
                     'attr' => ['class' => 'govuk-input--width-5'],
                 ],
                 'unit_options' => [

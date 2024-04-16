@@ -31,6 +31,7 @@ class InPossessionOfVehicleType extends AbstractType
                 'choices' => SurveyResponse::IS_EXEMPT_CHOICES,
                 'label' => "domestic.survey-response.is-exempt-vehicle-type.label",
                 'help' => "domestic.survey-response.is-exempt-vehicle-type.help",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
         ;
     }

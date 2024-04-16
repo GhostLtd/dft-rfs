@@ -15,10 +15,14 @@ class MaintenanceWarningType extends AbstractType
             ->add('start', Gds\DateTimeType::class,[
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => null,
+                'time_options' => [
+                    'expanded' => false,
+                ],
             ])
             ->add('end', Gds\TimeType::class, [
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => null,
+                'expanded' => false,
             ])
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',

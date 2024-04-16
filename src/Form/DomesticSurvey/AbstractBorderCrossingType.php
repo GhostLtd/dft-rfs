@@ -24,7 +24,7 @@ abstract class AbstractBorderCrossingType extends AbstractType implements DataMa
                 'label' => "{$translationKeyPrefix}.border-crossed.label",
                 'help' => "{$translationKeyPrefix}.border-crossed.help",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
             ])
             ->add('borderCrossingLocation', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.border-crossing-location.label",

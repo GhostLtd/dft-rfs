@@ -6,7 +6,7 @@ use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\DataMapper\TripDataMapper;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use App\Utility\PortsDataFactory;
 use App\Utility\PortsDataSet;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -78,9 +78,11 @@ class TripType extends AbstractType
             ->add('roundTripDistance', ValueUnitType::class, [
                 'label' => "Round trip distance",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'value_form_type' => Gds\DecimalType::class,
                 'value_options' => [
                     'label' => 'Distance',
-                    'is_decimal' => true,
+                    'precision' => 10,
+                    'scale' => 1,
                     'attr' => ['class' => 'govuk-input--width-5'],
                 ],
                 'unit_options' => [
@@ -113,13 +115,13 @@ class TripType extends AbstractType
 
             // Vehicle weights are in this event listener so that we maintain a sensible order
             $event->getForm()->get('otherDetails')
-                ->add('gross_weight', Gds\NumberType::class, [
+                ->add('gross_weight', Gds\IntegerType::class, [
                     'label' => "Gross vehicle weight (kg)",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],
                     'suffix' => 'kg',
                 ])
-                ->add('carrying_capacity', Gds\NumberType::class, [
+                ->add('carrying_capacity', Gds\IntegerType::class, [
                     'label' => "Carrying capacity (kg)",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],

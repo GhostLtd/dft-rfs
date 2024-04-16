@@ -7,6 +7,7 @@ use App\Entity\RoRo\VehicleCount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -51,9 +52,20 @@ class VehicleCountsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'attr' => ['autocomplete' => "off"],
             'data_class' => Survey::class,
             'validation_groups' => 'roro.vehicle-counts',
         ]);
+
+        // FormTypeExtension sets attr[novalidate], and it's important not to overwrite that
+        // by directly setting attr in setDefaults above
+        $resolver->setNormalizer('attr', function(Options $options, ?array $value) {
+            if (!is_array($value)) {
+                $value = [];
+            }
+
+            $value['autocomplete'] ??= 'off';
+
+            return $value;
+        });
     }
 }

@@ -62,7 +62,7 @@ class GoodsUnloadedWeightType extends AbstractType
                             'country' => $country,
                             'goods' => $goods,
                         ],
-                        'label_attr' => ['class' => 'govuk-label--s'],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                         'choices' => self::CHOICES,
                         'choice_options' => [
                             self::CHOICE_NO => [
@@ -78,7 +78,7 @@ class GoodsUnloadedWeightType extends AbstractType
             }
 
             $form
-                ->add('weightOfGoods', Gds\NumberType::class, [
+                ->add('weightOfGoods', Gds\IntegerType::class, [
                     'label' => "{$weightPrefix}.label",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'help' => "{$weightPrefix}.help",

@@ -5,7 +5,7 @@
 {%- endmacro -%}
 
 {%- macro surveyList(surveys, filters) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow -%}
 
     {%- if 'completed' in filters -%}
         {%- set surveys = surveys | filter(s => s.isCompleted) -%}
@@ -15,18 +15,24 @@
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-8">
         {%- for survey in surveys -%}
-            {{- summaryListRow(
-                survey.surveyPeriodStart | date('format.date.year-and-month' | trans),
-                'roro.route' | trans({ukPort: survey.route.ukPort.name, foreignPort: survey.route.foreignPort.name}),
-                {
-                    (path('app_roro_survey_view', {surveyId: survey.id})): 'common.actions.view',
-                },
-                {
-                    key_translation: false
-                }
-            ) -}}
+            {%- set monthAndYear = survey.surveyPeriodStart | date('format.date.year-and-month' | trans) -%}
+            {%- set routeDescription = 'roro.route' | trans({ukPort: survey.route.ukPort.name, foreignPort: survey.route.foreignPort.name}) %}
+            {{- summaryListRow({
+                key: monthAndYear,
+                value: routeDescription,
+                actions: [
+                    {
+                        href: path('app_roro_survey_view', {surveyId: survey.id}),
+                        text: 'common.actions.view' | trans,
+                        visuallyHiddenText: "#{monthAndYear} - #{routeDescription}",
+                    }
+                ]
+            }) -}}
         {%- else  -%}
-            {{- actionlessSummaryListRow('No surveys', null, {key_translation: false}) }}
+            {{- summaryListRow({
+                key: 'No surveys',
+                value: ''
+            }) -}}
         {%- endfor -%}
     </dl>
 {%- endmacro -%}

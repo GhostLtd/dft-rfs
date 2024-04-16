@@ -1,63 +1,66 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
-{% set showActions = showActions ?? true %}
-{% set showHeading = showHeading ?? true %}
+{%- set showActions = showActions ?? true -%}
+{%- set showHeading = showHeading ?? true -%}
 
-{% if showHeading %}<h2 class="govuk-heading-m">Vehicle details</h2>{% endif %}
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {# vehicle weights #}
-    {% set vehicleWeightsActionLinks = {
-        (url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS')})):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-weights.heading'}
-    } %}
+{%- set vehicleWeightsActionLinks = [
+    {
+        href: url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_WEIGHTS')}),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'domestic.survey-response.vehicle-weights.heading'
+    }
+] -%}
+
+{%- if showHeading -%}<h2 class="govuk-heading-m">Vehicle details</h2>{%- endif -%}
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
         {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
             ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
             '-'
         -%}
-        {{ row(showActions,
-            'domestic.survey-response.vehicle-fuel.fuel-quantity.label',
-            fuelValue,
-            vehicleWeightsActionLinks
-        ) }}
+        {{- summaryListRow({
+            key: 'domestic.survey-response.vehicle-fuel.fuel-quantity.label' | trans,
+            value: fuelValue,
+            actions: showActions ? vehicleWeightsActionLinks : []
+        }, showActions) -}}
     {% endif %}
-    {{ row(showActions,
-        'common.vehicle.gross-weight',
-        ('common.weight.kilograms'|trans({value: survey.response.vehicle.grossWeight})),
-        vehicleWeightsActionLinks
-    ) }}
-    {{ row(showActions,
-        'common.vehicle.carrying-capacity',
-        ('common.weight.kilograms'|trans({value: survey.response.vehicle.carryingCapacity})),
-        vehicleWeightsActionLinks
-    ) }}
+    {{- summaryListRow({
+        key: 'common.vehicle.gross-weight' | trans,
+        value: ('common.weight.kilograms'|trans({value: survey.response.vehicle.grossWeight})),
+        actions: showActions ? vehicleWeightsActionLinks : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'common.vehicle.carrying-capacity' | trans,
+        value: ('common.weight.kilograms'|trans({value: survey.response.vehicle.carryingCapacity})),
+        actions: showActions ? vehicleWeightsActionLinks : []
+    }, showActions) -}}
 
     {# vehicle config #}
-    {% set vehicleConfigActionLinks = {
-        (url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')})):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.vehicle-trailer-configuration.change-link-sr-suffix'}
-    } %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">{{ 'common.vehicle.axle-configuration' | trans }}</dt>
-        <dd class="govuk-summary-list__value">
-            {{- displayAxleConfiguration(survey.response.vehicle.axleConfiguration) -}}
-        </dd>
-        {% if showActions -%}
-            <dd class="govuk-summary-list__actions">
-                {{- actionLinks(vehicleConfigActionLinks) -}}
-            </dd>
-        {%- endif %}
-    </div>
-    {{ row(showActions,
-        'common.vehicle.body-type',
-        (constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_TRANSLATION_PREFIX') ~ survey.response.vehicle.bodyType) | trans,
-        vehicleConfigActionLinks
-    ) }}
+    {%- set vehicleConfigActionLinks = [
+        {
+            href: url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION')}),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'domestic.survey-response.vehicle-trailer-configuration.change-link-sr-suffix' | trans
+        }
+    ] -%}
+
+    {{- summaryListRow({
+        key: 'common.vehicle.axle-configuration' | trans,
+        value: {
+            html: displayAxleConfiguration(survey.response.vehicle.axleConfiguration)
+        },
+        actions: showActions ? vehicleConfigActionLinks : []
+    }, showActions) }}
+    {{- summaryListRow({
+        key: 'common.vehicle.body-type' | trans,
+        value: (constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_TRANSLATION_PREFIX') ~ survey.response.vehicle.bodyType) | trans,
+        actions: showActions ? vehicleConfigActionLinks : []
+    }, showActions) -}}
     {%- if (showReasonForEmptySurvey ?? false) and survey.response.isInPossessionOfVehicle and not survey.response.hasJourneys -%}
         {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\SurveyResponse::EMPTY_SURVEY_REASON_CHOICES'), survey.response.reasonForEmptySurvey) -%}
-        {{- row(false,
-            'Reason for empty survey',
-            reason ? reason|trans : '-'
-        ) -}}
+        {{- summaryListRow({
+            key: 'Reason for empty survey',
+            value: reason ? reason | trans : '-'
+        }, showActions) -}}
     {%- endif -%}
-</dl>
+{{- summaryListEnd() -}}

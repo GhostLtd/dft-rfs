@@ -3,7 +3,7 @@
 namespace App\Form\RoRo;
 
 use App\Entity\RoRo\VehicleCount;
-use Ghost\GovUkFrontendBundle\Form\Type\NumberType;
+use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -29,7 +29,7 @@ class VehicleCountEntryType extends AbstractType
             }
 
             $event->getForm()
-                ->add('vehicleCount', NumberType::class, [
+                ->add('vehicleCount', IntegerType::class, [
                     'attr' => ['class' => 'govuk-input--width-5'],
                     'help' => $help,
                     'label' => $label,

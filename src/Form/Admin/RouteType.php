@@ -33,7 +33,9 @@ class RouteType extends AbstractType
             ->add('ports', FieldsetType::class, [
                 'label' => false,
             ])
-            ->add('isActive', BooleanChoiceType::class)
+            ->add('isActive', BooleanChoiceType::class, [
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',
@@ -53,6 +55,7 @@ class RouteType extends AbstractType
                 'expanded' => false,
                 'disabled' => !$options['add'],
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('foreignPort', ChoiceType::class, [
                 'placeholder' => '-',
@@ -61,6 +64,7 @@ class RouteType extends AbstractType
                 'expanded' => false,
                 'disabled' => !$options['add'],
                 'attr' => ['class' => 'govuk-input--width-10'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ]);
     }
 

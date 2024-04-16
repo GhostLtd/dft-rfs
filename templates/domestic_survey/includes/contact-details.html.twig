@@ -1,12 +1,33 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
-{% set showActions = showActions ?? true %}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+{%- set showActions = showActions ?? true -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 1 }}">
-    {% set contactDetailsActionLinks = {(url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')})):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.contact-details.heading'}
-    } %}
-    {{ row(showActions, 'domestic.survey-response.contact-details.business-name.label', survey.response.contactBusinessName | default('-'), contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-name.label', survey.response.contactName | default('-'), contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-telephone.label', survey.response.contactTelephone | default('-'), contactDetailsActionLinks) }}
-    {{ row(showActions, 'domestic.survey-response.contact-details.contact-email.label', survey.response.contactEmail | default('-'), contactDetailsActionLinks) }}
-</dl>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 1)}) -}}
+    {%- set contactDetailsActionLinks = [
+        {
+            href: url('app_domesticsurvey_initialdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS')}),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'domestic.survey-response.contact-details.heading' | trans
+        }
+    ] -%}
+
+    {{- summaryListRow({
+        key: 'domestic.survey-response.contact-details.business-name.label' | trans,
+        value: survey.response.contactBusinessName | default('-'),
+        actions: showActions ? contactDetailsActionLinks : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.contact-details.contact-name.label' | trans,
+        value: survey.response.contactName | default('-'),
+        actions: showActions ? contactDetailsActionLinks : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.contact-details.contact-telephone.label' | trans,
+        value: survey.response.contactTelephone | default('-'),
+        actions: showActions ? contactDetailsActionLinks : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.contact-details.contact-email.label' | trans,
+        value: survey.response.contactEmail | default('-'),
+        actions: showActions ? contactDetailsActionLinks : []
+    }, showActions) -}}
+{{- summaryListEnd() -}}

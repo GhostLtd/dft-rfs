@@ -19,7 +19,7 @@ class MissingDaysType extends AbstractType
                 'mapped' => false,
                 'label' => "{$translationKeyPrefix}.missing-days.label",
                 'help' => "{$translationKeyPrefix}.missing-days.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [

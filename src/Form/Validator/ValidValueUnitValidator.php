@@ -2,7 +2,7 @@
 
 namespace App\Form\Validator;
 
-use App\Entity\ValueUnitInterface;
+use Ghost\GovUkFrontendBundle\Model\ValueUnitInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
@@ -29,7 +29,7 @@ class ValidValueUnitValidator extends ConstraintValidator
 
         $validator = $this->context->getValidator()->inContext($this->context);
 
-        if (!$constraint->allowBlank || !$value->isBlank()) {
+        if (!$constraint->allowBlank || !$value->getIsBlank()) {
             $validator->atPath('value')->validate($value->getValue(), [
                 new NotBlank(['message' => $constraint->valueBlankMessage]),
                 new PositiveOrZero(['message' => $constraint->valuePositiveMessage]),

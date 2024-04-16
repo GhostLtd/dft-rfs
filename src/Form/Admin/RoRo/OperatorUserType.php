@@ -17,6 +17,7 @@ class OperatorUserType extends AbstractType
         $builder
             ->add('username', EmailType::class, [
                 'label' => 'Email address',
+                'label_attr' => ['class' => 'govuk-label--s'],
             ])
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',

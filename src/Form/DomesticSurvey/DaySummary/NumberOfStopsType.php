@@ -24,17 +24,17 @@ class NumberOfStopsType extends AbstractType
             ]);
 
         $builder->get('group')
-            ->add('numberOfStopsLoading', Gds\NumberType::class, [
+            ->add('numberOfStopsLoading', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.number-of-stops-loading.label",
                 'help' => "{$translationKeyPrefix}.number-of-stops-loading.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('numberOfStopsUnloading', Gds\NumberType::class, [
+            ->add('numberOfStopsUnloading', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.number-of-stops-unloading.label",
                 'help' => "{$translationKeyPrefix}.number-of-stops-unloading.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('numberOfStopsLoadingAndUnloading', Gds\NumberType::class, [
+            ->add('numberOfStopsLoadingAndUnloading', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.number-of-stops-both.label",
                 'help' => "{$translationKeyPrefix}.number-of-stops-both.help",
                 'label_attr' => ['class' => 'govuk-label--s'],

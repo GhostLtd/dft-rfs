@@ -33,7 +33,7 @@ abstract class AbstractOriginType extends AbstractType
                 ]],
                 'label' => "{$translationKeyPrefix}.goods-loaded.label",
                 'help' => "{$translationKeyPrefix}.goods-loaded.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
             ->add('goodsTransferredFrom', Gds\ChoiceType::class, [
                 'choices' => Day::TRANSFER_CHOICES,

@@ -20,9 +20,10 @@ class EarlyResponseType extends AbstractType
                     'domestic.closing-details.early-response.is-correct.no' => "false",
                 ],
                 'label' => "domestic.closing-details.early-response.is-correct.label",
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "domestic.closing-details.early-response.is-correct.help",
-                'constraints' => new NotNull(['message' => 'domestic.closing-details.early-response.not-null'])
+                'constraints' => new NotNull(['message' => 'domestic.closing-details.early-response.not-null']),
+                'choice_translation_domain' => 'messages',
             ]);
     }
 }

@@ -89,7 +89,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                     ->add('contactAddress', LongAddressType::class, [
                         'label' => "{$correspondenceAddressPrefix}.address.label",
                         'label_attr' => [
-                            'class' => 'govuk-label--m',
+                            'class' => 'govuk-label--s',
                         ],
                         'help' => "{$correspondenceAddressPrefix}.address.help",
                         'include_addressee' => false,
@@ -110,7 +110,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 'help' => "{$correspondenceDetailsPrefix}.email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('totalVehicleCount', Gds\NumberType::class, [
+            ->add('totalVehicleCount', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.total-vehicle-count.label",
                 'help' => "{$vehicleQuestionsPrefix}.total-vehicle-count.help",
                 'attr' => [
@@ -118,7 +118,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('internationalJourneyVehicleCount', Gds\NumberType::class, [
+            ->add('internationalJourneyVehicleCount', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.label",
                 'help' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.help",
                 'attr' => [
@@ -126,7 +126,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('annualJourneyEstimate', Gds\NumberType::class, [
+            ->add('annualJourneyEstimate', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.label",
                 'help' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.help",
                 'attr' => [

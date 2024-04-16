@@ -16,14 +16,14 @@ class VehicleWeightType extends AbstractType
     {
 
         $builder
-            ->add('grossWeight', Gds\NumberType::class, [
+            ->add('grossWeight', Gds\IntegerType::class, [
                 'label' => "{$this->translationKeyPrefix}.gross-weight.label",
                 'help' => "{$this->translationKeyPrefix}.gross-weight.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
-            ->add('carryingCapacity', Gds\NumberType::class, [
+            ->add('carryingCapacity', Gds\IntegerType::class, [
                 'label' => "{$this->translationKeyPrefix}.carrying-capacity.label",
                 'help' => "{$this->translationKeyPrefix}.carrying-capacity.help",
                 'label_attr' => ['class' => 'govuk-label--s'],

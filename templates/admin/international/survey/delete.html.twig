@@ -12,7 +12,7 @@
         {%- endif -%}
     {%- endwith -%}
 
-    {{ warningText((translation_prefix ~ ".warning")|trans) }}
+    {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
 
     {{ form(form) }}
 {%- endblock -%}

@@ -15,10 +15,10 @@ class GoodsLoadedWeightType extends AbstractType
     {
         $translationKeyPrefix = "international.action.goods-weight-loaded";
         $builder
-            ->add('weightOfGoods', Gds\NumberType::class, [
+            ->add('weightOfGoods', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.weight-of-goods.label",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.weight-of-goods.help",
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',

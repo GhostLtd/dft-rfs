@@ -19,7 +19,7 @@ class FurthestStopType extends AbstractType
             ->add('furthestStop', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.furthest-stop.label",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => "{$translationKeyPrefix}.furthest-stop.help",
             ])
         ;

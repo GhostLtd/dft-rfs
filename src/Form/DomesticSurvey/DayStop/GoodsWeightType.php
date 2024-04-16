@@ -16,7 +16,7 @@ class GoodsWeightType extends AbstractType
     {
         $translationKeyPrefix = "domestic.day-stop.goods-weight";
         $builder
-            ->add('weightOfGoodsCarried', Gds\NumberType::class, [
+            ->add('weightOfGoodsCarried', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.weight-of-goods-carried.label",
                 'help' => "{$translationKeyPrefix}.weight-of-goods-carried.help",
                 'attr' => ['class' => 'govuk-input--width-10'],
@@ -26,7 +26,7 @@ class GoodsWeightType extends AbstractType
             ->add('wasAtCapacity', Gds\ChoiceType::class, [
                 'label' => "{$translationKeyPrefix}.was-at-capacity.label",
                 'help' => "{$translationKeyPrefix}.was-at-capacity.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => [
                     "common.choices.boolean.yes" => true,
                     "common.choices.boolean.no" => false,

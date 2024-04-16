@@ -54,13 +54,13 @@ class VehicleType extends AbstractType
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
             ])
-            ->add('grossWeight', Gds\NumberType::class, [
+            ->add('grossWeight', Gds\IntegerType::class, [
                 'label' => "Gross vehicle weight",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
-            ->add('carryingCapacity', Gds\NumberType::class, [
+            ->add('carryingCapacity', Gds\IntegerType::class, [
                 'label' => "Carrying capacity",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],

@@ -5,7 +5,7 @@
 } %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tabsHead -%}
     {%- set canSendManualReminder = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER'), survey) -%}
     {%- set canShowManualReminderButton = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER_BUTTON'), survey) -%}
 
@@ -30,16 +30,25 @@
         {{ tabsHead(tabs) }}
 
         <div class="govuk-tabs__panel govuk-tabs__panel govuk-!-padding-bottom-0" id="tab-survey-initial-details">
-            <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+            {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
                 {%- set isActiveForPeriod = (survey.isActiveForPeriod is null) ?
                     '-' :
                     (survey.isActiveForPeriod ? 'Yes' : 'No')
                 -%}
 
-                {{ actionlessSummaryListRow('Survey is active for period?', isActiveForPeriod) }}
-                {{ actionlessSummaryListRow('Data entry method', survey.dataEntryMethod ? ("roro.survey.data-entry.choices.#{survey.dataEntryMethod}" | trans) : '-') }}
-                {{ actionlessSummaryListRow('Respondent comments', survey.comments ?? '-') }}
-            </dl>
+                {{- summaryListRow({
+                    key: 'Survey is active for period?',
+                    value: isActiveForPeriod
+                }) -}}
+                {{- summaryListRow({
+                    key: 'Data entry method',
+                    value: survey.dataEntryMethod ? ("roro.survey.data-entry.choices.#{survey.dataEntryMethod}" | trans) : '-'
+                }) -}}
+                {{- summaryListRow({
+                    key: 'Respondent comments',
+                    value: survey.comments ?? '-'
+                }) -}}
+            {{- summaryListEnd() -}}
 
             {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
             <div>
@@ -155,13 +164,13 @@
 {%- endblock -%}
 
 {% macro workflow_link(survey, transitionName, transitionText, options) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
             href: path('admin_roro_survey_transition', {surveyId: survey.id, transition: transitionName}),
             class: ('govuk-button ' ~ (options.class | default('')) ) | trim
         })
     } -%}
-        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
     {%- endwith -%}
 {%- endmacro %}

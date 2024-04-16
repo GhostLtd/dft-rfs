@@ -6,7 +6,7 @@
 } %}
 
 {%- block adminContent -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     {%- if action.loading -%}
         {%- set filter = [action.id]|merge(action.unloadingActions|map(a => a.id)) -%}
     {%- else -%}
@@ -18,9 +18,9 @@
     {%- endwith -%}
 
     {%- if filter|length > 1 -%}
-        {{ warningText('This will permanently delete this loading action and all related unloading actions (shown above).') }}
+        {{ warningText({text: 'This will permanently delete this loading action and all related unloading actions (shown above).'}) }}
     {%- else -%}
-        {{ warningText('This will permanently delete this action.') }}
+        {{ warningText({text: 'This will permanently delete this action.'}) }}
     {%- endif -%}
 
     {{ form(form) }}

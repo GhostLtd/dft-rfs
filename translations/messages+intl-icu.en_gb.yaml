@@ -326,6 +326,9 @@ roro:
         unknown: Unknown country
         trailers: Unaccompanied trailers
     view:
+      change:
+        activity: activity status
+        comments: comments
       comments: Comments
       state: Status
       states:
@@ -825,9 +828,10 @@ admin:
     edit.heading: Edit maintenance warning
     delete:
       heading: 'Delete Maintenance Warning'
-      delete: 'Are you sure you want to delete this Maintenance Warning'
+      delete: &maintenanceDelete 'Are you sure you want to delete this Maintenance Warning?'
       confirm.label: Yes, delete this warning
       cancel.label: Cancel
+      warning: *maintenanceDelete
 
       confirmed-notification:
         heading: 'Delete confirmed'
@@ -1537,6 +1541,7 @@ pre-enquiry:
     address: Address
     vehicle-details: Vehicle details
     employee-count-and-international-journeys: Employee count and international journeys
+    employee-count: Employee count
     correspondence-address: Correspondence address
     submit:
       label: Submit pre-enquiry

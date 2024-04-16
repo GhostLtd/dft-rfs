@@ -7,8 +7,8 @@
     {% include 'includes/smartlook-tracking.html.twig' %}
 {%- endblock %}
 
-{% block headerBar %}
-    <style nonce="{{ csp_inline_script_helper.nonce('env-label') }}" data-wibble="{{ csp_inline_script_helper.nonce('env-label') }}">
+{% block header %}
+    <style nonce="{{ csp_inline_script_helper.nonce('env-label') }}">
         #envLabel {
             {% if env_label_colour ?? false %}color: {{ env_label_colour }};{% endif %}
             {% if env_label_background ?? false %}background: {{ env_label_background }};{% endif %}

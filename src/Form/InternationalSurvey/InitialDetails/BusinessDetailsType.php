@@ -22,7 +22,7 @@ class BusinessDetailsType extends AbstractType
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
                 'label' => self::EMPLOYEES_PREFIX.".label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => self::EMPLOYEES_PREFIX.".help",
             ])
             ->add('businessNature', Gds\InputType::class, [

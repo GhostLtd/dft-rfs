@@ -41,9 +41,7 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
                 $form
                     ->add('isCorrectCompanyName', Gds\ChoiceType::class, [
                         'label' => "{$correctNamePrefix}.label",
-                        'label_attr' => [
-                            'class' => 'govuk-label--s',
-                        ],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                         'label_translation_parameters' => [
                             'expectedCompanyName' => $expectedCompanyName,
                         ],

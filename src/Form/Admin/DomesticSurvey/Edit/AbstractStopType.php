@@ -8,9 +8,10 @@ use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
+use App\Form\DomesticSurvey\AbstractDistanceTravelledType;
 use App\Form\DomesticSurvey\DayStop as DayStopForms;
 use App\Form\DomesticSurvey\DaySummary as DaySummaryForms;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use App\Utility\HazardousGoodsHelper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
@@ -99,8 +100,9 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                         ->add('distanceTravelled', ValueUnitType::class, [
                             'label' => "domestic.day-stop.distance-travelled.distance-travelled.label",
                             'label_attr' => ['class' => 'govuk-label--s'],
-                            'value_options' => DayStopForms\DistanceTravelledType::VALUE_OPTIONS,
-                            'unit_options' => DayStopForms\DistanceTravelledType::UNIT_OPTIONS,
+                            'value_form_type' => Gds\DecimalType::class,
+                            'value_options' => AbstractDistanceTravelledType::VALUE_OPTIONS,
+                            'unit_options' => AbstractDistanceTravelledType::UNIT_OPTIONS,
                             'data_class' => Distance::class,
                         ]);
                     break;

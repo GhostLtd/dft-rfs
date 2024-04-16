@@ -19,7 +19,6 @@ class MaintenanceWarning
     private ?\DateTime $start = null;
 
     #[Assert\NotBlank(message: 'Provide a time')]
-    #[Assert\GreaterThan(propertyPath: 'startTime', message: 'The end must be after the start')]
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTime $end = null;
 

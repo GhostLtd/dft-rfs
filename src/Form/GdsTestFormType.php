@@ -85,7 +85,7 @@ class GdsTestFormType extends AbstractType
                     new NotBlank(),
                 ],
             ])
-            ->add('money', GdsTypes\MoneyType::class)
+            ->add('money', GdsTypes\DecimalMoneyType::class)
 
             ->add('submit_button', GdsTypes\ButtonType::class, [
                 'label' => 'Submit',

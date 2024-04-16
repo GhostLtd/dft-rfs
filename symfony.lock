@@ -123,6 +123,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.1"
     },
+    "ghost/govuk-frontend-bundle": {
+        "version": "dev-master"
+    },
     "google/auth": {
         "version": "v1.14.3"
     },

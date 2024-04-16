@@ -31,7 +31,7 @@ abstract class AbstractDestinationType extends AbstractType
                 'choice_options' => ['Yes' => ['conditional_form_name' => 'goodsTransferredTo']],
                 'label' => "{$translationKeyPrefix}.goods-unloaded.label",
                 'help' => "{$translationKeyPrefix}.goods-unloaded.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
             ->add('goodsTransferredTo', Gds\ChoiceType::class, [
                 'choices' => Day::TRANSFER_CHOICES,

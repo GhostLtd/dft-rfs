@@ -4,12 +4,12 @@
 {% set headingParams = translation_parameters %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, summaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
     {%- set canDeleteOperatorGroup = is_granted('CAN_DELETE_OPERATOR_GROUP', operatorGroup) -%}
     {%- set canEditOperatorGroup = is_granted('CAN_EDIT_OPERATOR_GROUP', operatorGroup) -%}
 
-    {% set matchingOperators %}
+    {% set matchingOperatorsValue %}
         {%- if operatorsInGroup is empty -%}
             None
         {%- else -%}
@@ -21,10 +21,16 @@
         {%- endif -%}
     {% endset %}
 
-    <dl class="govuk-summary-list">
-        {{ actionlessSummaryListRow('Name', operatorGroup.name) }}
-        {{ actionlessSummaryListRow('Matching operators', matchingOperators, {value: {nl2br: false}}) }}
-    </dl>
+    {{- summaryListStart() -}}
+        {{- summaryListRow({
+            key: 'Name',
+            value: operatorGroup.name
+        }) -}}
+        {{- summaryListRow({
+            key: 'Matching operators',
+            value: {html: matchingOperatorsValue}
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <div class="govuk-!-margin-bottom-9">
         {%- if canEditOperatorGroup -%}

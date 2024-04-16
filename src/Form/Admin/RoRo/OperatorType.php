@@ -6,7 +6,7 @@ use App\Entity\RoRo\Operator;
 use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
-use Ghost\GovUkFrontendBundle\Form\Type\NumberType;
+use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -20,13 +20,17 @@ class OperatorType extends AbstractType
         $builder
             ->add('name', InputType::class, [
                 'label' => 'Name',
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ])
-            ->add('code', NumberType::class, [
+            ->add('code', IntegerType::class, [
                 'label' => 'Code',
+                'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ])
-            ->add('isActive', BooleanChoiceType::class)
+            ->add('isActive', BooleanChoiceType::class, [
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',

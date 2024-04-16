@@ -35,7 +35,7 @@ class HireeDetailsType extends AbstractType
             ->add('hireeAddress', AddressType::class, [
                 'label' => 'domestic.survey-response.hiree-details.address.label',
                 'help' => 'domestic.survey-response.hiree-details.address.help',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
         ;
     }

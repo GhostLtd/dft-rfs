@@ -30,7 +30,7 @@ class IntroductionType extends AbstractType
 
         if ($showDataEntryQuestion) {
             $choiceOptions = [
-                'common.choices.boolean.yes' => [
+                'boolean.true' => [
                     'conditional_form_name' => 'dataEntryMethod',
                 ],
             ];
@@ -38,7 +38,7 @@ class IntroductionType extends AbstractType
 
         $builder
             ->add('isActiveForPeriod', BooleanChoiceType::class, [
-                'label_attr' => ['class' => $showDataEntryQuestion ? 'govuk-label--l' : 'govuk-label--m'],
+                'label_attr' => ['class' => $showDataEntryQuestion ? 'govuk-fieldset__legend--l' : 'govuk-fieldset__legend--s'],
                 'label' => 'roro.survey.introduction.is-active',
                 'choice_options' => $choiceOptions,
             ]);
@@ -46,7 +46,7 @@ class IntroductionType extends AbstractType
         if ($showDataEntryQuestion) {
             $builder
                 ->add('dataEntryMethod', ChoiceType::class, [
-                    'label_attr' => ['class' => 'govuk-label--m'],
+                    'label_attr' => ['class' => 'govuk-fieldset__legend--m'],
                     'label' => 'roro.survey.introduction.data-entry-method.label',
                     'help' => 'roro.survey.introduction.data-entry-method.help',
                     'choices' => self::DATA_ENTRY_CHOICES,

@@ -82,7 +82,7 @@ class PlaceType extends AbstractType
                             null => null,
                         },
                         'choice_options' => $choiceOptions,
-                        'label_attr' => ['class' => 'govuk-label--m'],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ]);
                 }
 
@@ -112,7 +112,7 @@ class PlaceType extends AbstractType
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ])
                     ->add('country', CountryType::class, [
-                        'country_label_attr' => ['class' => 'govuk-label--m'],
+                        'country_label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ]);
             });
     }

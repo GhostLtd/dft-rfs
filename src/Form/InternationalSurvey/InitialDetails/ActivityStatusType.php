@@ -19,9 +19,7 @@ class ActivityStatusType extends AbstractType
                 'help' => SurveyResponse::ACTIVITY_STATUS_PREFIX.'activity-status.help',
                 'choices' => SurveyResponse::ACTIVITY_STATUS_CHOICES,
                 'label_is_page_heading' => true,
-                'label_attr' => [
-                    'class' => 'govuk-label--l',
-                ]
+                'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
             ])
         ;
     }
