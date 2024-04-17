@@ -1615,7 +1615,7 @@ international:
         no: I might want to make further changes. Do not submit the survey.
         yes: I am sure there will be no further changes.
     loading-without-unloading:
-      heading: "Some cargo has been unloaded, but not unloaded:"
+      heading: "Some cargo has been loaded, but not unloaded:"
       is-correct:
         label: Is this information correct?
         help: ''
