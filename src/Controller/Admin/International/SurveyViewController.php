@@ -6,6 +6,7 @@ use App\Entity\International\SurveyNote;
 use App\Entity\International\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
+use App\Repository\PreEnquiry\PreEnquiryRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
@@ -32,8 +33,9 @@ class SurveyViewController extends AbstractController
     #[Route(path: '', name: SurveyController::VIEW_ROUTE)]
     public function view(
         #[MapEntity(expr: "repository.findWithVehiclesAndTrips(surveyId)")]
-        Survey  $survey,
-        Request $request,
+        Survey               $survey,
+        Request              $request,
+        PreEnquiryRepository $preEnquiryRepository,
     ): Response
     {
         $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);
@@ -55,6 +57,7 @@ class SurveyViewController extends AbstractController
             'qualityAssuredBy' => $survey->getQualityAssured() ?
                 $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,
+            'relatedPreEnquiryIds' => $preEnquiryRepository->findPreEnquiryIdsByCompanyName($survey->getCompany()->getBusinessName()),
             'survey' => $survey,
         ]);
     }

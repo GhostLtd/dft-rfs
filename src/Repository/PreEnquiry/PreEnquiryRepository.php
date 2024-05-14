@@ -70,4 +70,16 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findPreEnquiryIdsByCompanyName(string $businessName): array
+    {
+        $results = $this->createQueryBuilder('p')
+            ->select('p.id')
+            ->where('UPPER(TRIM(p.companyName)) = :companyName')
+            ->setParameter('companyName', mb_strtoupper($businessName))
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(fn(array $a) => $a['id'], $results);
+    }
 }

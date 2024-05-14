@@ -2,9 +2,20 @@
 {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
 {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {%- set businessName -%}
+        <a class="govuk-link" href="{{ path('admin_international_survey_list', {business_name: survey.company.businessName}) }}">{{ survey.company.businessName }}</a>
+        {%- if relatedPreEnquiryIds is defined and relatedPreEnquiryIds is not empty %}
+            {% if relatedPreEnquiryIds | length == 1 %}
+                <br><a class="govuk-link govuk-body-s" href="{{ path('admin_preenquiry_view', {preEnquiryId: (relatedPreEnquiryIds | first)}) }}">View pre-enquiry</a>
+            {%- else -%}
+                <br><a class="govuk-link govuk-body-s" href="{{ path('admin_preenquiry_list', {company_name: survey.company.businessName}) }}">View pre-enquiries</a>
+            {%- endif -%}
+        {%- endif -%}
+    {%- endset -%}
+
     {{- summaryListRow({
-            key: 'admin.international.company.business-name.label' | trans,
-            value: survey.company.businessName
+        key: 'admin.international.company.business-name.label' | trans,
+        value: {html: businessName},
     }) -}}
     {{- summaryListRow({
         key: 'admin.international.survey.reference-number.label' | trans,
