@@ -21,6 +21,7 @@ class AdminSurveyVoter extends Voter
     public const EDIT = 'EDIT';
     public const EDIT_NOTES = 'EDIT_NOTES';
     public const ENTER_BUSINESS_AND_VEHICLE_DETAILS = 'ENTER_BUSINESS_AND_VEHICLE_DETAILS';
+    public const ENTER_INITIAL_DETAILS = 'ENTER_INITIAL_DETAILS';
     public const FLAG_QA = 'FLAG_QA';
     public const MANUAL_REMINDER = 'MANUAL_REMINDER';
     public const MANUAL_REMINDER_BUTTON = 'MANUAL_REMINDER_BUTTON';
@@ -55,7 +56,7 @@ class AdminSurveyVoter extends Voter
         $qaInterfaceSupport = $subject instanceof QualityAssuranceInterface && ($attribute == self::FLAG_QA);
 
         // CSRGT
-        $domesticOnlySupport = $subject instanceof DomesticSurvey && ($attribute === self::ENTER_BUSINESS_AND_VEHICLE_DETAILS);
+        $domesticOnlySupport = $subject instanceof DomesticSurvey && in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS, self::ENTER_INITIAL_DETAILS]);
 
         return $surveyStateInterfaceSupport || $surveyInterfaceSupport || $manuallyReminderSupport || $haulageInterfaceSupport || $qaInterfaceSupport || $domesticOnlySupport;
     }
@@ -128,6 +129,14 @@ class AdminSurveyVoter extends Voter
                     !$subject->isBusinessAndVehicleDetailsComplete() &&
                     $response?->getIsInPossessionOfVehicle() === DomesticResponse::IN_POSSESSION_YES &&
                     !$response?->getIsExemptVehicleType();
+            case self::ENTER_INITIAL_DETAILS:
+                if (!$subject instanceof DomesticSurvey) {
+                    return false;
+                }
+
+                return
+                    in_array($state, $openStatusesOrClosed) &&
+                    !$subject->getResponse();
             case self::FLAG_QA:
                 assert($subject instanceof QualityAssuranceInterface);
                 return $state === SurveyStateInterface::STATE_APPROVED && !$subject->getQualityAssured();

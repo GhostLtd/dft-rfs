@@ -72,6 +72,7 @@ class SurveyController extends AbstractController
         return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/domestic/surveys/edit-final-details.html.twig', $redirectUrl);
     }
 
+    #[IsGranted(AdminSurveyVoter::ENTER_INITIAL_DETAILS, subject: 'survey')]
     #[Route(path: '/enter-initial-details', name: self::ENTER_INITIAL_ROUTE)]
     public function enterInitialDetails(
         #[MapEntity(expr: "repository.find(surveyId)")]

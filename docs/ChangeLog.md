@@ -5,7 +5,8 @@
 ## Upcoming
 
 * **Feature:** Use extracted govuk-frontend-bundle and in the process upgrade to govuk-frontend 5.3.1
-* **Feature:** Admin IRHS/Pre/RoRo - add links on survey view screens to list page (searching by company) and other related pages
+* **Feature:** Admin - IRHS/Pre/RoRo - add links on survey view screens to list page (searching by company) and other related pages
+* **Fix:** Admin - CSRGT - enter-initial-details screen could be visited even after initial details added
 
 ## 17th April 2024
 
