@@ -160,9 +160,6 @@ class DriverAvailability
     #[ORM\OneToOne(mappedBy: 'driverAvailability', targetEntity: Survey::class)]
     private ?Survey $survey = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $exportedDate = null;
-
     public function getId(): ?string
     {
         return $this->id;
@@ -398,17 +395,6 @@ class DriverAvailability
     public function setReasonsForWageIncreaseOther(?string $reasonsForWageIncreaseOther): self
     {
         $this->reasonsForWageIncreaseOther = $reasonsForWageIncreaseOther;
-        return $this;
-    }
-
-    public function getExportedDate(): ?\DateTime
-    {
-        return $this->exportedDate;
-    }
-
-    public function setExportedDate(?\DateTime $exportedDate): self
-    {
-        $this->exportedDate = $exportedDate;
         return $this;
     }
 

@@ -4,7 +4,6 @@ namespace App\Repository\International;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
-use App\Utility\ExportHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,7 +20,7 @@ use RuntimeException;
  */
 class VehicleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, protected ExportHelper $exportHelper)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Vehicle::class);
     }

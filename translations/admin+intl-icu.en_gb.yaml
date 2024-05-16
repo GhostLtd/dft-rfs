@@ -78,7 +78,16 @@ domestic:
     content: 'The export failed'
     title: ''
   driver-availability-export:
+    confirm:
+      heading: Driver Availability export - {year}/{month}
+      heading-export-all: Driver Availability export - all data
+      warning: Are you sure you want to export this data?
+    failed-notification:
+      heading: 'Export failed'
+      content: 'The export failed'
+      title: ''
     heading: Driver availability export
+    list.heading: Driver availability export
 
 international:
   action:

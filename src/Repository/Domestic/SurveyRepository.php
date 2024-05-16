@@ -233,4 +233,16 @@ class SurveyRepository extends AbstractSurveyRepository
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @return array{minDate: string, maxDate: string}
+     */
+    public function getSubmissionDateRange(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('MIN(s.submissionDate) AS minDate, MAX(s.submissionDate) AS maxDate')
+            ->where('s.submissionDate IS NOT NULL')
+            ->getQuery()
+            ->getSingleResult();
+    }
 }

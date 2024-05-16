@@ -8,6 +8,7 @@
 * **Feature:** Admin - IRHS/Pre/RoRo - add links on survey view screens to list page (searching by company) and other related pages
 * **Fix:** Admin - CSRGT - enter-initial-details screen could be visited even after initial details added
 * **Fix:** Cancel button on survey feedback screen triggers validation
+* **Change:** Admin - Driver-availability export - change so that export is now by year/month
 
 ## 17th April 2024
 
