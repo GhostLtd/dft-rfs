@@ -173,6 +173,10 @@ class DriverAvailabilityDataExporter
 
     public function getHeaders(array $responses): array
     {
+        if (empty($responses)) {
+            return [];
+        }
+
         return array_map(function ($name) {
             if ($name === 'contactBusinessName') {
                 $name = 'businessName';

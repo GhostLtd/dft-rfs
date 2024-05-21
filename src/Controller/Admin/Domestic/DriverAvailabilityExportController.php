@@ -49,7 +49,7 @@ class DriverAvailabilityExportController extends AbstractController
     }
     #[Route(path: '/{year}/{month}', name: 'year_and_month', requirements: ['year' => '\d{4}', 'month' => '[1-9]|10|11|12'])]
     #[Route(path: '/all', name: 'all')]
-    public function exportYearAndMonth(Request $request, ?string $year=null, ?string $month=null, DriverAvailabilityDataExporter $dataExporter, TranslatorInterface $translator): Response
+    public function exportYearAndMonth(DriverAvailabilityDataExporter $dataExporter, TranslatorInterface $translator, Request $request, ?string $year=null, ?string $month=null): Response
     {
         $form = $this->createForm(ConfirmationType::class, null, [
             'yes_label' => 'Export',
