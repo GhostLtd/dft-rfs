@@ -1531,7 +1531,7 @@ pre-enquiry:
     business-details: Business details
     correspondence-details: Correspondence details
     company-name: Company name
-    total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
+    total-vehicle-count: "Total HGV count"
     international-journey-vehicle-count: Vehicles used to make international journeys
     number-of-employees: Number of employees
     annual-journey-estimate: "International journey estimate (Annual)"
@@ -1588,14 +1588,14 @@ pre-enquiry:
     title: ''
     help: ''
     total-vehicle-count:
-      label: How many powered goods vehicles of 3.5 tonnes and over (gross vehicle weight) do you operate, either domestically or internationally?
+      label: How many heavy goods vehicles (HGVs) do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
-      label: How many of these vehicles will be used to make international journeys?
+      label: How many of these HGVs will be used to make international journeys?
       help: ''
     annual-journey-estimate:
       label: Estimate of the number of international journeys (round trips) that your company will make in these vehicles over the next 12 months
-      help: Only include the trips of vehicles of 3.5 tonnes and over in your estimate
+      help: Only include the trips of HGVs in your estimate
   business-details:
     heading: Business details
     title: ''
@@ -1744,7 +1744,7 @@ international:
     number-of-trips:
       heading: Annual international trips
       annual-international-journey-count:
-        label: Estimate the number of international trips that will be made by your firm in the next 12 months
+        label: Estimate the number of international trips that will be made by your firm using HGVs in the next 12 months
         help: ''
     activity-status:
       choices:
@@ -1786,14 +1786,14 @@ international:
       help: ''
       registration-mark:
         label: Registration mark of vehicle
-        help: ''
+        help: 'We are only interested in heavy goods vehicles (HGVs)'
         changed-notification-content: "The registration mark of this vehicle has been changed from {oldValue} to {newValue}. Make sure that the other details of the vehicle are still correct."
       operation-type:
         label: How was the vehicle being operated during the survey period?
         help: ''
     confirm-dates:
       heading: 'Survey period confirmation'
-      help: "We’re only interested in vehicles that made international trips where the date of departure from the UK was within survey period."
+      help: "We are only interested in HGVs that made international trips where the date of departure from the UK was within survey period."
       confirm:
         label: 'Did this vehicle depart from the UK during the survey period?'
         help: ''
