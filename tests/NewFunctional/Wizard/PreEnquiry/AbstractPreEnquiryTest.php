@@ -35,7 +35,7 @@ abstract class AbstractPreEnquiryTest extends AbstractPasscodeWizardTest
 
         $dashboardData = [
             'Company name' => $data['companyName'],
-            'Total vehicle count' => $data['totalVehicleCount'],
+            'Total HGV count' => $data['totalVehicleCount'],
             'Vehicles used' => $data['internationalJourneyVehicleCount'],
             'International journey' => $data['annualJourneyEstimate'],
             'Number of employees' => $data['numberOfEmployees'],
