@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Fix:** Admin - pre-enquiry list page has no default sort order
+
 ## 21st May 2024
 
 * **Feature:** Use extracted govuk-frontend-bundle and in the process upgrade to govuk-frontend 5.3.1

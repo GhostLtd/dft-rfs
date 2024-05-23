@@ -15,8 +15,11 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PreEnquiryListPage extends AbstractListPage
 {
-    public function __construct(private PreEnquiryRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
-    {
+    public function __construct(
+        protected PreEnquiryRepository $repository,
+        FormFactoryInterface $formFactory,
+        RouterInterface $router
+    ) {
         parent::__construct($formFactory, $router);
     }
 
@@ -47,6 +50,7 @@ class PreEnquiryListPage extends AbstractListPage
     protected function getDefaultOrder(): array
     {
         return [
+            Simple::generateId('Dispatch date') => 'DESC',
         ];
     }
 }
