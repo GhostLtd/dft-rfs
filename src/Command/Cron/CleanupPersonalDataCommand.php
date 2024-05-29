@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
-use App\Utility\Cleanup\PasscodeUserCleanupUtility;
+use App\Utility\Cleanup\PersonalDataCleanupUtility;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand('app:cron:cleanup:passcode-users')]
-class CronCleanupPasscodeUsersCommand extends Command
+#[AsCommand('app:cron:cleanup:personal-data')]
+class CleanupPersonalDataCommand extends Command
 {
-    public function __construct(protected PasscodeUserCleanupUtility $cleanupUtility)
+    public function __construct(protected PersonalDataCleanupUtility $cleanupUtility)
     {
         parent::__construct();
     }
@@ -21,7 +21,7 @@ class CronCleanupPasscodeUsersCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Deletes passcode users for rejected surveys after six months')
+            ->setDescription('Deletes personal data for surveys that have reached the cleanup time limit')
         ;
     }
 
@@ -31,15 +31,14 @@ class CronCleanupPasscodeUsersCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $count = $this->cleanupUtility->cleanupPasscodeUsersBefore(new \DateTime('6 months ago'));
+            $total = $this->cleanupUtility->cleanupPersonalData();
         }
         catch(\Exception $e) {
             $io->error($e->getMessage());
             return 1;
         }
 
-        $io->success(sprintf("Success - cleared %d passcode user(s)", $count));
-
+        $io->success(sprintf("Success - cleared personal data from %d survey(s)", $total));
         return 0;
     }
 }

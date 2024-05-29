@@ -10,6 +10,7 @@ use App\Serializer\Encoder\SqlServerInsertEncoder;
 use App\Serializer\Normalizer\International\SurveyNormalizer;
 use App\Serializer\Normalizer\International\TripActionsExportNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
+use App\Utility\Quarter\NaturalQuarterHelper;
 use App\Utility\Export\AbstractDataExporter;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
@@ -35,6 +36,7 @@ class DataExporter extends AbstractDataExporter
         EntityManagerInterface                $entityManager,
         protected ExportHelper                $exportHelper,
         protected LoggerInterface             $logger,
+        protected NaturalQuarterHelper        $naturalQuarterHelper,
         protected SerializerInterface         $symfonySerializer,
     )
     {
@@ -53,7 +55,7 @@ class DataExporter extends AbstractDataExporter
 
     public function generateExportData(int $year, int $quarter): ?string
     {
-        [$startDate, $endDate] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        [$startDate, $endDate] = $this->naturalQuarterHelper->getDateRangeForYearAndQuarter($year, $quarter);
 
         $now = new DateTime();
 

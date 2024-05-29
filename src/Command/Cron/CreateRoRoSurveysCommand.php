@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
-use App\Utility\Reminder\AutomatedRemindersHelper;
-use App\Utility\Reminder\AutomatedRoroRemindersHelper;
+use App\Utility\RoRo\SurveyCreationHelper;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand('app:cron:reminders:process')]
-class CronProcessRemindersCommand extends Command
+#[AsCommand('app:cron:roro:create-surveys')]
+class CreateRoRoSurveysCommand extends Command
 {
-    public function __construct(
-        protected AutomatedRemindersHelper $automatedRemindersHelper,
-        protected AutomatedRoroRemindersHelper $automatedRoroRemindersHelper,
-    ) {
+    public function __construct(protected SurveyCreationHelper $surveyCreationHelper)
+    {
         parent::__construct();
     }
 
@@ -24,7 +21,7 @@ class CronProcessRemindersCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Send reminders for surveys that need them.')
+            ->setDescription('Creates the necessary surveys for all active operators/routes in the current period')
         ;
     }
 
@@ -33,11 +30,15 @@ class CronProcessRemindersCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->automatedRemindersHelper->sendReminders();
-        $this->automatedRoroRemindersHelper->sendReminders();
+        try {
+            $this->surveyCreationHelper->createSurveysForPreviousMonth();
+        }
+        catch(\Exception $e) {
+            $io->error($e->getMessage());
+            return 1;
+        }
 
         $io->success("Success");
-
         return 0;
     }
 }

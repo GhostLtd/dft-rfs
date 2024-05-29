@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Cron;
 
-use App\Utility\Cleanup\PersonalDataCleanupUtility;
+use App\Utility\Cleanup\SurveyDeleteUtility;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand('app:cron:cleanup:personal-data')]
-class CronCleanupPersonalDataCommand extends Command
+#[AsCommand('app:cron:cleanup:surveys')]
+class CleanupSurveysCommand extends Command
 {
-    public function __construct(protected PersonalDataCleanupUtility $cleanupUtility)
+    public function __construct(protected SurveyDeleteUtility $deleteUtility)
     {
         parent::__construct();
     }
@@ -21,7 +21,7 @@ class CronCleanupPersonalDataCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Deletes personal data for exported,reissued and rejected surveys after six months')
+            ->setDescription('Deletes personal data for surveys that have reached the cleanup time limit')
         ;
     }
 
@@ -31,14 +31,14 @@ class CronCleanupPersonalDataCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $count = $this->cleanupUtility->cleanupPersonalDataBefore(new \DateTime('6 months ago'));
+            $total = $this->deleteUtility->deleteOldSurveys();
         }
         catch(\Exception $e) {
             $io->error($e->getMessage());
             return 1;
         }
 
-        $io->success(sprintf("Success - cleared personal data from %d survey(s)", $count));
+        $io->success(sprintf("Success - deleted %d old survey(s)", $total));
         return 0;
     }
 }

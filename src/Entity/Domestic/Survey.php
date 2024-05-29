@@ -15,6 +15,7 @@ use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
+use App\Utility\Cleanup\PersonalDataCleanupInterface;
 use App\Utility\NotifyApiResponseCleaner;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
@@ -28,7 +29,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 #[AppAssert\ValidRegistration(groups: ["add_survey", "import_survey"])]
 #[ORM\Table('domestic_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
     use NotifyApiResponseTrait;
@@ -351,7 +352,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
             !$response->hasJourneys();
     }
 
-    public function clearPersonalData(): self
+    public function clearPersonalData(): void
     {
         $this
             ->setInvitationEmails(null)
@@ -374,7 +375,6 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         }
 
         NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
-        return $this;
     }
 
     public function isPersonalDataCleared(): bool

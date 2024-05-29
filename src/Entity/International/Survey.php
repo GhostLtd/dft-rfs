@@ -14,6 +14,7 @@ use App\Entity\SurveyReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
+use App\Utility\Cleanup\PersonalDataCleanupInterface;
 use App\Utility\International\WeekNumberHelper;
 use App\Utility\NotifyApiResponseCleaner;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,7 +27,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 #[ORM\Table(name: 'international_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
     use NotifyApiResponseTrait;
@@ -264,7 +265,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         $this->setReasonForEmptySurveyOther($survey->getReasonForEmptySurveyOther());
     }
 
-    public function clearPersonalData(): self
+    public function clearPersonalData(): void
     {
         $this
             ->setInvitationEmails(null)
@@ -279,8 +280,6 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, QualityAss
         }
 
         NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
-
-        return $this;
     }
 
     public function isPersonalDataCleared(): bool

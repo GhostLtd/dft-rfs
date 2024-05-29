@@ -2,23 +2,20 @@
 
 namespace App\Utility;
 
+use App\Utility\Cleanup\QuarterHelperInterface;
 use DateTime;
-use Google\Cloud\Storage\Bucket;
-use Google\Cloud\Storage\StorageObject;
 
 abstract class AbstractExportHelper
 {
     abstract public function getPrefix(): string;
-    abstract public function getReportQuarterHelperClass(): string;
+    abstract public function getQuarterHelper(): QuarterHelperInterface;
 
     public function getPossibleYearsAndQuarters(bool $includeCurrentQuarter = false): array
     {
         $possibilities = [];
 
-        $reportQuarterHelperClass = $this->getReportQuarterHelperClass();
-        assert(is_a($reportQuarterHelperClass, ReportQuarterHelperInterface::class, true));
-
-        [$currentQuarter, $currentYear] = $reportQuarterHelperClass::getQuarterAndYear(new DateTime());
+        $reportQuarterHelperClass = $this->getQuarterHelper();
+        [$currentQuarter, $currentYear] = $reportQuarterHelperClass->getQuarterAndYear(new DateTime());
         $lastYear = $currentYear - 1;
 
         for($quarter=($currentQuarter - ($includeCurrentQuarter ? 0 : 1)); $quarter>=1; $quarter--) {

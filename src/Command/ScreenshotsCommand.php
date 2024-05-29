@@ -155,7 +155,7 @@ class ScreenshotsCommand extends Command
                 }
 
                 if ($preEnquiry) {
-                    $this->preEnquiryDeleteHelper->deletePreEnquiry($preEnquiry);
+                    $this->preEnquiryDeleteHelper->deleteSurvey($preEnquiry);
                 }
 
                 $this->entityManager->remove($user);

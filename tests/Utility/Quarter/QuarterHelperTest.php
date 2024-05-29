@@ -1,12 +1,37 @@
 <?php
 
-namespace App\Tests\Utility;
+namespace App\Tests\Utility\Quarter;
 
-use App\Utility\International\ReportQuarterHelper;
+use App\Utility\Quarter\NaturalQuarterHelper;
 use PHPUnit\Framework\TestCase;
 
-class ReportQuarterHelperTest extends TestCase
+class QuarterHelperTest extends TestCase
 {
+    public function dataAddQuartersToQuarterAndYear(): array
+    {
+        return [
+            [2023, 4, 0, 2023, 4],
+            [2023, 1, 1, 2023, 2],
+            [2024, 4, 1, 2025, 1],
+            [2023, 2, 4, 2024, 2],
+            [2023, 2, 13, 2026, 3],
+            [2023, 2, -8, 2021, 2],
+            [2023, 2, -5, 2022, 1],
+        ];
+    }
+
+    /**
+     * @dataProvider dataAddQuartersToQuarterAndYear
+     */
+    public function testAddQuartersToQuarterAndYear(int $year, int $quarter, int $delta, int $expectedYear, int $expectedQuarter): void
+    {
+        $helper =  new NaturalQuarterHelper();
+        [$resultYear, $resultQuarter] = $helper->addQuartersToQuarterAndYear($year, $quarter, $delta);
+
+        $this->assertEquals($expectedYear, $resultYear);
+        $this->assertEquals($expectedQuarter, $resultQuarter);
+    }
+
     public function dateToQuarterAndYearConversion(): array
     {
         return [
@@ -28,7 +53,8 @@ class ReportQuarterHelperTest extends TestCase
      */
     public function testDateToQuarterAndYearConversion(string $date, int $expectedQuarter, int $expectedYear)
     {
-        [$quarter, $year] = ReportQuarterHelper::getQuarterAndYear(new \DateTime($date));
+        $helper =  new NaturalQuarterHelper();
+        [$quarter, $year] = $helper->getQuarterAndYear(new \DateTime($date));
 
         $this->assertEquals($expectedQuarter, $quarter);
         $this->assertEquals($expectedYear, $year);
@@ -49,7 +75,8 @@ class ReportQuarterHelperTest extends TestCase
      */
     public function testQuarterAndYearToDateRangeConversion(int $quarter, int $year, string $expectedLowerBound, string $expectedUpperBound)
     {
-        [$lowerBound, $upperBound] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        $helper =  new NaturalQuarterHelper();
+        [$lowerBound, $upperBound] = $helper->getDateRangeForYearAndQuarter($year, $quarter);
 
         $this->assertEquals($expectedLowerBound, $lowerBound->format('Y-m-d'));
         $this->assertEquals($expectedUpperBound, $upperBound->format('Y-m-d'));

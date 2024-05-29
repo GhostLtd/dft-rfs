@@ -5,13 +5,12 @@ namespace App\Repository\Domestic;
 use App\Doctrine\Hydrators\ColumnHydrator;
 use App\Entity\Domestic\NotificationInterception;
 use App\Entity\Domestic\Survey;
-use App\Entity\Domestic\SurveyResponse;
 use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
-use App\Repository\AbstractSurveyRepository;
-use App\Utility\Domestic\WeekNumberHelper;
-use App\Utility\StateReportHelper;
+use App\Repository\SurveyDeletionInterface;
+use App\Utility\Quarter\CsrgtQuarterHelper;
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
@@ -24,11 +23,14 @@ use RuntimeException;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends AbstractSurveyRepository
+class SurveyRepository extends ServiceEntityRepository implements SurveyDeletionInterface
 {
     use DashboardStatsTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry              $registry,
+        protected CsrgtQuarterHelper $quarterHelper,
+    )
     {
         parent::__construct($registry, Survey::class);
     }
@@ -64,7 +66,7 @@ class SurveyRepository extends AbstractSurveyRepository
 
     public function getSurveyIDsForExport($year, $quarter): array
     {
-        $dateRange = WeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        $dateRange = $this->quarterHelper->getDateRangeForYearAndQuarter($year, $quarter);
 
         return $this->createQueryBuilder('survey')
             ->select('survey.id')
@@ -173,23 +175,8 @@ class SurveyRepository extends AbstractSurveyRepository
     /**
      * @return array<Survey>
      */
-    public function getSurveysRequiringPasscodeUserCleanup(DateTime $before): array
+    public function findSurveysMatchingLcniAddressAndEmails(NotificationInterception $interception): array
     {
-        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'domestic_survey');
-    }
-
-    /**
-     * @return array<Survey>
-     */
-    public function getSurveysRequiringPersonalDataCleanup(DateTime $before): array {
-        $states = [SurveyStateInterface::STATE_REJECTED, SurveyStateInterface::STATE_EXPORTED, Survey::STATE_REISSUED];
-        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'domestic_survey');
-    }
-
-    /**
-     * @return array<Survey>
-     */
-    public function findSurveysMatchingLcniAddressAndEmails(NotificationInterception $interception): array {
         return $this->lcniFindQuery(
             $interception,
             fn(QueryBuilder $qb) => $qb
@@ -244,5 +231,20 @@ class SurveyRepository extends AbstractSurveyRepository
             ->where('s.submissionDate IS NOT NULL')
             ->getQuery()
             ->getSingleResult();
+    }
+
+    public function getSurveysForDeletion(\DateTime $before): array
+    {
+        return $this->createQueryBuilder('survey')
+            ->select('survey, response, days, stops, summary, notes')
+            ->where('survey.surveyPeriodEnd < :before')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('response.days', 'days')
+            ->leftJoin('days.stops', 'stops')
+            ->leftJoin('days.summary', 'summary')
+            ->leftJoin('survey.notes', 'notes')
+            ->setParameter('before', $before->format('Y-m-d'))
+            ->getQuery()
+            ->execute();
     }
 }

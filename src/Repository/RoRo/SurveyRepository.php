@@ -7,6 +7,7 @@ use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey;
 use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
+use App\Repository\SurveyDeletionInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
@@ -20,7 +21,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends ServiceEntityRepository implements SurveyDeletionInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -171,5 +172,17 @@ class SurveyRepository extends ServiceEntityRepository
             ->setParameter('states', SurveyStateInterface::ACTIVE_STATES)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function getSurveysForDeletion(\DateTime $before): array
+    {
+        return $this->createQueryBuilder('survey')
+            ->select('survey, vc')
+            ->leftJoin('survey.vehicleCounts', 'vc')
+            ->leftJoin('survey.notes', 'notes')
+            ->where('survey.surveyPeriodStart < :before')
+            ->setParameter('before', $before->format('Y-m-d'))
+            ->getQuery()
+            ->execute();
     }
 }

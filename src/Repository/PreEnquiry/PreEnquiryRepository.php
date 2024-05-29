@@ -5,6 +5,7 @@ namespace App\Repository\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
+use App\Repository\SurveyDeletionInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
@@ -16,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method PreEnquiry[]    findAll()
  * @method PreEnquiry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PreEnquiryRepository extends ServiceEntityRepository
+class PreEnquiryRepository extends ServiceEntityRepository implements SurveyDeletionInterface
 {
     use DashboardStatsTrait;
 
@@ -81,5 +82,16 @@ class PreEnquiryRepository extends ServiceEntityRepository
             ->getArrayResult();
 
         return array_map(fn(array $a) => $a['id'], $results);
+    }
+
+    public function getSurveysForDeletion(\DateTime $before): array
+    {
+        return $this->createQueryBuilder('pre')
+            ->select('pre, response')
+            ->where('pre.dispatchDate < :before')
+            ->leftJoin('pre.response', 'response')
+            ->setParameter('before', $before->format('Y-m-d'))
+            ->getQuery()
+            ->execute();
     }
 }

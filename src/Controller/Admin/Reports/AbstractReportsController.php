@@ -5,14 +5,12 @@ namespace App\Controller\Admin\Reports;
 use App\Form\Admin\ReportFilterType;
 use App\Form\Admin\ReportYearlyFilterType;
 use App\Repository\AuditLog\AuditLogRepository;
+use App\Utility\Quarter\QuarterHelperProvider;
 use App\Utility\Reports\DateRangeHelper;
 use App\Utility\Reports\DomesticReportsHelper;
 use App\Utility\Reports\InternationalReportsHelper;
 use App\Utility\Reports\PreEnquiryReportsHelper;
 use App\Utility\Reports\RoRoReportsHelper;
-use App\Utility\Domestic\WeekNumberHelper;
-use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
-use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,12 +19,13 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractReportsController extends AbstractController
 {
     public function __construct(
-        protected DomesticReportsHelper         $domesticReportsHelper,
-        protected InternationalReportsHelper    $internationalReportsHelper,
-        protected PreEnquiryReportsHelper       $preEnquiryReportsHelper,
-        protected RoRoReportsHelper             $roRoReportsHelper,
-        protected AuditLogRepository            $auditLogRepository,
-        protected \App\Utility\Reports\DateRangeHelper $dateRangeHelper
+        protected DomesticReportsHelper      $domesticReportsHelper,
+        protected InternationalReportsHelper $internationalReportsHelper,
+        protected PreEnquiryReportsHelper    $preEnquiryReportsHelper,
+        protected RoRoReportsHelper          $roRoReportsHelper,
+        protected AuditLogRepository         $auditLogRepository,
+        protected DateRangeHelper            $dateRangeHelper,
+        protected QuarterHelperProvider      $quarterHelperProvider,
     ) {}
 
     protected function getTypeLabel(string $type): string
@@ -79,17 +78,9 @@ abstract class AbstractReportsController extends AbstractController
 
     protected function getDateRangeForYearAndQuarter(string $type, int $year, int $quarter): array
     {
-        return match ($type) {
-            ReportFilterType::TYPE_IRHS =>
-            InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter),
-
-            ReportFilterType::TYPE_CSRGT,
-            ReportFilterType::TYPE_CSRGT_GB,
-            ReportFilterType::TYPE_CSRGT_NI,
-            ReportFilterType::TYPE_PRE_ENQUIRY,
-            ReportFilterType::TYPE_RORO =>
-            DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter),
-        };
+        return $this->quarterHelperProvider
+            ->getQuarterHelperByReportClass($type)
+            ->getDateRangeForYearAndQuarter($year, $quarter);
     }
 
     protected function getDateRangeForYear(int $year): array
@@ -102,8 +93,10 @@ abstract class AbstractReportsController extends AbstractController
 
     protected function handleRedirect(string $type): RedirectResponse
     {
-        // N.B. Both the domestic and international weekNumberHelper have the same getQuarterAndYear implementation
-        [$quarter, $year] = WeekNumberHelper::getQuarterAndYear(new \DateTime());
+        [$quarter, $year] = $this->quarterHelperProvider
+            ->getQuarterHelperByReportClass($type)
+            ->getQuarterAndYear(new \DateTime());
+
         return $this->getRedirect(['type' => $type, 'year' => $year, 'quarter' => $quarter]);
     }
 

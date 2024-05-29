@@ -7,7 +7,6 @@ services:
             $secret: '%env(APP_SECRET)%'
 
     App\Utility\AlphagovNotify\PersonalisationHelper: ~
-    App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
     App\Utility\Cleanup\PersonalDataCleanupUtility: ~
     App\Utility\UrlSigner: ~
 

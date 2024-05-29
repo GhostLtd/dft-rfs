@@ -2,15 +2,14 @@
 
 namespace App\Repository\International;
 
-use App\Entity\International\NotificationInterception;
 use App\Entity\International\Survey;
 use App\Entity\SurveyStateInterface;
-use App\Repository\AbstractSurveyRepository;
 use App\Repository\DashboardStatsTrait;
+use App\Repository\SurveyDeletionInterface;
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,7 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends AbstractSurveyRepository
+class SurveyRepository extends ServiceEntityRepository implements SurveyDeletionInterface
 {
     use DashboardStatsTrait;
 
@@ -62,22 +61,6 @@ class SurveyRepository extends AbstractSurveyRepository
             ->setParameter('activeStates', SurveyStateInterface::ACTIVE_STATES)
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    /**
-     * @return Survey[]|array
-     */
-    public function getSurveysRequiringPasscodeUserCleanup(\DateTime $before): array
-    {
-        return $this->doGetSurveysRequiringPasscodeUserCleanup($before, 'international_survey');
-    }
-
-    /**
-     * @return Survey[]|array
-     */
-    public function getSurveysRequiringPersonalDataCleanup(\DateTime $before): array {
-        $states = [SurveyStateInterface::STATE_REJECTED, SurveyStateInterface::STATE_EXPORTED];
-        return $this->doGetSurveysRequiringPersonalDataCleanup($before, $states, 'international_survey');
     }
 
     public function getSurveysForExport(DateTime $minDate, DateTime $maxDate): array
@@ -127,6 +110,20 @@ class SurveyRepository extends AbstractSurveyRepository
         }
 
         return $qb
+            ->getQuery()
+            ->execute();
+    }
+
+    public function getSurveysForDeletion(\DateTime $before): array
+    {
+        return $this->createQueryBuilder('survey')
+            ->select('survey, response, notes, vehicles, trips')
+            ->where('survey.surveyPeriodEnd < :before')
+            ->leftJoin('survey.response', 'response')
+            ->leftJoin('survey.notes', 'notes')
+            ->leftJoin('response.vehicles', 'vehicles')
+            ->leftJoin('vehicles.trips', 'trips')
+            ->setParameter('before', $before->format('Y-m-d'))
             ->getQuery()
             ->execute();
     }

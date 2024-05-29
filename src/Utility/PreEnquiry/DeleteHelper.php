@@ -7,8 +7,12 @@ use App\Utility\AbstractDeleteHelper;
 
 class DeleteHelper extends AbstractDeleteHelper
 {
-    public function deletePreEnquiry(PreEnquiry $preEnquiry, bool $flush=true)
+    public function deleteSurvey(PreEnquiry $preEnquiry, bool $flush=true): void
     {
+        foreach($preEnquiry->getNotes() as $note) {
+            $this->entityManager->remove($note);
+        }
+
         $response = $preEnquiry->getResponse();
 
         if ($response) {
