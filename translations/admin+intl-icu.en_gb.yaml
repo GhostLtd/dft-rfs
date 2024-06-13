@@ -67,6 +67,9 @@ common:
       confirmed-notification:
         heading: '{transitionTitleUcfirst} survey'
         content: 'The requested {transitionTitle} survey transition was completed.'
+      failed-notification:
+        heading: '{transitionTitleUcfirst} survey'
+        content: 'The requested {transitionTitle} survey transition failed.'
 
 survey-feedback:
   export:

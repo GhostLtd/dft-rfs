@@ -47,6 +47,17 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
     }
 
     #[\Override]
+    public function getFailedBanner(): NotificationBanner
+    {
+        return new NotificationBanner(
+            $this->translator->trans('common.notification.failed'),
+            $this->domainTrans("{$this->getTranslationKeyPrefix()}.failed-notification.heading"),
+            $this->domainTrans("{$this->getTranslationKeyPrefix()}.failed-notification.content"),
+            ['style' => NotificationBanner::STYLE_WARNING]
+        );
+    }
+
+    #[\Override]
     public function getCancelledBanner(): NotificationBanner
     {
         return new NotificationBanner(
@@ -97,7 +108,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
      * @param null|callable $cancelledActionUrlCallback if omitted, will use the same callback as for confirmed
      * @return array|RedirectResponse
      */
-    public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null): array|RedirectResponse
+    public function controller(Request $request, callable $confirmedActionUrlCallback, callable $cancelledActionUrlCallback = null, callable $failedActionUrlCallback = null): array|RedirectResponse
     {
         $form = $this->getForm();
 
@@ -113,10 +124,18 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
 
             if ($confirm instanceof SubmitButton && $confirm->isClicked()) {
                 if ($form->isValid()) {
-                    $this->doConfirmedAction($form->getData());
-                    $redirectUrl = $confirmedActionUrlCallback();
+                    try {
+                        $this->doConfirmedAction($form->getData());
+                        $redirectUrl = $confirmedActionUrlCallback();
 
-                    $flashBag?->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
+                        $flashBag?->add(NotificationBanner::FLASH_BAG_TYPE, $this->getConfirmedBanner());
+                    }
+                    catch(ActionFailedException)
+                    {
+                        $redirectUrl = $failedActionUrlCallback ? $failedActionUrlCallback() : $confirmedActionUrlCallback();
+                        $flashBag?->add(NotificationBanner::FLASH_BAG_TYPE, $this->getFailedBanner());
+                    }
+
                     return new RedirectResponse($redirectUrl);
                 }
             } else {

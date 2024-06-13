@@ -14,9 +14,9 @@
     {%- endset -%}
 
     {%- set weightOfGoods -%}
-        {{- "common.distance.#{day.summary.distanceTravelledLoaded.unit}" | trans({value: day.summary.distanceTravelledLoaded.value}) -}}
+        {{- "domestic.day-view.weight-of-goods.loaded" | trans({value: day.summary.weightOfGoodsLoaded}) -}}
         {{- " / " -}}
-        {{- "common.distance.#{day.summary.distanceTravelledUnloaded.unit}" | trans({value: day.summary.distanceTravelledUnloaded.value}) -}}
+        {{- "domestic.day-view.weight-of-goods.unloaded" | trans({value: day.summary.weightOfGoodsUnloaded}) -}}
     {%- endset -%}
 
     {%- set actions = [

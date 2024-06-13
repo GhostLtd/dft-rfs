@@ -7,10 +7,12 @@ use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Form\ConfirmActionType;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
+use App\Utility\ConfirmAction\ActionFailedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -108,12 +110,17 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction($formData): void
     {
         $survey = $this->getSurvey();
 
-        $this->domesticSurveyStateMachine->apply($survey, $this->transition);
-        $this->entityManager->flush();
+        try {
+            $this->domesticSurveyStateMachine->apply($survey, $this->transition);
+            $this->entityManager->flush();
+        }
+        catch(NotEnabledTransitionException) {
+            throw new ActionFailedException();
+        }
     }
 
     public function getSurvey(): Survey

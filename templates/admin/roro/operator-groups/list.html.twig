@@ -26,7 +26,7 @@
                 text: 'admin.operator-groups.list.view' | trans,
                 visuallyHiddenText: 'admin.operator-groups.list.view-hidden-suffix' | trans({name: operatorGroup.name}),
             }
-        ]) -}}
+        ]) -%}
 
         {{- tableRow([
             operatorGroup.name ?? '-',

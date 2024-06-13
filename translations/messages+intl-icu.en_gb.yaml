@@ -76,6 +76,7 @@ common:
   error-summary:
     problem: There is a problem
   notification:
+    failed: Failed
     important: Important
     success: Success
     warning: Warning
