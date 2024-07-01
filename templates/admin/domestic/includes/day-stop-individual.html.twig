@@ -31,7 +31,8 @@
         {
             text: 'common.weight.kilograms' | trans({value: 0}),
             classes: 'govuk-table__cell--numeric'
-        }
+        },
+
     ]) -%}
 {%- else -%}
     {%- set columns = columns | merge([

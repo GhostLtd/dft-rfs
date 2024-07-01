@@ -8,6 +8,7 @@
 * **Fix:** Admin - fix error on Operator Groups list page
 * **Fix:** Admin - show warning notification upon failed transition event (e.g. trying to close an already-closed survey)
 * **Fix:** Admin - CSRGT summary days are showing distance where they should be showing weight
+* **Fix:** Admin - CSRGT missing "capacity" data when truck is empty
 
 ## 21st May 2024
 
