@@ -94,7 +94,7 @@
                 {%- set rows = rows | merge([
                     summaryListActionsList([
                         {
-                            href: url(constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE'), {actionId: action.id}),
+                            href: url('app_internationalsurvey_action_view', {actionId: action.id}),
                             text: 'common.actions.view' | trans,
                             visuallyHiddenText: 'international.actions.view-link-sr-suffix' | trans({actionNumber: action.number}),
                         }

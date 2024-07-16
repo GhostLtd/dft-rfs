@@ -31,7 +31,7 @@ class ActionReorderController extends AbstractActionReorderController
         return 'international_survey/action/re-order.html.twig';
     }
 
-    #[Route(path: '/trips/{tripId}/reorder-actions', name: ActionController::REORDER_ROUTE)]
+    #[Route(path: '/trips/{tripId}/reorder-actions', name: 'app_internationalsurvey_action_reorder')]
     public function reorderActions(
         #[MapEntity(expr: "repository.find(tripId)")]
         Trip $trip,

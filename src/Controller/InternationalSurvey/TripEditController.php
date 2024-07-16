@@ -24,6 +24,14 @@ class TripEditController extends AbstractSessionStateWorkflowController
 
     protected ?Trip $trip = null;
 
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $tripId = 'trip-' . $routeParams['tripId'];
+        $class = static::class;
+        return "wizard.{$class}.{$tripId}";
+    }
+
     #[Route(path: '/international-survey/trips/{tripId}/edit/{state}', name: self::WIZARD_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           Request $request,

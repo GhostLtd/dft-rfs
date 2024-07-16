@@ -18,7 +18,12 @@ abstract class AbstractSessionStateWorkflowController extends AbstractWorkflowCo
         return "wizard." . static::class;
     }
 
-    public function __construct(FormWizardManager $formWizardManager, EntityManagerInterface $entityManager, LoggerInterface $log, RequestStack $requestStack)
+    public function __construct(
+        FormWizardManager $formWizardManager,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $log,
+        protected RequestStack $requestStack,
+    )
     {
         parent::__construct($formWizardManager, $entityManager, $log);
         $this->session = $requestStack->getSession();

@@ -2,6 +2,10 @@
 
 # Changelog
 
+## Upcoming
+
+* **Feature:** Further increase measure to further prevent two different wizards from running at once
+
 ## 2nd July 2024
 
 * **Feature:** Deletion of old data (2 years), and personal data (1 year)

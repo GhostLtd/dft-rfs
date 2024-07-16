@@ -32,6 +32,14 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     use SurveyHelperTrait;
 
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $dayNumber = 'day-' . $routeParams['dayNumber'];
+        $class = static::class;
+        return "wizard.{$class}.stop.{$dayNumber}";
+    }
+
     #[Route(path: '/stop-{stopNumber}/start', name: 'start', requirements: ['stopNumber' => '\d+|(add)'])]
     #[Route(path: '/stop-{stopNumber}/{state}', name: 'wizard', requirements: ['stopNumber' => '\d+|(add)'])]
     public function init(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, string $stopNumber = "add", $state = null): Response

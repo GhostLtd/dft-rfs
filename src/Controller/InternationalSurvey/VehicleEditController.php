@@ -27,6 +27,14 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
 
     protected ?Vehicle $vehicle = null;
 
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $vehicleId = 'vehicle-' . $routeParams['vehicleId'];
+        $class = static::class;
+        return "wizard.{$class}.{$vehicleId}";
+    }
+
     #[Route(path: '/international-survey/vehicles/{vehicleId}/{state}', name: self::WIZARD_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,

@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Controller\InternationalSurvey\AbstractActionController;
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\TripEditController;
@@ -215,7 +216,7 @@ class AppExtension extends AbstractExtension
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
         'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
-        'international-action' => ['class' => ActionState::class, 'route' => ActionController::EDIT_ROUTE],
+        'international-action' => ['class' => ActionState::class, 'route' => 'app_internationalsurvey_action_edit_state'],
     ];
 
     protected function getWizardMeta(string $wizard): array {

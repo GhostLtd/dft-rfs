@@ -28,6 +28,14 @@ class TripAddController extends AbstractSessionStateWorkflowController
     protected SurveyResponse $surveyResponse;
     protected ?Vehicle $vehicle = null;
 
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $vehicleId = 'vehicle-' . $routeParams['vehicleId'];
+        $class = static::class;
+        return "wizard.{$class}.{$vehicleId}";
+    }
+
     #[Route(path: '/international-survey/vehicles/{vehicleId}/add-trip/{state}', name: self::WIZARD_ROUTE)]
     #[Route(path: '/international-survey/vehicles/{vehicleId}/add-trip', name: self::START_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,

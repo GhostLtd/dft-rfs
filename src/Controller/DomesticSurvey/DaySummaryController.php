@@ -36,6 +36,14 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     private DaySummary $daySummary;
 
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $dayNumber = 'day-' . $routeParams['dayNumber'];
+        $class = static::class;
+        return "wizard.{$class}.summary.{$dayNumber}";
+    }
+
     #[Route(path: '/summary/start', name: 'start')]
     #[Route(path: '/summary/{state}', name: 'wizard')]
     public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
