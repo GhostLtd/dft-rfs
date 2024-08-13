@@ -9,8 +9,8 @@
         {%- include "admin/international/includes/survey-basics.html.twig" -%}
 
         <div class="send-reminder-unavailable">
-        {{- warningText(({
-                markdown: translation_prefix ~ '.warning.' ~ reason.reason) | trans({
+        {{- warningText({
+                markdown: (translation_prefix ~ '.warning.' ~ reason.reason) | trans({
                     eventType: reason.eventType,
                     interval: reason.interval ? reason.interval.format('%d days, %h hours, %i minutes') : null,
                 })

@@ -4,6 +4,10 @@
 
 ## Upcoming
 
+* **Fix:** IRHS "send reminder unavailable" page was broken
+
+## 22nd July 2024
+
 * **Feature:** Further increase measure to further prevent two different wizards from running at once
 
 ## 2nd July 2024
