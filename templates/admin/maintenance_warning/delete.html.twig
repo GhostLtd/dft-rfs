@@ -2,15 +2,21 @@
 
 {% set headingParams = translation_parameters %}
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText, actionlessSummaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, warningText -%}
 
     {%- with {warning: subject} -%}
 
-        <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-            {{ actionlessSummaryListRow('Start', warning.start | format_datetime) }}
-            {{ actionlessSummaryListRow('End', warning.end | format_datetime) }}
-        </dl>
-        {{- warningText("#{translation_prefix}.delete"|trans) -}}
+        {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
+            {{- summaryListRow({
+                key: 'Start',
+                value: warning.start | format_datetime
+            }) -}}
+            {{- summaryListRow({
+                key: 'End',
+                value: warning.end | format_datetime
+            }) -}}
+        {{- summaryListEnd() -}}
+        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
 
         {{- form(form) -}}
     {%- endwith -%}

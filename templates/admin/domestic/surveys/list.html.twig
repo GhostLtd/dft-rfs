@@ -1,31 +1,58 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
-{% set translation_prefix = "admin.domestic.surveys.type-#{type}" %}
+{%- set translation_prefix = "admin.domestic.surveys.type-#{type}" -%}
 
-{% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, tableRowComplex, actionLinks, tag %}
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableRow, summaryListActionsList, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
     {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
 
-    {{ listTableStart(data, form) }}
-    {% for survey in data.entities %}
-        <tr class="govuk-table__row">
-            {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
-            {{ tableCell("#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}", {}) }}
-            {{ tableCell(survey.invitationAddress.line1 ?? '-', {}) }}
-            {{ tableCell(survey.registrationMark | formatRegMark, {}) }}
-            {{ tableCell(tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}), {html: true}) }}
-            {{ tableCell(survey.qualityAssured ? 'Yes' : 'No') }}
-            {{ tableCell((survey.response == null or survey.response.isInPossessionOfVehicle == null) ?
-                '-' :
-                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ survey.response.isInPossessionOfVehicle) | trans)
-            }}
-            {{ tableCell(reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate)) }}
-            {{- countField(survey, 'totalDayCount') -}}
-            {{ tableCell(actionLinks({(url('admin_domestic_survey_view', {surveyId: survey.id})): {label: 'view', srHiddenSuffix: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }"} }), {}) }}
-        </tr>
-    {% else %}
-        {{ tableRowComplex({"No results": {colSpan: data.fields|length + 1}}) }}
-    {% endfor %}
-    {{ listTableEnd(data, form) }}
-{% endblock %}
+    {{- listTableStart(data, form) -}}
+    {%- for survey in data.entities -%}
+        {%- set companyNameData -%}
+            {{- survey.invitationAddress.line1 ?? '-' -}}
+            {%- if hireStatsProvider.likelyHireCompany(survey.companyNameFromInvitationAddress) -%}
+                {{- tag({text: 'hire', classes: ('admin.survey.on-hire-flag' | trans) ~ ' govuk-!-margin-left-2'}) -}}
+            {%- endif -%}
+        {%- endset -%}
+
+        {%- set inPossessionData -%}
+            {%- if survey.response == null or survey.response.isInPossessionOfVehicle == null -%}
+                {{- '-' -}}
+            {%- else -%}
+                {%- set inPossessionCode = survey.response.isExemptVehicleType ? 'yes-exempt' : survey.response.isInPossessionOfVehicle -%}
+                {{- (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ 'short.' ~ inPossessionCode) | trans -}}
+            {%- endif -%}
+        {%- endset -%}
+
+        {%- set weekNumberAndYear = survey.weekNumberAndYear -%}
+
+        {%- set actions = [
+            {
+                href: url('admin_domestic_survey_view', {surveyId: survey.id}),
+                text: 'view',
+                visuallyHiddenText: "survey for #{survey.registrationMark} started #{survey.surveyPeriodStart | date('format.date.default' | trans) }",
+            }
+        ] -%}
+
+        {{- tableRow([
+            "#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}",
+            {html: companyNameData},
+            survey.registrationMark | formatRegMark,
+            {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
+            survey.qualityAssured ? 'Yes' : 'No',
+            inPossessionData,
+            reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate),
+            countField(survey, 'totalDayCount'),
+            {html: summaryListActionsList(actions)},
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans({}, 'messages'),
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
+{%- endblock -%}

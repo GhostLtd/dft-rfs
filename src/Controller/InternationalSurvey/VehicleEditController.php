@@ -9,28 +9,33 @@ use App\Security\Voter\International\VehicleChangeTrailerConfigVoter;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class VehicleEditController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
 
     public const WIZARD_ROUTE = 'app_internationalsurvey_vehicle_edit_state';
 
-    protected ?Vehicle $vehicle;
+    protected ?Vehicle $vehicle = null;
 
-    /**
-     * @Route("/international-survey/vehicles/{vehicleId}/{state}", name=self::WIZARD_ROUTE)
-     */
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $vehicleId = 'vehicle-' . $routeParams['vehicleId'];
+        $class = static::class;
+        return "wizard.{$class}.{$vehicleId}";
+    }
+
+    #[Route(path: '/international-survey/vehicles/{vehicleId}/{state}', name: self::WIZARD_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,
                           VehicleRepository $vehicleRepository,
@@ -59,6 +64,7 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var FormWizardStateInterface $formWizard */
@@ -71,11 +77,13 @@ class VehicleEditController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->redirectToRoute(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $this->vehicle->getId()]);

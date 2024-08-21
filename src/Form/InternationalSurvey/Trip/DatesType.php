@@ -9,24 +9,25 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DatesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = 'international.trip.dates';
-
-        $this->addDateField($builder, 'outboundDate', "{$translationKeyPrefix}.outbound-date");
-        $this->addDateField($builder, 'returnDate', "{$translationKeyPrefix}.return-date");
+        $this->addDateField($builder, 'outboundDate', "international.trip.dates.outbound-date");
+        $this->addDateField($builder, 'returnDate', "international.trip.dates.return-date");
     }
 
-    protected function addDateField(FormBuilderInterface $builder, string $fieldName, string $prefix) {
+    protected function addDateField(FormBuilderInterface $builder, string $fieldName, string $prefix): void
+    {
         $builder
             ->add($fieldName, Gds\DateType::class, [
                 'label' => "{$prefix}.label",
                 'help' => "{$prefix}.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['trip_dates'],

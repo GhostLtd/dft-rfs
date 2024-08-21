@@ -1,5 +1,5 @@
 framework:
     test: true
     session:
-        storage_id: session.storage.mock_file
-#    csrf_protection: false
+        handler_id: session.handler.native_file
+        storage_factory_id: session.storage.factory.mock_file

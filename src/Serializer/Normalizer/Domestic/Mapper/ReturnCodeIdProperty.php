@@ -7,6 +7,7 @@ use App\Serializer\Normalizer\Mapper\Mapper;
 
 class ReturnCodeIdProperty implements Mapper
 {
+    #[\Override]
     public function getData($sourceData)
     {
         /** @var Survey $sourceData */

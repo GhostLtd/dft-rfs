@@ -1,0 +1,14 @@
+{% if is_feature_enabled('SMARTLOOK_USER_SESSION_RECORDING') %}
+    {% if (app.request.host == frontend_hostname) %}
+        <script type='text/javascript' nonce="{{ csp_inline_script_helper.nonce('smartlook') }}">
+            window.smartlook||(function(d) {
+                var o=smartlook=function(){ o.api.push(arguments)},h=d.getElementsByTagName('head')[0];
+                var c=d.createElement('script');o.api=new Array();c.async=true;c.type='text/javascript';
+                c.charset='utf-8';c.src='https://web-sdk.smartlook.com/recorder.js';h.appendChild(c);
+            })(document);
+            smartlook('init', '921b77a238980e8ecc47369e81d6ed37b205b6be', { region: 'eu' });
+            smartlook('record', { forms: true, emails: true, ips: true, numbers: true, api: true });
+            {% if is_granted('ROLE_USER') or is_granted('ROLE_RORO_USER') %}smartlook('identify', '{{ app.user.userIdentifier }}');{% endif %}
+        </script>
+    {% endif %}
+{% endif %}

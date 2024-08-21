@@ -10,23 +10,17 @@ use Twig\TwigFunction;
 
 class EntryFilesTwigExtension extends AbstractExtension
 {
-    protected EntrypointLookupCollectionInterface $entrypointLookupCollection;
-    protected Packages $packages;
-    protected string $webRootDir;
-
-    public function __construct(EntrypointLookupCollectionInterface $entrypointLookupCollection, Packages $packages, string $webRootDir)
+    public function __construct(protected EntrypointLookupCollectionInterface $entrypointLookupCollection, protected Packages $packages, protected string $webRootDir)
     {
-        $this->entrypointLookupCollection = $entrypointLookupCollection;
-        $this->packages = $packages;
-        $this->webRootDir = $webRootDir;
     }
 
-    public function getFunctions()
+    #[\Override]
+    public function getFunctions(): array
     {
         return [
             // Names in keeping with Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension
-            new TwigFunction('encore_entry_inline_javascript', [$this, 'inlineJavascript'], ['is_safe' => ['html']]),
-            new TwigFunction('encore_entry_inline_styles', [$this, 'inlineStyles'], ['is_safe' => ['html']]),
+            new TwigFunction('encore_entry_inline_javascript', $this->inlineJavascript(...), ['is_safe' => ['html']]),
+            new TwigFunction('encore_entry_inline_styles', $this->inlineStyles(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -58,16 +52,12 @@ class EntryFilesTwigExtension extends AbstractExtension
     {
         $webRootDirWithoutTrailingSlash = DIRECTORY_SEPARATOR . trim($this->webRootDir, DIRECTORY_SEPARATOR);
 
-        return array_map(function($assetPath) use ($webRootDirWithoutTrailingSlash) {
-            return $webRootDirWithoutTrailingSlash . $assetPath;
-        }, $assetPaths);
+        return array_map(fn($assetPath) => $webRootDirWithoutTrailingSlash . $assetPath, $assetPaths);
     }
 
     private function getAssetsPaths(array $paths, string $packageName = null) : array
     {
-        return array_map(function($path) use ($packageName) {
-            return $this->getAssetPath($path, $packageName);
-        }, $paths);
+        return array_map(fn($path) => $this->getAssetPath($path, $packageName), $paths);
     }
 
     private function getAssetPath(string $assetPath, string $packageName = null): string

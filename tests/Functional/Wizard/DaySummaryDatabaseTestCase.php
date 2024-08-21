@@ -9,68 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class DaySummaryDatabaseTestCase implements DatabaseTestCase
 {
-    protected ?bool $goodsLoaded;
-    protected ?string $originLocation;
-    protected ?bool $goodsUnloaded;
-    protected ?string $destinationLocation;
-    protected ?string $hazardousGoodsCode;
-    protected ?string $furthestStop;
-    protected ?string $borderCrossing;
-    protected ?string $distanceLoadedValue;
-    protected ?string $distanceLoadedUnit;
-    protected ?string $distanceUnloadedValue;
-    protected ?string $distanceUnloadedUnit;
-    protected ?string $goodsDescription;
-    protected ?string $goodsDescriptionOther;
-    protected ?string $cargoTypeCode;
-    protected ?string $weightOfGoodsLoaded;
-    protected ?string $weightOfGoodsUnloaded;
-    protected ?string $numberOfStopsLoading;
-    protected ?string $numberOfStopsUnloading;
-    protected ?string $numberOfStopsLoadingAndUnloading;
-
-    public function __construct(?bool $goodsLoaded,
-                                ?string $originLocation,
-                                ?bool $goodsUnloaded,
-                                ?string $destinationLocation,
-                                ?string $hazardousGoodsCode,
-                                ?string $furthestStop,
-                                ?string $borderCrossing,
-                                ?string $distanceLoadedValue,
-                                ?string $distanceLoadedUnit,
-                                ?string $distanceUnloadedValue,
-                                ?string $distanceUnloadedUnit,
-                                ?string $goodsDescription,
-                                ?string $goodsDescriptionOther,
-                                ?string $cargoTypeCode,
-                                ?string $weightOfGoodsLoaded,
-                                ?string $weightOfGoodsUnloaded,
-                                ?string $numberOfStopsLoading,
-                                ?string $numberOfStopsUnloading,
-                                ?string $numberOfStopsLoadingAndUnloading
-    )
+    public function __construct(protected ?bool $goodsLoaded, protected ?string $originLocation, protected ?bool $goodsUnloaded, protected ?string $destinationLocation, protected ?string $hazardousGoodsCode, protected ?string $furthestStop, protected ?string $borderCrossing, protected ?string $distanceLoadedValue, protected ?string $distanceLoadedUnit, protected ?string $distanceUnloadedValue, protected ?string $distanceUnloadedUnit, protected ?string $goodsDescription, protected ?string $goodsDescriptionOther, protected ?string $cargoTypeCode, protected ?string $weightOfGoodsLoaded, protected ?string $weightOfGoodsUnloaded, protected ?string $numberOfStopsLoading, protected ?string $numberOfStopsUnloading, protected ?string $numberOfStopsLoadingAndUnloading)
     {
-        $this->goodsLoaded = $goodsLoaded;
-        $this->originLocation = $originLocation;
-        $this->goodsUnloaded = $goodsUnloaded;
-        $this->destinationLocation = $destinationLocation;
-        $this->hazardousGoodsCode = $hazardousGoodsCode;
-        $this->furthestStop = $furthestStop;
-        $this->borderCrossing = $borderCrossing;
-        $this->distanceLoadedValue = $distanceLoadedValue;
-        $this->distanceLoadedUnit = $distanceLoadedUnit;
-        $this->distanceUnloadedValue = $distanceUnloadedValue;
-        $this->distanceUnloadedUnit = $distanceUnloadedUnit;
-        $this->goodsDescription = $goodsDescription;
-        $this->goodsDescriptionOther = $goodsDescriptionOther;
-        $this->cargoTypeCode = $cargoTypeCode;
-        $this->weightOfGoodsLoaded = $weightOfGoodsLoaded;
-        $this->weightOfGoodsUnloaded = $weightOfGoodsUnloaded;
-        $this->numberOfStopsLoading = $numberOfStopsLoading;
-        $this->numberOfStopsUnloading = $numberOfStopsUnloading;
-        $this->numberOfStopsLoadingAndUnloading = $numberOfStopsLoadingAndUnloading;
     }
 
+    #[\Override]
     public function checkDatabaseAsExpected(EntityManagerInterface $entityManager, TestCase $test): void
     {
         /** @var DaySummaryRepository $repo */

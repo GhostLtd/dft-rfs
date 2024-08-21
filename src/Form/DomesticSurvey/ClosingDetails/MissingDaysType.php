@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class MissingDaysType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.closing-details.missing-days";
         $builder
@@ -18,7 +19,7 @@ class MissingDaysType extends AbstractType
                 'mapped' => false,
                 'label' => "{$translationKeyPrefix}.missing-days.label",
                 'help' => "{$translationKeyPrefix}.missing-days.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [
@@ -29,11 +30,5 @@ class MissingDaysType extends AbstractType
                 'constraints' => new NotNull(['message' => 'domestic.closing-details.missing-days.not-null'])
             ])
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-        ]);
     }
 }

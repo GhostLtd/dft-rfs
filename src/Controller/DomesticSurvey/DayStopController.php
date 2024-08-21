@@ -6,23 +6,23 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
+use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"}, name="app_domesticsurvey_daystop_")
- * @Security("is_granted('EDIT', user.getDomesticSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
+#[Route(path: '/domestic-survey/day-{dayNumber}', name: 'app_domesticsurvey_daystop_', requirements: ['dayNumber' => '[1-7]'])]
 class DayStopController extends AbstractSessionStateWorkflowController
 {
     protected string $dayNumber;
@@ -32,19 +32,17 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     use SurveyHelperTrait;
 
-    /**
-     * @Route(
-     *     "/stop-{stopNumber}/start",
-     *     name="start",
-     *     requirements={"stopNumber"="\d+|(add)"}
-     * )
-     * @Route(
-     *     "/stop-{stopNumber}/{state}",
-     *     name="wizard",
-     *     requirements={"stopNumber"="\d+|(add)"}
-     * )
-     */
-    public function init(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, $stopNumber = "add", $state = null): Response
+    public function getSessionKey(): string
+    {
+        $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
+        $dayNumber = 'day-' . $routeParams['dayNumber'];
+        $class = static::class;
+        return "wizard.{$class}.stop.{$dayNumber}";
+    }
+
+    #[Route(path: '/stop-{stopNumber}/start', name: 'start', requirements: ['stopNumber' => '\d+|(add)'])]
+    #[Route(path: '/stop-{stopNumber}/{state}', name: 'wizard', requirements: ['stopNumber' => '\d+|(add)'])]
+    public function init(WorkflowInterface $domesticSurveyDayStopStateMachine, Request $request, $dayNumber, string $stopNumber = "add", $state = null): Response
     {
         $this->stopNumber = $stopNumber;
         $this->dayNumber = $dayNumber;
@@ -54,7 +52,12 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $additionalViewData['exampleDayStops'] = $this->getExampleDayStops();
         }
 
-        return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+        try {
+            return $this->doWorkflow($domesticSurveyDayStopStateMachine, $request, $state, $additionalViewData);
+        }
+        catch(DayTypeMismatchException) {
+            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+        }
     }
 
     protected function getExampleDayStops(): array
@@ -89,65 +92,47 @@ class DayStopController extends AbstractSessionStateWorkflowController
         ];
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
-        $stop = $this->getDayStop();
-        $day = $stop->getDay();
+        $databaseDayStop = $this->getDayStop();
 
         /** @var FormWizardStateInterface $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), new DayStopState());
-        $subject = $formWizard->getSubject();
+        $sessionDayStop = $formWizard->getSubject();
 
-        if (!$subject || !$subject instanceof DayStop || $subject->getId() !== $stop->getId()) {
-            $subject = $stop; // No subject, or we've changed subject
+        // We have a DayStop in the session, and haven't changed ID (i.e. no user shenanigans)
+        if ($sessionDayStop && $sessionDayStop->getId() === $databaseDayStop->getId()) {
+            $databaseDayStop->merge($sessionDayStop);
         }
 
-        if (!$day) {
-            $day = (new Day())
-                ->setResponse($this->getSurvey()->getResponse())
-                ->setHasMoreThanFiveStops(false)
-                ->setNumber($this->dayNumber);
-
-            $this->entityManager->persist($day);
-        }
-
-        $subject->setDay($day);
-        $formWizard->setSubject($subject);
-
-        if ($subject->getId()) {
-            // ToDo: replace this with our own merge, or make the form wizard store an array of changes until we're ready to flush
-            $formWizard->setSubject($this->entityManager->merge($subject));
-        } else {
-            $day->addStop($subject); // Ultimately causes stop->number to be set
-        }
-
-        $this->dayStop = $formWizard->getSubject();
+        $formWizard->setSubject($databaseDayStop);
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute('app_domesticsurvey_daystop_wizard', ['dayNumber' => $this->dayNumber, 'stopNumber' => $this->stopNumber, 'state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         if ($this->stopNumber === 'add' && count($this->dayStop->getDay()->getStops()) <= 1) {
-            // first stop on this day - redirect to dashbaord
+            // first stop on this day - redirect to dashboard
             return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
         }
 
         return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
     }
 
-    /**
-     * @Route("/delete-day-stop-{stopNumber}", name="delete")
-     * @Template("domestic_survey/day_stop/delete.html.twig")
-     */
-    public function delete(string $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request)
+    #[Route(path: '/delete-day-stop-{stopNumber}', name: 'delete')]
+    #[Template('domestic_survey/day_stop/delete.html.twig')]
+    public function delete(string $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|array
     {
-        $this->dayNumber = intval($dayNumber);
-        $this->stopNumber = intval($stopNumber);
+        $this->dayNumber = $dayNumber;
+        $this->stopNumber = $stopNumber;
 
         $dayStop = $this->getDayStop(false);
         $numStops = $dayStop->getDay()->getStops()->count();
@@ -156,16 +141,14 @@ class DayStopController extends AbstractSessionStateWorkflowController
             ->setSubject($dayStop)
             ->controller(
                 $request,
-                function() use ($numStops) {
-                    return ($numStops > 1) ?
-                        $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]) :
-                        $this->generateUrl(IndexController::SUMMARY_ROUTE);
-                },
+                fn() => ($numStops > 1) ?
+                    $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]) :
+                    $this->generateUrl(IndexController::SUMMARY_ROUTE),
                 fn() => $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
             );
     }
 
-    protected function getDayStop(bool $createIfNotFound=true): DayStop
+    protected function getDayStop(bool $createDayIfNotFound=true): DayStop
     {
         /** @var DayRepository $dayRepository */
         $dayRepository = $this->entityManager->getRepository(Day::class);
@@ -174,19 +157,36 @@ class DayStopController extends AbstractSessionStateWorkflowController
             $day = $dayRepository->getBySurveyAndDayNumber($this->getSurvey(), $this->dayNumber);
 
             if ($day) {
-                $stop = $this->stopNumber === 'add' ?
-                    (new DayStop())->setDay($day) :
-                    $day->getStopByNumber($this->stopNumber);
+                if ($day->getSummary() !== null) {
+                    // This is already a summary day, so you can't use the stops wizard
+                    throw new DayTypeMismatchException();
+                }
 
-                if ($stop) {
-                    return $stop;
+                if ($this->stopNumber === 'add') {
+                    $this->dayStop = new DayStop();
+                    $day->addStop($this->dayStop);
+                } else {
+                    $this->dayStop = $day->getStopByNumber($this->stopNumber);
+                }
+
+                if ($this->dayStop) {
+                    return $this->dayStop;
                 }
             } else {
-                if ($createIfNotFound) {
-                    return (new DayStop());
+                if ($createDayIfNotFound) {
+                    $day = (new Day())
+                        ->setResponse($this->getSurvey()->getResponse())
+                        ->setHasMoreThanFiveStops(false)
+                        ->setNumber($this->dayNumber);
+
+                    $this->entityManager->persist($day);
+                    $this->dayStop = new DayStop();
+                    $day->addStop($this->dayStop);
+
+                    return $this->dayStop;
                 }
             }
-        } catch (NonUniqueResultException $e) {}
+        } catch (NonUniqueResultException) {}
 
         throw new NotFoundHttpException();
     }

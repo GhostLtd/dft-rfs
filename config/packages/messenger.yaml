@@ -3,12 +3,23 @@ framework:
         # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
         failure_transport: failed
 
+        reset_on_message: true
+
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             async: 'doctrine://default'
             async_notify:
                 dsn: 'doctrine://default?queue_name=govuk-notify'
+                retry_strategy:
+                    # 30 min delay first time
+                    delay: 1800000
+                    # double the delay for each retry
+                    multiplier: 2
+                    # max delay 2 hours
+                    max_delay: 7200000
+            async_notify_high_prio:
+                dsn: 'doctrine://default?queue_name=govuk-notify-high-prio'
                 retry_strategy:
                     # 30 min delay first time
                     delay: 1800000
@@ -24,4 +35,4 @@ framework:
             # 'App\Message\YourMessage': async
 
             'App\Messenger\AlphagovNotify\AbstractMessage': async_notify
-
+            'App\Messenger\AlphagovNotify\AbstractHighPrioMessage': async_notify_high_prio

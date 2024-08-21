@@ -8,9 +8,9 @@
 {% trans_default_domain 'admin' %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText     %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     <div class="govuk-width-container">
-        {{ warningText((translation_prefix ~ '.warning')|trans) }}
+        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
         {{ form(form) }}
     </div>
 {% endblock %}

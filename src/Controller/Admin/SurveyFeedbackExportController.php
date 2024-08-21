@@ -1,44 +1,32 @@
 <?php
 
-
 namespace App\Controller\Admin;
 
-
-use App\Utility\Domestic\DriverAvailabilityExportHelper;
 use App\Utility\SurveyFeedbackExportHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/survey-feedback/export", name="admin_surveyfeedback_export_")
- */
+#[Route(path: '/survey-feedback/export', name: 'admin_surveyfeedback_export_')]
 class SurveyFeedbackExportController extends AbstractController
 {
-    private SurveyFeedbackExportHelper $surveyFeedbackExportHelper;
-
-    public function __construct(SurveyFeedbackExportHelper $surveyFeedbackExportHelper)
+    public function __construct(protected SurveyFeedbackExportHelper $surveyFeedbackExportHelper)
     {
-        $this->surveyFeedbackExportHelper = $surveyFeedbackExportHelper;
     }
 
-    /**
-     * @Route("", name="index")
-     * @Template("admin/survey_feedback/export/index.html.twig")
-     */
+    #[Route(path: '', name: 'index')]
+    #[Template('admin/survey_feedback/export/index.html.twig')]
     public function index(): array
     {
         return [
-            'existingExportDates' => $this->surveyFeedbackExportHelper->getExistingDates(),
+            'existingExportDates' => $this->surveyFeedbackExportHelper->getPastExportDates(),
             'hasNewResponses' => $this->surveyFeedbackExportHelper->hasAnyFeedbackReadyForNewExport(),
         ];
     }
 
-    /**
-     * @Route("/all", name="all")
-     */
+    #[Route(path: '/all', name: 'all')]
     public function all(): Response
     {
         $response = new StreamedResponse(function() {
@@ -48,9 +36,7 @@ class SurveyFeedbackExportController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/new", name="new")
-     */
+    #[Route(path: '/new', name: 'new')]
     public function new(): Response
     {
         $exportDate = new \DateTime();
@@ -61,9 +47,7 @@ class SurveyFeedbackExportController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/existing/{date}", name="existing")
-     */
+    #[Route(path: '/existing/{date}', name: 'existing')]
     public function existing($date): Response
     {
         $exportDate = new \DateTime($date);
@@ -74,7 +58,7 @@ class SurveyFeedbackExportController extends AbstractController
         return $response;
     }
 
-    protected function addDownloadResponseHeaders(Response $response, \DateTime $date, $filenamePostfix = false)
+    protected function addDownloadResponseHeaders(Response $response, \DateTime $date, $filenamePostfix = false): void
     {
         $filename = "rfs-feedback-export"
             . ($filenamePostfix ? "-{$filenamePostfix}" : "")

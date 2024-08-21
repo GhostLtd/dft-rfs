@@ -5,7 +5,7 @@ options:
 
 steps:
     # Start by running some pre-install actions
-    - name: node:14
+    - name: node:20
       id: 'pre-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
@@ -18,11 +18,18 @@ steps:
       args: ['-c', 'gsutil rsync config/gcloud-build/all/ . && gsutil rsync config/gcloud-build/$PROJECT_ID/ .']
       waitFor: ['pre-install-script']
 
+    # We need vendor/ghost/govuk-frontend-bundle since the CSS/JS references resources from it
+    - name: composer:2.3
+      id: 'install-ghost-bundle'
+      entrypoint: sh
+      args: ['-c', 'composer install -vvv --ignore-platform-reqs --no-scripts']
+      waitFor: ['copy-deploy-files']
+
     # build assets, and .env.local file
-    - name: node:14
+    - name: node:20
       id: 'yarn-build'
       entrypoint: sh
-      args: ['-c', 'yarn install --frozen-lockfile --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs && cat .env.local']
+      args: ['-c', 'yarn install --frozen-lockfile --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs']
       env:
           - 'APP_ENV=prod'
           - 'ADMIN_HOSTNAME=${_ADMIN_HOSTNAME}'
@@ -30,12 +37,13 @@ steps:
           - 'ALPHAGOV_NOTIFY_API_KEY=${_ALPHAGOV_NOTIFY_API_KEY}'
           - 'APP_FEATURES=${_APP_FEATURES}'
           - 'GOOGLE_BUCKET_EXPORT=${_GOOGLE_BUCKET_EXPORT}'
+          - 'APP_DISABLE_REMINDERS=${_APP_DISABLE_REMINDERS}'
           - 'APP_ENV_LABEL_ADMIN=${_APP_ENV_LABEL_ADMIN}'
           - 'APP_ENV_LABEL_FRONTEND=${_APP_ENV_LABEL_FRONTEND}'
           - 'APP_ENV_LABEL_COLOUR="${_APP_ENV_LABEL_COLOUR}"'
           - 'APP_ENV_LABEL_BACKGROUND="${_APP_ENV_LABEL_BACKGROUND}"'
 
-      waitFor: ['copy-deploy-files']
+      waitFor: ['install-ghost-bundle']
 
     ## The app deployment will not run `composer install` if the composer.lock file has not changed
     ## meaning that post install scripts, or even update scripts to not get run
@@ -52,7 +60,7 @@ steps:
 
 
     # Finish up by calling the post-install-script
-    - name: node:14
+    - name: node:20
       id: 'post-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']

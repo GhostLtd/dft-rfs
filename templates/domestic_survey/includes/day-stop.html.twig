@@ -1,60 +1,81 @@
-{% from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row, buttonLink, actionLinks, tableHeadComplex, tableCell -%}
-{% from 'macros.html.twig' import displayHazardousGoods %}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import buttonLink, summaryListStart, summaryListEnd, summaryListRow -%}
+{%- from 'macros.html.twig' import displayHazardousGoods -%}
 {%- set showActions = showActions ?? true -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {%- set params = {dayNumber: day.number, stopNumber: stop.number} -%}
     {%- set suffixParams = {stopNumber: stop.number} -%}
-    {% set locationsChangeLink = {(url('app_domesticsurvey_daystop_start', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.locations', srHiddenSuffixParams: suffixParams}
-    } %}
-    {{ row(showActions, 'domestic.day-view.start-location',
-        (stop.originLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
-        locationsChangeLink
-    ) }}
-    {{ row(showActions, 'domestic.day-view.destination-location',
-        (stop.destinationLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — ')),
-        locationsChangeLink
-    ) }}
-    {% if stop.day.response.survey.isNorthernIreland %}
-        {{ row(showActions, 'domestic.day-view.border-crossing',
-            stop.borderCrossingLocation | formatPotentialPostcode | default('-'),
-            locationsChangeLink
-        ) }}
-    {% endif %}
+    {%- set locationsChangeLink = [
+        {
+            href: url('app_domesticsurvey_daystop_start', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'domestic.day-view.detailed-change-link-sr-suffix.locations' | trans(suffixParams)
+        }
+    ] -%}
+
+    {{- summaryListRow({
+            key: 'domestic.day-view.start-location' | trans,
+            value: (stop.originLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('loading', ' — ')),
+            actions: showActions ? locationsChangeLink : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'domestic.day-view.destination-location' | trans,
+        value: (stop.destinationLocation | formatPotentialPostcode | default('-')) ~ (stop | formatGoodsTransferDetails('unloading', ' — ')),
+        actions: showActions ? locationsChangeLink : []
+    }, showActions) -}}
+    {%- if stop.day.response.survey.isNorthernIreland -%}
+        {{- summaryListRow({
+            key: 'domestic.day-view.border-crossing' | trans,
+            value: stop.borderCrossingLocation | formatPotentialPostcode | default('-'),
+            actions: showActions ? locationsChangeLink : []
+        }, showActions) -}}
+    {%- endif -%}
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_DISTANCE_TRAVELLED')}) -%}
-    {% set distanceChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.distance-travelled', srHiddenSuffixParams: suffixParams}
-    } %}
+    {%- set distanceChangeLink = [
+        {
+            href: url('app_domesticsurvey_daystop_wizard', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'domestic.day-view.detailed-change-link-sr-suffix.distance-travelled' | trans(suffixParams)
+        }
+    ] -%}
     {%- set distanceValue = stop.distanceTravelled.isBlank ?
         '-' :
         ("common.distance.#{stop.distanceTravelled.unit}" | trans({value: stop.distanceTravelled.value}))
     -%}
-    {{- row(showActions, 'domestic.day-view.distance-travelled',
-        distanceValue,
-        distanceChangeLink
-    ) -}}
+
+    {{- summaryListRow({
+        key: 'domestic.day-view.distance-travelled' | trans,
+            value: distanceValue,
+            actions: showActions ? distanceChangeLink : []
+    }, showActions) -}}
 
     {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_DESCRIPTION')}) -%}
-    {% set goodsChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.goods-description', srHiddenSuffixParams: suffixParams}
-    } %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">{{ 'domestic.day-view.goods-carried' | trans | nl2br }}</dt>
-        <dd class="govuk-summary-list__value">
-            {{- stop | formatGoodsDescription }}
-            {%- if stop.hazardousGoodsCode %} — {{ displayHazardousGoods(stop.hazardousGoodsCode) }}{% endif %}
-        </dd>
-        {% if showActions %}
-        <dd class="govuk-summary-list__actions">
-            {{ actionLinks(goodsChangeLink) }}
-        </dd>
-        {% endif %}
-    </div>
-    {% if stop.goodsDescription != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') %}
+    {%- set goodsChangeLink = [
+        {
+            href: url('app_domesticsurvey_daystop_wizard', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'domestic.day-view.detailed-change-link-sr-suffix.goods-description' | trans(suffixParams)
+        }
+    ] -%}
+
+    {%- set goodsCarriedValue -%}
+        {{- stop | formatGoodsDescription -}}
+        {%- if stop.hazardousGoodsCode %} — {{ displayHazardousGoods(stop.hazardousGoodsCode) }}{%- endif -%}
+    {%- endset -%}
+    {{- summaryListRow({
+        key: 'domestic.day-view.goods-carried' | trans,
+        value: {html: goodsCarriedValue},
+        actions: showActions ? goodsChangeLink : []
+    }, showActions) -}}
+
+    {%- if stop.goodsDescription != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY') -%}
         {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-        {{ row(showActions, 'domestic.day-view.cargo-type', choiceLabel(cargoChoices, stop.cargoTypeCode) | trans, goodsChangeLink) }}
+        {{- summaryListRow({
+            key: 'domestic.day-view.cargo-type' | trans,
+            value: choiceLabel(cargoChoices, stop.cargoTypeCode) | trans,
+            actions: showActions ? goodsChangeLink : []
+        }, showActions) -}}
 
         {%- set wasLimitedBy -%}
             {%- set factors = stop.wasLimitedBy -%}
@@ -62,12 +83,17 @@
         {%- endset -%}
 
         {%- set params = params | merge({state: constant('App\\Workflow\\DomesticSurvey\\DayStopState::STATE_GOODS_WEIGHT')}) -%}
-        {% set weightChangeLink = {(url('app_domesticsurvey_daystop_wizard', params)):
-            {label: 'common.actions.change', srHiddenSuffix: 'domestic.day-view.detailed-change-link-sr-suffix.goods-weight', srHiddenSuffixParams: suffixParams}
-        } %}
-        {{ row(showActions, 'domestic.day-view.weight-of-goods.label',
-            ("common.weight.kilograms" | trans({value: stop.weightOfGoodsCarried})) ~ wasLimitedBy,
-            weightChangeLink
-        ) }}
-    {% endif %}
-</dl>
+        {%- set weightChangeLink = [
+            {
+                href: url('app_domesticsurvey_daystop_wizard', params),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'domestic.day-view.detailed-change-link-sr-suffix.goods-weight' | trans(suffixParams)
+            }
+        ] -%}
+        {{- summaryListRow({
+            key: 'domestic.day-view.weight-of-goods.label' | trans,
+            value: ("common.weight.kilograms" | trans({value: stop.weightOfGoodsCarried})) ~ wasLimitedBy,
+            actions: showActions ? weightChangeLink : []
+        }, showActions) -}}
+    {%- endif -%}
+{{- summaryListEnd() -}}

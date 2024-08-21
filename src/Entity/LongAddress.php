@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Embeddable()
- */
+#[ORM\Embeddable]
 class LongAddress extends Address
 {
-    public function toArray()
+    #[\Override]
+    public function toArray(): array
     {
         return [
             'line1' => $this->line1,
@@ -23,24 +23,20 @@ class LongAddress extends Address
         ];
     }
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line5;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line5 = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line6;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line6 = null;
 
     public function getLine5(): ?string
     {
         return $this->line5;
     }
 
-    public function setLine5(?string $line5): self
+    public function setLine5(?string $line5): static
     {
         $this->line5 = $line5;
 
@@ -52,7 +48,7 @@ class LongAddress extends Address
         return $this->line6;
     }
 
-    public function setLine6(?string $line6): self
+    public function setLine6(?string $line6): static
     {
         $this->line6 = $line6;
 
@@ -60,6 +56,7 @@ class LongAddress extends Address
     }
     // -----
 
+    #[\Override]
     public function isFilled(): bool {
         return $this->line1 || $this->line2 || $this->line5 || $this->line6 || $this->postcode;
     }
@@ -69,7 +66,7 @@ class LongAddress extends Address
             + boolval($this->line5) + boolval($this->line6) + boolval($this->postcode);
     }
 
-    public static function createFromAddress(string $name, Address $address): self
+    public static function createFromAddress(string $name, Address $address): LongAddress
     {
         return (new LongAddress())
             ->setLine1($name)

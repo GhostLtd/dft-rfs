@@ -19,7 +19,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         return $this->browser;
     }
 
-    protected function doWizardTest(KernelBrowser $browser, array $wizardTestCases)
+    protected function doWizardTest(KernelBrowser $browser, array $wizardTestCases): void
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
@@ -29,10 +29,8 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
 
             if ($wizardTestCase instanceof WizardStepUrlTestCase) {
                 $expectedUrl = $wizardTestCase->getExpectedUrl();
-                if ($expectedUrl !== null) {
-                    $actualUrl = $this->getUrl($crawler);
-                    $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
-                }
+                $actualUrl = $this->getUrl($crawler);
+                $this->assertEquals($expectedUrl, $actualUrl, 'Page URL as expected');
 
                 $wizardSubmitButtonId = $wizardTestCase->getSubmitButtonId();
                 if ($wizardSubmitButtonId !== null) {
@@ -47,13 +45,16 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
             } else if ($wizardTestCase instanceof DatabaseTestCase) {
                 $wizardTestCase->checkDatabaseAsExpected($entityManager, $this);
             } else {
-                $wizardTestCaseClass = get_class($wizardTestCase);
+                $wizardTestCaseClass = $wizardTestCase::class;
                 $this->fail("Unknown wizard test case type - '{$wizardTestCaseClass}'");
             }
+
+            $statusCode = $browser->getResponse()->getStatusCode();
+            $this->assertEquals(200, $statusCode);
         }
     }
 
-    protected function checkErrors(Crawler $crawler, array $expectedErrors)
+    protected function checkErrors(Crawler $crawler, array $expectedErrors): void
     {
         if (empty($expectedErrors)) {
             return;
@@ -70,7 +71,7 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         }
 
         foreach ($actualErrors as $k => $v) {
-            $this->assertNotRegExp('/^[\w\-]+(\.[\w\-]+)+$/', $v, 'error message appears to be un-translated');
+            $this->assertDoesNotMatchRegularExpression('/^[\w\-]+(\.[\w\-]+)+$/', $v, 'error message appears to be un-translated');
             if (!isset($expectedErrors[$k])) {
                 $excessErrors[] = $k;
             }
@@ -101,10 +102,6 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         $browser->submit($form, [], []);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return string
-     */
     protected function getTitle(Crawler $crawler): string
     {
         $node = $crawler->filterXPath('//h1');
@@ -117,10 +114,6 @@ abstract class AbstractWizardTest extends AbstractFrontendFunctionalTest
         return $actualTitle;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return string
-     */
     protected function getUrl(Crawler $crawler): string
     {
         $url = parse_url($crawler->getUri());

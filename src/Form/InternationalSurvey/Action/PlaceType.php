@@ -16,21 +16,21 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class PlaceType extends AbstractType
 {
-    protected ?string $actionType; // Passed to the template via buildView(). Used to change the page titles.
+    protected ?string $actionType = null; // Passed to the template via buildView(). Used to change the page titles.
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $prefix = "international.action.place";
         $this->actionType = null;
 
         $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $prefix) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 /** @var Action $action */
                 $action = $event->getData();
                 $form = $event->getForm();
 
                 if ($action->getId() === null) {
-                    /** @var Action[]|Collection $loadingActions */
+                    /** @var Collection<Action> $loadingActions */
                     $loadingActions = $action->getTrip()->getActions()->filter(fn(Action $a) => $a->getLoading());
 
                     $allFullyUnloaded = true;
@@ -54,34 +54,40 @@ class PlaceType extends AbstractType
                     }
 
                     $choiceOptions = [];
+
                     if ($loadingActions->count() === 0) {
-                        $choiceOptions["{$prefix}.loading.choices.unload"] = [
+                        $choiceOptions["international.action.place.loading.choices.unload"] = [
                             'disabled' => true,
-                            'help' => "{$prefix}.loading.no-goods-loaded",
+                            'help' => "international.action.place.loading.no-goods-loaded",
                         ];
                     } else if ($allFullyUnloaded) {
-                        $choiceOptions["{$prefix}.loading.choices.unload"] = [
+                        $choiceOptions["international.action.place.loading.choices.unload"] = [
                             'disabled' => true,
-                            'help' => "{$prefix}.loading.all-goods-fully-loaded",
+                            'help' => "international.action.place.loading.all-goods-fully-loaded",
                         ];
                     }
 
                     $form->add('loading', Gds\ChoiceType::class, [
-                        'label' => "{$prefix}.loading.label",
-                        'help' => "{$prefix}.loading.help",
+                        'label' => "international.action.place.loading.label",
+                        'help' => "international.action.place.loading.help",
                         'expanded' => true,
                         'multiple' => false,
                         'choices' => [
-                            "{$prefix}.loading.choices.load" => true,
-                            "{$prefix}.loading.choices.unload" => false,
+                            "international.action.place.loading.choices.load" => true,
+                            "international.action.place.loading.choices.unload" => false,
                         ],
+                        'choice_value' => fn($x) => match($x) {
+                            true => 'load',
+                            false => 'unload',
+                            null => null,
+                        },
                         'choice_options' => $choiceOptions,
-                        'label_attr' => ['class' => 'govuk-label--m'],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ]);
                 }
 
                 $isLoading = $action->getLoading();
-                $placeLabel = "{$prefix}.place.label";
+                $placeLabel = "international.action.place.place.label";
 
                 if ($isLoading !== null) {
                     if ($isLoading) {
@@ -100,25 +106,27 @@ class PlaceType extends AbstractType
                     ]);
                 $form->get('place')
                     ->add('name', Gds\InputType::class, [
-                        'label' => "{$prefix}.name.label",
-                        'help' => "{$prefix}.name.help",
+                        'label' => "international.action.place.name.label",
+                        'help' => "international.action.place.name.help",
                         'attr' => ['class' => 'govuk-input--width-10'],
                         'label_attr' => ['class' => 'govuk-label--s'],
                     ])
                     ->add('country', CountryType::class, [
-                        'country_label_attr' => ['class' => 'govuk-label--m'],
+                        'country_label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                     ]);
             });
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
         $view->vars['actionType'] = $this->actionType;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Action::class,

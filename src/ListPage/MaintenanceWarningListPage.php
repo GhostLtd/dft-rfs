@@ -4,6 +4,7 @@ namespace App\ListPage;
 
 use App\Entity\Utility\MaintenanceWarning;
 use App\ListPage\Field\Simple;
+use App\Repository\MaintenanceWarningRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class MaintenanceWarningListPage extends AbstractListPage
 {
-    private ObjectRepository $repository;
+    private MaintenanceWarningRepository $repository;
 
     public function __construct(EntityManagerInterface $entityManager, FormFactoryInterface $formFactory, RouterInterface $router)
     {
@@ -20,6 +21,7 @@ class MaintenanceWarningListPage extends AbstractListPage
         $this->repository = $entityManager->getRepository(MaintenanceWarning::class);
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
         return [
@@ -29,6 +31,7 @@ class MaintenanceWarningListPage extends AbstractListPage
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('maintenance_warning');
@@ -38,6 +41,7 @@ class MaintenanceWarningListPage extends AbstractListPage
             ->setParameter('now', new \DateTime('-2 hours'));
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [

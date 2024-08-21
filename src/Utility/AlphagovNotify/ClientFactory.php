@@ -3,15 +3,15 @@
 namespace App\Utility\AlphagovNotify;
 
 use Alphagov\Notifications\Client as AlphagovClient;
-use Http\Adapter\Guzzle6\Client as GuzzleClient;
+use GuzzleHttp\Client;
 
 class ClientFactory
 {
-    public function __invoke($apiKey)
+    public function __invoke($apiKey): AlphagovClient
     {
         return new AlphagovClient([
             'apiKey' => $apiKey,
-            'httpClient' => new GuzzleClient,
+            'httpClient' => new Client(),
         ]);
     }
 }

@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class VehicleDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $axleConfigurationChoices = [
             'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID],
@@ -64,7 +65,8 @@ class VehicleDetailsType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

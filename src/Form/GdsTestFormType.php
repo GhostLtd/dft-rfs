@@ -12,7 +12,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class GdsTestFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $choices = [
             'Apple' => 'apple',
@@ -84,7 +85,7 @@ class GdsTestFormType extends AbstractType
                     new NotBlank(),
                 ],
             ])
-            ->add('money', GdsTypes\MoneyType::class)
+            ->add('money', GdsTypes\DecimalMoneyType::class)
 
             ->add('submit_button', GdsTypes\ButtonType::class, [
                 'label' => 'Submit',
@@ -92,13 +93,12 @@ class GdsTestFormType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setNormalizer('attr', function (Options $options, $value) {
-            return array_merge(
-                $value ?? [],
-                ['novalidate' => 'novalidate']
-            );
-        });
+        $resolver->setNormalizer('attr', fn(Options $options, $value) => array_merge(
+            $value ?? [],
+            ['novalidate' => 'novalidate']
+        ));
     }
 }

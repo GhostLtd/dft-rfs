@@ -1,11 +1,30 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {% if showUsername ?? true %}
-        {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') -}}
+        {{- summaryListRow({
+            key: 'Username',
+            value: survey.passcodeUser.username ?? '-'
+        }) -}}
     {% endif %}
-    {{- actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) -}}
-    {{- actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark | formatRegMark) -}}
-    {{- actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('format.date.default' | trans)) -}}
-    {{- actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('format.date.default' | trans)) -}}
-</dl>
+    {{- summaryListRow({
+        key: 'admin.domestic.survey-created.type' | trans,
+        value: 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.domestic.survey-created.registration-mark' | trans,
+        value: survey.registrationMark | formatRegMark
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.domestic.survey-created.period-start' | trans,
+        value: survey.surveyPeriodStart | date('format.date.default' | trans)
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.domestic.survey-created.period-end' | trans,
+        value: survey.surveyPeriodEnd | date('format.date.default' | trans)
+    }) -}}
+    {{- summaryListRow({
+        key: 'Contact with haulier',
+        value: survey.chasedCount
+    }) -}}
+{{- summaryListEnd() -}}

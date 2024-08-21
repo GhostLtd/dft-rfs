@@ -4,19 +4,12 @@ namespace App\Utility\AuditEntityLogger;
 
 class ChangeSet
 {
-    const TYPE_DELETE = 'delete';
-    const TYPE_INSERT = 'insert';
-    const TYPE_UPDATE = 'update';
+    public const TYPE_DELETE = 'delete';
+    public const TYPE_INSERT = 'insert';
+    public const TYPE_UPDATE = 'update';
 
-    protected object $entity;
-    protected string $type;
-    protected array $changes;
-
-    public function __construct(object $entity, string $type, array $changes = [])
+    public function __construct(protected object $entity, protected string $type, protected array $changes = [])
     {
-        $this->entity = $entity;
-        $this->type = $type;
-        $this->changes = $changes;
     }
 
     public function getEntity(): object

@@ -4,6 +4,7 @@ namespace App\ListPage;
 
 use App\ListPage\Field\FilterableInterface;
 use App\ListPage\Field\Simple;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -15,23 +16,18 @@ use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractListPage
 {
-    protected FormFactoryInterface $formFactory;
-    protected RouterInterface $router;
+    protected ?int $page = null;
+    protected ?array $formData = null;
+    protected ?array $requestData = null;
 
-    protected ?int $page;
-    protected ?array $formData;
-    protected ?array $requestData;
+    protected ?string $routeName = null;
+    protected ?array $routeParams = null;
 
-    protected ?string $routeName;
-    protected ?array $routeParams;
+    protected ?string $order = null;
+    protected ?string $orderDirection = null;
 
-    protected ?string $order;
-    protected ?string $orderDirection;
-
-    public function __construct(FormFactoryInterface $formFactory, RouterInterface $router)
+    public function __construct(protected FormFactoryInterface $formFactory, protected RouterInterface $router)
     {
-        $this->formFactory = $formFactory;
-        $this->router = $router;
     }
 
     /**
@@ -162,6 +158,10 @@ abstract class AbstractListPage
         return $form;
     }
 
+    protected function prePaginatorQueryAdjustments(Query $query): void
+    {
+    }
+
     public function getData(): ListPageData
     {
         $itemsPerPage = $this->getItemsPerPage();
@@ -171,7 +171,10 @@ abstract class AbstractListPage
             ->setFirstResult(($page - 1) * $itemsPerPage)
             ->setMaxResults($itemsPerPage);
 
-        $paginator = new Paginator($queryBuilder);
+        $query = $queryBuilder->getQuery();
+        $this->prePaginatorQueryAdjustments($query);
+
+        $paginator = new Paginator($query);
         $numRecords = $paginator->count();
         $numPages = intval(ceil($numRecords / $itemsPerPage));
 
@@ -187,11 +190,10 @@ abstract class AbstractListPage
         $previousUrl = $page > 1 ? $this->getPageUrl($page - 1) : null;
         $nextUrl = $page < $numPages ? $this->getPageUrl($page + 1) : null;
 
-        $orderUrlGenerator = function(string $order, string $orderDirection) {
-            return ($order === $this->order && $orderDirection === $this->orderDirection) ?
+        $orderUrlGenerator = fn(string $order, string $orderDirection) =>
+            ($order === $this->order && $orderDirection === $this->orderDirection) ?
                 $this->getPageUrl(1, false, true) :
                 $this->getPageUrl(1, false, true, ['orderBy' => $order, 'orderDirection' => $orderDirection]);
-        };
 
         return new ListPageData(
             $page,

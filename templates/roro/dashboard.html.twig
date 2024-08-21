@@ -1,0 +1,35 @@
+{%- extends "roro/base.html.twig" -%}
+{%- set translation_prefix = 'roro.dashboard' -%}
+
+{%- set titleParams = ({
+    operator: operator.name
+}) -%}
+
+{%- block content -%}
+    {%- from "roro/macros.html.twig" import contactDetails, surveysTabsAndList -%}
+    {%- if maintenanceWarningBanner ?? false -%}
+        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4">{{ 'roro.dashboard.title' | trans(titleParams) }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-m">{{ 'roro.dashboard.outstanding-surveys' | trans }}</h2>
+
+            {{- surveysTabsAndList(surveys, ['outstanding']) -}}
+
+            <h2 class="govuk-heading-m">{{ 'roro.dashboard.useful-links' | trans }}</h2>
+            <ul class="govuk-list govuk-!-margin-bottom-8">
+                {%- if is_granted('CAN_SWITCH_OPERATOR') -%}
+                    <li><a href="{{ path('app_roro_switch_operator') }}" class="govuk-link">Switch operator</a></li>
+                {%- endif -%}
+                <li><a href="{{ path('app_roro_completed_surveys', {operatorId: operator.id}) }}" class="govuk-link">{{ 'roro.dashboard.view-completed-surveys' | trans }}</a></li>
+            </ul>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop">
+            {{- contactDetails('govuk-!-padding-top-9') -}}
+        </div>
+    </div>
+{%- endblock -%}

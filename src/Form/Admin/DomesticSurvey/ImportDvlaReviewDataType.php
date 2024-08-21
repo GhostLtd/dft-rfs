@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin\DomesticSurvey;
-
 
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\AbstractImportReviewDataType;
@@ -10,7 +8,9 @@ use App\Utility\RegistrationMarkHelper;
 
 class ImportDvlaReviewDataType extends AbstractImportReviewDataType
 {
-    protected function choiceLabel($data) {
+    #[\Override]
+    protected function choiceLabel($data): string
+    {
         /** @var Survey $data */
         $regMark = new RegistrationMarkHelper($data->getRegistrationMark());
         $address1 = ucwords(strtolower($data->getInvitationAddress()->getLine1()));

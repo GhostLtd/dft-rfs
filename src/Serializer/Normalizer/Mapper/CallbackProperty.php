@@ -6,15 +6,14 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CallbackProperty implements Mapper
 {
-    protected string $propertyPath;
     protected $callback;
 
-    public function __construct(string $propertyPath, callable $callback)
+    public function __construct(protected string $propertyPath, callable $callback)
     {
-        $this->propertyPath = $propertyPath;
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

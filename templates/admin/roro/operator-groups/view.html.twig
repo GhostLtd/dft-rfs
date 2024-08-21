@@ -1,0 +1,46 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.operator-groups.view" -%}
+{% set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+
+    {%- set canDeleteOperatorGroup = is_granted('CAN_DELETE_OPERATOR_GROUP', operatorGroup) -%}
+    {%- set canEditOperatorGroup = is_granted('CAN_EDIT_OPERATOR_GROUP', operatorGroup) -%}
+
+    {% set matchingOperatorsValue %}
+        {%- if operatorsInGroup is empty -%}
+            None
+        {%- else -%}
+        <ul class="govuk-list govuk-list--bullet">
+        {%- for operator in operatorsInGroup -%}
+            <li>{{ operator.name }}</li>
+        {%- endfor -%}
+        </ul>
+        {%- endif -%}
+    {% endset %}
+
+    {{- summaryListStart() -}}
+        {{- summaryListRow({
+            key: 'Name',
+            value: operatorGroup.name
+        }) -}}
+        {{- summaryListRow({
+            key: 'Matching operators',
+            value: {html: matchingOperatorsValue}
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- if canEditOperatorGroup -%}
+            <a class="govuk-button govuk-button--{{ canEditOperatorGroup ? 'primary' : 'secondary' }}" href="{{ path('admin_operator_groups_edit_start', {operatorGroupId: operatorGroup.id}) }}">{{ 'admin.operator-groups.view.edit' | trans }}</a>
+        {%- endif -%}
+        {%- if canDeleteOperatorGroup -%}
+            <a class="govuk-button govuk-button--{{ canDeleteOperatorGroup ? 'warning' : 'secondary' }}" href="{{ path('admin_operator_groups_delete', {operatorGroupId: operatorGroup.id}) }}">{{ 'admin.operator-groups.view.delete' | trans }}</a>
+        {%- endif -%}
+        <p class="govuk-body">
+            <a class="govuk-link" href="{{ path('admin_operator_groups_list') }}">Back to operator groups</a>
+        </p>
+    </div>
+{%- endblock -%}

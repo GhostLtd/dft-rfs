@@ -30,32 +30,44 @@ class InitialDetailsData
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_continue", [
+        ];
+
+        if ($inPossessionAnswer === SurveyResponse::IN_POSSESSION_YES) {
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
+                new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
+                new FormTestCase([
+                    'in_possession_of_vehicle' => [
+                        'isInPossessionOfVehicle' => $inPossessionAnswer,
+                    ]
+                ], ['#in_possession_of_vehicle_isExemptVehicleType']),
+                new FormTestCase([
+                    'in_possession_of_vehicle' => [
+                        'isInPossessionOfVehicle' => $inPossessionAnswer,
+                        'isExemptVehicleType' => strval(array_search(SurveyResponse::IS_EXEMPT_NO, array_values(SurveyResponse::IS_EXEMPT_CHOICES))),
+                    ],
+                ]),
+            ]);
+        } else {
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
                 new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
                 new FormTestCase([
                     'in_possession_of_vehicle' => [
                         'isInPossessionOfVehicle' => $inPossessionAnswer,
                     ]
                 ]),
-            ]),
-        ];
+            ]);
+        }
 
         $endData = [
             new WizardEndUrlTestCase('/domestic-survey')
         ];
-
-        switch($inPossessionAnswer) {
-            case SurveyResponse::IN_POSSESSION_YES:
-                return array_merge($baseData, $endData);
-            case SurveyResponse::IN_POSSESSION_ON_HIRE:
-                return array_merge($baseData, self::onHireData(), $endData);
-            case SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN:
-                return array_merge($baseData, self::scrappedData(), $endData);
-            case SurveyResponse::IN_POSSESSION_SOLD:
-                return array_merge($baseData, self::soldData(), $endData);
-        }
-
-        throw new \RuntimeException('Invalid "inPossessionAnswer" parameter');
+        return match ($inPossessionAnswer) {
+            SurveyResponse::IN_POSSESSION_YES => array_merge($baseData, $endData),
+            SurveyResponse::IN_POSSESSION_ON_HIRE => array_merge($baseData, self::onHireData(), $endData),
+            SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN => array_merge($baseData, self::scrappedData(), $endData),
+            SurveyResponse::IN_POSSESSION_SOLD => array_merge($baseData, self::soldData(), $endData),
+            default => throw new \RuntimeException('Invalid "inPossessionAnswer" parameter'),
+        };
     }
 
     protected static function onHireData(): array

@@ -6,15 +6,14 @@ use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
@@ -24,15 +23,14 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 
     protected SurveyResponse $surveyResponse;
 
-    /**
-     * @Route("/international-survey/initial-details/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/international-survey/initial-details", name=self::START_ROUTE)
-     */
+    #[Route(path: '/international-survey/initial-details/{state}', name: self::WIZARD_ROUTE)]
+    #[Route(path: '/international-survey/initial-details', name: self::START_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyInitialDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($internationalSurveyInitialDetailsStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         $survey = $this->getSurvey();
@@ -51,11 +49,13 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->surveyResponse->getId() ? $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE) : null;

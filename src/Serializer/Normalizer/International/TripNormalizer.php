@@ -21,14 +21,23 @@ class TripNormalizer extends AbstractExportNormalizer
 {
     private array $countryNames;
 
-    public function supportsNormalization($data, $format = null, array $context = [])
+    #[\Override]
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof Trip;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Trip::class => true,
+        ];
     }
 
     /**
      * @return Mapper[]|array
      */
+    #[\Override]
     protected function getMapping(): array
     {
         $this->countryNames = Countries::getNames();
@@ -112,9 +121,9 @@ class TripNormalizer extends AbstractExportNormalizer
         ];
     }
 
-    protected function resolveOtherCountryToCode($country)
+    protected function resolveOtherCountryToCode($country): string
     {
         $countryCode = array_search($country, $this->countryNames);
-        return $countryCode !== false ? $countryCode : $country;
+        return $countryCode !== false ? strval($countryCode) : $country;
     }
 }

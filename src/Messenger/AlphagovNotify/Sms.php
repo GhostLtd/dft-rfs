@@ -5,15 +5,14 @@ namespace App\Messenger\AlphagovNotify;
 class Sms extends AbstractSendMessage
 {
     protected string $phoneNumber;
-    protected ?string $senderId;
 
-    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $phoneNumber, string $templateId, array $personalisation = [], ?string $reference = null, ?string $senderId = null)
+    public function __construct(string $eventName, string $originatingEntityClass, string $originatingEntityId, string $phoneNumber, string $templateId, array $personalisation = [], ?string $reference = null, protected ?string $senderId = null)
     {
         parent::__construct($eventName, $originatingEntityClass, $originatingEntityId, $templateId, $phoneNumber, $personalisation, $reference);
         $this->phoneNumber = $phoneNumber;
-        $this->senderId = $senderId;
     }
 
+    #[\Override]
     public function getSendMethodParameters(): array
     {
         return [
@@ -25,6 +24,7 @@ class Sms extends AbstractSendMessage
         ];
     }
 
+    #[\Override]
     public function getEndpoint(): string
     {
         return '/v2/notifications/sms';

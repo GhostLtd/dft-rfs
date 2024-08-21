@@ -1,0 +1,21 @@
+{%- extends "roro/base.html.twig" -%}
+{%- set translation_prefix = 'roro.dashboard' -%}
+
+{%- set titleParams = ({
+    operator: operator.name
+}) -%}
+
+{% block content %}
+    {%- from "roro/macros.html.twig" import contactDetails, surveysTabsAndList -%}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h1 class="govuk-heading-l">{{ 'roro.completed-surveys.title' | trans(titleParams) }}</h1>
+            {{ surveysTabsAndList(surveys, ['completed']) }}
+            <a href="{{ path('app_roro_dashboard', {operatorId: operator.id}) }}" class="govuk-button govuk-button--secondary">{{ 'roro.back-to-dashboard' | trans }}</a>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop">
+            {{- contactDetails('govuk-!-padding-top-9') -}}
+        </div>
+    </div>
+{% endblock %}

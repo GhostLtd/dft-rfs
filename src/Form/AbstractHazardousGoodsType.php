@@ -3,7 +3,8 @@
 namespace App\Form;
 
 use App\Entity\HazardousGoods;
-use App\Entity\HazardousGoodsTrait;
+use App\Entity\HazardousGoodsInterface;
+use App\Entity\International\Action;
 use App\Utility\HazardousGoodsHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -15,14 +16,11 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 abstract class AbstractHazardousGoodsType extends AbstractType implements DataMapperInterface
 {
-    protected $hazardousGoodsHelper;
+    public function __construct(protected HazardousGoodsHelper $hazardousGoodsHelper)
+    {}
 
-    public function __construct(HazardousGoodsHelper $hazardousGoodsHelper)
-    {
-        $this->hazardousGoodsHelper = $hazardousGoodsHelper;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         [$choices, $choiceOptions] = $this->hazardousGoodsHelper->getFormChoicesAndOptions(false, true, true, false);
 
@@ -32,7 +30,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
             ->add('isHazardousGoods', Gds\ChoiceType::class, [
                 'label' => "{$translationKeyPrefix}.is-hazardous-goods.label",
                 'help' => "{$translationKeyPrefix}.is-hazardous-goods.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => [
                     "common.choices.boolean.yes" => true,
                     "common.choices.boolean.no" => false,
@@ -40,6 +38,13 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
                 'choice_options' => [
                     "common.choices.boolean.yes" => ['conditional_form_name' => 'hazardousGoodsCode'],
                 ],
+                'choice_value' => function(?bool $v) {
+                    if ($v === null) {
+                        return null;
+                    }
+
+                    return $v ? 'yes' : 'no';
+                },
                 'mapped' => false,
                 'constraints' => new NotNull(['message' => 'common.hazardous-goods.not-null', 'groups' => 'is-hazardous-goods']),
             ])
@@ -54,7 +59,8 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
             ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => function(FormInterface $form){
@@ -68,10 +74,10 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
         $resolver->setRequired(["translation_entity_key"]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
-        /** @var HazardousGoodsTrait $viewData */
-        if (null === $viewData) {
+        if (!$viewData instanceof HazardousGoodsInterface) {
             return;
         }
 
@@ -102,9 +108,13 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
-        /** @var HazardousGoodsTrait $viewData */
+        if (!$viewData instanceof HazardousGoodsInterface) {
+            return;
+        }
+
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
@@ -125,7 +135,5 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
                 $viewData->setHazardousGoodsCode($forms['hazardousGoodsCode']->getData());
                 break;
         }
-
     }
-
 }

@@ -3,12 +3,15 @@
 {% set translation_prefix = 'admin.pre-enquiry.sample-import-summary' %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow %}
     <p class="govuk-body">The following surveys have been created</p>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
         {% for survey in surveys %}
-            {{ actionlessSummaryListRow(survey.referenceNumber, survey.invitationAddress | formatAddress) }}
+            {{- summaryListRow({
+                key: survey.referenceNumber,
+                value: survey.invitationAddress | formatAddress
+            }) -}}
         {% endfor %}
-    </dl>
+    {{- summaryListEnd() -}}
 {% endblock %}

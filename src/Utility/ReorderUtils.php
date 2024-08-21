@@ -46,9 +46,9 @@ class ReorderUtils
             }
         }
 
-        $validCount = array_reduce($usedCheck, function($carry, $item) {
-            return $carry + ($item ? 1 : 0);
-        }, 0);
+        $validCount = array_reduce($usedCheck,
+            fn($carry, $item) => $carry + ($item ? 1 : 0),
+        0);
 
         return $validCount === $numberOfItems;
     }

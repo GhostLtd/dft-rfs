@@ -1,0 +1,22 @@
+{%- extends "roro/base.html.twig" -%}
+{%- set translation_prefix = 'roro.switch-operator' -%}
+
+{%- set disable_breadcrumbs = true -%}
+
+{%- block content -%}
+    {%- from "roro/macros.html.twig" import contactDetails, surveysTabsAndList -%}
+
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4">{{ 'roro.switch-operator.title' | trans }}</h1>
+
+    <p class="govuk-body">{{ 'roro.switch-operator.intro' | trans }}</p>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <ul class="govuk-list govuk-!-margin-bottom-8">
+                {%- for operator in targetOperators -%}
+                    <li><a href="{{ path('app_roro_dashboard', {operatorId: operator.id}) }}" class="govuk-link">Switch to {{ operator.name }}</a></li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    </div>
+{%- endblock -%}

@@ -3,7 +3,7 @@
 {% set translation_prefix = "admin.reports.possession" %}
 
 {% block statsTable %}
-    {% for year, yearStats in stats %}
+    {% for year, yearStats in stats.data %}
         {{ _self.displayTable(yearStats.data, yearStats.totals, yearStats.total) }}
     {% endfor %}
 {% endblock %}

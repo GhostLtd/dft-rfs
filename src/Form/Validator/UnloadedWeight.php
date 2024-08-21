@@ -4,20 +4,37 @@ namespace App\Form\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class UnloadedWeight extends Constraint
 {
-    public $message = "international.action.unloaded.weight-too-large";
-    public $minMessage = "international.action.unloaded.weight-more-than-one";
-    public $maxMessage = 'international.action.unloaded.weight-positive';
+    public string $message = "international.action.unloaded.weight-too-large";
+    public string $minMessage = "international.action.unloaded.weight-more-than-one";
+    public string $maxMessage = 'international.action.unloaded.weight-positive';
 
-    public function validatedBy() {
-        return static::class.'Validator';
+    public function __construct(
+        string $message = null,
+        string $minMessage = null,
+        string $maxMessage = null,
+        array  $groups = [],
+        mixed  $payload = null,
+    )
+    {
+        parent::__construct([], $groups, $payload);
+
+        $this->message = $message ?? $this->message;
+        $this->minMessage = $minMessage ?? $this->minMessage;
+        $this->maxMessage = $maxMessage ?? $this->maxMessage;
     }
 
-    public function getTargets() {
+    #[\Override]
+    public function validatedBy(): string
+    {
+        return static::class . 'Validator';
+    }
+
+    #[\Override]
+    public function getTargets(): string|array
+    {
         return self::CLASS_CONSTRAINT;
     }
 }

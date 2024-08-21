@@ -3,23 +3,20 @@
 namespace App\Controller\InternationalSurvey;
 
 use App\Entity\International\Vehicle;
-use App\Form\Admin\InternationalSurvey\VehicleDeleteType;
 use App\Repository\International\VehicleRepository;
-use App\Utility\International\DeleteHelper;
-use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use App\Utility\ConfirmAction\International\DeleteVehicleConfirmAction;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class VehicleController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -29,17 +26,12 @@ class VehicleController extends AbstractController
     public const DELETE_ROUTE = self::ROUTE_PREFIX.'delete';
     public const VEHICLE_ROUTE = self::ROUTE_PREFIX.'view';
 
-    protected VehicleRepository $vehicleRepository;
-
-    public function __construct(VehicleRepository $vehicleRepository)
+    public function __construct(protected VehicleRepository $vehicleRepository)
     {
-        $this->vehicleRepository = $vehicleRepository;
     }
 
-    /**
-     * @Route("/international-survey/vehicles/{vehicleId}", name=self::VEHICLE_ROUTE)
-     */
-    public function vehicle(string $vehicleId)
+    #[Route(path: '/international-survey/vehicles/{vehicleId}', name: self::VEHICLE_ROUTE)]
+    public function vehicle(string $vehicleId): Response
     {
         $vehicle = $this->getVehicle($vehicleId);
 
@@ -48,34 +40,22 @@ class VehicleController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/international-survey/vehicles/{vehicleId}/delete", name=self::DELETE_ROUTE)
-     */
-    public function delete(string $vehicleId, Request $request, DeleteHelper $deleteHelper): Response
+    #[Route(path: '/international-survey/vehicles/{vehicleId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('international_survey/vehicle/delete.html.twig')]
+    public function delete(string $vehicleId, Request $request, DeleteVehicleConfirmAction $confirmAction): RedirectResponse|array
     {
         $vehicle = $this->getVehicle($vehicleId);
-        $form = $this->createForm(VehicleDeleteType::class);
 
-        if ($request->getMethod() === Request::METHOD_POST) {
-            $form->handleRequest($request);
-
-            $delete = $form->get('delete');
-            $translationPrefix = 'international.vehicle-delete.notification';
-            if ($delete instanceof SubmitButton && $delete->isClicked()) {
-                $deleteHelper->deleteVehicle($vehicle);
-
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getDeletedNotification($translationPrefix));
-                return new RedirectResponse($this->generateUrl(IndexController::SUMMARY_ROUTE));
-            } else {
-                $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, $deleteHelper->getCancelledNotification($translationPrefix));
-                return new RedirectResponse($this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]));
-            }
-        }
-
-        return $this->render('international_survey/vehicle/delete.html.twig', [
-            'vehicle' => $vehicle,
-            'form' => $form->createView(),
-        ]);
+        return $confirmAction
+            ->setSubject($vehicle)
+            ->setExtraViewData([
+                'vehicle' => $vehicle,
+            ])
+            ->controller(
+                $request,
+                fn() => $this->generateUrl(IndexController::SUMMARY_ROUTE),
+                fn() => $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]),
+            );
     }
 
     protected function getVehicle(string $vehicleId): Vehicle

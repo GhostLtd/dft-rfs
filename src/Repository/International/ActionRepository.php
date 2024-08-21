@@ -9,7 +9,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Action|null find($id, $lockMode = null, $lockVersion = null)
@@ -48,18 +50,16 @@ class ActionRepository extends ServiceEntityRepository
                 ->leftJoin('a.loadingAction', 'la')
                 ->leftJoin('a.unloadingActions', 'ua')
                 ->where('a.id = :actionId')
-                ->setParameters([
-                    'actionId' => $id,
-                ])
+                ->setParameter('actionId', $id)
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
 
     /**
-     * @return ArrayCollection|Action[]
+     * @return array<Action>
      */
     public function getLoadingActions(string $tripId): array
     {
@@ -68,10 +68,10 @@ class ActionRepository extends ServiceEntityRepository
             ->where('a.trip = :tripId')
             ->andWhere('a.loading = :loading')
             ->leftJoin('a.unloadingActions', 'ua')
-            ->setParameters([
-                'tripId' => $tripId,
-                'loading' => true,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('tripId', $tripId),
+                new Parameter('loading', true),
+            ]))
             ->orderBy('a.number', 'ASC')
             ->getQuery()
             ->execute();
@@ -89,19 +89,19 @@ class ActionRepository extends ServiceEntityRepository
                 ->leftJoin('a.unloadingActions', 'ua')
                 ->where('a.id = :actionId')
                 ->andWhere('r = :response')
-                ->setParameters([
-                    'actionId' => $id,
-                    'response' => $response,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('actionId', $id),
+                    new Parameter('response', $response),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
 
     /**
-     * @return Action[]|Collection
+     * @return array<Action>
      */
     public function getActionsForExport(DateTime $weekStart, DateTime $weekEnd): array
     {
@@ -116,11 +116,11 @@ class ActionRepository extends ServiceEntityRepository
             ->andWhere('s.surveyPeriodStart >= :weekStart')
             ->andWhere('s.surveyPeriodStart < :weekEnd')
             ->getQuery()
-            ->setParameters([
-                'isLoading' => false,
-                'weekStart' => $weekStart,
-                'weekEnd' => $weekEnd,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('isLoading', false),
+                new Parameter('weekStart', $weekStart),
+                new Parameter('weekEnd', $weekEnd),
+            ]))
             ->execute();
     }
 }

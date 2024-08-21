@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ActivityStatusType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('activityStatus', Gds\ChoiceType::class, [
@@ -18,14 +19,13 @@ class ActivityStatusType extends AbstractType
                 'help' => SurveyResponse::ACTIVITY_STATUS_PREFIX.'activity-status.help',
                 'choices' => SurveyResponse::ACTIVITY_STATUS_CHOICES,
                 'label_is_page_heading' => true,
-                'label_attr' => [
-                    'class' => 'govuk-label--l',
-                ]
+                'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

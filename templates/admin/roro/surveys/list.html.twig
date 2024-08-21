@@ -1,0 +1,52 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.roro.surveys" -%}
+
+{%- block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock -%}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListActionsList, tableRow, tag -%}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+
+    {{- listTableStart(data, form) -}}
+
+    {%- for survey in data.entities -%}
+        {%- set operatorContent -%}
+            {{ survey.operator.name }} <span class="code">({{ survey.operator.code }})</span>
+        {%- endset -%}
+        {%- set ukPortContent -%}
+            {{ survey.route.ukPort.name }} <span class="code">({{ survey.route.ukPort.code }})</span>
+        {%- endset -%}
+        {%- set foreignPortContent -%}
+            {{ survey.route.foreignPort.name }} <span class="code">({{ survey.route.foreignPort.code }})</span>
+        {%- endset -%}
+
+        {%- set linksContent -%}
+            {%- set date = survey.surveyPeriodStart | date('F Y') -%}
+            {{- summaryListActionsList([
+                {
+                    href: (path('admin_roro_surveys_view', {surveyId: survey.id})),
+                    text: 'view',
+                    visuallyHiddenText: "{date} survey for {survey.operator.name} on route {survey.route}",
+                }
+            ]) -}}
+        {%- endset -%}
+
+        {{- tableRow([
+            survey.surveyPeriodStart | date ('Y/m'),
+            {html: operatorContent},
+            {html: ukPortContent},
+            {html: foreignPortContent},
+            {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
+            {html: linksContent},
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans,
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
+{%- endblock -%}

@@ -1,0 +1,57 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.ports." ~ portType -%}
+
+{%- block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock -%}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableRow, summaryListActionsList, tag -%}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+
+    {{- listTableStart(data, form) -}}
+
+    {%- set addRoute = "admin_ports_#{portType}_add" -%}
+    {%- set deleteRoute = "admin_ports_#{portType}_delete" -%}
+    {%- set editRoute = "admin_ports_#{portType}_edit" -%}
+
+    <p class="govuk-body govuk-!-margin-bottom-5">
+        <a href="{{ path(addRoute) }}" class="govuk-link">Add port</a>
+    </p>
+
+    {% for port in data.entities %}
+        {%- set actions = [] -%}
+        {%- if is_granted('CAN_EDIT_PORT', port) -%}
+            {%- set actions = actions | merge([
+                {
+                    href: path(editRoute, {portId: port.id}),
+                    text: 'edit',
+                    visuallyHiddenText: "port called #{port.name}"
+                }
+            ]) -%}
+        {%- endif -%}
+        {%- if is_granted('CAN_DELETE_PORT', port) -%}
+            {%- set actions = actions | merge([
+                {
+                    href: path(deleteRoute, {portId: port.id}),
+                    text: 'delete',
+                    visuallyHiddenText: "port called #{port.name}",
+                }
+            ]) -%}
+        {%- endif -%}
+
+        {{- tableRow([
+            port.name ?? '-',
+            port.code ?? '-',
+            {html: summaryListActionsList(actions)},
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans,
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
+{%- endblock -%}

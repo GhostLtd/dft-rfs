@@ -12,13 +12,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ListPageForm extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $hasFilterFields = false;
 
-        /**
-         * @var $field Simple
-         */
+        /** @var Simple $field */
         foreach($options['fields'] as $field) {
             $fieldName = $field->getId();
 
@@ -56,7 +55,8 @@ class ListPageForm extends AbstractType
             ->add('orderDirection', HiddenType::class);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'method' => 'get',
@@ -68,8 +68,9 @@ class ListPageForm extends AbstractType
         $resolver->setAllowedTypes('fields', Simple::class.'[]');
     }
 
-    public function getBlockPrefix()
+    #[\Override]
+    public function getBlockPrefix(): string
     {
-        return null;
+        return '';
     }
 }

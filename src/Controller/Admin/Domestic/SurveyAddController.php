@@ -8,6 +8,7 @@ use App\Entity\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Repository\Domestic\SurveyRepository;
 use App\Utility\NotificationInterceptionService;
+use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,29 +16,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyAddController extends AbstractController
 {
-    private SurveyRepository $surveyRepository;
-    private WorkflowInterface $domesticSurveyStateMachine;
-
-    public function __construct(SurveyRepository $surveyRepository, WorkflowInterface $domesticSurveyStateMachine)
+    public function __construct(protected SurveyRepository $surveyRepository, protected WorkflowInterface $domesticSurveyStateMachine)
     {
-        $this->surveyRepository = $surveyRepository;
-        $this->domesticSurveyStateMachine = $domesticSurveyStateMachine;
     }
 
-    /**
-     * @Route("/csrgt/survey-add/", name=SurveyController::ADD_ROUTE)
-     * @Route("/csrgt/survey-reissue/{originalSurveyId}", name="admin_domestic_survey_reissue")
-     */
+    #[Route(path: '/csrgt/survey-add/', name: SurveyController::ADD_ROUTE)]
+    #[Route(path: '/csrgt/survey-reissue/{originalSurveyId}', name: 'admin_domestic_survey_reissue')]
     public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception, string $originalSurveyId = null): Response
     {
         if ($originalSurveyId) {
             $originalSurvey = $this->surveyRepository->find($originalSurveyId);
-            $survey = $this->getSurvey($originalSurvey);
+            $survey = $this->createReissueSurveyFromOriginal($originalSurvey);
         } else {
             $originalSurvey = null;
             $survey = null;
@@ -78,17 +72,18 @@ class SurveyAddController extends AbstractController
 
                 return $this->render('admin/domestic/surveys/add-success.html.twig', [
                     'survey' => $survey,
-                    'password' => $passcodeGenerator->getPasswordForUser($survey->getPasscodeUser()),
+                    'password' => PasscodeFormatter::formatPasscode($passcodeGenerator->getPasswordForUser($survey->getPasscodeUser())),
+                    'username' => PasscodeFormatter::formatPasscode($survey->getPasscodeUser()->getUserIdentifier()),
                 ]);
             }
         }
 
         return $this->render('admin/domestic/surveys/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    protected function getSurvey(Survey $originalSurvey)
+    protected function createReissueSurveyFromOriginal(?Survey $originalSurvey): Survey
     {
         if (!$originalSurvey || !$this->domesticSurveyStateMachine->can($originalSurvey, 'reissue')) {
             throw new BadRequestHttpException();
@@ -104,11 +99,10 @@ class SurveyAddController extends AbstractController
                 ? LongAddress::createFromAddress($originalResponse->getNewOwnerName(), $originalResponse->getNewOwnerAddress())
                 : LongAddress::createFromAddress($originalResponse->getHireeName(), $originalResponse->getHireeAddress())
             )
-//              At the moment, email invitations are disabled
-//              ->setInvitationEmail($isSold
-//                    ? $originalResponse->getNewOwnerEmail()
-//                    : $originalResponse->getHireeEmail()
-//                )
+            ->setInvitationEmails($isSold
+                ? $originalResponse->getNewOwnerEmail()
+                : $originalResponse->getHireeEmail()
+            )
             ->setIsNorthernIreland($originalSurvey->getIsNorthernIreland())
             ->setSurveyPeriodStart($originalSurvey->getSurveyPeriodStart());
 

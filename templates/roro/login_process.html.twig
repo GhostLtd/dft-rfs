@@ -1,0 +1,20 @@
+{% extends 'roro/base.html.twig' %}
+
+{%- set disable_breadcrumbs = true -%}
+
+{% block pageTitle %}RoRo Survey - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <h1 class="govuk-heading-xl">RoRo Survey</h1>
+
+    <p class="govuk-body">Thank you for logging into the Roll-on/Roll-off (RoRo) statistics service.</p>
+    <p class="govuk-body">Click through to your dashboard to fill in a new survey or review completed returns.</p>
+
+    <form action="{{ path('app_roro_login_check') }}" method="POST">
+        <input type="hidden" name="expires" value="{{ expires }}">
+        <input type="hidden" name="user" value="{{ user }}">
+        <input type="hidden" name="hash" value="{{ hash }}">
+
+        <button id="login" type="submit" class="govuk-button">Access dashboard</button>
+    </form>
+{% endblock %}

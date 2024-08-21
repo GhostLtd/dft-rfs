@@ -6,12 +6,14 @@
 } %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tabsHead, tag -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tabsHead, tag -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canEnterVehicleAndBusinessDetails = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::ENTER_BUSINESS_AND_VEHICLE_DETAILS'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canSendManualReminder = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER'), survey) -%}
+    {%- set canShowManualReminderButton = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER_BUTTON'), survey) -%}
     {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
     {%- set hasAuditLogs = auditLogs is not empty -%}
@@ -31,44 +33,75 @@
                 'Business details': 'tab-business-details',
                 'Vehicle details': 'tab-vehicle-details',
             } : {})
-            | merge(survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') ? {'Final details': 'tab-final-details'} : {})
+            | merge(canViewUnfilledReason ? {'Final details': 'tab-final-details'} : {})
             | merge(not survey.inActiveState and survey.driverAvailability ?? false ? {'Driver availability': 'tab-driver-availability'} : {})
         %}
     {%- endif -%}
     {%- set tabs = tabs
         | merge({
-            ("Notes (#{ survey.notes | length })"): 'tab-notes',
+            ("Notes (#{survey.chasedCount} / #{ survey.notes | length })"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
         })
         | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
         | merge(hasAuditLogs ? {'Audit logs': 'tab-audit-logs'} : {})
     -%}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
-        {% set status -%}
-            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
+        {%- set statusValue -%}
+            {{- tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) -}}
             {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
             {% if survey.originalSurvey %}
                 <a class="govuk-!-margin-left-3" href="{{ path('admin_domestic_survey_view', {surveyId: survey.originalSurvey.id}) }}">view original</a>
             {% elseif survey.reissuedSurvey %}
                 <a class="govuk-!-margin-left-3" href="{{ path('admin_domestic_survey_view', {surveyId: survey.reissuedSurvey.id}) }}">view reissued</a>
             {% endif %}
-        {%- endset %}
-        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
-        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+        {%- endset -%}
+
+        {{- summaryListRow({
+            key: 'Status',
+            value: {html: statusValue},
+        }) -}}
+        {%- if approvedBy | default(false) %}
+            {{- summaryListRow({
+                key: 'Approved by',
+                value: "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
+        {%- if qualityAssuredBy | default(false) -%}
+            {{- summaryListRow({
+                key: 'QA checked by',
+                value: "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
 
         {%- if canViewUnfilledReason and survey.reasonForUnfilledSurvey -%}
             {%- set reason = choiceLabel(constant('App\\Entity\\Domestic\\Survey::UNFILLED_SURVEY_REASON_CHOICES'), survey.reasonForUnfilledSurvey) -%}
-            {{- actionlessSummaryListRow('Reason for unfilled survey', reason ? reason|trans : '-') -}}
+            {{- summaryListRow({
+                key: 'Reason for unfilled survey',
+                value: reason ? reason | trans : '-'
+            }) -}}
         {%- endif -%}
 
-        {{ actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
-        {{ actionlessSummaryListRow('Last logged in', (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
-        {{ actionlessSummaryListRow('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) }}
-        {{ actionlessSummaryListRow('Survey period start', survey.surveyPeriodStart | date ('format.date.default' | trans)) }}
+        {{ summaryListRow({
+            key: 'Username',
+            value: survey.passcodeUser.username ?? '-'
+        }) -}}
+        {{ summaryListRow({
+            key: 'Last logged in',
+            value: (survey.passcodeUser.lastLogin ?? false) ?
+                survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) :
+                '-'
+        }) -}}
+        {{ summaryListRow({
+            key: 'common.vehicle.registration-mark' | trans,
+            value: survey.registrationMark | formatRegMark
+        }) -}}
+        {{ summaryListRow({
+            key: 'Survey period start',
+            value: survey.surveyPeriodStart | date ('format.date.default' | trans)
+        }) -}}
         {%- if pdfs is not empty -%}
-            {%- set pdfContent -%}
+            {%- set pdfValue -%}
                 {%- set multiplePdfs = pdfs|length > 1 ? true : false -%}
                 {%- for pdf in pdfs -%}
                     {%- set routeParams = {surveyId: pdf.survey.id} -%}
@@ -78,13 +111,34 @@
                     </a></div>
                 {%- endfor -%}
             {%- endset -%}
-            {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
+            {{- summaryListRow({
+                key: 'Submission PDF(s)',
+                value: {html: pdfValue}
+            }) -}}
         {%- endif -%}
-        {% if survey.invitationAddress.line1 ?? false %}
-            {% set businessLink %}<a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">{{ survey.invitationAddress.line1 }}</a>{% endset %}
-            {{- actionlessSummaryListRow('Business name', businessLink) -}}
-        {% endif %}
-    </dl>
+        {%- if survey.invitationAddress.line1 ?? false -%}
+            {%- set businessNameValue -%}
+                <a href="{{ path('admin_domestic_survey_list', {type: survey.isNorthernIreland ? 'ni' : 'gb', company: survey.invitationAddress.line1}) }}">
+                    {{- survey.invitationAddress.line1 -}}
+                </a>
+                {%- set companyName = survey.companyNameFromInvitationAddress -%}
+                {%- if hireStatsProvider.likelyHireCompany(companyName) -%}
+                    {% set hireStats = hireStatsProvider.onHireStats(companyName) -%}
+                    {{- tag({text: 'hire', classes: ('admin.survey.on-hire-flag' | trans) ~ ' govuk-!-margin-left-2'}) -}}
+                    <div class="govuk-body-s">{{- hireStats.onHireCount }} / {{ hireStats.total }} of surveys on hire ({{ hireStats.percentage | number_format(0) }}%)</div>
+                {%- endif -%}
+            {%- endset -%}
+
+            {{- summaryListRow({
+                key: 'Business name',
+                value: {html: businessNameValue}
+            }) -}}
+        {%- endif -%}
+        {{- summaryListRow({
+            key: 'Contact with haulier',
+            value: survey.chasedCount ? survey.chasedCount : '-'
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <div class="govuk-!-margin-bottom-9">
         {%- if canEdit -%}
@@ -100,6 +154,9 @@
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_domestic_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
         {%- endif -%}
+        {%- if canShowManualReminderButton -%}
+            <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ path('admin_domestic_survey_manual_reminder', {id: survey.id}) }}">Send reminder</a>
+        {%- endif -%}
     </div>
 
     {%- if tabs|default(false) -%}
@@ -107,7 +164,7 @@
             {{- tabsHead(tabs) -}}
 
             {%- if 'Initial details' in tabs | keys -%}
-                <div class="govuk-tabs__panel" id="tab-initial-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0" id="tab-initial-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/initial-details.html.twig' -%}
                     {%- endwith -%}
@@ -120,7 +177,7 @@
             {%- endif -%}
 
             {%- if 'Business details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-business-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-business-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/business-details.html.twig' -%}
                     {%- endwith -%}
@@ -134,7 +191,7 @@
             {%- endif -%}
 
             {%- if 'Vehicle details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-vehicle-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-vehicle-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/vehicle-details.html.twig' -%}
                     {%- endwith -%}
@@ -147,7 +204,7 @@
             {%- endif -%}
 
             {%- if 'Final details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-final-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'domestic_survey/includes/final-details.html.twig' -%}
                     {%- endwith -%}
@@ -160,27 +217,27 @@
             {%- endif -%}
 
             {%- if 'Driver availability' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-driver-availability">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-driver-availability">
                     {%- with {availability: survey.driverAvailability} -%}
                         {%- include 'admin/domestic/includes/driver-availability.html.twig' -%}
                     {%- endwith -%}
                 </div>
             {%- endif -%}
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-invitation-details">
                 {%- with {marginBottom: 5} -%}
                     {%- include 'admin/includes/invitation-details.html.twig' -%}
                 {%- endwith -%}
             </div>
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-notes">
                 {%- with {marginBottom: 5, deleteRoute: 'admin_domestic_survey_deletenote', deleteParams: {surveyId: survey.id}} -%}
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
 
             {%- if hasFeedback -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-feedback">
                     {%- with {feedback: survey.feedback} -%}
                         {%- include 'admin/includes/feedback.html.twig' -%}
                     {%- endwith -%}
@@ -188,7 +245,7 @@
             {%- endif -%}
 
             {%- if hasAuditLogs -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
                         {%- include 'admin/includes/audit-log.html.twig' -%}
                     {%- endwith -%}
@@ -205,10 +262,7 @@
         {%- endwith -%}
     {%- endif -%}
 
-    {% if workflow_can(survey, 'approve') or workflow_can(survey, 'reject') or workflow_can(survey, 'complete')
-        or workflow_can(survey, 're_open') or workflow_can(survey, 'un_approve') or workflow_can(survey, 'un_reject')
-        or workflow_can(survey, 'reissue')
-    %}
+    {% if workflow_can_any(survey, ['approve', 'complete', 'reissue', 'reject', 're_open', 'un_approve', 'un_reject']) %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Survey actions</h2>
@@ -221,13 +275,13 @@
             {{ _self.workflow_link(survey, 'reissue', 'Reissue', {href: path('admin_domestic_survey_reissue', {originalSurveyId: survey.id})}) }}
 
             {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
-                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
                 {%- with {
                     attr: (options.attr ?? {}) | merge({
                     href: path('admin_domestic_survey_flag_qa', {surveyId: survey.id}),
                     class: ('govuk-button ' ~ (options.class | default('')) ) | trim
                 })} -%}
-                    <a {{ attributes(attr) }}>Flag as QA'd</a>
+                    <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
                 {%- endwith -%}
             {% endif %}
         </div>
@@ -235,13 +289,13 @@
 {%- endblock -%}
 
 {% macro workflow_link(survey, transitionName, transitionText, options) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
         href: options.href ?? path('admin_domestic_survey_transition', {surveyId: survey.id, transition: transitionName}),
         class: ('govuk-button ' ~ (options.class | default('')) ) | trim
     })
         } -%}
-        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
     {%- endwith -%}
 {%- endmacro %}

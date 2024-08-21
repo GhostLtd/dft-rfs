@@ -1,0 +1,17 @@
+{% set translation_prefix = 'roro.survey.vehicle-counts' %}
+{% set titleParams = {
+    route: 'roro.route' | trans({ukPort: form.vars.data.route.ukPort.name, foreignPort: form.vars.data.route.foreignPort.name}),
+    period: form.vars.data.surveyPeriodStart | date('format.date.year-and-month' | trans),
+} %}
+
+{% form_theme form _self 'roro/survey/form-theme-vertical-first-collection.html.twig' %}
+
+{%- extends "roro/form-base.html.twig" -%}
+
+{%- set pageHeadingClass = "govuk-!-margin-bottom-3" -%}
+{%- set pageHeadingSizeClass = "govuk-heading-xl" -%}
+{%- set postHeadingContent -%}
+<div class="prose-scope govuk-!-margin-bottom-8">
+    {{ 'roro.survey.vehicle-counts.intro' | trans | markdown_to_html }}
+</div>
+{%- endset -%}

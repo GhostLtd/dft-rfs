@@ -6,11 +6,14 @@
 } %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
     {%- set hasInitialDetails = survey.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), survey) -%}
     {%- set canResetPasscode = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESET_PASSCODE'), survey) -%}
+    {%- set canSendManualReminder = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER'), survey) -%}
+    {%- set canShowManualReminderButton = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER_BUTTON'), survey) -%}
+
     {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
     {%- set hasAuditLogs = auditLogs is not empty -%}
@@ -27,9 +30,9 @@
         -%}
     {%- endif -%}
     {%- set tabs = tabs
-        | merge(canViewUnfilledReason and survey.shouldAskWhyEmptySurvey() ? {'Final details': 'tab-final-details'} : {})
+        | merge(canViewUnfilledReason ? {'Final details': 'tab-final-details'} : {})
         | merge({
-            ("Notes (#{ survey.notes | length })"): 'tab-notes',
+            ("Notes (#{survey.chasedCount} / #{ survey.notes | length })"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
         })
         | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
@@ -51,6 +54,9 @@
         {%- if canResend -%}
             <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
         {%- endif -%}
+        {%- if canShowManualReminderButton -%}
+            <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ path('admin_international_survey_manual_reminder', {id: survey.id}) }}">Send reminder</a>
+        {%- endif -%}
     </div>
 
     {%- if tabs is defined -%}
@@ -58,7 +64,7 @@
             {{ tabsHead(tabs) }}
 
             {%- if 'Vehicles' in tabs | keys -%}
-                <div class="govuk-tabs__panel" id="tab-vehicles">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 " id="tab-vehicles">
                     <h2 class="govuk-heading-m">Vehicles</h2>
 
                     {%- with {vehicles: survey.response.vehicles, survey: survey, marginBottom: 5} -%}
@@ -74,7 +80,7 @@
             {%- endif -%}
 
             {%- if 'Correspondence details' in tabs | keys -%}
-                <div class="govuk-tabs__panel" id="tab-correspondence">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 " id="tab-correspondence">
                     {%- with {showActions: false, response: survey.response, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/contact-details.html.twig' -%}
                     {%- endwith -%}
@@ -88,7 +94,7 @@
             {%- endif -%}
 
             {%- if 'Business details' in tabs | keys -%}
-                <div class="govuk-tabs__panel" id="tab-business-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0" id="tab-business-details">
                     {%- with {showActions: false, response: survey.response, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/business-details.html.twig' -%}
                     {%- endwith -%}
@@ -102,7 +108,7 @@
             {%- endif -%}
 
             {%- if 'Final details' in tabs | keys -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-final-details">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-final-details">
                     {%- with {showActions: false, marginBottom: 5} -%}
                         {%- include 'international_survey/includes/final-details.html.twig' -%}
                     {%- endwith -%}
@@ -114,20 +120,20 @@
                 </div>
             {%- endif -%}
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-invitation-details">
                 {%- with {marginBottom: 5} -%}
                     {%- include "admin/includes/invitation-details.html.twig" -%}
                 {%- endwith -%}
             </div>
 
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-notes">
+            <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-notes">
                 {%- with {marginBottom: 5, deleteRoute: 'admin_international_survey_deletenote', deleteParams: {surveyId: survey.id}} -%}
                     {%- include 'admin/includes/notes.html.twig' -%}
                 {%- endwith -%}
             </div>
 
             {%- if hasFeedback -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-feedback">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-feedback">
                     {%- with {feedback: survey.feedback} -%}
                         {%- include 'admin/includes/feedback.html.twig' -%}
                     {%- endwith -%}
@@ -135,7 +141,7 @@
             {%- endif -%}
 
             {%- if hasAuditLogs -%}
-                <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-audit-logs">
+                <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-audit-logs">
                     {%- with {marginBottom: 5} -%}
                         {%- include 'admin/includes/audit-log.html.twig' -%}
                     {%- endwith -%}
@@ -224,13 +230,13 @@
             {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
 
             {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
-                {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+                {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
                 {%- with {
                     attr: (options.attr ?? {}) | merge({
                     href: path('admin_international_survey_flag_qa', {surveyId: survey.id}),
                     class: ('govuk-button ' ~ (options.class | default('')) ) | trim
                 })} -%}
-                    <a {{ attributes(attr) }}>Flag as QA'd</a>
+                    <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
                 {%- endwith -%}
             {% endif %}
         </div>
@@ -239,13 +245,13 @@
 {%- endblock -%}
 
 {% macro workflow_link(survey, transitionName, transitionText, options) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
             href: path('admin_international_survey_transition', {surveyId: survey.id, transition: transitionName}),
             class: ('govuk-button ' ~ (options.class | default('')) ) | trim
         })
     } -%}
-        {%- if workflow_can(survey, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
     {%- endwith -%}
 {%- endmacro %}

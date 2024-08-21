@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class TripRouteValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof TripRoute) {
             throw new UnexpectedTypeException($constraint, TripRoute::class);

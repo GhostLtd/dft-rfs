@@ -6,7 +6,7 @@ use App\Entity\Distance;
 use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\DataMapper\TripDataMapper;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use App\Utility\PortsDataFactory;
 use App\Utility\PortsDataSet;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
@@ -18,13 +18,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TripType extends AbstractType
 {
-    const CARGO_STATE_EMPTY = 'empty';
-    const CARGO_STATE_PART_FILLED = 'part-filled';
-    const CARGO_STATE_CAPACITY_SPACE = 'space';
-    const CARGO_STATE_CAPACITY_WEIGHT = 'weight';
-    const CARGO_STATE_CAPACITY_BOTH = 'weight-and-space';
+    public const CARGO_STATE_EMPTY = 'empty';
+    public const CARGO_STATE_PART_FILLED = 'part-filled';
+    public const CARGO_STATE_CAPACITY_SPACE = 'space';
+    public const CARGO_STATE_CAPACITY_WEIGHT = 'weight';
+    public const CARGO_STATE_CAPACITY_BOTH = 'weight-and-space';
 
-    const CARGO_STATE_CHOICES = [
+    public const CARGO_STATE_CHOICES = [
         'Empty' => self::CARGO_STATE_EMPTY,
         'Partially filled' => self::CARGO_STATE_PART_FILLED,
         'At capacity by space' => self::CARGO_STATE_CAPACITY_SPACE,
@@ -32,24 +32,22 @@ class TripType extends AbstractType
         'At capacity by space and weight' => self::CARGO_STATE_CAPACITY_BOTH,
     ];
 
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    protected PortsDataFactory $portsDataFactory;
-
     /** @var PortsDataSet[] $portsDataSets */
     protected array $portsDataSets;
 
-    public function __construct(PortsDataFactory $portsDataFactory)
+    public function __construct(protected PortsDataFactory $portsDataFactory)
     {
-        $this->portsDataFactory = $portsDataFactory;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->portsDataSets = [
             'outbound' => $this->portsDataFactory->getData('outbound'),
@@ -80,9 +78,11 @@ class TripType extends AbstractType
             ->add('roundTripDistance', ValueUnitType::class, [
                 'label' => "Round trip distance",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'value_form_type' => Gds\DecimalType::class,
                 'value_options' => [
                     'label' => 'Distance',
-                    'is_decimal' => true,
+                    'precision' => 10,
+                    'scale' => 1,
                     'attr' => ['class' => 'govuk-input--width-5'],
                 ],
                 'unit_options' => [
@@ -115,13 +115,13 @@ class TripType extends AbstractType
 
             // Vehicle weights are in this event listener so that we maintain a sensible order
             $event->getForm()->get('otherDetails')
-                ->add('gross_weight', Gds\NumberType::class, [
+                ->add('gross_weight', Gds\IntegerType::class, [
                     'label' => "Gross vehicle weight (kg)",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],
                     'suffix' => 'kg',
                 ])
-                ->add('carrying_capacity', Gds\NumberType::class, [
+                ->add('carrying_capacity', Gds\IntegerType::class, [
                     'label' => "Carrying capacity (kg)",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],
@@ -147,16 +147,16 @@ class TripType extends AbstractType
             ]);
     }
 
-    protected function addDirectionalFields(FormBuilderInterface $builder, string $direction)
+    protected function addDirectionalFields(FormBuilderInterface $builder, string $direction): void
     {
         $portsData = $this->portsDataSets[$direction];
 
         $builder
-            ->add("${direction}Date", Gds\DateType::class, [
+            ->add("{$direction}Date", Gds\DateType::class, [
                 'label' => "Date",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add("${direction}Ports", Gds\ChoiceType::class, [
+            ->add("{$direction}Ports", Gds\ChoiceType::class, [
                 'label' => 'Ports',
                 'choices' => $portsData->getPortChoices(),
                 'expanded' => false,
@@ -184,7 +184,8 @@ class TripType extends AbstractType
         return $builder->get($fieldName);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Trip::class,

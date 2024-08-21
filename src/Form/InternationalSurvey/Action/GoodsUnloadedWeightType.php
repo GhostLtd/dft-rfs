@@ -17,28 +17,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GoodsUnloadedWeightType extends AbstractType
 {
-    protected ActionRepository $actionRepository;
-    protected CountryHelper $countryHelper;
-    protected TranslatorInterface $translator;
-
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    public function __construct(ActionRepository $actionRepository, CountryHelper $countryHelper, TranslatorInterface $translator)
+    public function __construct(protected ActionRepository $actionRepository, protected CountryHelper $countryHelper, protected TranslatorInterface $translator)
     {
-        $this->actionRepository = $actionRepository;
-        $this->countryHelper = $countryHelper;
-        $this->translator = $translator;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setDataMapper(new GoodsUnloadedWeightDataMapper());
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Action $action */
             $action = $event->getData();
 
@@ -68,18 +62,23 @@ class GoodsUnloadedWeightType extends AbstractType
                             'country' => $country,
                             'goods' => $goods,
                         ],
-                        'label_attr' => ['class' => 'govuk-label--s'],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                         'choices' => self::CHOICES,
                         'choice_options' => [
                             self::CHOICE_NO => [
                                 'conditional_form_name' => 'weightOfGoods',
                             ],
                         ],
+                        'choice_value' => fn($x) => match($x) {
+                            true => 'yes',
+                            false => 'no',
+                            null => null,
+                        },
                     ]);
             }
 
             $form
-                ->add('weightOfGoods', Gds\NumberType::class, [
+                ->add('weightOfGoods', Gds\IntegerType::class, [
                     'label' => "{$weightPrefix}.label",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'help' => "{$weightPrefix}.help",
@@ -89,7 +88,8 @@ class GoodsUnloadedWeightType extends AbstractType
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Action::class,

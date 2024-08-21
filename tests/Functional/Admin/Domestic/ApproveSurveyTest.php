@@ -13,9 +13,9 @@ use App\Tests\Functional\AbstractAdminFunctionalTest;
 
 class ApproveSurveyTest extends AbstractAdminFunctionalTest
 {
-    const BUTTON_ONLY_FORM_NAME = 'confirm_action';
-    const FINAL_DETAILS_FORM_NAME = 'final_details';
-    const UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
+    public const BUTTON_ONLY_FORM_NAME = 'confirm_action';
+    public const FINAL_DETAILS_FORM_NAME = 'final_details';
+    public const UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
 
     public function dataProvider(): array
     {
@@ -32,7 +32,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
                 [ResponseSoldFixtures::class],
                 self::BUTTON_ONLY_FORM_NAME,
             ],
-            // N.B. Normal hire doesn't have an approve button (it can only be re-issued, re-opened or rejected)
+            // N.B. Normal hire doesn't have an "approve" button (it can only be re-issued, re-opened or rejected)
             [
                 [ResponseOnMultiHireFixtures::class],
                 self::BUTTON_ONLY_FORM_NAME,
@@ -56,7 +56,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
 
         $browser->request('GET', '/csrgt/surveys-ni/');
-        $browser->clickLink('view: survey for AB01ABC started 01/05/2021');
+        $browser->clickLink('view survey for AB01ABC started 01/05/2021');
 
         $crawler = $browser->clickLink('Approve survey');
 

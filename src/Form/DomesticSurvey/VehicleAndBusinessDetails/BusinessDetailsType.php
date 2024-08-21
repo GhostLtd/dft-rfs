@@ -12,9 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = "domestic.survey-response.business-details";
         $employeeChoices = AbstractSurveyResponse::EMPLOYEES_CHOICES;
 
         if ($options['add_form']) {
@@ -24,28 +24,29 @@ class BusinessDetailsType extends AbstractType
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => $employeeChoices,
-                'label' => "{$translationKeyPrefix}.number-of-employees.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => "{$translationKeyPrefix}.number-of-employees.help",
+                'label' => "domestic.survey-response.business-details.number-of-employees.label",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
+                'help' => "domestic.survey-response.business-details.number-of-employees.help",
                 'expanded' => $options['expanded_employees'],
             ])
             ->add('businessNature', Gds\InputType::class, [
-                'label' => "{$translationKeyPrefix}.business-nature.label",
+                'label' => "domestic.survey-response.business-details.business-nature.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => "{$translationKeyPrefix}.business-nature.help",
+                'help' => "domestic.survey-response.business-details.business-nature.help",
                 'attr' => ['class' => 'govuk-input--width-30']
             ])
             ->add('operationType', Gds\ChoiceType::class, [
-                'label' => "{$translationKeyPrefix}.operation-type.label",
+                'label' => "domestic.survey-response.business-details.operation-type.label",
                 'property_path' => 'vehicle.operationType',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => Vehicle::OPERATION_TYPE_CHOICES,
-                'help' => "{$translationKeyPrefix}.operation-type.help",
+                'help' => "domestic.survey-response.business-details.operation-type.help",
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

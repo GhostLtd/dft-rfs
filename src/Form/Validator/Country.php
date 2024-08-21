@@ -4,19 +4,34 @@ namespace App\Form\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class Country extends Constraint
 {
     public string $message = "common.country.country";
     public string $otherMessage = "common.country.other";
 
-    public function validatedBy() {
-        return static::class.'Validator';
+    public function __construct(
+        string $message = null,
+        string $otherMessage = null,
+        array  $groups = [],
+        mixed  $payload = null,
+    )
+    {
+        parent::__construct([], $groups, $payload);
+
+        $this->message = $message ?? $this->message;
+        $this->otherMessage = $otherMessage ?? $this->otherMessage;
     }
 
-    public function getTargets() {
+    #[\Override]
+    public function validatedBy(): string
+    {
+        return static::class . 'Validator';
+    }
+
+    #[\Override]
+    public function getTargets(): string|array
+    {
         return self::CLASS_CONSTRAINT;
     }
 }

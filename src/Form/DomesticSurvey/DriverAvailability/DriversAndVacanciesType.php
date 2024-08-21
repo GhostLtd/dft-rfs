@@ -11,14 +11,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DriversAndVacanciesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.driver-availability.drivers";
 
         $builder
             ->setDataMapper(new DriversAndVacanciesTypeMapper())
 
-            ->add('numberOfDriversEmployed', Gds\NumberType::class, [
+            ->add('numberOfDriversEmployed', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriversEmployed',
                 'label' => "{$translationKeyPrefix}.number-of-drivers-employed.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -28,7 +29,7 @@ class DriversAndVacanciesType extends AbstractType
             ->add('hasVacancies', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.hasVacancies',
                 'label' => "{$translationKeyPrefix}.has-vacancies.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.has-vacancies.help",
                 'choices' => DriverAvailability::TRISTATE_CHOICES,
                 'choice_options' => [
@@ -39,7 +40,7 @@ class DriversAndVacanciesType extends AbstractType
                 'inherit_data' => true,
                 'label' => false,
             ])
-            ->add('numberOfDriversThatHaveLeft', Gds\NumberType::class, [
+            ->add('numberOfDriversThatHaveLeft', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriversThatHaveLeft',
                 'label' => "{$translationKeyPrefix}.number-of-drivers-that-have-left.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -49,7 +50,7 @@ class DriversAndVacanciesType extends AbstractType
         ;
 
         $builder->get('vacancy_details')
-            ->add('numberOfDriverVacancies', Gds\NumberType::class, [
+            ->add('numberOfDriverVacancies', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfDriverVacancies',
                 'label' => "{$translationKeyPrefix}.number-of-driver-vacancies.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -60,7 +61,7 @@ class DriversAndVacanciesType extends AbstractType
                 'multiple' => true,
                 'property_path' => 'survey.driverAvailability.reasonsForDriverVacancies',
                 'label' => "{$translationKeyPrefix}.reasons-for-vacancies.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-vacancies.help",
                 'choices' => DriverAvailability::VACANCY_REASON_CHOICES,
                 'choice_options' => [
@@ -76,7 +77,8 @@ class DriversAndVacanciesType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['driver-availability.drivers-and-vacancies']

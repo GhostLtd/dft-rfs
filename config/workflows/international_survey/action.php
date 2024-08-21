@@ -1,6 +1,7 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Controller\InternationalSurvey\AbstractActionController;
 use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\TripController;
 use App\Workflow\InternationalSurvey\ActionState as StateObject;
@@ -14,7 +15,7 @@ return static function (ContainerConfigurator $container) {
         'guard' => $expressionEditing,
         'metadata' => [
             'redirectRoute' => [
-                'routeName' => ActionController::VIEW_ROUTE,
+                'routeName' => 'app_internationalsurvey_action_view',
                 'parameterMappings' => [
                     'actionId' => 'id',
                 ],
@@ -139,7 +140,7 @@ return static function (ContainerConfigurator $container) {
                         'to' => StateObject::STATE_END,
                         'metadata' => [
                             'redirectRoute' => [
-                                'routeName' => ActionController::ADD_ANOTHER_ROUTE,
+                                'routeName' => 'app_internationalsurvey_action_add_another',
                                 'parameterMappings' => [
                                     'tripId' => 'trip.id',
                                 ],

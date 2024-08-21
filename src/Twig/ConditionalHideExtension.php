@@ -8,16 +8,17 @@ use Twig\TwigFunction;
 
 class ConditionalHideExtension extends AbstractExtension
 {
-    public function getFunctions()
+    #[\Override]
+    public function getFunctions(): array
     {
         return [
-            new TwigFunction('namesToIds', [$this, 'namesToIds']),
+            new TwigFunction('namesToIds', $this->namesToIds(...)),
         ];
     }
 
     public function namesToIds(FormView $view, ?array $names): ?array
     {
-        if ($names === null || empty($names)) {
+        if (empty($names)) {
             return null;
         }
 

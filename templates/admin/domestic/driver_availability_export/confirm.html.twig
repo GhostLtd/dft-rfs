@@ -1,0 +1,21 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "domestic.driver-availability-export.confirm" %}
+{% set headingDomain = 'admin' %}
+
+{% if year is null and month is null %}
+    {% set headingTranslation = translation_prefix ~ '.heading-export-all' %}
+{% endif %}
+
+{% set headingParams = {
+    year: year,
+    month: month
+} %}
+
+{%- block adminContent -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+
+    {{- warningText({text: "#{translation_prefix}.warning" | trans({}, 'admin') }) -}}
+
+    {{ form(form) }}
+{%- endblock -%}

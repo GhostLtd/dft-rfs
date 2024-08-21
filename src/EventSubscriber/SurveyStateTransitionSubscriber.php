@@ -22,16 +22,9 @@ use Symfony\Component\Workflow\Event\GuardEvent;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
-    private MessageBusInterface $messageBus;
-    private DomesticPdfHelper $domesticPdfHelper;
-    private InternationalPdfHelper $internationalPdfHelper;
-    private AuditLogRepository $auditLogRepository;
-    private PersonalisationHelper $personalisationHelper;
-
-    private const TYPE_LETTER = 'letter';
-    private const TYPE_EMAIL = 'email';
-    private const TEMPLATE_MAP = [
+    private const string TYPE_LETTER = 'letter';
+    private const string TYPE_EMAIL = 'email';
+    private const array TEMPLATE_MAP = [
         DomesticSurvey::class => [
             self::TYPE_LETTER => Reference::LETTER_DOMESTIC_SURVEY_INVITE,
             self::TYPE_EMAIL => Reference::EMAIL_DOMESTIC_SURVEY_INVITE,
@@ -46,60 +39,57 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ],
     ];
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, DomesticPdfHelper $domesticPdfHelper, InternationalPdfHelper $internationalPdfHelper, AuditLogRepository $auditLogRepository, PersonalisationHelper $personalisationHelper) {
-        $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
-        $this->domesticPdfHelper = $domesticPdfHelper;
-        $this->internationalPdfHelper = $internationalPdfHelper;
-        $this->auditLogRepository = $auditLogRepository;
-        $this->personalisationHelper = $personalisationHelper;
-    }
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected MessageBusInterface    $messageBus,
+        protected DomesticPdfHelper      $domesticPdfHelper,
+        protected InternationalPdfHelper $internationalPdfHelper,
+        protected AuditLogRepository     $auditLogRepository,
+        protected PersonalisationHelper  $personalisationHelper
+    ) {}
 
-    public function guardInviteUser(GuardEvent $event)
+    public function guardInviteUser(GuardEvent $event): void
     {
         $survey = $this->getSurvey($event);
         $address = $survey->getInvitationAddress();
-        if ((!$address || !$address->isFilled()) && !$survey->getInvitationEmails()) {
+        if ((!$address || !$address->isFilled()) && !$survey->hasValidInvitationEmails()) {
             $event->setBlocked(true);
         }
     }
 
-    public function transitionInviteUser(Event $event)
+    public function transitionInviteUser(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $personalisation = $this->personalisationHelper->getForEntity($survey);
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
-        if ($addressIsFilled && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER]) {
+        if ($addressIsFilled && self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER]) {
             $this->messageBus->dispatch(new Letter(
                 Reference::EVENT_INVITE,
-                get_class($survey),
+                $survey::class,
                 $survey->getId(),
                 $address,
-                self::TEMPLATE_MAP[get_class($survey)][self::TYPE_LETTER],
+                self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER],
                 $personalisation,
             ));
         }
 
-        if ($survey->getInvitationEmails() && self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL]) {
-
-            $invitationEmails = array_map('trim', explode(',', $survey->getInvitationEmails()));
-
-            foreach($invitationEmails as $invitationEmail) {
+        if (self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL]) {
+            foreach ($survey->getArrayOfInvitationEmails() as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     Reference::EVENT_INVITE,
-                    get_class($survey),
+                    $survey::class,
                     $survey->getId(),
                     $invitationEmail,
-                    self::TEMPLATE_MAP[get_class($survey)][self::TYPE_EMAIL],
+                    self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL],
                     $personalisation,
                 ));
             }
         }
     }
 
-    public function transitionComplete(Event $event)
+    public function surveyFinished(Event $event): void
     {
         $survey = $this->getSurvey($event);
 
@@ -115,81 +105,62 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
             // Do nothing...
             return;
         } else {
-            throw new \RuntimeException("Unsupported survey class".get_class($survey));
+            throw new \RuntimeException("Unsupported survey class" . $survey::class);
         }
     }
 
-    public function transitionConfirmExport(Event $event)
+    public function transitionConfirmExport(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $this->deletePasscodeUser($survey);
     }
 
-    public function transitionReissue(Event $event)
+    public function transitionReissue(Event $event): void
     {
         $survey = $this->getSurvey($event);
         $this->deletePasscodeUser($survey);
-    }
-
-    public function transitionApprove(Event $event)
-    {
-        $survey = $this->getSurvey($event);
-
-        if ($survey instanceof DomesticSurvey) {
-            if (!$survey->shouldAskWhyUnfilled()) {
-                // ReasonForUnfilledSurvey should be NULL, because the survey *is* filled
-                $survey->setReasonForUnfilledSurvey(null);
-
-                if (!$survey->shouldAskWhyNoJourneys()) {
-                    // ReasonForEmptyJourney should be NULL, because journeys *have* been entered
-                    $survey->getResponse()->setReasonForEmptySurvey(null);
-                }
-            }
-        }
-
-        if ($survey instanceof InternationalSurvey) {
-            if (!$survey->shouldAskWhyEmptySurvey()) {
-                // ReasonForEmptySurvey (+Other) should be NULL, because the survey *is* filled
-                $survey
-                    ->setReasonForEmptySurvey(null)
-                    ->setReasonForEmptySurveyOther(null);
-            }
-        }
     }
 
     protected function getSurvey(Event $event): SurveyInterface
     {
         $survey = $event->getSubject();
         if (!$survey instanceof SurveyInterface) {
-            throw new \LogicException("unhandled survey class: ". get_class($survey));
+            throw new \LogicException("unhandled survey class: " . $survey::class);
         }
         return $survey;
     }
 
-    public function guardUnReject(GuardEvent $event)
+    public function guardUnReject(GuardEvent $event): void
     {
-        $event->setBlocked(
-            !$this->auditLogRepository->surveyHasPreviouslyBeenInClosedState(
-                $this->getSurvey($event)
-            )
-        );
+        $survey = $this->getSurvey($event);
+
+        $hasPreviouslyBeenInClosedState = $this->auditLogRepository->surveyHasPreviouslyBeenInClosedState($survey);
+
+        $isExemptVehicleType =
+            $survey instanceof DomesticSurvey &&
+            $survey->getResponse()?->getIsExemptVehicleType() === true;
+
+        $event->setBlocked(!$hasPreviouslyBeenInClosedState && !$isExemptVehicleType);
     }
 
-    public static function getSubscribedEvents()
+    #[\Override]
+    public static function getSubscribedEvents(): array
     {
         return [
             // Transitions
             'workflow.domestic_survey.transition.invite_user' => 'transitionInviteUser',
-            'workflow.domestic_survey.transition.complete' => 'transitionComplete',
             'workflow.domestic_survey.transition.reissue' => 'transitionReissue',
             'workflow.domestic_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.domestic_survey.transition.approve' => 'transitionApprove',
+            'workflow.domestic_survey.entered.closed' => 'surveyFinished',
+            'workflow.domestic_survey.entered.rejected' => 'surveyFinished',
+
             'workflow.international_survey.transition.invite_user' => 'transitionInviteUser',
-            'workflow.international_survey.transition.complete' => 'transitionComplete',
             'workflow.international_survey.transition.confirm_export' => 'transitionConfirmExport',
-            'workflow.international_survey.transition.approve' => 'transitionApprove',
+            'workflow.international_survey.entered.closed' => 'surveyFinished',
+
+
             'workflow.pre_enquiry.transition.invite_user' => 'transitionInviteUser',
-            'workflow.pre_enquiry.transition.complete' => 'transitionComplete',
+            'workflow.pre_enquiry.entered.closed' => 'surveyFinished',
 
             // Guards
             'workflow.domestic_survey.guard.un_reject' => 'guardUnReject',
@@ -200,9 +171,6 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param SurveyInterface $survey
-     */
     public function deletePasscodeUser(SurveyInterface $survey): void
     {
         $passcodeUser = $survey->getPasscodeUser();

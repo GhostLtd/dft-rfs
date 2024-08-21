@@ -83,6 +83,16 @@ return static function (ContainerConfigurator $container) {
 //                        'from' => StateObject::STATE_EXPORTING,
 //                        'to' => StateObject::STATE_EXPORTED,
 //                    ],
+                    'reject_exempt' => [
+                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'to' => StateObject::STATE_REJECTED,
+                        'guard' => 'subject.getResponse() && subject.getResponse().getIsExemptVehicleType() === true',
+                    ],
+                    'reject_not_in_possession' => [
+                        'from' => StateObject::STATE_IN_PROGRESS,
+                        'to' => StateObject::STATE_CLOSED,
+                        'guard' => 'subject.getResponse() && subject.getResponse().isSoldScrappedStolenOrOnHire() === true',
+                    ],
                     'reject' => [
                         'from' => [StateObject::STATE_CLOSED, StateObject::STATE_INVITATION_FAILED],
                         'to' => StateObject::STATE_REJECTED,

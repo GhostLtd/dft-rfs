@@ -1,23 +1,29 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, optionalActionsSummaryListRow as row -%}
-{% set showActions = showActions ?? true %}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+{%- set showActions = showActions ?? true -%}
+
+{%- set businessDetailsActionLinks = [
+    {
+        href: url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')}),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'domestic.survey-response.business-details.heading' | trans
+    }
+] -%}
 
 <h2 class="govuk-heading-m">Business details</h2>
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {# business details #}
-    {% set businessDetailsActionLinks = {
-        (url('app_domesticsurvey_vehicleandbusinessdetails_index', {state: constant('App\\Workflow\\DomesticSurvey\\VehicleAndBusinessDetailsState::STATE_CHANGE_BUSINESS_DETAILS')})):
-        {label: 'common.actions.change', srHiddenSuffix: 'domestic.survey-response.business-details.heading'}
-    } %}
-    {{ row(showActions,
-        'domestic.survey-response.business-details.number-of-employees.label',
-        "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans,
-        businessDetailsActionLinks) }}
-    {{ row(showActions,
-        'domestic.survey-response.business-details.business-nature.label',
-        survey.response.businessNature,
-        businessDetailsActionLinks) }}
-    {{ row(showActions,
-        'domestic.survey-response.business-details.operation-type.label',
-        (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans,
-        businessDetailsActionLinks) }}
-</dl>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.business-details.number-of-employees.label' | trans,
+        value: "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans,
+        actions: showActions ? businessDetailsActionLinks : []
+    }, showActions) }}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.business-details.business-nature.label' | trans,
+        value: survey.response.businessNature,
+        actions: showActions ? businessDetailsActionLinks : []
+    }, showActions) }}
+    {{- summaryListRow({
+        key: 'domestic.survey-response.business-details.operation-type.label' | trans,
+        value: (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans,
+        actions: showActions ? businessDetailsActionLinks : []
+    }, showActions) }}
+{{- summaryListEnd() -}}

@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VehicleType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $typeAndConfigurationChoices = [
             'Rigid' => Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID],
@@ -53,13 +54,13 @@ class VehicleType extends AbstractType
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-select--width-15'],
             ])
-            ->add('grossWeight', Gds\NumberType::class, [
+            ->add('grossWeight', Gds\IntegerType::class, [
                 'label' => "Gross vehicle weight",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
-            ->add('carryingCapacity', Gds\NumberType::class, [
+            ->add('carryingCapacity', Gds\IntegerType::class, [
                 'label' => "Carrying capacity",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
@@ -74,7 +75,8 @@ class VehicleType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['admin_vehicle'],

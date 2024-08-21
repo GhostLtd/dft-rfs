@@ -5,7 +5,7 @@ namespace App\Utility;
 use DateTime;
 use DateTimeInterface;
 
-interface WeekNumberHelperInterface extends ReportQuarterHelperInterface
+interface WeekNumberHelperInterface
 {
     public static function getFirstDayOfWeek(bool $shortName): string;
     public static function getFirstDayOfYear(int $year): DateTime;

@@ -2,9 +2,10 @@
 
 namespace App\ListPage\PreEnquiry;
 
-use App\Entity\International\Survey;
+use App\Entity\PreEnquiry\PreEnquiry;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
+use App\ListPage\Field\DateTextFilter;
 use App\ListPage\Field\Simple;
 use App\ListPage\Field\TextFilter;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
@@ -14,26 +15,28 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PreEnquiryListPage extends AbstractListPage
 {
-    private PreEnquiryRepository $repository;
-
-    public function __construct(PreEnquiryRepository $repository, FormFactoryInterface $formFactory, RouterInterface $router)
-    {
+    public function __construct(
+        protected PreEnquiryRepository $repository,
+        FormFactoryInterface $formFactory,
+        RouterInterface $router
+    ) {
         parent::__construct($formFactory, $router);
-        $this->repository = $repository;
     }
 
+    #[\Override]
     protected function getFieldsDefinition(): array
     {
-        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
+        $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), PreEnquiry::STATE_FILTER_CHOICES), PreEnquiry::STATE_FILTER_CHOICES);
         return [
             (new TextFilter('Reference number', 'preEnquiry.referenceNumber'))->sortable(),
-            (new TextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
-            (new TextFilter('Company name', 'companyName'))->sortable(),
+            (new DateTextFilter('Dispatch date', 'preEnquiry.dispatchDate'))->sortable(),
+            (new TextFilter('Company name', 'preEnquiry.companyName'))->sortable(),
             (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
         ];
     }
 
+    #[\Override]
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('preEnquiry');
@@ -43,9 +46,11 @@ class PreEnquiryListPage extends AbstractListPage
             ->leftJoin('preEnquiry.passcodeUser', 'user');
     }
 
+    #[\Override]
     protected function getDefaultOrder(): array
     {
         return [
+            Simple::generateId('Dispatch date') => 'DESC',
         ];
     }
 }

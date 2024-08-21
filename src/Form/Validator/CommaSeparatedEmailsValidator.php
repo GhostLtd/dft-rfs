@@ -3,12 +3,19 @@
 namespace App\Form\Validator;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EmailValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class CommaSeparatedEmailsValidator extends EmailValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function __construct(string $defaultMode = Email::VALIDATION_MODE_HTML5)
+    {
+        parent::__construct($defaultMode);
+    }
+
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {
             return;

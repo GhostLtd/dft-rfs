@@ -7,14 +7,12 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class TextFilter extends Simple implements FilterableInterface
 {
-    protected array $formOptions;
-
-    public function __construct(string $label, string $propertyPath, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, protected array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -22,11 +20,13 @@ class TextFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return Gds\InputType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         $trimmed = trim($formData);

@@ -4,29 +4,23 @@ namespace App\Entity\Utility;
 
 use App\Entity\IdTrait;
 use App\Repository\MaintenanceWarningRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=MaintenanceWarningRepository::class)
- */
+#[ORM\Entity(repositoryClass: MaintenanceWarningRepository::class)]
 class MaintenanceWarning
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message="Provide a date/time")
-     * @Assert\GreaterThan ("now", message="Provide a date/time in the future")
-     */
-    private ?\DateTime $start;
+    #[Assert\NotBlank(message: 'Provide a date/time')]
+    #[Assert\GreaterThan('now', message: 'Provide a date/time in the future')]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $start = null;
 
-    /**
-     * @ORM\Column(type="time")
-     * @Assert\NotBlank(message="Provide a time")
-     * @Assert\GreaterThan(propertyPath="startTime", message="The end must be after the start")
-     */
-    private ?\DateTime $end;
+    #[Assert\NotBlank(message: 'Provide a time')]
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTime $end = null;
 
     public function getStart(): ?\DateTime
     {
@@ -36,7 +30,6 @@ class MaintenanceWarning
     public function setStart(?\DateTime $start): self
     {
         $this->start = $start;
-
         return $this;
     }
 
@@ -54,7 +47,6 @@ class MaintenanceWarning
     public function setEnd(?\DateTime $end): self
     {
         $this->end = $end;
-
         return $this;
     }
 }

@@ -6,21 +6,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Property implements Mapper
 {
-    protected string $propertyPath;
-    private $defaultValue;
-
-    public function __construct(string $propertyPath, $defaultValue = null)
+    public function __construct(protected string $propertyPath, private $defaultValue = null)
     {
-        $this->propertyPath = $propertyPath;
-        $this->defaultValue = $defaultValue;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         try {
             return $accessor->getValue($sourceData, $this->propertyPath);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->defaultValue;
         }
     }

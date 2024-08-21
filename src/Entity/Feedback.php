@@ -4,12 +4,11 @@ namespace App\Entity;
 
 use App\Repository\FeedbackRepository;
 use DateTime;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=FeedbackRepository::class)
- */
+#[ORM\Entity(repositoryClass: FeedbackRepository::class)]
 class Feedback
 {
     use IdTrait;
@@ -24,56 +23,38 @@ class Feedback
         $this->createdAt = new DateTime();
     }
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     * @Assert\NotNull(message="survey-feedback.experience-rating.not-null")
-     */
+    #[Assert\NotNull(message: 'survey-feedback.experience-rating.not-null')]
+    #[ORM\Column(type: Types::STRING, length: 50)]
     private ?string $experienceRating = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="survey-feedback.has-completed-paper.not-null")
-     */
+    #[Assert\NotNull(message: 'survey-feedback.has-completed-paper.not-null')]
+    #[ORM\Column(type: Types::BOOLEAN)]
     private ?bool $hasCompletedPaperSurvey = null;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     * @Assert\Expression("!this.getHasCompletedPaperSurvey() || !is_empty(value)", message="survey-feedback.comparison-rating.not-null")
-     */
+    #[Assert\Expression('!this.getHasCompletedPaperSurvey() || !is_empty(value)', message: 'survey-feedback.comparison-rating.not-null')]
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $comparisonRating = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("!this.getHasCompletedPaperSurvey() || !is_empty(value)", message="survey-feedback.time-to-complete.not-null")
-     */
+    #[Assert\Expression('!this.getHasCompletedPaperSurvey() || !is_empty(value)', message: 'survey-feedback.time-to-complete.not-null')]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $timeToComplete = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull(message="survey-feedback.had-issues.not-null")
-     */
+    #[Assert\NotNull(message: 'survey-feedback.had-issues.not-null')]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $hadIssues = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\Expression("this.getHadIssues() != 'yes-unsolved' || !is_empty(value)", message="survey-feedback.time-to-complete.not-null")
-     */
+    #[Assert\Expression("this.getHadIssues() != 'yes-unsolved' || !is_empty(value)", message: 'survey-feedback.time-to-complete.not-null')]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $issueDetails = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comments = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private \DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTime $exportedAt;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $exportedAt = null;
 
     public function getExperienceRating(): ?string
     {
@@ -83,7 +64,6 @@ class Feedback
     public function setExperienceRating(?string $experienceRating): self
     {
         $this->experienceRating = $experienceRating;
-
         return $this;
     }
 
@@ -95,7 +75,6 @@ class Feedback
     public function setHasCompletedPaperSurvey(?bool $hasCompletedPaperSurvey): self
     {
         $this->hasCompletedPaperSurvey = $hasCompletedPaperSurvey;
-
         return $this;
     }
 
@@ -107,7 +86,6 @@ class Feedback
     public function setComparisonRating(?string $comparisonRating): self
     {
         $this->comparisonRating = $comparisonRating;
-
         return $this;
     }
 
@@ -119,7 +97,6 @@ class Feedback
     public function setTimeToComplete(?string $timeToComplete): self
     {
         $this->timeToComplete = $timeToComplete;
-
         return $this;
     }
 
@@ -131,7 +108,6 @@ class Feedback
     public function setHadIssues(?string $hadIssues): self
     {
         $this->hadIssues = $hadIssues;
-
         return $this;
     }
 
@@ -143,7 +119,6 @@ class Feedback
     public function setIssueDetails(?string $issueDetails): self
     {
         $this->issueDetails = $issueDetails;
-
         return $this;
     }
 
@@ -155,7 +130,6 @@ class Feedback
     public function setComments(?string $comments): self
     {
         $this->comments = $comments;
-
         return $this;
     }
 
@@ -167,7 +141,6 @@ class Feedback
     public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -179,7 +152,6 @@ class Feedback
     public function setExportedAt(?\DateTime $exportedAt): self
     {
         $this->exportedAt = $exportedAt;
-
         return $this;
     }
 }

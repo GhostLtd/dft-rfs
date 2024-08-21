@@ -3,16 +3,12 @@
 namespace App\Form\InternationalSurvey\InitialDetails\DataMapper;
 
 use App\Entity\International\SurveyResponse;
-use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
 
-class NumberOfTripsDataMapper extends PropertyPathMapper
+class NumberOfTripsDataMapper extends DataMapper
 {
-    /**
-     * @param FormInterface[]|\Traversable $forms
-     * @param SurveyResponse $data
-     */
-    public function mapFormsToData($forms, &$data)
+    #[\Override]
+    public function mapFormsToData(\Traversable $forms, &$data): void
     {
         parent::mapFormsToData($forms, $data);
 

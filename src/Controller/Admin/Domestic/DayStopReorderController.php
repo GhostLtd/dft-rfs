@@ -6,15 +6,16 @@ use App\Controller\AbstractDayStopReorderController;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DayStopReorderController extends AbstractDayStopReorderController
 {
+    #[\Override]
     protected function getRedirectResponse(Day $day): RedirectResponse
     {
         $survey = $day->getResponse()->getSurvey();
@@ -22,17 +23,20 @@ class DayStopReorderController extends AbstractDayStopReorderController
         return new RedirectResponse($url);
     }
 
+    #[\Override]
     protected function getTemplate(): string
     {
         return 'admin/domestic/stop/re-order.html.twig';
     }
 
-    /**
-     * @Route("/csrgt/surveys/{surveyId}/{dayNumber}/reorder-stops", name=DayStopController::REORDER_ROUTE)
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
-     */
-    public function reorderAction(Survey $survey, int $dayNumber, Request $request): Response
+    #[Route(path: '/csrgt/surveys/{surveyId}/{dayNumber}/reorder-stops', name: DayStopController::REORDER_ROUTE)]
+    #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
+    public function reorderStops(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        int $dayNumber,
+        Request $request
+    ): Response
     {
         return parent::reorder($request, $this->getDay($survey, $dayNumber));
     }

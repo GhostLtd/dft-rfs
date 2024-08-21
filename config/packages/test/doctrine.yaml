@@ -1,0 +1,9 @@
+doctrine:
+  dbal:
+    logging: false
+  orm:
+    entity_managers:
+      default:
+        dql:
+          string_functions:
+            IF: DoctrineExtensions\Query\Sqlite\IfElse

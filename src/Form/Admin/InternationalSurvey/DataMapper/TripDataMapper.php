@@ -2,8 +2,8 @@
 
 namespace App\Form\Admin\InternationalSurvey\DataMapper;
 
-use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
+use App\Entity\Route\Route;
 use App\Form\Admin\InternationalSurvey\TripType;
 use App\Utility\PortsDataSet;
 use Symfony\Component\Form\DataMapperInterface;
@@ -13,15 +13,13 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TripDataMapper implements DataMapperInterface
 {
-    /** @var PortsDataSet[] $portDataSets */
-    protected array $portsDataSets;
+    public function __construct(
+        /** @var array<PortsDataSet> $portDataSets */
+        protected array $portsDataSets
+    ) {}
 
-    public function __construct(array $portsDataSets)
-    {
-        $this->portsDataSets = $portsDataSets;
-    }
-
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -62,7 +60,7 @@ class TripDataMapper implements DataMapperInterface
 
             $ports = $this->portsDataSets[$direction]->getPorts();
 
-            $matchingPair = array_filter($ports, fn(CrossingRoute $route) => $route->getUkPort() === $ukPort && $route->getForeignPort() === $foreignPort);
+            $matchingPair = array_filter($ports, fn(Route $route) => $route->getUkPort()->getName() === $ukPort && $route->getForeignPort()->getName() === $foreignPort);
 
             if (count($matchingPair) === 1) {
                 $forms["{$direction}Ports"]->setData(array_shift($matchingPair)->getId());
@@ -83,7 +81,8 @@ class TripDataMapper implements DataMapperInterface
         $forms['carrying_capacity']->setData($viewData->getCarryingCapacity());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
 
@@ -108,12 +107,12 @@ class TripDataMapper implements DataMapperInterface
             $foreignPort = null;
 
             if ($ports) {
-                $matchingPair = array_filter($this->portsDataSets[$direction]->getPorts(), fn(CrossingRoute $r) => $r->getId() === $ports);
+                $matchingPair = array_filter($this->portsDataSets[$direction]->getPorts(), fn(Route $r) => $r->getId() === $ports);
 
                 if (count($matchingPair) === 1) {
                     $matchingPair = array_shift($matchingPair);
-                    $ukPort = $matchingPair->getUkPort();
-                    $foreignPort = $matchingPair->getForeignPort();
+                    $ukPort = $matchingPair->getUkPort()->getName();
+                    $foreignPort = $matchingPair->getForeignPort()->getName();
                 }
             }
 

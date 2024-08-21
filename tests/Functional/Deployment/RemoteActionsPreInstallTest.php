@@ -14,11 +14,7 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
 {
     private array $addedMigrations = [];
 
-    protected function setUp()
-    {
-        $kernel = static::bootKernel();
-    }
-
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -73,7 +69,7 @@ class RemoteActionsPreInstallTest extends AbstractFunctionalTest
     }
 
 
-    private function generateMigration()
+    private function generateMigration(): void
     {
         // create new migration file
         $process = new Process(['bin/console', 'doctrine:migrations:generate']);

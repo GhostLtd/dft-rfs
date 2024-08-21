@@ -7,13 +7,8 @@ use App\Repository\PasscodeUserRepository;
 
 class PasscodeGenerator
 {
-    protected ?PasscodeUserRepository $passcodeUserRepository;
-    protected string $secret;
-
-    public function __construct(?PasscodeUserRepository $passcodeUserRepository, string $secret)
+    public function __construct(protected ?PasscodeUserRepository $passcodeUserRepository, protected string $secret)
     {
-        $this->passcodeUserRepository = $passcodeUserRepository;
-        $this->secret = $secret;
     }
 
     public function createNewPasscodeUser(): PasscodeUser

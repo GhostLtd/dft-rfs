@@ -1,11 +1,19 @@
 security:
-    encoders:
+    enable_authenticator_manager: true
+
+    password_hashers:
         App\Entity\PasscodeUser:
-            algorithm: 'bcrypt'
+            algorithm: 'auto'
             # these users have a short lifespan, and bulk creation of surveys/users needs faster hashing
             cost: 8
+        App\Entity\RoRoUser:
+            algorithm: 'auto'
+        Symfony\Component\Security\Core\User\InMemoryUser:
+            algorithm: 'auto'
+            cost: 8
         Symfony\Component\Security\Core\User\User:
-            algorithm: 'bcrypt'
+            algorithm: 'auto'
+
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -14,34 +22,57 @@ security:
             entity:
                 class: App\Entity\PasscodeUser
                 property: username
-        passwd_file:
-            id: App\Security\FileUserProvider
+        roro:
+            entity:
+                class: App\Entity\RoRoUser
+                property: username
         null_provider:
             memory:
-                users: ~
+                users: []
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        roro:
+            host: '^%frontend_hostname%$'
+            pattern: ^/roro
+            lazy: true
+            provider: roro
+            remember_me:
+                secret:   '%kernel.secret%' # required
+                lifetime: 604800 # 1 week in seconds
+                always_remember_me: true
+            login_link:
+                check_route: app_roro_login_check
+                check_post_only: true
+                lifetime: 604800
+                max_uses: 1
+                signature_properties: ['email']
+
+                failure_handler: App\Security\RoroAuthenticationHelper
+                success_handler: App\Security\RoroAuthenticationHelper
+            entry_point: App\Security\RoroAuthenticationHelper
+            logout:
+                path: app_roro_logout
+                target: app_roro_login
+
         main:
             host: '^%frontend_hostname%$'
-            anonymous: lazy
+            lazy: true
             provider: passcode
-            guard:
-                authenticator: App\Security\PasscodeAuthenticator
+            custom_authenticator: App\Security\PasscodeAuthenticator
             logout:
                 path: app_logout
                 target: app_login
 
         admin:
             host: '^%admin_hostname%$'
-            anonymous: lazy
-            provider: null_provider
-            logout:
-                path: admin_logout
-                target: admin_login
+            lazy: true
+            stateless: true
+            custom_authenticators:
+                - App\Security\GoogleIapAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -50,8 +81,14 @@ security:
             # switch_user: true
 
     role_hierarchy:
+        ROLE_ADMIN_MANAGER: ROLE_ADMIN_USER
+
         ROLE_ADMIN_FORM_USER: ROLE_ADMIN_USER
+        ROLE_ADMIN_FORM_MANAGER: [ROLE_ADMIN_MANAGER, ROLE_ADMIN_FORM_USER]
+
         ROLE_ADMIN_IAP_USER: ROLE_ADMIN_USER
+        ROLE_ADMIN_IAP_MANAGER: [ROLE_ADMIN_MANAGER, ROLE_ADMIN_IAP_USER]
+
         ROLE_DOMESTIC_SURVEY_USER: ROLE_SURVEY_USER
         ROLE_INTERNATIONAL_SURVEY_USER: ROLE_SURVEY_USER
         ROLE_PRE_ENQUIRY_USER: ROLE_SURVEY_USER
@@ -60,18 +97,24 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         ## General
-        - { path: '^/login$', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: '^/login$', roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/authenticate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/check-email, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/roro/login, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+
+        ## RoRo firewall
+        - { host: '^%frontend_hostname%$', path: ^/roro(/.*)?$, roles: ROLE_RORO_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Frontend firewall
-        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: https }
-        - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, roles: ROLE_PRE_ENQUIRY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/domestic-survey(/.*)?$, roles: ROLE_DOMESTIC_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/international-survey(/.*)?$, roles: ROLE_INTERNATIONAL_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
+        - { host: '^%frontend_hostname%$', path: ^/pre-enquiry(/.*)?$, roles: ROLE_PRE_ENQUIRY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
-        - { host: '^%frontend_hostname%$', path: ^/survey-feedback(/.*)?$, roles: ROLE_SURVEY_USER, requires_channel: https }
+        - { host: '^%frontend_hostname%$', path: ^/survey-feedback(/.*)?$, roles: ROLE_SURVEY_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Admin firewall
-        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER, requires_channel: https }
+        - { host: '^%admin_hostname%$', roles: ROLE_ADMIN_USER, requires_channel: '%env(SECURE_SCHEME)%' }
 
         ## Remainder
-        - { path: '^/', requires_channel: https }
+        - { path: '^/', requires_channel: '%env(SECURE_SCHEME)%' }
 

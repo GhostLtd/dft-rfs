@@ -11,7 +11,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class VehicleDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "international.vehicle.vehicle-details";
         $builder
@@ -24,13 +25,14 @@ class VehicleDetailsType extends AbstractType
             ->add('operationType', Gds\ChoiceType::class, [
                 'label' => "{$translationKeyPrefix}.operation-type.label",
                 'help' => "{$translationKeyPrefix}.operation-type.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => Vehicle::OPERATION_TYPE_CHOICES,
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => InternationalVehicle::class,

@@ -7,76 +7,52 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait SurveyTrait
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    use IdTrait;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTime $notifiedDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $invitationSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $firstReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $secondReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $responseStartDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $latestManualReminderSentDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $submissionDate;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $responseStartDate;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=false)
-     */
-    private $state;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $submissionDate;
 
-    /**
-     * @ORM\Column(type="string", length=1024, nullable=true)
-     * @AppAssert\CommaSeparatedEmails(groups={"add_survey", "import_survey"}, message="common.email.list-contains-invalid")
-     * @Assert\Length(max=1024, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
-     */
-    private $invitationEmails;
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: false)]
+    private ?string $state;
 
-    /**
-     * @ORM\Embedded(class=LongAddress::class)
-     * @AppAssert\ValidAddress(groups={"add_survey", "import_survey"}, validatePostcode=true, allowBlank=true)
-     * @Assert\Valid(groups={"add_srvuey", "import_survey", "notify_api"})
-     *
-     * @var LongAddress|null
-     */
-    private $invitationAddress;
+    #[Assert\Length(max: 1024, maxMessage: 'common.string.max-length', groups: ['add_survey', 'import_survey'])]
+    #[AppAssert\CommaSeparatedEmails(message: "common.email.list-contains-invalid", groups: ["add_survey", "import_survey"])]
+    #[ORM\Column(type: Types::STRING, length: 1024, nullable: true)]
+    private ?string $invitationEmails = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Feedback::class, cascade={"persist", "remove"})
-     */
+    #[Assert\Valid(groups: ['add_srvuey', 'import_survey', 'notify_api'])]
+    #[AppAssert\ValidAddress(groups: ["add_survey", "import_survey"], validatePostcode: true, allowBlank: true)]
+    #[ORM\Embedded(class: LongAddress::class)]
+    private ?LongAddress $invitationAddress;
+
+    #[ORM\OneToOne(targetEntity: Feedback::class, cascade: ['persist', 'remove'])]
     private ?Feedback $feedback;
 
-    private Collection $apiResponses;
-
-    /**
-     * @Assert\Callback(groups={"add_survey.not-enabled"})
-     */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
+    #[Assert\Callback(groups: ['add_survey.not-enabled'])]
+    public function validInvitationDetails(ExecutionContextInterface $context): void
+    {
         if (!$this->invitationEmails && (!$this->invitationAddress || !$this->invitationAddress->isFilled())) {
             $context
                 ->buildViolation('international.add.invitation-email-or-address')
@@ -90,20 +66,25 @@ trait SurveyTrait
         }
     }
 
-    public function getId(): ?string
+    public function getInvitationSentDate(): ?DateTime
     {
-        return $this->id;
+        return $this->invitationSentDate;
     }
 
-    public function getNotifiedDate(): ?DateTime
+    public function setInvitationSentDate(?DateTime $invitationSentDate): self
     {
-        return $this->notifiedDate;
+        $this->invitationSentDate = $invitationSentDate;
+        return $this;
     }
 
-    public function setNotifiedDate(?DateTime $notifiedDate): self
+    public function getLatestManualReminderSentDate(): ?DateTime
     {
-        $this->notifiedDate = $notifiedDate;
+        return $this->latestManualReminderSentDate;
+    }
 
+    public function setLatestManualReminderSentDate(?DateTime $latestManualReminderSentDate): self
+    {
+        $this->latestManualReminderSentDate = $latestManualReminderSentDate;
         return $this;
     }
 
@@ -115,7 +96,6 @@ trait SurveyTrait
     public function setResponseStartDate(?DateTime $responseStartDate): self
     {
         $this->responseStartDate = $responseStartDate;
-
         return $this;
     }
 
@@ -127,16 +107,15 @@ trait SurveyTrait
     public function setSubmissionDate(?DateTime $submissionDate): self
     {
         $this->submissionDate = $submissionDate;
-
         return $this;
     }
 
     public function getState(): ?string
     {
-        return $this->state;
+        return $this->state ?? null;
     }
 
-    public function setState($state): self
+    public function setState(?string $state): self
     {
         $this->state = $state;
         return $this;
@@ -144,25 +123,23 @@ trait SurveyTrait
 
     public function getInvitationEmails(): ?string
     {
-        return $this->invitationEmails;
+        return $this->invitationEmails ?? null;
     }
 
     public function setInvitationEmails(?string $invitationEmails): self
     {
         $this->invitationEmails = $invitationEmails;
-
         return $this;
     }
 
     public function getInvitationAddress(): ?LongAddress
     {
-        return $this->invitationAddress;
+        return $this->invitationAddress ?? null;
     }
 
     public function setInvitationAddress(?LongAddress $invitationAddress): self
     {
         $this->invitationAddress = $invitationAddress;
-
         return $this;
     }
 
@@ -190,7 +167,7 @@ trait SurveyTrait
 
     public function hasInvitationAddress(): bool
     {
-        return $this->invitationAddress instanceof LongAddress && $this->invitationAddress->isFilled();
+        return ($this->invitationAddress instanceof LongAddress) && $this->invitationAddress->isFilled();
     }
 
     public function getFeedback(): ?Feedback
@@ -204,40 +181,25 @@ trait SurveyTrait
         return $this;
     }
 
-    public function getNotifyApiResponses(): Collection
-    {
-        return $this->apiResponses;
-    }
+    // -----
 
-    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false): array
+    /**
+     * @return array<string>
+     */
+    public function getArrayOfInvitationEmails(): array
     {
-        $responses = $this->apiResponses
-            ->filter(fn(NotifyApiResponse $r) =>
-                $r->getEventName() === $eventName &&
-                $r->getMessageClass() === $notificationClass
-            )
-            ->toArray();
-
-        if ($sorted) {
-            usort($responses,
-                fn(NotifyApiResponse $a, NotifyApiResponse $b) => $b->getTimestamp() <=> $a->getTimestamp()
-            );
+        if (!$this->invitationEmails) {
+            return [];
         }
 
-        return $responses;
+        $emails = explode(',', $this->invitationEmails);
+        $emails = array_map('trim', $emails);
+        $emails = array_filter($emails, fn(string $email) => $email !== '');
+        return array_values(array_unique($emails));
     }
 
-    public function addNotifyApiResponse(NotifyApiResponse $apiResponse): self {
-        if (!$this->apiResponses->contains($apiResponse)) {
-            $this->apiResponses[] = $apiResponse;
-        }
-
-        return $this;
-    }
-
-    public function removeNotifyApiResponse(NotifyApiResponse $apiResponse): self
+    public function hasValidInvitationEmails(): bool
     {
-        $this->apiResponses->removeElement($apiResponse);
-        return $this;
+        return count($this->getArrayOfInvitationEmails()) > 0;
     }
 }

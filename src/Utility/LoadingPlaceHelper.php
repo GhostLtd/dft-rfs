@@ -9,15 +9,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoadingPlaceHelper
 {
-    protected ActionRepository $actionRepository;
-    protected CountryHelper $countryHelper;
-    protected TranslatorInterface $translator;
-
-    public function __construct(ActionRepository $actionRepository, CountryHelper $countryHelper, TranslatorInterface $translator)
+    public function __construct(protected ActionRepository $actionRepository, protected CountryHelper $countryHelper, protected TranslatorInterface $translator)
     {
-        $this->actionRepository = $actionRepository;
-        $this->countryHelper = $countryHelper;
-        $this->translator = $translator;
     }
 
     public function getChoicesAndOptionsForPlace(Action $action, bool $extendedHints=false): array

@@ -1,0 +1,19 @@
+services:
+  Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface $roroLoginLimiter:
+    class: Symfony\Component\Security\Http\RateLimiter\DefaultLoginRateLimiter
+    arguments:
+      $globalFactory: '@limiter.ip'
+      $localFactory: '@limiter.ip_and_username'
+      $secret: '%env(APP_SECRET)%'
+
+# Cache overridden in cache.yaml
+framework:
+  rate_limiter:
+    ip:
+      policy: 'sliding_window'
+      limit: 2
+      interval: '5 minutes'
+    ip_and_username:
+      policy: 'sliding_window'
+      limit: 2
+      interval: '15 minutes'

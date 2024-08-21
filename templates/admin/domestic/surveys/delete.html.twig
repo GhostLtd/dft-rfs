@@ -3,11 +3,11 @@
 {% set translation_prefix = "admin.domestic.survey-delete" %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, warningText     %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
     <div class="govuk-width-container">
         {%- include "admin/domestic/includes/survey-basics.html.twig" -%}
 
-        {{ warningText((translation_prefix ~ '.warning')|trans) }}
+        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
 
         {{ form(form) }}
     </div>

@@ -1,14 +1,29 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import optionalActionsSummaryListRow as row -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 {%- set showActions = showActions ?? true -%}
 
-{%- set changeLink = {
-    (wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS')):
-    {label: 'common.actions.change', srHiddenSuffix: 'international.survey-response.contact-details.heading'}
-} %}
+{%- set changeLink = [
+    {
+        href: wizardUrl('international-initial-details', 'STATE_CHANGE_CONTACT_DETAILS'),
+        text: 'common.actions.change' | trans,
+        visuallyHiddenText: 'international.survey-response.contact-details.heading' | trans
+    }
+] -%}
 
 <h2 class="govuk-heading-m">{{- 'international.correspondence-and-business-details.correspondence-details'|trans -}}</h2>
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? '9' }}">
-    {{- row(showActions, 'Name', response.contactName ?? '-', changeLink) -}}
-    {{- row(showActions, 'Email', response.contactEmail ?? '-', changeLink) -}}
-    {{- row(showActions, 'Phone', response.contactTelephone ?? '-', changeLink) -}}
-</dl>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'Name',
+        value: response.contactName ?? '-',
+        actions: showActions ? changeLink : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'Email',
+        value: response.contactEmail ?? '-',
+        actions: showActions ? changeLink : []
+    }, showActions) -}}
+    {{- summaryListRow({
+        key: 'Phone',
+        value: response.contactTelephone ?? '-',
+        actions: showActions ? changeLink : []
+    }, showActions) -}}
+{{- summaryListEnd() -}}

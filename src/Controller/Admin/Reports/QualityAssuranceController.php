@@ -3,46 +3,47 @@
 namespace App\Controller\Admin\Reports;
 
 use App\Form\Admin\ReportFilterType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class QualityAssuranceController extends AbstractReportsController
 {
-    /**
-     * @Route("/quality-assurance/{type}", name="qa_type", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs"})
-     */
+    #[Route(path: '/quality-assurance/{type}', name: 'qa_type', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs|pre-enquiry'])]
     public function qualityAssuranceReportsDefaults(string $type): Response
     {
-        return $this->redirectToCurrentQuarterAndYear($type, 'admin_reports_qa_full');
+        return $this->handleRedirect($type);
     }
 
-    /**
-     * @Route("/quality-assurance/{type}/{year}/{quarter}", name="qa_full", requirements={"type": "csrgt|csrgt-ni|csrgt-gb|irhs", "year": "\d{4}", "quarter": "1|2|3|4"})
-     */
-    public function qualityAssuranceReports(Request $request, string $type, int $year, int $quarter): Response
+    #[Route(path: '/quality-assurance/{type}/{year}/{quarter}', name: 'qa_full', requirements: ['type' => 'csrgt|csrgt-ni|csrgt-gb|irhs', 'year' => '\d{4}', 'quarter' => '1|2|3|4'])]
+    public function quarterlyQualityAssuranceReports(Request $request, string $type, int $year, int $quarter): Response
     {
-        [$start, $end] = self::getDateRangeForYearAndQuarter($type, $year, $quarter);
-
-        $form = $this->getReportsFilterForm($request, $year, $quarter, $type);
+        [$start, $end] = $this->getDateRangeForYearAndQuarter($type, $year, $quarter);
+        $form = $this->getReportsFilterForm($request, $year, $quarter, $type, [ReportFilterType::TYPE_PRE_ENQUIRY]);
 
         if ($form->isSubmitted()) {
-            return new RedirectResponse($this->generateUrl('admin_reports_qa_full', $form->getData()));
+            return $this->getRedirect($form->getData());
         }
 
+        return $this->qualityAssuranceReports($form, $type, $start, $end);
+    }
+
+    protected function qualityAssuranceReports(FormInterface $form, string $type, \DateTime $start, \DateTime $end): Response
+    {
         switch($type) {
             case ReportFilterType::TYPE_CSRGT:
-                $stats = $this->domesticRepo->getQualityAssuranceReportStats(null, $start, $end);
+                $stats = $this->domesticReportsHelper->getQualityAssuranceReportStats(null, $start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_GB:
-                $stats = $this->domesticRepo->getQualityAssuranceReportStats(false, $start, $end);
+                $stats = $this->domesticReportsHelper->getQualityAssuranceReportStats(false, $start, $end);
                 break;
             case ReportFilterType::TYPE_CSRGT_NI:
-                $stats = $this->domesticRepo->getQualityAssuranceReportStats(true, $start, $end);
+                $stats = $this->domesticReportsHelper->getQualityAssuranceReportStats(true, $start, $end);
                 break;
             case ReportFilterType::TYPE_IRHS:
-                $stats = $this->internationalRepo->getQualityAssuranceReportStats($start, $end);
+                $stats = $this->internationalReportsHelper->getQualityAssuranceReportStats($start, $end);
                 break;
         }
 
@@ -51,5 +52,24 @@ class QualityAssuranceController extends AbstractReportsController
             'form' => $form->createView(),
             'typeLabel' => $this->getTypeLabel($type),
         ]));
+    }
+
+    #[\Override]
+    protected function getRedirect(array $data): RedirectResponse
+    {
+        switch($data['type'] ?? null) {
+            case ReportFilterType::TYPE_CSRGT:
+            case ReportFilterType::TYPE_CSRGT_GB:
+            case ReportFilterType::TYPE_CSRGT_NI:
+            case ReportFilterType::TYPE_IRHS:
+                $data['quarter'] ??= 1;
+                return new RedirectResponse($this->generateUrl('admin_reports_qa_full', $data));
+
+            case ReportFilterType::TYPE_RORO:
+                unset($data['quarter']);
+                return new RedirectResponse($this->generateUrl('admin_reports_qa_yearly_full', $data));
+        }
+
+        throw new \RuntimeException('Invalid type');
     }
 }

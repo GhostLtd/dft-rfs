@@ -11,20 +11,22 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class FurthestStopType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.day-summary.furthest-stop";
         $builder
             ->add('furthestStop', Gds\InputType::class, [
                 'label' => "{$translationKeyPrefix}.furthest-stop.label",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => "{$translationKeyPrefix}.furthest-stop.help",
             ])
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => DaySummary::class,

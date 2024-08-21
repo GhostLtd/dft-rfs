@@ -13,10 +13,6 @@ use Twig\Environment;
 
 class MaintenanceLockSubscriber implements EventSubscriberInterface
 {
-    protected Environment $twig;
-    protected RouterInterface $router;
-    protected MaintenanceLockRepository $maintenanceLockRepository;
-
     protected const ROUTE_WHITELIST = [
         'app_home_index',
         'app_home_sitemap',
@@ -26,11 +22,8 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
         'util_remoteaction_postinstall',
     ];
 
-    public function __construct(Environment $twig, RouterInterface $router, MaintenanceLockRepository $maintenanceLockRepository)
+    public function __construct(protected Environment $twig, protected RouterInterface $router, protected MaintenanceLockRepository $maintenanceLockRepository)
     {
-        $this->twig = $twig;
-        $this->router = $router;
-        $this->maintenanceLockRepository = $maintenanceLockRepository;
     }
 
     public function onKernelRequest(RequestEvent $event)
@@ -41,7 +34,7 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
 
         $event->setResponse(new Response(
             $this->twig->render('bundles/TwigBundle/Exception/maintenance.html.twig'),
-            200, // 200, not 503, so that AppEngine doesn't take instances out of service
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK, // 200, not 503, so that AppEngine doesn't take instances out of service
             ['X-Robots-Tag' => 'noindex']
         ));
     }
@@ -72,7 +65,7 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
             return true;
         }
 
-        if (1 === preg_match('/^_profiler/', $routeName)) {
+        if ($routeName !== null && 1 === preg_match('/^_profiler/', $routeName)) {
             return true;
         }
 
@@ -83,6 +76,7 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
         return false;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

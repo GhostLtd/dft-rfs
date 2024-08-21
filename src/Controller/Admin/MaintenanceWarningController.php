@@ -8,23 +8,19 @@ use App\ListPage\MaintenanceWarningListPage;
 use App\Utility\ConfirmAction\DeleteMaintenanceWarningConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/maintenance-warning", name="admin_maintenance_warning_")
- */
+#[Route(path: '/maintenance-warning', name: 'admin_maintenance_warning_')]
 class MaintenanceWarningController extends AbstractController
 {
-    /**
-     * @Route("", name="list")
-     */
+    #[Route(path: '', name: 'list')]
     public function list(MaintenanceWarningListPage $listPage, Request $request): Response
     {
         $listPage
@@ -36,13 +32,11 @@ class MaintenanceWarningController extends AbstractController
 
         return $this->render('admin/maintenance_warning/list.html.twig', [
             'data' => $listPage->getData(),
-            'form' => $listPage->getFiltersForm()->createView(),
+            'form' => $listPage->getFiltersForm(),
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="edit")
-     */
+    #[Route(path: '/{id}/edit', name: 'edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager, Session $session, MaintenanceWarning $maintenanceWarning): Response
     {
         /** @var Form $form */
@@ -67,24 +61,20 @@ class MaintenanceWarningController extends AbstractController
         }
 
         return $this->render('admin/maintenance_warning/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'maintenanceWarning' => $form->getData(),
         ]);
     }
 
-    /**
-     * @Route("/add", name="add")
-     */
+    #[Route(path: '/add', name: 'add')]
     public function add(Request $request, EntityManagerInterface $entityManager, Session $session): Response
     {
         return $this->edit($request, $entityManager, $session, new MaintenanceWarning());
     }
 
-    /**
-     * @Route("{id}/delete", name="delete")
-     * @Template("admin/maintenance_warning/delete.html.twig")
-     */
-    public function delete(Request $request, DeleteMaintenanceWarningConfirmAction $deleteMaintenanceWarningConfirmAction, MaintenanceWarning $maintenanceWarning)
+    #[Route(path: '{id}/delete', name: 'delete')]
+    #[Template('admin/maintenance_warning/delete.html.twig')]
+    public function delete(Request $request, DeleteMaintenanceWarningConfirmAction $deleteMaintenanceWarningConfirmAction, MaintenanceWarning $maintenanceWarning): RedirectResponse|array
     {
         return $deleteMaintenanceWarningConfirmAction
             ->setSubject($maintenanceWarning)

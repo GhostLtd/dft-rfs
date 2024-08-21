@@ -7,17 +7,16 @@ use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
 use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/domestic-survey/day-{dayNumber}", requirements={"dayNumber"="[1-7]"})
- * @Security("is_granted('EDIT', user.getDomesticSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
+#[Route(path: '/domestic-survey/day-{dayNumber}', requirements: ['dayNumber' => '[1-7]'])]
 class DayController extends AbstractController
 {
     use SurveyHelperTrait;
@@ -27,9 +26,7 @@ class DayController extends AbstractController
     public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
     public const VIEW_ROUTE = self::ROUTE_PREFIX . 'view';
 
-    /**
-     * @Route("", name=self::VIEW_ROUTE)
-     */
+    #[Route(path: '', name: self::VIEW_ROUTE)]
     public function view(EntityManagerInterface $entityManager, string $dayNumber): Response
     {
         $survey = $this->getSurvey();
@@ -48,11 +45,15 @@ class DayController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/add", name=self::ADD_ROUTE)
-     */
-    public function add(Request $request, $dayNumber): Response
+    #[Route(path: '/add', name: self::ADD_ROUTE)]
+    public function add(EntityManagerInterface $entityManager, Request $request, $dayNumber): Response
     {
+        $day = $entityManager->getRepository(Day::class)->findOneBy(['number' => $dayNumber, 'response' => $this->getSurvey()->getResponse()]);
+
+        if ($day && (!$day->getStops()->isEmpty() || $day->getSummary() !== null)) {
+            return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
+        }
+
         /** @var Form $form */
         $form = $this->createForm(NumberOfStopsType::class, null, ['day_number' => $dayNumber]);
 
@@ -77,7 +78,7 @@ class DayController extends AbstractController
 
         // show the form/template
         return $this->render('domestic_survey/create-day.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'dayNumber' => $dayNumber,
         ]);
     }

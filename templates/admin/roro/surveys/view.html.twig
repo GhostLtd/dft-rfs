@@ -1,0 +1,176 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "admin.roro.survey" %}
+{% set headingParams = {
+} %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tabsHead -%}
+    {%- set canSendManualReminder = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER'), survey) -%}
+    {%- set canShowManualReminderButton = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MANUAL_REMINDER_BUTTON'), survey) -%}
+
+    {%- set tabs = {
+        'Initial details': 'tab-survey-initial-details',
+        ("Notes (#{survey.chasedCount} / #{ survey.notes | length })"): 'tab-notes',
+        'Audit logs': 'tab-audit-logs'
+    } -%}
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- with {marginBottom: 5} -%}
+            {%- include "admin/roro/surveys/includes/basics.html.twig" -%}
+        {%- endwith -%}
+
+        {%- if canShowManualReminderButton -%}
+            {# TODO #}
+            <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ '#' }}">Send reminder</a>
+        {%- endif -%}
+    </div>
+
+    <div class="govuk-tabs govuk-!-margin-bottom-9" data-module="govuk-tabs">
+        {{ tabsHead(tabs) }}
+
+        <div class="govuk-tabs__panel govuk-tabs__panel govuk-!-padding-bottom-0" id="tab-survey-initial-details">
+            {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
+                {%- set isActiveForPeriod = (survey.isActiveForPeriod is null) ?
+                    '-' :
+                    (survey.isActiveForPeriod ? 'Yes' : 'No')
+                -%}
+
+                {{- summaryListRow({
+                    key: 'Survey is active for period?',
+                    value: isActiveForPeriod
+                }) -}}
+                {{- summaryListRow({
+                    key: 'Data entry method',
+                    value: survey.dataEntryMethod ? ("roro.survey.data-entry.choices.#{survey.dataEntryMethod}" | trans) : '-'
+                }) -}}
+                {{- summaryListRow({
+                    key: 'Respondent comments',
+                    value: survey.comments ?? '-'
+                }) -}}
+            {{- summaryListEnd() -}}
+
+            {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+            <div>
+                <a class="govuk-button" href="{{ path('admin_roro_surveys_edit_is_active', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
+            </div>
+            {%- endif -%}
+        </div>
+
+
+        <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-notes">
+            {%- with {marginBottom: 5, deleteRoute: 'admin_roro_surveys_note_delete', deleteParams: {surveyId: survey.id}} -%}
+                {%- include 'admin/includes/notes.html.twig' -%}
+            {%- endwith -%}
+        </div>
+
+        <div class="govuk-tabs__panel govuk-!-padding-bottom-0 govuk-tabs__panel--hidden" id="tab-audit-logs">
+            {%- with {marginBottom: 5} -%}
+                {%- include 'admin/includes/audit-log.html.twig' -%}
+            {%- endwith -%}
+        </div>
+    </div>
+
+    {% if survey.isActiveForPeriod %}
+        <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Vehicle counts</h2>
+
+        {%- set vehicleCountColumns = survey.countryVehicleCounts | to_lists(2) -%}
+
+        <div class="govuk-grid-row">
+        {% for column in vehicleCountColumns %}
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <thead>
+                        <tr>
+                            <th class="govuk-table__header">Country</th>
+                            <th class="govuk-table__header govuk-!-text-align-right">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for vehicleCount in column %}
+                        <tr>
+                            <td class="govuk-table__cell">{{ vehicleCount.label }}</td>
+                            <td class="govuk-table__cell govuk-!-text-align-right">{{ vehicleCount.vehicleCount == null ? '-' : (vehicleCount.vehicleCount | number_format) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+        </div>
+
+        <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Other counts</h2>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <thead>
+                    <tr>
+                        <th class="govuk-table__header">Category</th>
+                        <th class="govuk-table__header govuk-!-text-align-right">Count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for vehicleCount in survey.otherVehicleCounts %}
+                        <tr>
+                            <td class="govuk-table__cell">{{ vehicleCount.label }}</td>
+                            <td class="govuk-table__cell govuk-!-text-align-right">{{ vehicleCount.vehicleCount == null ? '-' : (vehicleCount.vehicleCount | number_format) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Totals</h2>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half-from-desktop govuk-grid-column-one-third-from-wide">
+                {%- set count_totals = survey.totalVehicleCounts() -%}
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <tbody>
+                    <tr>
+                        <th class="govuk-table__header">Total powered vehicles</th>
+                        <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total_powered'] | number_format }}</td>
+                    </tr>
+                    <tr>
+                        <th class="govuk-table__header">Total vehicles</th>
+                        <td class="govuk-table__cell govuk-!-text-align-right">{{ count_totals['total'] | number_format }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
+        <div class="govuk-!-padding-bottom-5">
+            <a class="govuk-button" href="{{ path('admin_roro_surveys_edit', {surveyId: survey.id}) }}">Edit survey data</a>
+        </div>
+        {%- endif -%}
+    {% endif %}
+
+    {% if workflow_can(survey, 'approve') or workflow_can(survey, 'complete')
+        or workflow_can(survey, 're_open') or workflow_can(survey, 'un_approve')
+    %}
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <div class="govuk-!-margin-bottom-9 govuk-body">
+            <h2 class="govuk-heading-m">Survey actions</h2>
+            {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
+            {{ _self.workflow_link(survey, 'complete', 'Complete') }}
+            {{ _self.workflow_link(survey, 'approve', 'Approve') }}
+            {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+        </div>
+    {% endif %}
+
+{%- endblock -%}
+
+{% macro workflow_link(survey, transitionName, transitionText, options) -%}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
+    {%- with {
+        attr: (options.attr ?? {}) | merge({
+            href: path('admin_roro_survey_transition', {surveyId: survey.id, transition: transitionName}),
+            class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+        })
+    } -%}
+        {%- if workflow_can(survey, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} survey</a>{% endif -%}
+    {%- endwith -%}
+{%- endmacro %}

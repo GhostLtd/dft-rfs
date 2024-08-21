@@ -10,44 +10,21 @@ class MenuItem implements MenuItemInterface
     protected $children;
 
     /**
-     * @var string
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var string
-     */
-    protected $url;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
      * @param string $id
      * @param string $title
      * @param string $url
      * @param MenuItemInterface[] $children
      * @param array $options
      */
-    public function __construct($id, $title, $url, array $children = [], $options = [])
+    public function __construct(protected $id, protected $title, protected $url, array $children = [], protected $options = [])
     {
-        $this->id = $id;
-        $this->title = $title;
-        $this->url = $url;
         $this->children = $children;
-        $this->options = $options;
     }
 
     /**
      * @return MenuItemInterface[]
      */
+    #[\Override]
     public function getChildren()
     {
         return $this->children;
@@ -56,6 +33,7 @@ class MenuItem implements MenuItemInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -64,6 +42,7 @@ class MenuItem implements MenuItemInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getTitle()
     {
         return $this->title;
@@ -72,6 +51,7 @@ class MenuItem implements MenuItemInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getUrl()
     {
         return $this->url;
@@ -80,6 +60,7 @@ class MenuItem implements MenuItemInterface
     /**
      * @return bool
      */
+    #[\Override]
     public function hasChildren()
     {
         return is_array($this->children) && !empty($this->children);
@@ -88,6 +69,7 @@ class MenuItem implements MenuItemInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getOptions()
     {
         return $this->options;

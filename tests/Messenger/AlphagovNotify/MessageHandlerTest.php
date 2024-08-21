@@ -23,13 +23,19 @@ class MessageHandlerTest extends AbstractFunctionalTest
     private EntityManagerInterface $entityManager;
     private PersonalisationHelper $personalisationHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
-        self::bootKernel();
-        $container = self::$kernel->getContainer()->get('test.service_container');
+        parent::setUp();
+        $container = static::getContainer();
+
         $this->bus = $container->get('messenger.bus.default');
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->personalisationHelper = $container->get(PersonalisationHelper::class);
+
+        $this->entityManager->getConnection()->createQueryBuilder()
+            ->delete('messenger_messages')
+            ->executeStatement();
     }
 
     public function testSendLetterAccepted()
@@ -37,14 +43,19 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $survey = $this->getSurvey();
 
         $this->bus->dispatch($this->getInviteLetter($survey, $this->getValidTestAddress()));
+
         $this->runAsyncNotifyMessengerConsumer();
 
         /** @var Survey $survey */
-        $survey = $this->entityManager->find(get_class($survey), $survey->getId());
+        $survey = $this->entityManager->find($survey::class, $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
-        /** @var NotifyApiResponse $response */
+        /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
+
+        if ($response === false) {
+            $this->fail('No notify api responses found');
+        }
 
         self::assertSame(Reference::STATUS_ACCEPTED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
@@ -57,16 +68,20 @@ class MessageHandlerTest extends AbstractFunctionalTest
         $this->runAsyncNotifyMessengerConsumer();
 
         /** @var Survey $survey */
-        $survey = $this->entityManager->find(get_class($survey), $survey->getId());
+        $survey = $this->entityManager->find($survey::class, $survey->getId());
         $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
 
-        /** @var NotifyApiResponse $response */
+        /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
+
+        if ($response === false) {
+            $this->fail('No notify api responses found');
+        }
 
         self::assertSame(Reference::STATUS_FAILED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
-    protected function runAsyncNotifyMessengerConsumer()
+    protected function runAsyncNotifyMessengerConsumer(): void
     {
         $this->runCommand(
             'messenger:consume',
@@ -101,7 +116,7 @@ class MessageHandlerTest extends AbstractFunctionalTest
     {
         return new Letter(
             Reference::EVENT_INVITE,
-            get_class($survey),
+            $survey::class,
             $survey->getId(),
             $address,
             Reference::LETTER_DOMESTIC_SURVEY_INVITE,
@@ -113,12 +128,12 @@ class MessageHandlerTest extends AbstractFunctionalTest
     {
         $this->loadFixtures([MessageHandlerSurveyFixtures::class]);
         /** @var Survey $survey */
-        $survey = $this->getFixtureByReference('survey:notify-message-handler');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:notify-message-handler', Survey::class);
         $survey->getPasscodeUser()->setPlainPassword('test');
         return $survey;
     }
 
-    protected function runCommand($command, $options)
+    protected function runCommand($command, $options): void
     {
         $application = new Application(static::$kernel);
         $application->setAutoExit(false);

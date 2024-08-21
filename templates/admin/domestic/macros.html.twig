@@ -11,54 +11,46 @@
 {%- endmacro -%}
 
 {%- macro daySummaryTableHeading(isNorthernIreland, options={}) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRowComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCaption, tableHead -%}
 
-    <thead class="govuk-table__head">
     {%- if options.captionContent is defined -%}
-        {{- options.captionContent|raw -}}
+        {{- tableCaption({caption: options.captionContent}) -}}
     {%- endif -%}
 
-    {%- set headings = {
-        'Origin': {},
-        'Destination': {},
-    } | merge(isNorthernIreland ? {'Border': {}} : {}) | merge({
-        'Furthest point': {},
-        "Distance (l/u)": {numeric: true},
-        'Goods': {},
-        'Hazardous?': {},
-        'Cargo type': {},
-        "Weight (l/u)": {numeric: true},
-        "Stops (l/u/b)": {numeric: true},
-        ('common.actions.table-heading' | trans): {html: true}
-    }) -%}
-
-    {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
-    </thead>
+    {{- tableHead([
+        'Origin',
+        'Destination',
+        isNorthernIreland ? 'Border' : null,
+        'Furthest point',
+        {text: 'Distance (l/u)', classes: 'govuk-table__cell--numeric'},
+        'Goods',
+        'Hazardous?',
+        'Cargo type',
+        {text: "Weight (l/u)", classes: 'govuk-table__cell--numeric'},
+        {text: "Stops (l/u/b)", classes: 'govuk-table__cell--numeric'},
+        {html: 'common.actions.table-heading' | trans},
+    ]) -}}
 {%- endmacro -%}
 
 {%- macro dayStopTableHeading(isNorthernIreland, options={}) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRowComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCaption -%}
 
-    <thead class="govuk-table__head">
-        {%- if options.captionContent is defined -%}
-            {{- options.captionContent|raw -}}
-        {%- endif -%}
+    {%- if options.captionContent is defined -%}
+        {{- tableCaption({caption: options.captionContent}) }}
+    {%- endif -%}
 
-        {%- set headings = {
-            'Origin': {},
-            'Destination': {},
-        } | merge(isNorthernIreland ? {'Border': {}} : {}) | merge({
-            "Distance": {numeric: true},
-            'Goods': {},
-            'Hazardous?': {},
-            'Cargo type': {},
-            "Weight": {numeric: true},
-            "Capacity": {},
-            ('common.actions.table-heading' | trans): {html: true}
-        }) -%}
-
-        {{- tableRowComplex(headings, {commonCellOptions: {element: 'th', translate: true}}) -}}
-    </thead>
+    {{- tableHead([
+        'Origin',
+        'Destination',
+        isNorthernIreland ? 'Border' : null,
+        {text: 'Distance', classes: 'govuk-table__cell--numeric'},
+        'Goods',
+        'Hazardous?',
+        'Cargo type',
+        {text: 'Weight', classes: 'govuk-table__cell--numeric'},
+        'Capacity',
+        {html: 'common.actions.table-heading' | trans},
+    ]) -}}
 {%- endmacro -%}
 
 {%- macro dayJourneyTableCaption(dayNumber, survey, day) -%}
@@ -66,11 +58,10 @@
     {%- if not dayNumber -%}
         {%- set dayNumber = day.number -%}
     {%- endif -%}
-    <caption class="govuk-table__caption">
-        <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
-        {%- if day|default(false) %}
-            <div class="journeys-table__subcaption">{{ dayText(day) }}</div>{% endif -%}
-    </caption>
+    <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
+    {%- if day|default(false) %}
+        <div class="journeys-table__subcaption">{{ dayText(day) }}</div>
+    {%- endif -%}
 {%- endmacro -%}
 
 {%- macro locationAndStatus(location, loaded, showLoaded, port, isOrigin) -%}

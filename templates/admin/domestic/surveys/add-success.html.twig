@@ -1,37 +1,63 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
 {%- set bodyClasses = 'page__admin-survey-add-success' -%}
-{% set translation_prefix = translation_prefix|default("admin.domestic.survey-add-success") %}
+{%- set translation_prefix = translation_prefix|default("admin.domestic.survey-add-success") -%}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.registration-mark', survey.registrationMark|formatRegMark) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.type', 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-start', survey.surveyPeriodStart | date('format.date.default' | trans)) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.period-end', survey.surveyPeriodEnd | date('format.date.default' | trans)) }}
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.registration-mark' | trans,
+            value: survey.registrationMark|formatRegMark
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.type' | trans,
+            value: 'CSRGT ' ~ (survey.isNorthernIreland ? '(NI)' : '(GB)')
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.period-start' | trans,
+            value: survey.surveyPeriodStart | date('format.date.default' | trans)
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.period-end' | trans,
+            value: survey.surveyPeriodEnd | date('format.date.default' | trans)
+        }) -}}
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">{{ 'admin.domestic.survey-created.invitation-email' | trans | nl2br }}</dt>
-            <dd class="govuk-summary-list__value">
-                {%- if survey.invitationEmails -%}
-{%- set bodyText -%}
-Access code 1: {{ survey.passcodeUser.username }}
-Access code 2: {{ password }}
-{%- endset -%}
-                    {%- set mailLink = "mailto:#{survey.invitationEmails}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
-                    <a href="{{ mailLink }}">{{ survey.invitationEmails }}</a>
-                {%- else -%}-
-                {%- endif %}
-            </dd>
-        </div>
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.invitation-address', survey.invitationAddress.isFilled ?
-            (survey.invitationAddress | formatAddress(true)) :
-            '-', null) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
-    </dl>
+        {%- set invitationEmailValue -%}
+            {%- if survey.invitationEmails -%}
+                {%- set bodyText -%}
+                    First code: {{ username }}
+                    Second code: {{ password }}
+                {%- endset -%}
+                {%- set mailLink = "mailto:#{survey.invitationEmails}?subject=DfT Domestic Road Haulage Survey - Test access codes&body=" ~ (bodyText | trim | url_encode) -%}
+                <a href="{{ mailLink }}">{{ survey.invitationEmails }}</a>
+            {%- else -%}
+                {{ '-' }}
+            {%- endif -%}
+        {%- endset -%}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.invitation-email' | trans,
+            value: {html: invitationEmailValue}
+        }) -}}
+
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.invitation-address' | trans,
+            value: survey.invitationAddress.isFilled ?
+                (survey.invitationAddress | formatAddress(true)) :
+                '-'
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.access-code-1' | trans,
+            value: username,
+            classes: 'access-code'
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.access-code-2' | trans,
+            value: password,
+            classes: 'access-code'
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <a class="govuk-button" href="{{ path('admin_domestic_survey_view', {surveyId: survey.id}) }}">View survey</a>
 {% endblock %}

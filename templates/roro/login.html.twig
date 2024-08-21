@@ -1,0 +1,49 @@
+{% extends 'roro/base.html.twig' %}
+
+{% block pageTitle %}RoRo Sign in - {{ parent() }}{% endblock %}
+{% block metaDescription %}Sign in here to complete your roro survey. You will need the credentials you were sent.{% endblock %}
+
+{%- block beforeContent -%}
+{%- endblock -%}
+
+{%- block content -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner -%}
+    {%- from 'roro/macros.html.twig' import contactDetails -%}
+
+    {%- if maintenanceWarningBanner ?? false -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
+    {%- if authenticationError -%}
+        {{- errorSummary({
+            errorList: [
+                {text: authenticationError.message, href: '#ro_ro_login_username'}
+            ]
+        }) -}}
+    {% endif -%}
+
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">RoRo Sign in</h1>
+    <p class="govuk-body govuk-!-margin-bottom-8">Use this service to complete your Roll-on/Roll-off (RoRo) operator surveys.</p>
+
+    {{ form(form) }}
+
+
+<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <h2 class="govuk-heading-s">Contact us</h2>
+        <div class="govuk-inset-text">
+            {%- set email = 'roro.contact.email' | trans -%}
+            {%- set phone = 'roro.contact.phone' | trans -%}
+
+            <p class="govuk-body">Email <a href="mailto:{{ email }}" class="govuk-link">{{ email }}</a></p>
+            <p class="govuk-body">
+                Public enquiries<br>
+                <strong>{{ phone }}</strong>
+            </p>
+        </div>
+
+    </div>
+</div>
+{%- endblock -%}

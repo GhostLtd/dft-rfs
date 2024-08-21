@@ -4,14 +4,16 @@ namespace App\Form\DomesticSurvey\ClosingDetails;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Volume;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\DecimalType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VehicleFuelType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.survey-response.vehicle-fuel";
         $builder
@@ -19,10 +21,12 @@ class VehicleFuelType extends AbstractType
                 'label' => "{$translationKeyPrefix}.fuel-quantity.label",
                 'help' => "{$translationKeyPrefix}.fuel-quantity.help",
                 'property_path' => 'vehicle.fuelQuantity',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
+                'value_form_type' => DecimalType::class,
                 'value_options' => [
                     'label' => 'Quantity',
-                    'is_decimal' => true,
+                    'precision' => 8,
+                    'scale' => 2,
                     'attr' => ['class' => 'govuk-input--width-5']
                 ],
                 'unit_options' => [
@@ -33,7 +37,8 @@ class VehicleFuelType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

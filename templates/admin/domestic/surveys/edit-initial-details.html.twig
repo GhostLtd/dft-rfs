@@ -1,7 +1,15 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
-{% set translation_prefix = "admin.domestic.edit-initial-details" %}
+{%- set translation_prefix = "admin.domestic.edit-initial-details" -%}
 
 {%- block adminContent -%}
     {{ form(form) }}
 {%- endblock -%}
+
+{% form_theme form _self %}
+
+{% block _initial_details_isInPossessionOfVehicle_widget %}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import warningText -%}
+    {{- warningText({text: "Changing the in-possession state has the potential to clear all journeys! (e.g. if not in possession, or exempt)"}) -}}
+    {{- form_widget(form) -}}
+{% endblock %}

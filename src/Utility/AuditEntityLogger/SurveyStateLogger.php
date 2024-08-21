@@ -2,12 +2,13 @@
 
 namespace App\Utility\AuditEntityLogger;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 
 class SurveyStateLogger extends AbstractAuditEntityLogger
 {
-    const CATEGORY = 'survey-state';
+    public const CATEGORY = 'survey-state';
 
+    #[\Override]
     public function getAuditLogEntries(array $changeSets, string $username): array
     {
         $logs = [];
@@ -27,11 +28,13 @@ class SurveyStateLogger extends AbstractAuditEntityLogger
         return $logs;
     }
 
+    #[\Override]
     public function supports(string $className): bool
     {
-        return $this->implementsInterface($className, SurveyInterface::class);
+        return $this->implementsInterface($className, SurveyStateInterface::class);
     }
 
+    #[\Override]
     function getCategory(): string
     {
         return self::CATEGORY;

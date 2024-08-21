@@ -4,17 +4,17 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Vehicle as VehicleBase;
-use App\Tests\DataFixtures\Domestic\BusinessFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class VehicleFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var Vehicle $vehicle */
-        $vehicle = $this->getReference('vehicle:simple');
+        $vehicle = $this->getReference('vehicle:simple', Vehicle::class);
 
         $vehicle
             ->setAxleConfiguration(232)
@@ -24,12 +24,11 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
             ->setCarryingCapacity(26000)
             ->setOperationType(VehicleBase::OPERATION_TYPE_ON_OWN_ACCOUNT);
 
-        $manager->persist($vehicle);
-
         $manager->flush();
     }
 
-    public function getDependencies()
+    #[\Override]
+    public function getDependencies(): array
     {
         return [BusinessFixtures::class];
     }

@@ -2,50 +2,42 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 trait SurveyResponseTrait
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"business_details", "admin_business_details"}, message="common.survey-response.business-nature.not-blank")
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"business_details", "admin_business_details"})
-     */
-    private $businessNature;
+    #[Assert\NotBlank(message: 'common.survey-response.business-nature.not-blank', groups: ['business_details', 'admin_business_details'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['business_details', 'admin_business_details'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $businessNature = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="common.survey-response.name.not-blank", groups={"contact_details", "admin_correspondence"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
-     */
-    private $contactName;
+    #[Assert\NotBlank(message: 'common.survey-response.name.not-blank', groups: ['contact_details', 'admin_correspondence'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['contact_details', 'admin_correspondence'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $contactName = null;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     * @Assert\Length(max=50, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
-     */
-    private $contactTelephone;
+    #[Assert\Length(max: 50, maxMessage: 'common.string.max-length', groups: ['contact_details', 'admin_correspondence'])]
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $contactTelephone = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Email(message="common.email.invalid", groups={"contact_details", "admin_correspondence"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"contact_details", "admin_correspondence"})
-     */
-    private $contactEmail;
+    #[Assert\Email(message: 'common.email.invalid', groups: ['contact_details', 'admin_correspondence'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['contact_details', 'admin_correspondence'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $contactEmail = null;
 
-    /**
-     * @Assert\Callback(groups={"contact_details", "admin_correspondence"})
-     */
-    public function validInvitationDetails(ExecutionContextInterface $context) {
+    #[Assert\Callback(groups: ['contact_details', 'admin_correspondence'])]
+    public function validInvitationDetails(ExecutionContextInterface $context): void
+    {
         if (!$this->contactTelephone && !$this->contactEmail) {
             $context
                 ->buildViolation('domestic.survey-response.initial-details.contact-email-or-telephone-required')
@@ -58,13 +50,10 @@ trait SurveyResponseTrait
         }
     }
 
-
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotNull(message="domestic.survey-response.number-of-employees.choice", groups={"business_details", "admin_business_details"})
-     * @Assert\Length(max=20, maxMessage="common.string.max-length", groups={"business_details", "admin_business_details"})
-     */
-    private $numberOfEmployees;
+    #[Assert\NotNull(message: 'domestic.survey-response.number-of-employees.choice', groups: ['business_details', 'admin_business_details'])]
+    #[Assert\Length(max: 20, maxMessage: 'common.string.max-length', groups: ['business_details', 'admin_business_details'])]
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    private ?string $numberOfEmployees = null;
 
     public function getId(): ?string
     {
@@ -79,10 +68,8 @@ trait SurveyResponseTrait
     public function setBusinessNature(?string $businessNature): self
     {
         $this->businessNature = $businessNature;
-
         return $this;
     }
-
 
     public function getContactName(): ?string
     {
@@ -92,7 +79,6 @@ trait SurveyResponseTrait
     public function setContactName(?string $contactName): self
     {
         $this->contactName = $contactName;
-
         return $this;
     }
 
@@ -104,7 +90,6 @@ trait SurveyResponseTrait
     public function setContactTelephone(?string $contactTelephone): self
     {
         $this->contactTelephone = $contactTelephone;
-
         return $this;
     }
 
@@ -116,7 +101,6 @@ trait SurveyResponseTrait
     public function setContactEmail(?string $contactEmail): self
     {
         $this->contactEmail = $contactEmail;
-
         return $this;
     }
 
@@ -128,7 +112,6 @@ trait SurveyResponseTrait
     public function setNumberOfEmployees(?string $numberOfEmployees): self
     {
         $this->numberOfEmployees = $numberOfEmployees;
-
         return $this;
     }
 }

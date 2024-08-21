@@ -4,6 +4,7 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
+use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\UserFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -11,10 +12,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SurveyFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var PasscodeUser $user */
-        $user = $this->getReference('user:frontend');
+        $user = $this->getReference('user:frontend', PasscodeUser::class);
 
         $survey = (new Survey())
             ->setSurveyPeriodStart(new \DateTime('2021-05-01'))
@@ -22,16 +24,17 @@ class SurveyFixtures extends Fixture implements DependentFixtureInterface
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
             ->setPasscodeUser($user)
-            ->setState(Survey::STATE_NEW);
+            ->setState(SurveyStateInterface::STATE_NEW);
 
         $manager->persist($user);
 
-        $this->setReference('survey:simple', $survey);
+        $this->addReference('survey:simple', $survey);
 
         $manager->flush();
     }
 
-    public function getDependencies()
+    #[\Override]
+    public function getDependencies(): array
     {
         return [UserFixtures::class];
     }

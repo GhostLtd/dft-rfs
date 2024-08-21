@@ -1,42 +1,23 @@
 <?php
 
-
 namespace App\EventSubscriber;
 
-
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 class FormValidationLoggerSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Security
-     */
-    private $security;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    public function __construct(Security $security, RequestStack $requestStack, LoggerInterface $formValidationLogger)
+    public function __construct(protected Security $security, protected RequestStack $requestStack, protected LoggerInterface $logger)
     {
-        $this->security = $security;
-        $this->logger = $formValidationLogger;
-        $this->requestStack = $requestStack;
     }
 
-    public static function getSubscribedEvents()
+    #[\Override]
+    public static function getSubscribedEvents(): array
     {
         // Validation occurs at the default priority, so if we hook in to a lower priority, errors should be available
         return [
@@ -46,7 +27,7 @@ class FormValidationLoggerSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onPostSubmit(FormEvent $event)
+    public function onPostSubmit(FormEvent $event): void
     {
         $form = $event->getForm();
 
@@ -56,11 +37,11 @@ class FormValidationLoggerSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function logErrors(FormInterface $form)
+    public function logErrors(FormInterface $form): void
     {
         if ($form->getErrors(true)->count() > 0) {
             $logData = [
-                'user' => $this->security->getUser() ? $this->security->getUser()->getUsername() : null,
+                'user' => $this->security->getUser() ? $this->security->getUser()->getUserIdentifier() : null,
                 'form' => $form->getName(),
                 'path' => $this->requestStack->getCurrentRequest()->getPathInfo(),
                 'errors' => [],

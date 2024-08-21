@@ -8,20 +8,26 @@
 {% endmacro %}
 
 {% macro displayNote(note, deleteRoute, deleteParams, options) %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks -%}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            {{- note.createdBy | removeEmailNamespacePrefix -}}
-            <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date-time.default' | trans) -}}</div>
-        </dt>
-        <dd class="govuk-summary-list__value">{{ note.note | nl2br }}</dd>
-        {% if not (options.hideActions | default(false)) and is_granted(constant('\\App\\Security\\Voter\\AdminSurveyVoter::EDIT_NOTES'), note.survey ?? note.preEnquiry) %}
-            <dd class="govuk-summary-list__actions">
-                {{ actionLinks({
-                    (path(deleteRoute, deleteParams|default([])|merge({note: note.id}))): 'delete'
-                }) }}
-                {# 'app_admin_domestic_surveyview_deletenote' #}
-            </dd>
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow -%}
+
+    {%- set keyContent -%}
+        {{- note.createdBy | removeEmailNamespacePrefix -}}
+        <div class="govuk-summary-list-notes__timestamp">{{- note.createdAt | date('format.date-time.default' | trans) -}}</div>
+        {% if note.wasChased %}
+            <div><strong class="govuk-tag govuk-tag--blue">Contacted haulier</strong></div>
         {% endif %}
-    </div>
+    {%- endset -%}
+
+    {{- summaryListRow({
+        key: {html: keyContent},
+        value: {html: note.note | nl2br},
+        actions: (options.hideActions ?? false) ?
+            [] :
+            [
+                {
+                    href: path(deleteRoute, deleteParams | default([]) | merge({note: note.id})),
+                    text: 'delete',
+                }
+            ]
+    }) -}}
 {% endmacro %}

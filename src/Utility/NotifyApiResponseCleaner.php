@@ -7,7 +7,7 @@ use App\Messenger\AlphagovNotify\Letter;
 
 class NotifyApiResponseCleaner
 {
-    public static function cleanSurveyNotifyApiResponses(ApiResponseInterface $survey)
+    public static function cleanSurveyNotifyApiResponses(ApiResponseInterface $survey): void
     {
         $responses = $survey->getNotifyApiResponses();
 

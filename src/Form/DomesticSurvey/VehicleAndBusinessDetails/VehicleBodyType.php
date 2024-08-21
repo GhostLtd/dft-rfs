@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\VehicleAndBusinessDetails;
 
 use App\Entity\Domestic\SurveyResponse;
@@ -9,7 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VehicleBodyType extends AbstractVehicleBodyType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([

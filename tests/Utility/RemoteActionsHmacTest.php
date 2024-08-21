@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RemoteActionsHmacTest extends AbstractFunctionalTest
 {
-    const HMAC_ACTION = 'test-function';
+    public const HMAC_ACTION = 'test-function';
 
     public function getAccessDeniedData(): array
     {
@@ -31,7 +31,7 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
         try {
             RemoteActions::denyAccessUnlessHmacPasses($hmac, $testTimestamp, self::HMAC_ACTION);
         } catch (\Throwable $e) {
-            self::assertSame(AccessDeniedHttpException::class, get_class($e));
+            self::assertSame(AccessDeniedHttpException::class, $e::class);
             return;
         }
 

@@ -13,56 +13,71 @@
 {%- endblock %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow as row -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
     {%- set isInPossession = (survey.response.isInPossessionOfVehicle ?? false) == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_YES') -%}
+    {%- set isExemptVehicleType = survey.response.isExemptVehicleType ?? false -%}
 
     <h1 class="govuk-heading-xl">Survey details</h1>
     <hr class="govuk-section-break govuk-section-break--xl">
-    <dl class="govuk-summary-list">
-        {{- row('common.vehicle.registration-mark', survey.registrationMark | formatRegMark) -}}
-        {{- row('Survey period start', survey.surveyPeriodStart | date ('format.date.default' | trans)) -}}
+    {{- summaryListStart() -}}
+        {{- summaryListRow({
+            key: 'common.vehicle.registration-mark' | trans,
+            value: survey.registrationMark | formatRegMark
+        }) -}}
+        {{- summaryListRow({
+            key: 'Survey period start',
+            value: survey.surveyPeriodStart | date ('format.date.default' | trans)
+        }) -}}
 
         {% if survey.response %}
-            {{- row(
-                'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label',
-                (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans
-            ) -}}
+            {{- summaryListRow({
+                key: 'domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label' | trans,
+                value: (constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX') ~ survey.response.isInPossessionOfVehicle) | trans,
+            }) -}}
         {% endif %}
 
         {# Contact details have been left out intentionally, for data protection purposes #}
 
-        {%- if not isInPossession -%}
-            {%- if survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') -%}
-                {{- row(
-                    'domestic.survey-response.scrapped-details.date.label',
-                    survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans)
-                ) }}
-            {%- elseif survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') -%}
-                {{- row(
-                    'domestic.survey-response.sold-details.date.label',
-                    survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans)
-                ) }}
+        {%- if not isInPossession or isExemptVehicleType -%}
+            {%- if isExemptVehicleType %}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.is-exempt-vehicle-type.label' | trans,
+                    value: 'domestic.survey-response.is-exempt-vehicle-type.option.yes' | trans,
+                }) -}}
+            {%- elseif survey.response and survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN') -%}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.scrapped-details.date.label' | trans,
+                    value: survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans),
+                }) -}}
+            {%- elseif survey.response and survey.response.isInPossessionOfVehicle == constant('App\\Entity\\Domestic\\SurveyResponse::IN_POSSESSION_SOLD') -%}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.sold-details.date.label' | trans,
+                    value: survey.response.unableToCompleteDate | date('format.date.written-with-year' | trans),
+                }) -}}
             {%- endif -%}
         {%- endif -%}
-    </dl>
+    {{- summaryListEnd() -}}
 
-    {%- if isInPossession -%}
+    {%- if isInPossession and not isExemptVehicleType -%}
         <h1 class="govuk-heading-xl">Business details</h1>
         <hr class="govuk-section-break govuk-section-break--xl">
         {%- if not survey.isBusinessAndVehicleDetailsComplete -%}
             <p class="govuk-body">Not completed</p>
         {%- else -%}
-            <dl class="govuk-summary-list">
-                {{- row(
-                    'domestic.survey-response.business-details.number-of-employees.label',
-                    "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans) -}}
-                {{- row(
-                    'domestic.survey-response.business-details.business-nature.label',
-                    survey.response.businessNature) -}}
-                {{- row(
-                    'domestic.survey-response.business-details.operation-type.label',
-                    (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans) -}}
-            </dl>
+            {{- summaryListStart() -}}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.business-details.number-of-employees.label' | trans,
+                    value: "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans,
+                }) -}}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.business-details.business-nature.label' | trans,
+                    value: survey.response.businessNature,
+                }) -}}
+                {{- summaryListRow({
+                    key: 'domestic.survey-response.business-details.operation-type.label' | trans,
+                    value: (constant('App\\Entity\\Vehicle::OPERATION_TYPE_TRANSLATION_PREFIX') ~ survey.response.vehicle.operationType) | trans,
+                }) -}}
+            {{- summaryListEnd() -}}
         {%- endif -%}
 
         <h1 class="govuk-heading-xl">Vehicle details</h1>
@@ -92,7 +107,7 @@
                     {%- endif -%}
                 {%- endif -%}
             </span>
-            <h2 class="govuk-heading-xl">{{ date|date('format.date.written-with-year' | trans) }}</h2>
+            <h2 class="govuk-heading-xl">{{ date | date('format.date.written-with-year' | trans) }}</h2>
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         </div>
         <div class="domestic-day">
@@ -117,7 +132,7 @@
 
 {%- macro detailedDay(day) -%}
     {%- for stop in day.stops -%}
-        <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
+        <h2 class="govuk-heading-m">{{ 'domestic.day-view.stage' | trans({stage: stop.number}) }}</h2>
 
         <div class="domestic-day-stop">
             {%- with {showActions: false} -%}

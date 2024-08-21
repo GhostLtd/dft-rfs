@@ -6,26 +6,29 @@ namespace App\Utility\PreEnquiry;
 
 use App\Entity\LongAddress;
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\SurveyInterface;
 use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormInterface;
 
 class SampleImporter extends AbstractBulkSurveyImporter
 {
-    const COL_FIRM_REF = 0;
-    const COL_DISPATCH_DATE = 1;
-    const COL_FIRM_NAME = 2;
-    const COL_ADDRESS_1 = 3;
-    const COL_ADDRESS_2 = 4;
-    const COL_ADDRESS_3 = 5;
-    const COL_ADDRESS_4 = 6;
-    const COL_ADDRESS_5 = 7;
-    const COL_POSTCODE = 8;
+    public const COL_FIRM_REF = 0;
+    public const COL_DISPATCH_DATE = 1;
+    public const COL_FIRM_NAME = 2;
+    public const COL_ADDRESS_1 = 3;
+    public const COL_ADDRESS_2 = 4;
+    public const COL_ADDRESS_3 = 5;
+    public const COL_ADDRESS_4 = 6;
+    public const COL_ADDRESS_5 = 7;
+    public const COL_POSTCODE = 8;
 
+    #[\Override]
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form): array
     {
         return [];
     }
 
+    #[\Override]
     protected function parseLine($line): ?array
     {
         if ($fields = str_getcsv($line))
@@ -38,7 +41,8 @@ class SampleImporter extends AbstractBulkSurveyImporter
         return null;
     }
 
-    public function createSurvey($surveyData, $surveyOptions = null)
+    #[\Override]
+    public function createSurvey($surveyData, $surveyOptions = null): ?SurveyInterface
     {
         try {
             return (new PreEnquiry())
@@ -47,8 +51,8 @@ class SampleImporter extends AbstractBulkSurveyImporter
                 ->setDispatchDate(new \DateTime($surveyData[self::COL_DISPATCH_DATE]))
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
-        } catch (\Throwable $e) {
-            return false;
+        } catch (\Throwable) {
+            return null;
         }
     }
 
@@ -64,5 +68,4 @@ class SampleImporter extends AbstractBulkSurveyImporter
             ->setPostcode($surveyData[self::COL_POSTCODE])
             ;
     }
-
 }

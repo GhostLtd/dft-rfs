@@ -5,43 +5,30 @@ namespace App\Entity\AuditLog;
 use App\Entity\IdTrait;
 use App\Repository\AuditLog\AuditLogRepository;
 use DateTime;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AuditLogRepository::class)
- */
+#[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLog
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=16)
-     */
-    private ?string $category;
+    #[ORM\Column(type: Types::STRING, length: 32)]
+    private ?string $category = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $username;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $username = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $entityId;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $entityId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $entityClass;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $entityClass = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private ?DateTime $timestamp;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTime $timestamp = null;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
     public function getUsername(): ?string

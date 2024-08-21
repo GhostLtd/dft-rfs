@@ -14,15 +14,15 @@ use InvalidArgumentException;
 
 class PreEnquiryState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_INTRODUCTION = 'introduction';
-    const STATE_COMPANY_NAME = 'company-name';
-    const STATE_CORRESPONDENCE_DETAILS = 'correspondence-details';
-    const STATE_CORRESPONDENCE_ADDRESS = 'correspondence-address';
-    const STATE_VEHICLE_QUESTIONS = 'vehicle-questions';
-    const STATE_BUSINESS_DETAILS = 'business-details';
-    const STATE_SUMMARY = 'summary';
+    public const STATE_INTRODUCTION = 'introduction';
+    public const STATE_COMPANY_NAME = 'company-name';
+    public const STATE_CORRESPONDENCE_DETAILS = 'correspondence-details';
+    public const STATE_CORRESPONDENCE_ADDRESS = 'correspondence-address';
+    public const STATE_VEHICLE_QUESTIONS = 'vehicle-questions';
+    public const STATE_BUSINESS_DETAILS = 'business-details';
+    public const STATE_SUMMARY = 'summary';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_COMPANY_NAME => CompanyNameType::class,
         self::STATE_CORRESPONDENCE_DETAILS => CorrespondenceDetailsType::class,
         self::STATE_CORRESPONDENCE_ADDRESS => CorrespondenceAddressType::class,
@@ -30,7 +30,7 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_INTRODUCTION => 'pre_enquiry/introduction.html.twig',
         self::STATE_COMPANY_NAME => 'pre_enquiry/form-company-name.html.twig',
         self::STATE_CORRESPONDENCE_DETAILS => 'pre_enquiry/form-correspondence-details.html.twig',
@@ -42,35 +42,41 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
     /** @var PreEnquiryResponse */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (get_class($subject) !== PreEnquiryResponse::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . PreEnquiryResponse::class);
+        if ($subject::class !== PreEnquiryResponse::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . PreEnquiryResponse::class);
         }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         $response = ($this->subject && $this->subject instanceof PreEnquiryResponse) ? $this->subject : null;

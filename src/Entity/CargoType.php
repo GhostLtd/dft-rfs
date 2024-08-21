@@ -6,20 +6,20 @@ namespace App\Entity;
 
 class CargoType
 {
-    const CODE_LB_LIQUID_BULK = "LB";
-    const CODE_SB_SOLID_BULK = "SB";
-    const CODE_LFC_LARGE_FREIGHT_CONTAINERS = "LFC";
-    const CODE_OFC_OTHER_FREIGHT_CONTAINERS = "OFC";
-    const CODE_PL_PALLETISED_GOODS = "PL";
-    const CODE_PS_PRE_SLUNG_GOODS = "PS";
-    const CODE_NP_NO_PACKAGING = "NP";
-    const CODE_RC_ROLL_CAGES = "RC";
-    const CODE_OT_OTHER_CARGO_TYPES = "OT";
-    const CODE_NS_EMPTY = "NS";
+    public const CODE_LB_LIQUID_BULK = "LB";
+    public const CODE_SB_SOLID_BULK = "SB";
+    public const CODE_LFC_LARGE_FREIGHT_CONTAINERS = "LFC";
+    public const CODE_OFC_OTHER_FREIGHT_CONTAINERS = "OFC";
+    public const CODE_PL_PALLETISED_GOODS = "PL";
+    public const CODE_PS_PRE_SLUNG_GOODS = "PS";
+    public const CODE_NP_NO_PACKAGING = "NP";
+    public const CODE_RC_ROLL_CAGES = "RC";
+    public const CODE_OT_OTHER_CARGO_TYPES = "OT";
+    public const CODE_NS_EMPTY = "NS";
 
-    const TRANSLATION_PREFIX = "goods.cargo-type.options.";
+    public const TRANSLATION_PREFIX = "goods.cargo-type.options.";
 
-    const CHOICES = [
+    public const CHOICES = [
         self::TRANSLATION_PREFIX . self::CODE_LFC_LARGE_FREIGHT_CONTAINERS => self::CODE_LFC_LARGE_FREIGHT_CONTAINERS,
         self::TRANSLATION_PREFIX . self::CODE_LB_LIQUID_BULK => self::CODE_LB_LIQUID_BULK,
         self::TRANSLATION_PREFIX . self::CODE_NP_NO_PACKAGING => self::CODE_NP_NO_PACKAGING,

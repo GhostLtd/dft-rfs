@@ -3,24 +3,26 @@
 namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Tests\DataFixtures\Domestic\SurveyFixtures;
+use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class SurveyClosedFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var Survey $survey */
-        $survey = $this->getReference('survey:simple');
+        $survey = $this->getReference('survey:simple', Survey::class);
 
-        $survey->setState(Survey::STATE_CLOSED);
+        $survey->setState(SurveyStateInterface::STATE_CLOSED);
 
         $manager->flush();
     }
 
-    public function getDependencies()
+    #[\Override]
+    public function getDependencies(): array
     {
         return [SurveyFixtures::class];
     }

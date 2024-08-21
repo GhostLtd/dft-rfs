@@ -1,0 +1,36 @@
+front_end:
+    # The glob (`**/*`) is needed for the `exclude` directive to work
+    resource: '../../src/Controller/**/*'
+    exclude:
+        - '../../src/Controller/Cron/'
+        - '../../src/Controller/Admin/'
+        - '../../src/Controller/Workflow/'
+    type: attribute
+    host: '%frontend_hostname%'
+
+admin:
+    resource: '../../src/Controller/Admin/**/*'
+    exclude:
+        - '../../src/Controller/Admin/Reports/'
+    type: attribute
+    host: '%admin_hostname%'
+    stateless: false
+
+admin_reports:
+    resource: ../../src/Controller/Admin/Reports/
+    type: attribute
+    host: '%admin_hostname%'
+    name_prefix: 'admin_reports_'
+    prefix: /reports
+    stateless: false
+
+cron:
+    resource: ../../src/Controller/Cron/
+    type: attribute
+    prefix: /cron
+    name_prefix: 'cron_'
+    condition: "(request.headers.get('X-Appengine-Cron') === 'true') or (request.headers.get('X-Cloudscheduler') === 'true')"
+
+kernel:
+    resource: ../../src/Kernel.php
+    type: attribute

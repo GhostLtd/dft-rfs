@@ -2,27 +2,23 @@
 
 namespace App\Controller;
 
-use App\Entity\Feedback;
 use App\Entity\PasscodeUser;
 use App\Form\FeedbackType;
 use App\Security\Voter\SurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/survey-feedback", name="survey_feedback_")
- */
+#[Route(path: '/survey-feedback', name: 'survey_feedback_')]
 class FeedbackController extends AbstractController
 {
-    /**
-     * @Route("", name="form")
-     * @Template("feedback/form.html.twig")
-     */
-    public function feedback(Request $request, EntityManagerInterface $entityManager)
+    #[Route(path: '', name: 'form')]
+    #[Template('feedback/form.html.twig')]
+    public function feedback(Request $request, EntityManagerInterface $entityManager): array|RedirectResponse
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();
@@ -35,21 +31,27 @@ class FeedbackController extends AbstractController
 
         $form = $this->createForm(FeedbackType::class);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $survey->setFeedback($form->getData());
-            $entityManager->flush();
-            return $this->redirectToRoute("survey_feedback_thanks");
+        if ($form->isSubmitted()) {
+            $cancelButton = $form->get('cancel');
+            if ($cancelButton instanceof SubmitButton && $cancelButton->isClicked()) {
+                // Bounce to the index and that'll forward us to the appropriate page, no matter the survey type
+                return $this->redirectToRoute("app_home_index");
+            }
+
+            if ($form->isValid()) {
+                $survey->setFeedback($form->getData());
+                $entityManager->flush();
+                return $this->redirectToRoute("survey_feedback_thanks");
+            }
         }
         return [
             'form' => $form->createView(),
         ];
     }
 
-    /**
-     * @Route("/thanks", name="thanks")
-     * @Template("feedback/thanks.html.twig")
-     */
-    public function thanks()
+    #[Route(path: '/thanks', name: 'thanks')]
+    #[Template('feedback/thanks.html.twig')]
+    public function thanks(): void
     {
         /** @var PasscodeUser $user */
         $user = $this->getUser();

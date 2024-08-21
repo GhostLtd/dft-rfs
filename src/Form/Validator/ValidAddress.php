@@ -4,9 +4,7 @@ namespace App\Form\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class ValidAddress extends Constraint
 {
     public string $line1BlankMessage = "common.address.line-1.not-blank";
@@ -21,8 +19,32 @@ class ValidAddress extends Constraint
      */
     public bool $includeAddressee = true;
 
+    public function __construct(
+
+        string $line1BlankMessage = null,
+        string $postcodeBlankMessage = null,
+        string $maxLengthMessage = null,
+        bool   $allowBlank = null,
+        bool   $validatePostcode = null,
+        bool   $includeAddressee = null,
+        array  $groups = [],
+        mixed  $payload = null,
+    )
+    {
+        parent::__construct([], $groups, $payload);
+
+        $this->line1BlankMessage = $line1BlankMessage ?? $this->line1BlankMessage;
+        $this->postcodeBlankMessage = $postcodeBlankMessage ?? $this->postcodeBlankMessage;
+        $this->maxLengthMessage = $maxLengthMessage ?? $this->maxLengthMessage;
+        $this->allowBlank = $allowBlank ?? $this->allowBlank;
+        $this->validatePostcode = $validatePostcode ?? $this->validatePostcode;
+        $this->includeAddressee = $includeAddressee ?? $this->includeAddressee;
+    }
+
+
+    #[\Override]
     public function validatedBy(): string
     {
-        return static::class.'Validator';
+        return static::class . 'Validator';
     }
 }

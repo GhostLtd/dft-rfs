@@ -7,7 +7,9 @@ use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,12 +26,9 @@ class DayRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Survey $survey
-     * @param $dayNumber
-     * @return Day
      * @throws NonUniqueResultException
      */
-    public function getBySurveyAndDayNumber(Survey $survey, $dayNumber)
+    public function getBySurveyAndDayNumber(Survey $survey, int $dayNumber): ?Day
     {
         return $this->createQueryBuilder('day')
             ->select('day, stops')
@@ -37,10 +36,10 @@ class DayRepository extends ServiceEntityRepository
             ->leftJoin('day.response', 'response')
             ->where('day.number = :dayNumber')
             ->andWhere('response.survey = :survey')
-            ->setParameters([
-                'dayNumber' => $dayNumber,
-                'survey' => $survey,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('dayNumber', $dayNumber),
+                new Parameter('survey', $survey),
+            ]))
             ->getQuery()
             ->getOneOrNullResult();
     }

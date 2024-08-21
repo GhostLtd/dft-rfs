@@ -10,9 +10,8 @@ use App\Repository\Domestic\DayRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,37 +19,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/csrgt")
- */
+#[Route(path: '/csrgt')]
 class DayStopController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_domestic_daystop_';
+    private const string ROUTE_PREFIX = 'admin_domestic_daystop_';
     public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
     public const ADD_DAY_AND_STOP_ROUTE = self::ROUTE_PREFIX . 'add_day_and_stop';
     public const DELETE_ROUTE = self::ROUTE_PREFIX . 'delete';
     public const EDIT_ROUTE = self::ROUTE_PREFIX . 'edit';
     public const REORDER_ROUTE = self::ROUTE_PREFIX . 'reorder';
 
-    protected DayRepository $dayRepository;
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected RequestStack           $requestStack,
+        protected DayRepository          $dayRepository
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, DayRepository $dayRepository)
-    {
-        $this->dayRepository = $dayRepository;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @Route("/surveys/{surveyId}/{dayNumber}/add-day-stage", name=self::ADD_DAY_AND_STOP_ROUTE, requirements={"dayNumber": "\d+"})
-     * @Entity("survey", expr="repository.find(surveyId)")
-     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
-     */
-    public function addDayAndStop(Survey $survey, int $dayNumber): Response
+    #[Route(path: '/surveys/{surveyId}/{dayNumber}/add-day-stage', name: self::ADD_DAY_AND_STOP_ROUTE, requirements: ['dayNumber' => '\d+'])]
+    #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
+    public function addDayAndStop(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        int $dayNumber
+    ): Response
     {
         $existingDay = $this->dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
 
@@ -76,11 +70,11 @@ class DayStopController extends AbstractController
         return $this->handleRequest($stop, "admin/domestic/stop/add.html.twig", ['is_add_form' => true]);
     }
 
-    /**
-     * @Route("/days/{dayId}/add-day-stage", name=self::ADD_ROUTE)
-     * @Entity("day", expr="repository.find(dayId)")
-     */
-    public function add(Day $day): Response
+    #[Route(path: '/days/{dayId}/add-day-stage', name: self::ADD_ROUTE)]
+    public function add(
+        #[MapEntity(expr: "repository.find(dayId)")]
+        Day $day
+    ): Response
     {
         if ($day->getSummary() !== null) {
             throw new BadRequestHttpException();
@@ -94,16 +88,16 @@ class DayStopController extends AbstractController
         return $this->handleRequest($stop, "admin/domestic/stop/add.html.twig", ['is_add_form' => true]);
     }
 
-    /**
-     * @Route("/day-stages/{stopId}", name=self::EDIT_ROUTE)
-     * @Entity("stop", expr="repository.find(stopId)")
-     */
-    public function edit(DayStop $stop)
+    #[Route(path: '/day-stages/{stopId}', name: self::EDIT_ROUTE)]
+    public function edit(
+        #[MapEntity(expr: "repository.find(stopId)")]
+        DayStop $stop
+    ): Response
     {
         return $this->handleRequest($stop, "admin/domestic/stop/edit.html.twig");
     }
 
-    protected function handleRequest(DayStop $stop, string $template, array $formOptions = [])
+    protected function handleRequest(DayStop $stop, string $template, array $formOptions = []): Response
     {
         $survey = $stop->getDay()->getResponse()->getSurvey();
         $this->denyAccessUnlessGranted(AdminSurveyVoter::EDIT, $survey);
@@ -128,16 +122,18 @@ class DayStopController extends AbstractController
 
         return $this->render($template, [
             'survey' => $survey,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    /**
-     * @Route("/day-stages/{stopId}/delete", name=self::DELETE_ROUTE)
-     * @Entity("stop", expr="repository.findOneForDelete(stopId)")
-     * @Template("admin/domestic/stop/delete.html.twig")
-     */
-    public function delete(DayStop $stop, DeleteDayStopConfirmAction $deleteDayStopConfirmAction, Request $request)
+    #[Route(path: '/day-stages/{stopId}/delete', name: self::DELETE_ROUTE)]
+    #[Template('admin/domestic/stop/delete.html.twig')]
+    public function delete(
+        #[MapEntity(expr: "repository.findOneForDelete(stopId)")]
+        DayStop $stop,
+        DeleteDayStopConfirmAction $deleteDayStopConfirmAction,
+        Request $request
+    ): RedirectResponse|array
     {
         $day = $stop->getDay();
         $survey = $day->getResponse()->getSurvey();
@@ -147,7 +143,7 @@ class DayStopController extends AbstractController
             ->setSubject($stop)
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])."#{$day->getId()}"
+                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#{$day->getId()}"
             );
     }
 }

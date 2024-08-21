@@ -4,33 +4,106 @@
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
-    {% import '@GhostGovUkFrontend/components/macros.html.twig' as gdsComponents %}
-    <h1 class="govuk-heading-xl">{{ (translation_prefix ~ '.heading')|trans }}</h1>
-    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.business-details')|trans }}</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner, summaryListStart, summaryListEnd, summaryListRow -%}
+
+    {%- if maintenanceWarningBanner ?? false -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
+
+    <h1 class="govuk-heading-xl">{{ 'pre-enquiry.summary.heading' | trans }}</h1>
+    <h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.business-details' | trans }}</h2>
+
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
         {%- set response = preEnquiry.response -%}
-        {%- set urlCompanyName = wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME') -%}
-        {%- set urlVehicleQuestions = wizardUrl('pre-enquiry', 'STATE_VEHICLE_QUESTIONS') -%}
-        {%- set urlBusinessDetails = wizardUrl('pre-enquiry', 'STATE_BUSINESS_DETAILS') -%}
-        {%- set change = 'common.actions.change'|trans -%}
 
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.company-name', response.companyName, {(urlCompanyName): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.company-name'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.total-vehicle-count', response.totalVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.international-journey-vehicle-count', response.internationalJourneyVehicleCount, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.vehicle-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.annual-journey-estimate', response.annualJourneyEstimate, {(urlVehicleQuestions): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.number-of-employees', response.numberOfEmployees, {(urlBusinessDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.employee-count-and-international-journeys'}}) }}
-    </dl>
+        {%- set companyNameAction = [
+            {
+                href: wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME'),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'pre-enquiry.summary.company-name' | trans,
+            }
+        ] -%}
+        {%- set vehicleDetailsAction = [
+            {
+                href: wizardUrl('pre-enquiry', 'STATE_VEHICLE_QUESTIONS'),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'pre-enquiry.summary.vehicle-details' | trans,
+            }
+        ] -%}
+        {%- set employeeCountAction = [
+            {
+                href: wizardUrl('pre-enquiry', 'STATE_BUSINESS_DETAILS'),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'pre-enquiry.summary.employee-count' | trans,
+            }
+        ] -%}
 
-    <h2 class="govuk-heading-m">{{ (translation_prefix ~ '.correspondence-details')|trans }}</h2>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {%- set urlCorrespondenceDetails = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS') -%}
-        {%- set urlCorrespondenceAddress = wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS') -%}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.company-name' | trans,
+            value: response.companyName,
+            actions: companyNameAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.total-vehicle-count' | trans,
+            value: response.totalVehicleCount,
+            actions: vehicleDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.international-journey-vehicle-count' | trans,
+            value: response.internationalJourneyVehicleCount,
+            actions: vehicleDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.annual-journey-estimate' | trans,
+            value: response.annualJourneyEstimate,
+            actions: vehicleDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.number-of-employees' | trans,
+            value: response.numberOfEmployees,
+            actions: employeeCountAction,
+        }) -}}
+    {{- summaryListEnd() -}}
 
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.name', response.contactName, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.email', response.contactEmail, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.phone', response.contactTelephone, {(urlCorrespondenceDetails): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-details'}}) }}
-        {{ gdsComponents.summaryListRow(translation_prefix ~ '.address', response.contactAddress|formatAddress(true, false)|default('-'), {(urlCorrespondenceAddress): {label: 'common.actions.change', srHiddenSuffix: translation_prefix ~ '.correspondence-address'}}) }}
-    </dl>
+    <h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.correspondence-details' | trans }}</h2>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+
+        {%- set correspondenceDetailsAction = [
+            {
+                href: wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_DETAILS'),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'pre-enquiry.summary.correspondence-details' | trans,
+            }
+        ] -%}
+        {%- set correspondenceAddressAction = [
+            {
+                href: wizardUrl('pre-enquiry', 'STATE_CORRESPONDENCE_ADDRESS'),
+                text: 'common.actions.change' | trans,
+                visuallyHiddenText: 'pre-enquiry.summary.correspondence-address' | trans,
+            }
+        ] -%}
+
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.name' | trans,
+            value: response.contactName,
+            actions: correspondenceDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.email' | trans,
+            value: response.contactEmail,
+            actions: correspondenceDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.phone' | trans,
+            value: response.contactTelephone,
+            actions: correspondenceDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.address' | trans,
+            value: {html: response.contactAddress | formatAddress(true, false) | default('-') | nl2br},
+            actions: correspondenceAddressAction,
+        }) -}}
+    {{- summaryListEnd() -}}
 
     {{ form(form) }}
 {% endblock %}

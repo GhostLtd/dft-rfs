@@ -2,35 +2,41 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\NoteInterface;
 use App\Entity\NotifyApiResponse;
+use App\Entity\NotifyApiResponseTrait;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
+use App\Entity\QualityAssuranceInterface;
+use App\Entity\SurveyManualReminderInterface;
+use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyStateInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
+use App\Utility\Cleanup\PersonalDataCleanupInterface;
 use App\Utility\NotifyApiResponseCleaner;
 use App\Utility\RegistrationMarkHelper;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
-/**
- * @ORM\Entity(repositoryClass=SurveyRepository::class)
- * @ORM\Table("domestic_survey")
- *
- * @AppAssert\ValidRegistration(groups={"add_survey", "import_survey"})
- */
-class Survey implements HaulageSurveyInterface, ApiResponseInterface
+#[AppAssert\ValidRegistration(groups: ["add_survey", "import_survey"])]
+#[ORM\Table('domestic_survey')]
+#[ORM\Entity(repositoryClass: SurveyRepository::class)]
+class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
+    use NotifyApiResponseTrait;
 
-    const STATE_REISSUED = 'reissued';
+    public const STATE_REISSUED = 'reissued';
 
-    const STATE_FILTER_CHOICES = [
+    public const STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_INVITATION_PENDING,
         self::STATE_INVITATION_SENT,
@@ -44,14 +50,14 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         self::STATE_REISSUED,
     ];
 
-    const REASON_NOT_DELIVERED = 'not-delivered';
-    const REASON_REFUSED = 'respondent-refused';
-    const REASON_EXCUSED_PERSONAL = 'excused-personal';
-    const REASON_EXCUSED_OTHER = 'excused-other';
-    const REASON_OTHER = 'other';
+    public const REASON_NOT_DELIVERED = 'not-delivered';
+    public const REASON_REFUSED = 'respondent-refused';
+    public const REASON_EXCUSED_PERSONAL = 'excused-personal';
+    public const REASON_EXCUSED_OTHER = 'excused-other';
+    public const REASON_OTHER = 'other';
 
-    const UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-unfilled-survey.option.';
-    const UNFILLED_SURVEY_REASON_CHOICES = [
+    public const UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-unfilled-survey.option.';
+    public const UNFILLED_SURVEY_REASON_CHOICES = [
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_DELIVERED => self::REASON_NOT_DELIVERED,
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_REFUSED => self::REASON_REFUSED,
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_EXCUSED_PERSONAL => self::REASON_EXCUSED_PERSONAL,
@@ -60,7 +66,7 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
 
     ];
 
-    const UNFILLED_SURVEY_REASON_EXPORT_IDS = [
+    public const UNFILLED_SURVEY_REASON_EXPORT_IDS = [
         self::REASON_NOT_DELIVERED => 6,
         self::REASON_REFUSED => 7,
         self::REASON_EXCUSED_PERSONAL => 8,
@@ -68,69 +74,54 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         self::REASON_OTHER => 10,
     ];
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="common.choice.not-null", groups={"add_survey", "import_survey"})
-     */
-    private $isNorthernIreland;
+    #[Assert\NotNull(message: 'common.choice.not-null', groups: ['add_survey', 'import_survey'])]
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isNorthernIreland = null;
+
+    #[ORM\OneToOne(mappedBy: 'survey', targetEntity: SurveyResponse::class, cascade: ['persist'])]
+    private ?SurveyResponse $response = null;
+
+    #[Assert\NotBlank(message: 'common.vehicle.vehicle-registration.not-blank', groups: ['add_survey', 'import_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 10)]
+    private ?string $registrationMark = null;
+
+    #[ORM\OneToOne(mappedBy: 'domesticSurvey', targetEntity: PasscodeUser::class, cascade: ['persist', 'remove'])]
+    private ?PasscodeUser $passcodeUser = null;
 
     /**
-     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="survey", cascade={"persist"})
+     * @var Collection<SurveyNote>
      */
-    private $response;
+    #[ORM\OneToMany(targetEntity: SurveyNote::class, mappedBy: 'survey')]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    private Collection $notes;
+
+    #[ORM\OneToOne(inversedBy: 'reissuedSurvey', targetEntity: Survey::class, cascade: ['persist'], fetch: 'EAGER')]
+    private ?Survey $originalSurvey = null;
+
+    #[ORM\OneToOne(mappedBy: 'originalSurvey', targetEntity: Survey::class, cascade: ['persist', 'remove'], fetch: 'EAGER')]
+    private ?Survey $reissuedSurvey = null;
+
+    #[Assert\NotNull(message: 'common.choice.not-null', groups: ['admin_reason_for_unfilled_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    private ?string $reasonForUnfilledSurvey = null;
+
+    #[Assert\Valid(groups: ['driver-availability.drivers-and-vacancies', 'driver-availability.deliveries', 'driver-availability.wages', 'driver-availability.bonuses'])]
+    #[ORM\OneToOne(inversedBy: 'survey', targetEntity: DriverAvailability::class, fetch: 'EAGER')]
+    private ?DriverAvailability $driverAvailability = null;
 
     /**
-     * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank(groups={"add_survey", "import_survey"}, message="common.vehicle.vehicle-registration.not-blank")
+     * @var Collection<int, NotifyApiResponse>
      */
-    private $registrationMark;
-
-    /**
-     * @ORM\OneToOne(targetEntity=PasscodeUser::class, mappedBy="domesticSurvey", cascade={"persist", "remove"})
-     */
-    private $passcodeUser;
-
-    /**
-     * @ORM\OneToMany(targetEntity=SurveyNote::class, mappedBy="survey")
-     * @ORM\OrderBy({"createdAt" = "ASC"})
-     */
-    private $notes;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="reissuedSurvey", cascade={"persist"}, fetch="EAGER")
-     */
-    private $originalSurvey;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Survey::class, mappedBy="originalSurvey", cascade={"persist", "remove"}, fetch="EAGER")
-     */
-    private $reissuedSurvey;
-
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @Assert\NotNull(message="common.choice.not-null", groups={"admin_reason_for_unfilled_survey"})
-     */
-    private ?string $reasonForUnfilledSurvey;
-
-    /**
-     * @ORM\OneToOne(targetEntity=DriverAvailability::class, inversedBy="survey", fetch="EAGER")
-     * @Assert\Valid(groups={"driver-availability.drivers-and-vacancies", "driver-availability.deliveries", "driver-availability.wages", "driver-availability.bonuses"})
-     */
-    private ?DriverAvailability $driverAvailability;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=NotifyApiResponse::class)
-     * @ORM\JoinTable(
-     *     name="domestic_survey_notify_api_responses",
-     *     joinColumns={@ORM\JoinColumn(name="survey_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="notify_api_response_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
-     * )
-     */
-    private Collection $apiResponses;
+    #[ORM\JoinTable(name: 'domestic_survey_notify_api_responses')]
+    #[ORM\JoinColumn(name: 'survey_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
+    protected Collection $apiResponses;
 
     public function __construct()
     {
         $this->apiResponses = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function isInitialDetailsComplete(): bool
@@ -172,7 +163,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setIsNorthernIreland(bool $isNorthernIreland): self
     {
         $this->isNorthernIreland = $isNorthernIreland;
-
         return $this;
     }
 
@@ -206,11 +196,13 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return $this;
     }
 
+    #[\Override]
     public function getPasscodeUser(): ?PasscodeUser
     {
         return $this->passcodeUser;
     }
 
+    #[\Override]
     public function setPasscodeUser(?PasscodeUser $passcodeUser): self
     {
         $this->passcodeUser = $passcodeUser;
@@ -228,19 +220,44 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return WeekNumberHelper::getYearlyWeekNumberAndYear($this->getSurveyPeriodStart());
     }
 
-    public function getNotes()
+    #[\Override]
+    public function getNotes(): Collection
     {
         return $this->notes;
     }
 
-    public function addNote(SurveyNote $note): self
+    #[\Override]
+    public function setNotes(Collection $notes): Survey
     {
+        $this->notes = $notes;
+        return $this;
+    }
+
+    #[\Override]
+    public function addNote(NoteInterface $note): self
+    {
+        if (!$note instanceof SurveyNote) {
+            throw new \RuntimeException("Got a ".$note::class.", but expected a ".SurveyNote::class);
+        }
+
         if (!$this->notes->contains($note)) {
             $note->setSurvey($this);
             $this->notes[] = $note;
         }
 
         return $this;
+    }
+
+    #[\Override]
+    public function createNote(): NoteInterface
+    {
+        return new SurveyNote();
+    }
+
+    #[\Override]
+    public function getChasedCount(): int
+    {
+        return array_reduce($this->getNotes()->toArray(), fn($c, NoteInterface $i) => $c += ($i->getWasChased() ? 1 : 0)) ?? 0;
     }
 
     public function getDriverAvailability(): ?DriverAvailability
@@ -251,7 +268,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setDriverAvailability(?DriverAvailability $driverAvailability): self
     {
         $this->driverAvailability = $driverAvailability;
-
         return $this;
     }
 
@@ -263,7 +279,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     public function setOriginalSurvey(?self $originalSurvey): self
     {
         $this->originalSurvey = $originalSurvey;
-
         return $this;
     }
 
@@ -285,7 +300,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         }
 
         $this->reissuedSurvey = $reissuedSurvey;
-
         return $this;
     }
 
@@ -316,10 +330,12 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
     {
         $response = $this->getResponse();
 
-        $isInPossession = $response && $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES;
+        $isInPossessionOfNonExemptVehicle = $response &&
+            $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->getIsExemptVehicleType();
 
         return !$this->isInitialDetailsComplete() ||
-            ($isInPossession && !$this->isBusinessAndVehicleDetailsComplete());
+            ($isInPossessionOfNonExemptVehicle && !$this->isBusinessAndVehicleDetailsComplete());
     }
 
     /**
@@ -332,10 +348,11 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         return $this->isBusinessAndVehicleDetailsComplete() &&
             $response &&
             $response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
+            !$response->getIsExemptVehicleType() &&
             !$response->hasJourneys();
     }
 
-    public function clearPersonalData(): self
+    public function clearPersonalData(): void
     {
         $this
             ->setInvitationEmails(null)
@@ -358,8 +375,6 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         }
 
         NotifyApiResponseCleaner::cleanSurveyNotifyApiResponses($this);
-
-        return $this;
     }
 
     public function isPersonalDataCleared(): bool
@@ -383,5 +398,53 @@ class Survey implements HaulageSurveyInterface, ApiResponseInterface
         }
 
         return $isCleared && NotifyApiResponseCleaner::surveyNotifyApiResponsesHaveBeenCleaned($this);
+    }
+
+    public function mergeDriverAvailability(?DriverAvailability $driverAvailabilityToMerge): DriverAvailability
+    {
+        if ($this->driverAvailability === null || $this->driverAvailability->getId() === null) {
+            $this->driverAvailability = new DriverAvailability();
+        }
+
+        if ($driverAvailabilityToMerge !== null) {
+            $this->driverAvailability
+                // BonusesType
+                ->setHasPaidBonus($driverAvailabilityToMerge->getHasPaidBonus())
+                ->setReasonsForBonuses($driverAvailabilityToMerge->getReasonsForBonuses())
+                ->setAverageBonus($driverAvailabilityToMerge->getAverageBonus())
+                // DeliveriesType
+                ->setNumberOfLorriesOperated($driverAvailabilityToMerge->getNumberOfLorriesOperated())
+                ->setNumberOfParkedLorries($driverAvailabilityToMerge->getNumberOfParkedLorries())
+                ->setHasMissedDeliveries($driverAvailabilityToMerge->getHasMissedDeliveries())
+                ->setNumberOfMissedDeliveries($driverAvailabilityToMerge->getNumberOfMissedDeliveries())
+                // DriversAndVacanciesType
+                ->setNumberOfDriversEmployed($driverAvailabilityToMerge->getNumberOfDriversEmployed())
+                ->setHasVacancies($driverAvailabilityToMerge->getHasVacancies())
+                ->setNumberOfDriversThatHaveLeft($driverAvailabilityToMerge->getNumberOfDriversThatHaveLeft())
+                ->setNumberOfDriverVacancies($driverAvailabilityToMerge->getNumberOfDriverVacancies())
+                ->setReasonsForDriverVacancies($driverAvailabilityToMerge->getReasonsForDriverVacancies())
+                ->setReasonsForDriverVacanciesOther($driverAvailabilityToMerge->getReasonsForDriverVacanciesOther())
+                // WagesType
+                ->setHaveWagesIncreased($driverAvailabilityToMerge->getHaveWagesIncreased())
+                ->setAverageWageIncrease($driverAvailabilityToMerge->getAverageWageIncrease())
+                ->setWageIncreasePeriod($driverAvailabilityToMerge->getWageIncreasePeriod())
+                ->setWageIncreasePeriodOther($driverAvailabilityToMerge->getWageIncreasePeriodOther())
+                ->setReasonsForWageIncrease($driverAvailabilityToMerge->getReasonsForWageIncrease())
+                ->setReasonsForWageIncreaseOther($driverAvailabilityToMerge->getReasonsForWageIncreaseOther());
+        }
+
+        $this->driverAvailability->setSurvey($this);
+        return $this->driverAvailability;
+    }
+
+    #[\Override]
+    public function getResponseContactEmail(): ?string
+    {
+        return $this->getResponse()?->getContactEmail();
+    }
+
+    public function getCompanyNameFromInvitationAddress(): ?string
+    {
+        return $this->getInvitationAddress()?->getLine1();
     }
 }

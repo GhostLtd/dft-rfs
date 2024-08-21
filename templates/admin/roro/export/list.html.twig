@@ -1,0 +1,28 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = 'admin.roro.export' -%}
+
+{%- block adminContent -%}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import summaryListActionsList, tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow -%}
+    {{- tableStart() -}}
+        {{- tableHead(['Year', 'Month', '']) -}}
+        {{- tableBodyStart() -}}
+
+        {%- for month in months -%}
+            {%- set actionsContent -%}
+                {{- summaryListActionsList([
+                    {
+                        href: url('admin_roro_export_month', {year: month | date('Y'), month: month | date('m')}),
+                        text: 'Export',
+                    }
+                ]) -}}
+            {%- endset -%}
+
+            {{- tableRow([
+                month | date('Y'),
+                month | date('F'),
+                {html: actionsContent},
+            ]) -}}
+        {%- endfor -%}
+    {{- tableEndIncludingBody() -}}
+{%- endblock -%}

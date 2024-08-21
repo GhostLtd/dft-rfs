@@ -1,45 +1,68 @@
-{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableCell, actionLinks -%}
+{%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableStart, tableBodyStart, tableRow, tableEndIncludingBody, summaryListActionsList-%}
 {%- from "admin/domestic/macros.html.twig" import locationAndStatus, daySummaryTableHeadingAndCaption -%}
 {%- from "admin/macros/macros.html.twig" import displayLimitedBy -%}
-{% from 'macros.html.twig' import displayHazardousGoods %}
+{%- from 'macros.html.twig' import displayHazardousGoods -%}
 
-{%- set isNorthernIreland = survey.isNorthernIreland -%}
-
-<table class="govuk-table journeys-table" id="{{ day.id }}">
+{{- tableStart({classes: 'journeys-table', attributes: {id: day.id}}) -}}
     {{- daySummaryTableHeadingAndCaption(null, survey, day) -}}
-    <tbody class="govuk-table__body">
-    <tr class="govuk-table__row" id="{{ day.summary.id }}">
-        {{- tableCell(locationAndStatus(day.summary.originLocation, day.summary.goodsLoaded, false, day.summary.goodsTransferredFrom), {class: 'journeys-table__load-status'}) -}}
-        {{- tableCell(locationAndStatus(day.summary.destinationLocation, day.summary.goodsUnloaded, false, day.summary.goodsTransferredTo, false), {class: 'journeys-table__load-status'}) -}}
+    {{- tableBodyStart() -}}
 
-        {%- if isNorthernIreland -%}
-            {{- tableCell(day.summary.borderCrossingLocation|formatPotentialPostcode|default('-')) -}}
-        {%- endif -%}
+    {%- set distanceTravelled -%}
+        {{- "common.distance.#{day.summary.distanceTravelledLoaded.unit}" | trans({value: day.summary.distanceTravelledLoaded.value}) -}}
+        {{- " / " -}}
+        {{- "common.distance.#{day.summary.distanceTravelledUnloaded.unit}" | trans({value: day.summary.distanceTravelledUnloaded.value}) -}}
+    {%- endset -%}
 
-        {{- tableCell(day.summary.furthestStop | formatPotentialPostcode) -}}
-        {{- tableCell(
-            ("common.distance.#{day.summary.distanceTravelledLoaded.unit}" | trans({value: day.summary.distanceTravelledLoaded.value})) ~
-            " / " ~
-            ("common.distance.#{day.summary.distanceTravelledUnloaded.unit}" | trans({value: day.summary.distanceTravelledUnloaded.value})),
-            {numeric: true}
-        ) -}}
-        {{- tableCell(day.summary | formatGoodsDescription(true)) -}}
-        {{- tableCell(displayHazardousGoods(day.summary.hazardousGoodsCode)) -}}
-        {{- tableCell(day.summary.cargoTypeCode) -}}
-        {{- tableCell(
-            ('common.weight.kilograms'|trans({value: day.summary.weightOfGoodsLoaded})) ~
-            " / " ~
-            ('common.weight.kilograms'|trans({value: day.summary.weightOfGoodsUnloaded}))
-        , {numeric: true}) -}}
-        {{- tableCell("#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}", {numeric: true}) -}}
+    {%- set weightOfGoods -%}
+        {{- "domestic.day-view.weight-of-goods.loaded" | trans({value: day.summary.weightOfGoodsLoaded}) -}}
+        {{- " / " -}}
+        {{- "domestic.day-view.weight-of-goods.unloaded" | trans({value: day.summary.weightOfGoodsUnloaded}) -}}
+    {%- endset -%}
 
-        {%- if showActions ?? true -%}
-            {%- set links = actionLinks({
-                (url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE'), {summaryId: day.summary.id})): {label: 'common.actions.delete', srHiddenSuffix: "Day #{day.number}"},
-                (url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE'), {summaryId: day.summary.id})): {label: 'common.actions.edit', srHiddenSuffix: "Day #{day.number}"},
-            }) -%}
-            {{- tableCell(links, {actions: true}) -}}
-        {%- endif -%}
-    </tr>
-    </tbody>
-</table>
+    {%- set actions = [
+        {
+            href: url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::DELETE_ROUTE'), {summaryId: day.summary.id}),
+            text: 'common.actions.delete' | trans,
+            visuallyHiddenText: "Day #{day.number}"
+        },
+        {
+            href: url(constant('App\\Controller\\Admin\\Domestic\\DaySummaryController::EDIT_ROUTE'), {summaryId: day.summary.id}),
+            text: 'common.actions.edit' | trans,
+            visuallyHiddenText: "Day #{day.number}"
+        },
+    ] -%}
+
+    {{- tableRow([
+        {
+            html: locationAndStatus(day.summary.originLocation, day.summary.goodsLoaded, false, day.summary.goodsTransferredFrom),
+            classes: 'journeys-table__load-status'
+        },
+        {
+            html: locationAndStatus(day.summary.destinationLocation, day.summary.goodsUnloaded, false, day.summary.goodsTransferredTo, false),
+            classes: 'journeys-table__load-status'
+        },
+        survey.isNorthernIreland ?
+            (day.summary.borderCrossingLocation | formatPotentialPostcode | default('-')) :
+            null,
+        day.summary.furthestStop | formatPotentialPostcode,
+        {
+            text: distanceTravelled,
+            classes: 'govuk-table__cell--numeric'
+        },
+        day.summary | formatGoodsDescription(true),
+        displayHazardousGoods(day.summary.hazardousGoodsCode),
+        day.summary.cargoTypeCode,
+        {
+            text: weightOfGoods,
+            classes: 'govuk-table__cell--numeric'
+        },
+        {
+            text: "#{day.summary.numberOfStopsLoading} / #{day.summary.numberOfStopsUnloading} / #{day.summary.numberOfStopsLoadingAndUnloading}",
+            classes: 'govuk-table__cell--numeric'
+        },
+        (showActions ?? true) ?
+            {html: summaryListActionsList(actions)} :
+            null,
+    ], {attributes: {id: day.summary.id}}
+    ) -}}
+{{- tableEndIncludingBody() -}}

@@ -1,0 +1,16 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.operators.routes.assign" -%}
+{%- set headingParams = translation_parameters -%}
+
+{%- form_theme form _self -%}
+
+{%- block adminContent -%}
+    {{ form(form) }}
+{%- endblock -%}
+
+{%- block _operator_route_backdateSurveysGroup_row -%}
+    <div class="govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+        {{ form_row(form) }}
+    </div>
+{%- endblock -%}

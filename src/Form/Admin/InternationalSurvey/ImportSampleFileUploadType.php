@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\Admin\InternationalSurvey;
-
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,7 +10,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class ImportSampleFileUploadType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('file', Gds\FileUploadType::class, [

@@ -1,84 +1,94 @@
 <?php
 
-
 namespace App\Controller\Admin\Domestic;
 
-
-use App\Utility\Domestic\DriverAvailabilityExportHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use App\Form\ConfirmationType;
+use App\Repository\Domestic\SurveyRepository;
+use App\Utility\Domestic\DriverAvailabilityDataExporter;
+use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/csrgt/driver-availability-export", name="admin_domestic_driveravailabilityexport_")
- */
+#[Route(path: '/csrgt/driver-availability-export', name: 'admin_domestic_driveravailabilityexport_')]
 class DriverAvailabilityExportController extends AbstractController
 {
-    private DriverAvailabilityExportHelper $driverAvailabilityExportHelper;
+    public function __construct(
+        protected SurveyRepository $surveyRepository,
+    ) {}
 
-    public function __construct(DriverAvailabilityExportHelper $driverAvailabilityExportHelper)
-    {
-        $this->driverAvailabilityExportHelper = $driverAvailabilityExportHelper;
-    }
-
-    /**
-     * @Route("", name="index")
-     * @Template("admin/domestic/driver_availability_export/index.html.twig")
-     */
+    #[Route(path: '', name: 'list')]
+    #[Template('admin/domestic/driver_availability_export/list.html.twig')]
     public function index(): array
     {
+        ['minDate' => $minDate, 'maxDate' => $date] = $this->surveyRepository->getSubmissionDateRange();
+
+        $links = [];
+
+        $minDate = new \DateTime($minDate);
+        $date = new \DateTime($date);
+
+        do {
+            $links[] = [
+                'month' => intval($date->format('m')),
+                'year' => intval($date->format('Y')),
+            ];
+
+            $date->modify('-1 month');
+        } while($date >= $minDate);
+
         return [
-            'existingExportDates' => $this->driverAvailabilityExportHelper->getExistingDates(),
-            'hasNewResponses' => $this->driverAvailabilityExportHelper->hasAnyResponsesReadyForNewExport(),
+            'exports' => $links,
         ];
     }
-
-    /**
-     * @Route("/all", name="all")
-     */
-    public function all(): Response
+    #[Route(path: '/{year}/{month}', name: 'year_and_month', requirements: ['year' => '\d{4}', 'month' => '[1-9]|10|11|12'])]
+    #[Route(path: '/all', name: 'all')]
+    public function exportYearAndMonth(DriverAvailabilityDataExporter $dataExporter, TranslatorInterface $translator, Request $request, ?string $year=null, ?string $month=null): Response
     {
-        $response = new StreamedResponse(function() {
-            $this->driverAvailabilityExportHelper->exportAll();
-        });
-        $this->addDownloadResponseHeaders($response, new \DateTime(), 'all');
-        return $response;
-    }
+        $form = $this->createForm(ConfirmationType::class, null, [
+            'yes_label' => 'Export',
+        ]);
 
-    /**
-     * @Route("/new", name="new")
-     */
-    public function new(): Response
-    {
-        $exportDate = new \DateTime();
-        $response = new StreamedResponse(function() use ($exportDate) {
-            $this->driverAvailabilityExportHelper->exportNew($exportDate);
-        });
-        $this->addDownloadResponseHeaders($response, $exportDate);
-        return $response;
-    }
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
 
-    /**
-     * @Route("/existing/{date}", name="existing")
-     */
-    public function existing($date): Response
-    {
-        $exportDate = new \DateTime($date);
-        $response = new StreamedResponse(function() use ($exportDate) {
-            $this->driverAvailabilityExportHelper->exportExisting($exportDate);
-        });
-        $this->addDownloadResponseHeaders($response, $exportDate);
-        return $response;
-    }
+            $cancel = $form->get('no');
+            $export = $form->get('yes');
 
-    protected function addDownloadResponseHeaders(Response $response, \DateTime $date, $filenamePostfix = false)
-    {
-        $filename = "csrgt-driver-availability-export"
-            . ($filenamePostfix ? "-{$filenamePostfix}" : "")
-            . ("-" . $date->format('Ymd-Hi'));
-        $response->headers->set('Content-Type', "text/csv");
-        $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}.csv\"");
+            if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
+                return new RedirectResponse($this->generateUrl('admin_domestic_driveravailabilityexport_list'));
+            } else if ($export instanceof SubmitButton && $export->isClicked()) {
+
+                $filename = ($year !== null && $month !== null) ?
+                    $dataExporter->generateExportDataForYearAndMonth($year, $month) :
+                    $dataExporter->generateAllExportData();
+
+                if ($filename) {
+                    $now = new \DateTime();
+                    return $this
+                        ->file(new File($filename), "driver-availability_export_{$year}_{$month}_{$now->format('Ymd_Hi')}.sql")
+                        ->deleteFileAfterSend();
+                } else {
+                    $this->addFlash(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
+                        $translator->trans('domestic.driver-availability-export.failed-notification.title', [], 'admin'),
+                        $translator->trans('domestic.driver-availability-export.failed-notification.heading', [], 'admin'),
+                        $translator->trans('domestic.driver-availability-export.failed-notification.content', [], 'admin')
+                    ));
+                    return new RedirectResponse($this->generateUrl('admin_domestic_driveravailabilityexport_list'));
+                }
+            }
+        }
+
+        return $this->render('admin/domestic/driver_availability_export/confirm.html.twig', [
+            'month' => $month,
+            'year' => $year,
+            'form' => $form,
+        ]);
     }
 }

@@ -5,21 +5,20 @@ namespace App\Utility\ConfirmAction;
 use App\Entity\Utility\MaintenanceWarning;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteMaintenanceWarningConfirmAction extends AbstractConfirmAction
 {
     /** @var MaintenanceWarning */
     protected $subject;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
-        $this->entityManager = $entityManager;
+        parent::__construct($formFactory, $requestStack, $translator);
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -29,6 +28,7 @@ class DeleteMaintenanceWarningConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationParameters(): array
     {
         return [
@@ -37,11 +37,13 @@ class DeleteMaintenanceWarningConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'admin.maintenance-warning.delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->entityManager->remove($this->subject);

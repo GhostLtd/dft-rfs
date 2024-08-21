@@ -12,6 +12,7 @@ format:
     full: 'l, jS F'
     side-bar: 'j M Y'
     default: 'd/m/Y'
+    year-and-month: 'F Y'
   time:
     default: 'g:i a'
   date-time:
@@ -41,6 +42,7 @@ common:
     re-order-stops: Re-order stops
     remove: Remove
     save-and-continue: Save and continue
+    save: Save
     submit-survey: Submit survey
     view: View
   address:
@@ -74,6 +76,7 @@ common:
   error-summary:
     problem: There is a problem
   notification:
+    failed: Failed
     important: Important
     success: Success
     warning: Warning
@@ -180,27 +183,315 @@ passcode:
       0.label: First code
       1.label: Second code
 
+roro:
+  auth:
+    login-failure-banner:
+      heading: Login error
+      title: Login error
+    rate-limit: "Rate limit exceeded; try again later"
+  back-to-dashboard: Back to dashboard
+  contact:
+    email: roro.stats@dft.gov.uk
+    phone: 020 7944 8233
+  dashboard:
+    title: Dashboard for {operator}
+    other-routes: Other routes
+    outstanding-surveys: Outstanding surveys
+    questions:
+      header: Questions?
+      email: "Email:"
+      phone: "Phone:"
+      text: "If you have any queries, please contact us:"
+    useful-links: Useful links
+    view-completed-surveys: View submitted surveys
+  completed-surveys:
+    title: Submitted surveys
+  login:
+    username.label: Email address
+  route: "{ukPort} to {foreignPort}"
+  survey:
+    comments:
+      comments:
+        label: Comments
+        help: Enter any comments about this survey, that you wish to send to the RoRo team
+    data-entry:
+      choices:
+        advanced: Bulk data entry
+        manual: Manual data entry
+      data:
+        label: Bulk vehicle count data
+        help: Copy/paste your data into the box below (e.g. from a spreadsheet)
+      format-decription:
+        title: View format description
+        copy: |
+          ## Format description
+
+          The data pasted must comprise groups of cells containing:
+
+          1. Country name or category name (see below)
+          2. 2-letter country code, in brackets (optional)
+          3. Vehicle count
+
+          ## Valid category names
+
+          * Other countries
+          * Unknown countries
+          * Unaccompanied trailers
+          * Total vehicles
+          * Total powered vehicles
+
+          ## Error checking
+
+          There are two potential types of error, which may be shown when you submit your data:
+          
+          1. **Unused rows:** row data that looks like a "Country, Count" grouping, but isn't (e.g. "Irelond 83")
+
+          2. **Totals mismatch:** If you include either "Total vehicles" or "Total powered vehicles", and error will be 
+          shown if actual totals don't match the totals from your data. This serves as a good extra check that the 
+          system has recognised all of your country names.
+          
+          These errors must be fixed before you will be able to continue.
+
+          ## Example data
+
+          ```
+           United Kingdom          (GB)     23
+           France                  (FR)     10
+           Ireland                         383
+           Other countries                  27
+           Unaccompanied trailers           10
+           Total vehicles                  453
+           Total powered vehicles          443
+          ```
+      survey-requirements.title: Survey requirements
+    edit-vehicle-counts: Edit vehicle counts
+    edit-vehicle-counts-advanced: Edit vehicle counts using bulk data entry
+    submit-survey: Submit survey
+    introduction:
+      title: Introduction - {route} - {period}
+      is-active: Was this route active for the period?
+      data-entry-method:
+        label: Which data entry method do you want to use?
+        help: If unsure, choose "manual data entry"
+    vehicle-counts:
+      heading: Vehicle counts by country of registration
+      intro: |
+        Number of vehicles **over 3.5 tonnes** carried **outwards** from GB by **country of registration**.
+        
+        **Include:**
+        
+        * Rigid lorries
+        * Tractor & trailers (count as one unit)
+        * Tractive units only
+        
+        **Exclude:**
+
+        * Vehicles being exported
+      bulk-entry:
+        title: Bulk data entry feedback
+        check-data: |
+          Please check the numbers below are correct before saving.
+        unused-rows:
+          title: Unused rows
+          copy: |
+            The following data looked like "<Country>, <Number>" pairs, but did not match to a country name or category:
+        sum-inconsistencies:
+          title: Sum inconsistencies
+          copy: |
+            The values of the "Total vehicles" and/or "Total powered vehicles" rows from your data do not match the actual sums of the values that you entered.
+          table:
+            your-data: Your data
+            actual: Actual
+            difference: Difference
+            total-vehicles: Total vehicles
+            total-powered-vehicles: Total powered vehicles
+        unparsable-rows:
+          title: Unparsable rows
+          copy: |
+            The system was unable to interpret the following rows:
+        view-minor-issues: View minor issues
+
+      title: Vehicle counts - {route} - {period}
+      help: ''
+      country:
+        label: Country vehicle counts
+      totals:
+        label: Totals
+      other:
+        label: Other vehicle counts
+      unaccompanied-trailers.help: Include tow-bar trailers and articulated semi trailers
+    vehicle-count:
+      others:
+        XK: Kosovo
+        other: Other country
+        unknown: Unknown country
+        trailers: Unaccompanied trailers
+    view:
+      change:
+        activity: activity status
+        comments: comments
+      comments: Comments
+      state: Status
+      states:
+        completed: Submitted
+        outstanding: Outstanding
+      title: &route-and-date "{ukPort} to {foreignPort} - {date}"
+    complete:
+      title: Submit survey
+      heading: Submit survey
+      help: This will mark the survey for "{ukPort} to {foreignPort} - {date}" as complete.
+      confirm.label: Submit survey
+      cancel.label: Cancel
+      cancelled-notification:
+        heading: Survey submission cancelled
+        content: The survey was not submitted
+      confirmed-notification:
+        heading: Survey submitted
+        content: The survey was successfully submitted
+  switch-operator:
+    title: Switch operator
+    intro: "Choose which operator's survey dashboard you wish to see:"
+  breadcrumbs:
+    dashboard: "{name}"
+    submit-survey: Submit survey
+    survey: *route-and-date
+
 admin:
   audit:
     table:
-      date: "Date"
-      event: "Event"
-      header: "Audit Logs"
-      user: "User"
-    cleanup-passcode: "Removed passcode user"
-    cleanup-personal: "Removed personal data"
-    survey-qa: "Flagged survey as QA checked"
+      date: Date
+      event: Event
+      header: Audit Logs
+      no-entries: No entries
+      user: User
+    cleanup-passcode: Removed passcode user
+    cleanup-personal: Removed personal data
+    lcni:
+      add: "LCNI created - Added reminder emails: `{emails}`"
+      additional-name:
+        add: "LCNI additional name added - Added reminder emails: `{emails}`"
+        delete: "LCNI additional name removed - Deleted reminder emails; previously: `{emails}`"
+      delete: "LCNI removed - Deleted reminder emails; previously: `{emails}`"
+      update:
+        address:
+          add: "LCNI address updated - Added reminder emails `{emails}`"
+          remove: "LCNI address updated - Removed reminder emails `{emails}`"
+        emails: "LCNI emails updated - Changed reminder emails from `{old_emails}` to `{new_emails}`"
+    manual-reminder: Sent manual reminder
+    survey-qa: Flagged survey as QA checked
     survey-state: "Changed survey state from `{from}` to `{to}`"
+
+  dashboard:
+    heading: Dashboard
+
   login:
     label: Login
     help: ''
     username.label: Username
     password.label: Password
-  dashboard:
-    heading: Dashboard
+
+  operator-groups:
+    add:
+      choose-name:
+        heading: "Add operator group: Choose name"
+      preview:
+        heading: "Add operator group: Confirm"
+        intro: >-
+          {mode, select,
+            add   {Adding}
+            other {Editing}
+          } this operator group will allow users to switch between any operators whose name starts with "{name}".
+        no-match: Currently, no operators match this criteria.
+        match: >-
+          Currently, {count, plural,
+                        =0    {no operators match}
+                        =1    {1 operator matches}
+                        other {# operators match}
+                     } this criteria{count, plural,
+                                       =0    {.}
+                                       other {:}
+                                    }
+      success-notification:
+        title: Success
+        heading: Operation successful
+        content: Operator group {name} was successfully added
+    delete:
+      heading: Delete operator group {name}?
+      warning: Are you sure you want to delete this operator group?
+      confirm.label: Yes, delete {name}
+      cancel.label: Cancel
+      cancelled-notification:
+        heading: Operation cancelled
+        content: Operator group {name} was NOT deleted
+      confirmed-notification:
+        heading: Operation successful
+        content: Operator group {name} was successfully deleted
+    edit:
+      choose-name:
+        heading: "Edit operator group: Choose name"
+      preview:
+        heading: "Edit operator group: Confirm"
+      success-notification:
+        title: Success
+        heading: Operation successful
+        content: Operator group {name} was successfully edited
+    heading: Operator groups
+    list:
+      add: Add operator group
+      no-results: No results
+      edit: edit
+      edit-hidden-suffix: &operator-group-hidden-suffix operator group {name}
+      view: view
+      view-hidden-suffix: *operator-group-hidden-suffix
+    view:
+      heading: "{name}"
+      delete: Delete operator group
+      edit: Edit operator group
+
+  operators:
+    add:
+      heading: Add operator
+    edit:
+      heading: Edit operator
+    heading: Operators
+    routes:
+      assign:
+        heading: "Assign route to {name}"
+    view:
+      heading: "{name}"
+    users:
+      add:
+        heading: "Add user to {name}"
+
+  ports:
+    foreign:
+      add.heading: Add foreign port
+      edit.heading: Edit foreign port
+      heading: Foreign ports
+    uk:
+      add.heading: Add UK port
+      edit.heading: Edit UK port
+      heading: UK ports
+
   reports:
     dashboard:
       heading: Reports
+      surveys:
+        csrgt: CSRGT (All)
+        csrgt-gb: CSRGT (GB)
+        csrgt-ni: CSRGT (NI)
+        irhs: IRHS
+        pre-enquiry: Pre-Enquiry
+        roro: RoRo
+      types:
+        activity: Activity Status
+        approvals: Approvals
+        possession: Possession of vehicle
+        quality: Quality assurance
+        state: Surveys by state
+        unapprovals: Unapprovals
+      view: view
+
     activity-status:
       heading: Surveys by activity state
       sub-heading: &subHeading >-
@@ -223,7 +514,39 @@ admin:
     unapprovals:
       heading: Un-approvals
       sub-heading: *subHeading
+
+  roro:
+    edit:
+      heading: Edit survey data
+
+    edit-is-active:
+      heading: Edit survey basics
+
+    export:
+      heading: RoRo survey export
+
+    survey:
+      heading: RoRo Survey
+
+      operator.label: Operator
+      route.label: Route
+      survey-start.label: Survey period
+
+    surveys:
+      heading: RoRo surveys
+
+  routes:
+    add:
+      heading: Add route
+    edit:
+      heading: Edit route
+    heading: Routes
+    view:
+      heading: "{uk_port_name} to {foreign_port_name}"
+
   survey:
+    on-hire-flag: govuk-tag--red
+
     state:
       in-progress: govuk-tag--yellow
       new: govuk-tag--grey
@@ -235,6 +558,7 @@ admin:
       rejected: govuk-tag--red
       exporting: govuk-tag--green
       exported: govuk-tag--green
+
   notify:
     status:
       accepted: govuk-tag--green
@@ -315,8 +639,8 @@ admin:
       period-end: Survey period end
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
     export:
       heading: CSRGT export
     export-confirm:
@@ -417,8 +741,8 @@ admin:
     survey-created:
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
   passcode-reset:
     heading: Reset passcode ({identifier})
     confirmation: "Are you sure you want to reset this survey's passcode?\nThe previous code - including any sent to the user via letter/email - will no longer work."
@@ -472,8 +796,8 @@ admin:
       company-name: Company name
       invitation-email: Invitation email
       invitation-address: Invitation address
-      access-code-1: "Access code #1"
-      access-code-2: "Access code #2"
+      access-code-1: "First code"
+      access-code-2: "Second code"
     edit-response:
       heading: "Edit Pre-enquiry response — {companyName}"
     enter-response:
@@ -505,9 +829,10 @@ admin:
     edit.heading: Edit maintenance warning
     delete:
       heading: 'Delete Maintenance Warning'
-      delete: 'Are you sure you want to delete this Maintenance Warning'
+      delete: &maintenanceDelete 'Are you sure you want to delete this Maintenance Warning?'
       confirm.label: Yes, delete this warning
       cancel.label: Cancel
+      warning: *maintenanceDelete
 
       confirmed-notification:
         heading: 'Delete confirmed'
@@ -515,6 +840,34 @@ admin:
       cancelled-notification:
         heading: 'Delete cancelled'
         content: The Maintenance Warning for {start, date, medium} was not deleted
+
+  send-reminder:
+    heading: Send email reminder
+    warning: 'Are you sure you want to send an email reminder for this survey?'
+    cancel.label: Cancel
+    confirm.label: Send reminder
+    recipients: Reminder recipients
+
+    confirmed-notification:
+      heading: 'Reminder sent'
+      content: A reminder has been sent for this survey
+    cancelled-notification:
+      heading: 'Reminder cancelled'
+      content: No reminder has been sent
+
+  send-reminder-unavailable:
+    heading: Send email reminder
+    warning:
+      no-email-addresses: |-
+        A reminder cannot be sent, as there is neither an invitation address nor a contact email associated with this survey.
+      too-soon: |-
+        A reminder cannot be sent yet, as {eventType, select,
+          in_progress {the survey recently changed state to *in-progress*.}
+          manual_reminder {a *manual reminder* was recently sent.}
+          was_chased {the hauler was recently contacted (see "Notes" tab).}
+          other {Other}
+        }  
+        A manual reminder may next be sent in *{interval}*.
 
 domestic:
   transferred-port:
@@ -528,6 +881,7 @@ domestic:
     heading: Survey dashboard
     vehicle: Vehicle
     start-date: Start date
+    complete-exempt: Review survey details
     complete-week: Complete survey week
     complete-vehicle-and-business-details: Complete vehicle and business details
     change-contact-details: View/change the contact, business and vehicle details you have already entered
@@ -548,7 +902,7 @@ domestic:
       help: ''
       business-name:
         label: 'Business name'
-        help: 'The name of the business that owns the vehicle. If you are a sole trader, this is your operating name.'
+        help: 'The name of your business. If you are a sole trader, this is your operating name.'
       contact-name:
         label: 'Name'
         help: ''
@@ -565,15 +919,24 @@ domestic:
         help: 'We may need to ask you to supply evidence at the end of the survey period'
       option:
         yes: 'Yes'
+        yes-exempt: 'Yes - exempt'
         scrapped-or-stolen: 'No - it has been scrapped or stolen'
         sold: 'No - it has been sold'
         on-hire: 'No - it is on hire to another person or company'
         short:
           yes: 'Yes'
+          yes-exempt: 'Yes - exempt'
           scrapped-or-stolen: 'No - scrapped/stolen'
           sold: 'No - sold'
           on-hire: 'No - on hire'
-      change-link-sr-suffix: vehicle posession details
+      change-link-sr-suffix: vehicle possession details
+
+    is-exempt-vehicle-type:
+      label: Is your vehicle a horsebox, jetter, cherry-picker or exhibition/showperson's vehicle?
+      help: ''
+      option:
+        yes: Yes
+        no: No
 
     reason-for-empty-survey:
       reason-for-empty-survey:
@@ -583,7 +946,7 @@ domestic:
         label: ''
         help: Give details of why no journeys were carried out
       option:
-        not-taxed: 'The vehicle was not taxed'
+        not-taxed: 'The vehicle was not taxed / SORN'
         no-work: 'There was no work'
         repair: 'The vehicle was being repaired'
         site-work-only: 'The vehicle is used solely for site work'
@@ -809,15 +1172,14 @@ domestic:
 
     border-crossing: &border-crossing
       border-crossed:
-        label: 'Did you cross an international border?'
+        label: 'Did you make a border or sea crossing?'
         help: ''
       border-crossing-location:
-        label: 'Where did you cross a border?'
-        help: "For journeys involving land journeys between Northern Ireland and Eire (Republic of Ireland), please
-               state where the vehicle crossed the Republic of Ireland–United Kingdom border.\n\n
-               For journeys by ferry to a destination outside the UK please indicate which sea crossing or whether the
-               channel tunnel was used in the journey e.g. Larne – Stranraer, Dover – Calais channel tunnel."
-
+        label: 'Tell us where'
+        help: |-
+          If you crossed the border between Northern Ireland and Eire (Republic of Ireland) on this journey, state where the vehicle crossed the border.
+          
+          If you made a sea crossing, indicate whether you used the channel tunnel or a specific ferry route, for example "Larne-Cairnryan" or "channel tunnel".
     distance-travelled:
       heading: How far did you travel?
       help: "Tell us the total distance travelled for this day.\n\nInclude all empty mileage made during the journey. If the vehicle returns empty at the end of the round, e.g. on a ‘base to base’ journey, include this empty mileage too."
@@ -985,11 +1347,19 @@ domestic:
   completed:
     heading: Survey complete
     reference-number: Your reference number
-    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
+    download: For your records, you should <a target="_blank" href="{url}" class="govuk-link">download a PDF</a> (opens in a new window or tab) of your finished survey.
 
   closing-details:
     start:
       heading: Final questions
+    early-response:
+      heading: Your survey period does not end until {finishDate}
+      is-correct:
+        label: Can you confirm there will be no further changes?
+        help: ''
+        no: I might want to make further changes. Do not submit the survey.
+        yes: I am sure there will be no further changes.
+
     missing-days:
       heading: Missing days
       help: You have not entered any journey information for the days listed below. Check and confirm that the vehicle ({ registrationMark }) was not driven on these days.
@@ -1002,6 +1372,13 @@ domestic:
       contact-details: Contact details
       contact-details-copy: We may need to contact you if we need to clarify any of your answers. Please check that these contact details are correct before submitting your survey.
       confirm-and-submit: Confirm and submit
+
+  closing-exempt: &closing-survey
+    confirm.label: Submit survey
+    cancel.label: Cancel
+
+  closing-not-in-possession: *closing-survey
+
   driver-availability:
     currency-or-percentage:
       percentage: "% (percent)"
@@ -1155,7 +1532,7 @@ pre-enquiry:
     business-details: Business details
     correspondence-details: Correspondence details
     company-name: Company name
-    total-vehicle-count: "Total vehicle count\n(> 3.5 tonnes gross)"
+    total-vehicle-count: "Total HGV count"
     international-journey-vehicle-count: Vehicles used to make international journeys
     number-of-employees: Number of employees
     annual-journey-estimate: "International journey estimate (Annual)"
@@ -1165,6 +1542,7 @@ pre-enquiry:
     address: Address
     vehicle-details: Vehicle details
     employee-count-and-international-journeys: Employee count and international journeys
+    employee-count: Employee count
     correspondence-address: Correspondence address
     submit:
       label: Submit pre-enquiry
@@ -1211,14 +1589,14 @@ pre-enquiry:
     title: ''
     help: ''
     total-vehicle-count:
-      label: How many powered goods vehicles over 3.5 tonnes gross vehicle weight do you operate, either domestically or internationally?
+      label: How many heavy goods vehicles (HGVs) do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
     international-journey-vehicle-count:
-      label: How many of these vehicles will be used to make international journeys?
+      label: How many of these HGVs will be used to make international journeys?
       help: ''
     annual-journey-estimate:
-      label: Give an estimate of the number of international journeys (round trips) that will be made by all of your company's vehicles in the next 12 months
-      help: ''
+      label: Estimate of the number of international journeys (round trips) that your company will make in these vehicles over the next 12 months
+      help: Only include the trips of HGVs in your estimate
   business-details:
     heading: Business details
     title: ''
@@ -1235,15 +1613,29 @@ international:
   closing-details:
     confirm-submission:
       heading: Submit your survey
+    early-response:
+      heading: Your survey period does not end until {finishDate}
+      is-correct:
+        label: Can you confirm there will be no further changes?
+        help: ''
+        no: I might want to make further changes. Do not submit the survey.
+        yes: I am sure there will be no further changes.
+    loading-without-unloading:
+      heading: "Some cargo has been loaded, but not unloaded:"
+      is-correct:
+        label: Is this information correct?
+        help: ''
+        no: No, cancel the survey submission - I need to make more edits.
+        yes: Yes, continue with survey submission.
 
   completed:
     heading: Survey complete
     reference-number: Your reference number
-    download: For your records, you should <a target="_blank" href="{url}">download a PDF</a> (opens in a new window or tab) of your finished survey.
+    download: For your records, you should <a target="_blank" href="{url}" class="govuk-link">download a PDF</a> (opens in a new window or tab) of your finished survey.
 
   buttons:
     add-vehicles: Add Vehicles
-    submit-survey: Submit Survey
+    submit-survey: Submit survey
   help:
     text:
       phone-number: '0207 944 8580'
@@ -1281,13 +1673,14 @@ international:
     heading: Delete action {actionNumber}
     delete-loading: Are you sure you want to delete this loading action and related unloading actions? (shown above)
     delete-unloading: Are you sure you want to delete this unloading action?
-    notification:
-      deleted:
-        heading: Action deleted successfully
-        content: The action was successfully deleted
-      cancelled:
-        heading: Action not deleted
-        content: The request to delete the action was cancelled
+    confirm.label: Yes, delete action
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Action deleted successfully
+      content: The action was successfully deleted
+    cancelled-notification:
+      heading: Action not deleted
+      content: The request to delete the action was cancelled
 
   trip-delete:
     heading: "Delete trip — {date, date, short}"
@@ -1305,13 +1698,14 @@ international:
   vehicle-delete:
     heading: "Delete vehicle — {regMark}"
     delete: This will permanently delete this vehicle and all related trips and actions
-    notification:
-      deleted:
-        heading: Vehicle deleted successfully
-        content: The vehicle was successfully deleted
-      cancelled:
-        heading: Vehicle not deleted
-        content: The request to delete the vehicle was cancelled
+    confirm.label: Yes, delete this vehicle
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Vehicle deleted successfully
+      content: The vehicle was successfully deleted
+    cancelled-notification:
+      heading: Vehicle not deleted
+      content: The request to delete the vehicle was cancelled
 
   vehicle-cant-edit-trailer-configs:
     title: Edit cancelled
@@ -1351,7 +1745,7 @@ international:
     number-of-trips:
       heading: Annual international trips
       annual-international-journey-count:
-        label: Estimate the number of international trips that will be made by your firm in the next 12 months
+        label: Estimate the number of international trips that will be made by your firm using HGVs in the next 12 months
         help: ''
     activity-status:
       choices:
@@ -1393,14 +1787,14 @@ international:
       help: ''
       registration-mark:
         label: Registration mark of vehicle
-        help: ''
+        help: 'We are only interested in heavy goods vehicles (HGVs)'
         changed-notification-content: "The registration mark of this vehicle has been changed from {oldValue} to {newValue}. Make sure that the other details of the vehicle are still correct."
       operation-type:
         label: How was the vehicle being operated during the survey period?
         help: ''
     confirm-dates:
       heading: 'Survey period confirmation'
-      help: "We’re only interested in vehicles that made international trips where the date of departure from the UK was within survey period."
+      help: "We are only interested in HGVs that made international trips where the date of departure from the UK was within survey period."
       confirm:
         label: 'Did this vehicle depart from the UK during the survey period?'
         help: ''
@@ -1599,11 +1993,11 @@ international:
       heading: Where did trip start/end?
       help: ''
       origin:
-        label: Where did the trip start?
-        help: 'The postcode or place name, within the UK, where this trip first started.'
+        label: Where in the UK did the trip start?
+        help: 'The postcode or place name **within the UK**, where this trip first started.'
       destination:
-        label: Where did the trip end?
-        help: "The postcode or place name, within the UK, where this trip finally ended. This might be the same place as where the trip first started."
+        label: Where in the UK did the trip end?
+        help: "The postcode or place name **within the UK**, where this trip finally ended. This might be the same place as where the trip first started."
     dates:
       heading: Dates of Trip
       help: ''
@@ -1857,7 +2251,9 @@ maintenance-warning:
 survey-feedback:
   heading: Survey Feedback
   help: The answers you give us to this short survey will help us to make improvements to the service.
-  confirm.label: Submit feedback
+  confirm:
+    label: Submit feedback
+    privacy-warning: Our team may contact you in relation to any feedback given, with the aim of further improving this service.
   cancel.label: Cancel
   thanks-page:
     heading: Survey feedback received

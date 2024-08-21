@@ -1,21 +1,13 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
 
+use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
 
-use App\Entity\Domestic\SurveyResponse;
-use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
-use Symfony\Component\Form\FormInterface;
-use Traversable;
-
-class BonusesTypeMapper extends PropertyPathMapper
+class BonusesTypeMapper extends DataMapper
 {
-    /**
-     * @param FormInterface[]|Traversable $forms
-     * @param SurveyResponse $data
-     */
-    public function mapFormsToData($forms, &$data)
+    #[\Override]
+    public function mapFormsToData(\Traversable $forms, &$data): void
     {
         parent::mapFormsToData($forms, $data);
 

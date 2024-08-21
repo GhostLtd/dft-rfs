@@ -1,43 +1,26 @@
 <?php
 
-
 namespace App\EventSubscriber;
-
 
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Workflow\FormWizardStateInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Clear all session-based wizard data from the session, except for the current wizard (if it is a wizard)
- *
- * Class FormWizardCleanupSubscriber
- * @package App\EventSubscriber
  */
 class FormWizardCleanupSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
-
-    public function __construct(SessionInterface $session, LoggerInterface $log)
+    public function __construct(private RequestStack $requestStack, private LoggerInterface $log)
     {
-        $this->session = $session;
-        $this->log = $log;
     }
 
-    public function kernelControllerEvent(ControllerEvent $event)
+    public function kernelControllerEvent(ControllerEvent $event): void
     {
         $controllerBlacklist = [
             ProfilerController::class,
@@ -45,7 +28,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
 
         if (!is_array($event->getController())) return;
         $controller = $event->getController()[0];
-        $controllerClass = get_class($controller);
+        $controllerClass = $controller::class;
         if (
             in_array($controllerClass, $controllerBlacklist)
             || !str_starts_with($controllerClass, "App\\Controller\\")
@@ -66,20 +49,22 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
         $this->log->notice("[FormWizard] Done");
     }
 
-    private function cleanUp($exclude = null)
+    private function cleanUp($exclude = null): void
     {
         $this->log->notice("[FormWizard] Exclude from search: {$exclude}");
 
-        $sessionVars = $this->session->all();
+        $session = $this->requestStack->getSession();
+        $sessionVars = $session->all();
         foreach ($sessionVars as $key => $var) {
             if ($var instanceof FormWizardStateInterface && $key != $exclude) {
                 $this->log->notice("[FormWizard] Removing wizard var: {$key}");
-                $this->session->remove($key);
+                $session->remove($key);
             }
         }
     }
 
-    public static function getSubscribedEvents()
+    #[\Override]
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => [

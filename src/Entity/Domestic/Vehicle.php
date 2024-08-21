@@ -2,6 +2,7 @@
 
 namespace App\Entity\Domestic;
 
+use App\Entity\VehicleInterface;
 use App\Entity\VehicleTrait;
 use App\Entity\Volume;
 use App\Form\Validator as AppAssert;
@@ -9,25 +10,18 @@ use App\Repository\Domestic\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert; // N.B. Used by trait
 
-/**
- * @ORM\Entity(repositoryClass=VehicleRepository::class)
- * @ORM\Table("domestic_vehicle")
- */
-class Vehicle
+#[ORM\Table('domestic_vehicle')]
+#[ORM\Entity(repositoryClass: VehicleRepository::class)]
+class Vehicle implements VehicleInterface
 {
     use VehicleTrait;
 
-    /**
-     * @ORM\Embedded(class=Volume::class)
-     * @AppAssert\ValidValueUnit(allowBlank=true, groups={"vehicle_fuel_quantity", "admin_vehicle_fuel_quantity"})
-     */
+    #[AppAssert\ValidValueUnit(allowBlank: true, groups: ["vehicle_fuel_quantity", "admin_vehicle_fuel_quantity"])]
+    #[ORM\Embedded(class: Volume::class)]
     private $fuelQuantity;
 
-    /**
-     * @var SurveyResponse
-     * @ORM\OneToOne(targetEntity=SurveyResponse::class, mappedBy="vehicle", cascade={"persist"})
-     */
-    private $response;
+    #[ORM\OneToOne(mappedBy: 'vehicle', targetEntity: SurveyResponse::class)]
+    private ?SurveyResponse $response = null;
 
     public function getFuelQuantity(): ?Volume
     {
@@ -37,11 +31,10 @@ class Vehicle
     public function setFuelQuantity(Volume $fuelQuantity): self
     {
         $this->fuelQuantity = $fuelQuantity;
-
         return $this;
     }
 
-    public function getResponse()
+    public function getResponse(): ?SurveyResponse
     {
         return $this->response;
     }

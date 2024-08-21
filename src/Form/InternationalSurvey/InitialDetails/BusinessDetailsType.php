@@ -11,17 +11,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessDetailsType extends AbstractType
 {
-    const PREFIX = "international.survey-response.business-details";
-    const EMPLOYEES_PREFIX = self::PREFIX . '.number-of-employees';
-    const NATURE_PREFIX = self::PREFIX . '.business-nature';
+    public const PREFIX = "international.survey-response.business-details";
+    public const EMPLOYEES_PREFIX = self::PREFIX . '.number-of-employees';
+    public const NATURE_PREFIX = self::PREFIX . '.business-nature';
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => AbstractSurveyResponse::EMPLOYEES_CHOICES,
                 'label' => self::EMPLOYEES_PREFIX.".label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => self::EMPLOYEES_PREFIX.".help",
             ])
             ->add('businessNature', Gds\InputType::class, [
@@ -33,7 +34,8 @@ class BusinessDetailsType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

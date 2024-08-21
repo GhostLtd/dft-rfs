@@ -10,7 +10,8 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractCargoTypeType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         [$choices, $choiceOptions] = CargoType::getFormChoicesAndOptions();
 
@@ -21,13 +22,14 @@ abstract class AbstractCargoTypeType extends AbstractType
                 'choice_options' => $choiceOptions,
                 'label' => "{$translationKeyPrefix}.cargo-type-code.label",
                 'label_is_page_heading' => true,
-                'label_attr' => ['class' => 'govuk-label--xl'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                 'help' => "{$translationKeyPrefix}.cargo-type-code.help",
             ])
             ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => 'cargo-type',

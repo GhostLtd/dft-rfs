@@ -3,12 +3,14 @@
 namespace App\Controller\Admin\Reports;
 
 use App\Form\Admin\ReportFilterType;
+use App\Form\Admin\ReportYearlyFilterType;
 use App\Repository\AuditLog\AuditLogRepository;
-use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
-use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
-use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
-use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
-use DateTimeInterface;
+use App\Utility\Quarter\QuarterHelperProvider;
+use App\Utility\Reports\DateRangeHelper;
+use App\Utility\Reports\DomesticReportsHelper;
+use App\Utility\Reports\InternationalReportsHelper;
+use App\Utility\Reports\PreEnquiryReportsHelper;
+use App\Utility\Reports\RoRoReportsHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,34 +18,22 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractReportsController extends AbstractController
 {
-    protected DomesticSurveyRepository $domesticRepo;
-    protected InternationalSurveyRepository $internationalRepo;
-    protected AuditLogRepository $auditLogRepository;
-
-    public function __construct(DomesticSurveyRepository $domesticRepo, InternationalSurveyRepository $internationalRepo, AuditLogRepository $auditLogRepository)
-    {
-        $this->domesticRepo = $domesticRepo;
-        $this->internationalRepo = $internationalRepo;
-        $this->auditLogRepository = $auditLogRepository;
-    }
+    public function __construct(
+        protected DomesticReportsHelper      $domesticReportsHelper,
+        protected InternationalReportsHelper $internationalReportsHelper,
+        protected PreEnquiryReportsHelper    $preEnquiryReportsHelper,
+        protected RoRoReportsHelper          $roRoReportsHelper,
+        protected AuditLogRepository         $auditLogRepository,
+        protected DateRangeHelper            $dateRangeHelper,
+        protected QuarterHelperProvider      $quarterHelperProvider,
+    ) {}
 
     protected function getTypeLabel(string $type): string
     {
         return array_flip(ReportFilterType::CHOICE_TYPES)[$type];
     }
 
-    protected function redirectToCurrentQuarterAndYear(string $type, string $routeName): RedirectResponse
-    {
-        [$quarter, $year] = self::getQuarterAndYear($type, new \DateTime());
-
-        return new RedirectResponse($this->generateUrl($routeName, [
-            'type' => $type,
-            'year' => $year,
-            'quarter' => $quarter
-        ]));
-    }
-
-    protected function getReportsFilterForm(Request $request, int $year, int $quarter, string $type, array $excludeChoices=[]): FormInterface
+    protected function getReportsFilterForm(Request $request, int $year, int $quarter, string $type, array $excludeChoices = []): FormInterface
     {
         $current = [
             'year' => $year,
@@ -51,9 +41,7 @@ abstract class AbstractReportsController extends AbstractController
             'type' => $type,
         ];
 
-        [$intMinYear] = $this->internationalRepo->getMinimumAndMaximumYear();
-        [$domMinYear] = $this->domesticRepo->getMinimumAndMaximumYear();
-        $minYear = min($domMinYear, $intMinYear);
+        [$minYear] = $this->dateRangeHelper->getMinAndMaxYearsForAllSurveys();
 
         $form = $this->createForm(ReportFilterType::class, $current, [
             'minYear' => $minYear,
@@ -67,17 +55,50 @@ abstract class AbstractReportsController extends AbstractController
         return $form;
     }
 
-    protected static function getDateRangeForYearAndQuarter(string $type, int $year, int $quarter): array
+    protected function getReportsYearlyFilterForm(Request $request, int $year, string $type, array $excludeChoices = []): FormInterface
     {
-        return ($type === 'irhs') ?
-            InternationalWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter) :
-            DomesticWeekNumberHelper::getDateRangeForYearAndQuarter($year, $quarter);
+        $current = [
+            'year' => $year,
+            'type' => $type,
+        ];
+
+        [$minYear] = $this->dateRangeHelper->getMinAndMaxYearsForAllSurveys();
+
+        $form = $this->createForm(ReportYearlyFilterType::class, $current, [
+            'minYear' => $minYear,
+            'excludeChoices' => $excludeChoices,
+        ]);
+
+        if ($request->getMethod() === Request::METHOD_POST) {
+            $form->handleRequest($request);
+        }
+
+        return $form;
     }
 
-    protected static function getQuarterAndYear(string $type, DateTimeInterface $dateTime): array
+    protected function getDateRangeForYearAndQuarter(string $type, int $year, int $quarter): array
     {
-        return ($type === 'irhs') ?
-            InternationalWeekNumberHelper::getQuarterAndYear($dateTime) :
-            DomesticWeekNumberHelper::getQuarterAndYear($dateTime);
+        return $this->quarterHelperProvider
+            ->getQuarterHelperByReportClass($type)
+            ->getDateRangeForYearAndQuarter($year, $quarter);
     }
+
+    protected function getDateRangeForYear(int $year): array
+    {
+        return [
+            \DateTime::createFromFormat("Y-m-d H:i:s", "{$year}-01-01 00:00:00"),
+            \DateTime::createFromFormat("Y-m-d H:i:s", ($year + 1) . "-01-01 00:00:00"),
+        ];
+    }
+
+    protected function handleRedirect(string $type): RedirectResponse
+    {
+        [$quarter, $year] = $this->quarterHelperProvider
+            ->getQuarterHelperByReportClass($type)
+            ->getQuarterAndYear(new \DateTime());
+
+        return $this->getRedirect(['type' => $type, 'year' => $year, 'quarter' => $quarter]);
+    }
+
+    abstract protected function getRedirect(array $data): RedirectResponse;
 }

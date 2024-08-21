@@ -6,15 +6,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class NullIsZeroProperty implements Mapper
 {
-    protected string $propertyPath;
-    private $defaultValue;
-
-    public function __construct(string $propertyPath, $defaultValue = 0)
+    public function __construct(protected string $propertyPath, private $defaultValue = 0)
     {
-        $this->propertyPath = $propertyPath;
-        $this->defaultValue = $defaultValue;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -24,7 +20,7 @@ class NullIsZeroProperty implements Mapper
                 return 0;
             }
             return $value;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->defaultValue;
         }
     }

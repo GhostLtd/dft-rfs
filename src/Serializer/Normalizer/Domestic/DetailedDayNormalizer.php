@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Normalizer\Domestic;
-
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\Distance;
@@ -11,6 +9,7 @@ use App\Entity\Domestic\DayStop;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\DayOfWeekProperty;
+use App\Serializer\Normalizer\Domestic\Mapper\MOAProperty;
 use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\NullIsZeroProperty;
 use App\Serializer\Normalizer\Mapper\Property;
@@ -18,11 +17,20 @@ use App\Serializer\Normalizer\Mapper\ZeroIsNullProperty;
 
 class DetailedDayNormalizer extends AbstractExportNormalizer
 {
-    public function supportsNormalization($data, $format = null, array $context = [])
+    #[\Override]
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof DayStop;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            DayStop::class => true,
+        ];
+    }
+
+    #[\Override]
     protected function getMapping(): array
     {
         return [
@@ -47,7 +55,7 @@ class DetailedDayNormalizer extends AbstractExportNormalizer
             'WeightOfGoodsCarriedKG' => new NullIsZeroProperty('weightOfGoodsCarried'),
             'RowNumber' => new Property('number'),
 //            'DateInput' => '' // null in examples,
-            'MOA' => new Property('cargoTypeCode'),
+            'MOA' => new MOAProperty(),
             'WhereBorderCrossed' => new Property('borderCrossingLocation'),
             'DayOfWeek' => new DayOfWeekProperty(),
 //            'MOACode' => '', // null in examples

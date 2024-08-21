@@ -7,15 +7,11 @@ use Throwable;
 
 class PropertyList implements Mapper
 {
-    protected array $propertyPathList;
-    private $defaultValue;
-
-    public function __construct(array $propertyPathList, $defaultValue = null)
+    public function __construct(protected array $propertyPathList, private $defaultValue = null)
     {
-        $this->propertyPathList = $propertyPathList;
-        $this->defaultValue = $defaultValue;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -27,7 +23,7 @@ class PropertyList implements Mapper
                     return $value;
                 }
             }
-            catch (Throwable $e) {}
+            catch (Throwable) {}
         }
 
         return $this->defaultValue;

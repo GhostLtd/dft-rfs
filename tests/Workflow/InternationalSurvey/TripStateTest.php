@@ -1,28 +1,21 @@
 <?php
 
-
 namespace App\Tests\Workflow\InternationalSurvey;
-
 
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle as InternationalVehicle;
 use App\Entity\Vehicle;
 use App\Workflow\InternationalSurvey\TripState;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class TripStateTest extends WebTestCase
 {
-    /** @var TripState */
-    private $tripState;
+    private TripState $tripState;
+    private WorkflowInterface $workflow;
 
-    /** @var WorkflowInterface */
-    private $workflow;
-
-    protected function setUp()
+    #[\Override]
+    protected function setUp(): void
     {
         static::bootKernel();
 
@@ -37,14 +30,9 @@ class TripStateTest extends WebTestCase
             ->setState(TripState::STATE_SWAPPED_TRAILER)
             ->setSubject($trip);
 
-        $container = self::$kernel->getContainer()->get('test.service_container');
+        $container = static::getContainer()->get('test.service_container');
         $workflowRegistry = $container->get('workflow.registry');
         $this->workflow = $workflowRegistry->get($this->tripState);
-
-        $token = new AnonymousToken('secret', new User('anon.', ''));
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $container->get('security.token_storage');
-        $tokenStorage->setToken($token);
     }
 
     protected function setTripPersisted($persisted = true)
@@ -76,13 +64,11 @@ class TripStateTest extends WebTestCase
         }
     }
 
-
-
     /***
      * Tests
      ***/
 
-    public function rigidTestDataProvider()
+    public function rigidTestDataProvider(): array
     {
         return [
             [false, false, [TripState::STATE_DISTANCE]],
@@ -95,11 +81,8 @@ class TripStateTest extends WebTestCase
 
     /**
      * @dataProvider rigidTestDataProvider
-     * @param $swappedTrailer
-     * @param $changeBodyType
-     * @param $states
      */
-    public function testRigid($editing, $swappedTrailer, $states)
+    public function testRigid(bool $editing, bool $swappedTrailer, array $states): void
     {
         $this->setTripPersisted($editing);
         $this->tripState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID]['vehicle.axle.rigid.3.0']);
@@ -109,7 +92,7 @@ class TripStateTest extends WebTestCase
         $this->assertStateTransitions($states);
     }
 
-    public function articulatedTestDataProvider()
+    public function articulatedTestDataProvider(): array
     {
         return [
             [false, false, false, [TripState::STATE_CHANGED_BODY_TYPE, TripState::STATE_DISTANCE]],
@@ -126,11 +109,8 @@ class TripStateTest extends WebTestCase
 
     /**
      * @dataProvider articulatedTestDataProvider
-     * @param $swappedTrailer
-     * @param $changeBodyType
-     * @param $states
      */
-    public function testArticulated($editing, $swappedTrailer, $changeBodyType, $states)
+    public function testArticulated(bool $editing, bool $swappedTrailer, bool $changeBodyType, array $states): void
     {
         $this->setTripPersisted($editing);
         $this->tripState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_ARTICULATED]['vehicle.axle.articulated.2.2']);

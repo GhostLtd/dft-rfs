@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Normalizer\Domestic;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
@@ -22,11 +20,22 @@ use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public const CONTEXT_KEY = 'for-export';
+
+    #[\Override]
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $data instanceof Survey;
+        return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Survey::class => false,
+        ];
+    }
+
+    #[\Override]
     protected function getMapping(): array
     {
         $true = new BooleanLiteral(true);
@@ -38,6 +47,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'RegMark' => new Property('registrationMark'),
             'CarryingCapacity' => new Property('response.vehicle.carryingCapacity'),
             'CarryingCapacityNotEntered' => new BooleanEquivalencyProperty('response.vehicle.carryingCapacity', false, true),
+            'GrossWeight' => new Property('response.vehicle.grossWeight'),
             'OnOwnAccount' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_ON_OWN_ACCOUNT),
             'ForHireReward' => new BooleanProperty('response.vehicle.operationType', BaseVehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD),
             'MainlyOperatedNotEntered' => $false,
@@ -77,7 +87,7 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyID' => new EpochWeekNumberProperty('surveyPeriodStart'),
             'SurveyWeek' => new YearlyWeekNumberProperty('surveyPeriodStart'),
 //            'VehicleOwnerID' => '', // not needed
-            'DateSurveySent' => new Property('notifiedDate'),
+            'DateSurveySent' => new Property('invitationSentDate'),
 //            'DateSurveyReturned' => '',
             'DateReminder1' => new Property('firstReminderSentDate'),
             'DateReminder2' => new Property('secondReminderSentDate'),
@@ -124,7 +134,6 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'ReturnCodeID' => new ReturnCodeIdProperty(),
             'ArticOrRigidID' => new BooleanProperty('response.vehicle.trailerConfiguration', Vehicle::TRAILER_CONFIGURATION_ARTICULATED),
             'AxleConfigurationID' => new Property('response.vehicle.axleConfiguration'),
-
         ];
     }
 }

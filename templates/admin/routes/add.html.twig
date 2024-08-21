@@ -1,0 +1,8 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.routes.add" -%}
+
+{%- block adminContent -%}
+    {%- include "admin/routes/add-and-edit-warning.html.twig" -%}
+    {{ form(form) }}
+{%- endblock -%}

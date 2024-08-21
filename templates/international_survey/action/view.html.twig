@@ -6,67 +6,106 @@
 {% extends 'international_survey/base.html.twig' %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks -%}
-    {% from 'macros.html.twig' import displayHazardousGoods %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, actionLinks -%}
+    {%- from 'macros.html.twig' import displayHazardousGoods -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ (translation_prefix ~ '.' ~ headingOverride)|trans(headingParams) }}</h1>
 
     {%- set params = {actionId: action.id} -%}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
-                {%- set loadingAction = action.loadingAction -%}
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
+            {%- set loadingAction = action.loadingAction -%}
 
-                {%- set changeLink = {(wizardUrl('international-action', 'STATE_PLACE', params)):
-                    {label: 'common.actions.change', srHiddenSuffix: 'common.action.place'}
-                } -%}
-                {{ summaryListRow('common.action.place', 'common.action.place-name' | trans({name: action.name|formatPotentialPostcode, country: action|formatCountry}), changeLink) }}
-                {%- if action.loading -%}
-            {# Loading #}
-                    {%- set loadGoodsChangeLink = {(wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params)):
-                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.goods'}
-                    } -%}
-                    {%- set loadHazardousChangeLink = {(wizardUrl('international-action', 'STATE_HAZARDOUS_GOODS', params)):
-                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.cargo-type'}
-                    } -%}
+            {%- set changeLink = [
+                {
+                    href: wizardUrl('international-action', 'STATE_PLACE', params),
+                    text: 'common.actions.change' | trans,
+                    visuallyHiddenText: 'common.action.place' | trans,
+                }
+            ] -%}
+            {%- set loadGoodsChangeLink = [
+                {
+                    href: wizardUrl('international-action', 'STATE_GOODS_DESCRIPTION', params),
+                    text: 'common.actions.change' | trans,
+                    visuallyHiddenText: 'common.action.goods' | trans,
+                }
+            ] -%}
+            {%- set loadHazardousChangeLink = [
+                {
+                    href: wizardUrl('international-action', 'STATE_HAZARDOUS_GOODS', params),
+                    text: 'common.actions.change' | trans,
+                    visuallyHiddenText: 'common.action.cargo-type' | trans,
+                }
+            ] -%}
+            {%- set unloadConsignmentChangeLink = [
+                {
+                    href: wizardUrl('international-action', 'STATE_CONSIGNMENT_UNLOADED', params),
+                    text: 'common.actions.change' | trans,
+                    visuallyHiddenText: 'common.action.goods' | trans,
+                }
+            ] -%}
 
-                    {{ summaryListRow('common.action.goods', formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther), loadGoodsChangeLink) }}
-                    {{ summaryListRow('common.action.weight',
-                        ('common.weight.kilograms'|trans({value: action.weightOfGoods})),
-                        loadGoodsChangeLink
-                    ) }}
+            {{- summaryListRow({
+                key: 'common.action.place' | trans,
+                value: 'common.action.place-name' | trans({name: action.name|formatPotentialPostcode, country: action|formatCountry}),
+                actions: changeLink,
+            }) -}}
 
-                    {{ summaryListRow('common.action.is-hazardous', displayHazardousGoods(action.hazardousGoodsCode, 'common.action.not-hazardous'), loadHazardousChangeLink) }}
-                    {{ summaryListRow('common.action.cargo-type', choiceLabel(cargoChoices, action.cargoTypeCode) | trans, loadHazardousChangeLink) }}
+            {%- if action.loading -%}
+                {# Loading #}
+                {{- summaryListRow({
+                    key: 'common.action.goods' | trans,
+                    value: formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther),
+                    actions: loadGoodsChangeLink,
+                }) -}}
+                {{- summaryListRow({
+                    key: 'common.action.weight' | trans,
+                    value: 'common.weight.kilograms' | trans({value: action.weightOfGoods}),
+                    actions: loadGoodsChangeLink,
+                }) -}}
+                {{- summaryListRow({
+                    key: 'common.action.is-hazardous' | trans,
+                    value: displayHazardousGoods(action.hazardousGoodsCode, 'common.action.not-hazardous'),
+                    actions: loadHazardousChangeLink,
+                }) -}}
+                {{- summaryListRow({
+                    key: 'common.action.cargo-type' | trans,
+                    value: choiceLabel(cargoChoices, action.cargoTypeCode) | trans,
+                    actions: loadHazardousChangeLink,
+                }) -}}
+            {%- else -%}
+                {# Unloading #}
+                {%- with {action: action.loadingAction} -%}
+                    {%- set goodsCopy = 'common.action.goods-from-place' | trans({
+                        name: action.name,
+                        country: action | formatCountry,
+                        number: loadingAction.number,
+                        goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)
+                    }) -%}
+
+                    {{- summaryListRow({
+                        key: 'common.action.goods' | trans,
+                        value: goodsCopy,
+                        actions: unloadConsignmentChangeLink,
+                    }) -}}
+                {%- endwith -%}
+                {%- if action.weightUnloadedAll -%}
+                    {{- summaryListRow({
+                        key: 'common.action.weight' | trans,
+                        value: 'common.action.unloaded-all' | trans({value: action.loadingAction.weightOfGoods}),
+                        actions: unloadConsignmentChangeLink,
+                    }) -}}
                 {%- else -%}
-            {# Unloading #}
-                    {%- set unloadConsignmentChangeLink = {(wizardUrl('international-action', 'STATE_CONSIGNMENT_UNLOADED', params)):
-                        {label: 'common.actions.change', srHiddenSuffix: 'common.action.goods'}
-                    } -%}
-                    {% with {action: action.loadingAction} %}
-                        {%- set goodsCopy = 'common.action.goods-from-place'|trans({name: action.name, country: action|formatCountry, number: loadingAction.number, goods: formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)}) -%}
-                        {{ summaryListRow('common.action.goods', goodsCopy, unloadConsignmentChangeLink) }}
-                    {% endwith %}
-                    {% if action.weightUnloadedAll %}
-                        {{ summaryListRow('common.action.weight', 'common.action.unloaded-all'|trans({value: action.loadingAction.weightOfGoods}), unloadConsignmentChangeLink) }}
-                    {% else %}
-                        {{ summaryListRow('common.action.weight', ('common.weight.kilograms'|trans({value: action.weightOfGoods})), unloadConsignmentChangeLink) }}
-                    {% endif %}
+                    {{- summaryListRow({
+                        key: 'common.action.weight' | trans,
+                        value: ('common.weight.kilograms' | trans({value: action.weightOfGoods})),
+                        actions: unloadConsignmentChangeLink,
+                    }) -}}
                 {%- endif -%}
-            </dl>
-            {%- set deleteRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::DELETE_ROUTE') -%}
-            {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
-            <a href="{{ url(dashboardRoute, {id: action.trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.action.summary.actions.back-to-trip-summary'|trans }}</a>
-            <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning">{{ 'international.action.summary.actions.delete'|trans }}</a>
-        </div>
-{#
-        <div class="govuk-grid-column-one-third">
-            {% with {trip: action.trip} %}
-                {% include "international_survey/includes/trip-summary.html.twig" %}
-            {% endwith %}
-        </div>
-#}
-    </div>
+            {%- endif -%}
+        </dl>
+        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
+        <a href="{{ url(dashboardRoute, {id: action.trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.action.summary.actions.back-to-trip-summary'|trans }}</a>
+        <a href="{{ url('app_internationalsurvey_action_delete', {actionId: action.id}) }}" class="govuk-button govuk-button--warning">{{ 'international.action.summary.actions.delete'|trans }}</a>
 {% endblock %}

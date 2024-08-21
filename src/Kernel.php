@@ -3,6 +3,7 @@
 namespace App;
 
 use App\DependencyInjection\AuditLogPass;
+use App\ML\FileTypeMatcher;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -12,14 +13,15 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends BaseKernel implements CompilerPassInterface
 {
     use MicroKernelTrait;
 
-    private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+    private const string CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    #[\Override]
     public function registerBundles(): iterable
     {
         $contents = require $this->getProjectDir().'/config/bundles.php';
@@ -30,12 +32,14 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         }
     }
 
+    #[\Override]
     public function getProjectDir(): string
     {
         return \dirname(__DIR__);
     }
 
-    protected function build(ContainerBuilder $container)
+    #[\Override]
+    protected function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -55,16 +59,17 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $confDir = $this->getProjectDir().'/config';
 
-        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS);
+        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS);
+        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS);
     }
 
-    public function getCacheDir()
+    #[\Override]
+    public function getCacheDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
             return sys_get_temp_dir();
@@ -72,7 +77,8 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         return parent::getCacheDir();
     }
 
-    public function getLogDir()
+    #[\Override]
+    public function getLogDir(): string
     {
         if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
             return sys_get_temp_dir();
@@ -80,7 +86,8 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         return parent::getLogDir();
     }
 
-    public function process(ContainerBuilder $container)
+    #[\Override]
+    public function process(ContainerBuilder $container): void
     {
         if ($container->hasDefinition('workflow.security.expression_language')) {
             $definition = $container->findDefinition('workflow.security.expression_language');
@@ -94,11 +101,14 @@ class Kernel extends BaseKernel implements CompilerPassInterface
             $providers = $container->findTaggedServiceIds('validator.expression_language_provider');
 
             $expressionLanguage = (new Definition(ExpressionLanguage::class, [
-                null, array_map(function($service){return new Reference($service);}, array_keys($providers))
+                null, array_map(fn($service) => new Reference($service), array_keys($providers))
             ]));
             $definition->setArguments([$expressionLanguage]);
         }
+
+        $fileTypeMatcher = $container->getDefinition(FileTypeMatcher::class);
+        foreach($container->findTaggedServiceIds('app.ml.file_type') as $id => $tags) {
+            $fileTypeMatcher->addMethodCall('addFileType', [new Reference($id)]);
+        }
     }
 }
-
-

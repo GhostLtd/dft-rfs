@@ -1,0 +1,5 @@
+{% set translation_prefix = 'international.closing-details.early-response' %}
+{% set heading_translation_parameters = {
+    finishDate: subject.surveyPeriodEnd | date('l jS F')
+} %}
+{% extends 'international_survey/closing_details/form-base.html.twig' %}

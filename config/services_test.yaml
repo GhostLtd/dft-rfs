@@ -3,7 +3,19 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         public: true        # Need to be public to allow testing
+        bind:
+            $secret: '%env(APP_SECRET)%'
 
-    App\Utility\Cleanup\PasscodeUserCleanupUtility: ~
-    App\Utility\Cleanup\PersonalDataCleanupUtility: ~
     App\Utility\AlphagovNotify\PersonalisationHelper: ~
+    App\Utility\Cleanup\PersonalDataCleanupUtility: ~
+    App\Utility\UrlSigner: ~
+
+    # Alias these services to make sure they are not removed when the container is
+    # compiled, and so that they can be replaced with mocks via their alias name.
+    app.test.message_bus:
+        alias: Symfony\Component\Messenger\MessageBusInterface
+        public: true
+
+    app.test.security:
+        alias: Symfony\Component\Security\Core\Security
+        public: true

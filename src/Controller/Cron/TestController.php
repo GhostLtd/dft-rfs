@@ -2,20 +2,18 @@
 
 namespace App\Controller\Cron;
 
-use App\Utility\RemindersHelper;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TestController extends AbstractCronController
 {
     /**
      * A test cron controller, to ensure that general cron route conditions are correct
-     * @see "/config/routing/annotations.yaml"
+     * @see "/config/routing/attributes.yaml"
      *
-     * @Route("/test", name="test", condition="'test' === '%kernel.environment%'")
      * @return Response
      */
+    #[Route(path: '/test', name: 'test', condition: "'test' === '%kernel.environment%'")]
     public function test(): Response
     {
         return new Response("success");

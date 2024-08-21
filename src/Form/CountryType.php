@@ -24,7 +24,8 @@ class CountryType extends AbstractType
         $this->other = $translator->trans('common.choices.other');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('country', Gds\ChoiceType::class, [
@@ -39,6 +40,10 @@ class CountryType extends AbstractType
                         'conditional_form_name' => 'country_other',
                     ],
                 ],
+                'choice_value' => fn($x) => match($x) {
+                    '0' => 'other',
+                    default => $x,
+                },
             ])
             ->add('country_other', Gds\InputType::class, [
                 'label' => $options['other_label'],
@@ -48,7 +53,8 @@ class CountryType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'choice_translation_locale' => $this->locale,

@@ -1,16 +1,43 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tag -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- actionlessSummaryListRow('admin.pre-enquiry.view.company-name', preEnquiry.companyName) -}}
-    {{- actionlessSummaryListRow('admin.pre-enquiry.view.reference-number', preEnquiry.referenceNumber) -}}
-    {{- actionlessSummaryListRow('admin.pre-enquiry.view.dispatch-date', preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-') -}}
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {%- set companyName -%}
+        <a class="govuk-link" href="{{ path('admin_preenquiry_list', {company_name: preEnquiry.companyName}) }}">{{ preEnquiry.companyName }}</a>
+    {%- endset -%}
+
+    {{- summaryListRow({
+        key: 'admin.pre-enquiry.view.company-name' | trans,
+        value: {html: companyName}
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.pre-enquiry.view.reference-number' | trans,
+        value: preEnquiry.referenceNumber
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.pre-enquiry.view.dispatch-date' | trans,
+        value: preEnquiry.dispatchDate ? preEnquiry.dispatchDate | date('format.date.default' | trans) : '-'
+    }) -}}
 
     {%- if showStatus ?? true -%}
-        {{- actionlessSummaryListRow('admin.pre-enquiry.view.status', tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans}), {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('admin.pre-enquiry.view.approved-by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.view.status' | trans,
+            value: {
+                html: tag({text: preEnquiry.state, classes: "admin.survey.state.#{preEnquiry.state}" | trans})
+            },
+        }) -}}
     {%- endif -%}
     {%- if showUsername ?? true -%}
-        {{- actionlessSummaryListRow('admin.pre-enquiry.view.username', preEnquiry.passcodeUser.username) }}
-        {{ actionlessSummaryListRow('Last logged in', preEnquiry.passcodeUser.lastLogin ? preEnquiry.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.view.username' | trans,
+            value: preEnquiry.passcodeUser.username
+        }) -}}
+        {{ summaryListRow({
+            key: 'Last logged in',
+            value: preEnquiry.passcodeUser.lastLogin ? preEnquiry.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-'
+        }) -}}
+        {{ summaryListRow({
+            key: 'Contact with haulier',
+            value: preEnquiry.chasedCount ? preEnquiry.chasedCount : '-'
+        }) -}}
     {%- endif -%}
-</dl>
+{{- summaryListEnd() -}}

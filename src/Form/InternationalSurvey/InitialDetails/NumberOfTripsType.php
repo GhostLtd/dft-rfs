@@ -11,10 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NumberOfTripsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('annualInternationalJourneyCount', Gds\NumberType::class, [
+            ->add('annualInternationalJourneyCount', Gds\IntegerType::class, [
                 'label' => 'international.survey-response.number-of-trips.annual-international-journey-count.label',
                 'help' => 'international.survey-response.number-of-trips.annual-international-journey-count.help',
                 'attr' => [
@@ -25,7 +26,8 @@ class NumberOfTripsType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

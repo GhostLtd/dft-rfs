@@ -1,0 +1,52 @@
+{%- macro surveysTabsAndList(surveys, filters) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
+
+    {{- _self.surveyList(surveys, filters) -}}
+{%- endmacro -%}
+
+{%- macro surveyList(surveys, filters) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow -%}
+
+    {%- if 'completed' in filters -%}
+        {%- set surveys = surveys | filter(s => s.isCompleted) -%}
+    {%- elseif 'outstanding' in filters -%}
+        {%- set surveys = surveys | filter(s => not s.isCompleted) -%}
+    {%- endif -%}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+        {%- for survey in surveys -%}
+            {%- set monthAndYear = survey.surveyPeriodStart | date('format.date.year-and-month' | trans) -%}
+            {%- set routeDescription = 'roro.route' | trans({ukPort: survey.route.ukPort.name, foreignPort: survey.route.foreignPort.name}) %}
+            {{- summaryListRow({
+                key: monthAndYear,
+                value: routeDescription,
+                actions: [
+                    {
+                        href: path('app_roro_survey_view', {surveyId: survey.id}),
+                        text: 'common.actions.view' | trans,
+                        visuallyHiddenText: "#{monthAndYear} - #{routeDescription}",
+                    }
+                ]
+            }) -}}
+        {%- else  -%}
+            {{- summaryListRow({
+                key: 'No surveys',
+                value: ''
+            }) -}}
+        {%- endfor -%}
+    </dl>
+{%- endmacro -%}
+
+{%- macro contactDetails(headerClasses) -%}
+    <h2 class="govuk-heading-m {{ headerClasses ?? '' }}">{{ 'roro.dashboard.questions.header' | trans }}</h2>
+    <p class="govuk-body">{{ 'roro.dashboard.questions.text' | trans }}</p>
+    <ul class="govuk-list">
+        {%- set email = 'roro.contact.email' | trans -%}
+        {%- set email_label = 'roro.dashboard.questions.email' | trans -%}
+        {%- set phone = 'roro.contact.phone' | trans -%}
+        {%- set phone_label = 'roro.dashboard.questions.phone' | trans -%}
+
+        <li>{{ email_label }} <a href="mailto:{{ email }}" class="govuk-link">{{ email }}</a></li>
+        <li>{{ phone_label }} {{ phone }}</li>
+    </ul>
+{%- endmacro -%}

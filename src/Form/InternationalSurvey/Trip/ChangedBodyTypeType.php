@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form\InternationalSurvey\Trip;
-
 
 use App\Entity\International\Trip;
 use App\Entity\Vehicle;
@@ -18,45 +16,50 @@ use Symfony\Component\Form\Exception;
 
 class ChangedBodyTypeType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationKeyPrefix = "international.trip.changed-body-type";
         $builder
             ->setDataMapper($this)
             ->add('isChangedBodyType', Gds\ChoiceType::class, [
                 'choices' => self::CHOICES,
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'label' => "${translationKeyPrefix}.is-changed-body-type.label",
-                'help' => "${translationKeyPrefix}.is-changed-body-type.help",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
+                'label' => "international.trip.changed-body-type.is-changed-body-type.label",
+                'help' => "international.trip.changed-body-type.is-changed-body-type.help",
                 'choice_options' => [
                     self::CHOICE_YES => [
                         'conditional_form_name' => 'bodyType',
                     ],
                 ],
-            ])
-            ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($translationKeyPrefix) {
+                'choice_value' => fn($x) => match($x) {
+                    true => 'yes',
+                    false => 'no',
+                    null => null,
+                },
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Trip $trip */
             $trip = $event->getData();
             $event->getForm()
                 ->add('bodyType', Gds\ChoiceType::class, [
                     'choices' => $trip->getChangeBodyTypeChoices(),
-                    'label' => "{$translationKeyPrefix}.body-type.label",
-                    'help' => "{$translationKeyPrefix}.body-type.help",
+                    'label' => "international.trip.changed-body-type.body-type.label",
+                    'help' => "international.trip.changed-body-type.body-type.help",
                     'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
-                ])
-            ;
+                ]);
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Trip::class,
@@ -64,7 +67,8 @@ class ChangedBodyTypeType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -84,7 +88,8 @@ class ChangedBodyTypeType extends AbstractType implements DataMapperInterface
         $forms['bodyType']->setData($viewData->getBodyType());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
 

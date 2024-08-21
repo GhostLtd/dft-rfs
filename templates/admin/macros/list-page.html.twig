@@ -1,23 +1,29 @@
 {%- macro listTableStart(data, form) -%}
-    {{ form_start(form) }}
-    <table class="govuk-table list-table">
-        {{ _self.tableHeader(data, form) }}
-        <tbody class="govuk-table__body">
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableStart, tableBodyStart -%}
+    {{- form_start(form) -}}
+
+    {{- tableStart({classes: 'list-table'}) -}}
+        {{- _self.tableHeader(data, form) -}}
+        {{- tableBodyStart() -}}
 {%- endmacro -%}
 
-{%- macro listTableEnd(data, form, pagination=true) -%}
-        </tbody>
-    </table>
-    {{ form_end(form) }}
-    {% if pagination %}
-        {{ _self.pagination(data) }}
-    {% endif %}
+{%- macro listTableEnd(listPageData, form, enable_pagination=true) -%}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import pagination, tableEndIncludingBody -%}
+    {{- tableEndIncludingBody() -}}
+
+    {{- form_end(form) -}}
+
+    {%- if enable_pagination -%}
+        <div class="pagination-container">
+            {{- pagination(listPageData.getPaginationData) -}}
+        </div>
+    {%- endif -%}
 {%- endmacro -%}
 
 {%- macro tableHeader(data, form) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell %}
-    <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
+    {%- from '@GhostGovUkFrontend/components/table/macros.html.twig' import tableHeader, tableRowStart, tableRowEnd, tableHeadStart, tableHeadEnd -%}
+    {{- tableHeadStart() -}}
+    {{- tableRowStart() -}}
         {%- for field in data.fields -%}
             {%- set contents -%}
             {%- autoescape false -%}
@@ -43,44 +49,12 @@
             {%- endautoescape -%}
             {%- endset -%}
 
-            {{- tableCell(contents, field.getCellOptions|merge({element: 'th', html: true})) -}}
+            {{- tableHeader(field.getCellOptions | merge({html: contents})) -}}
         {%- endfor -%}
-        {{- tableCell('<div class="list-table--buttons">' ~ form_rest(form) ~ '</div>', {element: 'th', html: true}) -}}
-    </tr>
-    </thead>
-{%- endmacro -%}
-
-{%- macro page(page) -%}
-    <span class="govuk-visually-hidden">Page </span>{{ page }}
-{%- endmacro -%}
-
-{%- macro pagination(data) -%}
-    <nav class="govuk-pagination__container" aria-label="Pagination">
-        <div class="previous">
-            {% if data.previousUrl %}<a href="{{ data.previousUrl }}">Previous page</a>{% endif %}
-        </div>
-        <div class="govuk-pagination">
-            <ul>
-                {%- for entry in data.paginationUrls -%}
-                    {%- set page = entry[0] -%}
-                    {%- set url = entry[1] -%}
-                    {%- set isCurrent = page == data.page -%}
-                    <li{% if isCurrent %} class="govuk-pagination__active"{% endif %}>
-                        {%- if page == '...' -%}
-                            ...
-                        {%- else -%}
-                            {%- if isCurrent -%}
-                                {{ _self.page(page) }}
-                            {%- else -%}
-                                <a href="{{ url }}">{{ _self.page(page) }}</a>
-                            {%- endif -%}
-                        {%- endif -%}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="next">
-            {% if data.nextUrl %}<a href="{{ data.nextUrl }}">Next page</a>{% endif %}
-        </div>
-    </nav>
+        {%- set actionsContent -%}
+            <div class="list-table--buttons">{{ form_rest(form) }}</div>
+        {%- endset -%}
+        {{- tableHeader({html: actionsContent}) -}}
+    {{- tableRowEnd() -}}
+    {{- tableHeadEnd() -}}
 {%- endmacro -%}

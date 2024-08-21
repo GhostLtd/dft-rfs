@@ -7,15 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class CallbackSingleEntityDatabaseTestCase implements DatabaseTestCase
 {
-    protected string $singleEntityClass;
     protected $callback;
 
-    public function __construct(string $singleEntityClass, callable $callback)
+    public function __construct(protected string $singleEntityClass, callable $callback)
     {
-        $this->singleEntityClass = $singleEntityClass;
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function checkDatabaseAsExpected(EntityManagerInterface $entityManager, TestCase $testCase): void
     {
         $repo = $entityManager->getRepository($this->singleEntityClass);

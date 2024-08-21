@@ -29,7 +29,8 @@
                 {% for stat in weekStats.data %}
                     <td class="govuk-table__header govuk-table__header--numeric">{{ stat }}</td>
                 {% endfor %}
-                <td class="govuk-table__header">{{ weekStats.data | reduce((carry, v) => carry + v) }}</td>
+                {% set total = weekStats.data | reduce((carry, v) => carry + v) %}
+                <td class="govuk-table__header">{{ total ?? '0' }}</td>
             </tr>
         {% endfor %}
         <tr class="govuk-table__row">
@@ -37,7 +38,8 @@
             {% for stat in totals %}
                 <td class="govuk-table__header govuk-table__header--numeric">{{ stat }}</td>
             {% endfor %}
-            <td class="govuk-table__header govuk-table__header--numeric"></td>
+            {% set total = totals | reduce((carry, v) => carry + v) %}
+            <td class="govuk-table__header govuk-table__header--numeric">{{ total ?? '0' }}</td>
         </tr>
         </tbody>
     </table>

@@ -4,8 +4,12 @@
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLinks, tableCell, tableHead -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
+
+    {%- if maintenanceWarningBanner ?? false -%}
+        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
+        {{- notificationBanner(maintenanceWarningBanner) -}}
+    {%- endif -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.summary.heading'|trans }}</h1>
 

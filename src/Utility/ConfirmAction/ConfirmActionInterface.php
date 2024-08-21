@@ -14,7 +14,9 @@ interface ConfirmActionInterface
     public function getTranslationParameters(): array;
     public function getFormOptions(): array;
     public function doConfirmedAction($formData);
-    public function getConfirmedBanner(): NotificationBanner;
     public function getCancelledBanner(): NotificationBanner;
+    public function getConfirmedBanner(): NotificationBanner;
+    public function getFailedBanner(): NotificationBanner;
     public function getExtraViewData(): array;
+    public function setExtraViewData(array $extraViewData): self;
 }

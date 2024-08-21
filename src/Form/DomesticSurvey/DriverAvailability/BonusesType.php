@@ -1,12 +1,8 @@
 <?php
 
-
 namespace App\Form\DomesticSurvey\DriverAvailability;
 
-
-use App\Entity\CurrencyOrPercentage;
 use App\Entity\Domestic\DriverAvailability;
-use App\Form\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BonusesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.driver-availability.bonuses";
 
@@ -25,7 +22,7 @@ class BonusesType extends AbstractType
             ->add('hasPaidBonus', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.hasPaidBonus',
                 'label' => "{$translationKeyPrefix}.has-paid-bonus.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.has-paid-bonus.help",
                 'choices' => DriverAvailability::YES_NO_PLAN_TO_CHOICES,
                 'choice_options' => [
@@ -43,12 +40,12 @@ class BonusesType extends AbstractType
             ->add('reasonsForBonuses', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.reasonsForBonuses',
                 'label' => "{$translationKeyPrefix}.reasons-for-bonuses.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.reasons-for-bonuses.help",
                 'choices' => DriverAvailability::BONUS_REASON_CHOICES,
                 'multiple' => true,
             ])
-            ->add('averageBonus', Gds\MoneyType::class, [
+            ->add('averageBonus', Gds\DecimalMoneyType::class, [
                 'property_path' => 'survey.driverAvailability.averageBonus',
                 'label' => "{$translationKeyPrefix}.average-bonus.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -60,7 +57,8 @@ class BonusesType extends AbstractType
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['driver-availability.bonuses']

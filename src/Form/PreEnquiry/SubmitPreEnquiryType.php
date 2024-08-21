@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class SubmitPreEnquiryType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('submit', ButtonType::class, [

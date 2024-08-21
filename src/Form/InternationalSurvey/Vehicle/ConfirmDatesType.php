@@ -7,7 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConfirmDatesType extends AbstractConfirmType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([

@@ -8,37 +8,28 @@ use Twig\Extension\EscaperExtension;
 
 class SqlServerInsertEncoder implements EncoderInterface
 {
-    const FORMAT = 'sql-server-insert';
-    const TABLE_NAME_KEY = 'table-name';
-    const FORCE_STRING_FIELDS = 'force-string-fields';
-    const ROWS_PER_INSERT = 'rows-per-insert';
+    public const FORMAT = 'sql-server-insert';
+    public const TABLE_NAME_KEY = 'table-name';
+    public const FORCE_STRING_FIELDS = 'force-string-fields';
+    public const ROWS_PER_INSERT = 'rows-per-insert';
 
-    private $defaultContext = [
+    private array $defaultContext = [
         self::TABLE_NAME_KEY => 'table_a',
         self::FORCE_STRING_FIELDS => [],
         self::ROWS_PER_INSERT => 1000,
     ];
 
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
-    /**
-     * @param Environment $twig
-     */
     public function setTwig(Environment $twig): void
     {
         $this->twig = $twig;
         $this->twig
             ->getExtension(EscaperExtension::class)
-            ->setEscaper('sql', [$this, 'sqlEscape']);
+            ->setEscaper('sql', $this->sqlEscape(...));
     }
 
-    /**
-     * @param array $defaultContext
-     */
-    public function __construct($defaultContext = [])
+    public function __construct(array $defaultContext = [])
     {
         $this->defaultContext = array_merge($this->defaultContext, $defaultContext);
     }
@@ -46,7 +37,8 @@ class SqlServerInsertEncoder implements EncoderInterface
     /**
      * {@inheritdoc}
      */
-    public function encode($data, $format, array $context = [])
+    #[\Override]
+    public function encode($data, $format, array $context = []): string
     {
         if (count($data) === 0) {
             return '';
@@ -63,7 +55,8 @@ class SqlServerInsertEncoder implements EncoderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsEncoding($format)
+    #[\Override]
+    public function supportsEncoding($format): bool
     {
         return self::FORMAT === $format;
     }

@@ -3,15 +3,13 @@
 namespace App\Repository\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
-use App\Utility\StateReportHelper;
+use App\Repository\SurveyDeletionInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
-use RuntimeException;
 
 /**
  * @method PreEnquiry|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,29 +17,13 @@ use RuntimeException;
  * @method PreEnquiry[]    findAll()
  * @method PreEnquiry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PreEnquiryRepository extends ServiceEntityRepository
+class PreEnquiryRepository extends ServiceEntityRepository implements SurveyDeletionInterface
 {
     use DashboardStatsTrait;
 
-    protected StateReportHelper $stateReportHelper;
-
-    public function __construct(ManagerRegistry $registry, StateReportHelper $stateReportHelper)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PreEnquiry::class);
-        $this->stateReportHelper = $stateReportHelper;
-    }
-
-    public function findLatestSurveyForTesting(): ?PreEnquiry
-    {
-        try {
-            return $this->createQueryBuilder('pe')
-                ->orderBy('pe.id', 'DESC')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Query with maxResults 1 returned multiple results!');
-        }
     }
 
     /**
@@ -54,125 +36,62 @@ class PreEnquiryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('pe')
             ->select('pe, per')
             ->leftJoin('pe.response', 'per')
-            ->where('pe.state = :state')
+            ->where('pe.state IN (:states)')
             ->andWhere('pe.submissionDate >= :monthStart')
             ->andWhere('pe.submissionDate < :monthEnd')
-            ->setParameters([
-                'state' => SurveyInterface::STATE_CLOSED,
-                'monthStart' => $monthStart,
-                'monthEnd' => $monthEnd,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', [SurveyStateInterface::STATE_CLOSED]),
+                new Parameter('monthStart', $monthStart),
+                new Parameter('monthEnd', $monthEnd),
+            ]))
             ->getQuery()
             ->execute();
     }
 
-    public function getMinimumAndMaximumYear(): array
+    public function getOverdueCount(): int
     {
-        $result = $this->createQueryBuilder('p')
-            ->select('MIN(YEAR(p.dispatchDate)) AS min, MAX(YEAR(p.dispatchDate)) AS max')
+        return $this->createQueryBuilder('p')
+            ->select('count(p) AS count')
+            ->where('p.state IN (:states)')
+            ->andWhere('p.invitationSentDate < :fourteenDaysAgo')
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('fourteenDaysAgo', (new \DateTime())->modify('-14 days')),
+            ]))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getInProgressCount(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p) AS count')
+            ->where('p.state IN (:states)')
+            ->setParameter('states', SurveyStateInterface::ACTIVE_STATES)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findPreEnquiryIdsByCompanyName(string $businessName): array
+    {
+        $results = $this->createQueryBuilder('p')
+            ->select('p.id')
+            ->where('UPPER(TRIM(p.companyName)) = :companyName')
+            ->setParameter('companyName', mb_strtoupper($businessName))
             ->getQuery()
             ->getArrayResult();
 
-        if (count($result) === 0) {
-            $year = (new \DateTime())->format('Y');
-            return [$year, $year];
-        } else {
-            $firstResult = current($result);
-            return array_values($firstResult);
-        }
+        return array_map(fn(array $a) => $a['id'], $results);
     }
 
-    public function getStateReportStats(?\DateTime $minStart = null, ?\DateTime $maxStart = null): array
+    public function getSurveysForDeletion(\DateTime $before): array
     {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p.state, count(p) AS count, p.dispatchDate AS dispatchDate, MONTH(p.dispatchDate) AS month, YEAR(p.dispatchDate) AS year');
-
-        $this->addTimeBounds($qb, $minStart, $maxStart);
-
-        $results = $qb
-            ->groupBy('year, month, p.state, dispatchDate')
-            ->orderBy('year, month, p.state')
+        return $this->createQueryBuilder('pre')
+            ->select('pre, response')
+            ->where('pre.dispatchDate < :before')
+            ->leftJoin('pre.response', 'response')
+            ->setParameter('before', $before->format('Y-m-d'))
             ->getQuery()
             ->execute();
-
-        $mergeStates = $this->stateReportHelper->getStateReportMergeMappings();
-
-        $stats = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $stats['data'][$month] = [
-                'data' => [
-                    SurveyInterface::STATE_INVITATION_SENT => 0,
-                    SurveyInterface::STATE_IN_PROGRESS => 0,
-                    SurveyInterface::STATE_CLOSED => 0,
-                    SurveyInterface::STATE_REJECTED => 0,
-//                    SurveyInterface::STATE_EXPORTED => 0,
-                    SurveyInterface::STATE_APPROVED => 0,
-                ],
-            ];
-        }
-
-        foreach ($results as $result) {
-            $date = ($result['dispatchDate']);
-            $month = intval($date->format('n'));
-            $state = $result['state'];
-
-            if (array_key_exists($state, $mergeStates)) {
-                $state = $mergeStates[$state];
-            }
-
-            if (!isset($stats['data'][$month]['data'][$state])) {
-                $stats['data'][$month]['data'][$state] = 0;
-            }
-
-            $stats['data'][$month]['data'][$state] += $result['count'];
-        }
-
-        return $this->addTotalsAndFlags($stats);
-    }
-
-    // TODO: Refactor / pull this out (+ others)
-    protected function addTotalsAndFlags(array $stats): array
-    {
-        $totals = [];
-        $sumOfTotals = 0;
-        foreach ($stats['data'] as $month => $monthStats) {
-            $allZeros = true;
-            $total = 0;
-            foreach ($monthStats['data'] as $name => $data) {
-                $total += $data;
-                if ($data > 0) {
-                    $allZeros = false;
-                }
-
-                if (!isset($totals[$name])) {
-                    $totals[$name] = $data;
-                } else {
-                    $totals[$name] += $data;
-                }
-            }
-            $stats['data'][$month]['total'] = $total;
-            $stats['data'][$month]['allZeros'] = $allZeros;
-            $sumOfTotals += $total;
-        }
-        $stats['totals'] = $totals;
-        $stats['total'] = $sumOfTotals;
-        return $stats;
-    }
-
-    protected function addTimeBounds(QueryBuilder $qb, ?\DateTime $minStart, ?\DateTime $maxStart): QueryBuilder
-    {
-        if ($minStart !== null) {
-            $qb
-                ->andWhere('p.dispatchDate >= :minStart')
-                ->setParameter('minStart', $minStart);
-        }
-
-        if ($maxStart !== null) {
-            $qb
-                ->andWhere('p.dispatchDate < :maxStart')
-                ->setParameter('maxStart', $maxStart);
-        }
-
-        return $qb;
     }
 }

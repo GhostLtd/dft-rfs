@@ -2,48 +2,48 @@
 
 namespace App\Repository;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 
 trait DashboardStatsTrait
 {
     private static array $statusColourMap = [
-        SurveyInterface::STATE_IN_PROGRESS => [
+        SurveyStateInterface::STATE_IN_PROGRESS => [
             "background" => "#ffdd00", // Yellow
             "colour" => "#000",
         ],
-        SurveyInterface::STATE_NEW => [
+        SurveyStateInterface::STATE_NEW => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        SurveyInterface::STATE_INVITATION_PENDING => [
+        SurveyStateInterface::STATE_INVITATION_PENDING => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        SurveyInterface::STATE_INVITATION_FAILED => [
+        SurveyStateInterface::STATE_INVITATION_FAILED => [
             "background" => "#942514", // Red
             "colour" => "#fff",
         ],
-        SurveyInterface::STATE_INVITATION_SENT => [
+        SurveyStateInterface::STATE_INVITATION_SENT => [
             "background" => "#b1b4b6", // Mid-grey
             "colour" => "#000",
         ],
-        SurveyInterface::STATE_CLOSED => [
+        SurveyStateInterface::STATE_CLOSED => [
             "background" => "#1d70b8", // Blue
             "colour" => "#fff",
         ],
-        SurveyInterface::STATE_APPROVED => [
+        SurveyStateInterface::STATE_APPROVED => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
-        SurveyInterface::STATE_REJECTED => [
+        SurveyStateInterface::STATE_REJECTED => [
             "background" => "#942514", // Red
             "colour" => "#fff",
         ],
-        SurveyInterface::STATE_EXPORTING => [
+        SurveyStateInterface::STATE_EXPORTING => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
-        SurveyInterface::STATE_EXPORTED => [
+        SurveyStateInterface::STATE_EXPORTED => [
             "background" => "#005a30", // Green
             "colour" => "#fff",
         ],
@@ -52,22 +52,22 @@ trait DashboardStatsTrait
     public function getCountsByStatus(): array
     {
         $wantedStates = [
-            SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_IN_PROGRESS,
-            SurveyInterface::STATE_APPROVED,
-            SurveyInterface::STATE_CLOSED,
+            SurveyStateInterface::STATE_INVITATION_SENT,
+            SurveyStateInterface::STATE_IN_PROGRESS,
+            SurveyStateInterface::STATE_APPROVED,
+            SurveyStateInterface::STATE_CLOSED,
         ];
 
         $ignoredStates = [
-            SurveyInterface::STATE_EXPORTING,
-            SurveyInterface::STATE_EXPORTED,
-            SurveyInterface::STATE_REJECTED,
+            SurveyStateInterface::STATE_EXPORTING,
+            SurveyStateInterface::STATE_EXPORTED,
+            SurveyStateInterface::STATE_REJECTED,
         ];
 
         $mergeStates = [
-            SurveyInterface::STATE_NEW => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_INVITATION_PENDING => SurveyInterface::STATE_INVITATION_SENT,
-            SurveyInterface::STATE_EXPORTING => SurveyInterface::STATE_EXPORTED,
+            SurveyStateInterface::STATE_NEW => SurveyStateInterface::STATE_INVITATION_SENT,
+            SurveyStateInterface::STATE_INVITATION_PENDING => SurveyStateInterface::STATE_INVITATION_SENT,
+            SurveyStateInterface::STATE_EXPORTING => SurveyStateInterface::STATE_EXPORTED,
         ];
 
         $counts = $this->createQueryBuilder('s')

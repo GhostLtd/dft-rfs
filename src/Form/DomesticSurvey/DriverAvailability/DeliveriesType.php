@@ -10,21 +10,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DeliveriesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.driver-availability.deliveries";
 
         $builder
             ->setDataMapper(new DeliveriesTypeMapper())
 
-            ->add('numberOfLorriesOperated', Gds\NumberType::class, [
+            ->add('numberOfLorriesOperated', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfLorriesOperated',
                 'label' => "{$translationKeyPrefix}.number-of-lorries-operated.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.number-of-lorries-operated.help",
                 'attr' => ['class' => 'govuk-input--width-5'],
             ])
-            ->add('numberOfParkedLorries', Gds\NumberType::class, [
+            ->add('numberOfParkedLorries', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfParkedLorries',
                 'label' => "{$translationKeyPrefix}.number-of-parked-lorries.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -34,14 +35,14 @@ class DeliveriesType extends AbstractType
             ->add('hasMissedDeliveries', Gds\ChoiceType::class, [
                 'property_path' => 'survey.driverAvailability.hasMissedDeliveries',
                 'label' => "{$translationKeyPrefix}.has-missed-deliveries.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "{$translationKeyPrefix}.has-missed-deliveries.help",
                 'choices' => DriverAvailability::MISSING_DELIVERY_CHOICES,
                 'choice_options' => [
                     DriverAvailability::MISSING_DELIVERY_TRANSLATION_PREFIX.'yes' => ['conditional_form_name' => 'numberOfMissedDeliveries'],
                 ],
             ])
-            ->add('numberOfMissedDeliveries', Gds\NumberType::class, [
+            ->add('numberOfMissedDeliveries', Gds\IntegerType::class, [
                 'property_path' => 'survey.driverAvailability.numberOfMissedDeliveries',
                 'label' => "{$translationKeyPrefix}.number-of-missed-deliveries.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
@@ -51,7 +52,8 @@ class DeliveriesType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['driver-availability.deliveries']

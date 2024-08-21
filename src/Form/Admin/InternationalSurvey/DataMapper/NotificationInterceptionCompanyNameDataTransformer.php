@@ -8,12 +8,14 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class NotificationInterceptionCompanyNameDataTransformer implements DataTransformerInterface
 {
-    private ?Collection $transformValue;
+    private ?Collection $transformValue = null;
 
     /**
      * @param ?Collection $value
+     * @return mixed
      */
-    public function transform($value): ?string
+    #[\Override]
+    public function transform($value)
     {
         $this->transformValue = $value;
         return $value
@@ -21,6 +23,10 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
             : null;
     }
 
+    /**
+     * @return mixed
+     */
+    #[\Override]
     public function reverseTransform($value)
     {
         $data = explode("\r\n", $value);

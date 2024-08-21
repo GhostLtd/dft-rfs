@@ -1,9 +1,10 @@
 {% extends 'admin/base.html.twig' %}
 
 {% set translation_prefix = translation_prefix | default('default') %}
+{%- set heading_translation = headingTranslation | default(translation_prefix ~ '.heading') %}
 
 {% block pageTitle -%}
-    {{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }} - {{ parent() -}}
+    {{ heading_translation | trans(headingParams | default({}), headingDomain | default(null)) }} - {{ parent() -}}
 {%- endblock %}
 
 {% block main %}
@@ -21,13 +22,28 @@
                 {% endblock %}
             </nav>
 
-            {% block beforeContent %}{% endblock %}
+            {% block beforeContent -%}
+                {%- block backLink -%}
+                    {%- if (formWizardState | default(false)) and formWizardState.previousHistoryState -%}
+                        <a href="{{ url(app.request.get('_route'), app.request.get('_route_params') | default({}) | merge({state: formWizardState.previousHistoryState})) }}" class="govuk-back-link">Back</a>
+                    {%- endif -%}
+                {%- endblock -%}
+            {%- endblock %}
             <main class="govuk-grid-column-content govuk-main-wrapper {{ mainClasses | default('') }}" id="main-content" role="main"{% if mainLang | default(false) %} lang="{{ mainLang }}"{% endif %}>
                 {% from '@GhostGovUkFrontend/components/macros.html.twig' import flashNotificationBanners %}
+                {%- if maintenanceWarningBanner ?? false -%}
+                    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds-from-wide">
+                    {{- notificationBanner(maintenanceWarningBanner) -}}
+                    </div>
+                </div>
+                {%- endif -%}
+
                 {{ flashNotificationBanners() }}
 
                 {% block adminContentIncludingHeader %}
-                <h1 class="govuk-heading-l" id="top">{{ (translation_prefix ~ '.heading')|trans(headingParams|default({}), headingDomain|default(null)) }}</h1>
+                <h1 class="govuk-heading-l {{ block('extraHeadingClasses') ?? null }}" id="top">{{ heading_translation | trans(headingParams | default({}), headingDomain | default(null)) }}</h1>
                 {% block adminContent %}
                     <p class="govuk-body">Content</p>
                 {% endblock %}

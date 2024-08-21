@@ -18,25 +18,22 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ActionUnloadType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    protected $loadingPlaceHelper;
+    public function __construct(protected LoadingPlaceHelper $loadingPlaceHelper)
+    {}
 
-    public function __construct(LoadingPlaceHelper $loadingPlaceHelper)
-    {
-        $this->loadingPlaceHelper = $loadingPlaceHelper;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 /** @var Action $action */
                 $action = $event->getData();
 
@@ -65,7 +62,7 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
                             ],
                         ],
                     ])
-                    ->add('weightOfGoods', Gds\NumberType::class, [
+                    ->add('weightOfGoods', Gds\IntegerType::class, [
                         'label' => "Weight of goods unloaded",
                         'label_attr' => ['class' => 'govuk-label--s'],
                         'attr' => ['class' => 'govuk-input--width-10'],
@@ -81,14 +78,16 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
             });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['admin_action_unload'],
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -108,11 +107,12 @@ class ActionUnloadType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
-
         /** @var FormInterface[] $forms */
+
         if (!$viewData instanceof Action) {
             throw new UnexpectedTypeException($viewData, Action::class);
         }

@@ -2,15 +2,14 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Embeddable()
- */
-class Address
+#[ORM\Embeddable]
+class Address implements \Stringable
 {
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'line1' => $this->line1,
@@ -21,45 +20,34 @@ class Address
         ];
     }
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line1;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line1 = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line3;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line3 = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line2;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line2 = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $line4;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $line4 = null;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     * @Assert\Regex(groups={"notify_api"}, message="Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)", pattern="/^[@()=\[\]"",<>\\\/]/", match=false)
-     */
-    protected $postcode;
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]
+    #[ORM\Column(type: Types::STRING, length: 10, nullable: true)]
+    protected ?string $postcode = null;
 
     public function getLine1(): ?string
     {
         return $this->line1;
     }
 
-    public function setLine1(?string $line1): self
+    public function setLine1(?string $line1): static
     {
         $this->line1 = $line1;
-
         return $this;
     }
 
@@ -68,10 +56,9 @@ class Address
         return $this->line2;
     }
 
-    public function setLine2(?string $line2): self
+    public function setLine2(?string $line2): static
     {
         $this->line2 = $line2;
-
         return $this;
     }
 
@@ -80,10 +67,9 @@ class Address
         return $this->line3;
     }
 
-    public function setLine3(?string $line3): self
+    public function setLine3(?string $line3): static
     {
         $this->line3 = $line3;
-
         return $this;
     }
 
@@ -92,10 +78,9 @@ class Address
         return $this->line4;
     }
 
-    public function setLine4(?string $line4): self
+    public function setLine4(?string $line4): static
     {
         $this->line4 = $line4;
-
         return $this;
     }
 
@@ -104,10 +89,9 @@ class Address
         return $this->postcode;
     }
 
-    public function setPostcode(?string $postcode): self
+    public function setPostcode(?string $postcode): static
     {
         $this->postcode = $postcode;
-
         return $this;
     }
 
@@ -117,6 +101,7 @@ class Address
         return $this->line1 || $this->line2 || $this->line3 || $this->line4 || $this->postcode;
     }
 
+    #[\Override]
     public function __toString(): string {
         $nonEmptyLines = array_filter($this->toArray(), fn(?string $line) => $line && trim($line) !== '');
         return join(', ', $nonEmptyLines);

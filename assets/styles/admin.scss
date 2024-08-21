@@ -1,5 +1,4 @@
-//@import '../../bundles/Ghost/GovUkFrontendBundle/Resources/assets/css/bundle';
-$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+@import "node_modules/govuk-frontend/dist/govuk/all";
 
 @import "admin/blame-log";
 @import "admin/bulk-import";
@@ -9,11 +8,21 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "admin/login";
 @import "admin/menu";
 @import "admin/notes";
-@import "admin/pagination";
+//@import "admin/pagination";
 @import "admin/report-table";
+@import "admin/send-reminder";
 @import "admin/surveys";
 @import "admin/vertical-text";
 @import "admin/feedback";
+
+@import "common/notification-banner";
+@import "common/text-align";
+
+.pagination-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
 
 .govuk-header__service-name-env {
   @include govuk-font(24, "bold");
@@ -40,6 +49,8 @@ legend.govuk-fieldset__legend--underline,
 }
 
 .govuk-select {
+  min-width: auto;
+
   &.govuk-select--width-30 {
     max-width: 56ex + 3ex;
   }
@@ -88,4 +99,12 @@ legend.govuk-fieldset__legend--underline,
   &.govuk-select--width-2 {
     width: 100%;
   }
+}
+
+span.code {
+  font-size: 70%;
+}
+
+.govuk-label--s {
+  font-weight: 700;
 }

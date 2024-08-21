@@ -19,7 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class InitialDetailsType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
@@ -30,12 +31,20 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ->add('isInPossessionOfVehicle', Gds\ChoiceType::class, [
                 'choices' => SurveyResponse::IN_POSSESSION_CHOICES,
                 'label' => "domestic.survey-response.in-possession-of-vehicle.is-in-possession-of-vehicle.label",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choice_options' => [
+                    SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_YES => ['conditional_form_name' => 'isExemptVehicleType'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_ON_HIRE => ['conditional_form_name' => 'hiree_details'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN => ['conditional_form_name' => 'scrapped_details'],
                     SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . SurveyResponse::IN_POSSESSION_SOLD => ['conditional_form_name' => 'sold_details'],
                 ],
                 'constraints' => [new NotBlank(['groups' => 'admin_correspondence', 'message' => 'Please choose an option'])],
+            ])
+            ->add('isExemptVehicleType', Gds\ChoiceType::class, [
+                'choices' => SurveyResponse::IS_EXEMPT_CHOICES,
+                'label' => "domestic.survey-response.is-exempt-vehicle-type.label",
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
+                'help' => "domestic.survey-response.is-exempt-vehicle-type.help",
             ])
             ->add('hiree_details', HireeDetailsType::class, [
                 'label' => false,
@@ -63,7 +72,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
@@ -72,6 +82,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                 $validationGroups = ['admin_correspondence'];
 
                 switch ($isInPossession) {
+                    case SurveyResponse::IN_POSSESSION_YES:
+                        $validationGroups[] = 'admin_exempt_vehicle_type';
+                        break;
                     case SurveyResponse::IN_POSSESSION_ON_HIRE:
                         $validationGroups[] = 'admin_on_hire';
                         break;
@@ -88,7 +101,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -102,8 +116,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         // a) Getting the date data to/from the correct form field (soldDate, scrappedDate or neither)
         // b) Setting fields related to the non-chosen options to null (e.g. choose "hire" and sold/scrapped fields will be nulled)
 
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
+
+        /** @var FormInterface[] $forms */
         $accessor = PropertyAccess::createPropertyAccessor();
 
         foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
@@ -111,6 +126,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
 
         switch ($viewData->getIsInPossessionOfVehicle()) {
+            case SurveyResponse::IN_POSSESSION_YES:
+                $forms['isExemptVehicleType']->setData($accessor->getValue($viewData, 'isExemptVehicleType'));
+                break;
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
                 foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {
                     $forms[$field]->setData($accessor->getValue($viewData, $field));
@@ -128,11 +146,12 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
-        /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
+        /** @var FormInterface[] $forms */
         if (!$viewData instanceof SurveyResponse) {
             throw new Exception\UnexpectedTypeException($viewData, SurveyResponse::class);
         }
@@ -140,19 +159,22 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         $accessor = PropertyAccess::createPropertyAccessor();
         $isInPossession = $forms['isInPossessionOfVehicle']->getData();
 
+
         foreach(['contactBusinessName', 'contactName', 'contactTelephone', 'contactEmail', 'isInPossessionOfVehicle'] as $field) {
             $accessor->setValue($viewData, $field, $forms[$field]->getData());
         }
 
         // If you say "hire", it'll give you the "sold" fields. If you say "scrapped", it'll give you "sold" + "hire" fields etc.
-        $getFieldsExcluding = function(string $excludeGroup) {
-            return array_merge(...array_values(array_filter([
-                'hire' => ['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'],
-                'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
-            ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
-        };
+        $getFieldsExcluding = fn(string $excludeGroup) => array_merge(...array_values(array_filter([
+            'hire' => ['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'],
+            'sold' => ['newOwnerAddress', 'newOwnerName', 'newOwnerEmail'],
+        ], fn($x) => $x !== $excludeGroup, ARRAY_FILTER_USE_KEY)));
 
         switch ($isInPossession) {
+            case SurveyResponse::IN_POSSESSION_YES:
+                $isExemptVehicleType = $forms['isExemptVehicleType']->getData();
+                $viewData->setIsExemptVehicleType($isExemptVehicleType);
+                break;
             case SurveyResponse::IN_POSSESSION_ON_HIRE:
                 $viewData->setUnableToCompleteDate(null);
                 foreach(['hireeAddress', 'hireeName', 'hireeTelephone', 'hireeEmail'] as $field) {

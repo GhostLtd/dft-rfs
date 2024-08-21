@@ -4,7 +4,7 @@ namespace App\Form\Admin\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Volume;
-use App\Form\ValueUnitType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,7 +17,8 @@ class FinalDetailsType extends AbstractType
 {
     protected bool $isMissingDays;
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
@@ -33,9 +34,11 @@ class FinalDetailsType extends AbstractType
                             'label' => "domestic.survey-response.vehicle-fuel.fuel-quantity.label",
                             'property_path' => 'vehicle.fuelQuantity',
                             'label_attr' => ['class' => 'govuk-label--s'],
+                            'value_form_type' => Gds\DecimalType::class,
                             'value_options' => [
                                 'label' => 'Quantity',
-                                'is_decimal' => true,
+                                'precision' => 8,
+                                'scale' => 2,
                                 'attr' => ['class' => 'govuk-input--width-5']
                             ],
                             'unit_options' => [
@@ -76,7 +79,8 @@ class FinalDetailsType extends AbstractType
             });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

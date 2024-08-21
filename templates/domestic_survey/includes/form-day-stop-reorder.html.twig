@@ -1,35 +1,54 @@
-{%- from 'macros.html.twig' import addToListRow as row, addToListActionLinks as actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/summary-list/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="order-list">
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-9', attributes: {id: 'order-list'}}) -}}
     {%- set reorderRoute = app.request.attributes.get('_route') -%}
     {%- for stop in sortedStops -%}
-        {%- set moveUpLink = url(reorderRoute, reorderRouteExtraParams|default({})|merge({
-            dayNumber: day.number, mapping: shiftMapping(mapping, loop.index0, 'up')|join(',')
-        })) -%}
-        {%- set moveDownLink = url(reorderRoute, reorderRouteExtraParams|default({})|merge({
-            dayNumber: day.number, mapping: shiftMapping(mapping, loop.index0, 'down')|join(',')
-        })) -%}
-        {%- set key -%}
-            {%- set journeyCopy = 'domestic.day-stop.re-order.journey'|trans({
-                origin: stop.originLocation,
-                destination: stop.destinationLocation,
-            }) -%}
-            {%- set goodsCopy = formatGoodsDescription(stop.goodsDescription, stop.goodsDescriptionOther) -%}
+        {%- set journeyCopy = 'domestic.day-stop.re-order.journey' | trans({
+            origin: stop.originLocation,
+            destination: stop.destinationLocation,
+        }) -%}
+        {%- set content -%}
             <strong>{{ stop.number }}.</strong>{{ journeyCopy }}<br>
-            <div class="goods">{{ goodsCopy }}</div>
+            <div class="goods">{{ formatGoodsDescription(stop.goodsDescription, stop.goodsDescriptionOther) }}</div>
         {%- endset -%}
 
-        {%- set links = [] -%}
-        {%- if not loop.first %}{% set links = links|merge({
-            (moveUpLink): {label: 'common.actions.move-up', srHiddenSuffix: "stage ##{stop.number} - #{journeyCopy}"}
-        }) %}{% endif -%}
-        {%- if not loop.last %}{% set links = links|merge({
-            (moveDownLink): {label: 'common.actions.move-down', srHiddenSuffix: "stage ##{stop.number} - #{journeyCopy}"}
-        }) %}
-        {% endif -%}
+        {%- set links = [
+            not loop.first ?
+                {
+                    href: url(
+                        reorderRoute,
+                        reorderRouteExtraParams | default({}) | merge({
+                            dayNumber: day.number,
+                            mapping: shiftMapping(mapping, loop.index0, 'up') | join(',')
+                        })
+                    ),
+                    text: 'common.actions.move-up' | trans(),
+                    visuallyHiddenText: "stage ##{stop.number} - #{journeyCopy}"
+                } :
+                null,
+            not loop.last ?
+                {
+                    href: url(
+                        reorderRoute,
+                        reorderRouteExtraParams | default({}) | merge({
+                            dayNumber: day.number,
+                            mapping: shiftMapping(mapping, loop.index0, 'down') | join(',')
+                        })
+                    ),
+                    text: 'common.actions.move-down' | trans(),
+                    visuallyHiddenText: "stage ##{stop.number} - #{journeyCopy}"
+                } :
+                null,
+        ] -%}
 
-        {{ row(key, links, {noEscape: true}) }}
+        {%- set links = links | filter(v => v is not null) -%}
+
+        {{- summaryListRow({
+            key: {html: content},
+            value: '',
+            actions: {items: links}
+        }) -}}
     {%- endfor -%}
-</dl>
+{{- summaryListEnd() -}}
 
-{{ form(form) }}
+{{- form(form) -}}

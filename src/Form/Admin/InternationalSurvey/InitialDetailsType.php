@@ -15,7 +15,8 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class InitialDetailsType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
@@ -40,7 +41,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
@@ -59,7 +61,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -80,7 +83,8 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         if (!$viewData instanceof SurveyResponse) {
             throw new UnexpectedTypeException($viewData, SurveyResponse::class);

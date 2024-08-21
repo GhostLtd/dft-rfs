@@ -1,0 +1,13 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.roro.edit-is-active" -%}
+
+{%- block adminContent -%}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import warningText -%}
+    {{- warningText({text: "Setting the route as inactive will clear any existing vehicle count data!"}) -}}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            {{ form(form) }}
+        </div>
+    </div>
+{%- endblock -%}

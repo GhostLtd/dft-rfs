@@ -12,14 +12,12 @@ use Doctrine\ORM\QueryBuilder;
 
 class WeekYearFilter extends Simple implements FilterableInterface
 {
-    private array $formOptions;
-
-    public function __construct(string $label, string $propertyPath, $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, string $propertyPath, private array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, $propertyPath, $cellOptions);
-        $this->formOptions = $formOptions;
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -27,22 +25,31 @@ class WeekYearFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         return WeekYearFilterType::class;
     }
 
+    #[\Override]
     public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
     {
         if (!isset($formData['year']) || !is_numeric($formData['year'])) {
             return $queryBuilder;
         }
 
-        if (isset($formData['week']) && is_numeric($formData['year'])) {
+        if (isset($formData['week']) && is_numeric($formData['week'])) {
             $start = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
             $end = WeekNumberHelper::getDateForYearAndWeek($formData['year'], $formData['week']);
-            $end->modify('+7 days');
 
+            if (!$end) {
+                // Impossible year/week combo.
+                // Generally caused be "no week 53 in chosen year".
+                // Make sure no results shown.
+                return $queryBuilder->andWhere('1 = 0');
+            }
+
+            $end->modify('+7 days');
         } else {
             $start = WeekNumberHelper::getFirstDayOfYear($formData['year']);
             $end = WeekNumberHelper::getFirstDayOfYear($formData['year'] + 1);

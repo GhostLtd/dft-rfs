@@ -15,6 +15,7 @@ use App\Serializer\Normalizer\Domestic\SurveyNormalizer;
 use App\Utility\Export\AbstractDataExporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -25,17 +26,15 @@ class DataExporter extends AbstractDataExporter
 {
     private SurveyRepository $surveyRepository;
 
-    protected SerializerInterface $serializer;
-    protected SerializerInterface $surveySerializer;
+    protected Serializer $serializer;
+    protected Serializer $surveySerializer;
 
-    protected SerializerInterface $summaryDaySerializer;
+    protected Serializer $summaryDaySerializer;
     protected DaySummaryRepository $daySummaryRepository;
     protected DayStopRepository $dayStopRepository;
-    protected SerializerInterface  $detailedDaySerializer;
-    protected ExportHelper $exportHelper;
-    protected LoggerInterface $logger;
+    protected Serializer  $detailedDaySerializer;
 
-    public function __construct(ExportHelper $exportHelper, WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager, SurveyNormalizer $surveyNormalizer, SummaryDayNormalizer $summaryDayNormalizer, DetailedDayNormalizer $detailedDayNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder, LoggerInterface $logger)
+    public function __construct(protected ExportHelper $exportHelper, WorkflowInterface $domesticSurveyStateMachine, EntityManagerInterface $entityManager, SurveyNormalizer $surveyNormalizer, SummaryDayNormalizer $summaryDayNormalizer, DetailedDayNormalizer $detailedDayNormalizer, SqlServerInsertEncoder $sqlServerInsertEncoder, protected LoggerInterface $logger)
     {
         parent::__construct($domesticSurveyStateMachine, $entityManager);
 
@@ -52,30 +51,35 @@ class DataExporter extends AbstractDataExporter
         $this->surveySerializer = new Serializer([$surveyNormalizer], []);
         $this->summaryDaySerializer = new Serializer([$summaryDayNormalizer], []);
         $this->detailedDaySerializer = new Serializer([$detailedDayNormalizer], []);
-        $this->exportHelper = $exportHelper;
-        $this->logger = $logger;
     }
 
-    public function generateExportData(int $year, int $quarter)
+    public function generateExportData(int $year, int $quarter): ?string
     {
         $surveyIDs = $this->surveyRepository->getSurveyIDsForExport($year, $quarter);
         try {
             $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-csrgt-');
 
-            $this->getVehiclesSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles")."\n";
-            $this->getDetailedDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys")."\n";
-            $this->getSummaryDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys")."\n";
+            if (!$sqlFilename) {
+                return null;
+            }
+
+            $this->getVehiclesSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_vehicles");
+            $this->getDetailedDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fourjourneys");
+            $this->getSummaryDaysSql($surveyIDs, $sqlFilename, "rf{$year}.dbo.q{$quarter}_a_raw_CSRGT_fivejourneys");
 
             return $sqlFilename;
         } catch (Throwable $e) {
             $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
-            return false;
+            return null;
         }
     }
 
-    protected function getDetailedDaysSql($surveyIDs, $outputFilename, $filename)
+    /**
+     * @throws ExceptionInterface
+     */
+    protected function getDetailedDaysSql(array $surveyIDs, string $outputFilename, string $filename): void
     {
-        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs));
+        $dayArrayData = $this->detailedDaySerializer->normalize($this->dayStopRepository->findForExport($surveyIDs), null, [SurveyNormalizer::CONTEXT_KEY => true]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
@@ -88,9 +92,12 @@ class DataExporter extends AbstractDataExporter
         $this->entityManager->clear();
     }
 
-    protected function getSummaryDaysSql($surveyIDs, $outputFilename, $filename)
+    /**
+     * @throws ExceptionInterface
+     */
+    protected function getSummaryDaysSql(array $surveyIDs, string $outputFilename, string $filename): void
     {
-        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs));
+        $dayArrayData = $this->summaryDaySerializer->normalize($this->daySummaryRepository->findForExport($surveyIDs), null, [SurveyNormalizer::CONTEXT_KEY => true,]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($dayArrayData, 'sql-server-insert', [
@@ -104,10 +111,13 @@ class DataExporter extends AbstractDataExporter
         $this->entityManager->clear();
     }
 
-    protected function getVehiclesSql($surveyIDs, $outputFilename, $filename)
+    /**
+     * @throws ExceptionInterface
+     */
+    protected function getVehiclesSql(array $surveyIDs, string $outputFilename, string $filename): void
     {
         $surveys = $this->surveyRepository->findForExport($surveyIDs);
-        $surveyArrayData = $this->surveySerializer->normalize($surveys);
+        $surveyArrayData = $this->surveySerializer->normalize($surveys, null, [SurveyNormalizer::CONTEXT_KEY => true]);
         file_put_contents(
             $outputFilename,
             $this->serializer->serialize($surveyArrayData, 'sql-server-insert', [

@@ -15,14 +15,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CompanyNameType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => 'yes',
         self::CHOICE_NO => 'no',
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
@@ -40,9 +41,7 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
                 $form
                     ->add('isCorrectCompanyName', Gds\ChoiceType::class, [
                         'label' => "{$correctNamePrefix}.label",
-                        'label_attr' => [
-                            'class' => 'govuk-label--s',
-                        ],
+                        'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                         'label_translation_parameters' => [
                             'expectedCompanyName' => $expectedCompanyName,
                         ],
@@ -63,7 +62,8 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
             });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
@@ -71,7 +71,8 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
         if (null === $viewData) {
@@ -106,7 +107,8 @@ class CompanyNameType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */

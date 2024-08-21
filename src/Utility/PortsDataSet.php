@@ -2,22 +2,16 @@
 
 namespace App\Utility;
 
-use App\Entity\International\CrossingRoute;
+use App\Entity\Route\Route;
 use App\Form\InternationalSurvey\Trip\AbstractPortsAndCargoStateType;
-use App\Repository\International\CrossingRouteRepository;
+use App\Repository\Route\RouteRepository;
 
 class PortsDataSet
 {
-    protected CrossingRouteRepository $crossingRouteRepository;
-
-    protected string $direction;
-
     protected array $ports;
 
-    public function __construct(CrossingRouteRepository $crossingRouteRepository, string $direction)
+    public function __construct(protected RouteRepository $routeRepository, protected string $direction)
     {
-        $this->crossingRouteRepository = $crossingRouteRepository;
-        $this->direction = $direction;
     }
 
     public function getDirection(): string
@@ -28,12 +22,19 @@ class PortsDataSet
     public function getPorts(): array
     {
         if (!isset($this->ports)) {
-            $this->ports =
-                $this->crossingRouteRepository
-                    ->createQueryBuilder('c')
-                    ->orderBy('c.' . ($this->direction === AbstractPortsAndCargoStateType::DIRECTION_OUTBOUND ? 'ukPort' : 'foreignPort'), 'ASC')
-                    ->getQuery()
-                    ->execute();
+            $orderField = $this->direction === AbstractPortsAndCargoStateType::DIRECTION_OUTBOUND ?
+                'ukPort.name' :
+                'foreignPort.name';
+
+            $this->ports = $this->routeRepository
+                ->createQueryBuilder('route')
+                ->select('route, ukPort, foreignPort')
+                ->join('route.ukPort', 'ukPort')
+                ->join('route.foreignPort', 'foreignPort')
+                ->where('route.isActive = 1')
+                ->orderBy($orderField, 'ASC')
+                ->getQuery()
+                ->execute();
         }
 
         return $this->ports;
@@ -44,12 +45,12 @@ class PortsDataSet
         $ports = $this->getPorts();
         $choices = array_combine(
             array_map(
-                fn(CrossingRoute $c) => $this->direction === AbstractPortsAndCargoStateType::DIRECTION_OUTBOUND ?
-                    "{$c->getUkPort()} – {$c->getForeignPort()}" :
-                    "{$c->getForeignPort()} – {$c->getUkPort()}",
+                fn(Route $r) => $this->direction === AbstractPortsAndCargoStateType::DIRECTION_OUTBOUND ?
+                    "{$r->getUkPort()->getName()} – {$r->getForeignPort()->getName()}" :
+                    "{$r->getForeignPort()->getName()} – {$r->getUkPort()->getName()}",
                 $ports
             ),
-            array_map(fn(CrossingRoute $c) => $c->getId(), $ports)
+            array_map(fn(Route $r) => $r->getId(), $ports)
         );
 
         return ['' => null] + $choices;

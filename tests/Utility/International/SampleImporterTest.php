@@ -1,31 +1,26 @@
 <?php
 
-
 namespace App\Tests\Utility\International;
-
 
 use App\Entity\International\Survey;
 use App\Utility\International\SampleImporter;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Vfs\FileSystem;
 
 class SampleImporterTest extends WebTestCase
 {
-    /**
-     * @var SampleImporter|null
-     */
-    private $sampleImporter;
+    private ?SampleImporter $sampleImporter;
 
-    private $tempFilename;
+    private string $tempFilename;
 
-    protected function setUp()
+    #[\Override]
+    protected function setUp(): void
     {
         self::bootKernel();
-        $this->sampleImporter = self::$container->get(SampleImporter::class);
-
+        $this->sampleImporter = static::getContainer()->get(SampleImporter::class);
         $this->tempFilename = tempnam('/tmp', 'rfs-sample-import-test');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -35,7 +30,7 @@ class SampleImporterTest extends WebTestCase
         }
     }
 
-    public function validSurveyFixtureProvider()
+    public function validSurveyFixtureProvider(): array
     {
         $startDate = new \DateTime();
         $startDate->modify('+7 days');
@@ -63,7 +58,7 @@ class SampleImporterTest extends WebTestCase
     }
 
 
-    public function invalidLineFixtureProvider()
+    public function invalidLineFixtureProvider(): array
     {
         return [
             ['"1537","2021-03-07","2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
@@ -87,7 +82,7 @@ class SampleImporterTest extends WebTestCase
 
 
 
-    public function invalidArrayDataFixtureProvider()
+    public function invalidArrayDataFixtureProvider(): array
     {
         return [
             ['"3770","1537",not-a-date,"2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
@@ -110,7 +105,7 @@ class SampleImporterTest extends WebTestCase
     }
 
 
-    public function invalidSurveyFixtureProvider()
+    public function invalidSurveyFixtureProvider(): array
     {
         $validStartDate = new \DateTime();
         $validStartDate->modify('+7 days');
@@ -143,5 +138,4 @@ class SampleImporterTest extends WebTestCase
         self::assertCount(0, $result['invalidData']);
         self::assertInstanceOf(Survey::class, $result['invalidSurveys'][0]['survey']);
     }
-
 }

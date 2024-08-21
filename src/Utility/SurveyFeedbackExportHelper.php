@@ -2,32 +2,45 @@
 
 namespace App\Utility;
 
+use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\Feedback;
+use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\PreEnquiry\PreEnquiry;
+use App\Serializer\Normalizer\FeedbackExportNormalizer;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class SurveyFeedbackExportHelper
 {
-    protected EntityManagerInterface $entityManager;
-    protected SerializerInterface $serializer;
-
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    protected SerializerInterface|NormalizerInterface $serializer;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        SerializerInterface    $serializer,
+    )
     {
-        $this->entityManager = $entityManager;
+        if (!$serializer instanceof NormalizerInterface) {
+            throw new \RuntimeException('Passed serializer must implement NormalizerInterface');
+        }
+
         $this->serializer = $serializer;
     }
 
-    public function exportAll(string $exportPath = 'php://output')
+    public function exportAll(string $exportPath = 'php://output'): void
     {
-        $feedback = $this->getQueryBuilder()->getQuery()->execute();
+        $feedback = $this->getFeedbackQueryBuilder()->getQuery()->execute();
         $this->exportFeedback($feedback, $exportPath);
     }
 
-    public function exportExisting(\DateTime $date, $exportPath = 'php://output')
+    public function exportExisting(\DateTime $date, $exportPath = 'php://output'): void
     {
-        $query = $this->getQueryBuilder()
+        $query = $this->getFeedbackQueryBuilder()
             ->andWhere('f.exportedAt = :exportedAt')
             ->setParameter('exportedAt', $date)
             ->getQuery();
@@ -41,15 +54,14 @@ class SurveyFeedbackExportHelper
         $this->exportFeedback($feedback, $exportPath);
     }
 
-    public function exportNew(\DateTime $exportDate, $exportPath = 'php://output')
+    public function exportNew(\DateTime $exportDate, $exportPath = 'php://output'): void
     {
         // get the ones with no exported date
-        $query = $this->getQueryBuilder()
+        $query = $this->getFeedbackQueryBuilder()
             ->andWhere('f.exportedAt IS NULL')
             ->getQuery();
         $feedback = $query->execute();
 
-        $exportDate = new \DateTime();
         array_map(fn(Feedback $f) => $f->setExportedAt($exportDate), $feedback);
         $this->entityManager->flush();
 
@@ -57,16 +69,47 @@ class SurveyFeedbackExportHelper
         $this->exportFeedback($feedback, $exportPath);
     }
 
-    protected function exportFeedback($feedback, $exportPath)
+    /* ---------------------- */
+
+    /**
+     * @throws ExceptionInterface
+     */
+    protected function exportFeedback(array $feedback, string $exportPath): void
     {
+        $feedbackIds = $this->getIds($feedback);
+        $allNormalizedFeedback = [];
+        foreach ([DomesticSurvey::class, InternationalSurvey::class, PreEnquiry::class] as $surveyClass)
+        {
+            $surveyFeedback = $this->getSurveyQueryBuilder($surveyClass, $feedbackIds)->getQuery()->execute();
+            $surveyFeedback = $this->serializer->normalize($surveyFeedback, 'csv', [FeedbackExportNormalizer::CONTEXT_KEY => true]);
+            $allNormalizedFeedback = array_merge($allNormalizedFeedback, $surveyFeedback);
+        }
         $handle = fopen($exportPath, 'w');
-        fputs($handle, $this->serializer->serialize($feedback, 'csv'));
+        fputs($handle, $this->serializer->serialize($allNormalizedFeedback, 'csv'));
         fclose($handle);
     }
 
-    public function getExistingDates(): array
+    /* ---------------------- */
+
+    protected function getIds(array $entities): array
     {
-        $query = $this->getQueryBuilder()
+        return array_map(fn($entity) => $entity->getId(), $entities);
+    }
+
+    protected function getSurveyQueryBuilder(string $surveyClass, array $feedbackIds): QueryBuilder
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('s, f')
+            ->from($surveyClass, 's')
+            ->join('s.feedback', 'f', Expr\Join::WITH, 'f.id in (:feedbackIds)')
+            ->setParameter('feedbackIds', $feedbackIds)
+        ;
+    }
+
+    public function getPastExportDates(): array
+    {
+        $query = $this->getFeedbackQueryBuilder()
             ->select('
                     f.exportedAt
                 ')
@@ -81,27 +124,19 @@ class SurveyFeedbackExportHelper
     public function hasAnyFeedbackReadyForNewExport(): bool
     {
         // get the ones with no exported date
-        $query = $this->getQueryBuilder()
+        $query = $this->getFeedbackQueryBuilder()
             ->andWhere('f.exportedAt IS NULL')
             ->getQuery();
         $feedback = $query->execute();
         return !empty($feedback);
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getFeedbackQueryBuilder(): QueryBuilder
     {
         return $this->entityManager
             ->createQueryBuilder()
             ->select('f')
             ->from(Feedback::class, 'f')
         ;
-    }
-
-    public function getHeaders(array $feedback): array
-    {
-        return array_map(function ($name) {
-            $parts = preg_split('/(?=[A-Z])/', $name);
-            return ucfirst(join(' ', array_map("strtolower", $parts)));
-        }, array_keys(current($feedback)));
     }
 }

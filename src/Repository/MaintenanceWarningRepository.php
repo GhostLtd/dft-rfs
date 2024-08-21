@@ -6,21 +6,20 @@ namespace App\Repository;
 
 use App\Entity\Utility\MaintenanceWarning;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MaintenanceWarningRepository extends ServiceEntityRepository
 {
-    private TranslatorInterface $translator;
-
-    public function __construct(ManagerRegistry $registry, TranslatorInterface $translator)
+    public function __construct(ManagerRegistry $registry, private TranslatorInterface $translator)
     {
         parent::__construct($registry, MaintenanceWarning::class);
-        $this->translator = $translator;
     }
 
-    public function getNotificationBannerForFrontend($warningPeriodDateModifier = '+1 week')
+    public function getNotificationBanner($warningPeriodDateModifier = '+1 week'): ?NotificationBanner
     {
         /** @var MaintenanceWarning $warning */
         $warning = $this->createQueryBuilder('maintenanceWarning')
@@ -28,15 +27,17 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
             ->andWhere('maintenanceWarning.start < :future')
             ->orderBy('maintenanceWarning.start', 'DESC')
             ->setMaxResults(1)
-            ->setParameters([
-                'now' => (new \DateTime())->modify('-15 minutes'),
-                'future' => (new \DateTime())->modify($warningPeriodDateModifier)
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('now', (new \DateTime())->modify('-15 minutes')),
+                new Parameter('future', (new \DateTime())->modify($warningPeriodDateModifier))
+            ]))
             ->getQuery()
             ->getOneOrNullResult();
+
         if ($warning) {
             $timeFormat = $this->translator->trans('format.time.default');
             $dateFormat = $this->translator->trans('format.date.full-with-year');
+
             return new NotificationBanner(
                 $this->translator->trans('maintenance-warning.banner.title'),
                 $this->translator->trans('maintenance-warning.banner.heading'),
@@ -47,6 +48,7 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
                 ])
             );
         }
-        return false;
+
+        return null;
     }
 }

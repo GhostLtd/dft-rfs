@@ -6,14 +6,12 @@ use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
 
 class BooleanPropertyList extends PropertyList
 {
-    protected $trueIfEquals;
-
-    public function __construct(array $propertyPathList, $trueIfEquals = true)
+    public function __construct(array $propertyPathList, protected $trueIfEquals = true)
     {
         parent::__construct($propertyPathList);
-        $this->trueIfEquals = $trueIfEquals;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $value = parent::getData($sourceData);

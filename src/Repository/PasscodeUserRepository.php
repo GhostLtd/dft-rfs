@@ -6,8 +6,8 @@ use App\Entity\PasscodeUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method PasscodeUser|null find($id, $lockMode = null, $lockVersion = null)
@@ -25,43 +25,30 @@ class PasscodeUserRepository extends ServiceEntityRepository implements Password
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    #[\Override]
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof PasscodeUser) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
-        $user->setPassword($newEncodedPassword);
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $user->setPassword($newHashedPassword);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
     }
 
-    // /**
-    //  * @return PasscodeUser[] Returns an array of PasscodeUser objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function lookupUserByIdentifier(string $userIdentifier): ?PasscodeUser
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('u')
+            ->select('u, d, i, p')
+            ->leftJoin('u.domesticSurvey', 'd')
+            ->leftJoin('u.internationalSurvey', 'i')
+            ->leftJoin('u.preEnquiry', 'p')
+            ->where('u.username = :username')
+            ->setParameter('username', $userIdentifier)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?PasscodeUser
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

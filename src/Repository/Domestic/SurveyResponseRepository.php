@@ -2,8 +2,6 @@
 
 namespace App\Repository\Domestic;
 
-use App\Entity\Domestic\DayStop;
-use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -24,11 +22,9 @@ class SurveyResponseRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Survey $survey
-     * @return SurveyResponse
      * @throws NonUniqueResultException
      */
-    public function getBySurvey(Survey $survey)
+    public function getBySurvey(Survey $survey): ?SurveyResponse
     {
         return $this->createQueryBuilder('survey_response')
             ->select('survey_response, vehicle')
@@ -36,38 +32,8 @@ class SurveyResponseRepository extends ServiceEntityRepository
             ->leftJoin('survey_response.vehicle', 'vehicle')
             ->leftJoin('survey_response.days', 'days')
             ->andWhere('survey_response.survey = :survey')
-            ->setParameters([
-                'survey' => $survey,
-            ])
+            ->setParameter('survey', $survey)
             ->getQuery()
             ->getOneOrNullResult();
     }
-    // /**
-    //  * @return DomesticSurveyResponse[] Returns an array of DomesticSurveyResponse objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?DomesticSurveyResponse
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

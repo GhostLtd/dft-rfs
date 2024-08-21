@@ -6,6 +6,7 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\FormTestCase;
+use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
 
 class BusinessAndVehiclesTest extends AbstractWizardTest
@@ -64,6 +65,15 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     "#vehicle_weights_grossWeight",
                     "#vehicle_weights_carryingCapacity",
                 ]),
+                // Triggering an error like this on the last page of the wizard was causing errors in DataConsistencyListener
+                // as it was then receiving a proxy survey which wasn't being correctly initialized when checked.
+                new FormTestCase([
+                    "vehicle_weights" => [
+                        "grossWeight" => "30000",
+                    ],
+                ], [
+                    "#vehicle_weights_carryingCapacity",
+                ]),
                 new FormTestCase([
                     "vehicle_weights" => [
                         "grossWeight" => "30000",
@@ -71,6 +81,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
+            new WizardEndUrlTestCase('/domestic-survey'),
         ];
     }
 

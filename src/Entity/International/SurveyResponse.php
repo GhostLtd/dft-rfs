@@ -7,64 +7,56 @@ use App\Entity\SurveyResponseTrait;
 use App\Repository\International\SurveyResponseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=SurveyResponseRepository::class)
- * @ORM\Table(name="international_survey_response")
- */
+#[ORM\Table(name: 'international_survey_response')]
+#[ORM\Entity(repositoryClass: SurveyResponseRepository::class)]
 class SurveyResponse extends AbstractSurveyResponse
 {
-    const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
-    const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
-    const ACTIVITY_STATUS_STILL_ACTIVE = 'still-active';
+    public const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
+    public const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
+    public const ACTIVITY_STATUS_STILL_ACTIVE = 'still-active';
 
-    const ACTIVITY_STATUS_PREFIX = 'international.survey-response.activity-status.';
-    const ACTIVITY_STATUS_CHOICES_PREFIX = self::ACTIVITY_STATUS_PREFIX .'choices.';
-    const ACTIVITY_STATUS_CHOICES = [
+    public const ACTIVITY_STATUS_PREFIX = 'international.survey-response.activity-status.';
+    public const ACTIVITY_STATUS_CHOICES_PREFIX = self::ACTIVITY_STATUS_PREFIX .'choices.';
+    public const ACTIVITY_STATUS_CHOICES = [
          self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_CEASED_TRADING => self::ACTIVITY_STATUS_CEASED_TRADING,
          self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK => self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK,
          self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_STILL_ACTIVE => self::ACTIVITY_STATUS_STILL_ACTIVE,
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[Assert\NotNull(message: 'international.survey-response.annual-international-journey-count.not-null', groups: ['number_of_trips', 'admin_business_details'])]
+    #[Assert\PositiveOrZero(message: 'common.number.positive-or-zero', groups: ['number_of_trips', 'admin_business_details'])]
+    #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['number_of_trips', 'admin_business_details'])]
+    #[ORM\Column(type: Types::INTEGER)]
+    private ?int $annualInternationalJourneyCount = null;
+
+    #[Assert\NotNull(message: 'common.choice.invalid', groups: ['activity_status', 'admin_business_details'])]
+    #[ORM\Column(type: Types::STRING, length: 24, nullable: true)]
+    private ?string $activityStatus = null;
+
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(inversedBy: 'response', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
+    private ?Survey $survey = null;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotNull(groups={"number_of_trips", "admin_business_details"}, message="international.survey-response.annual-international-journey-count.not-null")
-     * @Assert\PositiveOrZero(message="common.number.positive-or-zero", groups={"number_of_trips", "admin_business_details"})
-     * @Assert\Range(groups={"number_of_trips", "admin_business_details"}, max=2000000000, maxMessage="common.number.max")
+     * @var Collection<Vehicle>
      */
-    private $annualInternationalJourneyCount;
+    #[ORM\OneToMany(mappedBy: 'surveyResponse', targetEntity: Vehicle::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['registrationMark' => 'ASC'])]
+    private Collection $vehicles;
 
-    /**
-     * @ORM\Column(type="string", length=24, nullable=true)
-     * @Assert\NotNull(groups={"activity_status", "admin_business_details"}, message="common.choice.invalid")
-     */
-    private $activityStatus;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Survey::class, inversedBy="response", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $survey;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="surveyResponse", orphanRemoval=true)
-     * @ORM\OrderBy({"registrationMark": "ASC"})
-     */
-    private $vehicles;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $initialDetailsSignedOff;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $initialDetailsSignedOff = null;
 
     use SurveyResponseTrait;
 
@@ -115,12 +107,11 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setSurvey(Survey $survey): self
     {
         $this->survey = $survey;
-
         return $this;
     }
 
     /**
-     * @return Collection|Vehicle[]
+     * @return Collection<Vehicle>
      */
     public function getVehicles(): Collection
     {
@@ -157,13 +148,12 @@ class SurveyResponse extends AbstractSurveyResponse
     public function setInitialDetailsSignedOff(?bool $initialDetailsSignedOff): self
     {
         $this->initialDetailsSignedOff = $initialDetailsSignedOff;
-
         return $this;
     }
 
     // -----
 
-    public function hasPositiveTrips(): bool
+    public function hasPositiveEstimatedInternationalTrips(): bool
     {
         $journeyCount = $this->getAnnualInternationalJourneyCount();
         return $journeyCount !== null && $journeyCount > 0;
@@ -175,7 +165,7 @@ class SurveyResponse extends AbstractSurveyResponse
         return ($status === self::ACTIVITY_STATUS_CEASED_TRADING || $status === self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK);
     }
 
-    public function mergeInitialDetails(SurveyResponse $response)
+    public function mergeInitialDetails(SurveyResponse $response): void
     {
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());

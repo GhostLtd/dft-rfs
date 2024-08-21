@@ -9,11 +9,11 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class AddSurveyType extends AbstractType implements DataTransformerInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "admin.international.survey";
 
@@ -46,7 +46,6 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'label' => "{$translationKeyPrefix}.invitation-email.label",
                 'help' => "{$translationKeyPrefix}.invitation-email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
-//                'disabled' => true,
             ])
             ->add('invitationAddress', LongAddressType::class, [
                 'label' => "{$translationKeyPrefix}.invitation-address.label",
@@ -67,7 +66,8 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
@@ -76,12 +76,14 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
         ]);
     }
 
-    public function transform($value)
+    #[\Override]
+    public function transform($value): mixed
     {
         return $value;
     }
 
-    public function reverseTransform($value)
+    #[\Override]
+    public function reverseTransform($value): mixed
     {
         if ($value instanceof Survey) {
             $businessName = $value->getCompany()->getBusinessName();

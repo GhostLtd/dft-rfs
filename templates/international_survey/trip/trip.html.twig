@@ -6,8 +6,6 @@
 } %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHead, tableCell -%}
-
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.trip.summary.heading'|trans(headingParams) }}</h1>
 
     {%- with {marginBottom: 5} -%}
@@ -41,17 +39,15 @@
 
         {%- if showReorderLink %}
             <div class="govuk-!-margin-bottom-6 govuk-body">
-                {%- set reorderRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::REORDER_ROUTE') -%}
-                <a href="{{ url(reorderRoute, {tripId: trip.id}) }}"
+                <a href="{{ url('app_internationalsurvey_action_reorder', {tripId: trip.id}) }}"
                    class="govuk-link">{{ 'common.actions.re-order-actions'|trans }}</a>
             </div>
         {% endif %}
     {%- endif -%}
     <div>
-        {%- set addActionRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::START_ROUTE') -%}
         {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
         {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
-        <a href="{{ url(addActionRoute, {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
+        <a href="{{ url('app_internationalsurvey_action_add_start', {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
     </div>
 
     <hr class="govuk-!-margin-bottom-9">

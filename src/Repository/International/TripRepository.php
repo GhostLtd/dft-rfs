@@ -4,11 +4,13 @@ namespace App\Repository\International;
 
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyStateInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,12 +36,12 @@ class TripRepository extends ServiceEntityRepository
                 ->where('t.id = :id')
                 ->andWhere('r = :response')
                 ->getQuery()
-                ->setParameters([
-                    'id' => $id,
-                    'response' => $response,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('id', $id),
+                    new Parameter('response', $response),
+                ]))
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             // Not that this can ever happen, since we're querying by id!
             return null;
         }
@@ -55,18 +57,18 @@ class TripRepository extends ServiceEntityRepository
                 ->where('t.id = :id')
                 ->andWhere('r = :response')
                 ->getQuery()
-                ->setParameters([
-                    'id' => $id,
-                    'response' => $response,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('id', $id),
+                    new Parameter('response', $response),
+                ]))
                 ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }
 
     /**
-     * @return Trip[]|Collection
+     * @return array<Trip>
      */
     public function getTripsForExport(DateTime $minDate, DateTime $maxDate): array
     {
@@ -88,13 +90,14 @@ class TripRepository extends ServiceEntityRepository
             ->addOrderBy('t.outboundDate', 'ASC')
             ->addOrderBy('a.number', 'ASC')
             ->getQuery()
-            ->setParameters([
-                'states' => [
-                    SurveyInterface::STATE_CLOSED, SurveyInterface::STATE_APPROVED,
-                ],
-                'minDate' => $minDate,
-                'maxDate' => $maxDate,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('states', [
+                    SurveyStateInterface::STATE_CLOSED,
+                    SurveyStateInterface::STATE_APPROVED,
+                ]),
+                new Parameter('minDate', $minDate),
+                new Parameter('maxDate', $maxDate),
+            ]))
             ->execute();
     }
 }

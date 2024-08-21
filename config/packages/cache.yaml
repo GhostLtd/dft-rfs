@@ -17,11 +17,17 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-            #my.dedicated.cache: null
+        pools:
+            url_signer_cache:
+                adapter: cache.adapter.doctrine_dbal
 
 services:
+    # Override the default cache for rate_limiter as per https://symfony.com/doc/current/rate_limiter.html#storing-rate-limiter-state
+    cache.rate_limiter:
+        parent: 'cache.adapter.doctrine_dbal'
+        tags: [{ name: 'cache.pool', namespace: 'shared' }]
+
     cache.messenger.restart_workers_signal:
-        parent: 'cache.adapter.pdo'
+        parent: 'cache.adapter.doctrine_dbal'
         tags:
             - { name: 'cache.pool', namespace: 'shared' }

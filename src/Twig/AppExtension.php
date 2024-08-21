@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Controller\InternationalSurvey\AbstractActionController;
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\TripEditController;
@@ -40,52 +41,44 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    const TRANSFER_UNLOADING = 'unloading';
-    const TRANSFER_LOADING = 'loading';
+    public const TRANSFER_UNLOADING = 'unloading';
+    public const TRANSFER_LOADING = 'loading';
 
     protected string $iconsDir;
-    protected RouterInterface $router;
-    protected TranslatorInterface $translator;
-    protected Features $features;
-    protected LoadingPlaceHelper $loadingPlaceHelper;
-    protected SessionTimeoutHelper $sessionTimeoutHelper;
 
     public function __construct(
         KernelInterface $kernel,
-        RouterInterface $router,
-        TranslatorInterface $translator,
-        Features $features,
-        LoadingPlaceHelper $loadingPlaceHelper,
-        SessionTimeoutHelper $sessionTimeoutHelper
+        protected RouterInterface $router,
+        protected TranslatorInterface $translator,
+        protected Features $features,
+        protected LoadingPlaceHelper $loadingPlaceHelper,
+        protected SessionTimeoutHelper $sessionTimeoutHelper
     ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
-        $this->router = $router;
-        $this->translator = $translator;
-        $this->features = $features;
-        $this->loadingPlaceHelper = $loadingPlaceHelper;
-        $this->sessionTimeoutHelper = $sessionTimeoutHelper;
     }
 
+    #[\Override]
     public function getFilters(): array
     {
         return [
-            new TwigFilter('formatAddress', [$this, 'formatAddress']),
-            new TwigFilter('formatBool', function($bool){return 'common.choices.boolean.' . ($bool ? 'yes' : 'no');}),
-            new TwigFilter('formatCountry', [$this, 'formatCountry']),
-            new TwigFilter('formatGoodsDescription', function($stop, $short = false){
-                return $stop instanceof GoodsDescriptionInterface ?
+            new TwigFilter('formatAddress', $this->formatAddress(...)),
+            new TwigFilter('formatBool', fn($bool) => 'common.choices.boolean.' . ($bool ? 'yes' : 'no')),
+            new TwigFilter('formatCountry', $this->formatCountry(...)),
+            new TwigFilter('formatGoodsDescription', fn($stop, $short = false) =>
+                $stop instanceof GoodsDescriptionInterface ?
                     $this->formatGoodsDescription($stop->getGoodsDescription(), $stop->getGoodsDescriptionOther(), $short) :
-                    '';
-            }),
-            new TwigFilter('formatGoodsTransferDetails', [$this, 'formatGoodsTransferDetails']),
-            new TwigFilter('formatRegMark', [$this, 'formatRegMark']),
-            new TwigFilter('formatSurveyPeriod', [$this, 'formatSurveyPeriod']),
+                    ''
+            ),
+            new TwigFilter('formatGoodsTransferDetails', $this->formatGoodsTransferDetails(...)),
+            new TwigFilter('formatRegMark', $this->formatRegMark(...)),
+            new TwigFilter('formatSurveyPeriod', $this->formatSurveyPeriod(...)),
             new TwigFilter('formatPotentialPostcode', fn(?string $a) => PostcodeHelper::formatIfPostcode($a, true)),
-            new TwigFilter('vehicleAxleConfigTransKey', [Vehicle::class, 'getAxleConfigurationTranslationKey']),
-            new TwigFilter('weekNumberAndYear', function(?DateTimeInterface $date) {
-                return $date ? WeekNumberHelper::getYearlyWeekNumberAndYear($date) : [null, null];
-            }),
+            new TwigFilter('vehicleAxleConfigTransKey', Vehicle::getAxleConfigurationTranslationKey(...)),
+            new TwigFilter('weekNumberAndYear', fn(?DateTimeInterface $date) => $date ?
+                WeekNumberHelper::getYearlyWeekNumberAndYear($date) :
+                [null, null]
+            ),
             new TwigFilter('removeEmailNamespacePrefix', function($username) {
                 preg_match('/^(?:[^:"]+\:)?(?<email>.*)$/', $username, $matches);
                 return $matches['email'] ?? 'unknown';
@@ -93,21 +86,22 @@ class AppExtension extends AbstractExtension
         ];
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('choiceLabel', [$this, 'choiceLabel']),
-            new TwigFunction('is_feature_enabled', [$this, 'isFeatureEnabled']),
-            new TwigFunction('flattenChoices', [$this, 'flattenChoices']),
-            new TwigFunction('formatGoodsDescription', [$this, 'formatGoodsDescription']),
-            new TwigFunction('labelForLoadingAction', [$this->loadingPlaceHelper, 'getLabelForLoadingAction']),
-            new TwigFunction('sessionExpiryTime', [$this->sessionTimeoutHelper, 'getExpiryTime']),
-            new TwigFunction('sessionWarningTime', [$this->sessionTimeoutHelper, 'getWarningTime']),
-            new TwigFunction('shiftMapping', [$this, 'shiftMapping']),
-            new TwigFunction('svgIcon', [$this, 'svgIcon'], ['is_safe' => ['html']]),
-            new TwigFunction('unloadingSummary', [$this->loadingPlaceHelper, 'getUnloadingSummary']),
-            new TwigFunction('wizardState', [$this, 'wizardState']),
-            new TwigFunction('wizardUrl', [$this, 'wizardUrl']),
+            new TwigFunction('choiceLabel', $this->choiceLabel(...)),
+            new TwigFunction('is_feature_enabled', $this->isFeatureEnabled(...)),
+            new TwigFunction('flattenChoices', $this->flattenChoices(...)),
+            new TwigFunction('formatGoodsDescription', $this->formatGoodsDescription(...)),
+            new TwigFunction('labelForLoadingAction', $this->loadingPlaceHelper->getLabelForLoadingAction(...)),
+            new TwigFunction('sessionExpiryTime', $this->sessionTimeoutHelper->getExpiryTime(...)),
+            new TwigFunction('sessionWarningTime', $this->sessionTimeoutHelper->getWarningTime(...)),
+            new TwigFunction('shiftMapping', $this->shiftMapping(...)),
+            new TwigFunction('svgIcon', $this->svgIcon(...), ['is_safe' => ['html']]),
+            new TwigFunction('unloadingSummary', $this->loadingPlaceHelper->getUnloadingSummary(...)),
+            new TwigFunction('wizardState', $this->wizardState(...)),
+            new TwigFunction('wizardUrl', $this->wizardUrl(...)),
         ];
     }
 
@@ -123,8 +117,8 @@ class AppExtension extends AbstractExtension
     public function isFeatureEnabled($str): bool {
         try {
             return $this->features->isEnabled($str, true);
-        } catch(Exception $e) {
-            throw new SyntaxError("Unknown feature '${str}'");
+        } catch(Exception) {
+            throw new SyntaxError("Unknown feature '{$str}'");
         }
     }
 
@@ -222,7 +216,7 @@ class AppExtension extends AbstractExtension
         'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
         'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
         'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
-        'international-action' => ['class' => ActionState::class, 'route' => ActionController::EDIT_ROUTE],
+        'international-action' => ['class' => ActionState::class, 'route' => 'app_internationalsurvey_action_edit_state'],
     ];
 
     protected function getWizardMeta(string $wizard): array {

@@ -6,82 +6,72 @@ use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=PasscodeUserRepository::class)
- */
-class PasscodeUser implements UserInterface
+#[ORM\Entity(repositoryClass: PasscodeUserRepository::class)]
+class PasscodeUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const ROLE_PASSCODE_USER = 'ROLE_PASSCODE_USER';
-    const ROLE_DOMESTIC_SURVEY_USER = 'ROLE_DOMESTIC_SURVEY_USER';
-    const ROLE_INTERNATIONAL_SURVEY_USER = 'ROLE_INTERNATIONAL_SURVEY_USER';
-    const ROLE_PRE_ENQUIRY_USER = 'ROLE_PRE_ENQUIRY_USER';
+    public const ROLE_PASSCODE_USER = 'ROLE_PASSCODE_USER';
+    public const ROLE_DOMESTIC_SURVEY_USER = 'ROLE_DOMESTIC_SURVEY_USER';
+    public const ROLE_INTERNATIONAL_SURVEY_USER = 'ROLE_INTERNATIONAL_SURVEY_USER';
+    public const ROLE_PRE_ENQUIRY_USER = 'ROLE_PRE_ENQUIRY_USER';
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[ORM\Column(type: Types::STRING, length: 10, unique: true)]
+    private ?string $username = null;
 
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
+     * @var ?string The hashed password
      */
-    private $id;
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $password = null;
 
-    /**
-     * @ORM\Column(type="string", length=10, unique=true)
-     */
-    private $username;
+    private ?string $plainPassword = null;
 
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $password;
-
-    /**
-     * @var string | null
-     */
-    private $plainPassword;
-
-    /**
-     * @ORM\OneToOne(targetEntity=DomesticSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
-     */
+    #[ORM\OneToOne(inversedBy: 'passcodeUser', targetEntity: DomesticSurvey::class, cascade: ['persist'], fetch: 'EAGER')]
     private ?DomesticSurvey $domesticSurvey = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=InternationalSurvey::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
-     */
+    #[ORM\OneToOne(inversedBy: 'passcodeUser', targetEntity: InternationalSurvey::class, cascade: ['persist'], fetch: 'EAGER')]
     private ?InternationalSurvey $internationalSurvey = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=PreEnquiry::class, inversedBy="passcodeUser", cascade={"persist"}, fetch="EAGER")
-     */
+    #[ORM\OneToOne(inversedBy: 'passcodeUser', targetEntity: PreEnquiry::class, cascade: ['persist'], fetch: 'EAGER')]
     private ?PreEnquiry $preEnquiry = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $lastLogin;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastLogin = null;
 
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    #[\Override]
+    public function getUserIdentifier(): string
     {
         return $this->username;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
     }
 
     public function setUsername(?string $username): self
     {
         $this->username = $username;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    #[\Override]
     public function getRoles(): array
     {
         // guarantee every user at least has ROLE_USER
@@ -103,19 +93,7 @@ class PasscodeUser implements UserInterface
         return array_unique($roles);
     }
 
-    public function hasRole($role)
-    {
-        return in_array($role, $this->getRoles());
-    }
-
-    public function setRoles(array $roles): self
-    {
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
+    #[\Override]
     public function getPassword(): ?string
     {
         return $this->password;
@@ -127,21 +105,14 @@ class PasscodeUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
+    #[\Override]
+    public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getDomesticSurvey(): ?DomesticSurvey
@@ -152,22 +123,14 @@ class PasscodeUser implements UserInterface
     public function setDomesticSurvey(?DomesticSurvey $domesticSurvey): self
     {
         $this->domesticSurvey = $domesticSurvey;
-
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
     }
 
-    /**
-     * @param string|null $plainPassword
-     * @return PasscodeUser
-     */
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
@@ -227,7 +190,6 @@ class PasscodeUser implements UserInterface
 
     public function getSurveyId(): ?string
     {
-        $survey = $this->getSurvey();
-        return $survey ? $survey->getId() : null;
+        return $this->getSurvey()?->getId();
     }
 }

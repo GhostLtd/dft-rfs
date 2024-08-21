@@ -2,6 +2,7 @@
 
 namespace App\Entity\International;
 
+use App\Entity\VehicleInterface;
 use App\Entity\VehicleTrait;
 use App\Form\Validator as AppAssert;
 use App\Repository\International\VehicleRepository;
@@ -10,27 +11,23 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=VehicleRepository::class)
- * @ORM\Table(name="international_vehicle")
- *
- * @AppAssert\ValidRegistration(groups={"vehicle_registration", "admin_vehicle"})
- */
-class Vehicle
+#[AppAssert\ValidRegistration(groups: ["vehicle_registration", "admin_vehicle"])]
+#[ORM\Table(name: 'international_vehicle')]
+#[ORM\Entity(repositoryClass: VehicleRepository::class)]
+class Vehicle implements VehicleInterface
 {
     use VehicleTrait;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=SurveyResponse::class, inversedBy="vehicles")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $surveyResponse;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: SurveyResponse::class, inversedBy: 'vehicles')]
+    private ?SurveyResponse $surveyResponse = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Trip::class, mappedBy="vehicle")
-     * @ORM\OrderBy({"outboundDate": "ASC", "returnDate": "ASC"})
+     * @var Collection<int, Trip>
      */
-    private $trips;
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Trip::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['outboundDate' => 'ASC', 'returnDate' => 'ASC'])]
+    private Collection $trips;
 
     public function __construct()
     {
@@ -45,12 +42,11 @@ class Vehicle
     public function setSurveyResponse(?SurveyResponse $surveyResponse): self
     {
         $this->surveyResponse = $surveyResponse;
-
         return $this;
     }
 
     /**
-     * @return Collection|Trip[]
+     * @return Collection<Trip>
      */
     public function getTrips(): Collection
     {
@@ -79,7 +75,7 @@ class Vehicle
         return $this;
     }
 
-    public function mergeVehicleChanges(Vehicle $vehicle)
+    public function mergeVehicleChanges(Vehicle $vehicle): void
     {
         $this->setRegistrationMark($vehicle->getRegistrationMark());
         $this->setOperationType($vehicle->getOperationType());

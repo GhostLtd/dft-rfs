@@ -1,0 +1,9 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "user-id.lookup" %}
+{% set headingDomain = 'admin' %}
+
+{% block adminContent %}
+    <div class="govuk-body prose-scope">{{ 'user-id.lookup.help' | trans([], 'admin') }}</div>
+    {{ form(form) }}
+{% endblock %}

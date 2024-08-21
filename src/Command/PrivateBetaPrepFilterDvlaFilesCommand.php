@@ -3,29 +3,25 @@
 namespace App\Command;
 
 use App\Utility\Domestic\DvlaImporter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('app:private-beta-prep:filter-dvla-files')]
 class PrivateBetaPrepFilterDvlaFilesCommand extends Command
 {
-    protected static $defaultName = 'app:private-beta-prep:filter-dvla-files';
-    private $dvlaImporter;
-    /**
-     * @var SymfonyStyle
-     */
-    private $io;
+    private SymfonyStyle $io;
 
-    public function __construct(DvlaImporter $dvlaImporter)
+    public function __construct(protected DvlaImporter $dvlaImporter)
     {
-        $this->dvlaImporter = $dvlaImporter;
-
         parent::__construct();
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Filter the DVLA files supplied by Lucy, for the private beta')
@@ -34,6 +30,7 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -59,12 +56,13 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         return 0;
     }
 
-    protected function getFilteredSourceData($filterData, $sourceData) {
+    protected function getFilteredSourceData($filterData, $sourceData): array
+    {
         $filteredSourceData = [];
         foreach ($filterData as $filterItem) {
             $regMark = $filterItem[0];
             if (!isset($sourceData[$regMark])) {
-                $this->io->error("Missing Reg: ${regMark}");
+                $this->io->error("Missing Reg: {$regMark}");
                 continue;
             }
             $filteredSourceData[$regMark] = $sourceData[$regMark];
@@ -72,7 +70,8 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         return $filteredSourceData;
     }
 
-    protected function loadSourceFiles($sourceFiles) {
+    protected function loadSourceFiles($sourceFiles): array
+    {
         $sourceData = [];
         foreach ($sourceFiles as $sourceFile) {
             $fileData = trim(file_get_contents($sourceFile));
@@ -85,10 +84,11 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         );
     }
 
-    protected function loadFilterFile($filterFile, $skipFirstLine = true) {
+    protected function loadFilterFile($filterFile, $skipFirstLine = true): array
+    {
         $fileData = trim(file_get_contents($filterFile));
         $lines = explode(PHP_EOL, $fileData);
-        $csvData = array();
+        $csvData = [];
         if ($skipFirstLine) {
             unset($lines[0]);
         }
@@ -98,7 +98,8 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
         return $csvData;
     }
 
-    protected function initialSummary($filterFile, $sourceFiles) {
+    protected function initialSummary($filterFile, $sourceFiles): void
+    {
         $initialSummary = "Using {$filterFile} to filter\n";
         foreach ($sourceFiles as $sourceFile) {
             $initialSummary .= " - {$sourceFile}\n";

@@ -1,0 +1,55 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.routes.view" -%}
+{% set headingParams = translation_parameters %}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+
+    {%- set canDeleteRoute = is_granted('CAN_DELETE_ROUTE', route) -%}
+    {%- set canEditRoute = is_granted('CAN_EDIT_ROUTE', route) -%}
+
+    {{- summaryListStart() -}}
+        {{- summaryListRow({
+            key: 'UK port',
+            value: route.ukPort.name ~ ' (' ~ route.ukPort.code ~ ')'
+        }) -}}
+        {{- summaryListRow({
+            key: 'Foreign port',
+            value: route.foreignPort.name ~ ' (' ~ route.foreignPort.code ~ ')'
+        }) -}}
+        {{- summaryListRow({
+            key: 'Is active?',
+            value: route.isActive ? 'Yes' : 'No'
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    <div class="govuk-!-margin-bottom-9">
+        {%- if canEditRoute -%}
+            <a class="govuk-button govuk-button--{{ canEditRoute ? 'primary' : 'secondary' }}" href="{{ path('admin_routes_edit', {routeId: route.id}) }}">Edit route</a>
+        {%- endif -%}
+        {%- if canDeleteRoute -%}
+            <a class="govuk-button govuk-button--{{ canDeleteRoute ? 'warning' : 'secondary' }}" href="{{ path('admin_routes_delete', {routeId: route.id}) }}">Delete route</a>
+        {%- endif -%}
+    </div>
+
+    <h2 class="govuk-heading govuk-heading-m govuk-heading--underline">Operators</h2>
+
+    {{- summaryListStart() -}}
+        {%- for operator in route.roroOperators -%}
+            {{- summaryListRow({
+                key: operator.name,
+                value: '',
+                actions: [
+                    {
+                        href: path('admin_operators_view', {operatorId: operator.id}),
+                        text: 'view',
+                        visuallyHiddenText: operator.name,
+                    }
+                ]
+            }) -}}
+        {%- else -%}
+            No operators
+        {%- endfor -%}
+    {{- summaryListEnd() -}}
+{%- endblock -%}

@@ -1,0 +1,12 @@
+{%- extends 'admin/roro/operator-groups/add/form-base.html.twig' -%}
+
+{# N.B explicitly not using string interpolation so that translation strings are searchable #}
+{%- if mode == 'add' -%}
+    {%- set translation_prefix = "admin.operator-groups.add.choose-name" -%}
+{%- elseif mode == 'edit' -%}
+    {%- set translation_prefix = "admin.operator-groups.edit.choose-name" -%}
+{%- endif -%}
+
+{%- block adminContent -%}
+    {{ form(form) }}
+{%- endblock -%}

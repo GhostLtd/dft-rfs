@@ -3,46 +3,34 @@
 namespace App\Entity;
 
 use App\Repository\NotifyApiResponseRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=NotifyApiResponseRepository::class)
- */
+#[ORM\Entity(repositoryClass: NotifyApiResponseRepository::class)]
 class NotifyApiResponse
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=16)
-     */
-    private ?string $eventName;
+    #[ORM\Column(type: Types::STRING, length: 16)]
+    private ?string $eventName = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $messageClass;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $messageClass = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $endpoint;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $endpoint = null;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private ?\DateTime $timestamp;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $timestamp = null;
 
     /**
      * A hash of the recipient (i.e. address, sms or email -> unique string)
-     *
-     * @ORM\Column(type="string", length=64)
      */
-    private ?string $recipientHash;
+    #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
+    private ?string $recipientHash = null;
 
     /**
      * The recipient as a string
@@ -51,15 +39,9 @@ class NotifyApiResponse
      *
      *       These fields won't be necessary if we transition to Survey -> Invitation -> NotifyApiResponses,
      *       but that will take a while.
-     *
-     * @ORM\Column(type="string", length=1024, nullable=true)
      */
-    private ?string $recipient;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\Column(type: Types::STRING, length: 1024, nullable: true)]
+    private ?string $recipient = null;
 
     public function getEventName(): ?string
     {
@@ -121,7 +103,7 @@ class NotifyApiResponse
         return $this->recipientHash;
     }
 
-    public function setRecipientHash(string $recipientHash): self
+    public function setRecipientHash(?string $recipientHash): self
     {
         $this->recipientHash = $recipientHash;
         return $this;

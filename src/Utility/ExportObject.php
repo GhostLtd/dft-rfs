@@ -6,15 +6,8 @@ use Google\Cloud\Storage\StorageObject;
 
 class ExportObject
 {
-    protected int $year;
-    protected int $quarter;
-    protected ?StorageObject $storageObject;
-
-    public function __construct(?StorageObject $storageObject, int $year, int $quarter)
+    public function __construct(protected ?StorageObject $storageObject, protected int $year, protected int $quarter)
     {
-        $this->year = $year;
-        $this->quarter = $quarter;
-        $this->storageObject = $storageObject;
     }
 
     public function getYear(): int

@@ -9,7 +9,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class OtherNotBlankValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof OtherNotBlank) {
             throw new UnexpectedTypeException($constraint, OtherNotBlank::class);

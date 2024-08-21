@@ -1,0 +1,11 @@
+{% extends 'roro/base.html.twig' %}
+
+{%- set disable_breadcrumbs = true -%}
+
+{% block pageTitle %}Check your email - {{ parent() }}{% endblock %}
+
+{% block content %}
+    <h1 class="govuk-heading-xl">Check your email</h1>
+    <p class="govuk-body">If you are a registered user on this service, an email will be sent to you with a one-time access link.</p>
+    <p class="govuk-body">If you are not a registered user but need to access this service, please contact <a href="mailto:roro.stats@dft.gov.uk" class="govuk-link">roro.stats@dft.gov.uk</a>.</p>
+{% endblock %}

@@ -1,11 +1,12 @@
-$govuk-assets-path: "~govuk-frontend/govuk/assets/";
-
+@import "app/advanced-data-entry";
 @import "app/choice-label-icons";
 @import "app/choice-label-bring-to-attention";
-@import "app/passcode-fieldset";
 @import "app/session-reminder";
 @import "app/vehicle-icons";
 @import "app/prose-scope";
+
+@import "common/notification-banner";
+@import "common/text-align";
 
 body {
     background-color: lightgray;
@@ -34,4 +35,16 @@ body {
     color: govuk-colour("black");
     padding: govuk-spacing(2);
     @include govuk-font(16);
+}
+
+.roro-vehicle-counts {
+    dl.govuk-summary-list {
+        .govuk-summary-list__key {
+            width: 75%;
+        }
+        .govuk-summary-list__value {
+            width: 25%;
+            text-align: right;
+        }
+    }
 }

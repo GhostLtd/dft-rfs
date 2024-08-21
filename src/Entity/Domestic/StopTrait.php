@@ -5,88 +5,66 @@ namespace App\Entity\Domestic;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoTypeTrait;
 use App\Entity\HazardousGoodsTrait;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait StopTrait
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.origin.not-blank", groups={"origin-day", "admin-day-stop"})
-     * @Assert\NotBlank(message="domestic.day-stop.origin.not-blank", groups={"origin-day-stop"})
-     *
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"origin-day", "origin-day-stop", "admin-day-stop"})
-     */
-    private $originLocation;
+    
+    #[Assert\NotBlank(message: 'domestic.day.origin.not-blank', groups: ['origin-day', 'admin-day-stop'])]
+    #[Assert\NotBlank(message: 'domestic.day-stop.origin.not-blank', groups: ['origin-day-stop'])]
+    #[Assert\Length(max: 255, maxMessage: 'domestic.day.location.max-length', groups: ['origin-day', 'origin-day-stop', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $originLocation = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="domestic.day.destination.not-blank", groups={"destination-day", "admin-day-stop"})
-     * @Assert\NotBlank(message="domestic.day-stop.destination.not-blank", groups={"destination-day-stop"})
-     * @Assert\Length(max=255, maxMessage="domestic.day.location.max-length", groups={"destination-day", "destination-day-stop", "admin-day-stop"})
-     */
-    private $destinationLocation;
+    #[Assert\NotBlank(message: 'domestic.day.destination.not-blank', groups: ['destination-day', 'admin-day-stop'])]
+    #[Assert\NotBlank(message: 'domestic.day-stop.destination.not-blank', groups: ['destination-day-stop'])]
+    #[Assert\Length(max: 255, maxMessage: 'domestic.day.location.max-length', groups: ['destination-day', 'destination-day-stop', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $destinationLocation = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="domestic.day.origin.goods-loaded", groups={"origin-day", "origin-day-stop", "admin-day-stop"})
-     */
-    private $goodsLoaded;
+    #[Assert\NotNull(message: 'domestic.day.origin.goods-loaded', groups: ['origin-day', 'origin-day-stop', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $goodsLoaded = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="domestic.day.origin.goods-from", groups={"origin-ports", "admin-day-stop-loaded"})
-     */
-    private $goodsTransferredFrom;
+    #[Assert\NotNull(message: 'domestic.day.origin.goods-from', groups: ['origin-ports', 'admin-day-stop-loaded'])]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $goodsTransferredFrom = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\NotNull(message="domestic.day.destination.goods-unloaded", groups={"destination-day", "destination-day-stop", "admin-day-stop"})
-     */
-    private $goodsUnloaded;
+    #[Assert\NotNull(message: 'domestic.day.destination.goods-unloaded', groups: ['destination-day', 'destination-day-stop', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $goodsUnloaded = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\NotNull(message="domestic.day.destination.goods-to", groups={"destination-ports", "admin-day-stop-unloaded"})
-     */
-    private $goodsTransferredTo;
+    #[Assert\NotNull(message: 'domestic.day.destination.goods-to', groups: ['destination-ports', 'admin-day-stop-unloaded'])]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $goodsTransferredTo = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Assert\NotNull(message="domestic.day.border-crossed.not-null", groups={"border-crossing"})
-     */
-    private $borderCrossed;
+    #[Assert\NotNull(message: 'domestic.day.border-crossed.not-null', groups: ['border-crossing'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $borderCrossed = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max=255, maxMessage="domestic.day.border-crossing.max-length", groups={"border-crossing"})
-     *
-     * @Assert\Expression("!this.getBorderCrossed() or this.getBorderCrossingLocation()",
-     *     groups={"border-crossing"},
-     *     message="domestic.day.border-crossing.not-null"
-     * )
-     */
-    private $borderCrossingLocation;
+    
+    #[Assert\Length(max: 255, maxMessage: 'domestic.day.border-crossing.max-length', groups: ['border-crossing'])]
+    #[Assert\Expression('!this.getBorderCrossed() or this.getBorderCrossingLocation()', message: 'domestic.day.border-crossing.not-null', groups: ['border-crossing'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $borderCrossingLocation = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull(message="domestic.goods-carried.not-blank", groups={"goods-description", "admin-day-stop"})
-     */
-    private $goodsDescription;
+    #[Assert\NotNull(message: 'domestic.goods-carried.not-blank', groups: ['goods-description', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $goodsDescription = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Expression("(this.getGoodsDescription() != constant('App\\Entity\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message="common.goods-description-other.not-blank", groups={"goods-description", "admin-day-stop"})
-     * @Assert\Length(max=255, maxMessage="common.goods-description-other.max-length", groups={"goods-description", "admin-day-stop"})
-     */
-    private $goodsDescriptionOther;
+    #[Assert\Expression("(this.getGoodsDescription() != constant('App\\\\Entity\\\\AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER')) || value != null", message: 'common.goods-description-other.not-blank', groups: ['goods-description', 'admin-day-stop'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.goods-description-other.max-length', groups: ['goods-description', 'admin-day-stop'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $goodsDescriptionOther = null;
 
     use HazardousGoodsTrait;
     use CargoTypeTrait;
@@ -104,7 +82,6 @@ trait StopTrait
     public function setOriginLocation(?string $originLocation): self
     {
         $this->originLocation = $originLocation;
-
         return $this;
     }
 
@@ -116,7 +93,6 @@ trait StopTrait
     public function setDestinationLocation(?string $destinationLocation): self
     {
         $this->destinationLocation = $destinationLocation;
-
         return $this;
     }
 
@@ -128,7 +104,6 @@ trait StopTrait
     public function setGoodsTransferredFrom(?int $goodsTransferredFrom): self
     {
         $this->goodsTransferredFrom = $goodsTransferredFrom;
-
         return $this;
     }
 
@@ -160,7 +135,6 @@ trait StopTrait
     public function setGoodsTransferredTo(?int $goodsTransferredTo): self
     {
         $this->goodsTransferredTo = $goodsTransferredTo;
-
         return $this;
     }
 
@@ -203,7 +177,6 @@ trait StopTrait
     public function setBorderCrossingLocation(?string $borderCrossingLocation): self
     {
         $this->borderCrossingLocation = $borderCrossingLocation;
-
         return $this;
     }
 
@@ -233,17 +206,16 @@ trait StopTrait
     public function setGoodsDescriptionOther(?string $goodsDescriptionOther): self
     {
         $this->goodsDescriptionOther = $goodsDescriptionOther;
-
         return $this;
     }
 
 
-    public function isGoodsDescriptionEmptyOption()
+    public function isGoodsDescriptionEmptyOption(): bool
     {
         return $this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY;
     }
 
-    public function getGoodsDescriptionNormalized()
+    public function getGoodsDescriptionNormalized(): ?string
     {
         if ($this->goodsDescription === AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER) {
             return $this->getGoodsDescriptionOther();

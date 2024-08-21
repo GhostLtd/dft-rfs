@@ -17,14 +17,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CorrespondenceAddressType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => 'yes',
         self::CHOICE_NO => 'no',
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = "pre-enquiry.correspondence-address";
 
@@ -42,9 +43,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
                     $form
                         ->add('isCorrectAddress', Gds\ChoiceType::class, [
                             'label' => "{$correctAddressPrefix}.label",
-                            'label_attr' => [
-                                'class' => 'govuk-label--s',
-                            ],
+                            'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                             'help' => "{$correctAddressPrefix}.help",
                             'choices' => self::CHOICES,
                             'choice_options' => [
@@ -60,7 +59,7 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
                     ->add('contactAddress', LongAddressType::class, [
                         'label' => "{$translationPrefix}.address.label",
                         'label_attr' => [
-                            'class' => 'govuk-label--m',
+                            'class' => 'govuk-label--s',
                         ],
                         'help' => "{$translationPrefix}.address.help",
                         'include_addressee' => false,
@@ -69,20 +68,25 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
             'validation_groups' => function (Form $form) {
-                if ($form->get('isCorrectAddress')->getData() === self::CHOICES[self::CHOICE_NO])
-                    return ['correspondence_address'];
-                else
-                    return ["is_correct_address"];
+                $hasInvitationAddress = $form->has('isCorrectAddress');
+                $alreadyHaveCorrectAddress = $hasInvitationAddress &&
+                    $form->get('isCorrectAddress')->getData() === self::CHOICES[self::CHOICE_YES];
+
+                return $alreadyHaveCorrectAddress ?
+                    ["is_correct_address"] :
+                    ['correspondence_address'];
             },
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
         if (null === $viewData) {
@@ -111,18 +115,23 @@ class CorrespondenceAddressType extends AbstractType implements DataMapperInterf
         $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
         assert($viewData instanceof PreEnquiryResponse);
 
-        if (!isset($forms['isCorrectAddress'])) return;
+        if (!isset($forms['contactAddress'])) return;
 
-        $isCorrectAddress = !empty($forms['isCorrectAddress']->getData())
-            ? $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES]
-            : null;
+        if (!isset($forms['isCorrectAddress'])) {
+            $isCorrectAddress = false;
+        } else {
+            $isCorrectAddress = !empty($forms['isCorrectAddress']->getData())
+                ? $forms['isCorrectAddress']->getData() === self::CHOICES[self::CHOICE_YES]
+                : null;
+        }
 
         $address = $isCorrectAddress ?
             (clone $viewData->getPreEnquiry()->getInvitationAddress()) :

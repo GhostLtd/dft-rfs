@@ -20,7 +20,8 @@ class StageOrderFunctionalTest extends AbstractStageFunctionalTest
         self::assertEquals($worthing, $this->getStageStartingLocation($this->browser, 'Stage 2'));
 
         $this->clickLink($this->browser, 'Re-order stages', 'govuk-button');
-        $this->clickLink($this->browser, 'Move down: stage #1 - Bognor Regis to Chichester', 'govuk-link');
+
+        $this->clickLink($this->browser, 'Move down stage #1 - Bognor Regis to Chichester', 'govuk-link');
 
         $this->browser->submitForm('Save order');
 

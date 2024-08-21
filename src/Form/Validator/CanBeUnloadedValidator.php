@@ -12,14 +12,12 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class CanBeUnloadedValidator extends ConstraintValidator
 {
-    protected $actionRepository;
-
-    public function __construct(ActionRepository $actionRepository)
+    public function __construct(protected ActionRepository $actionRepository)
     {
-        $this->actionRepository = $actionRepository;
     }
 
-    public function validate($value, Constraint $constraint)
+    #[\Override]
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof CanBeUnloaded) {
             throw new UnexpectedTypeException($constraint, CanBeUnloaded::class);

@@ -8,10 +8,11 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
 use App\Workflow\FormWizardStateInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class InitialDetailsController extends AbstractSessionStateWorkflowController
@@ -22,22 +23,20 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
 
     use SurveyHelperTrait;
 
-    /**
-     * @Route("/domestic-survey/initial-details", name="app_domesticsurvey_initialdetails_start")
-     * @Route("/domestic-survey/initial-details/{state}", name=self::ROUTE_NAME)
-     * @Security("is_granted('EDIT', user.getDomesticSurvey())")
-     */
+    #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
+    #[Route(path: '/domestic-survey/initial-details', name: 'app_domesticsurvey_initialdetails_start')]
+    #[Route(path: '/domestic-survey/initial-details/{state}', name: self::ROUTE_NAME)]
     public function index(WorkflowInterface $domesticSurveyInitialDetailsStateMachine, Request $request, $state = null): Response
     {
         return $this->doWorkflow($domesticSurveyInitialDetailsStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
-        $em = $this->getDoctrine()->getManager();
-
         $survey = $this->getSurvey();
-        $databaseSurvey = $em->getRepository(Survey::class)->findOneByIdWithResponseAndVehicle($survey->getId());
+        $databaseSurvey = $this->entityManager->getRepository(Survey::class)
+            ->findOneByIdWithResponseAndVehicle($survey->getId());
 
         /** @var InitialDetailsState $formWizard */
         $formWizard = $this->session->get($this->getSessionKey(), (new InitialDetailsState())->setSubject($databaseSurvey->getResponse()));
@@ -66,11 +65,13 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->surveyResponse->getId() ? $this->redirectToRoute('app_domesticsurvey_contactdetails') : null;

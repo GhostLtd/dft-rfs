@@ -6,7 +6,7 @@
 } %}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead, tableCell, tableHeadComplex -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tabsHead -%}
     {%- set hasInitialDetails = preEnquiry.response | default(false) -%}
     {%- set canEdit = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), preEnquiry) -%}
     {%- set canResend = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::RESEND'), preEnquiry) -%}
@@ -17,7 +17,7 @@
     {%- set tabs = {}
         | merge(hasInitialDetails ? {'Response': 'tab-response'}: {})
         | merge({
-            ("Notes (#{ preEnquiry.notes | length })"): 'tab-notes',
+            ("Notes (#{preEnquiry.chasedCount} / #{preEnquiry.notes | length})"): 'tab-notes',
             'Invitation/reminders': 'tab-invitation-details',
         })
         | merge(hasFeedback ? {'Feedback': 'tab-feedback'} : {})
@@ -90,8 +90,8 @@
         </div>
     {%- endif -%}
 
-    {% if workflow_can(preEnquiry, 'approve') or workflow_can(preEnquiry, 'reject') or workflow_can(preEnquiry, 'complete')
-        or workflow_can(preEnquiry, 're_open') or workflow_can(preEnquiry, 'un_approve') or workflow_can(preEnquiry, 'un_reject')
+    {% if workflow_can(preEnquiry, 'reject') or workflow_can(preEnquiry, 'complete')
+        or workflow_can(preEnquiry, 're_open') or workflow_can(preEnquiry, 'un_reject')
     %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
@@ -100,21 +100,19 @@
             {{ _self.workflow_link(preEnquiry, 'complete', 'Complete') }}
             {{ _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
             {{ _self.workflow_link(preEnquiry, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(preEnquiry, 'approve', 'Approve') }}
-            {{ _self.workflow_link(preEnquiry, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
         </div>
     {% endif %}
 
 {%- endblock -%}
 
 {% macro workflow_link(preEnquiry, transitionName, transitionText, options) -%}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import attributes %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
     {%- with {
         attr: (options.attr ?? {}) | merge({
             href: path('admin_preenquiry_transition', {preEnquiryId: preEnquiry.id, transition: transitionName}),
             class: ('govuk-button ' ~ (options.class | default('')) ) | trim
         })
     } -%}
-        {%- if workflow_can(preEnquiry, transitionName) %}<a {{ attributes(attr) }}>{{ transitionText }} pre-enquiry</a>{% endif -%}
+        {%- if workflow_can(preEnquiry, transitionName) %}<a {{ govukAttributes(attr) }}>{{ transitionText }} pre-enquiry</a>{% endif -%}
     {%- endwith -%}
 {%- endmacro %}

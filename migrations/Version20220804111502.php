@@ -26,7 +26,7 @@ final class Version20220804111502 extends AbstractMigration
     public function getUpdateQuery(string $table): string
     {
         return <<<EOQ
-UPDATE ${table} s
+UPDATE {$table} s
 LEFT JOIN domestic_day d ON s.day_id = d.id
 LEFT JOIN domestic_survey_response r ON d.response_id = r.id
 LEFT JOIN domestic_survey sv ON r.survey_id = sv.id

@@ -4,26 +4,16 @@
 
 {% block statsTable %}
     {%- if type == 'irhs' -%}
-        {{- _self.displayIrhs(stateMappings, stats, excludeFromTotals, type) -}}
-    {%- elseif type == 'pre-enquiry' -%}
-        {{- _self.displayPreEnquiry(stateMappings, stats, excludeFromTotals, type) -}}
+        {{- _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals, type) -}}
     {%- else -%}
-        {{- _self.displayCsrgt(stateMappings, stats, excludeFromTotals, type) -}}
+        {{- _self.displayYearly(stateMappings, stats, excludeFromTotals, type) -}}
     {%- endif -%}
 {% endblock %}
 
-{% macro displayCsrgt(stateMappings, stats, excludeFromTotals, type) %}
-    {% for year, yearStats in stats %}
+{% macro displayYearly(stateMappings, stats, excludeFromTotals, type) %}
+    {% for year, yearStats in stats.data %}
         {{ _self.displayTable(stateMappings, yearStats.data, yearStats.totals, yearStats.total, excludeFromTotals, type) }}
     {% endfor %}
-{% endmacro %}
-
-{% macro displayIrhs(stateMappings, stats, excludeFromTotals, type) %}
-    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals, type) }}
-{% endmacro %}
-
-{% macro displayPreEnquiry(stateMappings, stats, excludeFromTotals, type) %}
-    {{ _self.displayTable(stateMappings, stats.data, stats.totals, stats.total, excludeFromTotals, type) }}
 {% endmacro %}
 
 {% macro displayTable(stateMappings, stats, totals, totalOfTotals, excludeFromTotals, type) %}
@@ -51,7 +41,7 @@
             </table>
         </div>
     </details>
-    {%- if type != 'pre-enquiry' -%}
+    {%- if type not in ['irhs', 'pre-enquiry', 'roro'] -%}
     <p class="govuk-body">
         N.B. Reissued surveys are not included in row totals.
     </p>
@@ -59,7 +49,7 @@
     <table class="govuk-table rfs-admin-report-table">
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">{% if type == 'pre-enquiry' %}Month{% else %}Week{% endif %}</th>
+            <th scope="col" class="govuk-table__header">{% if type in ['pre-enquiry', 'roro'] %}Month{% else %}Week{% endif %}</th>
             {% for state in stateMappings|keys %}
             <th scope="col" class="govuk-table__header">{{ state|capitalize }}</th>
             {% endfor %}

@@ -2,61 +2,34 @@
 
 namespace App\Utility\International;
 
-use App\Entity\International\Action;
 use App\Entity\International\Survey;
-use App\Entity\International\Trip;
-use App\Entity\International\Vehicle;
 use App\Utility\AbstractDeleteHelper;
 
 class DeleteHelper extends AbstractDeleteHelper
 {
-    public function deleteAction(Action $action, bool $flush=true)
-    {
-        $trip = $action->getTrip();
-
-        foreach ($action->getUnloadingActions() as $unloadingAction) {
-            $trip->removeAction($unloadingAction);
-            $this->entityManager->remove($unloadingAction);
-        }
-        $trip->removeAction($action);
-        $trip->renumberActions();
-        $this->entityManager->remove($action);
-        $flush && $this->entityManager->flush();
-    }
-
-    public function deleteTrip(Trip $trip, bool $flush=true)
-    {
-        foreach ($trip->getActions()->filter(fn(Action $action) => $action->getLoading()) as $action) {
-            foreach($action->getUnloadingActions() as $unloadingAction) {
-                $this->entityManager->remove($unloadingAction);
-            }
-            $this->entityManager->remove($action);
-        }
-        $this->entityManager->remove($trip);
-        $flush && $this->entityManager->flush();
-    }
-
-    public function deleteVehicle(Vehicle $vehicle, bool $flush=true)
-    {
-        foreach($vehicle->getTrips() as $trip) {
-            $this->deleteTrip($trip, false);
-        }
-        $this->entityManager->remove($vehicle);
-        $flush && $this->entityManager->flush();
-    }
-
-    public function deleteSurvey(Survey $survey, bool $flush=true)
+    public function deleteSurvey(Survey $survey, bool $flush=true): void
     {
         $response = $survey->getResponse();
 
+        foreach($survey->getNotes() as $note) {
+            $this->entityManager->remove($note);
+        }
+
         if ($response) {
-            foreach ($response->getVehicles() as $vehicle) {
-                $this->deleteVehicle($vehicle, false);
+            foreach($response->getVehicles() as $vehicle) {
+                $this->entityManager->remove($vehicle);
             }
+
             $this->entityManager->remove($response);
         }
 
         $this->entityManager->remove($survey);
+
+        $user = $survey->getPasscodeUser();
+        if ($user) {
+            $this->entityManager->remove($user);
+        }
+
         $flush && $this->entityManager->flush();
     }
 }

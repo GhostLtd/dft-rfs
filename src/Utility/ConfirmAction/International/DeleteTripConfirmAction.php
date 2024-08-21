@@ -1,28 +1,25 @@
 <?php
 
-
 namespace App\Utility\ConfirmAction\International;
-
 
 use App\Entity\International\Trip;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\International\DeleteHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteTripConfirmAction extends AbstractConfirmAction
 {
     /** @var Trip */
     protected $subject;
-    private DeleteHelper $deleteHelper;
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, DeleteHelper $deleteHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
-        $this->deleteHelper = $deleteHelper;
+        parent::__construct($formFactory, $requestStack, $translator);
     }
 
+    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge(parent::getFormOptions(), [
@@ -32,13 +29,16 @@ class DeleteTripConfirmAction extends AbstractConfirmAction
         ]);
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return 'international.trip-delete';
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
-        $this->deleteHelper->deleteTrip($this->subject);
+        $this->entityManager->remove($this->subject);
+        $this->entityManager->flush();
     }
 }

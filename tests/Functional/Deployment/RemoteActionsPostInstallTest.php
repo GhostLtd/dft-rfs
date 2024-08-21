@@ -3,17 +3,16 @@
 namespace App\Tests\Functional\Deployment;
 
 use App\Tests\DataFixtures\DoctrineMigrationFixtures;
-use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\RemoteActions;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
 
 class RemoteActionsPostInstallTest extends AbstractFunctionalTest
 {
     private array $addedMigrations = [];
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -25,7 +24,6 @@ class RemoteActionsPostInstallTest extends AbstractFunctionalTest
 
     public function testNoMigrations()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         self::assertStringContainsString('Post-install script completed successfully.', RemoteActions::postInstall());
@@ -33,7 +31,6 @@ class RemoteActionsPostInstallTest extends AbstractFunctionalTest
 
     public function testMigrations()
     {
-        $kernel = static::bootKernel();
         $this->loadFixtures([DoctrineMigrationFixtures::class]);
 
         $this->generateMigration();

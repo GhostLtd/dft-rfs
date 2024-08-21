@@ -1,0 +1,10 @@
+@import "node_modules/govuk-frontend/dist/govuk/base";
+
+.send-reminder-unavailable {
+  .govuk-warning-text {
+    em {
+      color: govuk-colour('bright-purple');
+      font-style: normal;
+    }
+  }
+}

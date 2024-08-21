@@ -4,15 +4,8 @@ namespace App\Tests\Functional\Wizard;
 
 class FormTestCase
 {
-    protected array $formData;
-    protected array $expectedErrorIds;
-    protected ?string $submitButtonId;
-
-    public function __construct(array $formData, array $expectedErrorIds = [], string $submitButtonId = null)
+    public function __construct(protected array $formData, protected array $expectedErrorIds = [], protected ?string $submitButtonId = null)
     {
-        $this->formData = $formData;
-        $this->expectedErrorIds = $expectedErrorIds;
-        $this->submitButtonId = $submitButtonId;
     }
 
     public function getFormData(): array

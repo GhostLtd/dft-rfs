@@ -6,34 +6,6 @@
     {{ (axleConfiguration | vehicleAxleConfigTransKey | trans) }}
 {%- endmacro -%}
 
-{% macro addToListRow(key, actions, options) -%}
-    <div class="govuk-add-to-list__row {{ options.row_class | default('') }}">
-        <div class="govuk-add-to-list__key">
-            {%- if options.noEscape | default(false) %}{{ key | raw }}{% else %}{{ key | nl2br }}{% endif %}
-        </div>
-        {% if not (options.hideActions | default(false)) %}
-            <div class="govuk-add-to-list__actions">
-                {{- _self.addToListActionLinks(actions) -}}
-            </div>
-        {% endif %}
-    </div>
-{%- endmacro %}
-
-{% macro addToListActionLinks(actionLinks) %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionLink -%}
-    {%- if actionLinks | length == 1 -%}
-        {{- actionLink((actionLinks | keys) | first, actionLinks | first) -}}
-    {%- else -%}
-        <ul class="govuk-add-to-list__actions-list">
-            {%- for url, action in actionLinks -%}
-                <li class="govuk-add-to-list__actions-list-item">
-                    {{- actionLink(url, action) -}}
-                </li>
-            {%- endfor -%}
-        </ul>
-    {%- endif -%}
-{% endmacro %}
-
 {% macro generalUserAssitanceHelpBlock() %}
 {#
     <details class="govuk-details" data-module="govuk-details">

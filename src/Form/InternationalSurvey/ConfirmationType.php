@@ -9,7 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConfirmationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('submit', ButtonType::class, [
@@ -17,7 +18,8 @@ class ConfirmationType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('label');
     }

@@ -1,34 +1,35 @@
 <?php
 
-
 namespace App\Utility\International;
-
 
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
 use App\Entity\LongAddress;
+use App\Entity\SurveyInterface;
 use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormInterface;
 
 class SampleImporter extends AbstractBulkSurveyImporter
 {
-    const COL_FIRM_REF = 0;
-    const COL_DISPATCH_WEEK = 1;
-    const COL_START_DATE = 2;
-    const COL_END_DATE = 3;
-    const COL_FIRM_NAME = 4;
-    const COL_ADDRESS_1 = 5;
-    const COL_ADDRESS_2 = 6;
-    const COL_ADDRESS_3 = 7;
-    const COL_ADDRESS_4 = 8;
-    const COL_ADDRESS_5 = 9;
-    const COL_POSTCODE = 10;
+    public const COL_FIRM_REF = 0;
+    public const COL_DISPATCH_WEEK = 1;
+    public const COL_START_DATE = 2;
+    public const COL_END_DATE = 3;
+    public const COL_FIRM_NAME = 4;
+    public const COL_ADDRESS_1 = 5;
+    public const COL_ADDRESS_2 = 6;
+    public const COL_ADDRESS_3 = 7;
+    public const COL_ADDRESS_4 = 8;
+    public const COL_ADDRESS_5 = 9;
+    public const COL_POSTCODE = 10;
 
+    #[\Override]
     protected function getAggregateSurveyOptionsAndValidate(FormInterface $form)
     {
         return [];
     }
 
+    #[\Override]
     protected function parseLine($line)
     {
         if ($fields = str_getcsv($line))
@@ -41,7 +42,8 @@ class SampleImporter extends AbstractBulkSurveyImporter
         return null;
     }
 
-    public function createSurvey($surveyData, $surveyOptions = null)
+    #[\Override]
+    public function createSurvey($surveyData, $surveyOptions = null): ?SurveyInterface
     {
         try {
             $survey = (new Survey())
@@ -52,12 +54,12 @@ class SampleImporter extends AbstractBulkSurveyImporter
                 ->setInvitationAddress($this->createAddress($surveyData))
                 ;
             return $this->notificationInterception->checkAndInterceptSurvey($survey);
-        } catch (\Throwable $e) {
-            return false;
+        } catch (\Throwable) {
+            return null;
         }
     }
 
-    protected function createAddress($surveyData)
+    protected function createAddress($surveyData): LongAddress
     {
         return (new LongAddress())
             ->setLine1($surveyData[self::COL_FIRM_NAME])

@@ -2,18 +2,12 @@
 
 namespace App\Form;
 
-use App\Entity\Feedback;
-use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
-use Symfony\Component\Form\FormInterface;
-use Traversable;
+use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
 
-class FeedbackTypeDataMapper extends PropertyPathMapper
+class FeedbackTypeDataMapper extends DataMapper
 {
-    /**
-     * @param FormInterface[]|Traversable $forms
-     * @param Feedback $data
-     */
-    public function mapFormsToData($forms, &$data)
+    #[\Override]
+    public function mapFormsToData(\Traversable $forms, &$data): void
     {
         parent::mapFormsToData($forms, $data);
 

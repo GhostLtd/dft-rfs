@@ -6,14 +6,16 @@ use App\Entity\International\SamplingGroup;
 use App\Repository\International\SamplingGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnexpectedResultException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('rfs:fixtures:create-sampling-groups')]
 class FixturesCreateSamplingGroupsCommand extends Command
 {
-    const SIZE_GROUP_TO_NUMBER_MAPPING = [
+    public const SIZE_GROUP_TO_NUMBER_MAPPING = [
         1 => 25,
         3 => 25,
         5 => 25,
@@ -21,28 +23,23 @@ class FixturesCreateSamplingGroupsCommand extends Command
         24 => 100,
     ];
 
-    protected static $defaultName = 'rfs:fixtures:create-sampling-groups';
-
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-
-    /** @var SamplingGroupRepository */
-    protected $samplingGroupRepository;
-
-    public function __construct(EntityManagerInterface $entityManager, SamplingGroupRepository $samplingGroupRepository)
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected SamplingGroupRepository $samplingGroupRepository
+    )
     {
-        $this->entityManager = $entityManager;
-        $this->samplingGroupRepository = $samplingGroupRepository;
         parent::__construct();
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates sampling groups')
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -53,7 +50,7 @@ class FixturesCreateSamplingGroupsCommand extends Command
                 ->select('count(s.id)')
                 ->getQuery()
                 ->getSingleScalarResult();
-        } catch (UnexpectedResultException $e) {
+        } catch (UnexpectedResultException) {
             $io->error('Unable to fetch number of existing groups');
             return 1;
         }

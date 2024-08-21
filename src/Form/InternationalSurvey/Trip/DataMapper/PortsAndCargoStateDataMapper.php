@@ -2,8 +2,8 @@
 
 namespace App\Form\InternationalSurvey\Trip\DataMapper;
 
-use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
+use App\Entity\Route\Route;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormInterface;
@@ -11,16 +11,12 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class PortsAndCargoStateDataMapper implements DataMapperInterface
 {
-    protected string $direction;
-    protected array $ports;
-
-    public function __construct(string $direction, array $ports)
+    public function __construct(protected string $direction, protected array $ports)
     {
-        $this->direction = $direction;
-        $this->ports = $ports;
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -42,7 +38,7 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
         $ukPort = $accessor->getValue($viewData, "{$this->direction}UkPort");
         $foreignPort = $accessor->getValue($viewData, "{$this->direction}ForeignPort");
 
-        $matchingPair = array_filter($this->ports, fn(CrossingRoute $route) => $route->getUkPort() === $ukPort && $route->getForeignPort() === $foreignPort);
+        $matchingPair = array_filter($this->ports, fn(Route $route) => $route->getUkPort()->getName() === $ukPort && $route->getForeignPort()->getName() === $foreignPort);
 
         if (count($matchingPair) === 1) {
             $forms['ports']->setData(array_shift($matchingPair)->getId());
@@ -70,11 +66,12 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
         $forms['wasAtCapacity']->setData($isAtCapacity);
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
-
         /** @var FormInterface[] $forms */
+
         if (!$viewData instanceof Trip) {
             throw new Exception\UnexpectedTypeException($viewData, Trip::class);
         }
@@ -86,12 +83,12 @@ class PortsAndCargoStateDataMapper implements DataMapperInterface
         $foreignPort = null;
 
         if ($ports) {
-            $matchingPair = array_filter($this->ports, fn(CrossingRoute $r) => $r->getId() === $ports);
+            $matchingPair = array_filter($this->ports, fn(Route $r) => $r->getId() === $ports);
 
             if (count($matchingPair) === 1) {
                 $matchingPair = array_shift($matchingPair);
-                $ukPort = $matchingPair->getUkPort();
-                $foreignPort = $matchingPair->getForeignPort();
+                $ukPort = $matchingPair->getUkPort()->getName();
+                $foreignPort = $matchingPair->getForeignPort()->getName();
             }
         }
 

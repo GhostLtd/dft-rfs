@@ -2,85 +2,101 @@
 {% extends 'international_survey/base.html.twig' %}
 
 {% set headingParams = {
-    regMark: vehicle.registrationMark|formatRegMark
+    regMark: vehicle.registrationMark | formatRegMark
 } %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListRow, actionLinks, tableHeadComplex, tableCell -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList -%}
     {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
-    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.vehicle.summary.heading'|trans(headingParams) }}</h1>
+    <h1 class="page-heading__heading govuk-heading-xl">{{ 'international.vehicle.summary.heading' | trans(headingParams) }}</h1>
 
     {%- set survey = vehicle.surveyResponse.survey -%}
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Company</dt>
-            <dd class="govuk-summary-list__value">{{ survey.company.businessName }}</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">{{ 'international.sidebar-summary.period'|trans }}</dt>
-            <dd class="govuk-summary-list__value">
-                <span class="nowrap">{{- survey.surveyPeriodStart | date('format.date.side-bar' | trans) -}}</span>
-                {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('format.date.side-bar' | trans) -}}</span>{% endif -%}
-            </dd>
-        </div>
-    </dl>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'Company',
+            value: survey.company.businessName
+        }) -}}
 
-    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.basic-details'|trans }}</h2>
+        {%- set surveyPeriodValue -%}
+            <span class="nowrap">{{- survey.surveyPeriodStart | date('format.date.side-bar' | trans) -}}</span>
+            {%- if survey.surveyPeriodInDays > 1 %} – <span class="nowrap">{{ survey.surveyPeriodEnd | date('format.date.side-bar' | trans) -}}</span>{% endif -%}
+        {%- endset -%}
+        {{- summaryListRow({
+            key: 'international.sidebar-summary.period' | trans,
+            value: {html: surveyPeriodValue}
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.basic-details' | trans }}</h2>
 
     {# Vehicle change Links #}
     {%- set params = {vehicleId: vehicle.id} -%}
-    {%- set vehicleDetailsLink = {
-        (wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'international.vehicle.summary.change-link-sr-suffix.vehicle-details'}
-    } -%}
-    {%- set trailerConfigurationLink = {
-        (wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'international.vehicle.summary.change-link-sr-suffix.trailer-configuration'}
-    } -%}
-    {%- set vehicleBodyLink = {
-        (wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'international.vehicle.summary.change-link-sr-suffix.body'}
-    } -%}
-    {%- set vehicleWeightLink = {
-        (wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params)):
-        {label: 'common.actions.change', srHiddenSuffix: 'international.vehicle.summary.change-link-sr-suffix.weights'}
-    } -%}
-    {%- set change = 'common.actions.change'|trans -%}
+    {%- set vehicleDetailsLink = [
+        {
+            href: wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_DETAILS', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'international.vehicle.summary.change-link-sr-suffix.vehicle-details' | trans,
+        }
+    ] -%}
+    {%- set trailerConfigurationLink = [
+        {
+            href: wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'international.vehicle.summary.change-link-sr-suffix.trailer-configuration' | trans,
+        }
+    ] -%}
+    {%- set vehicleBodyLink = [
+        {
+            href: wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_BODY', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'international.vehicle.summary.change-link-sr-suffix.body' | trans,
+        }
+    ] -%}
+    {%- set vehicleWeightLink = [
+        {
+            href: wizardUrl('international-vehicle', 'STATE_CHANGE_VEHICLE_WEIGHT', params),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'international.vehicle.summary.change-link-sr-suffix.weights' | trans,
+        }
+        ] -%}
+    {%- set change = 'common.actions.change' | trans -%}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
         {%- set operationChoices = constant('App\\Entity\\Vehicle::OPERATION_TYPE_CHOICES') -%}
-        {{ summaryListRow('common.vehicle.registration-mark',
-            vehicle.formattedRegistrationMark,
-            vehicleDetailsLink
-        ) }}
-        {{ summaryListRow('common.vehicle.operation-type',
-            choiceLabel(operationChoices, vehicle.operationType) | trans,
-            vehicleDetailsLink
-        ) }}
-
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Axle configuration</dt>
-            <dd class="govuk-summary-list__value">{{ displayAxleConfiguration(vehicle.axleConfiguration) }}</dd>
-            <dd class="govuk-summary-list__actions">
-                {{- actionLinks(trailerConfigurationLink) -}}
-            </dd>
-        </div>
+        {{- summaryListRow({
+            key: 'common.vehicle.registration-mark' | trans,
+            value: vehicle.formattedRegistrationMark,
+            actions: vehicleDetailsLink,
+        }) -}}
+        {{- summaryListRow({
+            key: 'common.vehicle.operation-type' | trans,
+            value: choiceLabel(operationChoices, vehicle.operationType) | trans,
+            actions: vehicleDetailsLink,
+        }) -}}
+        {{- summaryListRow({
+            key: 'Axle configuration',
+            value: {html: displayAxleConfiguration(vehicle.axleConfiguration)},
+            actions: trailerConfigurationLink,
+        }) -}}
 
         {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}
-        {{ summaryListRow('common.vehicle.body-type' | trans,
-            choiceLabel(bodyChoices, vehicle.bodyType) | trans,
-            vehicleBodyLink
-        ) }}
-        {{ summaryListRow('common.vehicle.gross-weight' | trans,
-            ('common.weight.kilograms'|trans({value: vehicle.grossWeight})),
-            vehicleWeightLink
-        ) }}
-        {{ summaryListRow('common.vehicle.carrying-capacity' | trans,
-            ('common.weight.kilograms'|trans({value: vehicle.carryingCapacity})),
-            vehicleWeightLink
-        ) }}
-    </dl>
+        {{- summaryListRow({
+            key: 'common.vehicle.body-type' | trans,
+            value: choiceLabel(bodyChoices, vehicle.bodyType) | trans,
+            actions: vehicleBodyLink,
+        }) -}}
+        {{- summaryListRow({
+            key: 'common.vehicle.gross-weight' | trans,
+            value: ('common.weight.kilograms' | trans({value: vehicle.grossWeight})),
+            actions: vehicleWeightLink,
+        }) -}}
+        {{- summaryListRow({
+            key: 'common.vehicle.carrying-capacity' | trans,
+            value: ('common.weight.kilograms' | trans({value: vehicle.carryingCapacity})),
+            actions: vehicleWeightLink,
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <div class="govuk-!-margin-bottom-9">
         <a class="govuk-button govuk-button--warning"
@@ -89,59 +105,64 @@
     </div>
 
 
-    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips'|trans }}</h2>
+    <h2 class="page-heading__heading govuk-heading-l">{{ 'international.vehicle.summary.trips' | trans }}</h2>
 
-    <table class="govuk-table">
-        {{ tableHeadComplex(false, {'Dates': {}, 'Outward journey': {}, 'Return journey': {}, ('common.actions.table-heading' | trans): {html: true}}) }}{# 'Status' #}
-        <tbody class="govuk-table__body">
+    {{- tableStart() -}}
+        {{- tableHead([
+            'Dates',
+            'Outward journey',
+            'Return journey',
+            {html: 'common.actions.table-heading' | trans},
+        ]) -}}
+        {{- tableBodyStart() -}}
         {%- for trip in vehicle.trips %}
-            <tr class="govuk-table__row">
-                {%- set tripRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
-                {%- set viewContents = actionLinks({
-                    (url(tripRoute, {id: trip.id})):
-                    {label: 'common.actions.view', srHiddenSuffix: 'international.vehicle.summary.view-trip-sr-link-suffix', srHiddenSuffixParams: {tripDate: trip.outboundDate}}
-                }) -%}
+            {%- set actions = [
+                {
+                    href: url(constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE'), {id: trip.id}),
+                    text: 'common.actions.view' | trans,
+                    visuallyHiddenText: 'international.vehicle.summary.view-trip-sr-link-suffix' | trans({tripDate: trip.outboundDate}),
+                }
+            ] -%}
 
-                {{ tableCell('international.trip.summary.date-until-date'|trans({
-                    'from': trip.outboundDate|date('format.date.default' | trans),
-                    'until': trip.returnDate|date('format.date.default' | trans),
-                })
-                ) }}
-
-                {{ tableCell('international.trip.summary.origin-to-destination'|trans({
-                    'origin': trip.outboundUkPort|capitalize,
-                    'destination': trip.outboundForeignPort|capitalize,
-                })) }}
-                {{ tableCell('international.trip.summary.origin-to-destination'|trans({
-                    'origin': trip.returnForeignPort|capitalize,
-                    'destination': trip.returnUkPort|capitalize,
-                })) }}
-                {# {{ tableCell('-') }} #}
-                {{ tableCell(viewContents, {actions: true}) }}
-            </tr>
+            {{- tableRow([
+                'international.trip.summary.date-until-date' | trans({
+                    'from': trip.outboundDate | date('format.date.default' | trans),
+                    'until': trip.returnDate | date('format.date.default' | trans),
+                }),
+                'international.trip.summary.origin-to-destination' | trans({
+                    'origin': trip.outboundUkPort | capitalize,
+                    'destination': trip.outboundForeignPort | capitalize,
+                }),
+                'international.trip.summary.origin-to-destination' | trans({
+                    'origin': trip.returnForeignPort | capitalize,
+                    'destination': trip.returnUkPort | capitalize,
+                }),
+                {html: summaryListActionsList(actions)},
+            ]) -}}
         {% else %}
-            <tr class="govuk-table__row">
-                {{ tableCell('international.vehicle.summary.no-trips'|trans, {colSpan: 4}) }}
-            </tr>
+            {{- tableRow([
+                {
+                    text: 'international.vehicle.summary.no-trips' | trans,
+                    colspan: 4
+                }
+            ]) -}}
         {%- endfor %}
-        </tbody>
-    </table>
+    {{- tableEndIncludingBody() -}}
 
     <div>
         {%- set dashboardUrl = url(constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE')) -%}
         {%- set addTripRoute = constant('App\\Controller\\InternationalSurvey\\TripAddController::START_ROUTE') -%}
         <a href="{{ url(addTripRoute, {vehicleId: vehicle.id}) }}"
-           class="govuk-button govuk-!-margin-bottom-9">{{ 'common.actions.add-trip'|trans }}</a>
+           class="govuk-button govuk-!-margin-bottom-9">{{ 'common.actions.add-trip' | trans }}</a>
     </div>
 
     <hr class="govuk-!-margin-bottom-9">
     <div>
         {%- if vehicle.trips.count() > 0 -%}
             <a href="{{ dashboardUrl }}"
-               class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete'|trans }}</a>
+               class="govuk-button">{{ 'international.trip.summary.actions.vehicle-complete' | trans }}</a>
         {%- endif -%}
         <a href="{{ dashboardUrl }}"
-           class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard'|trans }}</a>
+           class="govuk-button govuk-button--secondary">{{ 'common.actions.back-to-dashboard' | trans }}</a>
     </div>
-
 {% endblock %}

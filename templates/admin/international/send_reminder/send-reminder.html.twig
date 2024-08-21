@@ -1,0 +1,23 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.send-reminder" -%}
+
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, warningText -%}
+
+{% block adminContent %}
+    <div class="govuk-width-container">
+        {%- with {marginBottom: 0, survey: subject} -%}
+            {%- include "admin/international/includes/survey-basics.html.twig" -%}
+            {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+                {{- summaryListRow({
+                    key: 'admin.send-reminder.recipients' | trans,
+                    value: recipients
+                }) -}}
+            {{- summaryListEnd() -}}
+        {%- endwith -%}
+
+        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
+
+        {{ form(form) }}
+    </div>
+{% endblock %}

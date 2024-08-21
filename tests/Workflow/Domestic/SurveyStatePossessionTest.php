@@ -1,33 +1,23 @@
 <?php
 
-
 namespace App\Tests\Workflow\Domestic;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class SurveyStatePossessionTest extends WebTestCase
 {
     private WorkflowInterface $workflow;
 
-    protected function setUp()
+    #[\Override]
+    protected function setUp(): void
     {
         static::bootKernel();
 
-        $container = self::$kernel->getContainer()->get('test.service_container');
+        $container = static::getContainer()->get('test.service_container');
         $this->workflow = $container->get('state_machine.domestic_survey');
-
-        // the workflow guard events require a security token, so we add an anonymous one
-        $token = new AnonymousToken('secret', new User('anon.', ''));
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $container->get('security.token_storage');
-        $tokenStorage->setToken($token);
     }
 
     public function surveyProvider(): array

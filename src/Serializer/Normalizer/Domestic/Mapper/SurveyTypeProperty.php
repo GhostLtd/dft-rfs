@@ -7,13 +7,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SurveyTypeProperty implements Mapper
 {
-    protected string $propertyPath;
-
-    public function __construct(string $propertyPath)
+    public function __construct(protected string $propertyPath)
     {
-        $this->propertyPath = $propertyPath;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

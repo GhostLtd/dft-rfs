@@ -6,7 +6,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 trait StopTypeTrait
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired("translation_entity_key");
         $resolver->setAllowedValues("translation_entity_key", ['day-summary', 'day-stop']);

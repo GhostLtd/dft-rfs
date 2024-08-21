@@ -1,32 +1,73 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow, tag -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tag -%}
 {%- set canViewUnfilledReason = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::VIEW_UNFILLED_REASON'), survey) -%}
 
-<dl class="govuk-summary-list govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-    {{- actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) -}}
-    {{- actionlessSummaryListRow('admin.international.survey.reference-number.label', survey.referenceNumber) -}}
-    {{- actionlessSummaryListRow('common.survey-period.label', survey|formatSurveyPeriod) }}
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {%- set businessName -%}
+        <a class="govuk-link" href="{{ path('admin_international_survey_list', {business_name: survey.company.businessName}) }}">{{ survey.company.businessName }}</a>
+        {%- if relatedPreEnquiryIds is defined and relatedPreEnquiryIds is not empty %}
+            {% if relatedPreEnquiryIds | length == 1 %}
+                <br><a class="govuk-link govuk-body-s" href="{{ path('admin_preenquiry_view', {preEnquiryId: (relatedPreEnquiryIds | first)}) }}">View pre-enquiry</a>
+            {%- else -%}
+                <br><a class="govuk-link govuk-body-s" href="{{ path('admin_preenquiry_list', {company_name: survey.company.businessName}) }}">View pre-enquiries</a>
+            {%- endif -%}
+        {%- endif -%}
+    {%- endset -%}
+
+    {{- summaryListRow({
+        key: 'admin.international.company.business-name.label' | trans,
+        value: {html: businessName},
+    }) -}}
+    {{- summaryListRow({
+        key: 'admin.international.survey.reference-number.label' | trans,
+        value: survey.referenceNumber
+    }) -}}
+    {{- summaryListRow({
+        key: 'common.survey-period.label' | trans,
+        value: survey|formatSurveyPeriod
+    }) -}}
 
     {%- if showStatus ?? true -%}
-        {% set status -%}
-            {{ tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) }}
-            {%- if survey.qualityAssured %} {{ tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
+        {%- set status -%}
+            {{- tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans}) -}}
+            {%- if survey.qualityAssured %}{{- tag({text: 'QA checked', classes: "govuk-tag--turquoise"}) }}{% endif -%}
         {%- endset %}
-        {{ actionlessSummaryListRow('Status', status, {html: true}) }}
-        {% if approvedBy | default(false) %}{{ actionlessSummaryListRow('Approved by', "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
-        {% if qualityAssuredBy | default(false) -%}{{ actionlessSummaryListRow('QA checked by', "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})") }}{% endif %}
+        {{- summaryListRow({
+            key: 'Status',
+            value: {html: status}
+        }) -}}
+        {%- if approvedBy ?? false -%}
+            {{- summaryListRow({
+                key: 'Approved by',
+                value: "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
+        {%- if qualityAssuredBy ?? false -%}
+            {{- summaryListRow({
+                key: 'QA checked by',
+                value: "#{qualityAssuredBy['username'] | removeEmailNamespacePrefix} (#{qualityAssuredBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
     {%- endif -%}
     {%- if showReasonForEmptySurvey ?? false and canViewUnfilledReason and survey.reasonForEmptySurvey -%}
         {%- set reason = choiceLabel(constant('App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_CHOICES'), survey.reasonForEmptySurvey) -%}
-        {{- actionlessSummaryListRow(
-            'Reason for unfilled survey',
-            (reason ? reason|trans : '-')
-        ~ (survey.reasonForEmptySurvey == constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER')
-        ? " - #{survey.reasonForEmptySurveyOther}" : '')
-        ) -}}
+        {{- summaryListRow({
+                key: 'Reason for unfilled survey',
+                value: (reason ? reason|trans : '-') ~ (
+                    survey.reasonForEmptySurvey == constant('\\App\\Entity\\International\\Survey::REASON_FOR_EMPTY_SURVEY_OTHER') ?
+                        " - #{survey.reasonForEmptySurveyOther}" :
+                        ''
+                )
+        }) -}}
     {%- endif -%}
     {%- if showUsername ?? true -%}
-        {{- actionlessSummaryListRow('Username', survey.passcodeUser.username ?? '-') }}
-        {{ actionlessSummaryListRow('Last logged in', (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-') }}
+        {{- summaryListRow({
+            key: 'Username',
+            value: survey.passcodeUser.username ?? '-'
+        }) -}}
+        {{ summaryListRow({
+            key: 'Last logged in',
+            value: (survey.passcodeUser.lastLogin ?? false) ? survey.passcodeUser.lastLogin | date('format.date-time.default' | trans) : '-'
+        }) -}}
     {%- endif -%}
     {%- if pdfs is defined and pdfs is not empty -%}
         {%- set pdfContent -%}
@@ -39,6 +80,13 @@
                     </a></div>
             {%- endfor -%}
         {%- endset -%}
-        {{- actionlessSummaryListRow('Submission PDF(s)', pdfContent) -}}
+        {{- summaryListRow({
+            key: 'Submission PDF(s)',
+            value: {html: pdfContent}
+        }) -}}
     {%- endif -%}
-</dl>
+    {{ summaryListRow({
+        key: 'Contact with haulier',
+        value: survey.chasedCount ? survey.chasedCount : '-'
+    }) -}}
+{{- summaryListEnd() -}}

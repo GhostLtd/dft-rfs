@@ -3,15 +3,22 @@
 {% set translation_prefix = 'admin.domestic.import-summary' %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
     <p class="govuk-body">The following surveys have been created for the <strong>{{ surveyOptions.isNorthernIreland ? 'NI' : 'GB' }} region</strong>
         and will start on <strong>{{ surveyOptions.surveyPeriodStart | date('format.date.full-with-year' | trans) }}</strong>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-5">
+    {% if surveyOptions.allowHistoricalDate ?? null %}
+        <p class="govuk-body">The <em>allow_backdated_survey</em> option was enabled, allowing the sending of a backdated survey.</p>
+    {% endif %}
+
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-5'}) -}}
         {% for survey in surveys %}
             {# @var survey \App\Entity\Domestic\Survey #}
             {% set email = survey.invitationEmails ? " (#{survey.invitationEmails})" : "" %}
-            {{ actionlessSummaryListRow(survey.registrationMark | formatRegMark, (survey.invitationAddress | formatAddress) ~ email) }}
+            {{- summaryListRow({
+                key: survey.registrationMark | formatRegMark,
+                value: (survey.invitationAddress | formatAddress) ~ email
+            }) -}}
         {% endfor %}
-    </dl>
+    {{- summaryListEnd() -}}
 {% endblock %}

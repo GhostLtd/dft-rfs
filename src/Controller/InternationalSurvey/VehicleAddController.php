@@ -7,15 +7,14 @@ use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getInternationalSurvey())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
 class VehicleAddController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
@@ -25,10 +24,8 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
 
     protected SurveyResponse $surveyResponse;
 
-    /**
-     * @Route("/international-survey/add-vehicle/{state}", name=self::WIZARD_ROUTE)
-     * @Route("/international-survey/add-vehicle", name=self::START_ROUTE)
-     */
+    #[Route(path: '/international-survey/add-vehicle/{state}', name: self::WIZARD_ROUTE)]
+    #[Route(path: '/international-survey/add-vehicle', name: self::START_ROUTE)]
     public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
                           Request $request,
                           $state = null): Response
@@ -37,6 +34,7 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
         return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         /** @var FormWizardStateInterface $formWizard */
@@ -47,11 +45,13 @@ class VehicleAddController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);

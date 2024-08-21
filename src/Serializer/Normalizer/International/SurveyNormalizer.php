@@ -4,25 +4,34 @@ namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Survey;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class SurveyNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+class SurveyNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
-    const CONTEXT_KEY = 'for-export';
+    public const CONTEXT_KEY = 'for-export';
 
     use NormalizerAwareTrait;
 
+    #[\Override]
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
-        return $data instanceof Survey && $context[self::CONTEXT_KEY] === true;
+        return $data instanceof Survey && ($context[self::CONTEXT_KEY] ?? false) === true;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Survey::class => false,
+        ];
     }
 
     /**
      * @param Survey $object
      * @throws ExceptionInterface
      */
+    #[\Override]
     public function normalize($object, $format = null, array $context = []): array
     {
         $response = $object->getResponse();
@@ -33,15 +42,15 @@ class SurveyNormalizer implements ContextAwareNormalizerInterface, NormalizerAwa
             'qa' => $this->normalizer->normalize($object->getQualityAssured() === true, $format, $context),
             'reminders' => $object->getSecondReminderSentDate() ? 2
                 : ($object->getFirstReminderSentDate() ? 1 : 0),
-            'contactName' => $response ? $response->getContactName() : null,
-            'contactEmail' => $response ? $response->getContactEmail(): null,
-            'contactPhone' => $response ? $response->getContactTelephone() : null,
-            'numberOfIntJourneys' => $response ? $response->getAnnualInternationalJourneyCount() : null,
-            'activityStatus' => $response ? $response->getActivityStatus() : null,
+            'contactName' => $response?->getContactName(),
+            'contactEmail' => $response?->getContactEmail(),
+            'contactPhone' => $response?->getContactTelephone(),
+            'numberOfIntJourneys' => $response?->getAnnualInternationalJourneyCount(),
+            'activityStatus' => $response?->getActivityStatus(),
             'reasonForEmptySurvey' => $object->getReasonForEmptySurvey(),
             'reasonForEmptySurveyOther' => $object->getReasonForEmptySurvey() === Survey::REASON_FOR_EMPTY_SURVEY_OTHER ? $object->getReasonForEmptySurveyOther() : null,
-            'businessNature' => $response ? $response->getBusinessNature() : null,
-            'businessSize' => $response ? $response->getNumberOfEmployees() : null,
+            'businessNature' => $response?->getBusinessNature(),
+            'businessSize' => $response?->getNumberOfEmployees(),
         ];
     }
 }

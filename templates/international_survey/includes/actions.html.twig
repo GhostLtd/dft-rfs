@@ -1,4 +1,4 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHeadComplex, actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration, displayHazardousGoods -%}
 
 {%- set showActions = showActions ?? true -%}
@@ -6,75 +6,103 @@
 {%- set bottomMargin = bottomMargin ?? 6 -%}
 {%- set cargoChoices = constant('App\\Entity\\CargoType::CHOICES') -%}
 
-<table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
+{{- tableStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {%- if isAdmin -%}
-        {%- set headers = {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {numeric: true}, 'common.action.goods': {}, 'common.action.from': {}, 'Cargo Type': {}, 'Hazardous?': {}} -%}
-        {%- if showActions -%}{%- set headers = headers | merge({('common.actions.table-heading' | trans): {html: true}}) -%}{%- endif -%}
-        {{- tableHeadComplex(false, headers) -}}
+        {{- tableHead([
+            '#',
+            'common.action.place' | trans,
+            'common.action.type' | trans,
+            {
+                text: 'common.action.weight' | trans,
+                classes: 'govuk-table__cell--numeric'
+            },
+            'common.action.goods' | trans,
+            'common.action.from' | trans,
+            'Cargo Type',
+            'Hazardous?',
+            showActions ?
+                {html: 'common.actions.table-heading' | trans} :
+                null,
+        ]) -}}
     {%- else -%}
-        {{- tableHeadComplex(false, {'#': {}, 'common.action.place': {}, 'common.action.type': {}, 'common.action.weight': {numeric: true}, 'common.action.goods': {}, 'common.action.from': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}
+        {{- tableHead([
+            '#',
+            'common.action.place' | trans,
+            'common.action.type' | trans,
+            {
+                text: 'common.action.weight' | trans,
+                classes: 'govuk-table__cell--numeric'
+            },
+            'common.action.goods' | trans,
+            'common.action.from' | trans,
+            {html: 'common.actions.table-heading' | trans},
+        ]) -}}
     {%- endif -%}
-    <tbody class="govuk-table__body">
+    {{- tableBodyStart() -}}
     {%- for action in trip.actions %}
         {%- if filter is not defined or action.id in filter -%}
-        <tr class="govuk-table__row">
-            {{ tableCell(action.number) }}
-            {{ tableCell('common.action.place-name'|trans({name: action.name|formatPotentialPostcode, country: action|formatCountry})) }}
-            {{ tableCell((action.loading ? 'common.action.loading' : 'common.action.unloading')|trans) }}
+            {%- set loadingAction = action.loadingAction -%}
+            {%- set rows = [
+                action.number,
+                'common.action.place-name' | trans({
+                    name: action.name | formatPotentialPostcode,
+                    country: action | formatCountry
+                }),
+                (action.loading ? 'common.action.loading' : 'common.action.unloading') | trans,
+                action.loading or not action.weightUnloadedAll ?
+                    {
+                        text: 'common.weight.kilograms' | trans({value: action.weightOfGoods}),
+                        classes: 'govuk-table__cell--numeric'
+                    } :
+                    {
+                        text: 'common.action.unloaded-all' | trans({value: action.loadingAction.weightOfGoods}),
+                        classes: 'govuk-table__cell--numeric'
+                    },
+                action.loading ?
+                    formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther) :
+                    formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther),
+                action.loading ?
+                    '-' :
+                    loadingAction.number ~ '. ' ~ loadingAction.name,
+            ] -%}
 
-            {%- if action.loading or not action.weightUnloadedAll -%}
-                {{ tableCell(
-                    ('common.weight.kilograms'|trans({value: action.weightOfGoods})),
-                    {numeric: true}
-                ) }}
-            {%- else -%}
-                {{ tableCell(
-                    ('common.action.unloaded-all'|trans({value: action.loadingAction.weightOfGoods})),
-                    {numeric: true}
-                ) }}
-            {%- endif -%}
+            {% if isAdmin %}
+                {%- set actions = showActions ?
+                    [
+                        {
+                            href: url(constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE'), {actionId: action.id}),
+                            text: 'common.actions.delete' | trans,
+                            visuallyHiddenText: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}",
+                        },
+                        {
+                            href: url(constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE'), {actionId: action.id}),
+                            text: 'common.actions.edit' | trans,
+                            visuallyHiddenText: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}",
+                        },
+                    ] :
+                    null
+                -%}
 
+                {%- set rows = rows | merge([
+                    (choiceLabel(cargoChoices, action.cargoTypeCode) | trans | default('-')),
+                    {html: displayHazardousGoods(action.hazardousGoodsCode)},
+                    actions ?
+                        summaryListActionsList(actions) :
+                        null,
+                ]) -%}
+            {% elseif showActions %}
+                {%- set rows = rows | merge([
+                    summaryListActionsList([
+                        {
+                            href: url('app_internationalsurvey_action_view', {actionId: action.id}),
+                            text: 'common.actions.view' | trans,
+                            visuallyHiddenText: 'international.actions.view-link-sr-suffix' | trans({actionNumber: action.number}),
+                        }
+                    ])
+                ]) -%}
+            {% endif %}
 
-            {%- if action.loading -%}
-                {{ tableCell(formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther)) }}
-                {{ tableCell('-') }}
-            {%- else -%}
-                {%- set loadingAction = action.loadingAction -%}
-                {{ tableCell(formatGoodsDescription(loadingAction.goodsDescription, loadingAction.goodsDescriptionOther)) }}
-                {{ tableCell(loadingAction.number ~ '. ' ~ loadingAction.name) }}
-            {%- endif -%}
-
-            {%- if isAdmin -%}
-                {{ tableCell(choiceLabel(cargoChoices, action.cargoTypeCode) | trans | default('-')) }}
-                {{ tableCell(displayHazardousGoods(action.hazardousGoodsCode), {html: true}) }}
-            {%- endif -%}
-
-            {%- if showActions -%}
-                {%- if isAdmin -%}
-{#
-                    {%- set editContents -%}
-                        {%- set deleteRoute = constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE') -%}
-                        <a href="{{ url(deleteRoute, {actionId: action.id}) }}" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0">{{ 'common.actions.delete'|trans }}</a>
-                        {%- set editRoute = constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE') -%}
-                        <a href="{{ url(editRoute, {actionId: action.id}) }}" class="govuk-button govuk-!-margin-bottom-0">{{ 'common.actions.edit'|trans }}</a>
-                    {%- endset -%}
-#}
-                    {%- set editContents = actionLinks({
-                        (url(constant('App\\Controller\\Admin\\International\\ActionController::DELETE_ROUTE'), {actionId: action.id})): {label: 'common.actions.delete', srHiddenSuffix: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}"},
-                        (url(constant('App\\Controller\\Admin\\International\\ActionController::EDIT_ROUTE'), {actionId: action.id})): {label: 'common.actions.edit', srHiddenSuffix: "#{action.loading ? 'loading' : 'unloading'} action ##{action.number} on trip #{srTripIdentifier}"},
-                    }) -%}
-                    {{ tableCell(editContents, {actions: true}) }}
-                {%- else -%}
-                    {%- set viewRoute = constant('App\\Controller\\InternationalSurvey\\ActionController::VIEW_ROUTE') -%}
-                    {%- set viewContents = actionLinks({
-                        (url(viewRoute, {actionId: action.id})):
-                        {label: 'common.actions.view', srHiddenSuffix: 'international.actions.view-link-sr-suffix', srHiddenSuffixParams: {actionNumber: action.number}}
-                    }) -%}
-                    {{ tableCell(viewContents, {actions: true}) }}
-                {%- endif -%}
-            {%- endif -%}
-        </tr>
+            {{- tableRow(rows) -}}
         {%- endif -%}
     {%- endfor -%}
-    </tbody>
-</table>
+{{- tableEndIncludingBody() -}}

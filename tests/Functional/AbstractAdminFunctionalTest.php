@@ -15,13 +15,16 @@ abstract class AbstractAdminFunctionalTest extends AbstractFunctionalTest
         return $this->browser;
     }
 
+    protected function getServerParameters(): array
+    {
+        return [
+            'HTTP_X-Goog-Iap-Jwt-Assertion' => 'foo',
+            'HTTP_X-Goog-Authenticated-User-Email' => 'test@example.com',
+        ];
+    }
+
     protected function login(KernelBrowser $client): Crawler
     {
-        $client->request('GET', "https://{$_ENV['ADMIN_HOSTNAME']}/login");
-
-        return $client->submitForm('admin_login_login', [
-            'admin_login[credentials][username]' => 'test',
-            'admin_login[credentials][password]' => 'test'
-        ]);
+        return $client->request('GET', "https://{$_ENV['ADMIN_HOSTNAME']}/");
     }
 }

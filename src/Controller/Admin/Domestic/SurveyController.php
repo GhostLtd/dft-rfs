@@ -12,9 +12,7 @@ use App\Form\Admin\DomesticSurvey\Edit\VehicleDetailsType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Security\Voter\AdminSurveyVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,16 +20,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/csrgt/surveys/{surveyId}")
- * @Entity("survey", expr="repository.find(surveyId)")
- * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
- */
+#[Route(path: '/csrgt/surveys/{surveyId}')]
+#[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
 class SurveyController extends AbstractController
 {
-    private const ROUTE_PREFIX = 'admin_domestic_survey_';
+    private const string ROUTE_PREFIX = 'admin_domestic_survey_';
     public const ADD_ROUTE = self::ROUTE_PREFIX.'add';
     public const LIST_ROUTE = self::ROUTE_PREFIX.'list';
     public const LOGS_ROUTE = self::ROUTE_PREFIX.'logs';
@@ -51,38 +47,37 @@ class SurveyController extends AbstractController
     public const COMPLETE_ROUTE = self::ROUTE_PREFIX.'complete';
     public const FLAG_QA_ROUTE = self::ROUTE_PREFIX.'flag_qa';
 
-    protected EntityManagerInterface $entityManager;
-    protected RequestStack $requestStack;
-
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
+    public function __construct(protected EntityManagerInterface $entityManager, protected RequestStack $requestStack)
     {
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
     }
 
-    /**
-     * @Route("/enter-business-and-vehicle-details", name=self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)
-     * @Security("is_granted('ENTER_BUSINESS_AND_VEHICLE_DETAILS', survey)");
-     */
-    public function enterBusinessAndVehicle(Survey $survey): Response
+    #[IsGranted('ENTER_BUSINESS_AND_VEHICLE_DETAILS', 'survey')]
+    #[Route(path: '/enter-business-and-vehicle-details', name: self::ENTER_BUSINESS_AND_VEHICLE_ROUTE)]
+    public function enterBusinessAndVehicle(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-business-details');
         return $this->handleRequest($this->getResponse($survey), BusinessAndVehicleDetailsType::class, 'admin/domestic/surveys/enter-business-and-vehicle-details.html.twig', $redirectUrl);
     }
 
-    /**
-     * @Route("/edit-final-details", name=self::EDIT_FINAL_DETAILS_ROUTE)
-     */
-    public function editFinalDetails(Survey $survey): Response
+    #[Route(path: '/edit-final-details', name: self::EDIT_FINAL_DETAILS_ROUTE)]
+    public function editFinalDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-final-details');
         return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/domestic/surveys/edit-final-details.html.twig', $redirectUrl);
     }
 
-    /**
-     * @Route("/enter-initial-details", name=self::ENTER_INITIAL_ROUTE)
-     */
-    public function enterInitialDetails(Survey $survey): Response
+    #[IsGranted(AdminSurveyVoter::ENTER_INITIAL_DETAILS, subject: 'survey')]
+    #[Route(path: '/enter-initial-details', name: self::ENTER_INITIAL_ROUTE)]
+    public function enterInitialDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey);
         $response = (new SurveyResponse())
@@ -98,35 +93,39 @@ class SurveyController extends AbstractController
         return $this->handleRequest($response, InitialDetailsType::class, 'admin/domestic/surveys/enter-initial-details.html.twig', $redirectUrl);
     }
 
-    /**
-     * @Route("/edit-initial-details", name=self::EDIT_INITIAL_ROUTE)
-     * @IsGranted(AdminSurveyVoter::EDIT, subject="survey")
-     */
-    public function editInitialDetails(Survey $survey): Response
+    #[Route(path: '/edit-initial-details', name: self::EDIT_INITIAL_ROUTE)]
+    #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
+    public function editInitialDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-initial-details');
         return $this->handleRequest($this->getResponse($survey),InitialDetailsType::class, 'admin/domestic/surveys/edit-initial-details.html.twig', $redirectUrl);
     }
 
-    /**
-     * @Route("/edit-business-details", name=self::EDIT_BUSINESS_ROUTE)
-     */
-    public function editBusinessDetails(Survey $survey): Response
+    #[Route(path: '/edit-business-details', name: self::EDIT_BUSINESS_ROUTE)]
+    public function editBusinessDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-business-details');
         return $this->handleRequest($this->getResponse($survey), BusinessDetailsType::class, 'admin/domestic/surveys/edit-business-details.html.twig', $redirectUrl);
     }
 
-    /**
-     * @Route("/edit-vehicle-details", name=self::EDIT_VEHICLE_ROUTE)
-     */
-    public function editVehicleDetails(Survey $survey): Response
+    #[Route(path: '/edit-vehicle-details', name: self::EDIT_VEHICLE_ROUTE)]
+    public function editVehicleDetails(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-vehicle-details');
         return $this->handleRequest($this->getResponse($survey), VehicleDetailsType::class, 'admin/domestic/surveys/edit-vehicle-details.html.twig', $redirectUrl);
     }
 
-    protected function handleRequest(SurveyResponse $response, string $formClass, string $templateName, string $redirectUrl) {
+    protected function handleRequest(SurveyResponse $response, string $formClass, string $templateName, string $redirectUrl): Response
+    {
         $form = $this->createForm($formClass, $response);
         $request = $this->requestStack->getCurrentRequest();
 
@@ -146,16 +145,21 @@ class SurveyController extends AbstractController
 
         return $this->render($templateName, [
             'survey' => $response->getSurvey(),
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    protected function getRedirectUrl(Survey $survey, string $hash = null): string
+    protected function getRedirectUrl(
+        Survey $survey,
+        string $hash = null
+    ): string
     {
         return $this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . ($hash ? ("#".$hash) : null);
     }
 
-    protected function getResponse(Survey $survey): SurveyResponse
+    protected function getResponse(
+        Survey $survey
+    ): SurveyResponse
     {
         $response = $survey->getResponse();
 

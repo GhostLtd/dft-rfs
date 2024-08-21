@@ -8,21 +8,19 @@ use App\Controller\InternationalSurvey\IndexController as InternationalIndexCont
 use App\Entity\PasscodeUser;
 use App\Repository\MaintenanceWarningRepository;
 use App\Utility\SessionTimeoutHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/")
-     */
+    #[Route(path: '/')]
     public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response
     {
         $user = $this->getUser();
-        if ($user && $user instanceof PasscodeUser) {
+        if ($user instanceof PasscodeUser) {
             if ($user->getDomesticSurvey()) {
                 return $this->redirectToRoute(DomesticIndexController::SUMMARY_ROUTE);
             } else if ($user->getInternationalSurvey()) {
@@ -33,21 +31,17 @@ class HomeController extends AbstractController
         }
 
         return $this->render('home/index.html.twig', [
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBannerForFrontend(),
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 
-    /**
-     * @Route("/sitemap.txt")
-     */
+    #[Route(path: '/sitemap.txt')]
     public function sitemap(): Response
     {
         return $this->render('home/sitemap.txt.twig');
     }
 
-    /**
-     * @Route("/refresh-session")
-     */
+    #[Route(path: '/refresh-session')]
     public function refreshSession(SessionTimeoutHelper $timeoutHelper): JsonResponse
     {
         return new JsonResponse([
@@ -56,20 +50,16 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/accessibility-statement")
-     * @Template("home/accessibility-statement.html.twig")
-     */
-    public function accessibilityStatement()
+    #[Route(path: '/accessibility-statement')]
+    #[Template('home/accessibility-statement.html.twig')]
+    public function accessibilityStatement(): array
     {
         return [];
     }
 
-    /**
-     * @Route("/privacy-statement")
-     * @Template("home/privacy-statement.html.twig")
-     */
-    public function privacyStatement()
+    #[Route(path: '/privacy-statement')]
+    #[Template('home/privacy-statement.html.twig')]
+    public function privacyStatement(): array
     {
         return [];
     }

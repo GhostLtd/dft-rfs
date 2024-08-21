@@ -11,7 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BusinessAndVehicleDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('business_details', EmbeddedBusinessDetailsType::class, [
@@ -37,7 +38,8 @@ class BusinessAndVehicleDetailsType extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,

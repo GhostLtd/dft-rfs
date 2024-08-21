@@ -13,36 +13,34 @@ use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 class LoadingPlaceType extends AbstractType
 {
-    protected $loadingPlaceHelper;
-
-    public function __construct(LoadingPlaceHelper $loadingPlaceHelper)
+    public function __construct(protected LoadingPlaceHelper $loadingPlaceHelper)
     {
-        $this->loadingPlaceHelper = $loadingPlaceHelper;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Action $action */
             $action = $event->getData();
-
-            $prefix = 'international.action.unloading';
 
             [$choices, $choiceOptions] = $this->loadingPlaceHelper->getChoicesAndOptionsForPlace($action, true);
 
             $event->getForm()
                 ->add('loadingAction', Gds\ChoiceType::class, [
                     'label_is_page_heading' => true,
-                    'label' => "{$prefix}.label",
-                    'label_attr' => ['class' => 'govuk-label--xl'],
-                    'help' => "{$prefix}.help",
+                    'label' => "international.action.unloading.label",
+                    'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
+                    'help' => "international.action.unloading.help",
                     'choices' => $choices,
                     'choice_options' => $choiceOptions,
+                    'choice_value' => fn(?Action $a) => $a ? "action-{$a->getNumber()}" : null,
                 ]);
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Action::class,

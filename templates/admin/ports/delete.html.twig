@@ -1,0 +1,14 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "port.delete" %}
+{% set headingDomain = 'admin' %}
+{% set headingParams = translation_parameters %}
+{% trans_default_domain 'admin' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <div class="govuk-width-container">
+        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
+        {{ form(form) }}
+    </div>
+{% endblock %}

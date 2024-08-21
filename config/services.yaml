@@ -17,6 +17,8 @@ parameters:
     env_label_colour: '%env(string:APP_ENV_LABEL_COLOUR)%'
     env_label_background: '%env(string:APP_ENV_LABEL_BACKGROUND)%'
 
+    disable_reminders: '%env(string:APP_DISABLE_REMINDERS)%'
+
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     app_features_empty: none
@@ -28,6 +30,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $appEnvironment: '%env(APP_ENV)%'
+            $disableReminders: '%env(APP_DISABLE_REMINDERS)%'
             $auditLogEntityManager: '@doctrine.orm.audit_log_entity_manager'
             $frontendHostname: '%frontend_hostname%'
             $secret: '%env(APP_SECRET)%'
@@ -42,6 +45,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+
+    # TODO: This is to avoid a deprecation warning relating to the use of ContainerInterface, the only usage of which
+    #       is in ProjectMigrationFactory. If we can remove the need for container injection into migrations
+    #       (see Version20210929101841.php), then we can remove this line too.
+    Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
 
     ## for some reason the default declaration of this service is triggering a deprecation warning
     # see https://stackoverflow.com/questions/64458501/symfony-doctrine-get-list-of-available-commands
@@ -58,14 +66,9 @@ services:
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
-            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+            - !service { class: PDO, factory: ['@database_connection', 'getNativeConnection'] }
             # If you get transaction issues (e.g. after login) uncomment the line below
             - { lock_mode: !php/const Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_ADVISORY }
-
-    App\Security\FileUserProvider:
-        arguments:
-            $usersFile: '%env(resolve:ADMIN_USERS_PASSWORD_FILE)%'
-
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -77,11 +80,25 @@ services:
     # please note that last definitions always *replace* previous ones
 
     _instanceof:
+        App\ML\FileType\FileTypeInterface:
+            tags: [ 'app.ml.file_type' ]
         App\Utility\AuditEntityLogger\AuditEntityLogger:
             tags: [ 'app.audit_entity_logger' ]
         Doctrine\Common\EventSubscriber:
             tags:
                 - { name: 'doctrine.event_subscriber' }
+
+    App\EventListener\DomesticSurvey\DataConsistencyListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'onFlush'
+                lazy: true
+
+    App\EventListener\InternationalSurvey\DataConsistencyListener:
+        tags:
+            -   name: 'doctrine.event_listener'
+                event: 'onFlush'
+                lazy: true
 
     App\EventListener\InternationalSurvey\VehicleRegMarkChangedListener:
         tags:
@@ -119,6 +136,10 @@ services:
             - { name: 'workflow.expression_language_provider' }
             - { name: 'validator.expression_language_provider' }
 
+    App\Security\ManagementUserHelper:
+        arguments:
+            $managementDomains: '%env(json:default::MANAGEMENT_DOMAINS)%'
+
     App\Serializer\Encoder\SqlServerInsertEncoder:
         calls:
             - setTwig: ['@twig']
@@ -140,13 +161,5 @@ services:
     App\Doctrine\Migrations\Version\ProjectMigrationFactory:
         arguments: ['@App\Doctrine\Migrations\Version\ProjectMigrationFactory.inner']
 
-
-    App\EventSubscriber\RedirectAnnotationSubscriber:
-        arguments:
-            - '@framework_extra_bundle.argument_name_convertor'
-            - '@sensio_framework_extra.security.expression_language.default'
-            - '@security.authentication.trust_resolver'
-            - '@security.role_hierarchy'
-            - '@security.token_storage'
-            - '@security.authorization_checker'
-            - '@logger'
+    Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface $roroLoginLinkHandler:
+        '@security.authenticator.login_link_handler.roro'

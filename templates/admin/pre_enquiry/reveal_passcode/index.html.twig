@@ -3,13 +3,21 @@
 {% set translation_prefix = 'admin.pre-enquiry.passcode-reveal' %}
 
 {% block adminContent %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
     {%- include "admin/pre_enquiry/includes/basics.html.twig" with {marginBottom: 5, showStatus: false, showUsername: false} -%}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.pre-enquiry.created.access-code-2', code, {'row_class': 'access-code'}) }}
-    </dl>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.access-code-1' | trans,
+            value: username,
+            classes: 'access-code',
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.access-code-2' | trans,
+            value: code,
+            classes: 'access-code',
+        }) -}}
+        {{- summaryListEnd() -}}
 {% endblock %}
 

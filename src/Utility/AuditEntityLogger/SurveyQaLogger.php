@@ -3,11 +3,13 @@
 namespace App\Utility\AuditEntityLogger;
 
 use App\Entity\HaulageSurveyInterface;
+use App\Entity\QualityAssuranceInterface;
 
 class SurveyQaLogger extends AbstractAuditEntityLogger
 {
-    const CATEGORY = 'survey-qa';
+    public const CATEGORY = 'survey-qa';
 
+    #[\Override]
     public function getAuditLogEntries(array $changeSets, string $username): array
     {
         $logs = [];
@@ -22,11 +24,13 @@ class SurveyQaLogger extends AbstractAuditEntityLogger
         return $logs;
     }
 
+    #[\Override]
     public function supports(string $className): bool
     {
-        return $this->implementsInterface($className, HaulageSurveyInterface::class);
+        return $this->implementsInterface($className, QualityAssuranceInterface::class);
     }
 
+    #[\Override]
     function getCategory(): string
     {
         return self::CATEGORY;

@@ -112,7 +112,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     new FormTestCase([
                         "goods_weight" => [
                             "weightOfGoodsCarried" => "100",
-                            "wasAtCapacity" => "0"
+                            "wasAtCapacity" => "no"
                         ],
                     ])
                 ]);
@@ -129,7 +129,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     new FormTestCase([
                         "goods_weight" => [
                             "weightOfGoodsCarried" => "100",
-                            "wasAtCapacity" => "1"
+                            "wasAtCapacity" => "yes"
                         ],
                     ], [
                         "#goods_weight_wasLimitedBy",
@@ -137,7 +137,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     new FormTestCase([
                         "goods_weight" => [
                             "weightOfGoodsCarried" => "100",
-                            "wasAtCapacity" => "1",
+                            "wasAtCapacity" => "yes",
                             "wasLimitedBy" => $wasLimitedBy,
                         ],
                     ]),

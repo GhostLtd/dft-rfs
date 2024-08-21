@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CorrespondenceDetailsType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('contactName', Gds\InputType::class, [
@@ -31,7 +32,8 @@ class CorrespondenceDetailsType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,

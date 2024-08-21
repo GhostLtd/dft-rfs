@@ -12,4 +12,5 @@ interface NotificationInterceptionRepositoryInterface extends ServiceEntityRepos
 
     // Used for enforcing uniqueness
     public function findByAllNames($excludeId, array $names = []): array;
+    public function getClassName(): string;
 }

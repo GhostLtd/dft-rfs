@@ -3,41 +3,78 @@
 {% set translation_prefix = "admin.reports.dashboard" %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableCell, actionLink %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList %}
 
-    {%- set csrgtAll = 1 %}{% set csrgtGB = 2 %}{% set csrgtNI = 4 %}{% set irhs = 8 -%}{% set preEnquiry = 16 -%}
-    {%- set reportTypeRef = {(csrgtAll): 'csrgt', (csrgtGB): 'csrgt-gb', (csrgtNI): 'csrgt-ni', (irhs): 'irhs', (preEnquiry): 'pre-enquiry'} -%}
-    {%- set reportConfig = {
-        'Activity Status':       {'admin_reports_activity_status_type': irhs},
-        'Approvals':             {'admin_reports_approvals_type':       csrgtAll + csrgtGB + csrgtNI + irhs},
-        'Possession of vehicle': {'admin_reports_possession_type':      csrgtAll + csrgtGB + csrgtNI},
-        'Quality assurance':     {'admin_reports_qa_type':              csrgtAll + csrgtGB + csrgtNI + irhs},
-        'Surveys by state':      {'admin_reports_state_type':           csrgtAll + csrgtGB + csrgtNI + irhs + preEnquiry},
-        'Unapprovals':           {'admin_reports_unapprovals_type':     csrgtAll + irhs},
-    } -%}
+    {%- set csrgtAll = 1 %}{% set csrgtGB = 2 %}{% set csrgtNI = 4 %}{% set irhs = 8 -%}{% set preEnquiry = 16 -%}{% set roro = 32 -%}
+    {%- set reportTypeRef = {(csrgtAll): 'csrgt', (csrgtGB): 'csrgt-gb', (csrgtNI): 'csrgt-ni', (irhs): 'irhs', (preEnquiry): 'pre-enquiry', (roro): 'roro'} -%}
+    {%- set reportConfig = [
+        {
+            active: irhs,
+            route: 'admin_reports_activity_status_type',
+            title: 'admin.reports.dashboard.types.activity',
+        },
+        {
+            active: csrgtAll + csrgtGB + csrgtNI + irhs + preEnquiry + roro,
+            route: 'admin_reports_approvals_type',
+            title: 'admin.reports.dashboard.types.approvals',
+        },
+        {
+            active: csrgtAll + csrgtGB + csrgtNI,
+            route: 'admin_reports_possession_type',
+            title: 'admin.reports.dashboard.types.possession',
+        },
+        {
+            active: csrgtAll + csrgtGB + csrgtNI + irhs,
+            route: 'admin_reports_qa_type',
+            title: 'admin.reports.dashboard.types.quality',
+        },
+        {
+            active: csrgtAll + csrgtGB + csrgtNI + irhs + preEnquiry + roro,
+            route: 'admin_reports_state_type',
+            title: 'admin.reports.dashboard.types.state',
+        },
+        {
+            active: csrgtAll + irhs,
+            route: 'admin_reports_unapprovals_type',
+            title: 'admin.reports.dashboard.types.unapprovals',
+        },
+    ] -%}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-wide">
-            <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-            {{- tableHead(null, ['', 'CSRGT (All)', 'CSRGT (GB)', 'CSRGT (NI)', 'IRHS', 'Pre-Enquiry']) -}}
-            <tbody class="govuk-table__body">
-            {%- for reportName, config in reportConfig -%}
-                {%- set routeName = (config | keys).0 -%}
-                {%- set reportType = config[routeName] -%}
-                <tr class="govuk-table__row">
-                    {{- tableCell(reportName, {class: 'govuk-table__header'}) -}}
-                    {% for col in [csrgtAll, csrgtGB, csrgtNI, irhs, preEnquiry] %}
-                        {%- if (reportType b-and col) -%}
-                            {%- set link = actionLink(path(routeName, {type: reportTypeRef[col]}), 'view') -%}
-                            {{- tableCell(link, {html: true}) -}}
-                        {%- else -%}
-                            {{- tableCell('') -}}
-                        {%- endif -%}
-                    {%- endfor -%}
-                </tr>
+            {{- tableStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+            {{- tableHead([
+                '',
+                'admin.reports.dashboard.surveys.csrgt' | trans(),
+                'admin.reports.dashboard.surveys.csrgt-gb' | trans(),
+                'admin.reports.dashboard.surveys.csrgt-ni' | trans(),
+                'admin.reports.dashboard.surveys.irhs' | trans(),
+                'admin.reports.dashboard.surveys.pre-enquiry' | trans(),
+                'admin.reports.dashboard.surveys.roro' | trans(),
+            ]) -}}
+            {{- tableBodyStart() -}}
+            {%- for config in reportConfig -%}
+                {%- set row = [
+                    config.title | trans
+                ] -%}
+
+                {% for col in [csrgtAll, csrgtGB, csrgtNI, irhs, preEnquiry, roro] %}
+                    {%- if (config.active b-and col) -%}
+                        {%- set link = summaryListActionsList([
+                            {
+                                href: path(config.route, {type: reportTypeRef[col]}),
+                                text: 'admin.reports.dashboard.view' | trans
+                            }
+                        ]) -%}
+                        {%- set row = row | merge([link]) -%}
+                    {%- else -%}
+                        {%- set row = row | merge(['']) -%}
+                    {%- endif -%}
+                {%- endfor -%}
+
+                {{- tableRow(row, {firstCellIsHeader: true}) -}}
             {%- endfor -%}
-            </tbody>
-        </table>
+            {{- tableEndIncludingBody() -}}
         </div>
     </div>
 {% endblock %}

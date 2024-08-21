@@ -18,19 +18,19 @@ use InvalidArgumentException;
 
 class TripState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_ORIGIN_AND_DESTINATION = 'origin-and-destination';
-    const STATE_DATES = 'dates';
-    const STATE_OUTBOUND_PORTS = 'outbound-ports';
-    const STATE_RETURN_PORTS = 'return-ports';
-    const STATE_CHANGED_BODY_TYPE = 'body-type';
-    const STATE_SWAPPED_TRAILER = 'swapped-trailer';
-    const STATE_NEW_VEHICLE_WEIGHTS = 'vehicle-weights';
-    const STATE_DISTANCE = 'distance';
-    const STATE_COUNTRIES_TRANSITTED = 'countries-transitted';
+    public const STATE_ORIGIN_AND_DESTINATION = 'origin-and-destination';
+    public const STATE_DATES = 'dates';
+    public const STATE_OUTBOUND_PORTS = 'outbound-ports';
+    public const STATE_RETURN_PORTS = 'return-ports';
+    public const STATE_CHANGED_BODY_TYPE = 'body-type';
+    public const STATE_SWAPPED_TRAILER = 'swapped-trailer';
+    public const STATE_NEW_VEHICLE_WEIGHTS = 'vehicle-weights';
+    public const STATE_DISTANCE = 'distance';
+    public const STATE_COUNTRIES_TRANSITTED = 'countries-transitted';
 
-    const STATE_SUMMARY = 'summary';
+    public const STATE_SUMMARY = 'summary';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_ORIGIN_AND_DESTINATION => OriginAndDestinationType::class,
         self::STATE_DATES => DatesType::class,
         self::STATE_OUTBOUND_PORTS => OutboundPortsAndCargoStateType::class,
@@ -42,7 +42,7 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
         self::STATE_COUNTRIES_TRANSITTED => CountriesTransittedType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_ORIGIN_AND_DESTINATION => 'international_survey/trip/form-origin-and-destination.html.twig',
         self::STATE_DATES => 'international_survey/trip/form-dates.html.twig',
         self::STATE_OUTBOUND_PORTS => 'international_survey/trip/form-outbound-ports.html.twig',
@@ -57,35 +57,41 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
     /** @var Trip */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === Trip::class) {
-            throw new InvalidArgumentException("Got " . get_class($subject) . ", expected " . Trip::class);
+        if ($subject::class !== Trip::class) {
+            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . Trip::class);
         }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         if (!$this->subject instanceof Trip) {

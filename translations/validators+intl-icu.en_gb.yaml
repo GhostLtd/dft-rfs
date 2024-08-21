@@ -20,7 +20,7 @@ common:
     greater-than-or-equal: Enter a date on or after {compared_value}
     invalid: Enter a valid date
   hazardous-goods:
-    not-null: Choose whether the goods being transported were classifed as dangerous or hazardous
+    not-null: Choose whether the goods being transported were classified as dangerous or hazardous
     type-not-null: Choose the code for the hazardous goods that were carried
   number:
     invalid: Enter a number
@@ -28,6 +28,9 @@ common:
     positive-or-zero: Enter a positive number or zero
     positive: Enter a positive number
     max: "Cannot be more than {limit, number}"
+    too-large:
+      whole: Enter a maximum of {maxWholeDigits} digits and {maxDecimalDigits} decimal places
+      decimal: Enter a maximum of {maxDecimalDigits} decimal places
   place:
     place: Enter a place
     country: Enter a country
@@ -108,6 +111,14 @@ international:
       weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+  closing-details:
+    early-response:
+      not-null: Choose whether you are sure that the information submitted is final
+    loading-without-unloading:
+      not-null: Choose whether the information listed on this page is correct or not
+  survey:
+    reference-number:
+      correct-format: Enter a number followed by a dash, followed by a four-digit week number.
   survey-response:
     annual-international-journey-count:
       not-null: Estimate the number of trips
@@ -174,6 +185,8 @@ domestic:
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
   closing-details:
+    early-response:
+      not-null: Choose whether you are sure that the information submitted is final
     missing-days:
       not-null: Choose whether the information listed on this page is correct or not
   day:
@@ -191,6 +204,7 @@ domestic:
     location:
       max-length: "Location must be {limit, number} characters or fewer"
     number-of-stops:
+      at-least-five: Enter a total of at least five stops
       loading.not-null: Enter the number of stops where goods were only loaded onto the vehicle
       unloading.not-null: Enter the number of stops where goods were only unloaded onto the vehicle
       loading-and-unloading.not-null: Enter the number of stops where goods were both loaded and unloaded
@@ -217,6 +231,8 @@ domestic:
   number-of-stops:
     choice: Choose how many times you stopped on the day
   survey-response:
+    is-exempt-vehicle-type:
+      choice: Choose whether your vehicle is one of the described vehicle types
     in-possession-of-vehicle:
       choice: Choose whether you will be in possession of the vehicle during your survey week
     initial-details:
@@ -245,6 +261,60 @@ driver-availability:
       other: Enter the reason(s) for the wage increases
     period:
       other: Enter the period of this wage increase
+
+notification:
+  address-line:
+    duplicate: Company name has already been used
+
+operator-groups:
+  name:
+    min-length: Must be at least {limit} characters in length
+    not-null: Enter a name
+    prefix: This name is already used as part of another longer name
+    unique: This name is already is use
+
+operators:
+  name.not-null: Enter a name
+  code.not-null: Enter a code
+  is-active.not-null: Choose whether this operator is active
+  duplicate-code: An operator with this code already exists
+  duplicate-name: An operator with this name already exists
+
+ports:
+  name.not-null: Enter a name
+  code.not-null: Enter a code
+  duplicate-code: A port with this code already exists
+  duplicate-name: A port with this name already exists
+
+roro:
+  data-entry:
+    unused-row: |
+      "{countryName} {countryCode, select,
+        empty {}
+        other {({countryCode})}
+      } {count}" could not be matched to a country or category
+    incorrect-total: |
+      "Total vehicles" entry, does not add up correctly
+      (Your total: {expected}, actual total: {actual}, difference: {difference})
+    incorrect-total-powered: |
+      "Total powered vehicles" entry, does not add up correctly
+      (Your total: {expected}, actual total: {actual}, difference: {difference})
+  login:
+    invalid-email: Enter a valid email address
+    username-blank: Enter an email address
+  survey:
+    data-entry-method.not-null: Choose your data entry method
+    advanced-data-entry.invalid: Unable to parse data
+    vehicle-count.positive: Enter zero or a positive number
+  user:
+    username:
+      already-in-use: |
+        This email address is already in use within the RoRo system.
+        Choose a different email address.
+      not-null: Enter an email address
+
+routes:
+  duplicate-route: This route already exists
 
 survey-feedback:
   experience-rating.not-null: Rate your experience

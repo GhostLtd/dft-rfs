@@ -1,8 +1,6 @@
 {%- macro countField(survey, fieldName) -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell -%}
     {%- set field = survey.response ? attribute(survey.response, fieldName) : null -%}
-    {%- set value = (field == null or field == 0) ? '-' : field -%}
-    {{- tableCell(value) -}}
+    {{- (field == null or field == 0) ? '-' : field -}}
 {%- endmacro -%}
 
 {%- macro reminderDate(value, recursiveValue) -%}

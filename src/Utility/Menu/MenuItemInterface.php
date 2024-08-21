@@ -30,7 +30,7 @@ interface MenuItemInterface
     public function hasChildren();
 
     /**
-     * @return string
+     * @return array
      */
     public function getOptions();
 }

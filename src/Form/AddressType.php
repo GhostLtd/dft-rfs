@@ -12,7 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddressType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('line1', Gds\InputType::class, [
@@ -47,7 +48,8 @@ class AddressType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -60,12 +62,14 @@ class AddressType extends AbstractType
         $resolver->setAllowedTypes('label_is_page_heading', ['bool']);
     }
 
-    public function getParent()
+    #[\Override]
+    public function getParent(): ?string
     {
         return Gds\FieldsetType::class;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    #[\Override]
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
         $view->vars['label_is_page_heading'] = $options['label_is_page_heading'];

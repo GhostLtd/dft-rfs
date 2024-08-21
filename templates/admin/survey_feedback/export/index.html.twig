@@ -1,48 +1,57 @@
-{% extends 'admin/base-with-nav.html.twig' %}
+{%- extends 'admin/base-with-nav.html.twig' -%}
 
-{% set translation_prefix = "survey-feedback.export" %}
-{% set headingDomain = 'admin' %}
+{%- set translation_prefix = "survey-feedback.export" -%}
+{%- set headingDomain = 'admin' -%}
 
 {%- block adminContent -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableCell, tableHead, actionLinks -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList -%}
 
-    {%- set headers = ['Exported at', ''] -%}
-
-    <table class="govuk-table govuk-!-margin-bottom-{{ marginBottom ?? 9 }}">
-        {{- tableHead(false, headers) -}}
-        <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-                {{- tableCell('All') -}}
-                {%- set actions -%}
-                    <a href="{{ url('admin_surveyfeedback_export_all') }}" class="govuk-!-margin-bottom-0">Download</a>
-                {%- endset -%}
-                {{- tableCell(actions, {actions: true}) -}}
-            </tr>
+    {{- tableStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+        {{- tableHead(['Exported at', '']) -}}
+        {{- tableBodyStart() -}}
+            {{- tableRow([
+                'All',
+                {
+                    html: summaryListActionsList([
+                        {
+                            href: url('admin_surveyfeedback_export_all'),
+                            text: 'Download',
+                        }
+                    ])
+                }
+            ]) -}}
             {% if hasNewResponses %}
-                <tr class="govuk-table__row">
-                    {{- tableCell('New (since last partial export)') -}}
-                    {%- set actions -%}
-                        <a href="{{ url('admin_surveyfeedback_export_new') }}" class="govuk-!-margin-bottom-0">Download</a>
-                    {%- endset -%}
-                    {{- tableCell(actions, {actions: true}) -}}
-                </tr>
+                {{- tableRow([
+                    'New (since last partial export)',
+                    {
+                        html: summaryListActionsList([
+                        {
+                                href: url('admin_surveyfeedback_export_new'),
+                                text: 'Download',
+                            }
+                    ])
+                    }
+                ]) -}}
             {% else %}
-                <tr>
-                    {{- tableCell('There has been no new feedback since the last partial export') -}}
-                    {{- tableCell('') -}}
-                </tr>
+                {{- tableRow([
+                    {
+                        text: 'There has been no new feedback since the last partial export',
+                        colspan: 2,
+                    }
+                ]) -}}
             {% endif %}
             {% for exportDate in existingExportDates %}
-                <tr class="govuk-table__row">
-                    {{- tableCell(exportDate | date('format.date-time.default' | trans)) -}}
-
-                    {%- set actions -%}
-                        <a href="{{ url('admin_surveyfeedback_export_existing', {date: exportDate | date('c')}) }}" class="govuk-!-margin-bottom-0">Download</a>
-                    {%- endset -%}
-
-                    {{- tableCell(actions, {actions: true}) -}}
-                </tr>
+                {{- tableRow([
+                    exportDate | date('format.date-time.default' | trans),
+                    {
+                        html: summaryListActionsList([
+                        {
+                                href: url('admin_surveyfeedback_export_existing', {date: exportDate | date('c')}),
+                                text: 'Download',
+                            }
+                    ])
+                    }
+                ]) -}}
             {%- endfor -%}
-        </tbody>
-    </table>
+    {{- tableEndIncludingBody() -}}
 {%- endblock -%}

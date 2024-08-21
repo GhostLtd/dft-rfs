@@ -18,13 +18,13 @@
                 <div class="govuk-grid-column-one-third info-block info-block-empty"></div>
             </div>
 
-            <div class="govuk-grid-row info-row info-row--csrgt">
+            <div class="govuk-grid-row info-row info-row--csrgt-gb">
                 <div class="govuk-grid-column-one-third info-block">
                     <span class="info-block--large">CSRGT</span>
                 </div>
                 {{ _self.surveyBlocks(domesticGbInProgressCount, domesticGbOverdueCount, '(GB)') }}
             </div>
-            <div class="govuk-grid-row info-row">
+            <div class="govuk-grid-row info-row info-row--csrgt-ni">
                 <div class="govuk-grid-column-one-third info-block info-block-empty">
                 </div>
                 {{ _self.surveyBlocks(domesticNiInProgressCount, domesticNiOverdueCount, '(NI)') }}
@@ -35,7 +35,18 @@
                 </div>
                 {{ _self.surveyBlocks(internationalInProgressCount, internationalOverdueCount) }}
             </div>
-
+            <div class="govuk-grid-row info-row info-row--pre-enquiry">
+                <div class="govuk-grid-column-one-third info-block">
+                    <span class="info-block--large">Pre-Enquiry</span>
+                </div>
+                {{ _self.surveyBlocks(preEnquiryInProgressCount, preEnquiryOverdueCount) }}
+            </div>
+            <div class="govuk-grid-row info-row info-row--roro">
+                <div class="govuk-grid-column-one-third info-block">
+                    <span class="info-block--large">RoRo</span>
+                </div>
+                {{ _self.surveyBlocks(roroInProgressCount, roroOverdueCount) }}
+            </div>
         </div>
     </div>
 

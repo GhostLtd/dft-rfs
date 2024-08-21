@@ -1,0 +1,42 @@
+{%- set translation_prefix = 'international.closing-details.loading-without-unloading' -%}
+{%- extends 'international_survey/form-base.html.twig' -%}
+
+{%- set useThirdsColumns = false -%}
+
+{%- set preFormContent -%}
+    {%- from "@GhostGovUkFrontend/components/macros.html.twig" import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow -%}
+    {{- tableStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- tableHead([
+            'Vehicle',
+            'Dates',
+            'Cargo',
+            'Location',
+            {
+                text: 'Loaded',
+                classes: 'govuk-table__cell--numeric',
+            },
+            {
+                text: 'Unloaded',
+                classes: 'govuk-table__cell--numeric',
+            }
+        ]) -}}
+        {{- tableBodyStart() -}}
+        {%- for lwu in irhs_get_loading_without_unloading(subject) -%}
+            {%- set action = lwu.action -%}
+            {{- tableRow([
+                lwu.vehicle.registrationMark | formatRegMark,
+                (lwu.trip.outboundDate | date('d/m/Y')) ~ ' - ' ~ (lwu.trip.returnDate | date('d/m/Y')),
+                formatGoodsDescription(action.goodsDescription, action.goodsDescriptionOther),
+                'common.action.place-name' | trans({name: action.name, country: action.country}),
+                {
+                    text: 'common.weight.kilograms' | trans({value: lwu.weightLoaded}),
+                    classes: 'govuk-table__cell--numeric',
+                },
+                {
+                    text: 'common.weight.kilograms' | trans({value: lwu.weightUnloaded}),
+                    classes: 'govuk-table__cell--numeric',
+                },
+            ]) -}}
+        {%- endfor -%}
+    {{- tableEndIncludingBody() -}}
+{%- endset -%}

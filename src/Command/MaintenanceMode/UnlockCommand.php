@@ -4,41 +4,40 @@ namespace App\Command\MaintenanceMode;
 
 use App\Entity\Utility\MaintenanceLock;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('rfs:maintenance-mode:unlock')]
 class UnlockCommand extends Command
 {
-    protected static $defaultName = 'rfs:maintenance-mode:unlock';
-    private SymfonyStyle $io;
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
         parent::__construct();
-        $this->entityManager = $entityManager;
     }
 
-    protected function configure()
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->setDescription('Unlock the website for maintenance')
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->io = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
 
         $this->unlock();
-        $this->io->success('Maintenance mode is inactive.');
+        $io->success('Maintenance mode is inactive.');
 
         return 0;
     }
 
-    protected function unlock()
+    protected function unlock(): void
     {
         $this->entityManager->createQueryBuilder()
             ->delete()

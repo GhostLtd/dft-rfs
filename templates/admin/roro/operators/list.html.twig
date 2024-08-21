@@ -1,0 +1,41 @@
+{%- extends 'admin/base-with-nav.html.twig' -%}
+
+{%- set translation_prefix = "admin.operators" -%}
+
+{%- block extraHeadingClasses %}govuk-!-margin-bottom-2{% endblock -%}
+
+{%- block adminContent -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRow, summaryListActionsList, tag -%}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+
+    {{- listTableStart(data, form) -}}
+
+    <p class="govuk-body govuk-!-margin-bottom-5">
+        <a href="{{ path('admin_operators_add') }}" class="govuk-link">Add operator</a>
+    </p>
+
+    {%- for operator in data.entities -%}
+        {%- set linksContent = summaryListActionsList([
+                {
+                    href: path('admin_operators_view', {operatorId: operator.id}),
+                    text: 'view',
+                    visuallyHiddenText: "operator #{operator.name}"
+                }
+        ]) -%}
+
+        {{- tableRow([
+            operator.name ?? '-',
+            operator.code ?? '-',
+            operator.isActive ? 'Yes' : 'No',
+            {html: linksContent}
+        ]) -}}
+    {%- else -%}
+        {{- tableRow([
+            {
+                text: 'admin.operator-groups.list.no-results' | trans,
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {%- endfor -%}
+    {{- listTableEnd(data, form) -}}
+{%- endblock -%}

@@ -27,18 +27,18 @@ class NotificationInterceptionRepository extends ServiceEntityRepository impleme
      * @param Survey $survey
      * @throws NonUniqueResultException
      */
+    #[\Override]
     public function findOneBySurvey(SurveyInterface $survey): ?NotificationInterception
     {
         $query = $this->createQueryBuilder('ni')
             ->leftJoin('ni.additionalNames', 'an')
             ->andWhere('ni.primaryName = :name OR an.name = :name')
-            ->setParameters([
-                'name' => $survey->getCompany()->getBusinessName(),
-            ]);
+            ->setParameter('name', $survey->getCompany()->getBusinessName());
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
+    #[\Override]
     public function findByAllNames($excludeId, array $names = []): array
     {
         $others = [];

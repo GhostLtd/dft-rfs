@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\DataFixtures;
-
 
 use App\Entity\Domestic\Survey;
 use App\Entity\PasscodeUser;
@@ -13,10 +11,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         $user = (new PasscodeUser())
-            ->setUsername('test-null-password');
+            ->setUsername('testnullpassword');
         $this->setReference('user:frontend:null-password', $user);
 
         (new Survey())
@@ -31,6 +30,7 @@ class PasscodeLoginFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [SurveyFixtures::class];

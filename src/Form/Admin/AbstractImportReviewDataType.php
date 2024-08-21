@@ -13,10 +13,11 @@ abstract class AbstractImportReviewDataType extends AbstractType
 {
     abstract protected function choiceLabel($data);
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($options) {
-            $choices = array_combine(array_map([$this, 'choiceLabel'], $options['surveys']), array_keys($options['surveys']));
+            $choices = array_combine(array_map($this->choiceLabel(...), $options['surveys']), array_keys($options['surveys']));
 
             $choiceOptions = $choices;
             foreach ($choiceOptions as $k=>$v) {
@@ -50,7 +51,8 @@ abstract class AbstractImportReviewDataType extends AbstractType
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'surveys',

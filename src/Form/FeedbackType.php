@@ -21,21 +21,22 @@ class FeedbackType extends AbstractType
     public const TIME_CHOICES = ['5-less-time', '3-same', '1-more-time'];
     public const ISSUES_CHOICES = ['no', 'yes-solved', self::ISSUES_UNSOLVED];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setDataMapper(new FeedbackTypeDataMapper());
 
         $builder
             ->add('experienceRating', ChoiceType::class, [
                 'label' => 'survey-feedback.experience-rating.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => $this->getChoices("experience-rating", self::EXPERIENCE_CHOICES),
             ])
             ->add('hasCompletedPaperSurvey', BooleanChoiceType::class, [
                 'label' => 'survey-feedback.has-completed-paper-survey.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choice_options' => [
-                    'common.choices.boolean.yes' => [
+                    'boolean.true' => [
                         'conditional_form_name' => 'paper_survey_group',
                     ]
                 ],
@@ -46,7 +47,7 @@ class FeedbackType extends AbstractType
             ])
             ->add('hadIssues', ChoiceType::class, [
                 'label' => 'survey-feedback.had-issues.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => $this->getChoices('had-issues', self::ISSUES_CHOICES),
                 'choice_options' => [
                     "survey-feedback.had-issues.choices.yes-unsolved" => ['conditional_form_name' => 'issueDetails'],
@@ -54,21 +55,21 @@ class FeedbackType extends AbstractType
             ])
             ->add('issueDetails', TextareaType::class, [
                 'label' => 'survey-feedback.issue-details.label',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ])
             ->add('comments', TextareaType::class, [
                 'label' => 'survey-feedback.comments.label',
-                'label_attr' => ['class' => 'govuk-label--m'],
+                'label_attr' => ['class' => 'govuk-label--s'],
             ]);
         $builder->get('paper_survey_group')
             ->add('comparisonRating', ChoiceType::class, [
                 'label' => 'survey-feedback.comparison-rating.label',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => $this->getChoices("comparison-rating", self::COMPARISON_CHOICES),
             ])
             ->add('timeToComplete', ChoiceType::class, [
                 'label' => 'survey-feedback.time-to-complete.label',
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => $this->getChoices("time-to-complete", self::TIME_CHOICES),
             ]);
 
@@ -93,7 +94,8 @@ class FeedbackType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Feedback::class,

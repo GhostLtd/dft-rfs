@@ -3,38 +3,33 @@
 namespace App\Entity\International;
 
 use App\Entity\IdTrait;
-use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\International\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=CompanyRepository::class)
- * @ORM\Table(name="international_company")
- */
+#[ORM\Table(name: 'international_company')]
+#[ORM\Entity(repositoryClass: CompanyRepository::class)]
 class Company
 {
     use IdTrait;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="common.string.not-blank", groups={"add_survey", "import_survey"})
-     * @Assert\Length(max=255, maxMessage="common.string.max-length", groups={"add_survey", "import_survey"})
-     */
-    private $businessName;
+    #[Assert\NotBlank(message: 'common.string.not-blank', groups: ['add_survey', 'import_survey'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['add_survey', 'import_survey'])]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $businessName = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Survey::class, mappedBy="company", cascade={"persist"})
+     * @var Collection<int, Survey>
      */
-    private $surveys;
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Survey::class, cascade: ['persist'])]
+    private Collection $surveys;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=SamplingGroup::class, inversedBy="companies")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $samplingGroup;
+    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToOne(targetEntity: SamplingGroup::class, inversedBy: 'companies')]
+    private ?SamplingGroup $samplingGroup = null;
 
     public function __construct()
     {
@@ -49,12 +44,11 @@ class Company
     public function setBusinessName(string $businessName): self
     {
         $this->businessName = $businessName;
-
         return $this;
     }
 
     /**
-     * @return Collection|Survey[]
+     * @return Collection<Survey>
      */
     public function getSurveys(): Collection
     {
@@ -91,7 +85,6 @@ class Company
     public function setSamplingGroup(?SamplingGroup $samplingGroup): self
     {
         $this->samplingGroup = $samplingGroup;
-
         return $this;
     }
 }

@@ -1,0 +1,43 @@
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tag -%}
+
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'admin.roro.survey.survey-start.label' | trans,
+        value: survey.surveyPeriodStart | date('format.date.year-and-month' | trans)
+    }) -}}
+
+    {%- set operatorName -%}
+        <a class="govuk-link" href="{{ path('admin_roro_surveys_list', {operator: survey.operator.name}) }}">{{ survey.operator.name }}</a>
+        <br><a class="govuk-link govuk-body-s" href="{{ path('admin_operators_view', {operatorId: survey.operator.id}) }}">View operator</a>
+    {%- endset -%}
+
+    {{- summaryListRow({
+        key: 'admin.roro.survey.operator.label' | trans,
+        value: {html: operatorName}
+    }) -}}
+
+    {%- set routeName -%}
+        <a class="govuk-link" href="{{ path('admin_roro_surveys_list', {uk_port: survey.route.ukPort.name, foreign_port: survey.route.foreignPort.name}) }}">
+            {{- 'roro.route' | trans({ukPort: survey.route.ukPort.name, foreignPort: survey.route.foreignPort.name}) -}}
+        </a>
+    {%- endset -%}
+
+    {{- summaryListRow({
+        key: 'admin.roro.survey.route.label' | trans,
+        value: {html: routeName}
+    }) -}}
+
+    {%- if showStatus ?? true -%}
+        {{- summaryListRow({
+            key: 'Status',
+            value: {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})}
+        }) -}}
+        {%- if approvedBy | default(false) -%}
+            {{- summaryListRow({
+                key: 'Approved by',
+                value: "#{approvedBy['username'] | removeEmailNamespacePrefix} (#{approvedBy['timestamp'] | date('format.date-time.default' | trans)})"
+            }) -}}
+        {%- endif -%}
+    {%- endif -%}
+    {# {{- summaryListRow({key: 'Contact with haulier', value: survey.chasedCount}) -}} #}
+{{- summaryListEnd() -}}

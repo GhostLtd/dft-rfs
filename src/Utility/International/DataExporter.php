@@ -10,6 +10,7 @@ use App\Serializer\Encoder\SqlServerInsertEncoder;
 use App\Serializer\Normalizer\International\SurveyNormalizer;
 use App\Serializer\Normalizer\International\TripActionsExportNormalizer;
 use App\Serializer\Normalizer\International\TripNormalizer;
+use App\Utility\Quarter\NaturalQuarterHelper;
 use App\Utility\Export\AbstractDataExporter;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
@@ -23,32 +24,26 @@ use Throwable;
 
 class DataExporter extends AbstractDataExporter
 {
-    protected SerializerInterface $serializer;
+    protected Serializer $serializer;
     protected SurveyRepository $surveyRepository;
-    protected TripActionsExportNormalizer $tripActionsExportNormalizer;
     protected TripRepository $tripRepository;
-    protected ExportHelper $exportHelper;
-    protected LoggerInterface $logger;
-
-    // TODO: we should be using this for all our normalization/serialization, rather than creating them manually.
-    private SerializerInterface $symfonySerializer;
 
     public function __construct(
-        SqlServerInsertEncoder      $sqlServerInsertEncoder,
-        TripActionsExportNormalizer $tripActionsExportNormalizer,
-        TripNormalizer              $tripNormalizer,
-        WorkflowInterface           $internationalSurveyStateMachine,
-        EntityManagerInterface      $entityManager,
-        ExportHelper                $exportHelper,
-        LoggerInterface             $logger,
-        SerializerInterface         $symfonySerializer
+        SqlServerInsertEncoder                $sqlServerInsertEncoder,
+        protected TripActionsExportNormalizer $tripActionsExportNormalizer,
+        TripNormalizer                        $tripNormalizer,
+        WorkflowInterface                     $internationalSurveyStateMachine,
+        EntityManagerInterface                $entityManager,
+        protected ExportHelper                $exportHelper,
+        protected LoggerInterface             $logger,
+        protected NaturalQuarterHelper        $naturalQuarterHelper,
+        protected SerializerInterface         $symfonySerializer,
     )
     {
         parent::__construct($internationalSurveyStateMachine, $entityManager);
 
         $this->surveyRepository = $entityManager->getRepository(Survey::class);
         $this->tripRepository = $entityManager->getRepository(Trip::class);
-        $this->tripActionsExportNormalizer = $tripActionsExportNormalizer;
 
         $this->serializer = new Serializer([
             new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:s']),
@@ -56,18 +51,20 @@ class DataExporter extends AbstractDataExporter
         ], [
             $sqlServerInsertEncoder
         ]);
-        $this->exportHelper = $exportHelper;
-        $this->logger = $logger;
-        $this->symfonySerializer = $symfonySerializer;
     }
 
-    public function generateExportData(int $year, int $quarter) {
-        [$startDate, $endDate] = ReportQuarterHelper::getDateRangeForYearAndQuarter($year, $quarter);
+    public function generateExportData(int $year, int $quarter): ?string
+    {
+        [$startDate, $endDate] = $this->naturalQuarterHelper->getDateRangeForYearAndQuarter($year, $quarter);
 
         $now = new DateTime();
 
         try {
             $sqlFilename = tempnam(sys_get_temp_dir(), 'rfs-vehicle-irhs-');
+
+            if (!$sqlFilename) {
+                return null;
+            }
 
             $surveys = $this->surveyRepository->getSurveysForExport($startDate, $endDate);
             $this->getFirmsSQL($surveys, $sqlFilename);
@@ -79,27 +76,27 @@ class DataExporter extends AbstractDataExporter
             file_put_contents($sqlFilename, "\n\n", FILE_APPEND);
             $this->getActionsSQL($trips, $sqlFilename);
 
-            foreach($trips as $trip) {
+            foreach ($trips as $trip) {
                 $trip->setExportDate($now);
             }
 
             return $sqlFilename;
         } catch (Throwable $e) {
             $this->logger->error("[DataExporter] Export generation/upload failed", ['exception' => $e]);
-            return false;
+            return null;
         }
     }
 
     /**
      * @param Survey[] | Collection $surveys
      */
+    #[\Override]
     protected function confirmExport($surveys): array
     {
         $transitionName = 'confirm_export';
         $transitionIds = [];
 
-        foreach ($surveys as $survey)
-        {
+        foreach ($surveys as $survey) {
             if ($this->isSurveyFullyExported($survey) && $this->workflow->can($survey, $transitionName)) {
                 $this->workflow->apply($survey, $transitionName);
                 $transitionIds[] = $survey->getId();
@@ -112,7 +109,7 @@ class DataExporter extends AbstractDataExporter
 
     protected function isSurveyFullyExported(Survey $survey): bool
     {
-        foreach($survey->getResponse()->getVehicles() as $vehicle) {
+        foreach ($survey->getResponse()->getVehicles() as $vehicle) {
             foreach ($vehicle->getTrips() as $trip) {
                 if ($trip->getExportDate() === null) {
                     return false;
@@ -135,7 +132,7 @@ class DataExporter extends AbstractDataExporter
         return $surveys;
     }
 
-    protected function getFirmsSQL(array $firms, $outputFilename)
+    protected function getFirmsSQL(array $firms, $outputFilename): void
     {
         file_put_contents(
             $outputFilename,
@@ -149,7 +146,7 @@ class DataExporter extends AbstractDataExporter
         );
     }
 
-    protected function getTripsSQL(array $trips, $outputFilename)
+    protected function getTripsSQL(array $trips, $outputFilename): void
     {
         // This needs to be done in two parts, as the TripNormalizer doesn't normalize dates
         $tripNormData = $this->serializer->normalize($trips);
@@ -163,7 +160,7 @@ class DataExporter extends AbstractDataExporter
         );
     }
 
-    protected function getActionsSQL($surveys, $outputFilename)
+    protected function getActionsSQL($surveys, $outputFilename): void
     {
         $normalized = $this->tripActionsExportNormalizer->normalize($surveys); // N.B. This isn't a Symfony normalizer
         file_put_contents(

@@ -8,29 +8,27 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Workflow\FormWizardStateInterface;
 use App\Workflow\PreEnquiry\PreEnquiryState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-/**
- * @Security("is_granted('EDIT', user.getPreEnquiry())")
- */
+#[IsGranted(new Expression("is_granted('EDIT', user.getPreEnquiry())"))]
 class InitialDetailsController extends AbstractSessionStateWorkflowController
 {
-    protected ?PreEnquiryResponse $preEnquiryResponse;
+    protected ?PreEnquiryResponse $preEnquiryResponse = null;
 
-    /**
-     * @Route("/pre-enquiry/{state}", name=PreEnquiryController::WIZARD_ROUTE, requirements={"state": "^(?!completed).+$"})
-     */
-    public function wizard(WorkflowInterface $preEnquiryInitialDetailsStateMachine, Request $request, $state): Response
+    #[Route(path: '/pre-enquiry/{state}', name: PreEnquiryController::WIZARD_ROUTE, requirements: ['state' => '^(?!completed).+$'])]
+    public function wizard(WorkflowInterface $preEnquiryInitialDetailsStateMachine, Request $request, string $state): Response
     {
         return $this->doWorkflow($preEnquiryInitialDetailsStateMachine, $request, $state);
     }
 
+    #[\Override]
     protected function getFormWizard(): FormWizardStateInterface
     {
         $preEnquiry = $this->getPreEnquiry($this->getUser());
@@ -50,11 +48,13 @@ class InitialDetailsController extends AbstractSessionStateWorkflowController
         return $formWizard;
     }
 
+    #[\Override]
     protected function getRedirectUrl($state): Response
     {
         return $this->redirectToRoute(PreEnquiryController::WIZARD_ROUTE, ['state' => $state]);
     }
 
+    #[\Override]
     protected function getCancelUrl(): ?Response
     {
         return $this->preEnquiryResponse->getId() ? $this->redirectToRoute(PreEnquiryController::SUMMARY_ROUTE) : null;

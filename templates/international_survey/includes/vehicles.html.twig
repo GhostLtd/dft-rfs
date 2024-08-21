@@ -1,27 +1,37 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHeadComplex, tableCell, actionLinks -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableStart, tableBodyStart, tableEndIncludingBody, tableHead, tableRow, summaryListActionsList -%}
 {%- from 'macros.html.twig' import displayAxleConfiguration -%}
 
 {%- set showActions = showActions ?? true -%}
 {%- set vehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleController::VEHICLE_ROUTE') -%}
 
-<table class="govuk-table govuk-!-margin-bottom-9">
-    {{- tableHeadComplex(false, {'international.summary.registration': {}, 'international.summary.type-and-configuration': {}, ('common.actions.table-heading' | trans): {html: true}}) -}}{# 'international.summary.status' #}
-    <tbody class="govuk-table__body">
+{{- tableStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+    {{- tableHead([
+        'international.summary.registration' | trans,
+        'international.summary.type-and-configuration' | trans,
+        {html: 'common.actions.table-heading' | trans},
+    ]) -}}
+    {{- tableBodyStart() -}}
     {%- for vehicle in vehicles -%}
-        <tr class="govuk-table__row">
-            {{- tableCell(vehicle.formattedRegistrationMark) -}}
-            {{- tableCell(displayAxleConfiguration(vehicle.axleConfiguration)) -}}
-{#            {{- tableCell('-') -}}#}
-            {%- set viewContents = actionLinks({
-                (url(vehicleRoute, {vehicleId: vehicle.id})):
-                {label: 'common.actions.view', srHiddenSuffix: 'international.summary.view-vehicle-sr-suffix', srHiddenSuffixParams: {regMark: vehicle.registrationMark}}
-            }) -%}
-            {{- tableCell(viewContents, {actions: true}) -}}
-        </tr>
+        {%- set actions = [
+            {
+            href: url(vehicleRoute, {vehicleId: vehicle.id}),
+            text: 'common.actions.view' | trans,
+            visuallyHiddenText: 'international.summary.view-vehicle-sr-suffix' | trans({regMark: vehicle.registrationMark}),
+            }
+        ] -%}
+        {{- tableRow([
+            vehicle.formattedRegistrationMark,
+            displayAxleConfiguration(vehicle.axleConfiguration),
+            showActions ?
+                summaryListActionsList(actions) :
+                null,
+        ]) -}}
     {%- else -%}
-        <tr class="govuk-table__row">
-            {{- tableCell('international.summary.no-vehicles' | trans, {colSpan: showActions ? 4 : 3}) -}}
-        </tr>
+        {{- tableRow([
+            {
+                text: 'international.summary.no-vehicles' | trans,
+                colspan: showActions ? 3 : 2,
+            }
+        ]) -}}
     {%- endfor -%}
-    </tbody>
-</table>
+{{- tableEndIncludingBody() -}}

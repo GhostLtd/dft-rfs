@@ -3,35 +3,63 @@
 {% set translation_prefix = translation_prefix|default("admin.international.survey-add-success") %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.international.company.business-name.label', survey.company.businessName) }}
-        {{ actionlessSummaryListRow('admin.international.survey.reference-number.label', survey.referenceNumber) }}
-        {{ actionlessSummaryListRow('admin.international.survey.period-start.label', survey.surveyPeriodStart | date('format.date.default' | trans)) }}
-        {{ actionlessSummaryListRow('admin.international.survey.period-end.label', survey.surveyPeriodEnd | date('format.date.default' | trans)) }}
-        {{ actionlessSummaryListRow('admin.international.survey.period-days.label', survey.surveyPeriodInDays) }}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'admin.international.company.business-name.label' | trans,
+            value: survey.company.businessName
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey.reference-number.label' | trans,
+            value: survey.referenceNumber
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey.period-start.label' | trans,
+            value: survey.surveyPeriodStart | date('format.date.default' | trans)
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey.period-end.label' | trans,
+            value: survey.surveyPeriodEnd | date('format.date.default' | trans)
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey.period-days.label' | trans,
+            value: survey.surveyPeriodInDays
+        }) -}}
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">{{ 'admin.international.survey-created.invitation-email' | trans | nl2br }}</dt>
-            <dd class="govuk-summary-list__value">
-                {% if survey.invitationEmails ?? false %}
-                    {{ survey.invitationEmails }}
-                {% else %}
-                    {%- set bodyText -%}
-                        Access code 1: {{ survey.passcodeUser.username }}
-                        Access code 2: {{ password }}
-                    {%- endset -%}
-                    {%- set mailLink = "mailto:?subject=DfT International Road Haulage Survey - Test access codes&body=" ~ (bodyText|trim|url_encode) -%}
-                    <a href="{{ mailLink }}">email link</a>
-                {% endif %}
-            </dd>
-        </div>
-        {{ actionlessSummaryListRow('admin.international.survey-created.invitation-address', survey.invitationAddress.isFilled ?
-            (survey.invitationAddress | formatAddress(true)) :
-        '-', null) }}
-        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.international.survey-created.access-code-2', password, {'row_class': 'access-code'}) }}
-    </dl>
+        {%- set invitationEmailValue -%}
+            {% if survey.invitationEmails ?? false %}
+                {{ survey.invitationEmails }}
+            {% else %}
+                {%- set bodyText -%}
+                    First passcode: {{ username }}
+                    Second passcode: {{ password }}
+                {%- endset -%}
+                {%- set mailLink = "mailto:?subject=DfT International Road Haulage Survey - Test access codes&body=" ~ (bodyText | trim | url_encode) -%}
+                <a href="{{ mailLink }}">email link</a>
+            {% endif %}
+        {%- endset -%}
+        {{- summaryListRow({
+            key: 'admin.international.survey-created.invitation-email' | trans,
+            value: {html: invitationEmailValue}
+        }) -}}
+
+        {{- summaryListRow({
+            key: 'admin.international.survey-created.invitation-address' | trans,
+            value: survey.invitationAddress.isFilled ?
+                (survey.invitationAddress | formatAddress(true)) :
+                '-'
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey-created.access-code-1' | trans,
+            value: username,
+            classes: 'access-code',
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.international.survey-created.access-code-2' | trans,
+            value: password,
+            classes: 'access-code',
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <a class="govuk-button" href="{{ path('admin_international_survey_view', {surveyId: survey.id}) }}">View survey</a>
 {% endblock %}

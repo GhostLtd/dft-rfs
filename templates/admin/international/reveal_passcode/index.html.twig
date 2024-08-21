@@ -3,13 +3,20 @@
 {% set translation_prefix = 'admin.international.passcode-reveal' %}
 
 {% block adminContent %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
     {%- include "admin/international/includes/survey-basics.html.twig" with {marginBottom: 5, showUsername: false, showStatus: false} -%}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-1', survey.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow('admin.domestic.survey-created.access-code-2', code, {'row_class': 'access-code'}) }}
-    </dl>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.access-code-1' | trans,
+            value: username,
+            classes: 'access-code'
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.domestic.survey-created.access-code-2' | trans,
+            value: code,
+            classes: 'access-code'
+        }) -}}
+    {{- summaryListEnd() -}}
 {% endblock %}
-

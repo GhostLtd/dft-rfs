@@ -1,0 +1,30 @@
+{%- extends "roro/form-base.html.twig" -%}
+
+{% set translation_prefix = 'roro.survey.data-entry' %}
+
+{% form_theme form with _self %}
+
+{% block _data_entry_data_help  %}
+    {{ form_help(form) }}
+    <details class="govuk-details govuk-!-margin-bottom-8" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                {{ 'roro.survey.data-entry.format-decription.title' | trans }}
+            </span>
+        </summary>
+        <div class="govuk-details__text advanced-data-entry--spreadsheet-format-description">
+            {{- block('data_entry_help_contents') -}}
+        </div>
+    </details>
+
+    <h2 class="govuk-heading-m">{{ 'roro.survey.data-entry.survey-requirements.title' | trans }}</h2>
+    <div class="prose-scope govuk-!-margin-bottom-8">
+        {{ 'roro.survey.vehicle-counts.intro' | trans | markdown_to_html }}
+    </div>
+{% endblock %}
+
+{% block data_entry_help_contents %}
+    <div class="prose-scope">
+        {{ 'roro.survey.data-entry.format-decription.copy' | trans | markdown_to_html }}
+    </div>
+{% endblock %}

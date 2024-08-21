@@ -7,11 +7,20 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class SqlServerBooleanNormalizer implements NormalizerInterface
 {
-    public function supportsNormalization($data, $format = null): bool
+    #[\Override]
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return is_bool($data) && $format === SqlServerInsertEncoder::FORMAT;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            'native-boolean' => $format === SqlServerInsertEncoder::FORMAT,
+        ];
+    }
+
+    #[\Override]
     public function normalize($object, $format = null, array $context = []): ?int
     {
         return $object === true

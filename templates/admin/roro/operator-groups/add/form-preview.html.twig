@@ -1,0 +1,23 @@
+{%- extends 'admin/roro/operator-groups/add/form-base.html.twig' -%}
+
+{# N.B explicitly not using string interpolation so that translation strings are searchable #}
+{%- if mode == 'add' -%}
+    {%- set translation_prefix = "admin.operator-groups.add.preview" -%}
+{%- elseif mode == 'edit' -%}
+    {%- set translation_prefix = "admin.operator-groups.edit.preview" -%}
+{%- endif -%}
+
+{%- block adminContent -%}
+    <p class="govuk-body">{{ "admin.operator-groups.add.preview.intro" | trans({name, mode}) }}</p>
+
+    <p class="govuk-body">{{ "admin.operator-groups.add.preview.match" | trans({count: operatorsInGroup | length}) }}</p>
+    {% if operatorsInGroup is not empty %}
+        <ul class="govuk-list govuk-list--bullet">
+        {% for operator in operatorsInGroup %}
+            <li>{{ operator.name }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ form(form) }}
+{%- endblock -%}

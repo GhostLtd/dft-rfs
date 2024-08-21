@@ -12,11 +12,13 @@ abstract class AbstractFormWizardState implements FormWizardStateInterface
     /**
      * @return mixed
      */
+    #[\Override]
     public function getState()
     {
         return $this->state;
     }
 
+    #[\Override]
     public function addStateToHistory($state)
     {
         $this->stateHistory[] = $state;
@@ -26,6 +28,7 @@ abstract class AbstractFormWizardState implements FormWizardStateInterface
     /**
      * @param mixed $state
      */
+    #[\Override]
     public function setState($state)
     {
         if (in_array($state, $this->stateHistory)) {
@@ -37,16 +40,19 @@ abstract class AbstractFormWizardState implements FormWizardStateInterface
         return $this;
     }
 
+    #[\Override]
     public function isValidHistoryState($state): bool
     {
         return in_array($state, $this->stateHistory);
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         return false;
     }
 
+    #[\Override]
     public function getPreviousHistoryState(): ?string
     {
         if (empty($this->stateHistory)) return null;

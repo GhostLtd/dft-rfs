@@ -3,35 +3,28 @@
 namespace App\Entity\International;
 
 use App\Repository\International\SamplingSchemaRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
-/**
- * @ORM\Entity(repositoryClass=SamplingSchemaRepository::class)
- */
+#[ORM\Entity(repositoryClass: SamplingSchemaRepository::class)]
 class SamplingSchema
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid", unique=true)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $sizeGroup;
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $sizeGroup = null;
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $weekNumber;
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $weekNumber = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=SamplingSchemaDay::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $day;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: SamplingSchemaDay::class)]
+    private ?SamplingSchemaDay $day = null;
 
     public function getId(): ?string
     {
@@ -46,7 +39,6 @@ class SamplingSchema
     public function setSizeGroup(int $sizeGroup): self
     {
         $this->sizeGroup = $sizeGroup;
-
         return $this;
     }
 
@@ -58,7 +50,6 @@ class SamplingSchema
     public function setWeekNumber(int $weekNumber): self
     {
         $this->weekNumber = $weekNumber;
-
         return $this;
     }
 
@@ -70,7 +61,6 @@ class SamplingSchema
     public function setDay(?SamplingSchemaDay $day): self
     {
         $this->day = $day;
-
         return $this;
     }
 }

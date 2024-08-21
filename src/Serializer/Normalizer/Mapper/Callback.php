@@ -11,6 +11,7 @@ class Callback implements Mapper
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function getData($sourceData)
     {
         return ($this->callback)($sourceData);

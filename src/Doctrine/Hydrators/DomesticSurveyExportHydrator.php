@@ -8,7 +8,8 @@ use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
 
 class DomesticSurveyExportHydrator extends ObjectHydrator
 {
-    protected function hydrateAllData()
+    #[\Override]
+    protected function hydrateAllData(): array
     {
         $result = parent::hydrateAllData();
         foreach ($result as $item=>$value) {

@@ -9,7 +9,7 @@ use App\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -19,8 +19,6 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 
     /** @var Survey */
     protected $subject;
-    private WorkflowInterface $internationalSurveyStateMachine;
-    private EntityManagerInterface $entityManager;
 
     public function getTransition(): string
     {
@@ -33,18 +31,18 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return $this;
     }
 
-    public function __construct(FormFactoryInterface $formFactory, FlashBagInterface $flashBag, TranslatorInterface $translator, WorkflowInterface $internationalSurveyStateMachine, EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $internationalSurveyStateMachine, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $flashBag, $translator);
-        $this->internationalSurveyStateMachine = $internationalSurveyStateMachine;
-        $this->entityManager = $entityManager;
+        parent::__construct($formFactory, $requestStack, $translator);
     }
 
+    #[\Override]
     public function getTranslationDomain(): ?string
     {
         return 'admin';
     }
 
+    #[\Override]
     function getTranslationParameters(): array
     {
         return [
@@ -53,17 +51,20 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         ];
     }
 
+    #[\Override]
     public function getTranslationKeyPrefix(): string
     {
         return "common.survey.workflow-transition";
     }
 
+    #[\Override]
     public function doConfirmedAction($formData)
     {
         $this->internationalSurveyStateMachine->apply($this->getSubject(), $this->transition);
         $this->entityManager->flush();
     }
 
+    #[\Override]
     public function getFormClass(): string
     {
         $survey = $this->getSurvey();
@@ -77,6 +78,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return ConfirmActionType::class;
     }
 
+    #[\Override]
     public function getForm(): FormInterface
     {
         $formClass = $this->getFormClass();

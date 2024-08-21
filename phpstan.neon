@@ -1,0 +1,8 @@
+parameters:
+    level: 3
+    paths:
+        - src
+        - tests
+    doctrine:
+        allowNullablePropertyForRequiredField: true
+        objectManagerLoader: phpstan/object-manager.php

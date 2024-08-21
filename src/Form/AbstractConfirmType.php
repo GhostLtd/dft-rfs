@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 abstract class AbstractConfirmType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('confirm', ChoiceType::class, array_merge($options['field_options'], [
@@ -21,17 +22,25 @@ abstract class AbstractConfirmType extends AbstractType
                     'common.choices.boolean.yes' => true,
                     'common.choices.boolean.no' => false,
                 ],
+                // These are the values that are outputted to the HTML (i.e. the form->getData() will return us a
+                // bool, but the <input value> will be "yes" or "no")
+                'choice_value' => fn(?bool $b) => match($b) {
+                    true => "yes",
+                    false => "no",
+                    null => ""
+                },
                 'constraints' => new NotNull(['message' => $options['null_message']]),
             ]))
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'mapped' => false,
             'field_options' => [
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ],
             'null_message' => 'common.choice.not-null',
         ]);

@@ -5,20 +5,23 @@ namespace App\Controller\Admin\International;
 use App\Entity\International\Survey;
 use App\Utility\International\PdfHelper;
 use DateTime;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SurveyPdfController extends AbstractController
 {
-    /**
-     * @Route("/irhs/surveys/{surveyId}.pdf")
-     * @Entity("survey", expr="repository.find(surveyId)")
-     */
-    public function pdf(Survey $survey, PdfHelper $pdfHelper, Request $request)
+    #[Route(path: '/irhs/surveys/{surveyId}.pdf')]
+    public function pdf(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey    $survey,
+        PdfHelper $pdfHelper,
+        Request   $request
+    ): RedirectResponse
     {
         $pdf = $pdfHelper->getExistingSurveyPdfByTimestamp($survey, $request->query->get('timestamp'));
 
@@ -27,5 +30,19 @@ class SurveyPdfController extends AbstractController
         }
 
         return new RedirectResponse($pdf->getStorageObject()->signedUrl(new DateTime('+30 seconds')));
+    }
+
+    /**
+     * Generates a PDF and displays it immediately in the browser
+     */
+    #[Route(path: '/irhs/surveys/{surveyId}.pdf/generate')]
+    public function generate(
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey,
+        PdfHelper $pdfHelper
+    ): Response
+    {
+        $dompdf = $pdfHelper->generatePDF($survey);
+        return new Response($dompdf->output(), 200, ['content-type' => 'application/pdf']);
     }
 }

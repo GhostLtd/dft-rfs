@@ -18,16 +18,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ResponseType extends AbstractType implements DataMapperInterface
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => 'yes',
         self::CHOICE_NO => 'no',
     ];
 
-    private const nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
+    private const array nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $companyNamePrefix = 'pre-enquiry.company-name';
         $correspondenceDetailsPrefix = "pre-enquiry.correspondence-details";
@@ -88,7 +89,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                     ->add('contactAddress', LongAddressType::class, [
                         'label' => "{$correspondenceAddressPrefix}.address.label",
                         'label_attr' => [
-                            'class' => 'govuk-label--m',
+                            'class' => 'govuk-label--s',
                         ],
                         'help' => "{$correspondenceAddressPrefix}.address.help",
                         'include_addressee' => false,
@@ -109,7 +110,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 'help' => "{$correspondenceDetailsPrefix}.email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('totalVehicleCount', Gds\NumberType::class, [
+            ->add('totalVehicleCount', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.total-vehicle-count.label",
                 'help' => "{$vehicleQuestionsPrefix}.total-vehicle-count.help",
                 'attr' => [
@@ -117,7 +118,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('internationalJourneyVehicleCount', Gds\NumberType::class, [
+            ->add('internationalJourneyVehicleCount', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.label",
                 'help' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.help",
                 'attr' => [
@@ -125,7 +126,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('annualJourneyEstimate', Gds\NumberType::class, [
+            ->add('annualJourneyEstimate', Gds\IntegerType::class, [
                 'label' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.label",
                 'help' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.help",
                 'attr' => [
@@ -151,7 +152,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PreEnquiryResponse::class,
@@ -170,7 +172,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         // there is no data yet, so nothing to pre-populate
         if (null === $viewData) {
@@ -213,7 +216,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
         $forms['contactAddress']->setData($viewData->getIsCorrectAddress() ? null : $viewData->getContactAddress());
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */

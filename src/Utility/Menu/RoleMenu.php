@@ -14,9 +14,7 @@ class RoleMenu implements MenuInterface
     protected $menuItems;
 
     /**
-     * RoleMenuProvider constructor.
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param RoleMenuItem[] $roleMenuItems
+     * @param array<RoleMenuItem> $roleMenuItems
      */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker, array $roleMenuItems)
     {
@@ -26,6 +24,7 @@ class RoleMenu implements MenuInterface
     /**
      * @return MenuItemInterface[]
      */
+    #[\Override]
     public function getMenuItems()
     {
         return $this->menuItems;

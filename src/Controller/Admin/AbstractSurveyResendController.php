@@ -3,27 +3,22 @@
 namespace App\Controller\Admin;
 
 use App\Entity\SurveyInterface;
-use App\Utility\PasscodeGenerator;
+use App\Entity\SurveyStateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractSurveyResendController extends AbstractController
 {
-    protected EntityManagerInterface $entityManager;
-    protected WorkflowInterface $stateMachine;
-    private PasscodeGenerator $passcodeGenerator;
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected WorkflowInterface $stateMachine,
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, WorkflowInterface $stateMachine)
-    {
-        $this->entityManager = $entityManager;
-        $this->stateMachine = $stateMachine;
-        $this->passcodeGenerator = $passcodeGenerator;
-    }
-
-    protected function doResend(Request $request, SurveyInterface $survey, string $formClass, string $templatePath)
+    protected function doResend(Request $request, SurveyInterface $survey, string $formClass, string $templatePath): Response
     {
         $form = $this->createForm($formClass, $survey, ['is_resend' => true]);
 
@@ -37,7 +32,7 @@ abstract class AbstractSurveyResendController extends AbstractController
                     throw new BadRequestHttpException();
                 }
 
-                $survey->setState(SurveyInterface::STATE_NEW);
+                $survey->setState(SurveyStateInterface::STATE_NEW);
                 $survey->getPasscodeUser()->setPassword(null);
 
                 $this->stateMachine->apply($survey, 'invite_user');
@@ -50,7 +45,7 @@ abstract class AbstractSurveyResendController extends AbstractController
         }
 
         return $this->render($templatePath."/resend.html.twig", [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 }

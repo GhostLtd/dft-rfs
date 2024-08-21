@@ -34,7 +34,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ExceptionSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    #[\Override]
+    public static function getSubscribedEvents(): array
     {
         // return the subscribed events, their methods and priorities
         return [KernelEvents::EXCEPTION => [

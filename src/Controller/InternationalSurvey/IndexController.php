@@ -2,32 +2,30 @@
 
 namespace App\Controller\InternationalSurvey;
 
+use App\Repository\MaintenanceWarningRepository;
 use App\Security\Voter\SurveyVoter;
 use App\Utility\International\PdfHelper;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/international-survey")
- */
+#[Route(path: '/international-survey')]
 class IndexController extends AbstractController
 {
     use SurveyHelperTrait;
 
-    private const ROUTE_PREFIX = 'app_internationalsurvey_';
+    private const string ROUTE_PREFIX = 'app_internationalsurvey_';
     public const COMPLETED_ROUTE = self::ROUTE_PREFIX.'completed';
     public const COMPLETED_PDF_ROUTE = self::ROUTE_PREFIX.'completedpdf';
     public const SUMMARY_ROUTE = self::ROUTE_PREFIX.'summary';
 
-    /**
-     * @Route("", name=self::SUMMARY_ROUTE)
-     */
-    public function index(): Response {
+    #[Route(path: '', name: self::SUMMARY_ROUTE)]
+    public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response {
         $survey = $this->getSurvey();
 
         if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
@@ -50,12 +48,11 @@ class IndexController extends AbstractController
         return $this->render('international_survey/summary.html.twig', [
             'response' => $response,
             'vehicles' => $vehicles,
+            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 
-    /**
-     * @Route("/completed", name=self::COMPLETED_ROUTE)
-     */
+    #[Route(path: '/completed', name: self::COMPLETED_ROUTE)]
     public function completed(): Response {
         $survey = $this->getSurvey();
 
@@ -68,10 +65,8 @@ class IndexController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/completed.pdf", name=self::COMPLETED_PDF_ROUTE)
-     * @Security("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())")
-     */
+    #[IsGranted(new Expression("is_granted('VIEW_SUBMISSION_SUMMARY', user.getInternationalSurvey())"))]
+    #[Route(path: '/completed.pdf', name: self::COMPLETED_PDF_ROUTE)]
     public function pdf(PdfHelper $pdfHelper): Response
     {
         $survey = $this->getSurvey();

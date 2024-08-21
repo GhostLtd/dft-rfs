@@ -6,17 +6,13 @@ class Simple
 {
     protected string $id;
     protected string $label;
-    protected ?string $propertyPath;
-    protected array $cellOptions;
     protected bool $sortable;
 
-    public function __construct(string $label, ?string $propertyPath = null, array $cellOptions = [])
+    public function __construct(string $label, protected ?string $propertyPath = null, protected array $cellOptions = [])
     {
         $this->id = self::generateId($label);
 
         $this->label = $label;
-        $this->propertyPath = $propertyPath;
-        $this->cellOptions = $cellOptions;
 
         $this->sortable = false;
     }

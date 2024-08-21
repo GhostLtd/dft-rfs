@@ -15,7 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FinalDetailsType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->setDataMapper($this)
@@ -57,6 +58,7 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
             });
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -74,7 +76,8 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
         });
     }
 
-    public function mapDataToForms($viewData, $forms)
+    #[\Override]
+    public function mapDataToForms($viewData, $forms): void
     {
         if (null === $viewData) {
             return;
@@ -92,7 +95,8 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
         }
     }
 
-    public function mapFormsToData($forms, &$viewData)
+    #[\Override]
+    public function mapFormsToData($forms, &$viewData): void
     {
         $forms = iterator_to_array($forms);
 

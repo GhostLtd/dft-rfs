@@ -15,19 +15,19 @@ use App\Workflow\FormWizardStateInterface;
 
 class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements FormWizardStateInterface
 {
-    const STATE_BUSINESS_DETAILS = 'business-details';
-    const STATE_CHANGE_BUSINESS_DETAILS = 'change-business-details';
-    const STATE_VEHICLE_WEIGHTS = 'vehicle-weights';
-    const STATE_CHANGE_VEHICLE_WEIGHTS = 'change-vehicle-weights';
-    const STATE_VEHICLE_TRAILER_CONFIGURATION = 'vehicle-trailer-configuration';
-    const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-vehicle-trailer-configuration';
-    const STATE_VEHICLE_AXLE_CONFIGURATION = 'vehicle-axle-configuration';
-    const STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION = 'change-vehicle-axle-configuration';
-    const STATE_VEHICLE_BODY = 'vehicle-body';
-    const STATE_CHANGE_VEHICLE_BODY = 'change-vehicle-body';
-    const STATE_END = 'end';
+    public const STATE_BUSINESS_DETAILS = 'business-details';
+    public const STATE_CHANGE_BUSINESS_DETAILS = 'change-business-details';
+    public const STATE_VEHICLE_WEIGHTS = 'vehicle-weights';
+    public const STATE_CHANGE_VEHICLE_WEIGHTS = 'change-vehicle-weights';
+    public const STATE_VEHICLE_TRAILER_CONFIGURATION = 'vehicle-trailer-configuration';
+    public const STATE_CHANGE_VEHICLE_TRAILER_CONFIGURATION = 'change-vehicle-trailer-configuration';
+    public const STATE_VEHICLE_AXLE_CONFIGURATION = 'vehicle-axle-configuration';
+    public const STATE_CHANGE_VEHICLE_AXLE_CONFIGURATION = 'change-vehicle-axle-configuration';
+    public const STATE_VEHICLE_BODY = 'vehicle-body';
+    public const STATE_CHANGE_VEHICLE_BODY = 'change-vehicle-body';
+    public const STATE_END = 'end';
 
-    private const FORM_MAP = [
+    private const array FORM_MAP = [
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
         self::STATE_CHANGE_BUSINESS_DETAILS => BusinessDetailsType::class,
         self::STATE_VEHICLE_WEIGHTS => VehicleWeightsType::class,
@@ -40,7 +40,7 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
         self::STATE_CHANGE_VEHICLE_BODY => VehicleBodyType::class,
     ];
 
-    private const TEMPLATE_MAP = [
+    private const array TEMPLATE_MAP = [
         self::STATE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
         self::STATE_CHANGE_BUSINESS_DETAILS => 'domestic_survey/vehicle_and_business_details/form-business-details.html.twig',
         self::STATE_VEHICLE_WEIGHTS => 'domestic_survey/vehicle_and_business_details/form-vehicle-weights.html.twig',
@@ -56,33 +56,41 @@ class VehicleAndBusinessDetailsState extends AbstractFormWizardState implements 
     /** @var SurveyResponse */
     private $subject;
 
+    #[\Override]
     public function getSubject()
     {
         return $this->subject;
     }
 
+    #[\Override]
     public function setSubject($subject): self
     {
-        if (!get_class($subject) === SurveyResponse::class) throw new \InvalidArgumentException("Got " . get_class($subject) . ", expected " . SurveyResponse::class);
+        if ($subject::class !== SurveyResponse::class) {
+            throw new \InvalidArgumentException("Got " . $subject::class . ", expected " . SurveyResponse::class);
+        }
         $this->subject = $subject;
         return $this;
     }
 
+    #[\Override]
     public function getStateFormMap()
     {
         return self::FORM_MAP;
     }
 
+    #[\Override]
     public function getStateTemplateMap()
     {
         return self::TEMPLATE_MAP;
     }
 
+    #[\Override]
     public function getDefaultTemplate()
     {
         return null;
     }
 
+    #[\Override]
     public function isValidAlternativeStartState($state): bool
     {
         if ($this->subject->getId()) {

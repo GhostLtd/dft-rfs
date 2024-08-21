@@ -2,7 +2,6 @@
 
 namespace App\Form\InternationalSurvey\Trip;
 
-use App\Entity\International\CrossingRoute;
 use App\Entity\International\Trip;
 use App\Form\InternationalSurvey\Trip\DataMapper\PortsAndCargoStateDataMapper;
 use App\Form\LimitedByType;
@@ -20,62 +19,47 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 abstract class AbstractPortsAndCargoStateType extends AbstractType
 {
-    const CHOICE_YES = 'common.choices.boolean.yes';
-    const CHOICE_NO = 'common.choices.boolean.no';
-    const CHOICES = [
+    public const CHOICE_YES = 'common.choices.boolean.yes';
+    public const CHOICE_NO = 'common.choices.boolean.no';
+    public const CHOICES = [
         self::CHOICE_YES => true,
         self::CHOICE_NO => false,
     ];
 
-    const DIRECTION_OUTBOUND = 'outbound';
-    const DIRECTION_RETURN = 'return';
-
-    protected PortsDataFactory $portsHelper;
+    public const DIRECTION_OUTBOUND = 'outbound';
+    public const DIRECTION_RETURN = 'return';
     protected PortsDataSet $portsData;
 
-    /** @var CrossingRoute[] $ports */
-    protected array $ports;
-
-    public function __construct(PortsDataFactory $portsHelper)
+    public function __construct(protected PortsDataFactory $portsHelper)
     {
-        $this->portsHelper = $portsHelper;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $direction = $options['direction'];
         $this->portsData = $this->portsHelper->getData($direction);
 
-        $prefix = "international.trip.{$direction}-ports";
+        $booleanChoiceMapper = fn($x) => match ($x) {
+            true => 'yes',
+            false => 'no',
+            null => null,
+        };
 
         $builder
             ->setDataMapper(new PortsAndCargoStateDataMapper($direction, $this->portsData->getPorts()))
             ->add('ports', Gds\ChoiceType::class, [
                 'expanded' => false,
-                'label' => "{$prefix}.ports.label",
-                'help' => "{$prefix}.ports.help",
+                'label' => $options['ports_label'],
+                'help' => $options['ports_help'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => $this->portsData->getPortChoices(),
-            ]);
-
-        $this->addCargoStateFields($builder, $direction, $options['at_capacity_null_message']);
-    }
-
-    protected function addCargoStateFields(FormBuilderInterface $builder, $direction, $atCapacityNullMessage)
-    {
-        $prefix = "international.trip.{$direction}-cargo-state";
-
-        $emptyPrefix = "{$prefix}.was-empty";
-
-        $limitedPrefix = "{$prefix}.was-limited";
-        $atCapacityPrefix = "{$prefix}.was-at-capacity";
-
-        $builder
+            ])
             ->add("wasAtCapacity", Gds\ChoiceType::class, [
-                'label' => "{$atCapacityPrefix}.label",
-                'help' => "{$atCapacityPrefix}.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label' => $options['cargo_at_capacity_label'],
+                'help' => $options['cargo_at_capacity_help'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => self::CHOICES,
                 'choice_options' => [
                     self::CHOICE_NO => [
@@ -85,28 +69,41 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                         'conditional_form_name' => 'wasLimitedBy',
                     ],
                 ],
+                'choice_value' => $booleanChoiceMapper,
                 'constraints' => new NotNull([
-                    'message' => $atCapacityNullMessage,
+                    'message' => $options['at_capacity_null_message'],
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ]),
             ])
             ->add("wasEmpty", Gds\ChoiceType::class, [
-                'label' => "{$emptyPrefix}.label",
-                'help' => "{$emptyPrefix}.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label' => $options['cargo_empty_label'],
+                'help' => $options['cargo_empty_help'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'choices' => self::CHOICES,
+                'choice_value' => $booleanChoiceMapper,
             ])
             ->add('wasLimitedBy', LimitedByType::class, [
-                'label' => "{$limitedPrefix}.label",
-                'help' => "{$limitedPrefix}.help",
-                'label_attr' => ['class' => 'govuk-label--s'],
+                'label' => $options['cargo_limited_label'],
+                'help' => $options['cargo_limited_help'],
+                'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'direction',
+
+            'cargo_at_capacity_label',
+            'cargo_at_capacity_help',
+            'cargo_empty_label',
+            'cargo_empty_help',
+            'cargo_limited_label',
+            'cargo_limited_help',
+
+            'ports_label',
+            'ports_help',
         ]);
 
         $resolver->setAllowedValues('direction', [self::DIRECTION_OUTBOUND, self::DIRECTION_RETURN]);
@@ -114,7 +111,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
             'data_class' => Trip::class,
             'constraints' => [
                 new Callback([
-                    'callback' => [$this, 'validateCapacity'],
+                    'callback' => $this->validateCapacity(...),
                     'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
                 ])
             ],
@@ -122,7 +119,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         ]);
     }
 
-    public function validateCapacity(Trip $trip, ExecutionContextInterface $context)
+    public function validateCapacity(Trip $trip, ExecutionContextInterface $context): void
     {
         $form = $context->getRoot();
         if ($form instanceof FormInterface) {

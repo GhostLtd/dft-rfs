@@ -3,30 +3,44 @@
 {% set translation_prefix = translation_prefix|default("admin.pre-enquiry.add-success") %}
 
 {% block adminContent %}
-    {% from '@GhostGovUkFrontend/components/macros.html.twig' import actionlessSummaryListRow %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow %}
 
-    {% set body_translation_prefix = "admin.pre-enquiry.created" %}
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.company-name' | trans,
+            value: preEnquiry.companyName
+        }) -}}
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.company-name', preEnquiry.companyName) }}
+        {%- set invitationEmailValue -%}
+            {%- set bodyText -%}
+                First passcode: {{ username }}
+                Second passcode: {{ password }}
+            {%- endset -%}
+            {%- set mailLink = "mailto:?subject=DfT International Road Haulage Pre Enquiry - Access codes&body=" ~ (bodyText | trim | url_encode) -%}
+            <a href="{{ mailLink }}">email link</a>
+        {%- endset -%}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.invitation-email' | trans,
+            value: {html: invitationEmailValue}
+        }) -}}
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">{{ (body_translation_prefix ~ '.invitation-email') | trans | nl2br }}</dt>
-            <dd class="govuk-summary-list__value">
-                {%- set bodyText -%}
-                    Access code 1: {{ preEnquiry.passcodeUser.username }}
-                    Access code 2: {{ password }}
-                {%- endset -%}
-                {%- set mailLink = "mailto:?subject=DfT International Road Haulage Pre Enquiry - Access codes&body=" ~ (bodyText|trim|url_encode) -%}
-                <a href="{{ mailLink }}">email link</a>
-            </dd>
-        </div>
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.invitation-address', preEnquiry.invitationAddress.isFilled ?
+        {{- summaryListRow({
+        key: 'admin.pre-enquiry.created.invitation-address' | trans,
+        value: preEnquiry.invitationAddress.isFilled ?
             (preEnquiry.invitationAddress | formatAddress(true)) :
-        '-', null) }}
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-1', preEnquiry.passcodeUser.username, {'row_class': 'access-code'}) }}
-        {{ actionlessSummaryListRow(body_translation_prefix ~ '.access-code-2', password, {'row_class': 'access-code'}) }}
-    </dl>
+            '-'
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.access-code-1' | trans,
+            value: username,
+            classes: 'access-code',
+        }) -}}
+        {{- summaryListRow({
+            key: 'admin.pre-enquiry.created.access-code-2' | trans,
+            value: password,
+            classes: 'access-code',
+        }) -}}
+    {{- summaryListEnd() -}}
 
     <a class="govuk-button" href="{{ path('admin_preenquiry_view', {preEnquiryId: preEnquiry.id}) }}">View pre-enquiry</a>
 {% endblock %}

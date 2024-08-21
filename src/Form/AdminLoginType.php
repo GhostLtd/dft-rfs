@@ -7,24 +7,19 @@ use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Ghost\GovUkFrontendBundle\Form\Type\PasswordType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class AdminLoginType extends AbstractType
 {
-    /**
-     * @var KernelInterface
-     */
-    private $appEnvironment;
-
-    public function __construct($appEnvironment)
+    public function __construct(protected string $appEnvironment, protected CsrfTokenManagerInterface $tokenManager)
     {
-        $this->appEnvironment = $appEnvironment;
     }
 
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('credentials', FieldsetType::class, [
@@ -34,9 +29,11 @@ class AdminLoginType extends AbstractType
                 'help' => 'admin.login.help',
                 'attr' => ['class' => ''],
             ])
+            ->add('token', HiddenType::class, [
+                'data' => $this->tokenManager->getToken($options['csrf_token_id'])
+            ])
             ->add('login', ButtonType::class, ['type' => 'submit'])
         ;
-
 
         $builder->get('credentials')
             ->add('username', InputType::class, [
@@ -50,11 +47,16 @@ class AdminLoginType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'csrf_token_id' => 'authenticate.admin',
+            'csrf_protection' => false, // We handle it manually... (see AdminFormAuthenticator)
         ]);
-        if ($this->appEnvironment !== 'dev') $resolver->setDefault('attr', ['autocomplete' => 'off']);
+
+        if ($this->appEnvironment !== 'dev') {
+            $resolver->setDefault('attr', ['autocomplete' => 'off']);
+        }
     }
 }
