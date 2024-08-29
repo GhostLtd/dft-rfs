@@ -40,13 +40,13 @@
         visuallyHiddenText: 'international.trip.summary.change-link-sr-suffix.swapped-trailer' | trans
     }
 ] -%}
-{%- set distanceChangeLink = [
+{%- set distanceChangeLink = trip.distanceEnabled ? [
     {
         href: wizardUrl('international-trip', 'STATE_DISTANCE', params),
         text: 'common.actions.change' | trans,
         visuallyHiddenText: 'international.trip.summary.distance' | trans
     }
-] -%}
+] : [] -%}
 {%- set countriesTransittedChangeLink = [
     {
         href: wizardUrl('international-trip', 'STATE_COUNTRIES_TRANSITTED', params),
@@ -127,12 +127,14 @@
         }) -}}
     {%- endif -%}
 
-    {{- summaryListRow({
-        key: 'international.trip.summary.distance' | trans,
-        value: ("common.distance.#{trip.roundTripDistance.unit}" |
-        trans({value: trip.roundTripDistance.value})),
-        actions: showActions ? distanceChangeLink : [],
-    }) -}}
+    {% if trip.distanceEnabled %}
+        {{- summaryListRow({
+            key: 'international.trip.summary.distance' | trans,
+            value: ("common.distance.#{trip.roundTripDistance.unit}" |
+            trans({value: trip.roundTripDistance.value})),
+            actions: showActions ? distanceChangeLink : [],
+        }) -}}
+    {% endif %}
     {{- summaryListRow({
         key: 'international.trip.summary.countries-transitted' | trans,
         value: trip.allCountriesTransitted|default('-'),

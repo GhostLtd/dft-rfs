@@ -91,10 +91,10 @@ class Trip
 
     #[AppAssert\ValidValueUnit(groups: ["trip_distance", "admin_trip"])]
     #[ORM\Embedded(class: Distance::class)]
-    private $roundTripDistance;
+    private ?Distance $roundTripDistance;
 
     #[ORM\Column(type: Types::JSON)]
-    private $countriesTransitted = [];
+    private ?array $countriesTransitted = [];
 
     #[Assert\Length(max: 2000, maxMessage: 'common.string.max-length', groups: ['trip_countries_transitted', 'admin_trip'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -602,5 +602,13 @@ class Trip
     public function canChangeWeights(): bool
     {
         return ($this->isSwappedTrailer || $this->isChangedBodyType);
+    }
+
+    public function isDistanceEnabled(): bool
+    {
+        if (is_null($this?->getVehicle()?->getSurveyResponse()?->getSurvey()?->isTripDistanceEnabled())) {
+            throw new \RuntimeException('Cannot determine if distance field is enabled');
+        }
+        return $this->getVehicle()->getSurveyResponse()->getSurvey()->isTripDistanceEnabled();
     }
 }

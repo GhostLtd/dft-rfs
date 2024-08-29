@@ -18,12 +18,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
+#[Route(path: '/international-survey/vehicles/{vehicleId}/add-trip', name: 'app_internationalsurvey_trip_add_')]
 class TripAddController extends AbstractSessionStateWorkflowController
 {
     use SurveyHelperTrait;
-
-    public const START_ROUTE = 'app_internationalsurvey_trip_add_start';
-    public const WIZARD_ROUTE = 'app_internationalsurvey_trip_add_state';
 
     protected SurveyResponse $surveyResponse;
     protected ?Vehicle $vehicle = null;
@@ -36,8 +34,8 @@ class TripAddController extends AbstractSessionStateWorkflowController
         return "wizard.{$class}.{$vehicleId}";
     }
 
-    #[Route(path: '/international-survey/vehicles/{vehicleId}/add-trip/{state}', name: self::WIZARD_ROUTE)]
-    #[Route(path: '/international-survey/vehicles/{vehicleId}/add-trip', name: self::START_ROUTE)]
+    #[Route(path: '/{state}', name: 'state')]
+    #[Route(path: '', name: 'start')]
     public function index(WorkflowInterface $internationalSurveyTripStateMachine,
                           VehicleRepository $vehicleRepository,
                           Request $request,
@@ -48,6 +46,10 @@ class TripAddController extends AbstractSessionStateWorkflowController
         $this->vehicle = $vehicleRepository->findOneByIdAndSurveyResponse($vehicleId, $this->surveyResponse);
 
         if (!$this->vehicle) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($state === TripState::STATE_DISTANCE && !$this->vehicle->getSurveyResponse()->getSurvey()->isTripDistanceEnabled()) {
             throw new NotFoundHttpException();
         }
 
@@ -68,7 +70,7 @@ class TripAddController extends AbstractSessionStateWorkflowController
     #[\Override]
     protected function getRedirectUrl($state): Response
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
+        return $this->redirectToRoute('app_internationalsurvey_trip_add_state', ['vehicleId' => $this->vehicle->getId(), 'state' => $state]);
     }
 
     #[\Override]

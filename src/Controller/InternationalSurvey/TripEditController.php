@@ -46,6 +46,10 @@ class TripEditController extends AbstractSessionStateWorkflowController
             throw new NotFoundHttpException();
         }
 
+        if ($state === TripState::STATE_DISTANCE && !$this->trip->isDistanceEnabled()) {
+            throw new NotFoundHttpException();
+        }
+
         return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
     }
 

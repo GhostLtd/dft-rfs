@@ -75,27 +75,31 @@ class TripType extends AbstractType
 
         $this
             ->addFieldSet($builder, 'otherDetails', 'Other Details')
-            ->add('roundTripDistance', ValueUnitType::class, [
-                'label' => "Round trip distance",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'value_form_type' => Gds\DecimalType::class,
-                'value_options' => [
-                    'label' => 'Distance',
-                    'precision' => 10,
-                    'scale' => 1,
-                    'attr' => ['class' => 'govuk-input--width-5'],
-                ],
-                'unit_options' => [
-                    'label' => 'common.value-unit.unit',
-                    'choices' => Distance::UNIT_CHOICES,
-                ],
-                'data_class' => Distance::class,
-            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Trip $trip */
             $trip = $event->getData();
+
+            if ($trip->isDistanceEnabled()) {
+                $event->getForm()->get('otherDetails')->add('roundTripDistance', ValueUnitType::class, [
+                    'label' => "Round trip distance",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'value_form_type' => Gds\DecimalType::class,
+                    'value_options' => [
+                        'label' => 'Distance',
+                        'precision' => 10,
+                        'scale' => 1,
+                        'attr' => ['class' => 'govuk-input--width-5'],
+                    ],
+                    'unit_options' => [
+                        'label' => 'common.value-unit.unit',
+                        'choices' => Distance::UNIT_CHOICES,
+                    ],
+                    'data_class' => Distance::class,
+                ]);
+            }
+
             $event->getForm()->get('otherDetails')
                 ->add('axle_config', Gds\ChoiceType::class, [
                     'choices' => array_merge(['Unchanged' => null], $trip->getTrailerSwapChoices()),

@@ -98,6 +98,10 @@ class TripState extends AbstractFormWizardState implements FormWizardStateInterf
             return false;
         }
 
+        if (!$this->subject->isDistanceEnabled() && $state === self::STATE_DISTANCE) {
+            return false;
+        }
+
         $alternativeStartStates = [
             self::STATE_DATES,
             self::STATE_OUTBOUND_PORTS,

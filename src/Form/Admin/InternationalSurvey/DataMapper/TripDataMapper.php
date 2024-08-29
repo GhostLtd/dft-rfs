@@ -69,7 +69,7 @@ class TripDataMapper implements DataMapperInterface
 
         $forms['countriesTransitted']->setData($viewData->getCountriesTransitted());
         $forms['countriesTransittedOther']->setData($viewData->getCountriesTransittedOther());
-        $forms['roundTripDistance']->setData($viewData->getRoundTripDistance());
+        if (isset($forms['roundTripDistance'])) $forms['roundTripDistance']->setData($viewData->getRoundTripDistance());
         $forms['origin']->setData($viewData->getOrigin());
         $forms['destination']->setData($viewData->getDestination());
 
@@ -122,7 +122,7 @@ class TripDataMapper implements DataMapperInterface
 
         $viewData->setCountriesTransitted($forms['countriesTransitted']->getData());
         $viewData->setCountriesTransittedOther($forms['countriesTransittedOther']->getData());
-        $viewData->setRoundTripDistance($forms['roundTripDistance']->getData());
+        if (isset($forms['roundTripDistance'])) $viewData->setRoundTripDistance($forms['roundTripDistance']->getData());
         $viewData->setOrigin($forms['origin']->getData());
         $viewData->setDestination($forms['destination']->getData());
 

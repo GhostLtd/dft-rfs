@@ -32,7 +32,9 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     use HaulageSurveyTrait;
     use NotifyApiResponseTrait;
 
-    public const STATE_FILTER_CHOICES = [
+    public const string DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE = '2024-10-01';
+
+    public const array STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_INVITATION_PENDING,
         self::STATE_INVITATION_SENT,
@@ -45,15 +47,15 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
 //        self::STATE_EXPORTED,
     ];
 
-    public const REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
-    public const REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
-    public const REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
-    public const REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
-    public const REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
+    public const string REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK = 'no-international-work';
+    public const string REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
+    public const string REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
+    public const string REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    public const string REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
 
-    public const REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
-    public const REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
-    public const REASON_FOR_EMPTY_SURVEY_CHOICES = [
+    public const string REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
+    public const string REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX = self::REASON_FOR_EMPTY_SURVEY_PREFIX . 'choices.';
+    public const array REASON_FOR_EMPTY_SURVEY_CHOICES = [
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK => self::REASON_FOR_EMPTY_SURVEY_NO_INTERNATIONAL_WORK,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
@@ -307,5 +309,10 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     public function getResponseContactEmail(): ?string
     {
         return $this->getResponse()?->getContactEmail();
+    }
+
+    public function isTripDistanceEnabled(): bool
+    {
+        return $this->getSurveyPeriodStart() < (new \DateTime(self::DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE . " midnight"));
     }
 }

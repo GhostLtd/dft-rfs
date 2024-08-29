@@ -2,66 +2,46 @@
 
 namespace App\Tests\Workflow\InternationalSurvey;
 
+use App\Entity\International\Survey;
+use App\Entity\International\SurveyResponse;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle as InternationalVehicle;
 use App\Entity\Vehicle;
+use App\Tests\Workflow\AbstractWorkflowTestCase;
+use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class TripStateTest extends WebTestCase
+class TripStateTest extends AbstractWorkflowTestCase
 {
-    private TripState $tripState;
-    private WorkflowInterface $workflow;
+    protected Survey $survey;
+    protected FormWizardStateInterface|TripState $workflowState;
 
     #[\Override]
     protected function setUp(): void
     {
-        static::bootKernel();
+        parent::setUp();
 
-        $trip = new Trip();
         $vehicle = (new InternationalVehicle())
             ->setBodyType(Vehicle::BODY_TYPE_BOX)
             ->setGrossWeight(2000)
             ->setCarryingCapacity(1000)
+            ->addTrip($trip = new Trip())
         ;
-        $trip->setVehicle($vehicle);
-        $this->tripState = (new TripState())
+        $surveyResponse = (new SurveyResponse())
+            ->addVehicle($vehicle);
+        $this->survey = (new Survey())
+            ->setResponse($surveyResponse)
+            ->setSurveyPeriodStart(
+                (new \DateTime(Survey::DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE . ' midnight'))
+                    ->modify('-1 day')
+            );
+        $this->workflowState = (new TripState())
             ->setState(TripState::STATE_SWAPPED_TRAILER)
             ->setSubject($trip);
 
-        $container = static::getContainer()->get('test.service_container');
-        $workflowRegistry = $container->get('workflow.registry');
-        $this->workflow = $workflowRegistry->get($this->tripState);
-    }
-
-    protected function setTripPersisted($persisted = true)
-    {
-        $refl = new \ReflectionClass($this->tripState->getSubject());
-        $idProp = $refl->getProperty('id');
-        $idProp->setAccessible(true);
-        $idProp->setValue($this->tripState->getSubject(), $persisted ? 'fake-id' : null);
-    }
-
-    protected function assertOneTransitionAndApply()
-    {
-        $transitions = $this->workflow->getEnabledTransitions($this->tripState);
-        $this->assertCount(1, $transitions);
-        $this->workflow->apply($this->tripState, $transitions[0]->getName());
-    }
-
-    protected function assertTripStateEquals($state)
-    {
-        $this->assertEquals($state, $this->tripState->getState());
-    }
-
-    protected function assertStateTransitions($states)
-    {
-        foreach ($states as $state)
-        {
-            $this->assertOneTransitionAndApply();
-            $this->assertTripStateEquals($state);
-        }
+        $this->workflow = $this->workflowRegistry->get($this->workflowState);
     }
 
     /***
@@ -84,10 +64,10 @@ class TripStateTest extends WebTestCase
      */
     public function testRigid(bool $editing, bool $swappedTrailer, array $states): void
     {
-        $this->setTripPersisted($editing);
-        $this->tripState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID]['vehicle.axle.rigid.3.0']);
+        $this->setSubjectPersisted($editing);
+        $this->workflowState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_RIGID]['vehicle.axle.rigid.3.0']);
 
-        $this->tripState->getSubject()->setIsSwappedTrailer($swappedTrailer);
+        $this->workflowState->getSubject()->setIsSwappedTrailer($swappedTrailer);
 
         $this->assertStateTransitions($states);
     }
@@ -112,11 +92,11 @@ class TripStateTest extends WebTestCase
      */
     public function testArticulated(bool $editing, bool $swappedTrailer, bool $changeBodyType, array $states): void
     {
-        $this->setTripPersisted($editing);
-        $this->tripState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_ARTICULATED]['vehicle.axle.articulated.2.2']);
+        $this->setSubjectPersisted($editing);
+        $this->workflowState->getSubject()->getVehicle()->setAxleConfiguration(Vehicle::AXLE_CONFIGURATION_CHOICES[Vehicle::TRAILER_CONFIGURATION_ARTICULATED]['vehicle.axle.articulated.2.2']);
 
-        $this->tripState->getSubject()->setIsSwappedTrailer($swappedTrailer);
-        $this->tripState->getSubject()->setIsChangedBodyType($changeBodyType);
+        $this->workflowState->getSubject()->setIsSwappedTrailer($swappedTrailer);
+        $this->workflowState->getSubject()->setIsChangedBodyType($changeBodyType);
 
         $this->assertStateTransitions($states);
     }

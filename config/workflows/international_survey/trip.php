@@ -62,13 +62,29 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'guard' => "is_empty(subject.getSubject().getId())",
                     ],
-                    'didnt swap trailer entered cant change body type' => [
+                    /** START: trip distance removal */
+                    // original transition
+                    'didnt swap trailer entered cant change body type (including trip distance)' => [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_DISTANCE,
                         'guard' => 'is_empty(subject.getSubject().getId())
                                 && !subject.getSubject().canChangeBodyType()
-                                && !subject.getSubject().getIsSwappedTrailer()',
+                                && !subject.getSubject().getIsSwappedTrailer()
+                                && subject.getSubject().isDistanceEnabled()',
                     ],
+                    // new transition
+                    'didnt swap trailer entered cant change body type' => [
+                        'from' =>  StateObject::STATE_SWAPPED_TRAILER,
+                        'to' =>  StateObject::STATE_COUNTRIES_TRANSITTED,
+                        'guard' => 'is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeBodyType()
+                                && !subject.getSubject().getIsSwappedTrailer()
+                                && !subject.getSubject().isDistanceEnabled()',
+                    ],
+                    /** END: trip distance removal */
+
+
+
                     'swapped trailer entered cant change body type' => [
                         'from' =>  StateObject::STATE_SWAPPED_TRAILER,
                         'to' =>  StateObject::STATE_NEW_VEHICLE_WEIGHTS,
@@ -80,12 +96,27 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_CHANGED_BODY_TYPE,
                         'guard' => "subject.getSubject().canChangeBodyType()",
                     ],
-                    'can change body type but not changed trailer or body' => [
+
+
+                    /** START: trip distance removal */
+                    // original transition
+                    'can change body type but not changed trailer or body (including trip distance)' => [
                         'from' => StateObject::STATE_CHANGED_BODY_TYPE,
                         'to' =>  StateObject::STATE_DISTANCE,
                         'guard' => "is_empty(subject.getSubject().getId())
-                                && !subject.getSubject().canChangeWeights()",
+                                && !subject.getSubject().canChangeWeights()
+                                && subject.getSubject().isDistanceEnabled()",
                     ],
+                    // new transition
+                    'can change body type but not changed trailer or body' => [
+                        'from' => StateObject::STATE_CHANGED_BODY_TYPE,
+                        'to' =>  StateObject::STATE_COUNTRIES_TRANSITTED,
+                        'guard' => "is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().canChangeWeights()
+                                && !subject.getSubject().isDistanceEnabled()",
+                    ],
+                    /** END: trip distance removal */
+
 
                     'can change body and changed trailer or body' => [
                         'from' => StateObject::STATE_CHANGED_BODY_TYPE,
@@ -93,11 +124,23 @@ return static function (ContainerConfigurator $container) {
                         'guard' => "subject.getSubject().canChangeWeights()",
                     ],
 
-                    'new vehicle weights entered can change body type' => [
+
+                    /** START: trip distance removal */
+                    // original transition
+                    'new vehicle weights entered can change body type (including trip distance)' => [
                         'from' => StateObject::STATE_NEW_VEHICLE_WEIGHTS,
                         'to' =>  StateObject::STATE_DISTANCE,
-                        'guard' => "is_empty(subject.getSubject().getId())",
+                        'guard' => "is_empty(subject.getSubject().getId())
+                                && subject.getSubject().isDistanceEnabled()",
                     ],
+                    // new transition
+                    'new vehicle weights entered can change body type' => [
+                        'from' => StateObject::STATE_NEW_VEHICLE_WEIGHTS,
+                        'to' =>  StateObject::STATE_COUNTRIES_TRANSITTED,
+                        'guard' => "is_empty(subject.getSubject().getId())
+                                && !subject.getSubject().isDistanceEnabled()",
+                    ],
+                    /** END: trip distance removal */
 
 
                     'distance entered' => [
