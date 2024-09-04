@@ -20,7 +20,7 @@ class SessionProcessor
         $request = $this->requestStack->getMainRequest();
 
         if ($request) {
-            $record['context']['_ghost_meta']['session'] = $request->cookies->get('PHPSESSID', null);
+            $record->extra['_ghost_meta']['session'] = $request->cookies->get('PHPSESSID', null);
         }
 
         return $record;

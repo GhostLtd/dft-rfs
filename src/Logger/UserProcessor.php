@@ -17,7 +17,7 @@ class UserProcessor
     {
         $token = $this->tokenStorage->getToken();
 
-        $record['context']['_ghost_meta']['user_identifier'] = $token?->getUser()?->getUserIdentifier();
+        $record->extra['_ghost_meta']['user_identifier'] = $token?->getUser()?->getUserIdentifier();
         return $record;
     }
 }
