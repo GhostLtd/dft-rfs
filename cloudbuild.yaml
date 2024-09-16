@@ -22,7 +22,7 @@ steps:
     - name: composer:2.3
       id: 'install-ghost-bundle'
       entrypoint: sh
-      args: ['-c', 'composer install -vvv --ignore-platform-reqs --no-scripts']
+      args: ['-c', 'composer install --ignore-platform-reqs --no-scripts']
       waitFor: ['copy-deploy-files']
 
     # build assets, and .env.local file
