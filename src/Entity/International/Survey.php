@@ -32,7 +32,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     use HaulageSurveyTrait;
     use NotifyApiResponseTrait;
 
-    public const string DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE = '2024-10-01';
+    public const string DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE = '2024-09-17';
 
     public const array STATE_FILTER_CHOICES = [
         self::STATE_NEW,

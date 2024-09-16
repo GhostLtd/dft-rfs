@@ -35,8 +35,8 @@ abstract class AbstractTripTest extends AbstractSurveyTest
     protected function getInitialData(): array
     {
         return [
-            'outboundDate' => new \DateTime('2024-11-01'),
-            'returnDate' => new \DateTime('2024-11-03'),
+            'outboundDate' => new \DateTime('2024-10-01'),
+            'returnDate' => new \DateTime('2024-10-03'),
             'isChangedBodyType' => false,
             'isSwappedTrailer' => false,
             'outboundUkPort' => 'Portfoot',

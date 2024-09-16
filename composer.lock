@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21dde58b8f707c4fd41d9a307babc52f",
+    "content-hash": "bf4c284297e5358b19b6fe379cb79ecc",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1857,7 +1857,7 @@
         },
         {
             "name": "ghost/govuk-frontend-bundle",
-            "version": "5.3.1.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.tomarq.net/ghost/govuk-frontend-bundle.git",
@@ -13361,5 +13361,5 @@
         "ext-dom": "*",
         "ext-pdo_sqlite": "*"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

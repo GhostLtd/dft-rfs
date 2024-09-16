@@ -32,15 +32,15 @@ class TripChangeTest extends AbstractTripTest
             $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/dates$#', 'dates_continue', [
                 new FormTestCase([
                     'dates[outboundDate][day]' => '2',
-                    'dates[outboundDate][month]' => '11',
+                    'dates[outboundDate][month]' => '10',
                     'dates[outboundDate][year]' => '2024',
                     'dates[returnDate][day]' => '8',
-                    'dates[returnDate][month]' => '11',
+                    'dates[returnDate][month]' => '10',
                     'dates[returnDate][year]' => '2024',                ]),
             ], $options);
 
-            $expectedData['outboundDate'] = new \DateTime('2024-11-02');
-            $expectedData['returnDate'] = new \DateTime('2024-11-08');
+            $expectedData['outboundDate'] = new \DateTime('2024-10-02');
+            $expectedData['returnDate'] = new \DateTime('2024-10-08');
         });
     }
 

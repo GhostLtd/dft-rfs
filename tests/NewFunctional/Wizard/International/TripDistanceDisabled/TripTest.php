@@ -135,10 +135,10 @@ class TripTest extends AbstractTripTest
         $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/dates$#', 'dates_continue', [
             new FormTestCase([
                 'dates[outboundDate][day]' => '5',
-                'dates[outboundDate][month]' => '11',
+                'dates[outboundDate][month]' => '10',
                 'dates[outboundDate][year]' => '2024',
                 'dates[returnDate][day]' => '8',
-                'dates[returnDate][month]' => '11',
+                'dates[returnDate][month]' => '10',
                 'dates[returnDate][year]' => '2024',
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
@@ -221,8 +221,8 @@ class TripTest extends AbstractTripTest
     public function getExpectedData(): array
     {
         return [
-            'outboundDate' => new \DateTime('2024-11-05'),
-            'returnDate' => new \DateTime('2024-11-08'),
+            'outboundDate' => new \DateTime('2024-10-05'),
+            'returnDate' => new \DateTime('2024-10-08'),
             'isChangedBodyType' => false,
             'isSwappedTrailer' => false,
             'outboundUkPort' => 'Portfoot',
