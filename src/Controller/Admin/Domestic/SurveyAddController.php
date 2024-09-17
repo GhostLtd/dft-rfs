@@ -4,7 +4,7 @@ namespace App\Controller\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Repository\Domestic\SurveyRepository;
 use App\Utility\NotificationInterceptionService;

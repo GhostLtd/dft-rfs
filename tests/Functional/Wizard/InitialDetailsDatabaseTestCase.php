@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Wizard;
 
-use App\Entity\Address;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Embeddable\Address;
 use App\Repository\Domestic\SurveyResponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;

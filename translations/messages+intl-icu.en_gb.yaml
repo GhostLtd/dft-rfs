@@ -1036,11 +1036,72 @@ domestic:
         help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
 
     vehicle-fuel:
-      heading: Vehicle fuel
-      help: ''
-      fuel-quantity:
-        label: How much fuel in total was put into this vehicle during the survey week?
-        help: Enter 0 (zero) if you didn't add fuel during the survey week
+      label: Fuel type/amount
+      value: >-
+        {type, select,
+          diesel    {{isHybrid, select, 1 {Diesel hybrid} other {Diesel}}, {quantity} litres}
+          petrol    {{isHybrid, select, 1 {Petrol hybrid} other {Petrol}}, {quantity} litres}
+          gas       {LPG / CNG / LNG, {quantity} litres}
+          biofuel   {Biofuel, {quantity} litres}
+          electric  {Electric (EV), {quantity} kW}
+          fuel_cell {Hydrogen fuel cell, {quantity} kg}
+          other     {{quantityOther}}
+        }
+      type:
+        diesel:
+          label: Diesel / Diesel hybrid
+          help: ''
+          is-hybrid:
+            label: Is this vehicle a diesel hybrid?
+            help: For example HEV, PHEV, MHEV or BAHV.
+          quantity:
+            label: How much diesel was put into this vehicle during the survey week?
+            help: Enter 0 (zero) if you didn't add diesel during the survey week
+        petrol:
+         label: Petrol / Petrol hybrid
+         help: ''
+         is-hybrid:
+          label: Is this a petrol hybrid vehicle?
+          help: For example HEV, PHEV, MHEV or BAHV.
+         quantity:
+           label: How much petrol was put into this vehicle during the survey week?
+           help: Enter 0 (zero) if you didn't add petrol during the survey week
+        gas:
+          label: LPG / CNG / LNG
+          help: ''
+          quantity:
+            label: How much gas was put into this vehicle during the survey week?
+            help: Enter 0 (zero) if you didn't add gas during the survey week
+        biofuel:
+          label: Biofuel
+          help: 'Select this option if the majority of the fuel was biofuel, otherwise select the specific type of fuel from the other options.'
+          quantity:
+            label: How much fuel was put into this vehicle during the survey week?
+            help: Enter 0 (zero) if you didn't add fuel during the survey week
+        electric:
+          label: Electric (EV) or battery electric vehicle (BEV / AEV)
+          help: ''
+          quantity:
+            label: How much charge was put into this vehicle during the survey week?
+            help: Enter 0 (zero) if you didn't charge during the survey week
+        fuel_cell:
+          label: Hydrogen / Fuel-cell
+          help: ''
+          quantity:
+            label: How much hydrogen was put into this vehicle during the survey week?
+            help: Enter 0 (zero) if you didn't add hydrogen during the survey week
+        other:
+          label: Other
+          help: ''
+          quantity:
+            label: How much fuel was put into this vehicle during the survey week?
+            help: |-
+              Give as much detail as possible. Include the type of fuel, the quantity and the unit (for example, litres).
+              
+              Enter 0 (zero) if you didn't add fuel during the survey week
+      fuel-type:
+        label: What type of fuel does this vehicle use?
+        help: ''
 
     vehicle-trailer-configuration:
       heading: Vehicle type

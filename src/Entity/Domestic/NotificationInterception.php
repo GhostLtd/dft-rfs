@@ -2,9 +2,9 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\NotificationInterceptionInterface;
-use App\Repository\Domestic\NotificationInterceptionRepository;
+use App\Entity\LCNI\NotificationInterceptionInterface;
 use App\Form\Validator as AppAssert;
+use App\Repository\Domestic\NotificationInterceptionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;

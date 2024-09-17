@@ -4,10 +4,10 @@ namespace App\Tests\DataFixtures\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Embeddable\Distance;
 use App\Entity\HazardousGoods;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;

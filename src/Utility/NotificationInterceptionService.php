@@ -4,8 +4,8 @@ namespace App\Utility;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\NotificationInterceptionAdvancedInterface;
-use App\Entity\NotificationInterceptionInterface;
+use App\Entity\LCNI\NotificationInterceptionAdvancedInterface;
+use App\Entity\LCNI\NotificationInterceptionInterface;
 use App\Entity\SurveyInterface;
 use App\Repository\Domestic\NotificationInterceptionRepository as DomesticNotificationInterceptionRepository;
 use App\Repository\International\NotificationInterceptionRepository as InternationalNotificationInterceptionRepository;

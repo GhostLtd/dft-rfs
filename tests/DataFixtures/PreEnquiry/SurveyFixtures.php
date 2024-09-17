@@ -2,7 +2,7 @@
 
 namespace App\Tests\DataFixtures\PreEnquiry;
 
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyStateInterface;

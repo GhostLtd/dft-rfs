@@ -4,7 +4,7 @@ namespace App\Tests\Utility\Domestic;
 
 use App\Entity\Domestic\NotificationInterception as DomesticIntercept;
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\SurveyStateInterface;
 use App\Tests\Utility\AbstractNotificationInterceptionServiceTest;
 

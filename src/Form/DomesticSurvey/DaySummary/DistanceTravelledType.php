@@ -2,11 +2,11 @@
 
 namespace App\Form\DomesticSurvey\DaySummary;
 
-use App\Entity\Distance;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Embeddable\Distance;
 use App\Form\DomesticSurvey\AbstractDistanceTravelledType;
-use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Ghost\GovUkFrontendBundle\Form\Type\DecimalType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

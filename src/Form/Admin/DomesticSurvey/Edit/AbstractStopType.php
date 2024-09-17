@@ -4,16 +4,16 @@ namespace App\Form\Admin\DomesticSurvey\Edit;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Embeddable\Distance;
 use App\Form\DomesticSurvey\AbstractDistanceTravelledType;
 use App\Form\DomesticSurvey\DayStop as DayStopForms;
 use App\Form\DomesticSurvey\DaySummary as DaySummaryForms;
-use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use App\Utility\HazardousGoodsHelper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;

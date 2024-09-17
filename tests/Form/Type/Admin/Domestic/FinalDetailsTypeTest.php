@@ -6,9 +6,10 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\Volume;
+use App\Entity\Embeddable\Volume;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Tests\Form\Type\Admin\AbstractSurveyTypeTest;
+use Symfony\Component\Form\FormError;
 
 class FinalDetailsTypeTest extends AbstractSurveyTypeTest
 {
@@ -16,25 +17,21 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
     {
         return [
             [['banana' => '123'], false],
+            [[], false],
 
-            [['fuelQuantity' => ['unit' => 'litres', 'value' => 120]], true],
-            [['fuelQuantity' => ['unit' => 'gallons', 'value' => 35.77]], true],
+            [['fuel' => ['fuelType' => 'petrol']], false],
+            [['fuel' => ['fuelType' => 'petrol', 'fuelDetails_petrol' => ['fuelQuantity_petrol' => 123]]], false],
+            [['fuel' => ['fuelType' => 'petrol', 'fuelDetails_petrol' => ['fuelTypeIsHybrid_petrol' => 'true', 'fuelQuantity_petrol' => 123]]], true],
 
-            [['fuelQuantity' => ['unit' => 'bananas', 'value' => 35.5]], false],
-            [['fuelQuantity' => ['unit' => 'gallons', 'value' => 123456.12]], true],
+            [['fuel' => ['fuelType' => 'gas']], false],
+            [['fuel' => ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => 123]]], true],
 
-            // Too many decimal places and/or digits
-            [['fuelQuantity' => ['unit' => 'gallons', 'value' => 35.777]], false],
-            [['fuelQuantity' => ['unit' => 'gallons', 'value' => 1234567.12]], false],
+            [['fuel' => ['fuelType' => 'other']], false],
+            [['fuel' => ['fuelType' => 'other', 'fuelDetails_other' => ['fuelQuantity_other' => 'free text']]], true],
 
-            [[], true],
-
-            // Strangely with this form, you can set the units without the values
-            [['fuelQuantity' => ['unit' => 'litres']], true],
-            [['fuelQuantity' => ['unit' => 'gallons']], true],
-
-            // But not the value without the unit
-            [['fuelQuantity' => ['value' => 34]], false],
+            [['fuel' => ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => 123.56]]], true],
+            [['fuel' => ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => 123.567]]], false],
+            [['fuel' => ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => 1234567.56]]], false],
         ];
     }
 
@@ -56,10 +53,16 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
             $data = $form->getData();
 
             $this->assertInstanceOf(SurveyResponse::class, $data);
-            $fuelQuantity = $data?->getVehicle()?->getFuelQuantity();
+            $vehicle = $data?->getVehicle();
+            $type = $vehicle?->getFuelType();
 
-            $this->assertEquals($formData['fuelQuantity']['unit'] ?? null, $fuelQuantity?->getUnit());
-            $this->assertEquals($formData['fuelQuantity']['value'] ?? null, $fuelQuantity?->getValue());
+            $this->assertEquals($formData['fuel']['fuelType'] ?? null, $vehicle->getFuelType());
+            $this->assertEquals($formData['fuel']["fuelDetails_$type"]["fuelTypeIsHybrid_$type"] ?? null, $vehicle->getIsFuelTypeHybrid());
+            if ($type === 'other') {
+                $this->assertEquals($formData['fuel']["fuelDetails_$type"]["fuelQuantity_other"] ?? null, $vehicle->getFuelQuantityOther());
+            } else {
+                $this->assertEquals($formData['fuel']["fuelDetails_$type"]["fuelQuantity_$type"] ?? null, $vehicle->getFuelQuantity());
+            }
         }
     }
 
@@ -118,16 +121,14 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
 
     protected function getSurveyResponse(bool $hasJourneys): SurveyResponse
     {
-        $volume = (new Volume())
-            ->setUnit(Volume::UNIT_LITRES)
-            ->setValue(125);
+        $response = (new SurveyResponse())
+            ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_YES);
 
         $vehicle = (new Vehicle())
-            ->setFuelQuantity($volume);
-
-        $response = (new SurveyResponse())
-            ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_YES)
-            ->setVehicle($vehicle);
+            ->setFuelType('petrol')
+            ->setIsFuelTypeHybrid(true)
+            ->setFuelQuantity(125)
+            ->setResponse($response);
 
         if ($hasJourneys) {
             $day = (new Day())

@@ -2,7 +2,7 @@
 
 namespace App\Messenger\AlphagovNotify;
 
-use App\Entity\Address;
+use App\Entity\Embeddable\Address;
 
 class Letter extends AbstractSendMessage
 {

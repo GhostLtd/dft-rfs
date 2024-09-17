@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Entity\LongAddress; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+// PHPstorm indicates this isn't needed, but it is
 
 trait HaulageSurveyTrait {
     use SurveyTrait;

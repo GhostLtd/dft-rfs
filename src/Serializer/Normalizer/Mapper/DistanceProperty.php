@@ -2,7 +2,7 @@
 
 namespace App\Serializer\Normalizer\Mapper;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class DistanceProperty implements Mapper

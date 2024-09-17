@@ -2,9 +2,9 @@
 
 namespace App\Tests\Functional\Utility;
 
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
-use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
 

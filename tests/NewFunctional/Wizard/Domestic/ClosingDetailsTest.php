@@ -132,10 +132,9 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
                  '/domestic-survey/closing-details/vehicle-fuel',
                  'vehicle_fuel_continue',
                  [
-                    // It is valid to leave this form empty
                     new FormTestCase([
-                        'vehicle_fuel[fuelQuantity][value]' => '30',
-                        'vehicle_fuel[fuelQuantity][unit]' => 'litres',
+                        'vehicle_fuel[fuelType]' => 'gas',
+                        'vehicle_fuel[fuelDetails_gas][fuelQuantity_gas]' => '30',
                     ]),
                 ]
              );
@@ -222,16 +221,15 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
             $response = $responses[0];
             $survey = $response->getSurvey();
             $vehicle = $response->getVehicle();
-            $fuelQuantity = $vehicle->getFuelQuantity();
 
             $expectedReasonForEmptySurvey = $expectedEmptySurvey ? 'repair' : null;
-            $expectedFuelValue = $expectedEmptySurvey ? null : 30;
-            $expectedFuelUnit = $expectedEmptySurvey ? null : 'litres';
+            $expectedFuelType = $expectedEmptySurvey ? null : 'gas';
+            $expectedFuelQuantity = $expectedEmptySurvey ? null : 30;
 
             $test->assertEquals(SurveyStateInterface::STATE_CLOSED, $survey->getState());
             $test->assertEquals($expectedReasonForEmptySurvey, $response->getReasonForEmptySurvey());
-            $test->assertEquals($expectedFuelValue, $fuelQuantity->getValue());
-            $test->assertEquals($expectedFuelUnit, $fuelQuantity->getUnit());
+            $test->assertEquals($expectedFuelType, $vehicle->getFuelType());
+            $test->assertEquals($expectedFuelQuantity, $vehicle->getFuelQuantity());
         });
     }
 }

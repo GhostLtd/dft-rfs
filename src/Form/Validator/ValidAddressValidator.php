@@ -2,11 +2,10 @@
 
 namespace App\Form\Validator;
 
-use App\Entity\Address;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\Address;
+use App\Entity\Embeddable\LongAddress;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintValidator;

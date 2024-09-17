@@ -4,8 +4,8 @@ namespace App\Tests\Functional\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
+use App\Entity\Embeddable\Distance;
 use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 use App\Tests\Functional\AbstractWizardTest;

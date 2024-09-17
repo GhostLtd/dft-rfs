@@ -2,8 +2,8 @@
 
 namespace App\Tests\Messenger\AlphagovNotify;
 
-use App\Entity\Address;
 use App\Entity\Domestic\Survey;
+use App\Entity\Embeddable\Address;
 use App\Entity\NotifyApiResponse;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
 use App\Messenger\AlphagovNotify\Letter;

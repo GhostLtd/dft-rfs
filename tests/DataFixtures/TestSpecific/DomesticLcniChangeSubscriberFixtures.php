@@ -4,7 +4,7 @@ namespace App\Tests\DataFixtures\TestSpecific;
 
 use App\Entity\Domestic\NotificationInterception;
 use App\Entity\Domestic\Survey;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;

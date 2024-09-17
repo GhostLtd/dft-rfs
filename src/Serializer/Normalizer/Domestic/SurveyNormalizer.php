@@ -4,19 +4,19 @@ namespace App\Serializer\Normalizer\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Embeddable\Volume;
 use App\Entity\Vehicle;
 use App\Entity\Vehicle as BaseVehicle;
-use App\Entity\Volume;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanEquivalencyProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanLiteral;
+use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\EpochWeekNumberProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\ReturnCodeIdProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\YearlyWeekNumberProperty;
 use App\Serializer\Normalizer\Mapper\Property;
-use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
@@ -78,9 +78,13 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'TripDataLoaded' => $false, // don't know, needed, but all false
             'SurveyStartDate' => new Property('surveyPeriodStart'),
 //            'RecordLastUpdatedBy' => '', // approved by (email)
-            'LitresOfFuelPurchased' => new Property('response.vehicle.fuelQuantity.value'),
-            'Gallons' => new BooleanProperty('response.vehicle.fuelQuantity.unit', Volume::UNIT_GALLONS),
-            'Litres' => new BooleanProperty('response.vehicle.fuelQuantity.unit', Volume::UNIT_LITRES),
+//            'LitresOfFuelPurchased' => new Property('response.vehicle.fuelQuantity.value'),
+//            'Gallons' => new BooleanProperty('response.vehicle.fuelQuantity.unit', Volume::UNIT_GALLONS),
+//            'Litres' => new BooleanProperty('response.vehicle.fuelQuantity.unit', Volume::UNIT_LITRES),
+            'FuelType' => new Property('response.vehicle.fuelType'),
+            'FuelTypeIsHybrid' => new BooleanProperty('response.vehicle.isFuelTypeHybrid', nullable: true),
+            'FuelQuantity' => new Property('response.vehicle.fuelQuantity'),
+            'FuelQuantityOther' => new Property('response.vehicle.fuelQuantityOther'),
 //            'Comments' => '', // not use in export table
 //            'CaryingCapacityAdjusted' => '', // will all be null, not required - lucy doesn't know
             'BusinessType' => new Property('response.businessNature'),

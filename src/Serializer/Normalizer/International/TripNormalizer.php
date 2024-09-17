@@ -2,18 +2,18 @@
 
 namespace App\Serializer\Normalizer\International;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Entity\International\Trip;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Form\CountryType;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\International\Mapper\BooleanLiteral;
+use App\Serializer\Normalizer\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Mapper\BooleanPropertyList;
 use App\Serializer\Normalizer\Mapper\Callback;
-use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Literal;
+use App\Serializer\Normalizer\Mapper\Mapper;
 use App\Serializer\Normalizer\Mapper\Property;
-use App\Serializer\Normalizer\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Mapper\PropertyList;
 use Symfony\Component\Intl\Countries;
 

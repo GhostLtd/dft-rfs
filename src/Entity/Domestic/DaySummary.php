@@ -2,14 +2,14 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsInterface;
+use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\DaySummaryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Form\Validator as AppAssert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Table('domestic_day_summary')]

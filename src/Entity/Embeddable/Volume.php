@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Embeddable;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ghost\GovUkFrontendBundle\Model\ValueUnitInterface;
 
 #[ORM\Embeddable]
-class CurrencyOrPercentage implements ValueUnitInterface
+class Volume implements ValueUnitInterface
 {
-    public const UNIT_CURRENCY = 'currency';
-    public const UNIT_PERCENTAGE = 'percentage';
+    public const UNIT_GALLONS = 'gallons';
+    public const UNIT_LITRES = 'litres';
 
-    public const UNIT_TRANSLATION_PREFIX = 'domestic.driver-availability.currency-or-percentage.';
+    public const UNIT_TRANSLATION_PREFIX = 'unit.volume.';
 
     public const UNIT_CHOICES = [
-        self::UNIT_TRANSLATION_PREFIX . self::UNIT_PERCENTAGE => self::UNIT_PERCENTAGE,
-        self::UNIT_TRANSLATION_PREFIX . self::UNIT_CURRENCY => self::UNIT_CURRENCY,
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_LITRES => self::UNIT_LITRES,
+        self::UNIT_TRANSLATION_PREFIX . self::UNIT_GALLONS => self::UNIT_GALLONS,
     ];
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $value = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    private ?string $value = null;
 
-    #[ORM\Column(type: Types::STRING, length: 12, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 8, nullable: true)]
     private ?string $unit = null;
 
     #[\Override]
-    public function getValue(): ?int
+    public function getValue(): ?string
     {
         return $this->value;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Tests\NewFunctional\Wizard\PreEnquiry;
 
-use App\Entity\LongAddress;
 use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\PreEnquiry\SurveyFixtures;
 use App\Tests\NewFunctional\Wizard\Action\Context;

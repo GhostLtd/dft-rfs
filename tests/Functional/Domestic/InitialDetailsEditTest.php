@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Entity\Address;
 use App\Entity\Domestic\SurveyResponse;
+use App\Entity\Embeddable\Address;
 use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use App\Tests\Functional\AbstractWizardTest;
 use App\Tests\Functional\Wizard\CallbackSingleEntityDatabaseTestCase;

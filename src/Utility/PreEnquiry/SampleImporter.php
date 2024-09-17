@@ -4,7 +4,7 @@
 namespace App\Utility\PreEnquiry;
 
 
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use App\Utility\AbstractBulkSurveyImporter;

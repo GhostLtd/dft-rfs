@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Address;
+use App\Entity\Embeddable\Address;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

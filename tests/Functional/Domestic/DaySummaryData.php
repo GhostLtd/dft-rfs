@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Domestic;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;

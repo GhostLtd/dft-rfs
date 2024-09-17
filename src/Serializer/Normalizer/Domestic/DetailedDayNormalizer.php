@@ -3,9 +3,9 @@
 namespace App\Serializer\Normalizer\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
+use App\Entity\Embeddable\Distance;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
 use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\DayOfWeekProperty;

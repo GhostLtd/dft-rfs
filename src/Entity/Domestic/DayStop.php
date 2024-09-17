@@ -3,7 +3,7 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\AbstractGoodsDescription;
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Entity\GoodsDescriptionInterface;
 use App\Entity\HazardousGoodsInterface;
 use App\Form\Validator as AppAssert;

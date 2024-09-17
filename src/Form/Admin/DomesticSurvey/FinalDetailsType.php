@@ -3,9 +3,10 @@
 namespace App\Form\Admin\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\Volume;
-use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
+use App\Entity\Embeddable\Volume;
+use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -30,21 +31,9 @@ class FinalDetailsType extends AbstractType
 
                 if ($response->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES) {
                     if ($response->hasJourneys()) {
-                        $form->add('fuelQuantity', ValueUnitType::class, [
-                            'label' => "domestic.survey-response.vehicle-fuel.fuel-quantity.label",
-                            'property_path' => 'vehicle.fuelQuantity',
-                            'label_attr' => ['class' => 'govuk-label--s'],
-                            'value_form_type' => Gds\DecimalType::class,
-                            'value_options' => [
-                                'label' => 'Quantity',
-                                'precision' => 8,
-                                'scale' => 2,
-                                'attr' => ['class' => 'govuk-input--width-5']
-                            ],
-                            'unit_options' => [
-                                'label' => 'Unit',
-                                'choices' => Volume::UNIT_CHOICES,
-                            ],
+                        $form->add('fuel', VehicleFuelType::class, [
+                            'label' => false,
+                            'property_path' => 'vehicle.response',
                         ]);
                     } else {
                         $translationKeyPrefix = 'domestic.survey-response.reason-for-empty-survey';
@@ -87,6 +76,9 @@ class FinalDetailsType extends AbstractType
             'submit_name' => 'submit',
             'submit_label' => 'Save changes',
             'label_translation_domain' => null,
+            'error_mapping' => [
+                'vehicle' => 'fuel',
+            ],
         ]);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
@@ -97,7 +89,7 @@ class FinalDetailsType extends AbstractType
                 return [];
             }
 
-            return $response->hasJourneys() ? ['admin_vehicle_fuel_quantity'] : ['admin_reason_for_empty_survey'];
+            return $response->hasJourneys() ? ['admin_vehicle_fuel'] : ['admin_reason_for_empty_survey'];
         });
     }
 }

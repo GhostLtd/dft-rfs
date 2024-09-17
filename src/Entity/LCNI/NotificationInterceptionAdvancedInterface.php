@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\LCNI;
 
-use Doctrine\Common\Collections\Collection;
 use App\Form\Validator as AppAssert;
+use Doctrine\Common\Collections\Collection;
 
 #[AppAssert\UniqueNotificationInterceptionName(groups: ['notification_interception'])]
 interface NotificationInterceptionAdvancedInterface extends NotificationInterceptionInterface

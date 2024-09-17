@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\LCNI;
 
 use App\Form\Validator as AppAssert;
 use Doctrine\DBAL\Types\Types;

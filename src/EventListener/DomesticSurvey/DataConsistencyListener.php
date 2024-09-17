@@ -8,11 +8,9 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\Volume;
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use App\Entity\Embeddable\Volume;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Proxy;
 
@@ -163,7 +161,10 @@ class DataConsistencyListener
                 ->setAxleConfiguration(null)
                 ->setBodyType(null)
                 ->setCarryingCapacity(null)
-                ->setFuelQuantity(new Volume())
+                ->setFuelType(null)
+                ->setFuelQuantity(null)
+                ->setFuelQuantityOther(null)
+                ->setIsFuelTypeHybrid(null)
                 ->setGrossWeight(null)
                 ->setOperationType(null)
                 ->setTrailerConfiguration(null);

@@ -3,8 +3,7 @@
 namespace App\Entity\International;
 
 use App\Entity\IdTrait;
-use App\Entity\NotificationInterceptionCompanyNameInterface;
-use App\Entity\NotificationInterceptionInterface;
+use App\Entity\LCNI\NotificationInterceptionCompanyNameInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;

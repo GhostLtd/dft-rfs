@@ -2,7 +2,7 @@
 
 namespace App\Form\Validator;
 
-use App\Entity\NotificationInterceptionAdvancedInterface;
+use App\Entity\LCNI\NotificationInterceptionAdvancedInterface;
 use App\Utility\NotificationInterceptionService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;

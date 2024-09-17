@@ -15,13 +15,15 @@
                 )
         }) -}}
     {%- else -%}
-        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
-                ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
-                '-'
-        -%}
         {{- summaryListRow({
-            key: 'Fuel used during survey week',
-            value: {html: fuelValue}
-        }) -}}
+            key: 'domestic.survey-response.vehicle-fuel.label' | trans,
+            value: 'domestic.survey-response.vehicle-fuel.value' | trans({
+                type: survey.response.vehicle.fuelType,
+                isHybrid: survey.response.vehicle.isFuelTypeHybrid,
+                quantity: survey.response.vehicle.fuelQuantity,
+                quantityOther: survey.response.vehicle.fuelQuantityOther,
+            }),
+            actions: showActions ? vehicleWeightsActionLinks : []
+        }, showActions) -}}
     {%- endif -%}
 {{- summaryListEnd() -}}

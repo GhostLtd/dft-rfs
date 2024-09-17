@@ -4,82 +4,81 @@ namespace App\Tests\Form\Type\Domestic\ClosingDetails;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\Volume;
-use App\Form\DomesticSurvey\ClosingDetails\ReasonEmptySurveyType;
+use App\Entity\Embeddable\Volume;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
 use App\Tests\Form\Type\AbstractTypeTest;
+use Symfony\Component\Form\FormError;
 
 class VehicleFuelTypeTest extends AbstractTypeTest
 {
     protected function dataSubmit(): array
     {
         return [
-            [[], true], // We're allowed to leave this form blank
+            [[], false], // We're allowed to leave this form blank
             [['banana' => '123'], false],
 
-            [['fuelQuantity' => ['value' => '', 'unit' => '']], true],
+            [['fuelType' => ''], false],
 
             [
-                ['fuelQuantity' => ['value' => '27', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => 123]],
                 true,
-                '27.00',
-                'litres',
+                'gas',
+                '123.00',
             ],
             [
-                ['fuelQuantity' => ['value' => '27', 'unit' => 'gallons']],
+                ['fuelType' => 'petrol', 'fuelDetails_petrol' => ['fuelTypeIsHybrid_petrol' => 'true', 'fuelQuantity_petrol' => 123]],
                 true,
-                '27.00',
-                'gallons',
+                'petrol',
+                '123.00',
+                true,
             ],
             [
-                ['fuelQuantity' => ['value' => '27', 'unit' => 'bananas']],
+                ['fuelType' => 'bananas'],
                 false,
-                '27.00',
-                null,
             ],
 
             // Number extremities
             [
-                ['fuelQuantity' => ['value' => '0', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '0']],
                 true,
+                'gas',
                 '0.00',
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '27.53', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '27.53']],
                 true,
+                'gas',
                 '27.53',
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '999999.99', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '999999.99']],
                 true,
+                'gas',
                 '999999.99',
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '9999999.99', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '9999999.99']],
                 false, // Field has precision 8, scale 2
+                'gas',
                 '9999999.99',
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '27.531', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '27.531']],
                 false, // Field has scale 2
+                'gas',
                 null,
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '-1.2', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '-1.2']],
                 false,
+                'gas',
                 null,
-                'litres',
             ],
             [
-                ['fuelQuantity' => ['value' => '2e5', 'unit' => 'litres']],
+                ['fuelType' => 'gas', 'fuelDetails_gas' => ['fuelQuantity_gas' => '2e5']],
                 false,
+                'gas',
                 null,
-                'litres',
             ],
         ];
     }
@@ -87,11 +86,13 @@ class VehicleFuelTypeTest extends AbstractTypeTest
     /**
      * @dataProvider dataSubmit
      */
-    public function testSubmit(array $formData, bool $expectedValid, ?string $expectedValue=null, ?string $expectedUnit=null): void
+    public function testSubmit(array $formData, bool $expectedValid, ?string $expectedType=null, ?string $expectedQuantity=null, ?bool $expectedIsHybrid=null): void
     {
         $data = new SurveyResponse();
-        $vehicle = (new Vehicle())->setFuelQuantity(new Volume());
-        $data->setVehicle($vehicle);
+        (new Vehicle())
+            ->setResponse($data)
+            ->setFuelType(null)
+        ;
 
         $form = $this->factory->create(VehicleFuelType::class, $data);
 
@@ -100,12 +101,20 @@ class VehicleFuelTypeTest extends AbstractTypeTest
         $this->assertTrue($form->isSynchronized());
         $this->assertTrue($form->isSubmitted());
 
+//        dump(array_map(fn(FormError $e) => $e->getMessage(), iterator_to_array($form->getErrors(true, true))));
         $this->assertEquals($expectedValid, $form->isValid());
 
         if ($expectedValid) {
-            $fuelQuantity = $data->getVehicle()?->getFuelQuantity();
-            $this->assertEquals($expectedValue, $fuelQuantity?->getValue());
-            $this->assertEquals($expectedUnit, $fuelQuantity?->getUnit());
+            $vehicle = $data->getVehicle();
+            $this->assertEquals($expectedType, $vehicle?->getFuelType());
+            if ($vehicle->getFuelType() === 'other') {
+                $this->assertEquals($expectedQuantity, $vehicle?->getFuelQuantityOther());
+                $this->assertNull($vehicle?->getFuelQuantity());
+            } else {
+                $this->assertEquals($expectedQuantity, $vehicle?->getFuelQuantity());
+                $this->assertNull($vehicle?->getFuelQuantityOther());
+            }
+            $this->assertEquals($expectedIsHybrid, $vehicle?->getIsFuelTypeHybrid());
         }
     }
 }

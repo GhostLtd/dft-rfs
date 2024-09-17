@@ -3,7 +3,7 @@
 namespace App\Tests\Form\Type\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Tests\Form\Type\Admin\AbstractSurveyTypeTest;
 

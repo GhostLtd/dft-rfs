@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Embeddable\LongAddress;
 use DateTime;
 
 interface SurveyReminderInterface

@@ -2,7 +2,7 @@
 
 namespace App\Form\Validator;
 
-use App\Entity\CurrencyOrPercentage;
+use App\Entity\Embeddable\CurrencyOrPercentage;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;

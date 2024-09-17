@@ -2,9 +2,10 @@
 
 namespace App\Entity\Domestic;
 
-use App\Entity\Address;
+use App\Entity\Embeddable\Address;
 use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyResponseTrait;
+use App\Form\Validator as AppAssert;
 use App\Repository\Domestic\SurveyResponseRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,7 +13,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Form\Validator as AppAssert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Table('domestic_survey_response')]
@@ -150,7 +150,7 @@ class SurveyResponse extends AbstractSurveyResponse
     #[ORM\OneToOne(inversedBy: 'response', targetEntity: Survey::class)]
     private ?Survey $survey = null;
 
-    #[Assert\Valid(groups: ['vehicle_axle_configuration', 'vehicle_body_type', 'vehicle_fuel_quantity', 'vehicle_trailer_configuration', 'vehicle_weight', 'vehicle_operation_type', 'admin_vehicle', 'admin_vehicle_fuel_quantity'])]
+    #[Assert\Valid(groups: ['vehicle_axle_configuration', 'vehicle_body_type', 'vehicle_fuel', 'vehicle_trailer_configuration', 'vehicle_weight', 'vehicle_operation_type', 'admin_vehicle', 'admin_vehicle_fuel'])]
     #[ORM\OneToOne(inversedBy: 'response', targetEntity: Vehicle::class, cascade: ['persist'])]
     private ?Vehicle $vehicle = null;
 

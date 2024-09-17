@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class BooleanProperty implements Mapper
 {
-    public function __construct(protected string $propertyPath, protected $trueIfEquals = true, private bool $defaultValue = false)
+    public function __construct(protected string $propertyPath, protected bool $trueIfEquals = true, protected ?bool $defaultValue = false, protected bool $nullable = false)
     {
     }
 
@@ -17,7 +17,12 @@ class BooleanProperty implements Mapper
         $accessor = PropertyAccess::createPropertyAccessor();
 
         try {
-            $value = ($this->trueIfEquals === $accessor->getValue($sourceData, $this->propertyPath));
+            $propertyValue = $accessor->getValue($sourceData, $this->propertyPath);
+            if (is_null($propertyValue) && $this->nullable) {
+                return null;
+            }
+
+            $value = ($this->trueIfEquals === $propertyValue);
         } catch (\Throwable) {
             $value = $this->defaultValue;
         }

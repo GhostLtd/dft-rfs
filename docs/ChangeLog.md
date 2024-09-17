@@ -5,6 +5,8 @@
 ## Upcoming
 
 * **Fix:** IRHS "send reminder unavailable" page was broken
+* **Update**: IRHS - remove trip distance (using cut off date 2024-09-17)
+* **Update**: CSRGT - change fuel question in final details wizard to include fuel type
 
 ## 22nd July 2024
 

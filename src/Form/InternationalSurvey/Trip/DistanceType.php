@@ -2,9 +2,9 @@
 
 namespace App\Form\InternationalSurvey\Trip;
 
-use App\Entity\Distance;
-use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
+use App\Entity\Embeddable\Distance;
 use Ghost\GovUkFrontendBundle\Form\Type\DecimalType;
+use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

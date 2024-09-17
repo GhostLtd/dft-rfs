@@ -2,8 +2,8 @@
 
 namespace App\Entity\PreEnquiry;
 
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\IdTrait;
-use App\Entity\LongAddress;
 use App\Form\Validator as AppAssert;
 use App\Repository\PreEnquiry\PreEnquiryResponseRepository;
 use Doctrine\DBAL\Types\Types;

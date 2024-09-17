@@ -2,11 +2,11 @@
 
 namespace App\Tests\Utility\International;
 
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
 use App\Entity\International\NotificationInterception as InternationalIntercept;
 use App\Entity\International\NotificationInterceptionCompanyName;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\LongAddress;
 use App\Entity\SurveyStateInterface;
 use App\Tests\Utility\AbstractNotificationInterceptionServiceTest;
 

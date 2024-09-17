@@ -2,7 +2,7 @@
 
 namespace App\Tests\DataFixtures\International;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use Doctrine\Bundle\FixturesBundle\Fixture;

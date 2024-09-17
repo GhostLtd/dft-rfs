@@ -2,9 +2,9 @@
 
 namespace App\Utility\International;
 
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
 use App\Entity\International\Survey;
-use App\Entity\LongAddress;
 use App\Entity\SurveyInterface;
 use App\Utility\AbstractBulkSurveyImporter;
 use Symfony\Component\Form\FormInterface;

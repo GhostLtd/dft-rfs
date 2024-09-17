@@ -4,9 +4,9 @@ namespace App\Command;
 
 use App\DTO\RoRo\OperatorRoute;
 use App\Entity\Domestic\Survey as DomesticSurvey;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\RoRo\Operator;

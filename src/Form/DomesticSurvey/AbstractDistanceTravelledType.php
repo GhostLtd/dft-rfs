@@ -2,7 +2,7 @@
 
 namespace App\Form\DomesticSurvey;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use Symfony\Component\Form\AbstractType;
 
 class AbstractDistanceTravelledType extends AbstractType

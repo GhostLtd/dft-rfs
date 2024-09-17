@@ -3,7 +3,7 @@
 namespace App\Utility\Domestic;
 
 use App\Entity\Domestic\Survey;
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Entity\SurveyInterface;
 use App\Utility\AbstractBulkSurveyImporter;
 use App\Utility\NotificationInterceptionService;

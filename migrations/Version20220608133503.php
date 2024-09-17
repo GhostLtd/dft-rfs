@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Entity\LongAddress;
+use App\Entity\Embeddable\LongAddress;
 use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use Doctrine\DBAL\Schema\Schema;

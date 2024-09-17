@@ -2,7 +2,7 @@
 
 namespace App\Entity\International;
 
-use App\Entity\Distance;
+use App\Entity\Embeddable\Distance;
 use App\Entity\SimpleVehicleTrait;
 use App\Entity\Vehicle as VehicleLookup;
 use App\Form\Validator as AppAssert;

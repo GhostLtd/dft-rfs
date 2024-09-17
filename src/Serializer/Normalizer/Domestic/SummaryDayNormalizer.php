@@ -2,16 +2,16 @@
 
 namespace App\Serializer\Normalizer\Domestic;
 
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Embeddable\Distance;
 use App\Serializer\Normalizer\AbstractExportNormalizer;
+use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\DayOfWeekProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\MOAProperty;
 use App\Serializer\Normalizer\Mapper\DistanceProperty;
 use App\Serializer\Normalizer\Mapper\NullIsZeroProperty;
 use App\Serializer\Normalizer\Mapper\Property;
-use App\Serializer\Normalizer\Domestic\Mapper\BooleanProperty;
 use App\Serializer\Normalizer\Mapper\ZeroIsNullProperty;
 
 class SummaryDayNormalizer extends AbstractExportNormalizer

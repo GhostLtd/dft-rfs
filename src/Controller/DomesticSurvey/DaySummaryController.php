@@ -5,9 +5,9 @@ namespace App\Controller\DomesticSurvey;
 use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
-use App\Entity\Distance;
 use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
+use App\Entity\Embeddable\Distance;
 use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
@@ -22,8 +22,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]

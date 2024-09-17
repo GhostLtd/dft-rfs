@@ -3,10 +3,10 @@
 namespace App\Entity\International;
 
 use App\Entity\IdTrait;
-use App\Entity\NotificationInterceptionAdvancedInterface;
-use App\Entity\NotificationInterceptionCompanyNameInterface;
+use App\Entity\LCNI\NotificationInterceptionAdvancedInterface;
+use App\Entity\LCNI\NotificationInterceptionCompanyNameInterface;
+use App\Entity\LCNI\NotificationInterceptionTrait;
 use App\Repository\International\NotificationInterceptionRepository;
-use App\Entity\NotificationInterceptionTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;

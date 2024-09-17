@@ -251,6 +251,28 @@ domestic:
       date: Enter the date when the vehicle was sold
       date-max: Enter a date before the end of survey period
       contact-details-required: Provide at least one contact method for the new owner
+  vehicle:
+    fuel-type:
+      not-blank: Select the type of fuel
+    fuel-quantity:
+      positive-or-zero:
+      not-blank: >-
+        Enter the amount of {type, select,
+          petrol    {petrol}
+          diesel    {diesel}
+          electric  {charge}
+          fuel_cell {hydrogen}
+          other     {fuel}
+        }
+    fuel-other-quantity:
+      not-blank: Enter the type and amount of fuel
+    fuel-is-hybrid:
+      not-blank: >-
+        Select if this vehicle is a {type, select,
+          petrol  {petrol}
+          diesel  {diesel}
+          other   {}
+        } hybrid
 
 driver-availability:
   reasons-for-driver-vacancies:

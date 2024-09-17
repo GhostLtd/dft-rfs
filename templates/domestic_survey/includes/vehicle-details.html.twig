@@ -14,13 +14,14 @@
 {%- if showHeading -%}<h2 class="govuk-heading-m">Vehicle details</h2>{%- endif -%}
 {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {% if not workflow_has_marked_place(survey, constant('App\\Entity\\Domestic\\Survey::STATE_IN_PROGRESS'), 'domestic_survey') %}
-        {%- set fuelValue = survey.response.vehicle.fuelQuantity.value and survey.response.vehicle.fuelQuantity.unit ?
-            ("common.volume.#{survey.response.vehicle.fuelQuantity.unit}" | trans({value: survey.response.vehicle.fuelQuantity.value})) :
-            '-'
-        -%}
         {{- summaryListRow({
-            key: 'domestic.survey-response.vehicle-fuel.fuel-quantity.label' | trans,
-            value: fuelValue,
+            key: 'domestic.survey-response.vehicle-fuel.label' | trans,
+            value: 'domestic.survey-response.vehicle-fuel.value' | trans({
+                type: survey.response.vehicle.fuelType,
+                isHybrid: survey.response.vehicle.isFuelTypeHybrid,
+                quantity: survey.response.vehicle.fuelQuantity,
+                quantityOther: survey.response.vehicle.fuelQuantityOther,
+            }),
             actions: showActions ? vehicleWeightsActionLinks : []
         }, showActions) -}}
     {% endif %}

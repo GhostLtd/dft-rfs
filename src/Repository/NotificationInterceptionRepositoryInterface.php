@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\NotificationInterceptionInterface;
+use App\Entity\LCNI\NotificationInterceptionInterface;
 use App\Entity\SurveyInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 

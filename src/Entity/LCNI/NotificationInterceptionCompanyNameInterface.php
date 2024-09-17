@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\LCNI;
 
 use App\Entity\International\NotificationInterception;
 
