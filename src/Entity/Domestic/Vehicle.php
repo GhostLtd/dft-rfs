@@ -21,7 +21,7 @@ class Vehicle implements VehicleInterface
     public const array FUEL_TYPES = [
         'diesel' => 'litres',
         'petrol' => 'litres',
-        'gas' => 'kg',
+        'gas' => 'litres',
         'biofuel' => 'litres',
         'electric' => 'kW',
         'fuel_cell' => 'kg',
