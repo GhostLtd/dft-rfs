@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class BooleanProperty implements Mapper
 {
-    public function __construct(protected string $propertyPath, protected bool $trueIfEquals = true, protected ?bool $defaultValue = false, protected bool $nullable = false)
+    public function __construct(protected string $propertyPath, protected mixed $trueIfEquals = true, protected ?bool $defaultValue = false, protected bool $nullable = false)
     {
     }
 
