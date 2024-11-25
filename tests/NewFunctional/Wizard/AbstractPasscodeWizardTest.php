@@ -3,18 +3,27 @@
 namespace App\Tests\NewFunctional\Wizard;
 
 use App\Tests\NewFunctional\AbstractProceduralWizardTest;
+use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractPasscodeWizardTest extends AbstractProceduralWizardTest
 {
     protected EntityManagerInterface $entityManager;
+    private PasscodeGenerator $passcodeGenerator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->passcodeGenerator = $this->getContainer()->get(PasscodeGenerator::class);
+    }
 
     protected function initialiseTest(array $fixtures): void
     {
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->initialiseClientAndLoadFixtures($fixtures);
         $this->context = $this->createContext('');
-        $this->passcodeLogin('test', 'test');
+        $user = $this->fixtureReferenceRepository->getReference('user:frontend');
+        $this->passcodeLogin('test', $this->passcodeGenerator->getPasswordForUser($user));
     }
 
     #[\Override]

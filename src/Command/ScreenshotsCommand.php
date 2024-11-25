@@ -15,6 +15,7 @@ use App\Entity\RoRo\Survey;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
 use App\Utility\Domestic\DeleteHelper as DomesticDeleteHelper;
+use App\Utility\PasscodeGenerator;
 use App\Utility\PreEnquiry\DeleteHelper as PreEnquiryDeleteHelper;
 use App\Utility\RoRo\OperatorSwitchHelper;
 use App\Utility\RoRo\SurveyCreationHelper;
@@ -43,7 +44,7 @@ class ScreenshotsCommand extends Command
     public const MODE_RORO = 'roro';
     protected string $userId = 'screenshot';
     protected string $roroUserIdOne = 'screenshot@example.com';
-    protected string $userPassword = 'screenshot:password';
+    protected string $userPassword;
 
     public function __construct(
         protected EntityManagerInterface    $entityManager,
@@ -53,7 +54,8 @@ class ScreenshotsCommand extends Command
         protected PreEnquiryDeleteHelper    $preEnquiryDeleteHelper,
         protected SurveyCreationHelper      $roroSurveyCreationHelper,
         protected string                    $frontendHostname,
-        protected ?string                   $appEnvironment
+        protected ?string                   $appEnvironment,
+        protected PasscodeGenerator         $passcodeGenerator,
     ) {
         parent::__construct();
     }
@@ -194,8 +196,7 @@ class ScreenshotsCommand extends Command
     {
         if ($this->isDomesticInternationOrPreEnquiry([$mode])) {
             $userOne = (new PasscodeUser())
-                ->setUsername($this->userId)
-                ->setPlainPassword($this->userPassword);
+                ->setUsername($this->userId);
 
             $start = new DateTime();
             $end = (clone $start)->add(new DateInterval('P6D'));
@@ -239,6 +240,8 @@ class ScreenshotsCommand extends Command
             $this->entityManager->persist($survey);
             $this->entityManager->persist($userOne);
             $this->entityManager->flush();
+
+            $this->userPassword = $this->passcodeGenerator->getPasswordForUser($userOne);
         }
 
         if ($mode === self::MODE_RORO) {

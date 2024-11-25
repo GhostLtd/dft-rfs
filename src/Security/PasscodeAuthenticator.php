@@ -13,7 +13,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -26,11 +25,14 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
 {
-    public const LOGIN_ROUTE = 'app_login';
+    public const string LOGIN_ROUTE = 'app_login';
 
-    public function __construct(protected EntityManagerInterface $entityManager, protected FormFactoryInterface $formFactory, protected PasscodeGenerator $passcodeGenerator, protected UserPasswordHasherInterface $passwordHasher, protected UrlGeneratorInterface $urlGenerator)
-    {
-    }
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected FormFactoryInterface $formFactory,
+        protected PasscodeGenerator $passcodeGenerator,
+        protected UrlGeneratorInterface $urlGenerator
+    ) {}
 
     #[\Override]
     protected function getLoginUrl(Request $request): string
@@ -59,11 +61,7 @@ class PasscodeAuthenticator extends AbstractLoginFormAuthenticator
                     return false;
                 }
 
-                // TODO: PasswordHasher looks to be a historical artifact since we now generate our passcodes,
-                //       however, it is used in functional tests to verify the "test" password. Remove it.
-                return
-                    hash_equals($credentials, $this->passcodeGenerator->getPasswordForUser($user)) ||
-                    $this->passwordHasher->isPasswordValid($user, $credentials);
+                return hash_equals($credentials, $this->passcodeGenerator->getPasswordForUser($user));
             }, $password),
             [
                 new CsrfTokenBadge($csrfTokenId, $data['token'] ?? ''),
