@@ -3,9 +3,11 @@
 # Changelog
 
 ## Upcoming
+
 - **Fix**: Symfony CVE 2024-50340. Disable register_argv_argc directive
 - **Update**: Prevent double import (DVSA/DVLA)
 - **Update**: Prevent import (DVSA/DVLA) too far in advance
+- **Update**: IRHS - when a survey straddles more than one period, include the firm in all relevant exports 
 
 ## 12th November 2024
 

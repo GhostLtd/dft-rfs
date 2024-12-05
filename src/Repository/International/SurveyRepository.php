@@ -9,6 +9,7 @@ use App\Repository\SurveyDeletionInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,8 +73,18 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyDeletion
             ->leftJoin('v.trips', 't')
             // If we don't join on user, it does n+1 queries
             ->leftJoin('s.passcodeUser', 'p')
-            ->andWhere('s.surveyPeriodEnd >= :minDate')
-            ->andWhere('s.surveyPeriodEnd < :maxDate')
+//            ->where(new Expr\Orx([
+//                // start is within dates
+//                new Expr\Andx(['s.surveyPeriodStart >= :minDate', 's.surveyPeriodStart < :maxDate']),
+//                // end is within dates
+//                new Expr\Andx(['s.surveyPeriodEnd >= :minDate', 's.surveyPeriodEnd < :maxDate']),
+//                // start is before first date, and end is after last date (encompassing)
+//                new Expr\Andx(['s.surveyPeriodStart < :minDate', 's.surveyPeriodEnd >= :maxDate']),
+//            ]))
+            ->where(new Expr\Andx([
+                's.surveyPeriodEnd >= :minDate',
+                's.surveyPeriodStart < :maxDate',
+            ]))
             ->getQuery()
             ->setParameters(new ArrayCollection([
                 new Parameter('minDate', $minDate),
