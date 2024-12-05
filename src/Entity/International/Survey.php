@@ -21,10 +21,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
+#[UniqueEntity(['referenceNumber'], message: 'international.add.reference-number-exists', errorPath: 'survey', groups: ['add_survey', 'import_survey'])]
 #[ORM\Table(name: 'international_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface

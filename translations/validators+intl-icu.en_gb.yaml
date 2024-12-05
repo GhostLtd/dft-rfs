@@ -18,6 +18,7 @@ common:
     not-null: Enter a date
     greater-than: Enter a date after {compared_value}
     greater-than-or-equal: Enter a date on or after {compared_value}
+    less-than-or-equal: Enter a date on or before {compared_value}
     invalid: Enter a valid date
   hazardous-goods:
     not-null: Choose whether the goods being transported were classified as dangerous or hazardous
@@ -111,6 +112,7 @@ international:
       weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+    reference-number-exists: A survey with this reference number already exists
   closing-details:
     early-response:
       not-null: Choose whether you are sure that the information submitted is final
@@ -184,6 +186,7 @@ pre-enquiry:
 domestic:
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
+    duplicate-exists: A survey with this start date and registration mark already exists
   closing-details:
     early-response:
       not-null: Choose whether you are sure that the information submitted is final

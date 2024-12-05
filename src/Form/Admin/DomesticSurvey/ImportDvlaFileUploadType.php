@@ -60,7 +60,7 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
             ])
             ->add('allowHistoricalDate', Gds\CheckboxType::class, [
                 'label_attr' => ['class' => 'govuk-label--s'],
-                'label' => 'Allow survey period start date in the past',
+                'label' => 'Allow survey period start date in the past or more than 4 weeks in the future',
                 'help' => 'Check this box <strong>ONLY</strong> if you need to import a backdated import in extenuating circumstances',
                 'help_html' => true,
             ]);

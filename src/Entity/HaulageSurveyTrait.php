@@ -22,6 +22,7 @@ trait HaulageSurveyTrait {
     #[Assert\NotNull(message: 'common.date.not-null', groups: ['add_survey', 'import_survey'])]
     #[AppAssert\GreaterThanOrEqualDate("midnight -14 weeks", groups: ['add_survey'])]
     #[AppAssert\GreaterThanOrEqualDate("midnight", groups: ['import_survey_non_historical'])]
+    #[AppAssert\LessThanOrEqualDate("midnight +4 weeks", groups: ['import_survey_non_historical'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $surveyPeriodStart = null;
 

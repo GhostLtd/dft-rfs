@@ -3,6 +3,11 @@
 # Changelog
 
 ## Upcoming
+- **Fix**: Symfony CVE 2024-50340. Disable register_argv_argc directive
+- **Update**: Prevent double import (DVSA/DVLA)
+- **Update**: Prevent import (DVSA/DVLA) too far in advance
+
+## 12th November 2024
 
 * **Fix:** IRHS "send reminder unavailable" page was broken
 * **Update**: IRHS - remove trip distance (using cut off date 2024-09-17)
