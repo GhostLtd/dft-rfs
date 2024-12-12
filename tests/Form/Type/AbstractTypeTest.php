@@ -12,9 +12,12 @@ use Ghost\GovUkFrontendBundle\Form\Extension\NotRequiredExtension;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\ExpressionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validation;
 
 abstract class AbstractTypeTest extends TypeTestCase
@@ -34,13 +37,16 @@ abstract class AbstractTypeTest extends TypeTestCase
         ];
     }
 
+    /**
+     * We don't have a container (because this isn't an integration test), so we need to create our own validator factory.
+     */
     protected function getConstraintValidatorFactory(): ConstraintValidatorFactoryInterface
     {
         $validators = $this->getValidators();
 
         foreach($validators as $class => $validator) {
             $expectedClass = $validator::class;
-            if ($class !== 'validator.expression' && $expectedClass !== $class) {
+            if (!in_array($class, ['validator.expression', 'doctrine.orm.validator.unique']) && $expectedClass !== $class) {
                 $this->fail("getValidators() key/class mismatch [key: {$class} / expected: {$expectedClass}]");
             }
         }
@@ -63,6 +69,12 @@ abstract class AbstractTypeTest extends TypeTestCase
         return [
             // For some reason the expression validator is keyed differently (see ConstraintValidatorFactory)
             'validator.expression' => new ExpressionValidator($expressionLanguage),
+            // mock the unique validator, because there is no container, and therefore no doctrine to query for duplicates
+            // this will **always** validate, even if there are duplicates
+            'doctrine.orm.validator.unique' => (new class() implements ConstraintValidatorInterface {
+                public function initialize(ExecutionContextInterface $context) {}
+                public function validate(mixed $value, Constraint $constraint) {}
+            })
         ];
     }
 

@@ -95,12 +95,12 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
     public function dataReviewPage(): array
     {
         // TODO: This could do with more tests...
-        $nextYear = (new \DateTime('next year'))->format('Y');
+        $nextYear = (new \DateTime('next week'))->format('Ymd');
 
         return [
             [
                 1,
-                "csrgt_output_surveyweek_1_{$nextYear}1119143500.txt",
+                "csrgt_output_surveyweek_1_{$nextYear}143500.txt",
                 (
                     "    BROKENABCDE LTD 1                                        THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n".
                     "AU11AXZGHOST LTD 2                                       THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n"
