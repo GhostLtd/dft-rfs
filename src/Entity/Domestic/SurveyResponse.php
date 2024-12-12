@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Table('domestic_survey_response')]
 #[ORM\Entity(repositoryClass: SurveyResponseRepository::class)]
+#[ORM\Index(name: 'idx_dsr_survey_vehicle', columns: ['survey_id', 'vehicle_id', 'id'])]
 class SurveyResponse extends AbstractSurveyResponse
 {
     public const IN_POSSESSION_YES = 'yes';

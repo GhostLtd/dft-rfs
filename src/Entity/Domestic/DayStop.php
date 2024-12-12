@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table('domestic_day_stop')]
 #[ORM\Entity(repositoryClass: DayStopRepository::class)]
+#[ORM\Index(name: 'idx_day_stop_number', columns: ['day_id', 'number', 'id'])]
 class DayStop implements BorderCrossingInterface, GoodsDescriptionInterface, HazardousGoodsInterface, StopInterface
 {
     use StopTrait {

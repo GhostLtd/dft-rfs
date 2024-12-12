@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Table('domestic_day')]
 #[ORM\Entity(repositoryClass: DayRepository::class)]
+#[ORM\Index(name: 'idx_day_response_number', columns: ['response_id', 'number', 'id'])]
 class Day
 {
     public const TRANSFERRED_NONE = 0;

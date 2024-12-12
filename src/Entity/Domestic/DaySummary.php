@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Table('domestic_day_summary')]
 #[ORM\Entity(repositoryClass: DaySummaryRepository::class)]
+#[ORM\Index(name: 'idx_summary_day', columns: ['day_id', 'id'])]
 class DaySummary implements BorderCrossingInterface, GoodsDescriptionInterface, HazardousGoodsInterface, StopInterface
 {
     use StopTrait;

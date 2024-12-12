@@ -31,6 +31,8 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 #[UniqueEntity(['surveyPeriodStart', 'registrationMark', 'originalSurvey'], message: 'domestic.add.duplicate-exists', errorPath: 'survey', ignoreNull: false, groups: ['add_survey', 'import_survey'])]
 #[ORM\Table('domestic_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
+#[ORM\Index(name: 'idx_survey_state', columns: ['state', 'id'])]
+#[ORM\Index(name: 'idx_survey_start_id', columns: ['survey_period_start', 'id'])]
 class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
