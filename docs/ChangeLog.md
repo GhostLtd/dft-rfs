@@ -2,7 +2,7 @@
 
 # Changelog
 
-## Upcoming
+## 12th December 2024
 
 - **Fix**: Symfony CVE 2024-50340. Disable register_argv_argc directive
 - **Update**: Prevent double import (DVSA/DVLA)
