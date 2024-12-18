@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 #[AppAssert\ValidRegistration(groups: ["add_survey", "import_survey"])]
-#[UniqueEntity(['surveyPeriodStart', 'registrationMark'], message: 'domestic.add.duplicate-exists', errorPath: 'survey', groups: ['add_survey', 'import_survey'])]
+#[UniqueEntity(['surveyPeriodStart', 'registrationMark', 'originalSurvey'], message: 'domestic.add.duplicate-exists', errorPath: 'survey', groups: ['add_survey', 'import_survey'])]
 #[ORM\Table('domestic_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
