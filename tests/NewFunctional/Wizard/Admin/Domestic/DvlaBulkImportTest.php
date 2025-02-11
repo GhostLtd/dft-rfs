@@ -95,12 +95,13 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
     public function dataReviewPage(): array
     {
         // TODO: This could do with more tests...
-        $nextYear = (new \DateTime('next week'))->format('Ymd');
+        $nextWeek = (new \DateTime('next week'));
+        $filename = "csrgt_output_surveyweek_{$nextWeek->format('W')}_{$nextWeek->format('Ymd')}143500.txt";
 
         return [
             [
                 1,
-                "csrgt_output_surveyweek_1_{$nextYear}143500.txt",
+                $filename,
                 (
                     "    BROKENABCDE LTD 1                                        THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n".
                     "AU11AXZGHOST LTD 2                                       THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n"
@@ -109,7 +110,7 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
             ],
             [
                 2,
-                "csrgt_output_surveyweek_1_{$nextYear}1119143500.txt",
+                $filename,
                 (
                     "AU11AXYGHOST LTD 1                                       THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n".
                     "AU11AXZGHOST LTD 2                                       THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n"
@@ -125,6 +126,32 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
     public function testReviewPage(int $expectedValidRecords, string $filename, string $fileData, array $otherFormData=[]): void
     {
         $this->initialiseTest([]);
+        $this->doDvlaImport($expectedValidRecords, $filename, $fileData, $otherFormData);
+    }
+
+
+    public function testDoubleImport(): void
+    {
+        $nextWeek = (new \DateTime('next week'));
+        $fileData = "AU11AXYGHOST LTD 1                                       THE OLD CHURCH SCHOOL         FROME                                                                                     SOMERSET                      BA113HQ112C1 482011000199912062009\n";
+        $filename = "csrgt_output_surveyweek_{$nextWeek->format('W')}_{$nextWeek->format('Ymd')}143500.txt";
+
+        $this->initialiseTest([]);
+        $this->doDvlaImport(1, $filename, $fileData);
+        $this->formTestAction('/csrgt/dvla-import/review', 'import_dvla_review_data_submit', [
+            new FormTestCase([]),
+        ]);
+        $this->pathTestAction('/csrgt/dvla-import/summary');
+
+        $this->doDvlaImport(0, $filename, $fileData);
+        $text = $this->client->getCrawler()
+            ->findElement(WebDriverBy::cssSelector('#main-content .govuk-list li'))
+            ->getText();
+        $this->assertStringContainsString('A survey with this start date and registration mark already exists', $text);
+    }
+
+    protected function doDvlaImport(int $expectedValidRecords, string $filename, string $fileData, array $otherFormData=[]): void
+    {
         $this->clickLinkContaining('DVLA bulk import');
 
         $fixturePath = $this->createFixture($filename, $fileData);
@@ -143,5 +170,6 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
             ->getText();
 
         $this->assertStringContainsString("{$expectedValidRecords} records imported", $text);
+
     }
 }

@@ -17,11 +17,13 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
 class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 {
+    private const int INVITATION_DELAY = 1000 * 60 * 60 * 4; // 4 hours in ms
     private const string TYPE_LETTER = 'letter';
     private const string TYPE_EMAIL = 'email';
     private const array TEMPLATE_MAP = [
@@ -72,7 +74,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
                 $address,
                 self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER],
                 $personalisation,
-            ));
+            ), [
+                new DelayStamp(self::INVITATION_DELAY),
+            ]);
         }
 
         if (self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL]) {
@@ -84,7 +88,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
                     $invitationEmail,
                     self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL],
                     $personalisation,
-                ));
+                ), [
+                    new DelayStamp(self::INVITATION_DELAY),
+                ]);
             }
         }
     }

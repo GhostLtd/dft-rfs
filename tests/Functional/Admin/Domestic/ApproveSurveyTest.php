@@ -9,7 +9,7 @@ use App\Tests\DataFixtures\Domestic\ResponseScrappedFixtures;
 use App\Tests\DataFixtures\Domestic\ResponseSoldFixtures;
 use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
 use App\Tests\DataFixtures\Domestic\VehicleFixtures;
-use App\Tests\Functional\AbstractAdminFunctionalTest;
+use App\Tests\Functional\Admin\AbstractAdminFunctionalTest;
 
 class ApproveSurveyTest extends AbstractAdminFunctionalTest
 {

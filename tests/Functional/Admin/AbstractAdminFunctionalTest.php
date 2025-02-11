@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\Admin;
 
+use App\Tests\Functional\AbstractFunctionalTest;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 
