@@ -12,7 +12,7 @@ class AddSurveyTest extends AbstractAdminTest
     public function testAddSurvey(): void
     {
         $this->initialiseTest([]);
-        $this->assertNoSurveysInDatabase();
+        $this->assertEntityCountInDatabase(Survey::class, 0);
 
         $this->clickLinkContaining('Add Survey');
 
@@ -43,15 +43,6 @@ class AddSurveyTest extends AbstractAdminTest
             'Type' => 'CSRGT (GB)',
             'Survey period start' => $now->format('d/m/Y'),
         ]);
-    }
-
-    protected function assertNoSurveysInDatabase(): void
-    {
-        $this->callbackTestAction(function (Context $context) {
-            $vehicles = $context->getEntityManager()->getRepository(Survey::class)->findAll();
-
-            $context->getTestCase()->assertCount(0, $vehicles, "Expected number of surveys in the database to be zero");
-        });
     }
 
     protected function assertDatabaseMatchesData(array $data): void

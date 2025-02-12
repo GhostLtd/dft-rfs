@@ -14,11 +14,14 @@ class ResponseOnHireFixtures extends AbstractResponseFixtures
         $response = (new SurveyResponse())
             ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_ON_HIRE)
             ->setHireeEmail('test@example.com')
-            ->setHireeEmail('Tester')
+            ->setHireeName('Tester')
             ->setHireeTelephone('12345')
             ->setUnableToCompleteDate(new \DateTime('now - 2 days'));
 
-        $this->loadSurveyAndVehicle($manager, $response, SurveyStateInterface::STATE_CLOSED);
+        $survey = $this->loadSurveyAndVehicle($manager, $response, SurveyStateInterface::STATE_CLOSED);
+        $survey->setSurveyPeriodStart(new \DateTime('next monday'));
+        $survey->setSurveyPeriodEnd(new \DateTime('1 week next monday'));
+        $manager->flush();
     }
 
     #[\Override]

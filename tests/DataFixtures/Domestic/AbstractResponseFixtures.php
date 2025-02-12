@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 
 abstract class AbstractResponseFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function loadSurveyAndVehicle(ObjectManager $manager, SurveyResponse $response, string $surveyState = Survey::STATE_IN_PROGRESS): void
+    public function loadSurveyAndVehicle(ObjectManager $manager, SurveyResponse $response, string $surveyState = Survey::STATE_IN_PROGRESS): Survey
     {
         /** @var Survey $survey */
         $survey = $this->getReference('survey:simple', Survey::class);
@@ -33,5 +33,7 @@ abstract class AbstractResponseFixtures extends Fixture implements DependentFixt
 
         $this->addReference('response:simple', $response);
         $this->addReference('vehicle:simple', $vehicle);
+
+        return $survey;
     }
 }

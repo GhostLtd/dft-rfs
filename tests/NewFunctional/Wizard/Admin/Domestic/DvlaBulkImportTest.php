@@ -137,12 +137,15 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
         $filename = "csrgt_output_surveyweek_{$nextWeek->format('W')}_{$nextWeek->format('Ymd')}143500.txt";
 
         $this->initialiseTest([]);
+
+        // first import
         $this->doDvlaImport(1, $filename, $fileData);
         $this->formTestAction('/csrgt/dvla-import/review', 'import_dvla_review_data_submit', [
             new FormTestCase([]),
         ]);
         $this->pathTestAction('/csrgt/dvla-import/summary');
 
+        // second import
         $this->doDvlaImport(0, $filename, $fileData);
         $text = $this->client->getCrawler()
             ->findElement(WebDriverBy::cssSelector('#main-content .govuk-list li'))
