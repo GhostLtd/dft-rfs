@@ -23,6 +23,8 @@ abstract class AbstractImportReviewDataType extends AbstractType
             foreach ($choiceOptions as $k=>$v) {
                 $choiceOptions[$k] = [
                     'label_html' => true,
+                    // show the surveys without emails at the top of the list
+                    'priority' => $options['surveys'][$v]->getInvitationEmails() ? 5 : 10,
                 ];
             }
 

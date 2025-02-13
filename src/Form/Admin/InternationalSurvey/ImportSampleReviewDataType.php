@@ -33,7 +33,7 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
         $address1 = ucwords(strtolower($data->getCompany()->getBusinessName()));
 
         $safeLabel = htmlspecialchars(
-            "{$address1}, {$data->getInvitationAddress()->getPostcode()}",
+            "{$address1}, {$data->getInvitationAddress()->getPostcode()} ({$data->getReferenceNumber()})",
             ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}" . ($data->getInvitationEmails() ? '<strong class="govuk-tag">LCNI</strong>' : '');
     }
