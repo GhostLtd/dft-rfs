@@ -107,12 +107,22 @@ international:
     title: ''
 
 notification-interception:
+  dvla-import:
+    heading: "LCNI: Import DVLA data"
+    form:
+      help: Submitting this form will delete existing DVLA data before importing data from the file. For records where there is other data (CSRGT or IRHS), it empties the DVLA field. It deletes records where there is only DVLA data.
+      submit: Import data
+    confirmed-notification:
+      heading: Imported DVLA data
+      content: The DVLA was successfully added to the LCNI
   add:
     heading: Add LCNI
     confirmed-notification:
       heading: LCNI added
       content: The LCNI was successfully added
-  button.add: Add LCNI
+  button:
+    add: Add LCNI
+    dvla_import: Import DVLA data
   delete:
     heading: "Delete LCNI: {addressLine}"
     cancel.label: Cancel
@@ -133,14 +143,27 @@ notification-interception:
   edit-names:
     label: Edit names
     heading: Edit LCNI names
+  edit-all:
+    label: Edit
+    heading: Edit LCNI
   form:
     business-name:
       label: Business name
       help: ''
+    names:
+      label: Business names
+      help: Place each company name on a new line
     additional-names:
       label: Additional business names
       help: Place each additional company name on a new line
     cancel: Cancel
+    same-emails:
+      label: Use common or different email list for CSRGT/IRHS?
+      same.label: Same (common list)
+      different.label: Different email addresses
+    csrgt-emails.label: Emails for CSRGT
+    irhs-emails.label: Emails for IRHS
+    dvla-email.label: Emails from DVLA import
     emails:
       label: Emails
       help: 'Multiple email addresses can be added as a comma-separated list'

@@ -11,46 +11,27 @@
 
     {{ listTableStart(data, form) }}
     {% for ni in data.entities %}
-        {%- set visuallyHiddenText = "notification-interception.sr-hidden-suffix" | trans({primaryName: ni.primaryName}, 'admin') -%}
-        {%- set actions = [] -%}
-
-        {%- if survey_type == 'domestic' -%}
-            {%- set actions = actions | merge([
-                {
-                    href: url(edit_address_route, {id: ni.id}),
-                    text: 'notification-interception.edit-address.label' | trans({}, 'admin'),
-                    visuallyHiddenText: visuallyHiddenText,
-                }
-            ]) -%}
-        {%- elseif survey_type == 'international' -%}
-            {%- set actions = actions | merge([
-                {
-                    href: url(edit_names_route, {id: ni.id}),
-                    text: 'notification-interception.edit-names.label' | trans({}, 'admin'),
-                    visuallyHiddenText: visuallyHiddenText,
-                }
-            ]) -%}
-        {%- endif -%}
-
-        {%- set actions = actions | merge([
+        {%- set visuallyHiddenText = "notification-interception.sr-hidden-suffix" | trans({primaryName: ni.primaryName ?? (ni.names | first).name}, 'admin') -%}
+        {%- set actions = [
             {
-                href: url(edit_emails_route, {id: ni.id}),
-                text: 'notification-interception.edit-emails.label' | trans({}, 'admin'),
+                href: path('admin_notification_interception_edit_all', {id: ni.id}),
+                text: 'notification-interception.edit-all.label' | trans({}, 'admin'),
                 visuallyHiddenText: visuallyHiddenText,
             },
             {
-                href: url(delete_route, {id: ni.id}),
+                href: path('admin_notification_interception_delete', {id: ni.id}),
                 text: 'common.actions.delete' | trans({}, 'messages'),
                 visuallyHiddenText: visuallyHiddenText,
             }
-        ]) -%}
-
+        ] -%}
+        {% set email_content %}
+            {% if ni.csrgtEmails ?? false %}<div><b>CSRGT:</b> {{ ni.csrgtEmails }}</div>{% endif %}
+            {% if ni.irhsEmails ?? false %}<div><b>IRHS:</b> {{ ni.irhsEmails }}</div>{% endif %}
+            {% if ni.dvlaEmails ?? false %}<div><b>DVLA:</b>  {{ ni.dvlaEmails }}</div>{% endif %}
+        {% endset %}
         {{- tableRow([
-            ni.primaryName,
-            'other_names' in form.children | keys ?
-                (ni.additionalNames | map(n => n.name) | join(', ')) :
-                null,
-            ni.emails,
+            {html: (ni.names | map(n => n.name) | join('<br>'))},
+            {html: email_content},
             {html: summaryListActionsList(actions)}
         ]) -}}
     {% else %}
@@ -63,7 +44,8 @@
     {% endfor %}
     {{ listTableEnd(data, form, false) }}
 
-    <a class="govuk-button" href="{{ url(add_route) }}">{{ "#{translation_prefix}.button.add" | trans }}</a>
+    <a class="govuk-button" href="{{ path('admin_notification_interception_add') }}">{{ "notification-interception.button.add" | trans }}</a>
+    <a class="govuk-button govuk-button--secondary" href="{{ path('admin_notification_interception_dvla_import') }}">{{ "notification-interception.button.dvla_import" | trans }}</a>
 
     <div class="pagination-container">
         {{ pagination(data.paginationData) }}

@@ -1,0 +1,10 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% trans_default_domain 'admin' %}
+{% set headingDomain = 'admin' %}
+{% set translation_prefix = "notification-interception.dvla-import" %}
+
+{% block adminContent %}
+    {{ form(form) }}
+{% endblock %}
+

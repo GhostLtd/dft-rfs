@@ -34,7 +34,7 @@ class NotificationInterception implements NotificationInterceptionAdvancedInterf
      * @var ?Collection<NotificationInterceptionCompanyName>
      */
     #[Assert\Valid(groups: ['notification_interception'])]
-    #[ORM\OneToMany(mappedBy: 'notificationInterception', targetEntity: NotificationInterceptionCompanyName::class, cascade: ['all'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: NotificationInterceptionCompanyName::class, mappedBy: 'notificationInterception', cascade: ['all'], orphanRemoval: true)]
     #[ORM\OrderBy(['name' => 'ASC'])]
     private ?Collection $additionalNames;
 

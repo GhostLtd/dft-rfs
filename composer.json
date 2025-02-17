@@ -31,6 +31,7 @@
         "laminas/laminas-code": "^4.0",
         "laminas/laminas-eventmanager": "^3.3",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "phpoffice/phpspreadsheet": "^4.1",
         "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/debug-bundle": "^6.4",

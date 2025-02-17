@@ -13,6 +13,7 @@ use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\Domestic\PdfHelper as DomesticPdfHelper;
 use App\Utility\International\PdfHelper as InternationalPdfHelper;
 use App\Utility\AlphagovNotify\Reference;
+use App\Utility\NotificationInterceptionService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -47,7 +48,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         protected DomesticPdfHelper      $domesticPdfHelper,
         protected InternationalPdfHelper $internationalPdfHelper,
         protected AuditLogRepository     $auditLogRepository,
-        protected PersonalisationHelper  $personalisationHelper
+        protected PersonalisationHelper  $personalisationHelper,
+        protected NotificationInterceptionService $notificationInterceptionService,
     ) {}
 
     public function guardInviteUser(GuardEvent $event): void
@@ -55,7 +57,9 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         $survey = $this->getSurvey($event);
         $address = $survey->getInvitationAddress();
         if ((!$address || !$address->isFilled()) && !$survey->hasValidInvitationEmails()) {
-            $event->setBlocked(true);
+            if (count($this->notificationInterceptionService->getAllEmailsForSurvey($survey)) === 0) {
+                $event->setBlocked(true);
+            }
         }
     }
 
@@ -80,7 +84,8 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
         }
 
         if (self::TEMPLATE_MAP[$survey::class][self::TYPE_EMAIL]) {
-            foreach ($survey->getArrayOfInvitationEmails() as $invitationEmail) {
+            $allEmails = $this->notificationInterceptionService->getAllEmailsForSurvey($survey);
+            foreach ($allEmails as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(
                     Reference::EVENT_INVITE,
                     $survey::class,

@@ -3,7 +3,6 @@
 namespace App\Repository\Domestic;
 
 use App\Doctrine\Hydrators\ColumnHydrator;
-use App\Entity\Domestic\NotificationInterception;
 use App\Entity\Domestic\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
@@ -172,54 +171,6 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyDeletion
             ->getSingleScalarResult();
     }
 
-    /**
-     * @return array<Survey>
-     */
-    public function findSurveysMatchingLcniAddressAndEmails(NotificationInterception $interception): array
-    {
-        return $this->lcniFindQuery(
-            $interception,
-            fn(QueryBuilder $qb) => $qb
-                ->andWhere('s.invitationEmails = :emails')
-                ->setParameter('emails', $interception->getEmails())
-        );
-    }
-
-    /**
-     * @return array<Survey>
-     */
-    public function findSurveysMatchingLcniAddressWithNoEmails(NotificationInterception $interception): array
-    {
-        return $this->lcniFindQuery(
-            $interception,
-            fn(QueryBuilder $qb) => $qb->andWhere('s.invitationEmails IS NULL')
-        );
-    }
-
-    /**
-     * @return array<Survey>
-     */
-    protected function lcniFindQuery(NotificationInterception $interception, \Closure $callback): array
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->select('s')
-            ->where('s.invitationAddress.line1 = :addressLine')
-            ->andWhere('s.state IN (:states)')
-            ->setParameter('addressLine', $interception->getAddressLine())
-            ->setParameter('states', [
-                SurveyStateInterface::STATE_NEW,
-                SurveyStateInterface::STATE_INVITATION_FAILED,
-                SurveyStateInterface::STATE_INVITATION_PENDING,
-                SurveyStateInterface::STATE_INVITATION_SENT,
-                SurveyStateInterface::STATE_IN_PROGRESS,
-            ]);
-
-        $callback($qb);
-
-        return $qb
-            ->getQuery()
-            ->execute();
-    }
 
     /**
      * @return array{minDate: string, maxDate: string}

@@ -4,11 +4,11 @@ namespace App\Tests\Utility\International;
 
 use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
-use App\Entity\International\NotificationInterception as InternationalIntercept;
-use App\Entity\International\NotificationInterceptionCompanyName;
 use App\Entity\International\Survey as InternationalSurvey;
+use App\Entity\NotificationInterception;
 use App\Entity\SurveyStateInterface;
 use App\Tests\Utility\AbstractNotificationInterceptionServiceTest;
+use App\Utility\EmailHelper;
 
 class NotificationInterceptionServiceTest extends AbstractNotificationInterceptionServiceTest
 {
@@ -116,28 +116,19 @@ class NotificationInterceptionServiceTest extends AbstractNotificationIntercepti
         $this->addInternationalIntercept($interceptCompanyNames, $interceptEmails);
         $this->entityManager->flush();
 
-        $this->interceptService->checkAndInterceptSurvey($survey);
-
-        $expectedEmails = $expectedToChange ? $interceptEmails : $surveyEmails;
-        $this->assertEquals($expectedEmails, $survey->getInvitationEmails());
+        $actualEmails = $this->interceptService->getAllEmailsForSurvey($survey);
+        $expectedEmails = in_array($survey->getCompany()->getBusinessName(), $interceptCompanyNames) && $addressLine1
+            ? EmailHelper::convertArrayListToString([$surveyEmails, $interceptEmails])
+            : $surveyEmails;
+        $this->assertEquals($expectedEmails, EmailHelper::convertArrayListToString($actualEmails));
     }
 
     protected function addInternationalIntercept(array $companyNames, string $emails): void {
-        $primaryName = array_shift($companyNames);
-
-        $intercept = (new InternationalIntercept())
-            ->setPrimaryName($primaryName)
-            ->setEmails($emails);
+        $intercept = (new NotificationInterception())
+            ->setIrhsEmails($emails);
 
         $this->entityManager->persist($intercept);
-
-        foreach($companyNames as $companyName) {
-            $additionalIntercept = (new NotificationInterceptionCompanyName())
-                ->setName($companyName)
-                ->setNotificationInterception($intercept);
-
-            $this->entityManager->persist($additionalIntercept);
-        }
+        array_walk($companyNames, fn(string $name) => $intercept->addName($name));
     }
 
     protected function addInternationalSurvey(string $companyName, ?string $addressLine1, ?string $invitationEmails): InternationalSurvey {

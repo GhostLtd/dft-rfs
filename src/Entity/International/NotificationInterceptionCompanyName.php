@@ -15,7 +15,7 @@ class NotificationInterceptionCompanyName implements NotificationInterceptionCom
     use IdTrait;
 
     #[Assert\NotBlank(message: 'Company name must not be empty', groups: ['notification_interception'])]
-    #[Assert\Regex("^[@()=\[\]\",<>\\\/]", message: 'Company name must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notification_interception'])]
+    #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Company name must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notification_interception'])]
     #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['notification_interception'])]
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private ?string $name = null;

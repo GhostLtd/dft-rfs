@@ -14,7 +14,7 @@ class ImportDvlaReviewDataType extends AbstractImportReviewDataType
         /** @var Survey $data */
         $regMark = new RegistrationMarkHelper($data->getRegistrationMark());
         $address1 = ucwords(strtolower($data->getInvitationAddress()->getLine1()));
-        $email = strtolower($data->getInvitationEmails());
+//        $email = strtolower($data->getTransientInvitationEmails());
 
         $safeLabel = htmlspecialchars(
             "{$address1}, {$data->getInvitationAddress()->getPostcode()}",
@@ -22,10 +22,11 @@ class ImportDvlaReviewDataType extends AbstractImportReviewDataType
         $safeRegMark = htmlspecialchars(
             $regMark->getFormattedRegistrationMark(),
             ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $safeEmail = htmlspecialchars(
-            $email,
-            ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $emailLabel = $email ? " <i>($safeEmail)</i>" : "";
+//        $safeEmail = htmlspecialchars(
+//            $email,
+//            ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+//        $emailLabel = $email ? " <i>($safeEmail)</i>" : "";
+        $emailLabel = ($data->getTransientNotificationInterception() ? '<strong class="govuk-tag">LCNI</strong>' : '');
         return "<b>{$safeRegMark}</b> {$safeLabel}{$emailLabel}";
     }
 }

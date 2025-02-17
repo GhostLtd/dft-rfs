@@ -34,7 +34,6 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('export', 'menu.domestic.export', $this->router->generate('admin_domestic_export_list'), [], []),
                 new RoleMenuItem('add-survey', 'menu.domestic.survey-add', $this->router->generate('admin_domestic_survey_add'), [], []),
                 new RoleMenuItem('driver-availability-export', 'menu.domestic.driver-availability-export', $this->router->generate('admin_domestic_driveravailabilityexport_list'), [], []),
-                new RoleMenuItem('notification-interception', 'menu.domestic.notification-interception', $this->router->generate('admin_domestic_notification_interception_list'), [], []),
             ]),
             new MenuDivider(),
 
@@ -43,7 +42,6 @@ class AdminMenu implements MenuInterface
                 new RoleMenuItem('sample-import', 'menu.international.sample-import', $this->router->generate('admin_international_sampleimport_start'), [], []),
                 new RoleMenuItem('export', 'menu.international.export', $this->router->generate('admin_international_export_list'), [], []),
                 new RoleMenuItem('add-survey', 'menu.international.survey-add', $this->router->generate('admin_international_survey_add'), [], []),
-                new RoleMenuItem('notification-interception', 'menu.international.notification-interception', $this->router->generate('admin_international_notification_interception_list'), [], []),
             ]),
             new MenuDivider(),
 
@@ -70,6 +68,7 @@ class AdminMenu implements MenuInterface
             ]),
             new MenuDivider(),
 
+            new RoleMenuItem('notification-interception', 'menu.international.notification-interception', $this->router->generate('admin_notification_interception_list'), [], []),
             new RoleMenuItem('maintenance-warnings', 'Maintenance warnings', $this->router->generate('admin_maintenance_warning_list'), [], []),
             new RoleMenuItem('user-id-lookup', 'User ID lookup', $this->router->generate('admin_user_id_lookup'), [], []),
             new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], ['ROLE_ADMIN_FORM_USER']),

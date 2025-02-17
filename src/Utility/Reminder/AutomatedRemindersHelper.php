@@ -11,6 +11,7 @@ use App\Messenger\AlphagovNotify\Email;
 use App\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
+use App\Utility\NotificationInterceptionService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
@@ -65,6 +66,7 @@ class AutomatedRemindersHelper
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
         protected PersonalisationHelper $personalisationHelper,
+        protected NotificationInterceptionService $notificationInterceptionService,
     ) {}
 
     public function sendReminders(): void
@@ -112,7 +114,7 @@ class AutomatedRemindersHelper
         $emailTemplateReference = $templateReferences[self::TYPE_EMAIL] ?? false;
         if ($emailTemplateReference)
         {
-            $invitationEmails = $survey->getArrayOfInvitationEmails();
+            $invitationEmails = $this->notificationInterceptionService->getAllEmailsForSurvey($survey);
 
             foreach($invitationEmails as $invitationEmail) {
                 $this->messageBus->dispatch(new Email(

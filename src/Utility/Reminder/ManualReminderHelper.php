@@ -13,6 +13,7 @@ use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
+use App\Utility\NotificationInterceptionService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -31,7 +32,8 @@ class ManualReminderHelper
         protected EntityManagerInterface $entityManager,
         protected MessageBusInterface    $messageBus,
         protected PersonalisationHelper  $personalisationHelper,
-        protected Security               $security
+        protected Security               $security,
+        protected NotificationInterceptionService $notificationInterceptionService,
     ) {}
 
     public function sendManualReminder(SurveyManualReminderInterface $survey): void
@@ -146,7 +148,7 @@ class ManualReminderHelper
         if ($recipients) {
             $recipients = [$recipients];
         } else {
-            $recipients = $survey->getArrayOfInvitationEmails();
+            $recipients = $this->notificationInterceptionService->getAllEmailsForSurvey($survey);
         }
 
         if (empty($recipients)) {

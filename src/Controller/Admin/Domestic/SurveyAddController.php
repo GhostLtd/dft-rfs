@@ -7,7 +7,6 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Embeddable\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
 use App\Repository\Domestic\SurveyRepository;
-use App\Utility\NotificationInterceptionService;
 use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use DateInterval;
@@ -27,7 +26,7 @@ class SurveyAddController extends AbstractController
 
     #[Route(path: '/csrgt/survey-add/', name: SurveyController::ADD_ROUTE)]
     #[Route(path: '/csrgt/survey-reissue/{originalSurveyId}', name: 'admin_domestic_survey_reissue')]
-    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception, string $originalSurveyId = null): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, string $originalSurveyId = null): Response
     {
         if ($originalSurveyId) {
             $originalSurvey = $this->surveyRepository->find($originalSurveyId);
@@ -37,10 +36,6 @@ class SurveyAddController extends AbstractController
             $survey = null;
         }
         $isReissue = !empty($survey);
-
-        if ($isReissue) {
-            $notificationInterception->checkAndInterceptSurvey($survey);
-        }
 
         $form = $this->createForm(AddSurveyType::class, $survey, ['is_reissue' => $isReissue]);
 
@@ -53,9 +48,6 @@ class SurveyAddController extends AbstractController
                 if (!$survey instanceof Survey) {
                     throw new BadRequestHttpException();
                 }
-
-                // We did this in the GET, but we need to do it again in case it was cleared, or it's not a reissue
-                $notificationInterception->checkAndInterceptSurvey($survey);
 
                 $surveyPeriodEnd = clone $survey->getSurveyPeriodStart();
                 $surveyPeriodEnd->add(new DateInterval('P6D'));

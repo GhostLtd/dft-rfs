@@ -24,7 +24,7 @@ abstract class AbstractImportReviewDataType extends AbstractType
                 $choiceOptions[$k] = [
                     'label_html' => true,
                     // show the surveys without emails at the top of the list
-                    'priority' => $options['surveys'][$v]->getInvitationEmails() ? 5 : 10,
+                    'priority' => $options['surveys'][$v]->getTransientNotificationInterception() ? 5 : 10,
                 ];
             }
 

@@ -4,66 +4,51 @@ namespace App\Utility;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\LCNI\NotificationInterceptionAdvancedInterface;
-use App\Entity\LCNI\NotificationInterceptionInterface;
+use App\Entity\NotificationInterception;
 use App\Entity\SurveyInterface;
-use App\Repository\Domestic\NotificationInterceptionRepository as DomesticNotificationInterceptionRepository;
-use App\Repository\International\NotificationInterceptionRepository as InternationalNotificationInterceptionRepository;
-use App\Repository\NotificationInterceptionRepositoryInterface;
-use Doctrine\ORM\PersistentCollection;
+use App\Entity\SurveyManualReminderInterface;
+use App\Entity\SurveyReminderInterface;
+use App\Repository\NotificationInterceptionRepository;
 
 class NotificationInterceptionService
 {
-    /** @var array|NotificationInterceptionRepositoryInterface[]  */
-    private array $repositories;
+    public function __construct(
+        protected NotificationInterceptionRepository $notificationInterceptionRepository
+    ) {}
 
-    /** @var array | PersistentCollection */
-    private $interceptions;
-
-    public function __construct(DomesticNotificationInterceptionRepository $domesticRepository, InternationalNotificationInterceptionRepository $internationalRepository)
+    public function checkAndInterceptSurvey(SurveyInterface|SurveyReminderInterface $survey): SurveyInterface|SurveyReminderInterface
     {
-        $this->repositories = [
-            DomesticSurvey::class => $domesticRepository,
-            InternationalSurvey::class => $internationalRepository,
-        ];
-    }
-
-    protected function getRepositoryByNotificationInterception(NotificationInterceptionInterface $notificationInterception): NotificationInterceptionRepositoryInterface
-    {
-        foreach ($this->repositories as $repository) {
-            if ($repository->getClassName() === $notificationInterception::class) {
-                return $repository;
-            }
-        }
-        throw new \RuntimeException("unhandled notification interception type");
-    }
-
-    public function checkAndInterceptSurvey(SurveyInterface $survey): SurveyInterface
-    {
-        if ($survey->hasValidInvitationEmails()) {
-            return $survey;
-        }
         if (!$survey->getInvitationAddress()) {
             return $survey;
         }
 
-        if ($interception = $this->findInterception($survey)) {
-            $survey->setInvitationEmails($interception->getEmails());
-        }
+        $survey->setTransientNotificationInterception($this->findInterception($survey));
 
         return $survey;
     }
 
-    public function getNonUniqueCompanyNames(NotificationInterceptionAdvancedInterface $notificationInterception): array
-    {
-        return $this->getRepositoryByNotificationInterception($notificationInterception)->findByAllNames(
-            $notificationInterception->getId(),
-            [$notificationInterception->getPrimaryName(), ...array_map(fn($n) => $n->getName(), $notificationInterception->getAdditionalNames()->toArray())]
-        );
+    public function getAllEmailsForSurvey(
+        SurveyInterface|SurveyReminderInterface|SurveyManualReminderInterface $survey
+    ): array {
+        $this->checkAndInterceptSurvey($survey);
+        $emails = $survey->getArrayOfInvitationEmails();
+        $interceptionEmails = $survey->getTransientNotificationInterception()?->getAggregatedEmailsArray(get_class($survey));
+        foreach ($interceptionEmails ?? [] as $email) {
+            $emails[] = $email;
+        }
+        return $emails;
     }
 
-    protected function findInterception(SurveyInterface $survey): ?NotificationInterceptionInterface
+    protected function findInterception(SurveyInterface|SurveyReminderInterface $survey): ?NotificationInterception
     {
-        return $this->repositories[$survey::class]->findOneBySurvey($survey);
+        $businessName = match(get_class($survey)) {
+            DomesticSurvey::class => $survey->getInvitationAddress()->getLine1(),
+            InternationalSurvey::class => $survey->getCompany()->getBusinessName(),
+        };
+        if (!$businessName) {
+            return null;
+        }
+
+        return $this->notificationInterceptionRepository->findOneByBusinessName($businessName);
     }
 }

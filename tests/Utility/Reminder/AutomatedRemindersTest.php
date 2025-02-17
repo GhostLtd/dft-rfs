@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
+use App\Utility\NotificationInterceptionService;
 use App\Utility\Reminder\AutomatedRemindersHelper;
 use App\Utility\Reminder\DisabledRemindersHelper;
 use Doctrine\ORM\EntityManager;
@@ -45,7 +46,7 @@ class AutomatedRemindersTest extends KernelTestCase
 
         $reflClass = new \ReflectionClass($automatedRemindersHelperMock);
         $reflMethod = $reflClass->getMethod('getSurveysForReminding');
-        $reflMethod->setAccessible(true);
+//        $reflMethod->setAccessible(true);
 
         $reminderGroups = $reflMethod->invoke($automatedRemindersHelperMock);
 
@@ -84,6 +85,7 @@ class AutomatedRemindersTest extends KernelTestCase
                 $this->createStub(Logger::class),
                 $this->createStub(MessageBus::class),
                 $this->createStub(PersonalisationHelper::class),
+                $this->createStub(NotificationInterceptionService::class),
             ])
             ->onlyMethods($methods)
             ->getMock();

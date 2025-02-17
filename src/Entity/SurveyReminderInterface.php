@@ -21,4 +21,8 @@ interface SurveyReminderInterface
     public function getInvitationAddress(): ?LongAddress;
     public function getArrayOfInvitationEmails(): array;
     public function hasValidInvitationEmails(): bool;
+
+    public function getTransientNotificationInterception(): ?NotificationInterception;
+    public function setTransientNotificationInterception(?NotificationInterception $transientNotificationInterception): self;
+
 }

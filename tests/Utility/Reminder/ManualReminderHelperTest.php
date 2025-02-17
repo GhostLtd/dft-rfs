@@ -11,11 +11,12 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\International\SurveyResponse as InternationalResponse;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
+use App\Utility\NotificationInterceptionService;
 use App\Utility\Reminder\ManualReminderHelper;
 use App\Utility\Reminder\UnavailabilityReason;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,13 +39,18 @@ class ManualReminderHelperTest extends KernelTestCase
         $messageBusMock = $this->createMock(MessageBusInterface::class);
         $personalisationHelperMock = $this->createMock(PersonalisationHelper::class);
         $securityMock = $this->createMock(Security::class);
+        $notificationInterceptionServiceMock = $this->createMock(NotificationInterceptionService::class);
+        $notificationInterceptionServiceMock
+            ->method('getAllEmailsForSurvey')
+            ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
 
         $this->manualReminderHelper = new ManualReminderHelper(
             $this->auditLogRepositoryMock,
             $entityManagerMock,
             $messageBusMock,
             $personalisationHelperMock,
-            $securityMock
+            $securityMock,
+            $notificationInterceptionServiceMock
         );
     }
 
@@ -74,7 +80,7 @@ class ManualReminderHelperTest extends KernelTestCase
     /**
      * @dataProvider dataCanShowManualReminderButton
      */
-    public function testCanShowManualReminderButton(SurveyInterface $survey, bool $expectedResult): void
+    public function testCanShowManualReminderButton(SurveyManualReminderInterface $survey, bool $expectedResult): void
     {
         $this->assertEquals($expectedResult, $this->manualReminderHelper->canShowManualReminderButton($survey));
     }
@@ -129,7 +135,7 @@ class ManualReminderHelperTest extends KernelTestCase
     /**
      * @dataProvider dataGetRecipientEmails
      */
-    public function testGetRecipientEmails(SurveyInterface $survey, ?array $expectedResult): void
+    public function testGetRecipientEmails(SurveyManualReminderInterface $survey, ?array $expectedResult): void
     {
         $this->assertEquals($expectedResult, $this->manualReminderHelper->getRecipientEmails($survey));
     }
@@ -185,34 +191,39 @@ class ManualReminderHelperTest extends KernelTestCase
     {
         $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): DomesticSurvey =>
         (new DomesticSurvey())
-            ->setId('abc-123')
-            ->setState($state)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate($latestManualReminderDate)
-            ->setInvitationEmails($invitationEmails)
             ->setResponse(
                 (new DomesticResponse())
                     ->setContactEmail($contactEmail)
-            );
+            )
+            ->setId('abc-123')
+            ->setState($state)
+            ->setInvitationSentDate(null)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate($latestManualReminderDate)
+            ->setInvitationEmails($invitationEmails)
+;
 
         $internationalSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): InternationalSurvey =>
         (new InternationalSurvey())
-            ->setId('abc-123')
-            ->setState($state)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate($latestManualReminderDate)
-            ->setInvitationEmails($invitationEmails)
             ->setResponse(
                 (new InternationalResponse())
                     ->setContactEmail($contactEmail)
-            );
+            )            ->setId('abc-123')
+            ->setState($state)
+            ->setInvitationSentDate(null)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate($latestManualReminderDate)
+            ->setInvitationEmails($invitationEmails)
+            ;
 
         $preEnquiry = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): PreEnquiry =>
         (new PreEnquiry())
+            ->setResponse(
+                (new PreEnquiryResponse())
+                    ->setContactEmail($contactEmail)
+            )
             ->setId('abc-123')
             ->setState($state)
             ->setInvitationSentDate(null)
@@ -220,10 +231,7 @@ class ManualReminderHelperTest extends KernelTestCase
             ->setSecondReminderSentDate(null)
             ->setLatestManualReminderSentDate($latestManualReminderDate)
             ->setInvitationEmails($invitationEmails)
-            ->setResponse(
-                (new PreEnquiryResponse())
-                    ->setContactEmail($contactEmail)
-            );
+            ;
 
         $sixDaysAgo = (new \DateTime())->modify('-6 days');
         $eightDaysAgo = (new \DateTime())->modify('-8 days');
@@ -263,7 +271,7 @@ class ManualReminderHelperTest extends KernelTestCase
     /**
      * @dataProvider dataGetReasonWhyCannotSendManualReminder
      */
-    public function testGetReasonWhyCannotSendManualReminder(SurveyInterface $survey, ?string $expectedResult): void
+    public function testGetReasonWhyCannotSendManualReminder(SurveyManualReminderInterface $survey, ?string $expectedResult): void
     {
         $this->auditLogRepositoryMock
             ->method('getLogs')
@@ -349,7 +357,7 @@ class ManualReminderHelperTest extends KernelTestCase
     /**
      * @dataProvider dataGetMostRecentEventDate
      */
-    public function testGetMostRecentEventDate(SurveyInterface $survey, array $logs, ?\DateTime $expectedDate, ?string $expectedEventType): void
+    public function testGetMostRecentEventDate(SurveyManualReminderInterface $survey, array $logs, ?\DateTime $expectedDate, ?string $expectedEventType): void
     {
         $this->auditLogRepositoryMock
             ->method('getLogs')

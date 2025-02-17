@@ -39,7 +39,7 @@ class DeleteNotificationInterceptionConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction($formData): void
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

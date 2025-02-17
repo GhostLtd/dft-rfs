@@ -35,7 +35,7 @@ class ImportSampleReviewDataType extends AbstractImportReviewDataType
         $safeLabel = htmlspecialchars(
             "{$address1}, {$data->getInvitationAddress()->getPostcode()} ({$data->getReferenceNumber()})",
             ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}" . ($data->getInvitationEmails() ? '<strong class="govuk-tag">LCNI</strong>' : '');
+        return "<b>{$startDate} ({$diff}d)</b> {$safeLabel}" . ($data->getTransientNotificationInterception() ? '<strong class="govuk-tag">LCNI</strong>' : '');
     }
 
     protected function preEnquiryChoiceLabel($data): string

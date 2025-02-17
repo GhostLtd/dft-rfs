@@ -2,11 +2,12 @@
 
 namespace App\Tests\Utility\Domestic;
 
-use App\Entity\Domestic\NotificationInterception as DomesticIntercept;
+use App\Entity\NotificationInterception;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\Embeddable\LongAddress;
 use App\Entity\SurveyStateInterface;
 use App\Tests\Utility\AbstractNotificationInterceptionServiceTest;
+use App\Utility\EmailHelper;
 
 class NotificationInterceptionServiceTest extends AbstractNotificationInterceptionServiceTest
 {
@@ -14,25 +15,25 @@ class NotificationInterceptionServiceTest extends AbstractNotificationIntercepti
     {
         return [
             [
-                true, // Matches and no existing email
+                // Matches and no existing email
                 null,
                 '123 Test Road',
                 'mango@example.com,banana@example.com'
             ],
             [
-                false, // No match
+                // No match
                 null,
                 '456 Test Road',
                 'mango@example.com,banana@example.com'
             ],
             [
-                false, // Match but existing email
+                // Match but existing email
                 'carrot@example.com',
                 '123 Test Road',
                 'mango@example.com,banana@example.com'
             ],
             [
-                false, // No match
+                // No match
                 'carrot@example.com',
                 '456 Test Road',
                 'mango@example.com,banana@example.com'
@@ -43,22 +44,23 @@ class NotificationInterceptionServiceTest extends AbstractNotificationIntercepti
     /**
      * @dataProvider dataDomesticIntercept
      */
-    public function testDomesticIntercept(bool $expectedToChange, ?string $surveyEmails, string $interceptAddressLine, string $interceptEmails): void
+    public function testDomesticIntercept(?string $surveyEmails, string $interceptAddressLine, string $interceptEmails): void
     {
         $survey = $this->addDomesticSurvey('123 Test Road', $surveyEmails);
         $this->addDomesticIntercept($interceptAddressLine, $interceptEmails);
         $this->entityManager->flush();
 
-        $this->interceptService->checkAndInterceptSurvey($survey);
-
-        $expectedEmails = $expectedToChange ? $interceptEmails : $surveyEmails;
-        $this->assertEquals($expectedEmails, $survey->getInvitationEmails());
+        $actualEmails = EmailHelper::convertArrayListToString($this->interceptService->getAllEmailsForSurvey($survey));
+        $expectedEmails = $interceptAddressLine === $survey->getInvitationAddress()->getLine1()
+            ? EmailHelper::convertArrayListToString([$surveyEmails, $interceptEmails])
+            : $surveyEmails;
+        $this->assertEquals($expectedEmails, $actualEmails);
     }
 
     protected function addDomesticIntercept(string $addressLine, string $emails): void {
-        $intercept = (new DomesticIntercept())
-            ->setAddressLine($addressLine)
-            ->setEmails($emails);
+        $intercept = (new NotificationInterception())
+            ->addName($addressLine)
+            ->setCsrgtEmails($emails);
 
         $this->entityManager->persist($intercept);
     }

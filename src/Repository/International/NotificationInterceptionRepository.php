@@ -31,31 +31,10 @@ class NotificationInterceptionRepository extends ServiceEntityRepository impleme
     public function findOneBySurvey(SurveyInterface $survey): ?NotificationInterception
     {
         $query = $this->createQueryBuilder('ni')
-            ->leftJoin('ni.additionalNames', 'an')
-            ->andWhere('ni.primaryName = :name OR an.name = :name')
+            ->leftJoin('ni.names', 'an')
+            ->andWhere('an.name = :name')
             ->setParameter('name', $survey->getCompany()->getBusinessName());
 
         return $query->getQuery()->getOneOrNullResult();
-    }
-
-    #[\Override]
-    public function findByAllNames($excludeId, array $names = []): array
-    {
-        $others = [];
-        foreach ($names as $name)
-        {
-            $query = $this->createQueryBuilder('ni')
-                ->leftJoin('ni.additionalNames', 'an')
-                ->andWhere('ni.primaryName = :name OR an.name = :name')
-                ->setParameter('name', $name);
-            if (!is_null($excludeId)) {
-                $query
-                    ->andWhere('ni.id <> :exId')
-                    ->setParameter('exId', $excludeId);
-            }
-            $result = $query->getQuery()->execute();
-            if (count($result) > 0) $others[] = $name;
-        }
-        return array_unique($others);
     }
 }

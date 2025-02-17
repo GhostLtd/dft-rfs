@@ -3,7 +3,7 @@
 {% set translation_prefix = "notification-interception.delete" %}
 {% set headingDomain = 'admin' %}
 {% set headingParams = {
-    addressLine: subject.addressLine ?? subject.primaryName
+    addressLine: subject.names.first.name
 } %}
 {% trans_default_domain 'admin' %}
 

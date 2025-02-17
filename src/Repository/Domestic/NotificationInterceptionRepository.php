@@ -14,22 +14,20 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method NotificationInterception[]    findAll()
  * @method NotificationInterception[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NotificationInterceptionRepository extends ServiceEntityRepository implements NotificationInterceptionRepositoryInterface
+class NotificationInterceptionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, NotificationInterception::class);
     }
 
-    #[\Override]
     public function findOneBySurvey(SurveyInterface $survey): ?NotificationInterception
     {
-        return $this->findOneBy(['addressLine' => $survey->getInvitationAddress()->getLine1()]);
-    }
+        $query = $this->createQueryBuilder('ni')
+            ->leftJoin('ni.names', 'an')
+            ->andWhere('an.name = :name')
+            ->setParameter('name', $survey->getInvitationAddress()->getLine1());
 
-    #[\Override]
-    public function findByAllNames($excludeId, array $names = []): array
-    {
-        return [];
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

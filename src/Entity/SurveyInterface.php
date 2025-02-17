@@ -36,4 +36,8 @@ interface SurveyInterface
     // These two methods are not in the trait as implementation differs per Survey
     public function getPasscodeUser(): ?PasscodeUser;
     public function setPasscodeUser(?PasscodeUser $passcodeUser): self;
+
+
+    public function getTransientNotificationInterception(): ?NotificationInterception;
+    public function setTransientNotificationInterception(?NotificationInterception $transientNotificationInterception): self;
 }

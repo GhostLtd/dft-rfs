@@ -3,15 +3,14 @@
 namespace App\Entity;
 
 use App\Entity\Embeddable\LongAddress;
+use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
+use App\Utility\EmailHelper;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-// PHPstorm indicates this isn't needed, but it is
-// PHPstorm indicates this isn't needed, but it is
 
 trait SurveyTrait
 {
@@ -42,6 +41,9 @@ trait SurveyTrait
     #[AppAssert\CommaSeparatedEmails(message: "common.email.list-contains-invalid", groups: ["add_survey", "import_survey"])]
     #[ORM\Column(type: Types::STRING, length: 1024, nullable: true)]
     private ?string $invitationEmails = null;
+
+    // Non-persisted property, used during DVLA/DVSA import, and invite/reminder sending
+    private ?NotificationInterception $transientNotificationInterception = null;
 
     #[Assert\Valid(groups: ['add_srvuey', 'import_survey', 'notify_api'])]
     #[AppAssert\ValidAddress(groups: ["add_survey", "import_survey"], validatePostcode: true, allowBlank: true)]
@@ -127,9 +129,23 @@ trait SurveyTrait
         return $this->invitationEmails ?? null;
     }
 
+    /**
+     * @return string|null
+     */
     public function setInvitationEmails(?string $invitationEmails): self
     {
         $this->invitationEmails = $invitationEmails;
+        return $this;
+    }
+
+    public function getTransientNotificationInterception(): ?NotificationInterception
+    {
+        return $this->transientNotificationInterception;
+    }
+
+    public function setTransientNotificationInterception(?NotificationInterception $transientNotificationInterception): self
+    {
+        $this->transientNotificationInterception = $transientNotificationInterception;
         return $this;
     }
 
@@ -189,14 +205,7 @@ trait SurveyTrait
      */
     public function getArrayOfInvitationEmails(): array
     {
-        if (!$this->invitationEmails) {
-            return [];
-        }
-
-        $emails = explode(',', $this->invitationEmails);
-        $emails = array_map('trim', $emails);
-        $emails = array_filter($emails, fn(string $email) => $email !== '');
-        return array_values(array_unique($emails));
+        return EmailHelper::convertStringListToArray($this->invitationEmails);
     }
 
     public function hasValidInvitationEmails(): bool

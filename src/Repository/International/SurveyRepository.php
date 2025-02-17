@@ -93,38 +93,6 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyDeletion
             ->execute();
     }
 
-    /**
-     * @return Survey[]
-     */
-    public function findSurveysMatchingLcniNamesAndEmails(array $businessNames, ?string $emails): array
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->select('s, c')
-            ->join('s.company', 'c')
-            ->where('c.businessName IN (:names)')
-            ->andWhere('s.state IN (:states)')
-            ->setParameter('names', $businessNames)
-            ->setParameter('states', [
-                SurveyStateInterface::STATE_NEW,
-                SurveyStateInterface::STATE_INVITATION_FAILED,
-                SurveyStateInterface::STATE_INVITATION_PENDING,
-                SurveyStateInterface::STATE_INVITATION_SENT,
-                SurveyStateInterface::STATE_IN_PROGRESS,
-            ]);
-
-        if ($emails === null) {
-            $qb->andWhere('s.invitationEmails IS NULL');
-        } else {
-            $qb
-                ->andWhere('s.invitationEmails = :emails')
-                ->setParameter('emails', $emails);
-        }
-
-        return $qb
-            ->getQuery()
-            ->execute();
-    }
-
     public function getSurveysForDeletion(\DateTime $before): array
     {
         return $this->createQueryBuilder('survey')

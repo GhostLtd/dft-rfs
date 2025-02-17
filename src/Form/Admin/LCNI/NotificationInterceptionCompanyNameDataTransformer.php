@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Form\Admin\InternationalSurvey\DataMapper;
+namespace App\Form\Admin\LCNI;
 
-use App\Entity\International\NotificationInterceptionCompanyName;
+use App\Entity\NotificationInterceptionCompanyName;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -10,12 +10,8 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
 {
     private ?Collection $transformValue = null;
 
-    /**
-     * @param ?Collection $value
-     * @return mixed
-     */
     #[\Override]
-    public function transform($value)
+    public function transform($value): ?string
     {
         $this->transformValue = $value;
         return $value
@@ -23,11 +19,8 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
             : null;
     }
 
-    /**
-     * @return mixed
-     */
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): array
     {
         $data = explode("\r\n", $value);
         $data = array_map(fn($d) => trim($d), $data);

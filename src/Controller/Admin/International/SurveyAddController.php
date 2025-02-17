@@ -4,7 +4,6 @@ namespace App\Controller\Admin\International;
 
 use App\Entity\International\Survey;
 use App\Form\Admin\InternationalSurvey\AddSurveyType;
-use App\Utility\NotificationInterceptionService;
 use App\Utility\PasscodeFormatter;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,8 +16,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class SurveyAddController extends AbstractController
 {
     #[Route(path: '/irhs/survey-add/', name: SurveyController::ADD_ROUTE)]
-    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, NotificationInterceptionService $notificationInterception): Response
-    {
+    public function add(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PasscodeGenerator $passcodeGenerator
+    ): Response {
         $form = $this->createForm(AddSurveyType::class);
 
         if ($request->getMethod() === Request::METHOD_POST) {
@@ -32,8 +34,6 @@ class SurveyAddController extends AbstractController
             if ($form->isValid()) {
                 /** @var Survey $survey */
                 $survey = $form->getData();
-
-                $notificationInterception->checkAndInterceptSurvey($survey);
 
                 $entityManager->persist($survey->getCompany());
                 $entityManager->persist($survey);
