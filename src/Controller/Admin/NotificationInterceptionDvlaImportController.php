@@ -75,9 +75,6 @@ class NotificationInterceptionDvlaImportController extends AbstractController
         }
 
         $sheet = $spreadsheet->getActiveSheet();
-        if (count($sheet->getColumnDimensions()) !== 2) {
-            throw new \RuntimeException('expecting 2 columns');
-        }
 
         $expectedRowTitles = $this->getRowValues($sheet->getRowIterator()->current());
         if ($expectedRowTitles !== ['A' => 'Operator Name', 'B' => 'Email address']) {
