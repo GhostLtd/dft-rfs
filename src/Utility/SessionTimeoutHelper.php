@@ -6,7 +6,7 @@ use DateTime;
 
 class SessionTimeoutHelper
 {
-    public const DATE_FORMAT = 'Y-m-d H:i:s';
+    public const DATE_FORMAT = 'c';
 
     public function __construct(protected int $warningThreshold = 300)
     {

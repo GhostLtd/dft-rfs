@@ -24,6 +24,9 @@ class MaintenanceWarningType extends AbstractType
                 'help' => null,
                 'expanded' => false,
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

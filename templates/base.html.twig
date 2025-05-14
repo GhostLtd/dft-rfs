@@ -3,12 +3,14 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import header as govukHeader, footer as govukFooter -%}
 
 {% block head -%}
-    {{ encore_entry_link_tags('app') }}
+    {{- encore_entry_link_tags('app', attributes={
+        nonce: csp_nonce('style')
+    }) -}}
     {% include 'includes/smartlook-tracking.html.twig' %}
 {%- endblock %}
 
 {% block header %}
-    <style nonce="{{ csp_inline_script_helper.nonce('env-label') }}">
+    <style nonce="{{ csp_nonce('style') }}">
         #envLabel {
             {% if env_label_colour ?? false %}color: {{ env_label_colour }};{% endif %}
             {% if env_label_background ?? false %}background: {{ env_label_background }};{% endif %}
@@ -25,10 +27,9 @@
         serviceName: ('service.name' | trans),
         serviceUrl: '/',
         navigation: ((is_granted('ROLE_SURVEY_USER') or is_granted('ROLE_RORO_USER'))
-        ? [{href: logout_path(), text: 'common.logout' | trans}]
-        : false
+            ? [{href: logout_path(), text: 'common.logout' | trans}]
+            : false
         ),
-        useTudorCrown: true
     }) }}
 {% endblock %}
 
@@ -67,7 +68,9 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    {{ encore_entry_script_tags('app') }}
+    {{- encore_entry_script_tags('app', attributes={
+        nonce: csp_nonce('script')
+    }) -}}
 {% endblock %}
 
 {% block footer %}
@@ -75,6 +78,6 @@
         meta: {items: [
             {href: path('app_home_accessibilitystatement'), text: 'Accessibility'},
             {href: path('app_home_privacystatement'), text: 'Privacy'},
-        ]}
+        ]},
     }) }}
 {% endblock %}

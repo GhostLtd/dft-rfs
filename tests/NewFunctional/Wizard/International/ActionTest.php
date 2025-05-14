@@ -22,7 +22,7 @@ class ActionTest extends AbstractPasscodeWizardTest
         $this->clickLinkContaining('View'); // View trip
         $this->clickLinkContaining('Add loading action');
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/place#', 'place_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/place#', 'place_buttons_continue', [
             new FormTestCase([
                 'place[loading]' => 'load',
                 'place[place][name]' => 'Whoopie',
@@ -30,7 +30,7 @@ class ActionTest extends AbstractPasscodeWizardTest
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/goods-description#', 'goods_description_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/goods-description#', 'goods_description_buttons_continue', [
             new FormTestCase([
                 'goods_description[goodsDescription]' => 'other-goods',
                 'goods_description[goodsDescriptionOther]' => 'Fruits and vegetables',
@@ -38,14 +38,14 @@ class ActionTest extends AbstractPasscodeWizardTest
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/weight-loaded#', 'goods_loaded_weight_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/weight-loaded#', 'goods_loaded_weight_buttons_continue', [
             new FormTestCase([
                 'goods_loaded_weight[weightOfGoods]' => '1000',
 
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/hazardous-goods#', 'hazardous_goods_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/hazardous-goods#', 'hazardous_goods_buttons_continue', [
             new FormTestCase([
                 'hazardous_goods[isHazardousGoods]' => 'yes',
                 'hazardous_goods[hazardousGoodsCode]' => '4.1',
@@ -53,7 +53,7 @@ class ActionTest extends AbstractPasscodeWizardTest
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/cargo-type#', 'cargo_type_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/cargo-type#', 'cargo_type_buttons_continue', [
             new FormTestCase([
                 'cargo_type[cargoTypeCode]' => 'PL',
             ]),
@@ -90,7 +90,7 @@ class ActionTest extends AbstractPasscodeWizardTest
         $this->clickLinkContaining('View'); // View trip
         $this->clickLinkContaining('Add loading or unloading action');
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/place#', 'place_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/place#', 'place_buttons_continue', [
             new FormTestCase([
                 'place[loading]' => 'unload',
                 'place[place][name]' => 'Ogre',
@@ -99,13 +99,13 @@ class ActionTest extends AbstractPasscodeWizardTest
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/consignment-unloaded#', 'loading_place_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/consignment-unloaded#', 'loading_place_buttons_continue', [
             new FormTestCase([
                 'loading_place[loadingAction]' => 'action-1',
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/weight-unloaded#', 'goods_unloaded_weight_continue', [
+        $this->formTestAction('#^/international-survey/trips/[^/]+/add-action/weight-unloaded#', 'goods_unloaded_weight_buttons_continue', [
             new FormTestCase([
                 'goods_unloaded_weight[weightUnloadedAll]' => 'no',
                 'goods_unloaded_weight[weightOfGoods]' => '10000',
@@ -137,7 +137,7 @@ class ActionTest extends AbstractPasscodeWizardTest
     {
         [$tripDashboardPath, $addAnotherPath] = $this->initialiseAddAnotherAndGetPaths();
 
-        $this->formTestAction($addAnotherPath, 'add_another_continue', [
+        $this->formTestAction($addAnotherPath, 'add_another_buttons_continue', [
             new FormTestCase([
                 'add_another[confirm]' => 'no',
             ]),
@@ -150,7 +150,7 @@ class ActionTest extends AbstractPasscodeWizardTest
     {
         [$_, $addAnotherPath] = $this->initialiseAddAnotherAndGetPaths();
 
-        $this->formTestAction($addAnotherPath, 'add_another_continue', [
+        $this->formTestAction($addAnotherPath, 'add_another_buttons_continue', [
             new FormTestCase([
                 'add_another[confirm]' => 'yes',
             ]),

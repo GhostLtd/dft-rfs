@@ -98,7 +98,7 @@ class ActionController extends AbstractController
                 "#actions-{$action->getTrip()->getId()}"
             );
 
-            $cancel = $form->get('cancel');
+            $cancel = $form->get('buttons')->get('cancel');
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return $redirectResponse;
             };

@@ -142,6 +142,9 @@ class TripType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--m govuk-label--underline'],
                 'attr' => ['class' => 'govuk-!-margin-bottom-9'],
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

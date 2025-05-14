@@ -4,7 +4,7 @@ import * as gds from 'govuk-frontend';
 // import accessibleAutocomplete from 'accessible-autocomplete';
 import radiosOverride from "./radios";
 
-import '../../vendor/ghost/govuk-frontend-bundle/assets/css/ghost-frontend.scss';
+import '../../vendor/ghost/govuk-frontend-bundle/assets/scss/ghost-frontend.scss';
 import '../styles/common.scss';
 // import 'accessible-autocomplete/dist/accessible-autocomplete.min.css';
 import doubleSubmitPrevention from "./double-submit-prevention";

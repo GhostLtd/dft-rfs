@@ -143,6 +143,9 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'expanded' => false,
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

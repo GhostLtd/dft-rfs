@@ -12,7 +12,7 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(0, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/origin-and-destination$#', 'origin_and_destination_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/origin-and-destination$#', 'origin_and_destination_buttons_continue', [
                 new FormTestCase([
                     'origin_and_destination[origin]' => 'Felpham',
                     'origin_and_destination[destination]' => 'Gosport',
@@ -29,7 +29,7 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(1, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/dates$#', 'dates_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/dates$#', 'dates_buttons_continue', [
                 new FormTestCase([
                     'dates[outboundDate][day]' => '2',
                     'dates[outboundDate][month]' => '10',
@@ -49,7 +49,7 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(2, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/outbound-ports$#', 'outbound_ports_and_cargo_state_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/outbound-ports$#', 'outbound_ports_and_cargo_state_buttons_continue', [
                 new FormTestCase([
                     'outbound_ports_and_cargo_state[ports]' => '3',
                     'outbound_ports_and_cargo_state[wasAtCapacity]' => 'yes',
@@ -69,7 +69,7 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(3, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/return-ports$#', 'return_ports_and_cargo_state_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/return-ports$#', 'return_ports_and_cargo_state_buttons_continue', [
                 new FormTestCase([
                     'return_ports_and_cargo_state[ports]' => '1',
                     'return_ports_and_cargo_state[wasAtCapacity]' => 'no',
@@ -90,21 +90,21 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(4, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/swapped-trailer$#', 'swapped_trailer_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/swapped-trailer$#', 'swapped_trailer_buttons_continue', [
                 new FormTestCase([
                     'swapped_trailer[isSwappedTrailer]' => 'yes',
                     'swapped_trailer[axleConfiguration]' => 332,
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/body-type$#', 'changed_body_type_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/body-type$#', 'changed_body_type_buttons_continue', [
                 new FormTestCase([
                     'changed_body_type[isChangedBodyType]' => 'yes',
                     'changed_body_type[bodyType]' => 'temperature-controlled',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/vehicle-weights$#', 'vehicle_weight_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/vehicle-weights$#', 'vehicle_weight_buttons_continue', [
                 new FormTestCase([
                     'vehicle_weight[grossWeight]' => 25000,
                     'vehicle_weight[carryingCapacity]' => 22000,
@@ -125,7 +125,7 @@ class TripChangeTest extends AbstractTripTest
         $this->performChangeTest(6, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/countries-transitted#', 'countries_transitted_continue', [
+            $this->formTestAction('#^\/international-survey\/trips\/[a-f0-9-]+\/edit\/countries-transitted#', 'countries_transitted_buttons_continue', [
                 new FormTestCase([
                     'countries_transitted[countriesTransitted]' => ['FR', 'DE'],
                     'countries_transitted[countriesTransittedOther]' => 'Sweden, Denmark',

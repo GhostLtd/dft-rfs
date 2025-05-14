@@ -2,6 +2,7 @@
 
 namespace App\Form\Admin;
 
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
@@ -26,6 +27,9 @@ class PortType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
             ])
+            ->add('buttons', ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',

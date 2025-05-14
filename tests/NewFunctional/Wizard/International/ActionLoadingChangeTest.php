@@ -12,7 +12,7 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 0, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/place#', 'place_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/place#', 'place_buttons_continue', [
                 new FormTestCase([
                     'place[place][name]' => 'Calais',
                     'place[place][country][country]' => 'FR',
@@ -29,7 +29,7 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 0, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/place#', 'place_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/place#', 'place_buttons_continue', [
                 new FormTestCase([
                     'place[place][name]' => 'Kingston',
                     'place[place][country][country]' => 'other',
@@ -48,13 +48,13 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 1, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/goods-description#', 'goods_description_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/goods-description#', 'goods_description_buttons_continue', [
                 new FormTestCase([
                     'goods_description[goodsDescription]' => 'packaging',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/weight-loaded#', 'goods_loaded_weight_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/weight-loaded#', 'goods_loaded_weight_buttons_continue', [
                 new FormTestCase([
                     'goods_loaded_weight[weightOfGoods]' => '19019',
                 ]),
@@ -71,14 +71,14 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 1, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/goods-description#', 'goods_description_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/goods-description#', 'goods_description_buttons_continue', [
                 new FormTestCase([
                     'goods_description[goodsDescription]' => 'other-goods',
                     'goods_description[goodsDescriptionOther]' => 'Bananas',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/weight-loaded#', 'goods_loaded_weight_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/weight-loaded#', 'goods_loaded_weight_buttons_continue', [
                 new FormTestCase([
                     'goods_loaded_weight[weightOfGoods]' => '20202',
                 ]),
@@ -95,13 +95,13 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 3, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/hazardous-goods#', 'hazardous_goods_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/hazardous-goods#', 'hazardous_goods_buttons_continue', [
                 new FormTestCase([
                     'hazardous_goods[isHazardousGoods]' => 'no',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/cargo-type#', 'cargo_type_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/cargo-type#', 'cargo_type_buttons_continue', [
                 new FormTestCase([
                     'cargo_type[cargoTypeCode]' => 'LFC',
                 ]),
@@ -117,14 +117,14 @@ class ActionLoadingChangeTest extends AbstractActionTest
         $this->performChangeTest(true, 3, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/hazardous-goods#', 'hazardous_goods_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/hazardous-goods#', 'hazardous_goods_buttons_continue', [
                 new FormTestCase([
                     'hazardous_goods[isHazardousGoods]' => 'yes',
                     'hazardous_goods[hazardousGoodsCode]' => '4.2',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/cargo-type#', 'cargo_type_continue', [
+            $this->formTestAction('#^\/international-survey\/actions\/[a-f0-9-]+\/edit/cargo-type#', 'cargo_type_buttons_continue', [
                 new FormTestCase([
                     'cargo_type[cargoTypeCode]' => 'OT',
                 ]),

@@ -35,7 +35,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_continue',
+            'introduction_buttons_continue',
             [
                 new FormTestCase([], ['#introduction_isActiveForPeriod']),
                 new FormTestCase([
@@ -55,7 +55,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_continue',
+            'introduction_buttons_continue',
             [
                 new FormTestCase([
                     'introduction[isActiveForPeriod]' => 'true',
@@ -72,7 +72,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/vehicle-counts'),
-            'vehicle_counts_continue',
+            'vehicle_counts_buttons_continue',
             [
                 new FormTestCase([
                     "vehicle_counts[countryVehicleCounts][{$albaniaId}][vehicleCount]" => '-1',
@@ -88,7 +88,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/comments'),
-            'comments_continue',
+            'comments_buttons_continue',
             [
                 new FormTestCase([]),
             ],
@@ -120,7 +120,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_continue',
+            'introduction_buttons_continue',
             [
                 new FormTestCase([
                     'introduction[isActiveForPeriod]' => 'false',
@@ -131,7 +131,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/comments'),
-            'comments_continue',
+            'comments_buttons_continue',
             [
                 new FormTestCase([]),
             ],

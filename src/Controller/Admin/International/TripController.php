@@ -72,7 +72,7 @@ class TripController extends AbstractController
                 "#{$trip->getId()}"
             );
 
-            $cancel = $form->get('cancel');
+            $cancel = $form->get('buttons')->get('cancel');
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return $redirectResponse;
             };

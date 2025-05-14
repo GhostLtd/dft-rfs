@@ -21,7 +21,7 @@
             }) -}}
 
             {%- if showActions -%}
-            <div class="govuk-!-margin-bottom-9">
+            <div class="govuk-!-margin-bottom-9 govuk-button-group">
                 {%- set addStopRoute = constant('App\\Controller\\Admin\\Domestic\\DayStopController::ADD_DAY_AND_STOP_ROUTE') -%}
                 <a href="{{ url(addStopRoute, {surveyId: survey.id, dayNumber: dayNumber}) }}" class="govuk-button govuk-!-margin-bottom-0">
                     {{- 'common.actions.add-day-and-stop'|trans -}}

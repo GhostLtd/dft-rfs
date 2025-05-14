@@ -35,7 +35,7 @@ class OperatorUserController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
-            $cancelButton = $form->get('cancel');
+            $cancelButton = $form->get('buttons')->get('cancel');
             $redirectResponse = new RedirectResponse($this->generateUrl('admin_operators_view', ['operatorId' => $operator->getId()]) . '#users');
 
             if ($cancelButton instanceof SubmitButton && $cancelButton->isClicked()) {

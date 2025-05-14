@@ -130,7 +130,7 @@ class PortController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
-            $cancelButton = $form->get('cancel');
+            $cancelButton = $form->get('buttons')->get('cancel');
 
             $redirectPath = $this->getListPagePathForPortClass($dataClass);
             $redirectResponse = new RedirectResponse($redirectPath);

@@ -7,38 +7,38 @@
     {%- set address = survey.invitationAddress and survey.invitationAddress.filled ? survey.invitationAddress : null %}
     {{- summaryListRow({
         key: {text: 'Address', classes: indentClass},
-        value: {html: address | formatAddress(true) | default('-') | nl2br}
+        value: address | formatAddress(true) | default('-')
     }) -}}
 
     {{- summaryListRow({
             key: {text: 'Initial invitation', classes: indentClass},
-            value: _self.notificationStatus(
+            value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
                 'App\\Messenger\\AlphagovNotify\\Letter',
                 true
             )
-        )
+        )}
     }) -}}
     {{- summaryListRow({
         key: {text: 'Reminder 1', classes: indentClass},
-        value: _self.notificationStatus(
+        value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
                 'App\\Messenger\\AlphagovNotify\\Letter',
                 true
             )
-        )
+        )}
     }) -}}
     {{- summaryListRow({
         key: {text: 'Reminder 2', classes: indentClass},
-        value: _self.notificationStatus(
+        value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
                 'App\\Messenger\\AlphagovNotify\\Letter',
                 true
             )
-        )
+        )}
     }) -}}
 {{- summaryListEnd() -}}
 
@@ -50,33 +50,33 @@
 
     {{- summaryListRow({
         key: {text: 'Initial invitation', classes: indentClass},
-        value: _self.notificationStatus(
+        value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
                 'App\\Messenger\\AlphagovNotify\\Email',
                 true
             ), true
-        )
+        )}
     }) -}}
     {{- summaryListRow({
         key: {text: 'Reminder 1', classes: indentClass},
-        value: _self.notificationStatus(
+        value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
                 'App\\Messenger\\AlphagovNotify\\Email',
                 true
             ), true
-        )
+        )}
     }) -}}
     {{- summaryListRow({
         key: {text: 'Reminder 2', classes: indentClass},
-        value: _self.notificationStatus(
+        value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
                 'App\\Messenger\\AlphagovNotify\\Email',
                 true
             ), true
-        )
+        )}
     }) -}}
 {{- summaryListEnd() -}}
 
@@ -96,7 +96,7 @@
     {% for reminder in manualReminders %}
         {{- summaryListRow({
             key: {text: "Reminder #{loop.index}", classes: indentClass},
-            value: _self.notificationStatus([reminder], true)
+            value: {html: _self.notificationStatus([reminder], true)}
         }) -}}
     {% endfor %}
 {{- summaryListEnd() -}}

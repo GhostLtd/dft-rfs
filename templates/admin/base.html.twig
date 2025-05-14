@@ -16,11 +16,15 @@
 {% endblock %}
 
 {% block head -%}
-    {{ encore_entry_link_tags('admin') }}
+    {{- encore_entry_link_tags('admin', attributes={
+        nonce: csp_nonce('style')
+    }) -}}
 {%- endblock %}
 
 {% block bodyEnd %}
-    {{ encore_entry_script_tags('admin') }}
+    {{- encore_entry_script_tags('admin', attributes={
+        nonce: csp_nonce('script')
+    }) -}}
 {% endblock %}
 
 {% block footer %}

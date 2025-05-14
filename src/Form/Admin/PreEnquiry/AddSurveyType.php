@@ -51,6 +51,9 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'include_addressee' => false,
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => $options['is_resend'] ?

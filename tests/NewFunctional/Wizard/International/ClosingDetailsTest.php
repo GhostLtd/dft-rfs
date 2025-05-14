@@ -101,7 +101,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedEarlyResponse) {
             $this->formTestAction(
                 '/international-survey/closing-details/early-response',
-                'early_response_continue',
+                'early_response_buttons_continue',
                 [
                     new FormTestCase([], ['#early_response_is_correct']),
                     new FormTestCase([
@@ -114,7 +114,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedEmptySurvey) {
             $this->formTestAction(
                 '/international-survey/closing-details/empty-survey',
-                'reason_empty_survey_continue',
+                'reason_empty_survey_buttons_continue',
                 [
                     new FormTestCase([], ['#reason_empty_survey_reasonForEmptySurvey']),
                     new FormTestCase([
@@ -127,7 +127,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedLoadedButNotUnloaded) {
             $this->formTestAction(
                 '/international-survey/closing-details/loading-without-unloading',
-                'loading_without_unloading_continue',
+                'loading_without_unloading_buttons_continue',
                 [
                     new FormTestCase([], ['#loading_without_unloading_is_correct']),
                     new FormTestCase([
@@ -139,7 +139,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             '/international-survey/closing-details/confirm',
-        'form_continue', [
+        'form_buttons_continue', [
             new FormTestCase([]),
         ]);
 

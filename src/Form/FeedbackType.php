@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Feedback;
 use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
@@ -74,6 +75,8 @@ class FeedbackType extends AbstractType
             ]);
 
         $builder
+            ->add('buttons', ButtonGroupType::class)
+            ->get('buttons')
             ->add('confirm', ButtonType::class, [
                 'type' => 'submit',
                 'label' => "survey-feedback.confirm.label",

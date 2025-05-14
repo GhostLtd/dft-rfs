@@ -85,7 +85,7 @@ class RouteController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
-            $cancelButton = $form->get('cancel');
+            $cancelButton = $form->get('buttons')->get('cancel');
             $redirectResponse = $isAdd ?
                 $this->redirectToRoute('admin_routes_list') :
                 $this->redirectToRoute('admin_routes_view', ['routeId' => $route->getId()]);

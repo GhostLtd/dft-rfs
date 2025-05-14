@@ -21,6 +21,9 @@ class ConfirmApprovedActionType extends AbstractType
                 'choice_translation_domain' => 'messages',
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('confirm', Gds\ButtonType::class, array_merge($options['confirm_button_options'], [
                 'type' => 'submit',
                 'label' => "{$translationKeyPrefix}.confirm.label",

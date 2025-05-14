@@ -49,7 +49,7 @@ class DirectCloseController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $redirectResponse = new RedirectResponse($this->generateUrl('app_domesticsurvey_summary'));
 
-            $confirmButton = $form->get('confirm');
+            $confirmButton = $form->get('buttons')->get('confirm');
             if ($confirmButton instanceof SubmitButton && $confirmButton->isClicked()) {
                 $this->domesticSurveyStateMachine->apply($survey, $transition);
                 $this->entityManager->flush();

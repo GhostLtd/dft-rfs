@@ -108,7 +108,7 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
 
     protected function introPage(): void
     {
-        $this->formTestAction('/pre-enquiry/introduction', 'form_continue', [
+        $this->formTestAction('/pre-enquiry/introduction', 'form_buttons_continue', [
             new FormTestCase([]),
         ]);
     }
@@ -123,14 +123,14 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             $formData['company_name[companyName]'] = $companyName;
         }
 
-        $this->formTestAction('/pre-enquiry/company-name', 'company_name_continue', [
+        $this->formTestAction('/pre-enquiry/company-name', 'company_name_buttons_continue', [
             new FormTestCase($formData),
         ]);
     }
 
     protected function correspondenceDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_continue', [
+        $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_buttons_continue', [
             new FormTestCase([
                 'correspondence_details[contactName]' => 'Mark',
                 'correspondence_details[contactTelephone]' => '123456',
@@ -162,14 +162,14 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             $formData['correspondence_address[contactAddress][lines][postcode]'] = $postcode ?? '';
         }
 
-        $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_continue', [
+        $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
             new FormTestCase($formData),
         ]);
     }
 
     protected function vehicleAndBusinessDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/vehicle-questions', 'vehicle_questions_continue', [
+        $this->formTestAction('/pre-enquiry/vehicle-questions', 'vehicle_questions_buttons_continue', [
             new FormTestCase([
                 'vehicle_questions[totalVehicleCount]' => '100',
                 'vehicle_questions[internationalJourneyVehicleCount]' => '50',
@@ -177,7 +177,7 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             ]),
         ]);
 
-        $this->formTestAction('/pre-enquiry/business-details', 'business_details_continue', [
+        $this->formTestAction('/pre-enquiry/business-details', 'business_details_buttons_continue', [
             new FormTestCase([
                 'business_details[numberOfEmployees]' => '10-49',
             ]),

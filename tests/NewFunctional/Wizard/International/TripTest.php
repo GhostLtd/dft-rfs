@@ -124,14 +124,14 @@ class TripTest extends AbstractTripTest
 
     public function originDestinationDatesAndPorts(): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/origin-and-destination$#', 'origin_and_destination_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/origin-and-destination$#', 'origin_and_destination_buttons_continue', [
             new FormTestCase([
                 'origin_and_destination[origin]' => 'Southampton',
                 'origin_and_destination[destination]' => 'Paris',
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/dates$#', 'dates_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/dates$#', 'dates_buttons_continue', [
             new FormTestCase([
                 'dates[outboundDate][day]' => '5',
                 'dates[outboundDate][month]' => '5',
@@ -142,7 +142,7 @@ class TripTest extends AbstractTripTest
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/outbound-ports$#', 'outbound_ports_and_cargo_state_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/outbound-ports$#', 'outbound_ports_and_cargo_state_buttons_continue', [
             new FormTestCase([
                 'outbound_ports_and_cargo_state[ports]' => '1', // Portfoot - Waspwerp
                 'outbound_ports_and_cargo_state[wasAtCapacity]' => 'yes',
@@ -150,7 +150,7 @@ class TripTest extends AbstractTripTest
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/return-ports$#', 'return_ports_and_cargo_state_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/return-ports$#', 'return_ports_and_cargo_state_buttons_continue', [
             new FormTestCase([
                 'return_ports_and_cargo_state[ports]' => '1',
                 'return_ports_and_cargo_state[wasAtCapacity]' => 'no',
@@ -161,7 +161,7 @@ class TripTest extends AbstractTripTest
 
     protected function keptSameTrailer(): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/swapped-trailer$#', 'swapped_trailer_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/swapped-trailer$#', 'swapped_trailer_buttons_continue', [
             new FormTestCase([
                 'swapped_trailer[isSwappedTrailer]' => 'no',
             ]),
@@ -170,7 +170,7 @@ class TripTest extends AbstractTripTest
 
     protected function swappedTrailer(string $newAxleConfiguration): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/swapped-trailer$#', 'swapped_trailer_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/swapped-trailer$#', 'swapped_trailer_buttons_continue', [
             new FormTestCase([
                 'swapped_trailer[isSwappedTrailer]' => 'yes',
                 'swapped_trailer[axleConfiguration]' => $newAxleConfiguration,
@@ -180,7 +180,7 @@ class TripTest extends AbstractTripTest
 
     protected function keptSameBodyType(): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/body-type$#', 'changed_body_type_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/body-type$#', 'changed_body_type_buttons_continue', [
             new FormTestCase([
                 'changed_body_type[isChangedBodyType]' => 'no',
             ]),
@@ -189,7 +189,7 @@ class TripTest extends AbstractTripTest
 
     protected function changedBodyType(string $newBodyType): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/body-type$#', 'changed_body_type_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/body-type$#', 'changed_body_type_buttons_continue', [
             new FormTestCase([
                 'changed_body_type[isChangedBodyType]' => 'yes',
                 'changed_body_type[bodyType]' => $newBodyType,
@@ -199,7 +199,7 @@ class TripTest extends AbstractTripTest
 
     public function weight(string $grossWeight='32000', string $carryingCapacity='25000'): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/vehicle-weights$#', 'vehicle_weight_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/vehicle-weights$#', 'vehicle_weight_buttons_continue', [
             new FormTestCase([
                 'vehicle_weight[carryingCapacity]' => $carryingCapacity,
                 'vehicle_weight[grossWeight]' => $grossWeight,
@@ -209,14 +209,14 @@ class TripTest extends AbstractTripTest
 
     protected function distanceAndCountries(): void
     {
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/distance$#', 'distance_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/distance$#', 'distance_buttons_continue', [
             new FormTestCase([
                 'distance[roundTripDistance][unit]' => 'miles',
                 'distance[roundTripDistance][value]' => '300',
             ]),
         ], [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);
 
-        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/countries-transitted$#', 'countries_transitted_continue', [
+        $this->formTestAction('#^/international-survey/vehicles/[^/]+/add-trip/countries-transitted$#', 'countries_transitted_buttons_continue', [
             new FormTestCase([
                 'countries_transitted[countriesTransitted][]' => 'FR',
                 'countries_transitted[countriesTransittedOther]' => 'Belgium',

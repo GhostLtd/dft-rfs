@@ -4,6 +4,7 @@ namespace App\Form\Admin\RoRo;
 
 use App\Entity\RoRo\Operator;
 use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\InputType;
 use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
@@ -31,6 +32,9 @@ class OperatorType extends AbstractType
             ->add('isActive', BooleanChoiceType::class, [
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
+            ->add('buttons', ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',

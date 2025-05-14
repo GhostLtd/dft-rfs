@@ -50,7 +50,8 @@ class ListPageForm extends AbstractType
                 'attr' => [
                     'class' => 'govuk-button--warning',
                 ]
-            ])
+            ]);
+        $builder
             ->add('orderBy', HiddenType::class)
             ->add('orderDirection', HiddenType::class);
     }

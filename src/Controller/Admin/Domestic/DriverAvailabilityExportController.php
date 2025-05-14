@@ -58,8 +58,8 @@ class DriverAvailabilityExportController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            $cancel = $form->get('no');
-            $export = $form->get('yes');
+            $cancel = $form->get('buttons')->get('no');
+            $export = $form->get('buttons')->get('yes');
 
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl('admin_domestic_driveravailabilityexport_list'));

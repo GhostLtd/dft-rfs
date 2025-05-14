@@ -76,6 +76,9 @@ class ActionLoadType extends AbstractType
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

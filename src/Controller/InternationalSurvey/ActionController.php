@@ -127,7 +127,7 @@ class ActionController extends AbstractController
 
             $redirectResponse = $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $tripId]);
             if ($form->isSubmitted()) {
-                $cancel = $form->get('no');
+                $cancel = $form->get('buttons')->get('no');
                 if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                     return $redirectResponse;
                 }

@@ -172,6 +172,8 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
             }
 
             $event->getForm()
+                ->add('buttons', Gds\ButtonGroupType::class)
+                ->get('buttons')
                 ->add('submit', Gds\ButtonType::class, [
                     'label' => 'Save changes',
                 ])
@@ -245,8 +247,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                 case 'goodsTransferredTo':
                     $field->setData($viewData->getGoodsUnloaded() !== false ? $viewData->getGoodsTransferredTo() : false);
                     break;
-                case 'submit':
-                case 'cancel':
+                case 'buttons':
                     break;
                 default:
                     $field->setData($accessor->getValue($viewData, $name));
@@ -281,8 +282,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                     break;
                 case 'wasAtCapacity':
                 case 'wasLimitedBy':
-                case 'submit':
-                case 'cancel':
+                case 'buttons':
                     break;
                 default:
                     $accessor->setValue($viewData, $name, $field->getData());

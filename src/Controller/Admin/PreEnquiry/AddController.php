@@ -23,7 +23,7 @@ class AddController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            $cancel = $form->get('cancel');
+            $cancel = $form->get('buttons')->get('cancel');
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return $this->redirectToRoute('admin_index');
             }

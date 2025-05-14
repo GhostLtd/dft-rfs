@@ -34,6 +34,8 @@ class BusinessDetailsType extends AbstractType
 
         if ($options['include_buttons']) {
             $builder
+                ->add('buttons', Gds\ButtonGroupType::class)
+                ->get('buttons')
                 ->add('submit', Gds\ButtonType::class, [
                     'label' => 'Save changes',
                 ])

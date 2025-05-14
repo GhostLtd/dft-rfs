@@ -65,7 +65,7 @@
     {%- endset -%}
     {{- summaryListRow({
         key: 'domestic.day-view.goods-carried' | trans,
-        value: goodsCarriedValue,
+        value: {html: goodsCarriedValue},
         actions: showActions ? descriptionChangeLink : [],
     }, showActions) -}}
 

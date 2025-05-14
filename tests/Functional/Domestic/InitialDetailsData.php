@@ -14,10 +14,10 @@ class InitialDetailsData
     public static function initialDetailsData(string $inPossessionAnswer): array
     {
         $baseData = [
-            new WizardStepUrlTestCase(self::$baseUrl."/introduction", "form_continue", [
+            new WizardStepUrlTestCase(self::$baseUrl."/introduction", "form_buttons_continue", [
                 new FormTestCase([])
             ]),
-            new WizardStepUrlTestCase(self::$baseUrl."/contact-details", "contact_details_continue", [
+            new WizardStepUrlTestCase(self::$baseUrl."/contact-details", "contact_details_buttons_continue", [
                 new FormTestCase(
                     [],
                     ['#contact_details_contactBusinessName', "#contact_details_contactName", "#contact_details_contactTelephone", "#contact_details_contactEmail"]
@@ -33,7 +33,7 @@ class InitialDetailsData
         ];
 
         if ($inPossessionAnswer === SurveyResponse::IN_POSSESSION_YES) {
-            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_buttons_continue", [
                 new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
                 new FormTestCase([
                     'in_possession_of_vehicle' => [
@@ -48,7 +48,7 @@ class InitialDetailsData
                 ]),
             ]);
         } else {
-            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_continue", [
+            $baseData[] = new WizardStepUrlTestCase(self::$baseUrl . "/in-possession", "in_possession_of_vehicle_buttons_continue", [
                 new FormTestCase([], ["#in_possession_of_vehicle_isInPossessionOfVehicle"]),
                 new FormTestCase([
                     'in_possession_of_vehicle' => [
@@ -73,7 +73,7 @@ class InitialDetailsData
     protected static function onHireData(): array
     {
         return [
-            new WizardStepUrlTestCase(self::$baseUrl."/hiree-details", "hiree_details_continue", [
+            new WizardStepUrlTestCase(self::$baseUrl."/hiree-details", "hiree_details_buttons_continue", [
                 new FormTestCase([], [
                     "#hiree_details_hireeTelephone",
                     "#hiree_details_hireeEmail",
@@ -97,7 +97,7 @@ class InitialDetailsData
     protected static function scrappedData(): array
     {
         return [
-            new WizardStepUrlTestCase(self::$baseUrl."/scrapped-details","scrapped_details_continue", [
+            new WizardStepUrlTestCase(self::$baseUrl."/scrapped-details","scrapped_details_buttons_continue", [
                 new FormTestCase([], [
                     "#scrapped_details_scrappedDate",
                 ]),
@@ -117,7 +117,7 @@ class InitialDetailsData
     protected static function soldData(): array
     {
         return [
-            new WizardStepUrlTestCase(self::$baseUrl."/sold-details","sold_details_continue", [
+            new WizardStepUrlTestCase(self::$baseUrl."/sold-details","sold_details_buttons_continue", [
                 new FormTestCase([], [
                     "#sold_details_soldDate",
                     "#sold_details_newOwnerName",

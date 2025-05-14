@@ -15,6 +15,9 @@ class ConfirmActionType extends AbstractType
         $translationKeyPrefix = $options['translation_key_prefix'];
 
         $builder
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('confirm', Gds\ButtonType::class, array_merge($options['confirm_button_options'], [
                 'type' => 'submit',
                 'label' => "{$translationKeyPrefix}.confirm.label",

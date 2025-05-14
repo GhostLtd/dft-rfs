@@ -9,7 +9,7 @@
     }) -}}
     {{- summaryListRow({
         key: 'international.summary.type-and-configuration' | trans,
-        value: displayAxleConfiguration(vehicle.axleConfiguration),
+        value: {html: displayAxleConfiguration(vehicle.axleConfiguration)},
     }) -}}
 
     {%- set bodyChoices = constant('App\\Entity\\Vehicle::BODY_CONFIGURATION_CHOICES') -%}

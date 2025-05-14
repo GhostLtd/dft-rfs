@@ -65,7 +65,7 @@ class SurveyEditController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted()) {
-                $cancel = $form->get('cancel');
+                $cancel = $form->get('buttons')->get('cancel');
 
                 if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                     return $this->redirectResponseToSurveyView($survey);

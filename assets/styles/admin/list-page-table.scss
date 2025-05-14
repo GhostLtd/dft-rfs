@@ -18,6 +18,10 @@
 
     .govuk-button {
       margin-bottom: 0;
+
+      +.govuk-button {
+        margin-left: 5px;
+      }
     }
 
     color: govuk-colour('dark-grey');

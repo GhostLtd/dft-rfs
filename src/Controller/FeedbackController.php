@@ -32,7 +32,7 @@ class FeedbackController extends AbstractController
         $form = $this->createForm(FeedbackType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
-            $cancelButton = $form->get('cancel');
+            $cancelButton = $form->get('buttons')->get('cancel');
             if ($cancelButton instanceof SubmitButton && $cancelButton->isClicked()) {
                 // Bounce to the index and that'll forward us to the appropriate page, no matter the survey type
                 return $this->redirectToRoute("app_home_index");

@@ -2,6 +2,7 @@
 
 namespace App\Form\DomesticSurvey\CreateDay;
 
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
@@ -37,6 +38,9 @@ class NumberOfStopsType extends AbstractType
                 'help' => "{$translationKeyPrefix}.number-of-stops.help",
                 'constraints' => new NotNull(['message' => 'domestic.number-of-stops.choice'])
             ])
+            ->add('buttons', ButtonGroupType::class, ['property_path' => 'data'])
+
+            ->get('buttons')
             ->add('continue', ButtonType::class, [
                 'type' => 'submit',
             ])

@@ -3,6 +3,7 @@
 namespace App\Form\Admin\RoRo;
 
 use App\Form\RoRo\IntroductionType;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
 use Symfony\Component\Form\AbstractType;
@@ -21,6 +22,9 @@ class EditIsActiveStateType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--m'],
                 'help' => 'These are comments left by the user who filled the survey',
             ])
+            ->add('buttons', ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',

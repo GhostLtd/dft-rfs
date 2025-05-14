@@ -22,6 +22,7 @@ parameters:
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
     app_features_empty: none
+    app_smartlook_api_key: '%env(default::APP_SMARTLOOK_API_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -35,6 +36,7 @@ services:
             $frontendHostname: '%frontend_hostname%'
             $secret: '%env(APP_SECRET)%'
             $webRootDir: "%kernel.project_dir%/public"
+            $appSmartlookApiKey: '%app_smartlook_api_key%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

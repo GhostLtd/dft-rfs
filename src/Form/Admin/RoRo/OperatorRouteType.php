@@ -6,6 +6,7 @@ use App\Entity\RoRo\Operator;
 use App\Entity\Route\Route;
 use App\Repository\Route\RouteRepository;
 use Ghost\GovUkFrontendBundle\Form\Type\BooleanChoiceType;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Form\Type\ChoiceType;
 use Ghost\GovUkFrontendBundle\Form\Type\FieldsetType;
@@ -109,6 +110,8 @@ class OperatorRouteType extends AbstractType
             ]);
 
         $builder
+            ->add('buttons', ButtonGroupType::class)
+            ->get('buttons')
             ->add('submit', ButtonType::class, [
                 'type' => 'submit',
                 'label' => 'Save',

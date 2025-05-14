@@ -43,25 +43,25 @@ class VehicleTest extends AbstractVehicleTest
 
     public function vehicleConfiguration(): void
     {
-        $this->formTestAction('/international-survey/add-vehicle/trailer-configuration', 'vehicle_trailer_configuration_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/trailer-configuration', 'vehicle_trailer_configuration_buttons_continue', [
             new FormTestCase([
                 'vehicle_trailer_configuration[trailerConfiguration]' => "300",
             ]),
         ]);
 
-        $this->formTestAction('/international-survey/add-vehicle/axle-configuration', 'vehicle_axle_configuration_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/axle-configuration', 'vehicle_axle_configuration_buttons_continue', [
             new FormTestCase([
                 'vehicle_axle_configuration[axleConfiguration]' => "321",
             ]),
         ]);
 
-        $this->formTestAction('/international-survey/add-vehicle/vehicle-body', 'vehicle_body_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/vehicle-body', 'vehicle_body_buttons_continue', [
             new FormTestCase([
                 'vehicle_body[bodyType]' => 'liquid',
             ]),
         ]);
 
-        $this->formTestAction('/international-survey/add-vehicle/vehicle-weight', 'vehicle_weight_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/vehicle-weight', 'vehicle_weight_buttons_continue', [
             new FormTestCase([
                 'vehicle_weight[carryingCapacity]' => '35000',
                 'vehicle_weight[grossWeight]' => '40000',
@@ -71,14 +71,14 @@ class VehicleTest extends AbstractVehicleTest
 
     protected function vehicleDetails(bool $vehicleDepartedDuringSurveyPeriod): void
     {
-        $this->formTestAction('/international-survey/add-vehicle/vehicle-registration', 'vehicle_details_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/vehicle-registration', 'vehicle_details_buttons_continue', [
             new FormTestCase([
                 'vehicle_details[registrationMark]' => 'AB01 ABC',
                 'vehicle_details[operationType]' => 'for-hire-and-reward',
             ]),
         ]);
 
-        $this->formTestAction('/international-survey/add-vehicle/confirm-dates', 'confirm_dates_continue', [
+        $this->formTestAction('/international-survey/add-vehicle/confirm-dates', 'confirm_dates_buttons_continue', [
             new FormTestCase([
                 'confirm_dates[confirm]' => ($vehicleDepartedDuringSurveyPeriod ? 'yes' : 'no'),
             ]),

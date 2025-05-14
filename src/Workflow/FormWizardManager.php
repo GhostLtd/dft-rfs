@@ -3,6 +3,7 @@
 namespace App\Workflow;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkFrontendBundle\Form\Type\ButtonGroupType;
 use Ghost\GovUkFrontendBundle\Form\Type\ButtonType;
 use Ghost\GovUkFrontendBundle\Model\NotificationBanner;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -81,12 +82,15 @@ class FormWizardManager
             $submitLabel = $metadata['submitLabel'] ?? ($isSavePoint ? 'common.actions.save-and-continue' : null);
             $cancelLabel = $metadata['cancelLabel'] ?? null;
         }
-        $form->add('continue', ButtonType::class, [
+        $form
+            ->add('buttons', ButtonGroupType::class)
+            ->get('buttons')
+            ->add('continue', ButtonType::class, [
             'type' => 'submit',
             'label' => $submitLabel ?? 'common.actions.continue',
         ]);
         if ($showCancelButton) {
-            $form->add('cancel', ButtonType::class, [
+            $form->get('buttons')->add('cancel', ButtonType::class, [
                 'type' => 'submit',
                 'label' => $cancelLabel ?? 'common.actions.cancel',
                 'attr' => ['class' => 'govuk-button--secondary'],

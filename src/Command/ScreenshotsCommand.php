@@ -126,9 +126,10 @@ class ScreenshotsCommand extends Command
                 echo $process->getOutput();
             } catch (ProcessFailedException $exception) {
                 echo $exception->getMessage();
+                return Command::FAILURE;
+            } finally {
+                $this->deleteExistingUser($modes);
             }
-
-            $this->deleteExistingUser($modes);
         }
 
         return 0;

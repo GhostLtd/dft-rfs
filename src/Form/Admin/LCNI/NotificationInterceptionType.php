@@ -51,6 +51,8 @@ class NotificationInterceptionType extends AbstractType
         $builder->add('buttons', Gds\ButtonGroupType::class, []);
 
         $builder->get('buttons')
+            ->add('buttons', Gds\ButtonGroupType::class)
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'type' => 'submit',
                 'label' => "notification-interception.form.submit",

@@ -57,6 +57,8 @@ class FinalDetailsType extends AbstractType
                 }
 
                 $form
+                    ->add('buttons', Gds\ButtonGroupType::class)
+                    ->get('buttons')
                     ->add($options['submit_name'], Gds\ButtonType::class, [
                         'label' => $options['submit_label'],
                         'translation_domain' => $options['label_translation_domain']

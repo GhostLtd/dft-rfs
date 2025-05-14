@@ -29,15 +29,17 @@
             {%- include "admin/pre_enquiry/includes/basics.html.twig" -%}
         {%- endwith -%}
 
-        {%- if canEdit and not hasInitialDetails -%}
-            <a class="govuk-button" href="{{ path('admin_preenquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
-        {%- endif -%}
-        {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_reveal_passcode', {preEnquiryId: preEnquiry.id}) }}">Reveal passcode</a>
-        {%- endif -%}
-        {%- if canResend -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_resend', {id: preEnquiry.id}) }}">Change invitation details and resend survey</a>
-        {%- endif -%}
+        <div class="govuk-button-group">
+            {%- if canEdit and not hasInitialDetails -%}
+                <a class="govuk-button" href="{{ path('admin_preenquiry_enter_response', {preEnquiryId: preEnquiry.id}) }}">Enter response details</a>
+            {%- endif -%}
+            {%- if canResetPasscode -%}
+                <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_reveal_passcode', {preEnquiryId: preEnquiry.id}) }}">Reveal passcode</a>
+            {%- endif -%}
+            {%- if canResend -%}
+                <a class="govuk-button govuk-button--warning" href="{{ path('admin_preenquiry_resend', {id: preEnquiry.id}) }}">Change invitation details and resend survey</a>
+            {%- endif -%}
+        </div>
     </div>
 
     {%- if tabs is defined -%}
@@ -53,7 +55,7 @@
                     {%- endwith -%}
 
                     {%- if canEdit -%}
-                    <div>
+                    <div class="govuk-button-group">
                         <a class="govuk-button" href="{{ path('admin_preenquiry_edit_response', {preEnquiryId: preEnquiry.id}) }}">Edit<span class="govuk-visually-hidden"> response</span></a>
                     </div>
                     {%- endif -%}
@@ -96,10 +98,12 @@
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Pre-enquiry actions</h2>
-            {{ _self.workflow_link(preEnquiry, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(preEnquiry, 'complete', 'Complete') }}
-            {{ _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
-            {{ _self.workflow_link(preEnquiry, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
+            <div class="govuk-button-group">
+                {{- _self.workflow_link(preEnquiry, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) -}}
+                {{- _self.workflow_link(preEnquiry, 'complete', 'Complete') -}}
+                {{- _self.workflow_link(preEnquiry, 'reject', 'Reject', {class: 'govuk-button--warning'}) -}}
+                {{- _self.workflow_link(preEnquiry, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) -}}
+            </div>
         </div>
     {% endif %}
 

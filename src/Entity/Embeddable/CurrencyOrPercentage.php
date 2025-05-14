@@ -32,7 +32,7 @@ class CurrencyOrPercentage implements ValueUnitInterface
     }
 
     #[\Override]
-    public function setValue($value): self
+    public function setValue($value): static
     {
         $this->value = $value;
         return $this;
@@ -45,7 +45,7 @@ class CurrencyOrPercentage implements ValueUnitInterface
     }
 
     #[\Override]
-    public function setUnit(?string $unit): self
+    public function setUnit(?string $unit): static
     {
         $this->unit = $unit;
         return $this;

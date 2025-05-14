@@ -8,7 +8,6 @@ twig:
 
     globals:
         admin_hostname: '%admin_hostname%'
-        csp_inline_script_helper: '@App\Utility\CspInlineScriptHelper'
         env_label_admin: '%env_label_admin%'
         env_label_background: '%env_label_background%'
         env_label_colour: '%env_label_colour%'

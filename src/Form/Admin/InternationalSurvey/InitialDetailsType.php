@@ -32,6 +32,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                 'include_buttons' => false,
                 'validation_groups' => $options['validation_groups'],
             ])
+            ->add('buttons', Gds\ButtonGroupType::class)
+
+            ->get('buttons')
             ->add('submit', Gds\ButtonType::class, [
                 'label' => 'Save changes',
             ])

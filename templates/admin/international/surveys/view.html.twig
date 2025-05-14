@@ -45,18 +45,20 @@
             {%- include "admin/international/includes/survey-basics.html.twig" -%}
         {%- endwith -%}
 
-        {%- if canEdit and not hasInitialDetails -%}
-            <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
-        {%- endif -%}
-        {%- if canResetPasscode -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reveal_passcode', {surveyId: survey.id}) }}">Reveal passcode</a>
-        {%- endif -%}
-        {%- if canResend -%}
-            <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
-        {%- endif -%}
-        {%- if canShowManualReminderButton -%}
-            <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ path('admin_international_survey_manual_reminder', {id: survey.id}) }}">Send reminder</a>
-        {%- endif -%}
+        <div class="govuk-button-group">
+            {%- if canEdit and not hasInitialDetails -%}
+                <a class="govuk-button" href="{{ path('admin_international_survey_initial_enter', {surveyId: survey.id}) }}">Enter initial details</a>
+            {%- endif -%}
+            {%- if canResetPasscode -%}
+                <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_reveal_passcode', {surveyId: survey.id}) }}">Reveal passcode</a>
+            {%- endif -%}
+            {%- if canResend -%}
+                <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_survey_resend', {id: survey.id}) }}">Change invitation details and resend survey</a>
+            {%- endif -%}
+            {%- if canShowManualReminderButton -%}
+                <a class="govuk-button govuk-button--{{ canSendManualReminder ? 'primary' : 'secondary' }}" href="{{ path('admin_international_survey_manual_reminder', {id: survey.id}) }}">Send reminder</a>
+            {%- endif -%}
+        </div>
     </div>
 
     {%- if tabs is defined -%}
@@ -165,7 +167,7 @@
                 {% endwith %}
 
                 {%- if canEdit -%}
-                <div class="govuk-!-margin-bottom-5">
+                <div class="govuk-!-margin-bottom-5 govuk-button-group">
                     <a class="govuk-button" href="{{ path('admin_international_vehicle_edit', {vehicleId: vehicle.id}) }}">Edit vehicle<span class="govuk-visually-hidden">:{{ vehicle.registrationMark|formatRegMark }}</span></a>
                     <a class="govuk-button" href="{{ path('admin_international_trip_add', {vehicleId: vehicle.id}) }}">Add Trip<span class="govuk-visually-hidden">: for vehicle {{ vehicle.registrationMark|formatRegMark }}</span></a>
                     <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_vehicle_delete', {vehicleId: vehicle.id}) }}">Delete vehicle<span class="govuk-visually-hidden">:{{ vehicle.registrationMark|formatRegMark }}</span></a>
@@ -184,7 +186,7 @@
                     {%- endwith -%}
 
                     {%- if canEdit -%}
-                    <div class="govuk-!-margin-bottom-5">
+                    <div class="govuk-!-margin-bottom-5 govuk-button-group">
                         <a class="govuk-button" href="{{ path('admin_international_trip_edit', {tripId: trip.id}) }}">Edit trip<span class="govuk-visually-hidden">: {{ srTripIdentifier }}</span></a>
                         <a class="govuk-button govuk-button--warning" href="{{ path('admin_international_trip_delete', {tripId: trip.id}) }}">Delete trip<span class="govuk-visually-hidden">: {{ srTripIdentifier }}</span></a>
                     </div>
@@ -201,7 +203,7 @@
                     {%- endif -%}
 
                     {%- if canEdit -%}
-                    <div class="govuk-!-margin-bottom-9 govuk-body">
+                    <div class="govuk-!-margin-bottom-9 govuk-button-group">
                         <a class="govuk-button" href="{{ path('admin_international_action_add_loading', {tripId: trip.id}) }}">Add loading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
                         <a class="govuk-button" href="{{ path('admin_international_action_add_unloading', {tripId: trip.id}) }}">Add unloading action<span class="govuk-visually-hidden">: for trip {{ srTripIdentifier }}</span></a>
                         {%- if isReOrderable -%}
@@ -222,23 +224,25 @@
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Survey actions</h2>
-            {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(survey, 'complete', 'Complete') }}
-            {{ _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) }}
-            {{ _self.workflow_link(survey, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(survey, 'approve', 'Approve') }}
-            {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+            <div class="govuk-button-group">
+                {{- _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) -}}
+                {{- _self.workflow_link(survey, 'complete', 'Complete') -}}
+                {{- _self.workflow_link(survey, 'reject', 'Reject', {class: 'govuk-button--warning'}) -}}
+                {{- _self.workflow_link(survey, 'un_reject', 'Un-reject', {class: 'govuk-button--secondary'}) -}}
+                {{- _self.workflow_link(survey, 'approve', 'Approve') -}}
+                {{- _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) -}}
 
-            {% if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) %}
-                {% from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes %}
-                {%- with {
-                    attr: (options.attr ?? {}) | merge({
-                    href: path('admin_international_survey_flag_qa', {surveyId: survey.id}),
-                    class: ('govuk-button ' ~ (options.class | default('')) ) | trim
-                })} -%}
-                    <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
-                {%- endwith -%}
-            {% endif %}
+                {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::FLAG_QA'), survey) -%}
+                    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import govukAttributes -%}
+                    {%- with {
+                        attr: (options.attr ?? {}) | merge({
+                        href: path('admin_international_survey_flag_qa', {surveyId: survey.id}),
+                        class: ('govuk-button ' ~ (options.class | default('')) ) | trim
+                    })} -%}
+                        <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
+                    {%- endwith -%}
+                {%- endif -%}
+            </div>
         </div>
     {% endif %}
 

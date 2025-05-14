@@ -51,7 +51,7 @@
             {{- summaryListEnd() -}}
 
             {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
-            <div>
+            <div class="govuk-button-group">
                 <a class="govuk-button" href="{{ path('admin_roro_surveys_edit_is_active', {surveyId: survey.id}) }}">Edit<span class="govuk-visually-hidden"> initial details</span></a>
             </div>
             {%- endif -%}
@@ -142,7 +142,7 @@
             </div>
         </div>
         {%- if is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::EDIT'), survey) -%}
-        <div class="govuk-!-padding-bottom-5">
+        <div class="govuk-!-padding-bottom-5 govuk-button-group">
             <a class="govuk-button" href="{{ path('admin_roro_surveys_edit', {surveyId: survey.id}) }}">Edit survey data</a>
         </div>
         {%- endif -%}
@@ -154,10 +154,12 @@
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Survey actions</h2>
-            {{ _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) }}
-            {{ _self.workflow_link(survey, 'complete', 'Complete') }}
-            {{ _self.workflow_link(survey, 'approve', 'Approve') }}
-            {{ _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) }}
+            <div class="govuk-button-group">
+                {{- _self.workflow_link(survey, 're_open', 'Re-open', {class: 'govuk-button--secondary'}) -}}
+                {{- _self.workflow_link(survey, 'complete', 'Complete') -}}
+                {{- _self.workflow_link(survey, 'approve', 'Approve') -}}
+                {{- _self.workflow_link(survey, 'un_approve', 'Un-approve', {class: 'govuk-button--secondary'}) -}}
+            </div>
         </div>
     {% endif %}
 

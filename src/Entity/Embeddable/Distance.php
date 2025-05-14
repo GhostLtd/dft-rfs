@@ -57,7 +57,7 @@ class Distance implements ValueUnitInterface, \Stringable
     }
 
     #[\Override]
-    public function setValue($value): self
+    public function setValue($value): static
     {
         $this->value = $value;
         return $this;
@@ -70,7 +70,7 @@ class Distance implements ValueUnitInterface, \Stringable
     }
 
     #[\Override]
-    public function setUnit(?string $unit): self
+    public function setUnit(?string $unit): static
     {
         $this->unit = $unit;
         return $this;

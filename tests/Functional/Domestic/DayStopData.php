@@ -14,7 +14,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
 
         $originTests = self::getLocationFormTestCases('origin', $goodsLoaded, 'Portsmouth');
         $testData = [
-            new WizardStepUrlTestCase("{$baseUrl}/add", "number_of_stops_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/add", "number_of_stops_buttons_continue", [
                 new FormTestCase([], [
                     "#number_of_stops_hasMoreThanFiveStops",
                 ]),
@@ -24,10 +24,10 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/stop-add/introduction", "form_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/introduction", "form_buttons_continue", [
                 new FormTestCase([], []),
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/stop-add/stage-start", "origin_continue", $originTests),
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/stage-start", "origin_buttons_continue", $originTests),
         ];
 
         $destinationUrl = "{$baseUrl}/stop-add/stage-end";
@@ -41,7 +41,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
 
         $destinationTests = self::getLocationFormTestCases('destination', $goodsUnloaded, 'Worthing');
         $testData = array_merge($testData, [
-            new WizardStepUrlTestCase($destinationUrl, "destination_continue", $destinationTests),
+            new WizardStepUrlTestCase($destinationUrl, "destination_buttons_continue", $destinationTests),
         ]);
 
         if ($isEmpty === null) {
@@ -50,7 +50,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
 
         $goodsDescriptionTests = self::getGoodsDescriptionTests($isEmpty);
         $testData = array_merge($testData, [
-            new WizardStepUrlTestCase($borderCrossingUrl, "border_crossing_continue", [
+            new WizardStepUrlTestCase($borderCrossingUrl, "border_crossing_buttons_continue", [
                 new FormTestCase([
                     "border_crossing" => [
                         "borderCrossed" => 1,
@@ -58,7 +58,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/stop-add/distance-travelled", "distance_travelled_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/distance-travelled", "distance_travelled_buttons_continue", [
                 new FormTestCase([], [
                     "#distance_travelled_distanceTravelled_value",
                     "#distance_travelled_distanceTravelled_unit",
@@ -72,7 +72,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
                     ]
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/stop-add/goods-description", "goods_description_continue", $goodsDescriptionTests),
+            new WizardStepUrlTestCase("{$baseUrl}/stop-add/goods-description", "goods_description_buttons_continue", $goodsDescriptionTests),
         ]);
 
         if (!$isEmpty) {
@@ -82,8 +82,8 @@ class DayStopData extends AbstractDayStopOrSummaryData
 
             $hazardousTests = self::getHazardousTests($isHazardous);
             $testData = array_merge($testData, [
-                new WizardStepUrlTestCase($hazardousGoodsUrl, "hazardous_goods_continue", $hazardousTests),
-                new WizardStepUrlTestCase("{$baseUrl}/stop-add/cargo-type", "cargo_type_continue", [
+                new WizardStepUrlTestCase($hazardousGoodsUrl, "hazardous_goods_buttons_continue", $hazardousTests),
+                new WizardStepUrlTestCase("{$baseUrl}/stop-add/cargo-type", "cargo_type_buttons_continue", [
                     new FormTestCase([], [
                         "#cargo_type_cargoTypeCode",
                     ]),
@@ -145,7 +145,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
             }
 
             $testData = array_merge($testData, [
-                new WizardStepUrlTestCase($goodsWeightUrl, "goods_weight_continue", $weightTests),
+                new WizardStepUrlTestCase($goodsWeightUrl, "goods_weight_buttons_continue", $weightTests),
             ]);
         }
 

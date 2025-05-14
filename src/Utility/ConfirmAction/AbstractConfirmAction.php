@@ -115,7 +115,7 @@ abstract class AbstractConfirmAction implements ConfirmActionInterface
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            $confirm = $form->get('confirm');
+            $confirm = $form->get('buttons')->get('confirm');
 
             $session = $this->requestStack->getSession();
             $flashBag = ($session instanceof FlashBagAwareSessionInterface) ?

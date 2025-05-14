@@ -62,7 +62,7 @@ abstract class AbstractDayStopReorderController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted()) {
-                $cancel = $form->get('no');
+                $cancel = $form->get('buttons')->get('no');
                 if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                     return $this->getRedirectResponse($day);
                 }
