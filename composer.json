@@ -21,7 +21,7 @@
         "doctrine/orm": "^3.0",
         "dompdf/dompdf": "^2.0",
         "erusev/parsedown-extra": "^0.8.1",
-        "ghost/govuk-frontend-bundle": "2.0.*",
+        "ghost/govuk-frontend-bundle": "^3.1",
         "google/auth": "^1.9",
         "google/cloud-core": "^1.32",
         "google/cloud-error-reporting": "^0.18.2",

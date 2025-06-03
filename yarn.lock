@@ -1365,10 +1365,10 @@ __metadata:
 
 "@ghost/govuk-frontend-bundle@file:vendor/ghost/govuk-frontend-bundle::locator=root-workspace-0b6124%40workspace%3A.":
   version: 0.0.0
-  resolution: "@ghost/govuk-frontend-bundle@file:vendor/ghost/govuk-frontend-bundle#vendor/ghost/govuk-frontend-bundle::hash=75415c&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@ghost/govuk-frontend-bundle@file:vendor/ghost/govuk-frontend-bundle#vendor/ghost/govuk-frontend-bundle::hash=efad25&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
-    govuk-frontend: "npm:5.6.*"
-  checksum: 10c0/95a1044a07942e285f442a53f5512fb18baeab83ed24813814f953ee5bdd6e60a73df8bc5cc6d67e42a091e9c814677b745e7891cbf2179dac8ae42ce95d7fc5
+    govuk-frontend: "npm:5.10.*"
+  checksum: 10c0/16841e7fcbb1ea9b4a43494517b0527a27f57bc609e096fd6d0149ed9e04f74feb3c2209a57d547086f7daaa60f495fc8d402501fe51d177e59845a0bfa1e49e
   languageName: node
   linkType: hard
 
@@ -3861,10 +3861,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"govuk-frontend@npm:5.6.*":
-  version: 5.6.0
-  resolution: "govuk-frontend@npm:5.6.0"
-  checksum: 10c0/e3bd8e50b6d4e0ef2190f0bc14ecbdd4a126abce52a683c2008e32d16185ec5d7963bbfce53f7ef17026b97ee1dbe340272cc624f883e1e8a054aa90423f2293
+"govuk-frontend@npm:5.10.*":
+  version: 5.10.2
+  resolution: "govuk-frontend@npm:5.10.2"
+  checksum: 10c0/d18d5f101072f63ce18183e2ded89da7fa255596de18cc43a8845a9f2dcb2e583ba36181119a1ba9fec456db09c0d1921a734d030f75c4befd7bffef2ba94909
   languageName: node
   linkType: hard
 
