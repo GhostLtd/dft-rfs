@@ -8,6 +8,7 @@
 {% block header %}
     {% block headerBar %}
         {{ govuk.header({
+            classes: 'govuk-header--full-width-border',
             serviceName: ('service.name' | trans) ~ ' Admin',
             serviceNameEnv: env_label_admin,
             useTudorCrown: true

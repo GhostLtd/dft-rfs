@@ -55,7 +55,7 @@ class CountryFixtures extends Fixture
     ];
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach(self::COUNTRY_CODES as $code) {
             $country = (new Country())

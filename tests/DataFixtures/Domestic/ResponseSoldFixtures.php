@@ -9,7 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 class ResponseSoldFixtures extends AbstractResponseFixtures
 {
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $response = (new SurveyResponse())
             ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_SOLD)

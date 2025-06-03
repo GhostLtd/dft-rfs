@@ -2,7 +2,7 @@
     "devDependencies": {
         "@babel/core": "^7.17.0",
         "@babel/preset-env": "^7.16.0",
-        "@ghost/govuk-frontend-bundle": "file:vendor/ghost/govuk-frontend-bundle",
+        "@ghost/govuk-frontend-bundle": "portal:vendor/ghost/govuk-frontend-bundle",
         "@symfony/webpack-encore": "^4.0.0",
         "accessible-autocomplete": "^2.0.3",
         "chart.js": "^3.3.2",
@@ -11,7 +11,7 @@
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.69.5",
         "sass-loader": "^13.0.0",
-        "webpack": "^5.74.0",
+        "webpack": "^5.99.9",
         "webpack-cli": "^4.10.0",
         "webpack-notifier": "^1.15.0"
     },
@@ -38,5 +38,5 @@
         "ie 8-11",
         "iOS >= 9"
     ],
-    "packageManager": "yarn@4.9.1"
+    "packageManager": "yarn@4.9.2"
 }

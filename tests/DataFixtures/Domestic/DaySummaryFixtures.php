@@ -7,7 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 class DaySummaryFixtures extends AbstractDaySummaryFixture
 {
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->addDaySummary($manager, 2);
         $manager->flush();

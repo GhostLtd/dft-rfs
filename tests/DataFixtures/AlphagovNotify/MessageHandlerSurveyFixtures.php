@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class MessageHandlerSurveyFixtures extends Fixture
 {
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $survey = new Survey();
         $survey

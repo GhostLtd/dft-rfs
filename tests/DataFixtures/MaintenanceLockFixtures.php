@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 class MaintenanceLockFixtures extends Fixture implements FixtureInterface
 {
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $maintenanceLock = new MaintenanceLock();
 

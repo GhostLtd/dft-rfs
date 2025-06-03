@@ -32,7 +32,7 @@ class SurveyRepositoryTest extends AbstractRepositoryTest
         $repo = $this->getRepository(Survey::class);
         $this->assertInstanceOf(SurveyRepository::class, $repo);
 
-        $survey = $this->fixtureReferenceRepository->getReference('survey:int:simple');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:int:simple', Survey::class);
 
         $result = $repo->getSurveysForExport(new \DateTime("$minDate midnight"), new \DateTime ("$maxDate midnight"));
         $this->assertCount($surveyExpected ? 1 : 0, $result);

@@ -19,7 +19,7 @@ class ReissueSurveyTest extends AbstractAdminTest
 
         // view survey, click re-issue link
         /** @var Survey $survey */
-        $survey = $this->fixtureReferenceRepository->getReference('survey:simple');
+        $survey = $this->fixtureReferenceRepository->getReference('survey:simple', Survey::class);
         $this->client->request('GET', "/csrgt/surveys/{$survey->getId()}");
         $this->assertPageTitleContains('CSRGT (NI) Survey');
         $this->clickLinkContaining('Reissue survey');

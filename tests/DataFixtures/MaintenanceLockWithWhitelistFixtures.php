@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 class MaintenanceLockWithWhitelistFixtures extends Fixture implements FixtureInterface
 {
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $maintenanceLock = (new MaintenanceLock())
             ->setWhitelistedIps(['127.0.0.1']);
