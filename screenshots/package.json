@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "puppeteer": "^6.0.0",
+    "yargs": "^16.2.0"
+  }
+}

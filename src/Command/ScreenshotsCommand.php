@@ -65,7 +65,7 @@ class ScreenshotsCommand extends Command
     {
         $this->setDescription('Execute the (external) screenshots utility')
             ->addArgument('mode', InputArgument::REQUIRED, 'all|domestic|international|pre-enquiry|roro')
-            ->addArgument('path', InputArgument::REQUIRED, 'Path to the screenshots command')
+            ->addArgument('path', InputArgument::OPTIONAL, 'Path to the screenshots command', 'screenshots/screenshots.js')
             ->addOption('protocol', null, InputOption::VALUE_OPTIONAL, 'http or https', 'https');
     }
 
@@ -92,7 +92,7 @@ class ScreenshotsCommand extends Command
 
         $this->deleteExistingUser($modes);
 
-        $outputBaseDir = dirname($path) . "/screenshots-" . (new \DateTime())->format('Ymd-His');
+        $outputBaseDir = dirname($path) . "/output/" . (new \DateTime())->format('Ymd-His');
 
         foreach ($modes as $activeMode) {
             $this->createUserAndSurvey($activeMode);
