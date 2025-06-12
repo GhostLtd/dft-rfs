@@ -20,11 +20,11 @@ class InitialDetailsData
             new WizardStepUrlTestCase(self::$baseUrl."/contact-details", "contact_details_buttons_continue", [
                 new FormTestCase(
                     [],
-                    ['#contact_details_contactBusinessName', "#contact_details_contactName", "#contact_details_contactTelephone", "#contact_details_contactEmail"]
+                    ["#contact_details_contactName", "#contact_details_contactTelephone", "#contact_details_contactEmail"]
                 ),
                 new FormTestCase([
                     'contact_details' => [
-                        'contactBusinessName' => 'Acme Company Ltd.',
+//                        'contactBusinessName' => 'Acme Company Ltd.',
                         'contactName' => 'Mark',
                         'contactEmail' => 'mark@example.com',
                     ],

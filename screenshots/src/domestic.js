@@ -11,7 +11,6 @@ async function doLogin(page, username, password) {
 }
 
 async function doInitialContact(page) {
-    await type(page, '#contact_details_contactBusinessName', 'Form test ltd');
     await type(page, '#contact_details_contactName', 'Mark');
     await type(page, '#contact_details_contactTelephone', '01111 222222');
     await type(page, '#contact_details_contactEmail', 'mark@example.com');
@@ -96,6 +95,7 @@ async function doInitialHire(page) {
 }
 
 async function doBusinessDetails(page) {
+    await type(page, '#business_details_contactBusinessName', 'Form test ltd');
     await page.click('#business_details_numberOfEmployees_1');
     await page.click('#business_details_operationType_1');
     await type(page, '#business_details_businessNature', 'Haulage');
@@ -183,27 +183,30 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('business-details/1-details.png')});
 
         await doBusinessDetails(page);
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/3-trailer-configuration.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/2-trailer-configuration.png')});
 
         await doBusinessTrailerChoice(page, '0');
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/4a-rigid.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/3a-rigid.png')});
 
         await page.goBack(waitForOptions);
         await doBusinessTrailerChoice(page, '1');
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/4b-rigid-with-trailer.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/3b-rigid-with-trailer.png')});
 
         await page.goBack(waitForOptions);
         await doBusinessTrailerChoice(page, '2');
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/4c-artic.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/3c-artic.png')});
 
         await doBusinessAxleChoice(page, '2');
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/5-body-type.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/4-body-type.png')});
 
         await doBusinessBodyChoice(page, '3');
-        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/2-vehicle-weights.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('business-details/5-vehicle-weights.png')});
 
         await doBusinessVehicleWeights(page);
         await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/1-empty.png')});
+
+        await clickLink(page, "//a[text()='View/change the contact, business and vehicle details you have already entered']", 0);
+        await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/2-view-initial-details.png')});
 
         // Day stops
         await goto(page, baseUrl + 'domestic-survey/day-1/add')
@@ -292,7 +295,7 @@ module.exports.run = async function(argv) {
 
 
         await page.goto(baseUrl + 'domestic-survey', waitForOptions);
-        await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/2-first-day-added.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/3-first-day-added.png')});
 
         // Day summary
         await goto(page, baseUrl + 'domestic-survey/day-2/add')
@@ -372,7 +375,7 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/13-delete.png')});
 
         await page.goto(baseUrl + 'domestic-survey', waitForOptions);
-        await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/3-second-day-added.png')});
+        await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/4-second-day-added.png')});
 
         // Final questions
         await page.goto(baseUrl + 'domestic-survey/closing-details/start', waitForOptions);

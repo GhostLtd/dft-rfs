@@ -42,40 +42,35 @@ class InitialDetailsEditTest extends AbstractWizardTest
                     new WizardStepUrlTestCase("{$this->baseUrl}/change-contact-details", "contact_details_buttons_continue", [
                         new FormTestCase([
                             "contact_details" => [
-                                "contactBusinessName" => null,
                                 "contactName" => null,
                                 "contactTelephone" => null,
                                 "contactEmail" => null,
                             ]
                         ], [
-                            "#contact_details_contactBusinessName",
                             "#contact_details_contactName",
                             "#contact_details_contactTelephone",
                             "#contact_details_contactEmail",
                         ]),
                         new FormTestCase([
                             "contact_details" => [
-                                "contactBusinessName" => null,
-                                "contactName" => "Test",
+                                "contactName" => null,
                                 "contactTelephone" => $phone,
                                 "contactEmail" => null,
                             ]
                         ], [
-                            "#contact_details_contactBusinessName",
+                            "#contact_details_contactName",
                         ]),
                         new FormTestCase([
                             "contact_details" => [
-                                "contactBusinessName" => null,
-                                "contactName" => "Test",
+                                "contactName" => null,
                                 "contactTelephone" => null,
                                 "contactEmail" => $email,
                             ]
                         ], [
-                            "#contact_details_contactBusinessName",
+                            "#contact_details_contactName",
                         ]),
                         new FormTestCase([
                             "contact_details" => [
-                                "contactBusinessName" => "Example Ltd",
                                 "contactName" => "Test",
                                 "contactTelephone" => null,
                                 "contactEmail" => $email,
@@ -83,7 +78,6 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) use ($email) {
-                        $this->assertEquals("Example Ltd", $response->getContactBusinessName());
                         $this->assertEquals("Test", $response->getContactName());
                         $this->assertEquals($email, $response->getContactEmail());
                         $this->assertEquals(null, $response->getContactTelephone());

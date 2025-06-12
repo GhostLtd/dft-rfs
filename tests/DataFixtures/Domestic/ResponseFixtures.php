@@ -12,7 +12,6 @@ class ResponseFixtures extends AbstractResponseFixtures
     {
         $response = (new SurveyResponse())
             ->setIsInPossessionOfVehicle(SurveyResponse::IN_POSSESSION_YES)
-            ->setContactBusinessName('Example Firm')
             ->setContactEmail('test@example.com')
             ->setContactName('Tester')
             ->setIsExemptVehicleType(false);

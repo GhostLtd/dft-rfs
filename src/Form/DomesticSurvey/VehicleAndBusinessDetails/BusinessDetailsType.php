@@ -22,6 +22,13 @@ class BusinessDetailsType extends AbstractType
         }
 
         $builder
+            ->add('contactBusinessName', Gds\InputType::class, [
+                'label' => 'domestic.survey-response.contact-details.business-name.label',
+                'help' => 'domestic.survey-response.contact-details.business-name.help',
+                'attr' => ['class' => 'govuk-input--width-20'],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+
             ->add('numberOfEmployees', Gds\ChoiceType::class, [
                 'choices' => $employeeChoices,
                 'label' => "domestic.survey-response.business-details.number-of-employees.label",

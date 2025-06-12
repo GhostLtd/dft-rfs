@@ -26,13 +26,16 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                     new WizardStepUrlTestCase("{$this->baseUrl}/change-business-details", "business_details_buttons_continue", [
                         new FormTestCase([
                             "business_details" => [
+                                "contactBusinessName" => null,
                                 "businessNature" => null,
                             ]
                         ], [
                             "#business_details_businessNature",
+                            "#business_details_contactBusinessName",
                         ]),
                         new FormTestCase([
                             "business_details" => [
+                                "contactBusinessName" => "Example Ltd",
                                 "numberOfEmployees" => BaseSurveyResponse::EMPLOYEES_250_TO_499,
                                 "businessNature" => "Waste removal",
                                 "operationType" => Vehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD,
@@ -40,6 +43,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) {
+                        $this->assertEquals("Example Ltd", $response->getContactBusinessName());
                         $this->assertEquals("Waste removal", $response->getBusinessNature());
                         $this->assertEquals(BaseSurveyResponse::EMPLOYEES_250_TO_499, $response->getNumberOfEmployees());
                         $this->assertEquals(Vehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD, $response->getVehicle()->getOperationType());

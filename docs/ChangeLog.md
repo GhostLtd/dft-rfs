@@ -2,6 +2,13 @@
 
 # Changelog
 
+## Upcoming
+
+- **Update**: Bring ghost bundle up to date
+- **Update**: Gov.uk rebrand
+- **Update**: Bring external screenshot generation code in to this repo
+- **Update**: move CSRGT contact business name question - it was a potential block for horsebox owners 
+
 ## 24th June 2025
 
 - **Update**: Re-factor/combine LCNI
@@ -9,6 +16,12 @@
 - **Fix**: Double import check issue on CSRGT
 - **Fix**: Themed root forms were missing `form_errors` call
 - **Update**: Change fields compared for uniqueness check on IRHS/Add survey
+
+## 2nd April 2025
+
+- **Update**: sort and tag DVLA/DVSA import review pages, so that those with LCNI records appear at the top
+- **Update**: add firm reference no to IRHS import review page
+- **Update**: replace two separate LCNIs with single unified one, also allowing DVSA email list to be imported
 
 ## 12th December 2024
 

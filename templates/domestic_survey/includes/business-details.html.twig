@@ -12,6 +12,11 @@
 <h2 class="govuk-heading-m">Business details</h2>
 {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {{- summaryListRow({
+        key: 'domestic.survey-response.contact-details.business-name.label' | trans,
+        value: survey.response.contactBusinessName | default('-'),
+        actions: showActions ? businessDetailsActionLinks : []
+    }, showActions) -}}
+    {{- summaryListRow({
         key: 'domestic.survey-response.business-details.number-of-employees.label' | trans,
         value: "common.number-of-employees.#{survey.response.numberOfEmployees}" | trans,
         actions: showActions ? businessDetailsActionLinks : []

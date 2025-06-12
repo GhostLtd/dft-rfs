@@ -11,11 +11,6 @@
     ] -%}
 
     {{- summaryListRow({
-        key: 'domestic.survey-response.contact-details.business-name.label' | trans,
-        value: survey.response.contactBusinessName | default('-'),
-        actions: showActions ? contactDetailsActionLinks : []
-    }, showActions) -}}
-    {{- summaryListRow({
         key: 'domestic.survey-response.contact-details.contact-name.label' | trans,
         value: survey.response.contactName | default('-'),
         actions: showActions ? contactDetailsActionLinks : []

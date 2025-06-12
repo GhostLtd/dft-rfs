@@ -80,8 +80,8 @@ class SurveyResponse extends AbstractSurveyResponse
     public ?int $_summaryCountForExport = null;
     public ?int $_stopCountForExport = null;
 
-    #[Assert\NotBlank(message: 'domestic.survey-response.initial-details.business-name-required', groups: ['contact_details', 'admin_correspondence'])]
-    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['contact_details', 'admin_correspondence'])]
+    #[Assert\NotBlank(message: 'domestic.survey-response.initial-details.business-name-required', groups: ['business_details', 'admin_business_details'])]
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['business_details', 'admin_business_details'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $contactBusinessName = null;
 
@@ -460,7 +460,6 @@ class SurveyResponse extends AbstractSurveyResponse
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
         $this->setContactTelephone($response->getContactTelephone());
-        $this->setContactBusinessName($response->getContactBusinessName());
 
         $this->setIsInPossessionOfVehicle($response->getIsInPossessionOfVehicle());
 
@@ -576,6 +575,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     public function mergeVehicleAndBusinessDetails(SurveyResponse $responseToMerge): self
     {
+        $this->setContactBusinessName($responseToMerge->getContactBusinessName());
         $this->setNumberOfEmployees($responseToMerge->getNumberOfEmployees());
         $this->setBusinessNature($responseToMerge->getBusinessNature());
 

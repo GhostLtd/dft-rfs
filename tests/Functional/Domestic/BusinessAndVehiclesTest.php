@@ -17,13 +17,16 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
     {
         return [
             new WizardStepUrlTestCase("{$this->baseUrl}/business-details", "business_details_buttons_continue", [
-                new FormTestCase([], [
+                new FormTestCase([
+                ], [
+                    "#business_details_contactBusinessName",
                     "#business_details_numberOfEmployees",
                     "#business_details_businessNature",
                     "#business_details_operationType",
                 ]),
                 new FormTestCase([
                     "business_details" => [
+                        "contactBusinessName" => "Acme Company Ltd.",
                         "numberOfEmployees" => SurveyResponse::EMPLOYEES_10_TO_49,
                         "businessNature" => "Haulage",
                         "operationType" => "for-hire-and-reward",
