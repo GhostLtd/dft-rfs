@@ -1,6 +1,7 @@
 {% block form %}
     {%- form_theme form.countries "themes/countries-transitted.html.twig" -%}
     {{ form_start(form) }}
+    {{ form_errors(form) }}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
             <h3 class="govuk-heading-m govuk-heading--underline">Outbound journey</h3>

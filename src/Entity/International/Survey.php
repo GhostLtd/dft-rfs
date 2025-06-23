@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
-#[UniqueEntity(['referenceNumber'], message: 'international.add.reference-number-exists', errorPath: 'survey', groups: ['add_survey', 'import_survey'])]
+#[UniqueEntity(['referenceNumber', 'invitationAddress.line1', 'invitationAddress.postcode'], message: 'international.add.reference-number-exists', errorPath: 'survey', groups: ['import_survey', 'add_survey'])]
 #[ORM\Table(name: 'international_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
@@ -75,7 +75,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     {
         if (
             $this->referenceNumber &&
-            !preg_match('/^\d+\-\d{4}$/', $this->referenceNumber)
+            !preg_match('/^\d+-\d{4}$/', $this->referenceNumber)
         ) {
             $context
                 ->buildViolation("international.survey.reference-number.correct-format")

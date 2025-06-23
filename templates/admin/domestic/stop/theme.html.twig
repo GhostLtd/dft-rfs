@@ -1,5 +1,6 @@
 {% block form %}
     {{ form_start(form) }}
+    {{ form_errors(form) }}
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
         <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
             {{ form_row(form.originLocation) }}

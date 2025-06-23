@@ -2,6 +2,14 @@
 
 # Changelog
 
+## 24th June 2025
+
+- **Update**: Re-factor/combine LCNI
+- **Update**: Admin - Sort bulk import results by LCNI tag
+- **Fix**: Double import check issue on CSRGT
+- **Fix**: Themed root forms were missing `form_errors` call
+- **Update**: Change fields compared for uniqueness check on IRHS/Add survey
+
 ## 12th December 2024
 
 - **Fix**: Symfony CVE 2024-50340. Disable register_argv_argc directive

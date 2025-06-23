@@ -112,7 +112,7 @@ international:
       weight-more-than-one: Enter the weight of goods unloaded in kilograms. This value must be more than zero
   add:
     invitation-email-or-address: Enter at least one of an invitation email or an invitation address
-    reference-number-exists: A survey with this reference number already exists
+    reference-number-exists: A survey with this reference number, company name and postcode already exists
   closing-details:
     early-response:
       not-null: Choose whether you are sure that the information submitted is final
