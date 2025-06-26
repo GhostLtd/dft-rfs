@@ -125,7 +125,7 @@ class DataExporter extends AbstractDataExporter
                 SqlServerInsertEncoder::FORCE_STRING_FIELDS => ['RegMark', 'BusinessType', 'SurveyAddressLine1',
                     'SurveyAddressLine2', 'SurveyAddressLine3', 'SurveyAddressLine4', 'SurveyAddressLine5',
                     'SurveyPostcode', 'SurveyEmail', 'ContactName', 'ContactTelNo', 'ContactEmail', 'RegisteredKeeper',
-                    'HireCompany'],
+                    'HireCompany', 'FuelType', 'FuelQuantityOther'],
             ]),
             FILE_APPEND
         );
