@@ -29,7 +29,7 @@ steps:
     - name: node:20
       id: 'yarn-build'
       entrypoint: sh
-      args: ['-c', 'yarn install --frozen-lockfile --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs']
+      args: ['-c', 'corepack enable && yarn install --immutable --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs']
       env:
           - 'APP_ENV=prod'
           - 'ADMIN_HOSTNAME=${_ADMIN_HOSTNAME}'
