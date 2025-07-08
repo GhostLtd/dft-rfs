@@ -93,7 +93,12 @@ Encore
 
     .copyFiles({
         from: './node_modules/govuk-frontend/dist/govuk/assets/images',
-        to: 'images/[name].[ext]',
+        to: 'images/[path][name].[ext]',
+    })
+
+    .copyFiles({
+        from: './node_modules/govuk-frontend/dist/govuk/assets/rebrand',
+        to: 'rebrand/[path][name].[ext]',
     })
 ;
 

@@ -19,7 +19,7 @@
         }) -}}
         {{- summaryListRow({
             key: 'domestic.driver-availability.drivers.reasons-for-vacancies.label' | trans,
-            value: _self.listOrNull(availability.reasonsForDriverVacancies, availability.reasonsForDriverVacanciesOther, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices')
+            value: {html: _self.listOrNull(availability.reasonsForDriverVacancies, availability.reasonsForDriverVacanciesOther, 'domestic.driver-availability.drivers.reasons-for-vacancies.choices') | nl2br}
         }) -}}
     {%- endif -%}
     {{- summaryListRow({
@@ -79,7 +79,7 @@
         }) -}}
         {{- summaryListRow({
             key: 'domestic.driver-availability.wages.reasons-for-wage-increase.label' | trans,
-            value: _self.listOrNull(availability.reasonsForWageIncrease, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices')
+            value: {html: _self.listOrNull(availability.reasonsForWageIncrease, availability.reasonsForWageIncreaseOther, 'domestic.driver-availability.wages.reasons-for-wage-increase.choices') | nl2br}
         }) -}}
     {% endif %}
 {{- summaryListEnd() -}}
