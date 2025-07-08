@@ -4,6 +4,10 @@
 
 ## Upcoming
 
+- **Fix**: include rebrand assets in webpack file copy list
+
+## 2025-07-07
+
 - **Update**: Bring ghost bundle up to date
 - **Update**: Gov.uk rebrand
 - **Update**: Bring external screenshot generation code in to this repo
