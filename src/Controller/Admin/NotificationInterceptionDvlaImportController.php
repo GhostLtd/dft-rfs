@@ -14,21 +14,29 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use ReflectionProperty;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Context\Encoder\CsvEncoderContextBuilder;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Encoder\EncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route(path: '/notification-interception/dvla-import', name: 'admin_notification_interception_dvla_import')]
 class NotificationInterceptionDvlaImportController extends AbstractController
 {
+    protected array $dvlaImportData = [];
 
     public function __construct(
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
         protected string                 $appEnvironment,
+        protected DecoderInterface       $decoder,
     ) {}
 
     /**
@@ -44,9 +52,15 @@ class NotificationInterceptionDvlaImportController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $filename = $this->preProcessUploadedDvlaSpreadsheetFile($form->get('upload')->getData()->getPathname());
+            /** @var UploadedFile $file */
+            $file = $form->get('upload')->getData();
+            match($file->getMimeType()) {
+                'text/csv' => $this->preProcessUploadedDvlaSpreadsheetFile($file->getPathname()),
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => $this->preProcessUploadedDvlaSpreadsheetFilePhpOffice($file->getPathname()),
+                default => throw new \RuntimeException('Unexpected file type'),
+            };
             $this->clearExistingDvlaRecords();
-            $this->batchImportDvlaDataFromTempFile($filename);
+            $this->batchImportDvlaDataFromTempFile();
 
             // add notification banner
             /** @var FlashBagAwareSessionInterface $session */
@@ -67,29 +81,33 @@ class NotificationInterceptionDvlaImportController extends AbstractController
         ]);
     }
 
-    protected function preProcessUploadedDvlaSpreadsheetFile(string $uploadedFilename): mixed
+    protected function preProcessUploadedDvlaSpreadsheetFile(string $uploadedFilename): void
     {
-        $spreadsheet = IOFactory::load($uploadedFilename);
-        if ($spreadsheet->getSheetCount() !== 1) {
-            throw new \RuntimeException('too many sheets');
-        }
+        $this->dvlaImportData = $this->decoder->decode(file_get_contents($uploadedFilename), 'csv', [
+            CsvEncoder::NO_HEADERS_KEY => true,
+            CsvEncoder::OUTPUT_UTF8_BOM_KEY => true,
+        ]);
+    }
+    protected function preProcessUploadedDvlaSpreadsheetFilePhpOffice(string $uploadedFilename): void
+    {
+        $reader = IOFactory::createReaderForFile($uploadedFilename)
+            ->setReadDataOnly(true)
+            ->setReadEmptyCells(false)
+        ;
 
-        $sheet = $spreadsheet->getActiveSheet();
+        $spreadsheet = $reader->load($uploadedFilename);
+        $sheet = $spreadsheet->getSheet(0);
 
         $expectedRowTitles = $this->getRowValues($sheet->getRowIterator()->current());
         if ($expectedRowTitles !== ['A' => 'Operator Name', 'B' => 'Email address']) {
             throw new \RuntimeException('Column titles not as expected');
         }
 
-        $outputFilename = tempnam(sys_get_temp_dir(), 'dvla_import');
-
         foreach ($sheet->getRowIterator(2) as $row) {
             ['A' => $companyName, 'B' => $email] = $this->getRowValues($row);
-            file_put_contents($outputFilename, "$companyName\n$email\n", FILE_APPEND);
+            $this->dvlaImportData[] = [trim($companyName), strtolower(trim($email))];
         }
         $spreadsheet->disconnectWorksheets();
-
-        return $outputFilename;
     }
 
     protected function clearExistingDvlaRecords(): void
@@ -119,36 +137,13 @@ class NotificationInterceptionDvlaImportController extends AbstractController
             ->execute();
     }
 
-    protected function batchImportDvlaDataFromTempFile(string $filename): int
+    protected function batchImportDvlaDataFromTempFile(): void
     {
         $batchSize = 1000;
 
-        $batch = [];
-        $count = 0;
-        $fileHandle = fopen($filename, 'r');
-        while (($companyName = fgets($fileHandle)) !== false) {
-            if (($email = fgets($fileHandle)) === false) {
-                throw new \RuntimeException('unexpected file contents');
-            }
-            $companyName = trim($companyName);
-            $email = trim($email);
-            if (empty($companyName) || empty($email)) {
-                continue;
-            }
-
-            // company name isn't unique, so we can't use it a key
-            $batch[] = [$companyName, $email];
-            $count++;
-
-            if (count($batch) >= $batchSize) {
-                $this->processImportBatch($batch);
-                $batch = [];
-            }
+        for ($i = 0; $i < ceil(count($this->dvlaImportData) / $batchSize) ; $i++) {
+            $this->processImportBatch(array_slice($this->dvlaImportData, $i * $batchSize, $batchSize));
         }
-        // process the last batch
-        $this->processImportBatch($batch);
-
-        return $count;
     }
 
     protected function processImportBatch(array $batch): void
@@ -187,7 +182,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
     protected function getRowValues(Row $row): array
     {
-        return array_map(fn(Cell $c) => $c->getValue(), iterator_to_array($row->getCellIterator()));
+        return array_map(fn(Cell $c) => $c->getValue(), iterator_to_array($row->getCellIterator(iterateOnlyExistingCells: true)));
     }
 
     protected function resetDebugDataHolder(): void

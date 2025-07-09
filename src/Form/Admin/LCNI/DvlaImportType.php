@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DvlaImportType extends AbstractType
@@ -17,7 +18,16 @@ class DvlaImportType extends AbstractType
         $builder
             ->add('upload', Gds\FileUploadType::class, [
                 'label' => false,
-                'constraints' => [new NotBlank()],
+                'constraints' => [
+                    new NotBlank(),
+                    new File(
+                        mimeTypes: [
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'text/csv',
+                        ],
+                        mimeTypesMessage: 'An invalid file type was selected. You should select a CSV or Excel file.',
+                    ),
+                ],
             ]);
         $builder->add('buttons', Gds\ButtonGroupType::class, []);
 

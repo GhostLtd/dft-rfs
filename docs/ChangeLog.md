@@ -5,6 +5,7 @@
 ## Upcoming
 
 - **Fix**: include rebrand assets in webpack file copy list
+- **Update**: allow CSV for LCNI import to improve speed/memory usages
 
 ## 2025-07-07
 
