@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin\Domestic;
 
-use App\Entity\Domestic\Survey;
 use App\ListPage\Domestic\SurveyListPage;
 use App\Utility\Domestic\OnHireStatsProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

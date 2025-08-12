@@ -40,7 +40,7 @@
             {html: companyNameData},
             survey.registrationMark | formatRegMark,
             {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
-            survey.qualityAssured ? 'Yes' : 'No',
+            csrgt_empty_detector.emptyDayCount(survey.response) ?: '-',
             inPossessionData,
             reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate),
             countField(survey, 'totalDayCount'),

@@ -1200,7 +1200,7 @@ domestic:
       heading: Where did the vehicle start the day?
       help: ''
       origin-location:
-        label: Postcode or place-name
+        label: Postcode or place name
         help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
       goods-loaded:
         label: Were goods loaded?
@@ -1215,7 +1215,7 @@ domestic:
       heading: Where did the journey end?
       help: ''
       destination-location:
-        label: Postcode or place-name
+        label: Postcode or place name
         help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
       goods-unloaded:
         label: Were goods unloaded?
@@ -1319,7 +1319,7 @@ domestic:
       heading: Where did the vehicle begin this stage of the journey?
       help: ''
       origin-location:
-        label: Postcode or place-name
+        label: Postcode or place name
         help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
       goods-loaded:
         label: Were goods loaded?
@@ -1334,7 +1334,7 @@ domestic:
       heading: Where did this stage of the journey end?
       help: ''
       destination-location:
-        label: Postcode or place-name
+        label: Postcode or place name
         help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
       goods-unloaded:
         label: Were goods unloaded?

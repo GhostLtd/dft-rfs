@@ -37,7 +37,7 @@ class SurveyViewController extends AbstractController
         #[MapEntity(expr: "repository.find(surveyId)")]
         Survey              $survey,
         Request             $request,
-        OnHireStatsProvider $hireStatsProvider
+        OnHireStatsProvider $hireStatsProvider,
     ): Response
     {
         $addNotesForm = $this->addNotesHelper->getForm(SurveyNote::class);

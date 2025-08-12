@@ -53,10 +53,7 @@ class SurveyListPage extends AbstractListPage
             (new TextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
             (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
-            (new QaChoiceFilter("QA'd?", 'survey.qualityAssured', [
-                'Yes' => true,
-                'No' => false,
-            ]))->sortable(),
+            (new Simple('Empties?')),
             (new InPossessionFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),
             (new DaysFilter('Days')),

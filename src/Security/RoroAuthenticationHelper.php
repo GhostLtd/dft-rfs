@@ -34,8 +34,8 @@ class RoroAuthenticationHelper implements AuthenticationEntryPointInterface, Aut
     {
         $this->roroLoginLimiter->reset($this->requestStack->getMainRequest());
 
-        $user = $request->request->get('user', '<none>');
-        $this->logger->info("RoRo Login successful: {$user}");
+        $user = $token->getUser();
+        $this->logger->info("RoRo Login successful: {$user->getUserIdentifier()}");
 
         if (!$user instanceof RoRoUser) {
             throw new UnsupportedUserException();

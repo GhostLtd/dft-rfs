@@ -2,7 +2,7 @@
 
 {%- if not unloadedBeforeLoaded is empty -%}
     {{- errorSummary({
-        titleText: 'There is a problem',
+        titleText: 'common.error-summary.problem' | trans,
         errorList: [
             {
                 text: 'international.action.re-order.invalid-order' | trans({

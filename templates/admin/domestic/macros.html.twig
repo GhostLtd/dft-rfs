@@ -60,7 +60,10 @@
     {%- endif -%}
     <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
     {%- if day|default(false) %}
-        <div class="journeys-table__subcaption">{{ dayText(day) }}</div>
+        <div class="journeys-table__subcaption govuk-!-margin-bottom-1">
+            {{ dayText(day) }}
+            {% if csrgt_empty_detector.dayEmpty(day) %}<span class="govuk-tag govuk-tag--yellow govuk-!-font-size-16">Possible empty</span>{% endif %}
+        </div>
     {%- endif -%}
 {%- endmacro -%}
 

@@ -16,6 +16,7 @@
 
     {%- if authenticationError -%}
         {{- errorSummary({
+            titleText: 'common.error-summary.problem' | trans,
             errorList: [
                 {text: authenticationError.message, href: '#ro_ro_login_username'}
             ]

@@ -6,6 +6,13 @@
 
 - **Fix**: include rebrand assets in webpack file copy list
 - **Update**: allow CSV for LCNI import to improve speed/memory usages
+- Tidy up dev requirements in composer.json
+- **Fix**: remove hyphen from `place-name`. Corrected to `place name`
+- **Fix**: RoRo remember me
+- **Update**: make symfony lock (used for rate limiting) use the existing doctrine connection instead of creating its own
+- **Fix**: Roro login error display was missing the title param
+- **Update**: Remove QA column from CSRGT survey list
+- **Update**: Add Empty day detection to CSRGT
 
 ## 2025-07-07
 
