@@ -3,8 +3,7 @@
 # Changelog
 
 ## Upcoming
-
-- 
+- **Fix**: Routes list in admin had lost view links, and couldn't be edited or deactivated 
 
 ## 2025-08-19
 

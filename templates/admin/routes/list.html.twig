@@ -19,7 +19,7 @@
         {%- set linksContent = summaryListActionsList([
             {
                 href: path('admin_routes_view', {routeId: route.id}),
-                label: 'view',
+                text: 'view',
                 visuallyHiddenText: "route between #{route.ukPort.name} and #{route.foreignPort.name}"
             }
         ]) -%}
