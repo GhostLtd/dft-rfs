@@ -6,6 +6,7 @@ module.exports.setupBrowserAndPage = async () => {
     const browser = await puppeteer.launch({
         args: [
             '--single-process',
+            '--no-sandbox',
         ],
         ignoreHTTPSErrors: true,
         // headless: false,
