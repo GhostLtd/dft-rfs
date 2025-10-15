@@ -12,7 +12,7 @@
         {%- include "international_survey/includes/trip.html.twig" -%}
     {%- endwith -%}
 
-    <div class="govuk-!-margin-bottom-9">
+    <div class="govuk-button-group govuk-!-margin-bottom-9">
         <a class="govuk-button govuk-button--warning" href="{{ path('app_internationalsurvey_trip_delete', {tripId: trip.id}) }}">Delete trip</a>
     </div>
 
@@ -44,16 +44,16 @@
             </div>
         {% endif %}
     {%- endif -%}
-    <div>
+    <div class="govuk-button-group">
         {%- set dashboardUrl = url(dashboardRoute, {vehicleId: trip.vehicle.id}) -%}
         {%- set addActionCopy = 'international.trip.summary.actions.add-' ~ (trip.actions.count() > 0 ? 'action' : 'loading-action') -%}
         <a href="{{ url('app_internationalsurvey_action_add_start', {tripId: trip.id}) }}" class="govuk-button govuk-!-margin-bottom-9">{{ addActionCopy|trans }}</a>
     </div>
 
     <hr class="govuk-!-margin-bottom-9">
-    <div>
+    <div class="govuk-button-group">
         {%- if trip.actions.count() > 0 -%}
-        <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
+            <a href="{{ dashboardUrl }}" class="govuk-button">{{ 'international.trip.summary.actions.trip-complete'|trans }}</a>
         {%- endif -%}
         <a href="{{ dashboardUrl }}" class="govuk-button govuk-button--secondary">{{ 'international.trip.summary.actions.back-to-vehicle-summary'|trans }}</a>
     </div>

@@ -20,10 +20,10 @@
 {% for stop in day.stops %}
     <h2 id="stop-{{ stop.number }}" class="govuk-heading-m">{{ 'domestic.day-view.stage'|trans({stage: stop.number}) }}</h2>
 
-    <div class="govuk-!-margin-bottom-9">
-        {%- with {marginBottom: 5} -%}
-            {% include "/domestic_survey/includes/day-stop.html.twig" %}
-        {%- endwith -%}
+    {%- with {marginBottom: 5} -%}
+        {% include "/domestic_survey/includes/day-stop.html.twig" %}
+    {%- endwith -%}
+    <div class="govuk-button-group govuk-!-margin-bottom-9">
         {{ buttonLink(path('app_domesticsurvey_daystop_delete', {dayNumber: day.number, stopNumber: stop.number}), 'common.actions.delete-stop'|trans({stopNumber: stop.number}), {class: 'govuk-button--warning'}) }}
     </div>
 {% else %}

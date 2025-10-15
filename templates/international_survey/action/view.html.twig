@@ -105,7 +105,10 @@
                 {%- endif -%}
             {%- endif -%}
         </dl>
-        {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
-        <a href="{{ url(dashboardRoute, {id: action.trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.action.summary.actions.back-to-trip-summary'|trans }}</a>
-        <a href="{{ url('app_internationalsurvey_action_delete', {actionId: action.id}) }}" class="govuk-button govuk-button--warning">{{ 'international.action.summary.actions.delete'|trans }}</a>
+
+        <div class="govuk-button-group">
+            {%- set dashboardRoute = constant('App\\Controller\\InternationalSurvey\\TripController::TRIP_ROUTE') -%}
+            <a href="{{ url(dashboardRoute, {id: action.trip.id}) }}" class="govuk-button govuk-button--secondary">{{ 'international.action.summary.actions.back-to-trip-summary'|trans }}</a>
+            <a href="{{ url('app_internationalsurvey_action_delete', {actionId: action.id}) }}" class="govuk-button govuk-button--warning">{{ 'international.action.summary.actions.delete'|trans }}</a>
+        </div>
 {% endblock %}
