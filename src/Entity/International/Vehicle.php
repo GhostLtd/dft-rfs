@@ -85,4 +85,17 @@ class Vehicle implements VehicleInterface
         $this->setCarryingCapacity($vehicle->getCarryingCapacity());
         $this->setGrossWeight($vehicle->getGrossWeight());
     }
+
+    public function hasEmptyLoadings(): bool
+    {
+        foreach($this->getTrips() as $trip) {
+            foreach($trip->getActions() as $action) {
+                if ($action->getLoading() && ($action->getWeightOfGoods() ?? 0) === 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

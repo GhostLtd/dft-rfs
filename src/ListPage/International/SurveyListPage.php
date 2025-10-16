@@ -2,6 +2,7 @@
 
 namespace App\ListPage\International;
 
+use App\Entity\International\Action;
 use App\Entity\International\Survey;
 use App\ListPage\AbstractListPage;
 use App\ListPage\Field\ChoiceFilter;
@@ -36,6 +37,9 @@ class SurveyListPage extends AbstractListPage
                 'No' => false,
             ]))->sortable(),
             (new Simple('Reminders')),
+// Currently disabled, as it's thought that future rules will get too complex to implement in pure SQL
+//            (new EmptiesChoiceFilter('Empties'))->sortable(),
+            (new Simple('Empties')),
             (new Simple('# Vehicles')),
             (new Simple('# Trips')),
         ];
@@ -45,13 +49,31 @@ class SurveyListPage extends AbstractListPage
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->repository->createQueryBuilder('survey');
-        return $queryBuilder
+        $queryBuilder
             ->select('survey, response, user, company, vehicle, trip')
             ->leftJoin('survey.response', 'response')
             ->leftJoin('survey.passcodeUser', 'user')
             ->leftJoin('survey.company', 'company')
             ->leftJoin('response.vehicles', 'vehicle')
             ->leftJoin('vehicle.trips', 'trip');
+
+        $actionClass = Action::class;
+
+        $sql = <<<SQL
+(
+    SELECT (COUNT(a2.id))
+    FROM {$actionClass} a2
+    JOIN a2.trip t2
+    JOIN t2.vehicle v2
+    WHERE v2.surveyResponse = response
+    AND a2.loading = 1
+    AND (a2.weightOfGoods IS NULL OR a2.weightOfGoods = 0)
+) AS emptiesCount
+SQL;
+
+        $queryBuilder->addSelect($sql);
+
+        return $queryBuilder;
     }
 
     #[\Override]

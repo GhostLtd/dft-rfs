@@ -34,8 +34,16 @@
             }
         ] -%}
 
+        {%- set regMark -%}
+            {{ vehicle.formattedRegistrationMark }}
+            {%- if vehicle.hasEmptyLoadings() -%}
+                <br>
+                <span class="govuk-tag govuk-tag--yellow govuk-!-font-size-16">Empties</span>
+            {%- endif -%}
+        {%- endset -%}
+
         {{- tableRow([
-            vehicle.formattedRegistrationMark,
+            {html: regMark},
             '-',
             displayAxleConfiguration(vehicle.axleConfiguration),
             choiceLabel(operationChoices, vehicle.operationType) | trans,

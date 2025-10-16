@@ -3,7 +3,9 @@
 # Changelog
 
 ## Upcoming
-- **Fix**: Routes list in admin had lost view links, and couldn't be edited or deactivated 
+- **Feature**: IRHS: Flag returns + vehicles with empty loading actions
+- **Fix**: Routes list in admin had lost view links, and couldn't be edited or deactivated
+- **Fix**: Missing spacing between buttons on IRHS frontend
 
 ## 2025-08-19
 

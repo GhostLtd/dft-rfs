@@ -157,6 +157,9 @@
             <div class="govuk-!-padding-bottom-5">
                 <h2 class="govuk-heading-l govuk-heading--underline" id="{{ vehicle.id }}">Vehicle
                     — {{ vehicle.registrationMark|formatRegMark }}
+                    {% if vehicle.hasEmptyLoadings() %}
+                        <span class="govuk-tag govuk-tag--yellow govuk-!-font-size-16">Empties</span>
+                    {% endif %}
                     <a class="admin-surveys__back-to-top govuk-link--no-visited-state" href="#top">Back to top</a>
                 </h2>
 
