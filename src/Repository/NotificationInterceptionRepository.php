@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\NotificationInterception;
-use App\Entity\SurveyInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
