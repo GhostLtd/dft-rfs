@@ -6,6 +6,8 @@
 - **Feature**: IRHS: Flag returns + vehicles with empty loading actions
 - **Fix**: Routes list in admin had lost view links, and couldn't be edited or deactivated
 - **Fix**: Missing spacing between buttons on IRHS frontend
+- **Update**: Improve LCNI import process
+- **Fix**: Trim whitespace from LCNI company names (existing DB records and entity setter)
 
 ## 2025-08-19
 

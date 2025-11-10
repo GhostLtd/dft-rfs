@@ -19,12 +19,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpKernel\Exception\LockedHttpException;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\Context\Encoder\CsvEncoderContextBuilder;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
-use Symfony\Component\Serializer\Encoder\EncoderInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route(path: '/notification-interception/dvla-import', name: 'admin_notification_interception_dvla_import')]
@@ -32,11 +32,14 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 {
     protected array $dvlaImportData = [];
 
+    protected LockInterface $lock;
+
     public function __construct(
-        protected RequestStack $requestStack,
+        protected RequestStack           $requestStack,
         protected EntityManagerInterface $entityManager,
         protected string                 $appEnvironment,
         protected DecoderInterface       $decoder,
+        protected LockFactory            $lockFactory,
     ) {}
 
     /**
@@ -46,6 +49,11 @@ class NotificationInterceptionDvlaImportController extends AbstractController
     #[Route(name: '')]
     public function import(Request $request): ?Response
     {
+        $this->lock = $this->lockFactory->createLock('lcni-dvla-import', 60 * 2, false);
+        if (!$this->lock->acquire()) {
+            throw new LockedHttpException("Could not acquire lock");
+        }
+
         $form = $this->createForm(DvlaImportType::class, null, [
             'cancel_url' => $this->generateUrl('admin_notification_interception_list'),
         ]);
@@ -59,8 +67,11 @@ class NotificationInterceptionDvlaImportController extends AbstractController
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => $this->preProcessUploadedDvlaSpreadsheetFilePhpOffice($file->getPathname()),
                 default => throw new \RuntimeException('Unexpected file type'),
             };
+
             $this->clearExistingDvlaRecords();
             $this->batchImportDvlaDataFromTempFile();
+            $this->clearEmptyRecords();
+            $this->lock->release();
 
             // add notification banner
             /** @var FlashBagAwareSessionInterface $session */
@@ -73,9 +84,10 @@ class NotificationInterceptionDvlaImportController extends AbstractController
                 [],
                 'admin'
             ));
-
             return $this->redirectToRoute('admin_notification_interception_list');
         }
+
+        $this->lock->release();
         return $this->render('admin/notification_interception/dvla_import.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -112,29 +124,18 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
     protected function clearExistingDvlaRecords(): void
     {
-        $dvlaOnlyIds = $this->entityManager->createQueryBuilder()
-            ->select('ni.id')
-            ->from(NotificationInterception::class, 'ni')
-            ->where('ni.csrgtEmails IS NULL AND ni.irhsEmails IS NULL')
-            ->getQuery()
-            ->getSingleColumnResult();
-        $this->entityManager->createQueryBuilder()
-            ->delete(NotificationInterceptionCompanyName::class, 'cn')
-            ->where('cn.notificationInterception in (:ids)')
-            ->setParameter('ids', $dvlaOnlyIds)
-            ->getQuery()
-            ->execute();
-        $this->entityManager->createQueryBuilder()
-            ->delete(NotificationInterception::class, 'ni')
-            ->where('ni.id in (:ids)')
-            ->setParameter('ids', $dvlaOnlyIds)
-            ->getQuery()
-            ->execute();
         $this->entityManager->createQueryBuilder()
             ->update(NotificationInterception::class, 'ni')
             ->set('ni.dvlaEmails', 'NULL')
             ->getQuery()
             ->execute();
+    }
+
+    protected function clearEmptyRecords(): void
+    {
+        $this->entityManager->createQueryBuilder()
+            ->delete(NotificationInterception::class, 'ni')
+            ->where('ni.dvlaEmails IS NULL and ni.csrgtEmails is NULL and ni.irhsEmails is NULL');
     }
 
     protected function batchImportDvlaDataFromTempFile(): void
@@ -143,6 +144,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
         for ($i = 0; $i < ceil(count($this->dvlaImportData) / $batchSize) ; $i++) {
             $this->processImportBatch(array_slice($this->dvlaImportData, $i * $batchSize, $batchSize));
+            $this->lock->refresh();
         }
     }
 

@@ -2295,6 +2295,11 @@ errors:
     heading: Unauthorised
     copy: |-
       You need to be logged in to access this page
+  locked:
+    title: Resource locked
+    heading: Resource locked
+    copy: |-
+      This resource is currently locked
 
   maintenance:
     title: Scheduled maintenance - Service unavailable
