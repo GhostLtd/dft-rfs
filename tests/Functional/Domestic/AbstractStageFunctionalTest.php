@@ -25,7 +25,7 @@ abstract class AbstractStageFunctionalTest extends AbstractFrontendFunctionalTes
         return $browser
             ->getCrawler()
             ->filterXPath(
-                "//main/{$xpathHeader}/following-sibling::div[1]/dl/div/".
+                "//main/{$xpathHeader}/following-sibling::dl[1]/div/".
                 $this->summaryListPart('key', "Start location").
                 "/../".
                 $this->summaryListPart('value')
