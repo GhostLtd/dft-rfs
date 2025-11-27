@@ -36,26 +36,43 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
         });
     }
 
-    public function testVehicleDetailsChange(): void
+    public function testHgvDetailsChange(): void
     {
-        $this->performChangeTest(1, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/vehicle-questions', 'vehicle_questions_buttons_continue', [
+        $this->performChangeTest(2, function(array &$expectedData) {
+            $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_buttons_continue', [
                 new FormTestCase([
-                    'vehicle_questions[totalVehicleCount]' => '123',
-                    'vehicle_questions[internationalJourneyVehicleCount]' => '22',
-                    'vehicle_questions[annualJourneyEstimate]' => '303',
+                    'hgv_details[totalHgvCount]' => '123',
+                    'hgv_details[internationalJourneyHgvCount]' => '22',
+                    'hgv_details[annualHgvJourneyEstimate]' => '303',
                 ]),
             ]);
 
-            $expectedData['totalVehicleCount'] = '123';
-            $expectedData['internationalJourneyVehicleCount'] = '22';
-            $expectedData['annualJourneyEstimate'] = '303';
+            $expectedData['totalHgvCount'] = '123';
+            $expectedData['internationalJourneyHgvCount'] = '22';
+            $expectedData['annualHgvJourneyEstimate'] = '303';
+        });
+    }
+
+    public function testLgvDetailsChange(): void
+    {
+        $this->performChangeTest(5, function(array &$expectedData) {
+            $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_buttons_continue', [
+                new FormTestCase([
+                    'lgv_details[totalLgvCount]' => '50',
+                    'lgv_details[internationalJourneyLgvCount]' => '15',
+                    'lgv_details[annualLgvJourneyEstimate]' => '100',
+                ]),
+            ]);
+
+            $expectedData['totalLgvCount'] = '50';
+            $expectedData['internationalJourneyLgvCount'] = '15';
+            $expectedData['annualLgvJourneyEstimate'] = '100';
         });
     }
 
     public function testNumberOfEmployeesChange(): void
     {
-        $this->performChangeTest(4, function(array &$expectedData) {
+        $this->performChangeTest(1, function(array &$expectedData) {
             $this->formTestAction('/pre-enquiry/business-details', 'business_details_buttons_continue', [
                 new FormTestCase([
                     'business_details[numberOfEmployees]' => '10001-30000',
@@ -68,7 +85,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
 
     public function testCorrespondenceDetailsChange(): void
     {
-        $this->performChangeTest(5, function(array &$expectedData) {
+        $this->performChangeTest(8, function(array &$expectedData) {
             $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_buttons_continue', [
                 new FormTestCase([
                     'correspondence_details[contactName]' => 'Charlie',
@@ -85,7 +102,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
 
     public function testChangeCompanyAddressIncorrect(): void
     {
-        $this->performChangeTest(8, function(array &$expectedData) {
+        $this->performChangeTest(11, function(array &$expectedData) {
             $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
                 new FormTestCase([
                     'correspondence_address[isCorrectAddress]' => 'no',
@@ -110,7 +127,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
 
     public function testChangeCompanyAddressCorrect(): void
     {
-        $this->performChangeTest(8, function(array &$expectedData) {
+        $this->performChangeTest(11, function(array &$expectedData) {
             $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
                 new FormTestCase([
                     'correspondence_address[isCorrectAddress]' => 'yes',
@@ -149,9 +166,12 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     {
         return [
             'companyName' => 'Wabble Sockets Ltd',
-            'totalVehicleCount' => '70',
-            'internationalJourneyVehicleCount' => '20',
-            'annualJourneyEstimate' => '51',
+            'totalHgvCount' => '70',
+            'internationalJourneyHgvCount' => '20',
+            'annualHgvJourneyEstimate' => '51',
+            'totalLgvCount' => '30',
+            'internationalJourneyLgvCount' => '10',
+            'annualLgvJourneyEstimate' => '25',
             'numberOfEmployees' => '10-49',
             'contactName' => 'Bob Bobbington',
             'contactEmail' => 'bob@example.com',

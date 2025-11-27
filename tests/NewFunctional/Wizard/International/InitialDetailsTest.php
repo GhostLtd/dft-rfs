@@ -10,22 +10,36 @@ use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
+/**
+ * Tests the IRHS initial details wizard flow.
+ *
+ * Workflow order:
+ * 1. contact-details
+ * 2. activity-status
+ * 3. (if STILL_ACTIVE) business-details
+ * 4. (if STILL_ACTIVE) number-of-trips
+ */
 class InitialDetailsTest extends AbstractInitialDetailsTest
 {
+    /**
+     * Tests the flow when user selects "still-active" with zero HGV journeys.
+     * Zero HGV journeys means no vehicle data needed (survey ends after trips).
+     */
     public function testZeroJourneysAndStillActive(): void
     {
         $this->initialiseTest([SurveyFixtures::class]);
 
         $this->introAndContactDetails();
-        $this->annualJourneyCount(0);
         $this->activityStatus('still-active');
         $this->businessDetails('1-9', 'Testing websites');
+        $this->annualJourneyCount(0, 0);
 
         $data = [
             'contactName' => 'My name',
             'contactEmail' => 'email@example.com',
             'contactTelephone' => 'My telephone',
-            'annualInternationalJourneyCount' => 0,
+            'annualInternationalHGVJourneyCount' => 0,
+            'annualInternationalLGVJourneyCount' => 0,
             'activityStatus' => 'still-active',
             'numberOfEmployees' => '1-9',
             'businessNature' => 'Testing websites',
@@ -35,19 +49,24 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
         $this->assertDatabaseMatchesData($data);
     }
 
+    /**
+     * Tests the flow when user selects "ceased-trading".
+     * Survey ends immediately after activity-status - no business details or trips needed.
+     */
     public function testZeroJourneysAndCeasedTrading(): void
     {
         $this->initialiseTest([SurveyFixtures::class]);
 
         $this->introAndContactDetails();
-        $this->annualJourneyCount(0);
         $this->activityStatus('ceased-trading');
+        // No business details or journey count - survey ends here
 
         $data = [
             'contactName' => 'My name',
             'contactEmail' => 'email@example.com',
             'contactTelephone' => 'My telephone',
-            'annualInternationalJourneyCount' => 0,
+            'annualInternationalHGVJourneyCount' => null,
+            'annualInternationalLGVJourneyCount' => null,
             'activityStatus' => 'ceased-trading',
             'numberOfEmployees' => null,
             'businessNature' => null,
@@ -57,19 +76,24 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
         $this->assertDatabaseMatchesData($data);
     }
 
+    /**
+     * Tests the flow when user selects "only-domestic-work".
+     * Survey ends immediately after activity-status - no business details or trips needed.
+     */
     public function testZeroJourneysAndOnlyDomesticWork(): void
     {
         $this->initialiseTest([SurveyFixtures::class]);
 
         $this->introAndContactDetails();
-        $this->annualJourneyCount(0);
         $this->activityStatus('only-domestic-work');
+        // No business details or journey count - survey ends here
 
         $data = [
             'contactName' => 'My name',
             'contactEmail' => 'email@example.com',
             'contactTelephone' => 'My telephone',
-            'annualInternationalJourneyCount' => 0,
+            'annualInternationalHGVJourneyCount' => null,
+            'annualInternationalLGVJourneyCount' => null,
             'activityStatus' => 'only-domestic-work',
             'numberOfEmployees' => null,
             'businessNature' => null,
@@ -79,22 +103,56 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
         $this->assertDatabaseMatchesData($data);
     }
 
+    /**
+     * Tests the full flow with positive HGV journeys.
+     * This is the typical case where vehicle/trip data will be collected.
+     */
     public function testManyJourneys(): void
     {
         $this->initialiseTest([SurveyFixtures::class]);
 
         $this->introAndContactDetails();
-        $this->annualJourneyCount(30);
+        $this->activityStatus('still-active');
         $this->businessDetails('1-9', 'Testing websites');
+        $this->annualJourneyCount(30, 10);
 
         $data = [
             'contactName' => 'My name',
             'contactEmail' => 'email@example.com',
             'contactTelephone' => 'My telephone',
-            'annualInternationalJourneyCount' => 30,
+            'annualInternationalHGVJourneyCount' => 30,
+            'annualInternationalLGVJourneyCount' => 10,
             'activityStatus' => 'still-active',
             'numberOfEmployees' => '1-9',
             'businessNature' => 'Testing websites',
+        ];
+
+        $this->assertDashboardMatchesData($data);
+        $this->assertDatabaseMatchesData($data);
+    }
+
+    /**
+     * Tests the LGV-only scenario (0 HGV, positive LGV).
+     * Since the survey only collects HGV vehicle data, this ends without vehicle data.
+     */
+    public function testLgvOnlyJourneys(): void
+    {
+        $this->initialiseTest([SurveyFixtures::class]);
+
+        $this->introAndContactDetails();
+        $this->activityStatus('still-active');
+        $this->businessDetails('1-9', 'Van haulage only');
+        $this->annualJourneyCount(0, 50);
+
+        $data = [
+            'contactName' => 'My name',
+            'contactEmail' => 'email@example.com',
+            'contactTelephone' => 'My telephone',
+            'annualInternationalHGVJourneyCount' => 0,
+            'annualInternationalLGVJourneyCount' => 50,
+            'activityStatus' => 'still-active',
+            'numberOfEmployees' => '1-9',
+            'businessNature' => 'Van haulage only',
         ];
 
         $this->assertDashboardMatchesData($data);
@@ -116,15 +174,6 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
         ]);
     }
 
-    protected function annualJourneyCount(int $journeyCount): void
-    {
-        $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
-            new FormTestCase([
-                'number_of_trips[annualInternationalJourneyCount]' => $journeyCount,
-            ]),
-        ]);
-    }
-
     protected function activityStatus(string $status): void
     {
         $this->formTestAction('/international-survey/initial-details/activity-status', 'activity_status_buttons_continue', [
@@ -140,6 +189,16 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
             new FormTestCase([
                 'business_details[numberOfEmployees]' => $numberOfEmployees,
                 'business_details[businessNature]' => $businessNature,
+            ]),
+        ]);
+    }
+
+    protected function annualJourneyCount(int $hgvJourneyCount, int $lgvJourneyCount): void
+    {
+        $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
+            new FormTestCase([
+                'number_of_trips[annualInternationalHGVJourneyCount]' => $hgvJourneyCount,
+                'number_of_trips[annualInternationalLGVJourneyCount]' => $lgvJourneyCount,
             ]),
         ]);
     }

@@ -24,7 +24,8 @@ class ResponseStillActiveFixtures extends Fixture implements DependentFixtureInt
             ->setNumberOfEmployees(AbstractSurveyResponse::EMPLOYEES_10_TO_49)
             ->setActivityStatus(SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE)
             ->setBusinessNature('Bread haulage')
-            ->setAnnualInternationalJourneyCount('150')
+            ->setAnnualInternationalHGVJourneyCount(150)
+            ->setAnnualInternationalLGVJourneyCount(0)
             ->setInitialDetailsSignedOff(true);
 
         $survey

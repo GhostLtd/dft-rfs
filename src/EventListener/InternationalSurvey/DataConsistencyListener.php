@@ -76,9 +76,9 @@ class DataConsistencyListener
                 ->setReasonForEmptySurveyOther(null);
         }
 
-        if ($response->isNoLongerActive()) {
-            // If the company is no longer active (or carries out only domestic work), then we shouldn't be recording
-            // trips data
+        if ($response->shouldSurveyBeSubmittedWithoutJourneys()) {
+            // If the company is no longer active, carries out only domestic work, or isn't running
+            // HGVs, then we shouldn't be recording trips data
             $this->deleteVehicles($response);
         }
 

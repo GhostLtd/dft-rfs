@@ -7,7 +7,8 @@ use App\Form\PreEnquiry\CompanyNameType;
 use App\Form\PreEnquiry\CorrespondenceAddressType;
 use App\Form\PreEnquiry\CorrespondenceDetailsType;
 use App\Form\PreEnquiry\BusinessDetailsType;
-use App\Form\PreEnquiry\VehicleQuestionsType;
+use App\Form\PreEnquiry\HgvDetailsType;
+use App\Form\PreEnquiry\LgvDetailsType;
 use App\Workflow\AbstractFormWizardState;
 use App\Workflow\FormWizardStateInterface;
 use InvalidArgumentException;
@@ -18,15 +19,28 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
     public const STATE_COMPANY_NAME = 'company-name';
     public const STATE_CORRESPONDENCE_DETAILS = 'correspondence-details';
     public const STATE_CORRESPONDENCE_ADDRESS = 'correspondence-address';
-    public const STATE_VEHICLE_QUESTIONS = 'vehicle-questions';
+    public const STATE_HGV_DETAILS = 'hgv-details';
+    public const STATE_LGV_DETAILS = 'lgv-details';
     public const STATE_BUSINESS_DETAILS = 'business-details';
     public const STATE_SUMMARY = 'summary';
+
+    private const array FORM_WIZARD_ORDER = [
+        self::STATE_INTRODUCTION,
+        self::STATE_COMPANY_NAME,
+        self::STATE_CORRESPONDENCE_DETAILS,
+        self::STATE_CORRESPONDENCE_ADDRESS,
+        self::STATE_HGV_DETAILS,
+        self::STATE_LGV_DETAILS,
+        self::STATE_BUSINESS_DETAILS,
+        self::STATE_SUMMARY,
+    ];
 
     private const array FORM_MAP = [
         self::STATE_COMPANY_NAME => CompanyNameType::class,
         self::STATE_CORRESPONDENCE_DETAILS => CorrespondenceDetailsType::class,
         self::STATE_CORRESPONDENCE_ADDRESS => CorrespondenceAddressType::class,
-        self::STATE_VEHICLE_QUESTIONS => VehicleQuestionsType::class,
+        self::STATE_HGV_DETAILS => HgvDetailsType::class,
+        self::STATE_LGV_DETAILS => LgvDetailsType::class,
         self::STATE_BUSINESS_DETAILS => BusinessDetailsType::class,
     ];
 
@@ -35,7 +49,8 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
         self::STATE_COMPANY_NAME => 'pre_enquiry/form-company-name.html.twig',
         self::STATE_CORRESPONDENCE_DETAILS => 'pre_enquiry/form-correspondence-details.html.twig',
         self::STATE_CORRESPONDENCE_ADDRESS => 'pre_enquiry/form-correspondence-address.html.twig',
-        self::STATE_VEHICLE_QUESTIONS => 'pre_enquiry/form-vehicle-questions.html.twig',
+        self::STATE_HGV_DETAILS => 'pre_enquiry/form-hgv-details.html.twig',
+        self::STATE_LGV_DETAILS => 'pre_enquiry/form-lgv-details.html.twig',
         self::STATE_BUSINESS_DETAILS => 'pre_enquiry/form-business-details.html.twig',
     ];
 
@@ -88,7 +103,8 @@ class PreEnquiryState extends AbstractFormWizardState implements FormWizardState
                 PreEnquiryState::STATE_CORRESPONDENCE_ADDRESS,
                 PreEnquiryState::STATE_CORRESPONDENCE_DETAILS,
                 PreEnquiryState::STATE_BUSINESS_DETAILS,
-                PreEnquiryState::STATE_VEHICLE_QUESTIONS,
+                PreEnquiryState::STATE_HGV_DETAILS,
+                PreEnquiryState::STATE_LGV_DETAILS,
             ];
 
             return in_array($state, $validStates);

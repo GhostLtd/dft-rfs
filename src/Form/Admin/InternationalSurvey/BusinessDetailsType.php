@@ -23,10 +23,18 @@ class BusinessDetailsType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'choices' => SurveyResponse::ACTIVITY_STATUS_CHOICES,
                 'choice_options' => [
-                    SurveyResponse::ACTIVITY_STATUS_CHOICES_PREFIX.SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE => [
+                    'international.survey-response.activity-status.choices.still-active' => [
                         'conditional_form_name' => 'conditionalFields',
                     ],
+                    'international.survey-response.activity-status.choices.no-road-haulage' => [
+                        'conditional_form_name' => 'activityStatusOther'
+                    ],
                 ],
+            ])
+            ->add('activityStatusOther', Gds\InputType::class, [
+                'label' => 'international.survey-response.activity-status.other.label',
+                'help' => 'international.survey-response.activity-status.other.help',
+                'attr' => ['class' => 'govuk-input--width-30'],
             ])
             ->add('conditionalFields', Gds\FieldsetType::class, [
                 'label' => false,
@@ -59,25 +67,39 @@ class BusinessDetailsType extends AbstractType
                 'attr' => ['class' => 'govuk-select--width-15'],
                 'expanded' => false,
             ])
-            ->add('annualInternationalJourneyCount', Gds\IntegerType::class, [
-                'label' => 'Estimated number of international trips that will be made by the firm in the next 12 months',
+            ->add('annualInternationalHGVJourneyCount', Gds\IntegerType::class, [
+                'label' => 'international.survey-response.number-of-trips.admin-hgv-count.label',
+                'label_attr' => ['class' => 'govuk-label--s'],
+                'attr' => [
+                    'class' => 'govuk-input--width-5',
+                ],
+            ])
+            ->add('annualInternationalLGVJourneyCount', Gds\IntegerType::class, [
+                'label' => 'international.survey-response.number-of-trips.admin-lgv-count.label',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => [
                     'class' => 'govuk-input--width-5',
                 ],
             ]);
+
     }
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'data_class' => SurveyResponse::class,
             'validation_groups' => function(FormInterface $form) {
                 /** @var SurveyResponse $data */
                 $data = $form->getData();
 
-                return ($data && $data->getActivityStatus() === SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE) ?
-                    ['admin_business_details'] : ['Default'];
+                $groups = ['admin_business_details'];
+
+                if ($data->getActivityStatus() === SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE) {
+                    $groups[] = 'number_of_trips';
+                }
+
+                return $groups;
             },
             'include_buttons' => true,
         ]);

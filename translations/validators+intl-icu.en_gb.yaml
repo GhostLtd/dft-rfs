@@ -122,6 +122,9 @@ international:
     reference-number:
       correct-format: Enter a number followed by a dash, followed by a four-digit week number.
   survey-response:
+    activity-status:
+      other:
+        not-null: Enter the reason for the lack of international road haulage activities
     annual-international-journey-count:
       not-null: Estimate the number of trips
       not-negative: Enter a positive number

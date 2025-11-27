@@ -39,10 +39,12 @@ SELECT c.*, t.id AS TripID
 FROM view_international_consignments AS c
 JOIN international_trip AS t ON t.id = c.TripID
 JOIN international_vehicle AS v ON v.id = t.vehicle_id
-WHERE 
+JOIN international_survey_response AS sr ON sr.id = v.survey_response_id
+JOIN international_survey AS s ON s.id = sr.survey_id
+WHERE
     t.outbound_date >= :minDate
     AND t.outbound_date < :maxDate
-
+    AND s.state IN ('closed', 'approved')
 SQL,
                 [
                     'minDate' => $minDate,

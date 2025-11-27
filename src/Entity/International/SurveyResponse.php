@@ -16,16 +16,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: SurveyResponseRepository::class)]
 class SurveyResponse extends AbstractSurveyResponse
 {
-    public const ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
-    public const ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
-    public const ACTIVITY_STATUS_STILL_ACTIVE = 'still-active';
+    public const string ACTIVITY_STATUS_CEASED_TRADING = 'ceased-trading';
+    public const string ACTIVITY_STATUS_ONLY_DOMESTIC_WORK = 'only-domestic-work';
+    public const string ACTIVITY_STATUS_NO_ROAD_HAULAGE = 'no-road-haulage';
+    public const string ACTIVITY_STATUS_STILL_ACTIVE = 'still-active';
 
-    public const ACTIVITY_STATUS_PREFIX = 'international.survey-response.activity-status.';
-    public const ACTIVITY_STATUS_CHOICES_PREFIX = self::ACTIVITY_STATUS_PREFIX .'choices.';
-    public const ACTIVITY_STATUS_CHOICES = [
-         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_CEASED_TRADING => self::ACTIVITY_STATUS_CEASED_TRADING,
-         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK => self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK,
-         self::ACTIVITY_STATUS_CHOICES_PREFIX . self::ACTIVITY_STATUS_STILL_ACTIVE => self::ACTIVITY_STATUS_STILL_ACTIVE,
+    public const array ACTIVITY_STATUS_CHOICES = [
+         'international.survey-response.activity-status.choices.ceased-trading' => self::ACTIVITY_STATUS_CEASED_TRADING,
+         'international.survey-response.activity-status.choices.only-domestic-work' => self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK,
+         'international.survey-response.activity-status.choices.no-road-haulage' => self::ACTIVITY_STATUS_NO_ROAD_HAULAGE,
+         'international.survey-response.activity-status.choices.still-active' => self::ACTIVITY_STATUS_STILL_ACTIVE,
     ];
 
     #[ORM\Id]
@@ -34,18 +34,34 @@ class SurveyResponse extends AbstractSurveyResponse
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[Assert\NotNull(message: 'international.survey-response.annual-international-journey-count.not-null', groups: ['number_of_trips', 'admin_business_details'])]
-    #[Assert\PositiveOrZero(message: 'common.number.positive-or-zero', groups: ['number_of_trips', 'admin_business_details'])]
-    #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['number_of_trips', 'admin_business_details'])]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $annualInternationalJourneyCount = null;
+    #[Assert\NotNull(message: 'international.survey-response.annual-international-journey-count.not-null', groups: ['number_of_trips'])]
+    #[Assert\PositiveOrZero(message: 'common.number.positive-or-zero', groups: ['number_of_trips'])]
+    #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['number_of_trips'])]
+    #[ORM\Column(name: 'annual_international_hgv_journey_count', type: Types::INTEGER, nullable: true)]
+    private ?int $annualInternationalHGVJourneyCount = null;
+
+    #[Assert\NotNull(message: 'international.survey-response.annual-international-journey-count.not-null', groups: ['number_of_trips'])]
+    #[Assert\PositiveOrZero(message: 'common.number.positive-or-zero', groups: ['number_of_trips'])]
+    #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['number_of_trips'])]
+    #[ORM\Column(name: 'annual_international_lgv_journey_count', type: Types::INTEGER, nullable: true)]
+    private ?int $annualInternationalLGVJourneyCount = null;
 
     #[Assert\NotNull(message: 'common.choice.invalid', groups: ['activity_status', 'admin_business_details'])]
     #[ORM\Column(type: Types::STRING, length: 24, nullable: true)]
     private ?string $activityStatus = null;
 
+    #[Assert\Length(max: 255, maxMessage: 'common.string.max-length', groups: ['activity_status', 'admin_business_details'])]
+    #[Assert\Expression(
+        "(this.getActivityStatus() != constant('\\\\App\\\\Entity\\\\International\\\\SurveyResponse::ACTIVITY_STATUS_NO_ROAD_HAULAGE')) || value != null",
+        message: 'international.survey-response.activity-status.other.not-null',
+        groups: ['activity_status', 'admin_business_details']
+    )]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $activityStatusOther = null;
+
+
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\OneToOne(inversedBy: 'response', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Survey::class, inversedBy: 'response', cascade: ['persist', 'remove'])]
     private ?Survey $survey = null;
 
     /**
@@ -70,14 +86,25 @@ class SurveyResponse extends AbstractSurveyResponse
         return $this->id;
     }
 
-    public function getAnnualInternationalJourneyCount(): ?int
+    public function getAnnualInternationalHGVJourneyCount(): ?int
     {
-        return $this->annualInternationalJourneyCount;
+        return $this->annualInternationalHGVJourneyCount;
     }
 
-    public function setAnnualInternationalJourneyCount(?int $annualInternationalJourneyCount): self
+    public function setAnnualInternationalHGVJourneyCount(?int $annualInternationalHGVJourneyCount): self
     {
-        $this->annualInternationalJourneyCount = $annualInternationalJourneyCount;
+        $this->annualInternationalHGVJourneyCount = $annualInternationalHGVJourneyCount;
+        return $this;
+    }
+
+    public function getAnnualInternationalLGVJourneyCount(): ?int
+    {
+        return $this->annualInternationalLGVJourneyCount;
+    }
+
+    public function setAnnualInternationalLGVJourneyCount(?int $annualInternationalLGVJourneyCount): self
+    {
+        $this->annualInternationalLGVJourneyCount = $annualInternationalLGVJourneyCount;
         return $this;
     }
 
@@ -93,9 +120,26 @@ class SurveyResponse extends AbstractSurveyResponse
         if ($this->isNoLongerActive()) {
             $this->setBusinessNature(null);
             $this->setNumberOfEmployees(null);
+            $this->setAnnualInternationalHGVJourneyCount(null);
+            $this->setAnnualInternationalLGVJourneyCount(null);
             $this->setInitialDetailsSignedOff(null);
         }
 
+        if ($activityStatus !== self::ACTIVITY_STATUS_NO_ROAD_HAULAGE) {
+            $this->setActivityStatusOther(null);
+        }
+
+        return $this;
+    }
+
+    public function getActivityStatusOther(): ?string
+    {
+        return $this->activityStatusOther;
+    }
+
+    public function setActivityStatusOther(?string $activityStatusOther): self
+    {
+        $this->activityStatusOther = $activityStatusOther;
         return $this;
     }
 
@@ -153,16 +197,21 @@ class SurveyResponse extends AbstractSurveyResponse
 
     // -----
 
-    public function hasPositiveEstimatedInternationalTrips(): bool
-    {
-        $journeyCount = $this->getAnnualInternationalJourneyCount();
-        return $journeyCount !== null && $journeyCount > 0;
-    }
-
     public function isNoLongerActive(): bool
     {
-        $status = $this->getActivityStatus();
-        return ($status === self::ACTIVITY_STATUS_CEASED_TRADING || $status === self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK);
+        return match($this->getActivityStatus()) {
+            self::ACTIVITY_STATUS_CEASED_TRADING,
+            self::ACTIVITY_STATUS_NO_ROAD_HAULAGE,
+            self::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK => true,
+            default => false,
+        };
+    }
+
+    public function shouldSurveyBeSubmittedWithoutJourneys(): bool
+    {
+        return
+            $this->isNoLongerActive() ||
+            $this->annualInternationalHGVJourneyCount === 0;
     }
 
     public function mergeInitialDetails(SurveyResponse $response): void
@@ -174,18 +223,10 @@ class SurveyResponse extends AbstractSurveyResponse
         // N.B. The order of these calls is important as some setters cause other setters to be triggered
         $this->setBusinessNature($response->getBusinessNature());
         $this->setNumberOfEmployees($response->getNumberOfEmployees());
+        $this->setAnnualInternationalHGVJourneyCount($response->getAnnualInternationalHGVJourneyCount());
+        $this->setAnnualInternationalLGVJourneyCount($response->getAnnualInternationalLGVJourneyCount());
         $this->setActivityStatus($response->getActivityStatus());
-        $this->setAnnualInternationalJourneyCount($response->getAnnualInternationalJourneyCount());
-    }
-
-    public function canSubmit(): bool
-    {
-        return $this->isNoLongerActive(); // TODO: Add further check cases
-    }
-
-    public function isFilledOut(): bool
-    {
-        return $this->getTotalNumberOfTrips() > 0;
+        $this->setActivityStatusOther($response->getActivityStatusOther());
     }
 
     public function getNumberOfVehicles(): int

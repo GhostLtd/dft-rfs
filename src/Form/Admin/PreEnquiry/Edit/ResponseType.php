@@ -25,7 +25,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
         self::CHOICE_NO => 'no',
     ];
 
-    private const array nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalVehicleCount', 'internationalJourneyVehicleCount', 'numberOfEmployees', 'annualJourneyEstimate'];
+    private const array nonListenerFields = ['contactName', 'contactTelephone', 'contactEmail', 'totalHgvCount', 'internationalJourneyHgvCount', 'annualHgvJourneyEstimate', 'totalLgvCount', 'internationalJourneyLgvCount', 'annualLgvJourneyEstimate', 'numberOfEmployees'];
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -34,7 +34,8 @@ class ResponseType extends AbstractType implements DataMapperInterface
         $correspondenceDetailsPrefix = "pre-enquiry.correspondence-details";
         $correspondenceAddressPrefix = "pre-enquiry.correspondence-address";
         $businessDetailsPrefix = "pre-enquiry.business-details";
-        $vehicleQuestionsPrefix = "pre-enquiry.vehicle-questions";
+        $hgvDetailsPrefix = "pre-enquiry.hgv-details";
+        $lgvDetailsPrefix = "pre-enquiry.lgv-details";
 
         $builder
             ->setDataMapper($this)
@@ -110,25 +111,49 @@ class ResponseType extends AbstractType implements DataMapperInterface
                 'help' => "{$correspondenceDetailsPrefix}.email.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('totalVehicleCount', Gds\IntegerType::class, [
-                'label' => "{$vehicleQuestionsPrefix}.total-vehicle-count.label",
-                'help' => "{$vehicleQuestionsPrefix}.total-vehicle-count.help",
+            ->add('totalHgvCount', Gds\IntegerType::class, [
+                'label' => "{$hgvDetailsPrefix}.total-hgv-count.label",
+                'help' => "{$hgvDetailsPrefix}.total-hgv-count.help",
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('internationalJourneyVehicleCount', Gds\IntegerType::class, [
-                'label' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.label",
-                'help' => "{$vehicleQuestionsPrefix}.international-journey-vehicle-count.help",
+            ->add('internationalJourneyHgvCount', Gds\IntegerType::class, [
+                'label' => "{$hgvDetailsPrefix}.international-journey-hgv-count.label",
+                'help' => "{$hgvDetailsPrefix}.international-journey-hgv-count.help",
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
                 'label_attr' => ['class' => 'govuk-label--s'],
             ])
-            ->add('annualJourneyEstimate', Gds\IntegerType::class, [
-                'label' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.label",
-                'help' => "{$vehicleQuestionsPrefix}.annual-journey-estimate.help",
+            ->add('annualHgvJourneyEstimate', Gds\IntegerType::class, [
+                'label' => "{$hgvDetailsPrefix}.annual-hgv-journey-estimate.label",
+                'help' => "{$hgvDetailsPrefix}.annual-hgv-journey-estimate.help",
+                'attr' => [
+                    'class' => 'govuk-input--width-3',
+                ],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+            ->add('totalLgvCount', Gds\IntegerType::class, [
+                'label' => "{$lgvDetailsPrefix}.total-lgv-count.label",
+                'help' => "{$lgvDetailsPrefix}.total-lgv-count.help",
+                'attr' => [
+                    'class' => 'govuk-input--width-3',
+                ],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+            ->add('internationalJourneyLgvCount', Gds\IntegerType::class, [
+                'label' => "{$lgvDetailsPrefix}.international-journey-lgv-count.label",
+                'help' => "{$lgvDetailsPrefix}.international-journey-lgv-count.help",
+                'attr' => [
+                    'class' => 'govuk-input--width-3',
+                ],
+                'label_attr' => ['class' => 'govuk-label--s'],
+            ])
+            ->add('annualLgvJourneyEstimate', Gds\IntegerType::class, [
+                'label' => "{$lgvDetailsPrefix}.annual-lgv-journey-estimate.label",
+                'help' => "{$lgvDetailsPrefix}.annual-lgv-journey-estimate.help",
                 'attr' => [
                     'class' => 'govuk-input--width-3',
                 ],
@@ -162,7 +187,7 @@ class ResponseType extends AbstractType implements DataMapperInterface
             'data_class' => PreEnquiryResponse::class,
             'validation_groups' => function(FormInterface $form) {
                 $data = $form->getData();
-                $groups = ['company_name', 'correspondence_details', 'employees_and_international_journeys', 'is_correct_address', 'vehicle_questions', 'business_details'];
+                $groups = ['company_name', 'correspondence_details', 'employees_and_international_journeys', 'is_correct_address', 'hgv_details', 'lgv_details', 'business_details'];
 
                 if ($data instanceof PreEnquiryResponse) {
                     if ($data->getIsCorrectAddress() === false) {

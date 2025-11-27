@@ -30,7 +30,8 @@ return static function (ContainerConfigurator $container) {
                     StateObject::STATE_COMPANY_NAME,
                     StateObject::STATE_CORRESPONDENCE_DETAILS,
                     StateObject::STATE_CORRESPONDENCE_ADDRESS,
-                    StateObject::STATE_VEHICLE_QUESTIONS,
+                    StateObject::STATE_HGV_DETAILS,
+                    StateObject::STATE_LGV_DETAILS,
                     StateObject::STATE_BUSINESS_DETAILS,
                     StateObject::STATE_SUMMARY,
                 ],
@@ -50,13 +51,18 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_CORRESPONDENCE_ADDRESS,
                         'guard' => $guardNotPersisted,
                     ],
-                    'address-to-vehicles' => [
+                    'address-to-hgv' => [
                         'from' => StateObject::STATE_CORRESPONDENCE_ADDRESS,
-                        'to' =>  StateObject::STATE_VEHICLE_QUESTIONS,
+                        'to' =>  StateObject::STATE_HGV_DETAILS,
                         'guard' => $guardNotPersisted,
                     ],
-                    'vehicles-to-employees' => [
-                        'from' => StateObject::STATE_VEHICLE_QUESTIONS,
+                    'hgv-to-lgv' => [
+                        'from' => StateObject::STATE_HGV_DETAILS,
+                        'to' =>  StateObject::STATE_LGV_DETAILS,
+                        'guard' => $guardNotPersisted,
+                    ],
+                    'lgv-to-employees' => [
+                        'from' => StateObject::STATE_LGV_DETAILS,
                         'to' =>  StateObject::STATE_BUSINESS_DETAILS,
                         'guard' => $guardNotPersisted,
                     ],
@@ -87,9 +93,15 @@ return static function (ContainerConfigurator $container) {
                         'to' =>  StateObject::STATE_SUMMARY,
                         'guard' => $guardPersisted,
                     ],
-                    'vehicle-changed' => [
+                    'hgv-changed' => [
                         'metadata' => $endMetadata,
-                        'from' =>  StateObject::STATE_VEHICLE_QUESTIONS,
+                        'from' =>  StateObject::STATE_HGV_DETAILS,
+                        'to' =>  StateObject::STATE_SUMMARY,
+                        'guard' => $guardPersisted,
+                    ],
+                    'lgv-changed' => [
+                        'metadata' => $endMetadata,
+                        'from' =>  StateObject::STATE_LGV_DETAILS,
                         'to' =>  StateObject::STATE_SUMMARY,
                         'guard' => $guardPersisted,
                     ],

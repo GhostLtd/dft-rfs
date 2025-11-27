@@ -7,7 +7,9 @@ module.exports.setupBrowserAndPage = async () => {
         args: [
             '--single-process',
             '--no-sandbox',
+            '--disable-back-forward-cache',
         ],
+        executablePath: '/usr/local/bin/google-chrome',
         ignoreHTTPSErrors: true,
         // headless: false,
     });

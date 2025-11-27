@@ -15,11 +15,19 @@ class ActivityStatusType extends AbstractType
     {
         $builder
             ->add('activityStatus', Gds\ChoiceType::class, [
-                'label' => SurveyResponse::ACTIVITY_STATUS_PREFIX.'activity-status.label',
-                'help' => SurveyResponse::ACTIVITY_STATUS_PREFIX.'activity-status.help',
+                'label' => 'international.survey-response.activity-status.activity-status.label',
+                'help' => 'international.survey-response.activity-status.activity-status.help',
                 'choices' => SurveyResponse::ACTIVITY_STATUS_CHOICES,
                 'label_is_page_heading' => true,
                 'label_attr' => ['class' => 'govuk-fieldset__legend--l'],
+                'choice_options' => fn(string $x) => match($x) {
+                    'no-road-haulage' => ['conditional_form_name' => 'activityStatusOther'],
+                    default => [],
+                },
+            ])
+            ->add('activityStatusOther', Gds\InputType::class, [
+                'label' => 'international.survey-response.activity-status.other.label',
+                'help' => 'international.survey-response.activity-status.other.help',
             ])
         ;
     }

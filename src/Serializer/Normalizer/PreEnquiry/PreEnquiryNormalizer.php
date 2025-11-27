@@ -57,9 +57,12 @@ class PreEnquiryNormalizer implements NormalizerInterface, NormalizerAwareInterf
             'addressLine4' => $response?->getContactAddress()->getLine5(),
             'addressLine5' => $response?->getContactAddress()->getLine6(),
             'addressPostcode' => $response?->getContactAddress()->getPostcode(),
-            'numberOfHgv' => $response?->getTotalVehicleCount(),
-            'numberOfIntHgv' => $response?->getInternationalJourneyVehicleCount(),
-            'numberOfIntJourneys' => $response?->getAnnualJourneyEstimate(),
+            'numberOfHgv' => $response?->getTotalHgvCount(),
+            'numberOfIntHgv' => $response?->getInternationalJourneyHgvCount(),
+            'numberOfIntHgvJourneys' => $response?->getAnnualHgvJourneyEstimate(),
+            'numberOfLgv' => $response?->getTotalLgvCount(),
+            'numberOfIntLgv' => $response?->getInternationalJourneyLgvCount(),
+            'numberOfIntLgvJourneys' => $response?->getAnnualLgvJourneyEstimate(),
             'businessSize' => $response?->getNumberOfEmployees(),
         ];
     }

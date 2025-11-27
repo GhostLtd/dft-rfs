@@ -11,57 +11,87 @@
     {%- endif -%}
 
     <h1 class="govuk-heading-xl">{{ 'pre-enquiry.summary.heading' | trans }}</h1>
+
+    {%- set response = preEnquiry.response -%}
+
+    {%- set companyNameAction = [
+        {
+            href: wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME'),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'pre-enquiry.summary.company-name' | trans,
+        }
+    ] -%}
+    {%- set hgvDetailsAction = [
+        {
+            href: wizardUrl('pre-enquiry', 'STATE_HGV_DETAILS'),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'pre-enquiry.summary.hgv-details' | trans,
+        }
+    ] -%}
+    {%- set lgvDetailsAction = [
+        {
+            href: wizardUrl('pre-enquiry', 'STATE_LGV_DETAILS'),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'pre-enquiry.summary.lgv-details' | trans,
+        }
+    ] -%}
+    {%- set employeeCountAction = [
+        {
+            href: wizardUrl('pre-enquiry', 'STATE_BUSINESS_DETAILS'),
+            text: 'common.actions.change' | trans,
+            visuallyHiddenText: 'pre-enquiry.summary.employee-count' | trans,
+        }
+    ] -%}
+
     <h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.business-details' | trans }}</h2>
-
     {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
-        {%- set response = preEnquiry.response -%}
-
-        {%- set companyNameAction = [
-            {
-                href: wizardUrl('pre-enquiry', 'STATE_COMPANY_NAME'),
-                text: 'common.actions.change' | trans,
-                visuallyHiddenText: 'pre-enquiry.summary.company-name' | trans,
-            }
-        ] -%}
-        {%- set vehicleDetailsAction = [
-            {
-                href: wizardUrl('pre-enquiry', 'STATE_VEHICLE_QUESTIONS'),
-                text: 'common.actions.change' | trans,
-                visuallyHiddenText: 'pre-enquiry.summary.vehicle-details' | trans,
-            }
-        ] -%}
-        {%- set employeeCountAction = [
-            {
-                href: wizardUrl('pre-enquiry', 'STATE_BUSINESS_DETAILS'),
-                text: 'common.actions.change' | trans,
-                visuallyHiddenText: 'pre-enquiry.summary.employee-count' | trans,
-            }
-        ] -%}
-
         {{- summaryListRow({
             key: 'pre-enquiry.summary.company-name' | trans,
             value: response.companyName,
             actions: companyNameAction,
         }) -}}
         {{- summaryListRow({
-            key: 'pre-enquiry.summary.total-vehicle-count' | trans,
-            value: response.totalVehicleCount,
-            actions: vehicleDetailsAction,
-        }) -}}
-        {{- summaryListRow({
-            key: 'pre-enquiry.summary.international-journey-vehicle-count' | trans,
-            value: response.internationalJourneyVehicleCount,
-            actions: vehicleDetailsAction,
-        }) -}}
-        {{- summaryListRow({
-            key: 'pre-enquiry.summary.annual-journey-estimate' | trans,
-            value: response.annualJourneyEstimate,
-            actions: vehicleDetailsAction,
-        }) -}}
-        {{- summaryListRow({
             key: 'pre-enquiry.summary.number-of-employees' | trans,
             value: response.numberOfEmployees,
             actions: employeeCountAction,
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    <h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.hgv-details' | trans }}</h2>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.total-hgv-count' | trans,
+            value: response.totalHgvCount,
+            actions: hgvDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.international-journey-hgv-count' | trans,
+            value: response.internationalJourneyHgvCount,
+            actions: hgvDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.annual-hgv-journey-estimate' | trans,
+            value: response.annualHgvJourneyEstimate,
+            actions: hgvDetailsAction,
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    <h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.lgv-details' | trans }}</h2>
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.total-lgv-count' | trans,
+            value: response.totalLgvCount,
+            actions: lgvDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.international-journey-lgv-count' | trans,
+            value: response.internationalJourneyLgvCount,
+            actions: lgvDetailsAction,
+        }) -}}
+        {{- summaryListRow({
+            key: 'pre-enquiry.summary.annual-lgv-journey-estimate' | trans,
+            value: response.annualLgvJourneyEstimate,
+            actions: lgvDetailsAction,
         }) -}}
     {{- summaryListEnd() -}}
 

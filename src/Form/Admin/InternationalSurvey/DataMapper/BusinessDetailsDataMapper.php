@@ -25,9 +25,11 @@ class BusinessDetailsDataMapper implements DataMapperInterface
 
         // initialize form field values
         $forms['activityStatus']->setData($viewData->getActivityStatus());
+        $forms['activityStatusOther']->setData($viewData->getActivityStatusOther());
         $forms['numberOfEmployees']->setData($viewData->getNumberOfEmployees());
         $forms['businessNature']->setData($viewData->getBusinessNature());
-        $forms['annualInternationalJourneyCount']->setData($viewData->getAnnualInternationalJourneyCount());
+        $forms['annualInternationalHGVJourneyCount']->setData($viewData->getAnnualInternationalHGVJourneyCount());
+        $forms['annualInternationalLGVJourneyCount']->setData($viewData->getAnnualInternationalLGVJourneyCount());
     }
 
     #[\Override]
@@ -40,19 +42,27 @@ class BusinessDetailsDataMapper implements DataMapperInterface
             throw new UnexpectedTypeException($viewData, SurveyResponse::class);
         }
 
-        $viewData->setActivityStatus($forms['activityStatus']->getData());
+        $viewData
+            ->setActivityStatus($forms['activityStatus']->getData())
+            ->setNumberOfEmployees($forms['numberOfEmployees']->getData())
+            ->setBusinessNature($forms['businessNature']->getData());
 
-        $activityStatus = $viewData->getActivityStatus();
-        if (in_array($activityStatus, [SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING, SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK])) {
-            $viewData
-                ->setNumberOfEmployees(null)
-                ->setBusinessNature(null)
-                ->setAnnualInternationalJourneyCount(0);
-        } else {
-            $viewData
-                ->setNumberOfEmployees($forms['numberOfEmployees']->getData())
-                ->setBusinessNature($forms['businessNature']->getData())
-                ->setAnnualInternationalJourneyCount($forms['annualInternationalJourneyCount']->getData());
-        }
+        $activityStatusOther = $viewData->getActivityStatus() === SurveyResponse::ACTIVITY_STATUS_NO_ROAD_HAULAGE
+            ? $forms['activityStatusOther']->getData()
+            : null;
+
+        $viewData->setActivityStatusOther($activityStatusOther);
+
+        $hgvJourneyCount = $viewData->isNoLongerActive()
+            ? null
+            : $forms['annualInternationalHGVJourneyCount']->getData();
+
+        $viewData->setAnnualInternationalHGVJourneyCount($hgvJourneyCount);
+
+        $lgvJourneyCount = $viewData->isNoLongerActive()
+            ? null
+            : $forms['annualInternationalLGVJourneyCount']->getData();
+
+        $viewData->setAnnualInternationalLGVJourneyCount($lgvJourneyCount);
     }
 }

@@ -22,7 +22,7 @@
     {%- set tabs = {} -%}
     {%- if hasInitialDetails -%}
         {%- set tabs = tabs
-            | merge(survey.response.noLongerActive == false ? {'Vehicles': 'tab-vehicles'} : {})
+            | merge(survey.response.shouldSurveyBeSubmittedWithoutJourneys == false ? {'Vehicles': 'tab-vehicles'} : {})
             | merge({
                 'Correspondence details': 'tab-correspondence',
                 'Business details': 'tab-business-details',

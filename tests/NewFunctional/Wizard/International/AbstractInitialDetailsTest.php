@@ -36,7 +36,8 @@ abstract class AbstractInitialDetailsTest extends AbstractSurveyTest
             'numberOfEmployees' => '10-49',
             'activityStatus' => 'still-active',
             'businessNature' => 'Bread haulage',
-            'annualInternationalJourneyCount' => 150,
+            'annualInternationalHGVJourneyCount' => 150,
+            'annualInternationalLGVJourneyCount' => 0,
         ];
     }
 
@@ -46,7 +47,6 @@ abstract class AbstractInitialDetailsTest extends AbstractSurveyTest
             'Name' => $data['contactName'],
             'Email' => $data['contactEmail'] ?? '-',
             'Phone' => $data['contactTelephone'] ?? '-',
-            'international trips' => $data['annualInternationalJourneyCount'],
         ];
 
         if ($data['activityStatus'] === 'still-active') {
@@ -54,6 +54,8 @@ abstract class AbstractInitialDetailsTest extends AbstractSurveyTest
 
             $expectedData['Nature'] = $data['businessNature'];
             $expectedData['Number of employees'] = $numberOfEmployees;
+            $expectedData['Estimated HGV trips'] = $data['annualInternationalHGVJourneyCount'];
+            $expectedData['Estimated LGV/Van trips'] = $data['annualInternationalLGVJourneyCount'];
         } else {
             $expectedData['Firm still performs'] = match($data['activityStatus']) {
                 'ceased-trading' => 'No - firm has ceased trading',

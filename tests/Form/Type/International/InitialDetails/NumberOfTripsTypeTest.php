@@ -6,32 +6,36 @@ use App\Entity\International\SurveyResponse;
 use App\Form\InternationalSurvey\InitialDetails\NumberOfTripsType;
 use App\Tests\Form\Type\AbstractTypeTest;
 
+/**
+ * Tests the NumberOfTripsType form.
+ *
+ * Note: This form is only reached when activity status is STILL_ACTIVE,
+ * so we don't test activity status transitions here.
+ */
 class NumberOfTripsTypeTest extends AbstractTypeTest
 {
     protected function dataSubmit(): array
     {
         return [
-            [[], false],
-            [['banana' => '123'], false],
-
-            [['annualInternationalJourneyCount' => 'banana'], false],
-            [['annualInternationalJourneyCount' => ''], false],
-
-            [['annualInternationalJourneyCount' => '0'], true, SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING, SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING],
-            [['annualInternationalJourneyCount' => '100'], true, SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE],
-            [['annualInternationalJourneyCount' => '0'], true, SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK, SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK],
-            [['annualInternationalJourneyCount' => '100'], true, SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE],
-            [['annualInternationalJourneyCount' => '0'], true, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE],
-            [['annualInternationalJourneyCount' => '100'], true, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE],        ];
+            'empty submission' => [[], false],
+            'invalid field name' => [['banana' => '123'], false],
+            'invalid HGV value (text)' => [['annualInternationalHGVJourneyCount' => 'banana'], false],
+            'invalid HGV value (empty)' => [['annualInternationalHGVJourneyCount' => ''], false],
+            'zero HGV and LGV journeys' => [['annualInternationalHGVJourneyCount' => '0', 'annualInternationalLGVJourneyCount' => '0'], true],
+            'positive HGV, zero LGV' => [['annualInternationalHGVJourneyCount' => '100', 'annualInternationalLGVJourneyCount' => '0'], true],
+            'zero HGV, positive LGV' => [['annualInternationalHGVJourneyCount' => '0', 'annualInternationalLGVJourneyCount' => '50'], true],
+            'positive HGV and LGV' => [['annualInternationalHGVJourneyCount' => '100', 'annualInternationalLGVJourneyCount' => '50'], true],
+        ];
     }
 
     /**
      * @dataProvider dataSubmit
      */
-    public function testSubmit(array $formData, bool $expectedValid, ?string $initialActivityStatus=null, ?string $expectedActivityStatus=null): void
+    public function testSubmit(array $formData, bool $expectedValid): void
     {
+        // Form is only reached when activity status is STILL_ACTIVE
         $data = (new SurveyResponse())
-            ->setActivityStatus($initialActivityStatus);
+            ->setActivityStatus(SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE);
 
         $form = $this->factory->create(NumberOfTripsType::class, $data);
 
@@ -43,8 +47,10 @@ class NumberOfTripsTypeTest extends AbstractTypeTest
         $this->assertEquals($expectedValid, $form->isValid());
 
         if ($expectedValid) {
-            $this->assertEquals($formData['annualInternationalJourneyCount'], $data->getAnnualInternationalJourneyCount());
-            $this->assertEquals($expectedActivityStatus, $data->getActivityStatus());
+            $this->assertEquals($formData['annualInternationalHGVJourneyCount'], $data->getAnnualInternationalHGVJourneyCount());
+            $this->assertEquals($formData['annualInternationalLGVJourneyCount'], $data->getAnnualInternationalLGVJourneyCount());
+            // Activity status should remain STILL_ACTIVE (form doesn't change it)
+            $this->assertEquals(SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, $data->getActivityStatus());
         }
     }
 }

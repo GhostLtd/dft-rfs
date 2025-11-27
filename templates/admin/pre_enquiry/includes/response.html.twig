@@ -1,27 +1,48 @@
 {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
-{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
-    {%- set response = preEnquiry.response -%}
+{%- set response = preEnquiry.response -%}
 
+<h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.business-details' | trans }}</h2>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {{- summaryListRow({
         key: 'pre-enquiry.summary.company-name' | trans,
         value: response.companyName
     }) -}}
     {{- summaryListRow({
-        key: 'pre-enquiry.summary.total-vehicle-count' | trans,
-        value: response.totalVehicleCount
-    }) -}}
-    {{- summaryListRow({
-        key: 'pre-enquiry.summary.international-journey-vehicle-count' | trans,
-        value: response.internationalJourneyVehicleCount
-    }) -}}
-    {{- summaryListRow({
         key: 'pre-enquiry.summary.number-of-employees' | trans,
         value: response.numberOfEmployees
     }) -}}
+{{- summaryListEnd() -}}
+
+<h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.hgv-details' | trans }}</h2>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
     {{- summaryListRow({
-        key: 'pre-enquiry.summary.annual-journey-estimate' | trans,
-        value: response.annualJourneyEstimate
+        key: 'pre-enquiry.summary.total-hgv-count' | trans,
+        value: response.totalHgvCount
+    }) -}}
+    {{- summaryListRow({
+        key: 'pre-enquiry.summary.international-journey-hgv-count' | trans,
+        value: response.internationalJourneyHgvCount
+    }) -}}
+    {{- summaryListRow({
+        key: 'pre-enquiry.summary.annual-hgv-journey-estimate' | trans,
+        value: response.annualHgvJourneyEstimate
+    }) -}}
+{{- summaryListEnd() -}}
+
+<h2 class="govuk-heading-m">{{ 'pre-enquiry.summary.lgv-details' | trans }}</h2>
+{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+    {{- summaryListRow({
+        key: 'pre-enquiry.summary.total-lgv-count' | trans,
+        value: response.totalLgvCount
+    }) -}}
+    {{- summaryListRow({
+        key: 'pre-enquiry.summary.international-journey-lgv-count' | trans,
+        value: response.internationalJourneyLgvCount
+    }) -}}
+    {{- summaryListRow({
+        key: 'pre-enquiry.summary.annual-lgv-journey-estimate' | trans,
+        value: response.annualLgvJourneyEstimate
     }) -}}
 {{- summaryListEnd() -}}
 

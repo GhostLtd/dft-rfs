@@ -48,8 +48,6 @@
 
             {%- if 'Response' in tabs | keys -%}
                 <div class="govuk-tabs__panel" id="tab-response">
-                    <h2 class="govuk-heading-m">Response</h2>
-
                     {%- with {marginBottom: 5} -%}
                         {%- include 'admin/pre_enquiry/includes/response.html.twig' -%}
                     {%- endwith -%}

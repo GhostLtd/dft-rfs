@@ -17,8 +17,9 @@ async function doInitialContact(page) {
     await submit(page, '#contact_details_buttons_continue')
 }
 
-async function doEstimatedTrips(page, value) {
-    await type(page, '#number_of_trips_annualInternationalJourneyCount', value)
+async function doEstimatedTrips(page, hgvValue, lgvValue) {
+    await type(page, '#number_of_trips_annualInternationalHGVJourneyCount', hgvValue)
+    await type(page, '#number_of_trips_annualInternationalLGVJourneyCount', lgvValue)
     await submit(page, '#number_of_trips_buttons_continue')
 }
 
@@ -69,26 +70,50 @@ module.exports.run = async function (argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/2-contact.png')})
 
         await doInitialContact(page)
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/3-estimated-trips.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/3a-activity-status.png')})
 
-        await doEstimatedTrips(page, '0')
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4b-does-your-firm-still-haul.png')})
+        // Show "No road haulage" option selected - reveals the extra "other" text field
+        await page.click('#activity_status_activityStatus_2')
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/3b-activity-status-no-road-haulage.png')})
 
+        // Path 1: Ceased trading - goes straight to summary
+        await goto(page, baseUrl + 'international-survey/initial-details/activity-status')
         await doHaulStatus(page, '0')
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/5b-summary-ceased-trading.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4a-summary-ceased-trading.png')})
 
+        // Path 2: Only domestic work - goes straight to summary
         await goto(page, baseUrl + 'international-survey/initial-details/activity-status')
         await doHaulStatus(page, '1')
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/5c-summary-only-domestic-work.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4b-summary-only-domestic-work.png')})
 
-        await goto(page, baseUrl + 'international-survey/initial-details/number-of-trips')
-        await doEstimatedTrips(page, '60')
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4a-business-details.png')})
+        // Path 3: No road haulage - fill in "other" field and show summary
+        await goto(page, baseUrl + 'international-survey/initial-details/activity-status')
+        await page.click('#activity_status_activityStatus_2')
+        await type(page, '#activity_status_activityStatusOther', 'Passenger transport only')
+        await submit(page, '#activity_status_buttons_continue')
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4c-summary-no-road-haulage.png')})
+
+        // Path 4: Still active - goes through business details and number of trips
+        await goto(page, baseUrl + 'international-survey/initial-details/activity-status')
+        await doHaulStatus(page, '3') // still-active
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/5-business-details.png')})
 
         await page.click('#business_details_numberOfEmployees_1')
         await type(page, '#business_details_businessNature', 'Haulage')
         await submit(page, '#business_details_buttons_continue')
-        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/5a-summary.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/6-number-of-trips.png')})
+
+        // Capture summary with zero HGV trips (shows "Submit survey" button instead of continuing to add vehicles)
+        await doEstimatedTrips(page, '0', '20')
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/7b-summary-zero-hgv-trips.png')})
+
+        // Use "Change" link on summary page to go back to number-of-trips and set proper values
+        await clickLink(page, `//a[contains(@href, 'number-of-trips')]`)
+        // Clear existing values and enter new ones
+        await page.$eval('#number_of_trips_annualInternationalHGVJourneyCount', el => el.value = '')
+        await page.$eval('#number_of_trips_annualInternationalLGVJourneyCount', el => el.value = '')
+        await doEstimatedTrips(page, '60', '20')
+        await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/7a-summary.png')})
 
         await submit(page, '#confirmation_submit')
         await fullPageScreenshot.default(page, {path: screenshotPath('dashboard/1a-empty.png')})

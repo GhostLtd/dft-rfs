@@ -71,7 +71,10 @@ SQL,
         $this->checkStringColumn('addressPostcode', $this->getColumn($exportRow, 'addressPostcode'), $dbRow['AddressPostcode']);
         $this->checkStringColumn('numberOfHgv', $this->getColumn($exportRow, 'numberOfHgv'), $dbRow['NumberOfHgvs']);
         $this->checkStringColumn('numberOfIntHgv', $this->getColumn($exportRow, 'numberOfIntHgv'), $dbRow['NumberOfHgvsForIntJourneys']);
-        $this->checkStringColumn('numberOfIntJourneys', $this->getColumn($exportRow, 'numberOfIntJourneys'), $dbRow['EstimatedNumberOfIntJourneys']);
+        $this->checkStringColumn('numberOfIntHgvJourneys', $this->getColumn($exportRow, 'numberOfIntHgvJourneys'), $dbRow['EstimatedNumberOfIntHgvJourneys']);
+        $this->checkStringColumn('numberOfLgv', $this->getColumn($exportRow, 'numberOfLgv'), $dbRow['NumberOfLgvs']);
+        $this->checkStringColumn('numberOfIntLgv', $this->getColumn($exportRow, 'numberOfIntLgv'), $dbRow['NumberOfLgvsForIntJourneys']);
+        $this->checkStringColumn('numberOfIntLgvJourneys', $this->getColumn($exportRow, 'numberOfIntLgvJourneys'), $dbRow['EstimatedNumberOfIntLgvJourneys']);
         $this->checkStringColumn('businessSize', $this->getColumn($exportRow, 'businessSize'), $dbRow['NumberOfEmployees']);
     }
 }

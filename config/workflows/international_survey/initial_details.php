@@ -29,34 +29,28 @@ return static function (ContainerConfigurator $container) {
                 'transitions' => [
                     'start' => [
                         'from' => StateObject::STATE_INTRODUCTION,
-                        'to' =>  StateObject::STATE_REQUEST_CONTACT_DETAILS,
+                        'to' => StateObject::STATE_REQUEST_CONTACT_DETAILS,
                     ],
                     'contact details entered' => [
                         'from' => StateObject::STATE_REQUEST_CONTACT_DETAILS,
-                        'to' =>  StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
-                    ],
-                    'zero trips entered' => [
-                        'from' => StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
-                        'to' =>  StateObject::STATE_REQUEST_ACTIVITY_STATUS,
-                        'guard' => 'subject.getSubject().getAnnualInternationalJourneyCount() === 0'
-                    ],
-                    'positive trips entered' => [
-                        'from' => StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
-                        'to' =>  StateObject::STATE_REQUEST_BUSINESS_DETAILS,
-                        'guard' => 'subject.getSubject().getAnnualInternationalJourneyCount() > 0'
+                        'to' => StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                     ],
                     'still active' => [
                         'from' => StateObject::STATE_REQUEST_ACTIVITY_STATUS,
                         'to' =>  StateObject::STATE_REQUEST_BUSINESS_DETAILS,
                         'guard' => '! subject.getSubject().isNoLongerActive()'
                     ],
-                    'finish via business details' => [
+                    'business details entered' => [
+                        'from' => StateObject::STATE_REQUEST_BUSINESS_DETAILS,
+                        'to' =>  StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
+                    ],
+                    'finish via number of trips' => [
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
                             'redirectRoute' => BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE,
                         ],
-                        'from' => StateObject::STATE_REQUEST_BUSINESS_DETAILS,
+                        'from' => StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
                         'to' =>  StateObject::STATE_SUMMARY,
                     ],
                     'finish via inactive business' => [
@@ -86,6 +80,7 @@ return static function (ContainerConfigurator $container) {
                     'number of trips change' => [
                         'from' =>  StateObject::STATE_SUMMARY,
                         'to' =>  StateObject::STATE_REQUEST_NUMBER_OF_TRIPS,
+                        'guard' => '! subject.getSubject().isNoLongerActive()'
                     ],
                     'business details change' => [
                         'from' =>  StateObject::STATE_SUMMARY,

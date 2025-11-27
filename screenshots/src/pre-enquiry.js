@@ -45,20 +45,32 @@ module.exports.run = async function (argv) {
 
         await clickOptionValue(page, 'yes')
         await clickButtonWithText(page, 'Continue')
-        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/5-vehicle-details.png')})
 
-        await type(page, '#vehicle_questions_totalVehicleCount', '35')
-        await type(page, '#vehicle_questions_internationalJourneyVehicleCount', '25')
-        await type(page, '#vehicle_questions_annualJourneyEstimate', '110')
+        // HGV details screen
+        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/5-hgv-details.png')})
+
+        await type(page, '#hgv_details_totalHgvCount', '35')
+        await type(page, '#hgv_details_internationalJourneyHgvCount', '25')
+        await type(page, '#hgv_details_annualHgvJourneyEstimate', '110')
         await clickButtonWithText(page, 'Continue')
-        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/6-employee-count-and-international-journeys.png')})
+
+        // LGV details screen
+        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/6-lgv-details.png')})
+
+        await type(page, '#lgv_details_totalLgvCount', '10')
+        await type(page, '#lgv_details_internationalJourneyLgvCount', '5')
+        await type(page, '#lgv_details_annualLgvJourneyEstimate', '30')
+        await clickButtonWithText(page, 'Continue')
+
+        // Business details screen
+        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/7-business-details.png')})
 
         await clickOptionValue(page, '50-249')
         await clickButtonWithText(page, 'Save and continue')
-        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/7-summary.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/8-summary.png')})
 
         await clickButtonWithText(page, 'Submit pre-enquiry')
-        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/8-success.png')})
+        await fullPageScreenshot.default(page, {path: screenshotPath('pre-enquiry/9-success.png')})
     } catch (e) {
         console.log(e.toString(), e.stack)
         await fullPageScreenshot.default(page, {path: screenshotPath('error.png')})

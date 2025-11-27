@@ -25,20 +25,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(AdminSurveyVoter::EDIT, subject: 'survey')]
 class SurveyController extends AbstractController
 {
-    private const string ROUTE_PREFIX = 'admin_international_survey_';
-    public const ADD_ROUTE = self::ROUTE_PREFIX . 'add';
-    public const DELETE_ROUTE = self::ROUTE_PREFIX . 'delete';
-    public const LIST_ROUTE = self::ROUTE_PREFIX . 'list';
-    public const TRANSITION_ROUTE = self::ROUTE_PREFIX . 'transition';
-    public const VIEW_ROUTE = self::ROUTE_PREFIX . 'view';
-    public const ADD_NOTE_ROUTE = self::ROUTE_PREFIX . 'addnote';
-    public const DELETE_NOTE_ROUTE = self::ROUTE_PREFIX . 'deletenote';
-    public const FLAG_QA_ROUTE = self::ROUTE_PREFIX . 'flag_qa';
+    public const string ADD_ROUTE = 'admin_international_survey_add';
+    public const string LIST_ROUTE = 'admin_international_survey_list';
+    public const string TRANSITION_ROUTE = 'admin_international_survey_transition';
+    public const string VIEW_ROUTE = 'admin_international_survey_view';
+    public const string DELETE_NOTE_ROUTE = 'admin_international_survey_deletenote';
+    public const string FLAG_QA_ROUTE = 'admin_international_survey_flag_qa';
 
-    public const ENTER_INITIAL_ROUTE = self::ROUTE_PREFIX . 'initial_enter';
-    public const EDIT_CORRESPONDENCE_ROUTE = self::ROUTE_PREFIX . 'correspondence_edit';
-    public const EDIT_BUSINESS_ROUTE = self::ROUTE_PREFIX . 'business_edit';
-    public const EDIT_FINAL_DETAILS_ROUTE = self::ROUTE_PREFIX . 'final_details_edit';
+    public const string ENTER_INITIAL_ROUTE = 'admin_international_survey_initial_enter';
+    public const string EDIT_CORRESPONDENCE_ROUTE = 'admin_international_survey_correspondence_edit';
+    public const string EDIT_BUSINESS_ROUTE = 'admin_international_survey_business_edit';
+    public const string EDIT_FINAL_DETAILS_ROUTE = 'admin_international_survey_final_details_edit';
 
     public function __construct(
         protected EntityManagerInterface $entityManager,

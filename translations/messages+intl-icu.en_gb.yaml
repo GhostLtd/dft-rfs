@@ -1597,14 +1597,19 @@ pre-enquiry:
     business-details: Business details
     correspondence-details: Correspondence details
     company-name: Company name
-    total-vehicle-count: "Total HGV count"
-    international-journey-vehicle-count: Vehicles used to make international journeys
+    total-hgv-count: "Total HGV count"
+    international-journey-hgv-count: "HGVs used"
+    annual-hgv-journey-estimate: "International HGV journeys"
+    total-lgv-count: "Total LGV count"
+    international-journey-lgv-count: "LGVs used"
+    annual-lgv-journey-estimate: "International LGV journeys"
     number-of-employees: Number of employees
-    annual-journey-estimate: "International journey estimate (Annual)"
     name: Name
     email: Email address
     phone: Telephone number
     address: Address
+    hgv-details: HGV details
+    lgv-details: LGV details
     vehicle-details: Vehicle details
     employee-count-and-international-journeys: Employee count and international journeys
     employee-count: Employee count
@@ -1649,19 +1654,32 @@ pre-enquiry:
   introduction:
     title: Introduction
     heading: International Pre-Enquiry
-  vehicle-questions:
-    heading: Vehicle details
+  hgv-details:
+    heading: HGV details
     title: ''
     help: ''
-    total-vehicle-count:
+    total-hgv-count:
       label: How many heavy goods vehicles (HGVs) do you operate, either domestically or internationally?
       help: Disregard the weight of any trailers
-    international-journey-vehicle-count:
+    international-journey-hgv-count:
       label: How many of these HGVs will be used to make international journeys?
       help: ''
-    annual-journey-estimate:
+    annual-hgv-journey-estimate:
       label: Estimate of the number of international journeys (round trips) that your company will make in these vehicles over the next 12 months
       help: Only include the trips of HGVs in your estimate
+  lgv-details:
+    heading: LGV details
+    title: ''
+    help: ''
+    total-lgv-count:
+      label: How many light goods vehicles (LGVs) do you operate, either domestically or internationally?
+      help: ''
+    international-journey-lgv-count:
+      label: How many of these LGVs will be used to make international journeys?
+      help: ''
+    annual-lgv-journey-estimate:
+      label: Estimate of the number of international journeys (round trips) that your company will make in these vehicles over the next 12 months
+      help: Only include the trips of LGVs in your estimate
   business-details:
     heading: Business details
     title: ''
@@ -1713,8 +1731,11 @@ international:
     correspondence-details: Correspondence details
     number-of-employees: Number of employees nationally
     nature-of-business: Nature of business
-    number-of-trips: Estimated number of international trips over the next 12 months
+    number-of-trips: International trips over the next 12 months
+    number-of-hgv-trips: Estimated HGV trips
+    number-of-lgv-trips: Estimated LGV/Van trips
     still-active: Firm still performs international road haulage activities?
+    still-active-other: Reason for no international road haulage activities?
   sidebar-summary:
     title: International Survey
     company: Company
@@ -1809,18 +1830,31 @@ international:
         help: ''
     number-of-trips:
       heading: Annual international trips
-      annual-international-journey-count:
-        label: Estimate the number of international trips that will be made by your firm using HGVs in the next 12 months
+      hgv-count:
+        label: Estimate the number of international trips that will be made by your firm using **HGVs** in the next 12 months
+        help: ''
+      lgv-count:
+        label: Estimate the number of international trips that will be made by your firm using **LGVs / Vans** in the next 12 months
+        help: ''
+      admin-hgv-count:
+        label: Estimated annual HGV count
+        help: ''
+      admin-lgv-count:
+        label: Estimated annual LGV count
         help: ''
     activity-status:
       choices:
         ceased-trading: No - firm has ceased trading
         only-domestic-work: No - firm only carries out domestic work
+        no-road-haulage: No - firm does not perform any road haulage activities
         still-active: Yes
       activity-status:
-        label: Does your firm still perform international road haulage activities?
+        label: Does your firm still perform international road haulage activities using HGVs or LGVs?
         help: ''
       change-link-sr-suffix: activity status
+      other:
+        label: Why does your firm not carry out any road haulage activities?
+        help: ''
     business-details:
       heading: Business details
       help: ''

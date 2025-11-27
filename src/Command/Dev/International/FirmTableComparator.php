@@ -64,7 +64,8 @@ SQL,
         $this->checkStringColumn('refNumber', $this->getColumn($exportRow, 'refNumber'), $dbRow['ReferenceNumber']);
         $this->checkStringColumn('status', $this->getColumn($exportRow, 'status'), $dbRow['SurveyStatus']);
         $this->checkStringColumn('reminders', $this->getColumn($exportRow, 'reminders'), $dbRow['NumberOfReminders']);
-        $this->checkStringColumn('numberOfIntJourneys', $this->getColumn($exportRow, 'numberOfIntJourneys'), $dbRow['NumberOfInternationalJourneys']);
+        $this->checkStringColumn('numberOfIntHGVJourneys', $this->getColumn($exportRow, 'numberOfIntHGVJourneys'), $dbRow['NumberOfInternationalHGVJourneys']);
+        $this->checkStringColumn('numberOfIntLGVJourneys', $this->getColumn($exportRow, 'numberOfIntLGVJourneys'), $dbRow['NumberOfInternationalLGVJourneys']);
         $this->checkStringColumn('activityStatus', $this->getColumn($exportRow, 'activityStatus'), $dbRow['ActivityStatus']);
         $this->checkStringColumn('reasonForEmptySurvey', $this->getColumn($exportRow, 'reasonForEmptySurvey'), $dbRow['ReasonForEmptySurvey']);
         $this->checkStringColumn('reasonForEmptySurveyOther', $this->getColumn($exportRow, 'reasonForEmptySurveyOther'), $dbRow['ReasonForEmptySurveyOther'], true);

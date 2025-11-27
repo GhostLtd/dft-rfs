@@ -18,13 +18,18 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
         $this->companyName(true);
         $this->correspondenceDetails();
         $this->correspondenceAddress(true);
-        $this->vehicleAndBusinessDetails();
+        $this->hgvDetails();
+        $this->lgvDetails();
+        $this->businessDetails();
 
         $data = [
             'companyName' => 'Wibble Sprockets Ltd',
-            'totalVehicleCount' => 100,
-            'internationalJourneyVehicleCount' => 50,
-            'annualJourneyEstimate' => 200,
+            'totalHgvCount' => 100,
+            'internationalJourneyHgvCount' => 50,
+            'annualHgvJourneyEstimate' => 200,
+            'totalLgvCount' => 40,
+            'internationalJourneyLgvCount' => 20,
+            'annualLgvJourneyEstimate' => 80,
             'numberOfEmployees' => '10-49',
             'contactName' => 'Mark',
             'contactEmail' => 'mark@example.com',
@@ -72,13 +77,18 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             'WO20 5WX',
         );
 
-        $this->vehicleAndBusinessDetails();
+        $this->hgvDetails();
+        $this->lgvDetails();
+        $this->businessDetails();
 
         $data = [
             'companyName' => 'Badger sprockets ltd',
-            'totalVehicleCount' => 100,
-            'internationalJourneyVehicleCount' => 50,
-            'annualJourneyEstimate' => 200,
+            'totalHgvCount' => 100,
+            'internationalJourneyHgvCount' => 50,
+            'annualHgvJourneyEstimate' => 200,
+            'totalLgvCount' => 40,
+            'internationalJourneyLgvCount' => 20,
+            'annualLgvJourneyEstimate' => 80,
             'numberOfEmployees' => '10-49',
             'contactName' => 'Mark',
             'contactEmail' => 'mark@example.com',
@@ -167,16 +177,30 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
         ]);
     }
 
-    protected function vehicleAndBusinessDetails(): void
+    protected function hgvDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/vehicle-questions', 'vehicle_questions_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_buttons_continue', [
             new FormTestCase([
-                'vehicle_questions[totalVehicleCount]' => '100',
-                'vehicle_questions[internationalJourneyVehicleCount]' => '50',
-                'vehicle_questions[annualJourneyEstimate]' => '200',
+                'hgv_details[totalHgvCount]' => '100',
+                'hgv_details[internationalJourneyHgvCount]' => '50',
+                'hgv_details[annualHgvJourneyEstimate]' => '200',
             ]),
         ]);
+    }
 
+    protected function lgvDetails(): void
+    {
+        $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_buttons_continue', [
+            new FormTestCase([
+                'lgv_details[totalLgvCount]' => '40',
+                'lgv_details[internationalJourneyLgvCount]' => '20',
+                'lgv_details[annualLgvJourneyEstimate]' => '80',
+            ]),
+        ]);
+    }
+
+    protected function businessDetails(): void
+    {
         $this->formTestAction('/pre-enquiry/business-details', 'business_details_buttons_continue', [
             new FormTestCase([
                 'business_details[numberOfEmployees]' => '10-49',

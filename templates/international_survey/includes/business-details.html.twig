@@ -23,39 +23,59 @@
     }
 ] -%}
 
-{% if showTitle ?? true %}
-    <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
-{% endif %}
+    {% if showTitle ?? true %}
+        <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.business-details'|trans }}</h2>
+    {% endif %}
 
-{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
-    {{- summaryListRow({
-        key: 'international.correspondence-and-business-details.number-of-trips' | trans,
-        value: ('common.number.plain'|trans({value: response.annualInternationalJourneyCount})),
-        actions: showActions ? numberOfTripsChangeLink : []
-    }, showActions) -}}
-    {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
-    {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
-
-    {%- if response.isNoLongerActive or response.annualInternationalJourneyCount == 0 -%}
-    {{- summaryListRow({
-        key: 'international.correspondence-and-business-details.still-active' | trans,
-        value: activityStatus,
-        actions: showActions ? activityStatusChangeLink : []
-    }, showActions) -}}
-    {%- endif -%}
-    {%- if not response.isNoLongerActive -%}
-        {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
-        {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
-
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+        {%- set activityChoices = constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_CHOICES') -%}
+        {%- set activityStatus = choiceLabel(activityChoices, response.activityStatus) | trans -%}
         {{- summaryListRow({
-            key: 'international.correspondence-and-business-details.nature-of-business' | trans,
-            value: response.businessNature,
-            actions: showActions ? businessDetailsChangeLink : []
+            key: 'international.correspondence-and-business-details.still-active' | trans,
+            value: activityStatus,
+            actions: showActions ? activityStatusChangeLink : []
         }, showActions) -}}
+
+        {%- if response.activityStatus == constant('App\\Entity\\International\\SurveyResponse::ACTIVITY_STATUS_NO_ROAD_HAULAGE') -%}
+            {{- summaryListRow({
+                key: 'international.correspondence-and-business-details.still-active-other' | trans,
+                value: response.activityStatusOther,
+                actions: showActions ? activityStatusChangeLink : []
+            }, showActions) -}}
+        {%- endif -%}
+
+        {%- if not response.isNoLongerActive -%}
+            {{- summaryListRow({
+                key: 'international.correspondence-and-business-details.nature-of-business' | trans,
+                value: response.businessNature,
+                actions: showActions ? businessDetailsChangeLink : []
+            }, showActions) -}}
+
+            {%- set employeesChoices = constant('App\\Entity\\SurveyResponse::EMPLOYEES_CHOICES') -%}
+            {%- set numberOfEmployees = choiceLabel(employeesChoices, response.numberOfEmployees, true) | trans -%}
+            {{- summaryListRow({
+                key: 'international.correspondence-and-business-details.number-of-employees' | trans,
+                value: numberOfEmployees | default('-'),
+                actions: showActions ? businessDetailsChangeLink : []
+            }, showActions) -}}
+        {%- endif -%}
+    {{- summaryListEnd() -}}
+
+{%- if not response.isNoLongerActive -%}
+    {% if showTitle ?? true %}
+        <h2 class="govuk-heading-m">{{ 'international.correspondence-and-business-details.number-of-trips'|trans }}</h2>
+    {% endif %}
+
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+            {{- summaryListRow({
+                key: 'international.correspondence-and-business-details.number-of-hgv-trips' | trans,
+                value: ('common.number.plain'|trans({value: response.annualInternationalHGVJourneyCount})),
+                actions: showActions ? numberOfTripsChangeLink : []
+            }, showActions) -}}
         {{- summaryListRow({
-            key: 'international.correspondence-and-business-details.number-of-employees' | trans,
-            value: numberOfEmployees | default('-'),
-            actions: showActions ? businessDetailsChangeLink : []
+            key: 'international.correspondence-and-business-details.number-of-lgv-trips' | trans,
+            value: ('common.number.plain'|trans({value: response.annualInternationalLGVJourneyCount})),
+            actions: showActions ? numberOfTripsChangeLink : []
         }, showActions) -}}
-    {%- endif -%}
-{{- summaryListEnd() -}}
+    {{- summaryListEnd() -}}
+{%- endif -%}

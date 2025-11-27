@@ -44,39 +44,69 @@ class PreEnquiryResponse
     #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $contactEmail = null;
 
-    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.vehicle-count', groups: ['vehicle_questions'])]
-    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $totalVehicleCount = null;
+    // HGV fields
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.vehicle-count', groups: ['hgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['hgv_details'])]
+    #[ORM\Column(name: 'total_hgv_count', type: Types::INTEGER, nullable: true)]
+    private ?int $totalHgvCount = null;
 
-    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank', groups: ['vehicle_questions'])]
-    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $internationalJourneyVehicleCount = null;
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank', groups: ['hgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['hgv_details'])]
+    #[ORM\Column(name: 'international_journey_hgv_count', type: Types::INTEGER, nullable: true)]
+    private ?int $internationalJourneyHgvCount = null;
+
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.annual-journey-estimate', groups: ['hgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['hgv_details'])]
+    #[ORM\Column(name: 'annual_hgv_journey_estimate', type: Types::INTEGER, nullable: true)]
+    private ?int $annualHgvJourneyEstimate = null;
+
+    // LGV fields
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.vehicle-count', groups: ['lgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['lgv_details'])]
+    #[ORM\Column(name: 'total_lgv_count', type: Types::INTEGER, nullable: true)]
+    private ?int $totalLgvCount = null;
+
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-blank', groups: ['lgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['lgv_details'])]
+    #[ORM\Column(name: 'international_journey_lgv_count', type: Types::INTEGER, nullable: true)]
+    private ?int $internationalJourneyLgvCount = null;
+
+    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.annual-journey-estimate', groups: ['lgv_details'])]
+    #[Assert\PositiveOrZero(groups: ['lgv_details'])]
+    #[ORM\Column(name: 'annual_lgv_journey_estimate', type: Types::INTEGER, nullable: true)]
+    private ?int $annualLgvJourneyEstimate = null;
 
     #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.number-of-employees', groups: ['business_details'])]
     #[Assert\Length(max: 20, maxMessage: 'common.string.max-length', groups: ['business_details'])]
     #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
     private ?string $numberOfEmployees = null;
 
-    #[Assert\NotBlank(message: 'pre-enquiry.pre-enquiry-response.annual-journey-estimate', groups: ['vehicle_questions'])]
-    #[Assert\PositiveOrZero(groups: ['vehicle_questions'])]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $annualJourneyEstimate = null;
-
     #[ORM\JoinColumn(nullable: false)]
     #[ORM\OneToOne(inversedBy: 'response', targetEntity: PreEnquiry::class, cascade: ['persist'])]
     private ?PreEnquiry $preEnquiry = null;
 
-    #[Assert\Callback(groups: ['vehicle_questions'])]
-    public function validateVehicleDetails(ExecutionContextInterface $context): void
+    #[Assert\Callback(groups: ['hgv_details'])]
+    public function validateHgvDetails(ExecutionContextInterface $context): void
     {
-        if ($this->getInternationalJourneyVehicleCount() !== null &&
-            $this->getTotalVehicleCount() !== null &&
-            $this->getInternationalJourneyVehicleCount() > $this->getTotalVehicleCount()) {
+        if ($this->getInternationalJourneyHgvCount() !== null &&
+            $this->getTotalHgvCount() !== null &&
+            $this->getInternationalJourneyHgvCount() > $this->getTotalHgvCount()) {
             $context
                 ->buildViolation('pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-more-international-than-total-vehicles')
-                ->atPath('internationalJourneyVehicleCount')
+                ->atPath('internationalJourneyHgvCount')
+                ->addViolation();
+        }
+    }
+
+    #[Assert\Callback(groups: ['lgv_details'])]
+    public function validateLgvDetails(ExecutionContextInterface $context): void
+    {
+        if ($this->getInternationalJourneyLgvCount() !== null &&
+            $this->getTotalLgvCount() !== null &&
+            $this->getInternationalJourneyLgvCount() > $this->getTotalLgvCount()) {
+            $context
+                ->buildViolation('pre-enquiry.pre-enquiry-response.international-journey-vehicle-count.not-more-international-than-total-vehicles')
+                ->atPath('internationalJourneyLgvCount')
                 ->addViolation();
         }
     }
@@ -176,25 +206,71 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function getTotalVehicleCount(): ?int
+    // HGV getters/setters
+    public function getTotalHgvCount(): ?int
     {
-        return $this->totalVehicleCount;
+        return $this->totalHgvCount;
     }
 
-    public function setTotalVehicleCount(?int $totalVehicleCount): self
+    public function setTotalHgvCount(?int $totalHgvCount): self
     {
-        $this->totalVehicleCount = $totalVehicleCount;
+        $this->totalHgvCount = $totalHgvCount;
         return $this;
     }
 
-    public function getInternationalJourneyVehicleCount(): ?int
+    public function getInternationalJourneyHgvCount(): ?int
     {
-        return $this->internationalJourneyVehicleCount;
+        return $this->internationalJourneyHgvCount;
     }
 
-    public function setInternationalJourneyVehicleCount(?int $internationalJourneyVehicleCount): self
+    public function setInternationalJourneyHgvCount(?int $internationalJourneyHgvCount): self
     {
-        $this->internationalJourneyVehicleCount = $internationalJourneyVehicleCount;
+        $this->internationalJourneyHgvCount = $internationalJourneyHgvCount;
+        return $this;
+    }
+
+    public function getAnnualHgvJourneyEstimate(): ?int
+    {
+        return $this->annualHgvJourneyEstimate;
+    }
+
+    public function setAnnualHgvJourneyEstimate(?int $annualHgvJourneyEstimate): self
+    {
+        $this->annualHgvJourneyEstimate = $annualHgvJourneyEstimate;
+        return $this;
+    }
+
+    // LGV getters/setters
+    public function getTotalLgvCount(): ?int
+    {
+        return $this->totalLgvCount;
+    }
+
+    public function setTotalLgvCount(?int $totalLgvCount): self
+    {
+        $this->totalLgvCount = $totalLgvCount;
+        return $this;
+    }
+
+    public function getInternationalJourneyLgvCount(): ?int
+    {
+        return $this->internationalJourneyLgvCount;
+    }
+
+    public function setInternationalJourneyLgvCount(?int $internationalJourneyLgvCount): self
+    {
+        $this->internationalJourneyLgvCount = $internationalJourneyLgvCount;
+        return $this;
+    }
+
+    public function getAnnualLgvJourneyEstimate(): ?int
+    {
+        return $this->annualLgvJourneyEstimate;
+    }
+
+    public function setAnnualLgvJourneyEstimate(?int $annualLgvJourneyEstimate): self
+    {
+        $this->annualLgvJourneyEstimate = $annualLgvJourneyEstimate;
         return $this;
     }
 
@@ -209,17 +285,6 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function getAnnualJourneyEstimate(): ?int
-    {
-        return $this->annualJourneyEstimate;
-    }
-
-    public function setAnnualJourneyEstimate(?int $annualJourneyEstimate): self
-    {
-        $this->annualJourneyEstimate = $annualJourneyEstimate;
-        return $this;
-    }
-
     public function getPreEnquiry(): ?PreEnquiry
     {
         return $this->preEnquiry;
@@ -231,18 +296,26 @@ class PreEnquiryResponse
         return $this;
     }
 
-    public function mergeInitialDetails(PreEnquiryResponse $response)
+    public function mergeInitialDetails(PreEnquiryResponse $response): void
     {
-        $this->setAnnualJourneyEstimate($response->getAnnualJourneyEstimate());
+        // HGV fields
+        $this->setTotalHgvCount($response->getTotalHgvCount());
+        $this->setInternationalJourneyHgvCount($response->getInternationalJourneyHgvCount());
+        $this->setAnnualHgvJourneyEstimate($response->getAnnualHgvJourneyEstimate());
+
+        // LGV fields
+        $this->setTotalLgvCount($response->getTotalLgvCount());
+        $this->setInternationalJourneyLgvCount($response->getInternationalJourneyLgvCount());
+        $this->setAnnualLgvJourneyEstimate($response->getAnnualLgvJourneyEstimate());
+
+        // Other fields
         $this->setIsCorrectCompanyName($response->getIsCorrectCompanyName());
         $this->setCompanyName($response->getCompanyName());
         $this->setIsCorrectAddress($response->getIsCorrectAddress());
         $this->setContactAddress($response->getContactAddress());
         $this->setContactName($response->getContactName());
         $this->setContactEmail($response->getContactEmail());
-        $this->setInternationalJourneyVehicleCount($response->getInternationalJourneyVehicleCount());
         $this->setContactTelephone($response->getContactTelephone());
-        $this->setTotalVehicleCount($response->getTotalVehicleCount());
         $this->setNumberOfEmployees($response->getNumberOfEmployees());
     }
 }

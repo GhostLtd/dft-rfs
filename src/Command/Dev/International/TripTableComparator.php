@@ -34,9 +34,12 @@ class TripTableComparator extends AbstractTableExportComparator
 SELECT t.*
 FROM view_international_trips AS t
 JOIN international_vehicle AS v ON v.id = t.VehicleID
-WHERE 
+JOIN international_survey_response AS sr ON sr.id = v.survey_response_id
+JOIN international_survey AS s ON s.id = sr.survey_id
+WHERE
     t.OutboundDate >= :minDate
     AND t.OutboundDate < :maxDate
+    AND s.state IN ('closed', 'approved')
 SQL,
                 [
                     'minDate' => $minDate,

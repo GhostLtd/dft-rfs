@@ -20,7 +20,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
 {
     use SurveyHelperTrait;
 
-    public const SUMMARY_ROUTE = 'app_internationalsurvey_correspondence_and_business_details';
+    public const string SUMMARY_ROUTE = 'app_internationalsurvey_correspondence_and_business_details';
 
     public function __construct(protected SurveyRepository $surveyRepo)
     {
@@ -38,8 +38,8 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
         $response = $survey->getResponse();
         $detailsComplete = $response->isInitialDetailsSignedOff();
 
-        $canSubmitAsNoLongerActive = $response->isNoLongerActive();
-        if ($canSubmitAsNoLongerActive) {
+        $canSubmitAtThisPoint = $response->shouldSurveyBeSubmittedWithoutJourneys();
+        if ($canSubmitAtThisPoint) {
             $submitLabel = 'international.buttons.submit-survey';
         } elseif (!$detailsComplete) {
             $submitLabel = 'international.buttons.add-vehicles';
@@ -60,7 +60,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
 
             $button = $form->get('submit');
             if ($button instanceof SubmitButton && $button->isClicked()) {
-                if ($canSubmitAsNoLongerActive) {
+                if ($canSubmitAtThisPoint) {
                     // Not trading or domestic journeys only
                     $response->setInitialDetailsSignedOff(true);
 
