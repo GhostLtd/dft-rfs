@@ -19,8 +19,10 @@ final class Version20251017105317 extends AbstractMigration
         $this->addSql(<<<SQL
 CREATE OR REPLACE VIEW view_export_domestic_driver_availability AS (
     SELECT
-        YEAR(sv.survey_period_start)                    AS SurveyStartYear
-        , MONTH(sv.survey_period_start)                 AS SurveyStartMonth
+        sv.registration_mark                            AS RegistrationMark
+        , sv.submission_date                            AS SubmissionDate
+        , YEAR(sv.submission_date)                      AS SubmissionYear
+        , MONTH(sv.submission_date)                     AS SubmissionMonth
         , da.id                                         AS DriverAvailabilityID
         , da.number_of_drivers_employed                 AS NumberOfDriversEmployed
         , da.has_vacancies                              AS HasVacancies
