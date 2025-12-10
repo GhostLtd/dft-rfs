@@ -9,6 +9,7 @@
 - **Fix**: Missing spacing between buttons on IRHS frontend
 - **Update**: Improve LCNI import process
 - **Fix**: Trim whitespace from LCNI company names (existing DB records and entity setter)
+- **Fix**: Reduce repeated whitespace when looking up business name in LCNI
 
 ## 2025-08-19
 

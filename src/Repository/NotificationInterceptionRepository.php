@@ -24,8 +24,13 @@ class NotificationInterceptionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('ni')
             ->leftJoin('ni.names', 'nn')
             ->andWhere('nn.name = :name')
-            ->setParameter('name', $businessName)
+            ->setParameter('name', $this->normaliseBusinessName($businessName))
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    protected function normaliseBusinessName(string $businessName): string
+    {
+        return strtolower(trim(preg_replace('/\s+/', ' ', $businessName)));
     }
 }
