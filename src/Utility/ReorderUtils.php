@@ -38,12 +38,17 @@ class ReorderUtils
      */
     public static function isMappingValid(array $mapping, int $numberOfItems): bool
     {
+        if (count($mapping) !== $numberOfItems) {
+            return false;
+        }
+
         $usedCheck = array_fill(1, $numberOfItems, false);
 
         foreach($mapping as $value) {
-            if (isset($usedCheck[$value])) {
-                $usedCheck[$value] = true;
+            if (!isset($usedCheck[$value])) {
+                return false;
             }
+            $usedCheck[$value] = true;
         }
 
         $validCount = array_reduce($usedCheck,

@@ -3,6 +3,9 @@
 # Changelog
 
 ## Upcoming
+- **Fix**: Domestic stop reorder bug
+
+## 2025-12-04
 - **Feature**: Federated queries export views
 - **Feature**: IRHS: Flag returns + vehicles with empty loading actions
 - **Fix**: Routes list in admin had lost view links, and couldn't be edited or deactivated
