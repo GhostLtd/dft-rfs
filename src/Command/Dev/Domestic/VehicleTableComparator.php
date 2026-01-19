@@ -90,7 +90,6 @@ SQL,
             ->columnSeen('SurveyAddressLine4')
             ->columnSeen('SurveyAddressLine5')
             ->columnSeen('SurveyEmail')
-            ->columnSeen('SurveyID')
             ->columnSeen('SurveyWeek')
             ->columnSeen('TickBoxForSortingRecords')
             ->columnSeen('TrailerTypeNotEntered')
@@ -188,5 +187,6 @@ SQL,
 
         $this->checkDateColumn('ScrappedStolenDate', $this->getColumn($exportRow, 'ScrappedStolenDate'), $dbRow['ScrappedStolenDate']);
         $this->checkDateColumn('SurveyStartDate', $this->getColumn($exportRow, 'SurveyStartDate'), $dbRow['SurveyPeriodStart']);
+        $this->checkStringColumn('SurveyID', $this->getColumn($exportRow, 'SurveyID'), $dbRow['WeekNumber']);
     }
 }

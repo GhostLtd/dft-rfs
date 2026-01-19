@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Update**: Add WeekNumber to CSRGT export views
 - **Fix**: Domestic stop reorder bug
 
 ## 2025-12-04
