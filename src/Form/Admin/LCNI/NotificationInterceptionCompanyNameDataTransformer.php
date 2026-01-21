@@ -23,7 +23,7 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
     public function reverseTransform($value): array
     {
         $data = explode("\r\n", $value);
-        $data = array_map(fn($d) => trim($d), $data);
+        $data = array_map(fn($d) => mb_trim($d), $data);
         $data = array_filter($data, fn($d) => !empty($d));
         return array_map(fn($d) => $this->getTransformValueOrNewCompanyName($d), array_values($data));
     }
@@ -32,7 +32,9 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
     {
         /** @var NotificationInterceptionCompanyName $cn */
         foreach ($this->transformValue ?? [] as $cn) {
-            if ($cn->getName() === $name) {
+            if (mb_trim($cn->getName()) === $name) {
+                // Update the name to ensure any whitespace is trimmed
+                $cn->setName($name);
                 return $cn;
             }
         }

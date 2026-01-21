@@ -1,0 +1,46 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% trans_default_domain 'admin' %}
+{% set headingDomain = 'admin' %}
+{% set translation_prefix = "email-blacklist" %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import pagination, tableRow, summaryListActionsList %}
+    {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
+
+    {{ listTableStart(data, form) }}
+    {% for entry in data.entities %}
+        {%- set actions = [
+            {
+                href: path('admin_email_blacklist_edit', {id: entry.id}),
+                text: 'common.actions.edit' | trans({}, 'messages'),
+                visuallyHiddenText: entry.email,
+            },
+            {
+                href: path('admin_email_blacklist_delete', {id: entry.id}),
+                text: 'common.actions.delete' | trans({}, 'messages'),
+                visuallyHiddenText: entry.email,
+            }
+        ] -%}
+        {{- tableRow([
+            {text: entry.createdAt | date('d/m/Y H:i')},
+            {text: entry.email},
+            {text: entry.reason ?? '-'},
+            {html: summaryListActionsList(actions)}
+        ]) -}}
+    {% else %}
+        {{- tableRow([
+            {
+                text: "#{translation_prefix}.list.no-results" | trans,
+                colspan: data.fields | length + 1,
+            }
+        ]) -}}
+    {% endfor %}
+    {{ listTableEnd(data, form, false) }}
+
+    <a class="govuk-button" href="{{ path('admin_email_blacklist_add') }}">{{ "#{translation_prefix}.list.add" | trans }}</a>
+
+    <div class="pagination-container">
+        {{ pagination(data.paginationData) }}
+    </div>
+{% endblock %}

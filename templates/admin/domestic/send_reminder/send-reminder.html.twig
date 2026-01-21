@@ -2,7 +2,7 @@
 
 {% set translation_prefix = "admin.send-reminder" %}
 
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, warningText -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, warningText, tag -%}
 
 {% block adminContent %}
     <div class="govuk-width-container">
@@ -11,13 +11,60 @@
             {{- summaryListStart({classes: 'govuk-!-margin-bottom-9'}) -}}
                 {{- summaryListRow({
                         key: 'admin.send-reminder.recipients' | trans,
-                        value: recipients
+                        value: {html: _self.recipientsDisplay(recipientEmails, lcniInfo, hasResponseContactEmail)}
                 }) -}}
             {{- summaryListEnd() -}}
         {%- endwith -%}
 
-        {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
+        {% set allBlacklisted = true %}
+        {% for email in recipientEmails %}
+            {% if not is_email_blacklisted(email) %}
+                {% set allBlacklisted = false %}
+            {% endif %}
+        {% endfor %}
 
-        {{ form(form) }}
+        {% if allBlacklisted %}
+            {{- warningText({text: "#{translation_prefix}.all-blacklisted" | trans }) -}}
+            <a class="govuk-button govuk-button--secondary" href="{{ path('admin_domestic_survey_view', {surveyId: subject.id}) }}">Back</a>
+        {% else %}
+            {{- warningText({text: "#{translation_prefix}.warning" | trans }) -}}
+            {{ form(form) }}
+        {% endif %}
     </div>
 {% endblock %}
+
+{%- macro recipientsDisplay(recipientEmails, lcniInfo, hasResponseContactEmail) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+
+    {# Check for LCNI locked state #}
+    {%- if lcniInfo.locked ?? false -%}
+        {%- for email in recipientEmails -%}
+            <div>
+                {%- if is_email_blacklisted(email) %}{{ tag({text: 'Blacklisted', classes: 'govuk-tag--red'}) }} {% endif -%}
+                {{- email }}
+            </div>
+        {%- endfor -%}
+        <div class="govuk-!-margin-top-2">{{ tag({text: 'LCNI', classes: 'govuk-tag--yellow'}) }} Lookup temporarily unavailable; DVLA sample import in progress</div>
+    {%- elseif hasResponseContactEmail -%}
+        {# responseContactEmail overrides everything - just show it plain #}
+        {%- for email in recipientEmails -%}
+            <div>
+                {%- if is_email_blacklisted(email) %}{{ tag({text: 'Blacklisted', classes: 'govuk-tag--red'}) }} {% endif -%}
+                {{- email }}
+            </div>
+        {%- endfor -%}
+    {%- else -%}
+        {# Show combined emails with LCNI ones tagged #}
+        {%- set lcniEmails = lcniInfo.emails | default([]) | map(e => e | lower) -%}
+        {%- for email in recipientEmails -%}
+            {%- set isLcni = (email | lower) in lcniEmails -%}
+            <div>
+                {%- if is_email_blacklisted(email) %}{{ tag({text: 'Blacklisted', classes: 'govuk-tag--red'}) }} {% endif -%}
+                {%- if isLcni %}{{ tag({text: 'LCNI', classes: 'govuk-tag--blue'}) }} {% endif -%}
+                {{- email }}
+            </div>
+        {%- endfor -%}
+    {%- endif -%}
+
+    {%- if recipientEmails is empty -%}-{%- endif -%}
+{%- endmacro -%}

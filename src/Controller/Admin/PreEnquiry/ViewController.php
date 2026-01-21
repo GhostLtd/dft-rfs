@@ -7,6 +7,7 @@ use App\Entity\PreEnquiry\PreEnquiryNote;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
+use App\Utility\AlphagovNotify\PendingNotificationService;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -22,8 +23,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ViewController extends AbstractController
 {
     public function __construct(
-        protected AuditLogRepository $auditLogRepository,
-        protected AddNotesHelper     $addNotesHelper,
+        protected AuditLogRepository         $auditLogRepository,
+        protected AddNotesHelper             $addNotesHelper,
+        protected PendingNotificationService $pendingNotificationService,
     ) {}
 
     #[Route(path: '', name: EditController::VIEW_ROUTE)]
@@ -42,6 +44,7 @@ class ViewController extends AbstractController
             'addNoteForm' => $addNotesForm,
             'approvedBy' => false, // PreEnquiry has no APPROVED state
             'auditLogs' => $this->auditLogRepository->getLogs($preEnquiry->getId(), PreEnquiry::class),
+            'pendingNotifications' => $this->pendingNotificationService->loadPendingMessagesFor($preEnquiry),
 //          'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($preEnquiry),
             'preEnquiry' => $preEnquiry,
         ]);

@@ -3,6 +3,7 @@ menu:
   logout: Sign out
   reports: Reports
   feedback: Feedback
+  email-blacklist: Email blacklist
   ports-and-routes:
     ports:
       foreign: Foreign ports
@@ -238,3 +239,35 @@ user-id:
   lookup:
     heading: User ID lookup
     help: This utility allows a user ID (commonly found in the Google logs) to be more easily matched to a corresponding survey.
+
+email-blacklist:
+  heading: Email blacklist
+  list:
+    add: Add email
+    email: Email
+    reason: Reason
+    created-at: Date added
+    delete: Delete
+    no-results: No blacklisted emails found.
+  add:
+    heading: Add email to blacklist
+    success: Email successfully added to blacklist
+  edit:
+    heading: "Edit blacklisted email: {email}"
+    success: Email blacklist entry updated successfully
+  delete:
+    heading: "Delete blacklisted email: {email}"
+    warning: "Are you sure you want to remove {email} from the blacklist?"
+    confirm.label: Yes, remove from blacklist
+    cancel.label: Cancel
+    confirmed-notification:
+      heading: Email removed
+      content: The email was successfully removed from the blacklist
+    cancelled-notification:
+      heading: Email not removed
+      content: The request to remove the email was cancelled
+  form:
+    email: Email address
+    reason: Reason for blacklisting (optional)
+    submit: Add to blacklist
+    save: Save changes

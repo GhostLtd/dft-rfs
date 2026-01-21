@@ -1,4 +1,4 @@
-{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
+{%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow, tag -%}
 
 {% set indentClass = 'govuk-!-padding-left-5' -%}
 
@@ -11,51 +11,15 @@
     }) -}}
 
     {{- summaryListRow({
-            key: {text: 'Initial invitation', classes: indentClass},
-            value: {html: _self.notificationStatus(
-            survey.notifyApiResponsesMatching(
-                constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
-                true
-            )
-        )}
-    }) -}}
-    {{- summaryListRow({
-        key: {text: 'Reminder 1', classes: indentClass},
-        value: {html: _self.notificationStatus(
-            survey.notifyApiResponsesMatching(
-                constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
-                true
-            )
-        )}
-    }) -}}
-    {{- summaryListRow({
-        key: {text: 'Reminder 2', classes: indentClass},
-        value: {html: _self.notificationStatus(
-            survey.notifyApiResponsesMatching(
-                constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
-                true
-            )
-        )}
-    }) -}}
-{{- summaryListEnd() -}}
-
-{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
-    {{- summaryListRow({
-        key: {text: 'Email Address', classes: indentClass},
-        value: survey.invitationEmails ?? '-'
-    }) -}}
-
-    {{- summaryListRow({
         key: {text: 'Initial invitation', classes: indentClass},
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
-                'App\\Messenger\\AlphagovNotify\\Email',
+                'App\\Messenger\\AlphagovNotify\\Letter',
                 true
-            ), true
+            ),
+            pendingNotifications.pendingInviteLetters | default([]),
+            false
         )}
     }) -}}
     {{- summaryListRow({
@@ -63,9 +27,11 @@
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
-                'App\\Messenger\\AlphagovNotify\\Email',
+                'App\\Messenger\\AlphagovNotify\\Letter',
                 true
-            ), true
+            ),
+            pendingNotifications.pendingReminder1Letters | default([]),
+            false
         )}
     }) -}}
     {{- summaryListRow({
@@ -73,44 +39,126 @@
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
-                'App\\Messenger\\AlphagovNotify\\Email',
+                'App\\Messenger\\AlphagovNotify\\Letter',
                 true
-            ), true
+            ),
+            pendingNotifications.pendingReminder2Letters | default([]),
+            false
         )}
     }) -}}
 {{- summaryListEnd() -}}
 
-{%- set manualReminders = survey.notifyApiResponsesMatching(
-    constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_MANUAL_REMINDER'),
-    'App\\Messenger\\AlphagovNotify\\Email',
-    true,
-    true
-) -%}
-
-{% if manualReminders | length > 0 %}
-{{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
-    {{- summaryListRow({
-        key: {text: 'Manual reminders', classes: indentClass},
-        value: ''
-    }) -}}
-    {% for reminder in manualReminders %}
+{% if showEmails ?? true %}
+    {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
         {{- summaryListRow({
-            key: {text: "Reminder #{loop.index}", classes: indentClass},
-            value: {html: _self.notificationStatus([reminder], true)}
+            key: {text: 'Email Address', classes: indentClass},
+            value: {html: _self.combinedEmailDisplay(survey.arrayOfInvitationEmails, lcniInfo)}
         }) -}}
-    {% endfor %}
-{{- summaryListEnd() -}}
+
+        {{- summaryListRow({
+            key: {text: 'Initial invitation', classes: indentClass},
+            value: {html: _self.notificationStatus(
+                survey.notifyApiResponsesMatching(
+                    constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
+                    'App\\Messenger\\AlphagovNotify\\Email',
+                    true
+                ),
+                pendingNotifications.pendingInviteEmails | default([]),
+                true
+            )}
+        }) -}}
+        {{- summaryListRow({
+            key: {text: 'Reminder 1', classes: indentClass},
+            value: {html: _self.notificationStatus(
+                survey.notifyApiResponsesMatching(
+                    constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
+                    'App\\Messenger\\AlphagovNotify\\Email',
+                    true
+                ),
+                pendingNotifications.pendingReminder1Emails | default([]),
+                true
+            )}
+        }) -}}
+        {{- summaryListRow({
+            key: {text: 'Reminder 2', classes: indentClass},
+            value: {html: _self.notificationStatus(
+                survey.notifyApiResponsesMatching(
+                    constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
+                    'App\\Messenger\\AlphagovNotify\\Email',
+                    true
+                ),
+                pendingNotifications.pendingReminder2Emails | default([]),
+                true
+            )}
+        }) -}}
+    {{- summaryListEnd() -}}
+
+    {%- set manualReminders = survey.notifyApiResponsesMatching(
+        constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_MANUAL_REMINDER'),
+        'App\\Messenger\\AlphagovNotify\\Email',
+        true,
+        true
+    ) -%}
+
+    {%- set pendingManualReminders = pendingNotifications.pendingManualReminderEmails | default([]) -%}
+
+    {% if manualReminders | length > 0 or pendingManualReminders | length > 0 %}
+        {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
+            {{- summaryListRow({
+                key: {text: 'Manual reminders', classes: indentClass},
+                value: ''
+            }) -}}
+            {% for reminder in manualReminders %}
+                {{- summaryListRow({
+                    key: {text: "Reminder #{loop.index}", classes: indentClass},
+                    value: {html: _self.notificationStatus([reminder], [], true)}
+                }) -}}
+            {% endfor %}
+            {% for pendingReminder in pendingManualReminders %}
+                {{- summaryListRow({
+                    key: {text: "Reminder #{manualReminders | length + loop.index}", classes: indentClass},
+                    value: {html: _self.notificationStatus([], [pendingReminder], true)}
+                }) -}}
+            {% endfor %}
+        {{- summaryListEnd() -}}
+        {% endif %}
 {% endif %}
 
-{#{%- macro row(key, value, options) -%}#}
-{#    <div class="govuk-summary-list__row">#}
-{#        <dt class="govuk-summary-list__key govuk-!-padding-left-5">{{ key }}</dt>#}
-{#        <dd class="govuk-summary-list__value">{% if (options.nl2br ?? false) %}{{ value | nl2br }}{% else %}{{ value }}{% endif %}</dd>#}
-{#    </div>#}
-{#{%- endmacro -%}#}
-
-{%- macro notificationStatus(apiResponses, displayRecipient) -%}
+{%- macro combinedEmailDisplay(invitationEmails, lcniInfo) -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- set hasContent = false -%}
+    {%- set hasLocalEmails = invitationEmails | length > 0 -%}
+
+    {# Local invitation emails #}
+    {%- for email in invitationEmails -%}
+        {%- set hasContent = true -%}
+        <div class="govuk-!-margin-bottom-1">
+            {%- if is_email_blacklisted(email) %}{{ tag({text: 'Blacklisted', classes: 'govuk-tag--red'}) }} {% endif -%}
+            {{- email }}
+        </div>
+    {%- endfor -%}
+
+    {# LCNI locked state #}
+    {%- if lcniInfo.locked ?? false -%}
+        {%- set hasContent = true -%}
+        <div class="govuk-!-margin-bottom-1{% if hasLocalEmails %} govuk-!-margin-top-2{% endif %}">{{ tag({text: 'LCNI', classes: 'govuk-tag--yellow'}) }} Lookup temporarily unavailable; DVLA sample import in progress</div>
+    {# LCNI emails with tag #}
+    {%- elseif lcniInfo.emails ?? false -%}
+        {%- for email in lcniInfo.emails -%}
+            {%- set hasContent = true -%}
+            <div class="govuk-!-margin-bottom-2{% if loop.first and hasLocalEmails %} govuk-!-margin-top-2{% endif %}">
+                {%- if is_email_blacklisted(email) %}{{ tag({text: 'Blacklisted', classes: 'govuk-tag--red'}) }} {% endif -%}
+                {{- tag({text: 'LCNI', classes: 'govuk-tag--blue'}) }} {{ email }}
+            </div>
+        {%- endfor -%}
+    {%- endif -%}
+
+    {%- if not hasContent -%}-{%- endif -%}
+{%- endmacro -%}
+
+{%- macro notificationStatus(apiResponses, pendingItems, displayRecipient) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- set hasContent = (apiResponses | length > 0) or (pendingItems | length > 0) -%}
     {%- if apiResponses -%}
         {% for response in apiResponses %}
             <div class="api-response">
@@ -127,7 +175,17 @@
                 </span>
             </div>
         {% endfor %}
-    {%- else -%}
+    {%- endif -%}
+    {%- for pending in pendingItems -%}
+        <div class="api-response">
+            {{- tag({text: 'pending', classes: 'govuk-tag--yellow'}) -}}
+            <span class="govuk-body-s">
+                <span class="api-response__timestamp">sends {{ pending.availableAt | date('format.date-time.default' | trans) -}}</span>
+                {%- if displayRecipient | default(false) and pending.recipient | default(false) -%}<span class="api-response__recipient">{{ pending.recipient }}</span>{% endif %}
+            </span>
+        </div>
+    {%- endfor -%}
+    {%- if not hasContent -%}
         -
     {%- endif -%}
 {%- endmacro -%}

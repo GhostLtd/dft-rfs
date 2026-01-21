@@ -69,6 +69,7 @@ class AdminMenu implements MenuInterface
             new MenuDivider(),
 
             new RoleMenuItem('notification-interception', 'menu.international.notification-interception', $this->router->generate('admin_notification_interception_list'), [], []),
+            new RoleMenuItem('email-blacklist', 'menu.email-blacklist', $this->router->generate('admin_email_blacklist_list'), [], []),
             new RoleMenuItem('maintenance-warnings', 'Maintenance warnings', $this->router->generate('admin_maintenance_warning_list'), [], []),
             new RoleMenuItem('user-id-lookup', 'User ID lookup', $this->router->generate('admin_user_id_lookup'), [], []),
             new RoleMenuItem('logout', 'menu.logout', $this->router->generate('admin_logout'), [], ['ROLE_ADMIN_FORM_USER']),

@@ -4,6 +4,7 @@ namespace App\Utility\ConfirmAction\Common\Admin;
 
 use App\Entity\SurveyInterface;
 use App\Utility\ConfirmAction\AbstractConfirmAction;
+use App\Utility\ConfirmAction\ActionFailedException;
 use App\Utility\Reminder\ManualReminderHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -40,6 +41,8 @@ class SendReminderConfirmAction extends AbstractConfirmAction
     #[\Override]
     public function doConfirmedAction($formData)
     {
-        $this->reminderHelper->sendManualReminder($this->subject);
+        if (!$this->reminderHelper->sendManualReminder($this->subject)) {
+            throw new ActionFailedException();
+        }
     }
 }

@@ -847,6 +847,7 @@ admin:
     cancel.label: Cancel
     confirm.label: Send reminder
     recipients: Reminder recipients
+    all-blacklisted: 'A reminder cannot be sent, as all email addresses are blacklisted.'
 
     confirmed-notification:
       heading: 'Reminder sent'
@@ -854,6 +855,9 @@ admin:
     cancelled-notification:
       heading: 'Reminder cancelled'
       content: No reminder has been sent
+    failed-notification:
+      heading: 'Reminder not sent'
+      content: 'The reminder could not be sent because all recipient email addresses are blacklisted'
 
   send-reminder-unavailable:
     heading: Send email reminder

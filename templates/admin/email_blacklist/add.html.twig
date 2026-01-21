@@ -1,0 +1,11 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% trans_default_domain 'admin' %}
+{% set headingDomain = 'admin' %}
+{% set translation_prefix = "email-blacklist.add" %}
+
+{%- block adminContent -%}
+    <div class="govuk-width-container">
+        {{ form(form) }}
+    </div>
+{%- endblock -%}

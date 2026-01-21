@@ -13,7 +13,8 @@ use App\Repository\NotificationInterceptionRepository;
 class NotificationInterceptionService
 {
     public function __construct(
-        protected NotificationInterceptionRepository $notificationInterceptionRepository
+        protected NotificationInterceptionRepository $notificationInterceptionRepository,
+        protected EmailBlacklistService $emailBlacklistService,
     ) {}
 
     public function checkAndInterceptSurvey(SurveyInterface|SurveyReminderInterface $survey): SurveyInterface|SurveyReminderInterface
@@ -36,7 +37,9 @@ class NotificationInterceptionService
         foreach ($interceptionEmails ?? [] as $email) {
             $emails[] = $email;
         }
-        return $emails;
+
+        // Filter out blacklisted emails
+        return $this->emailBlacklistService->filterBlacklistedEmails($emails);
     }
 
     protected function findInterception(SurveyInterface|SurveyReminderInterface $survey): ?NotificationInterception

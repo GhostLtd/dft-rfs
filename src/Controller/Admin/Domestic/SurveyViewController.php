@@ -7,7 +7,9 @@ use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyStateInterface;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
+use App\Utility\AlphagovNotify\PendingNotificationService;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
+use App\Utility\LcniDisplayService;
 use App\Utility\Domestic\OnHireStatsProvider;
 use App\Utility\Domestic\PdfHelper;
 use App\Repository\AuditLog\AuditLogRepository;
@@ -25,9 +27,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SurveyViewController extends AbstractController
 {
     public function __construct(
-        protected AddNotesHelper     $addNotesHelper,
-        protected AuditLogRepository $auditLogRepository,
-        protected PdfHelper          $pdfHelper,
+        protected AddNotesHelper               $addNotesHelper,
+        protected AuditLogRepository           $auditLogRepository,
+        protected LcniDisplayService           $lcniDisplayService,
+        protected PdfHelper                    $pdfHelper,
+        protected PendingNotificationService   $pendingNotificationService,
     )
     {
     }
@@ -55,7 +59,9 @@ class SurveyViewController extends AbstractController
                 SurveyStateInterface::STATE_CLOSED,
             ]) ? false : $this->auditLogRepository->getApprovedBy($survey),
             'auditLogs' => $this->auditLogRepository->getLogs($survey->getId(), Survey::class),
+            'lcniInfo' => $this->lcniDisplayService->getDisplayInfoForSurvey($survey),
             'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
+            'pendingNotifications' => $this->pendingNotificationService->loadPendingMessagesFor($survey),
             'qualityAssuredBy' => $survey->getQualityAssured() ?
                 $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,

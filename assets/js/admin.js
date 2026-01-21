@@ -15,7 +15,11 @@ import '../styles/admin.scss';
 import './admin/blame-log';
 import './admin/dashboard';
 import './admin/irhs-trip';
+import './admin/lcni-lookup';
+import './admin/email-blacklist-check';
 
 GOVUK.rfsBlameLog.initAll();
 GOVUK.rfsDashboard.init();
 GOVUK.rfsIrhsTrip.init();
+GOVUK.rfsLcniLookup.init();
+GOVUK.rfsEmailBlacklistCheck.init();

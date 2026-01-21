@@ -9,8 +9,10 @@ use App\Repository\AuditLog\AuditLogRepository;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
+use App\Utility\AlphagovNotify\PendingNotificationService;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\International\PdfHelper;
+use App\Utility\LcniDisplayService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,9 +27,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SurveyViewController extends AbstractController
 {
     public function __construct(
-        protected AddNotesHelper     $addNotesHelper,
-        protected AuditLogRepository $auditLogRepository,
-        protected PdfHelper          $pdfHelper,
+        protected AddNotesHelper               $addNotesHelper,
+        protected AuditLogRepository           $auditLogRepository,
+        protected LcniDisplayService           $lcniDisplayService,
+        protected PdfHelper                    $pdfHelper,
+        protected PendingNotificationService   $pendingNotificationService,
     ) {}
 
     #[Route(path: '', name: SurveyController::VIEW_ROUTE)]
@@ -53,7 +57,9 @@ class SurveyViewController extends AbstractController
                 SurveyStateInterface::STATE_CLOSED,
             ]) ? false : $this->auditLogRepository->getApprovedBy($survey),
             'auditLogs' => $this->auditLogRepository->getLogs($survey->getId(), Survey::class),
+            'lcniInfo' => $this->lcniDisplayService->getDisplayInfoForSurvey($survey),
             'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
+            'pendingNotifications' => $this->pendingNotificationService->loadPendingMessagesFor($survey),
             'qualityAssuredBy' => $survey->getQualityAssured() ?
                 $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,

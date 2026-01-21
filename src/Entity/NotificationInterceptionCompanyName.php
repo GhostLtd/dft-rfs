@@ -30,7 +30,7 @@ class NotificationInterceptionCompanyName
 
     public function setName(?string $name): self
     {
-        $this->name = trim($name);
+        $this->name = $name === null ? null : mb_trim($name);
         return $this;
     }
 

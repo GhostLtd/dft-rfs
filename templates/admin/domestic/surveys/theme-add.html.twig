@@ -2,14 +2,32 @@
     {{ form_start(form) }}
     {{ form_errors(form) }}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4"
+             data-email-blacklist-check
+             data-email-blacklist-input="#{{ form.invitationEmails.vars.id }}">
             {{ form_row(form.registrationMark) }}
             {{ form_row(form.isNorthernIreland) }}
             {{ form_row(form.surveyPeriodStart) }}
             {{ form_row(form.invitationEmails) }}
+            <div data-email-blacklist-display class="govuk-inset-text email-blacklist-display--hidden"></div>
         </div>
-        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4">
-            {{ form_row(form.invitationAddress) }}
+        <div class="govuk-grid-column-one-half-from-desktop govuk-!-margin-bottom-4"
+             data-lcni-lookup
+             data-lcni-input="#{{ form.invitationAddress.lines.line1.vars.id }}"
+             data-lcni-emails-input="#{{ form.invitationEmails.vars.id }}"
+             data-lcni-survey-type="csrgt">
+            {{ form_label(form.invitationAddress) }}
+            {{ form_errors(form.invitationAddress) }}
+            <fieldset class="govuk-fieldset">
+                {{ form_row(form.invitationAddress.lines.line1) }}
+                <div data-lcni-display class="govuk-inset-text lcni-display--hidden"></div>
+                {{ form_row(form.invitationAddress.lines.line2) }}
+                {{ form_row(form.invitationAddress.lines.line3) }}
+                {{ form_row(form.invitationAddress.lines.line4) }}
+                {{ form_row(form.invitationAddress.lines.line5) }}
+                {{ form_row(form.invitationAddress.lines.line6) }}
+                {{ form_row(form.invitationAddress.lines.postcode) }}
+            </fieldset>
         </div>
     </div>
     {{ form_rest(form) }}

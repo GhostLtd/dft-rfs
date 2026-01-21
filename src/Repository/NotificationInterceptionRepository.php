@@ -31,6 +31,7 @@ class NotificationInterceptionRepository extends ServiceEntityRepository
 
     protected function normaliseBusinessName(string $businessName): string
     {
-        return strtolower(trim(preg_replace('/\s+/', ' ', $businessName)));
+        // Collapse all whitespace (including NBSP) to single space, then trim
+        return strtolower(mb_trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $businessName)));
     }
 }

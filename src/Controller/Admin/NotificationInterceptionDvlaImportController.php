@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\NotificationInterception;
 use App\Entity\NotificationInterceptionCompanyName;
 use App\Form\Admin\LCNI\DvlaImportType;
+use App\Utility\LcniDisplayService;
 use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +50,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
     #[Route(name: '')]
     public function import(Request $request): ?Response
     {
-        $this->lock = $this->lockFactory->createLock('lcni-dvla-import', 60 * 2, false);
+        $this->lock = $this->lockFactory->createLock(LcniDisplayService::DVLA_IMPORT_LOCK_NAME, 60 * 2, false);
         if (!$this->lock->acquire()) {
             throw new LockedHttpException("Could not acquire lock");
         }
@@ -117,7 +118,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
         foreach ($sheet->getRowIterator(2) as $row) {
             ['A' => $companyName, 'B' => $email] = $this->getRowValues($row);
-            $this->dvlaImportData[] = [trim($companyName), strtolower(trim($email))];
+            $this->dvlaImportData[] = [mb_trim($companyName), strtolower(mb_trim($email))];
         }
         $spreadsheet->disconnectWorksheets();
     }

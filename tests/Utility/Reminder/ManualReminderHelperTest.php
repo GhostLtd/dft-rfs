@@ -16,6 +16,7 @@ use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
+use App\Utility\EmailBlacklistService;
 use App\Utility\NotificationInterceptionService;
 use App\Utility\Reminder\ManualReminderHelper;
 use App\Utility\Reminder\UnavailabilityReason;
@@ -28,6 +29,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class ManualReminderHelperTest extends KernelTestCase
 {
     protected AuditLogRepository&MockObject $auditLogRepositoryMock;
+    protected EmailBlacklistService&MockObject $emailBlacklistServiceMock;
 
     protected ManualReminderHelper $manualReminderHelper;
 
@@ -44,13 +46,19 @@ class ManualReminderHelperTest extends KernelTestCase
             ->method('getAllEmailsForSurvey')
             ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
 
+        $this->emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
+        $this->emailBlacklistServiceMock
+            ->method('filterBlacklistedEmails')
+            ->willReturnCallback(fn(array $emails) => $emails); // Pass-through by default
+
         $this->manualReminderHelper = new ManualReminderHelper(
             $this->auditLogRepositoryMock,
             $entityManagerMock,
             $messageBusMock,
             $personalisationHelperMock,
             $securityMock,
-            $notificationInterceptionServiceMock
+            $notificationInterceptionServiceMock,
+            $this->emailBlacklistServiceMock,
         );
     }
 
@@ -367,5 +375,145 @@ class ManualReminderHelperTest extends KernelTestCase
 
         $this->assertEquals($expectedDate, $latestEventDate);
         $this->assertEquals($expectedEventType, $eventType);
+    }
+
+    public function testGetRecipientEmailsReturnsBlacklistedEmail(): void
+    {
+        $survey = (new DomesticSurvey())
+            ->setInvitationEmails(null)
+            ->setResponse(
+                (new DomesticResponse())
+                    ->setContactEmail('blacklisted@example.com')
+            );
+
+        $this->assertEquals(['blacklisted@example.com'], $this->manualReminderHelper->getRecipientEmails($survey));
+    }
+
+    public function testGetRecipientEmailsReturnsBlacklistedInvitationEmails(): void
+    {
+        $survey = (new DomesticSurvey())
+            ->setInvitationEmails('blacklisted@example.com')
+            ->setResponse(
+                (new DomesticResponse())
+                    ->setContactEmail(null)
+            );
+
+        $this->assertEquals(['blacklisted@example.com'], $this->manualReminderHelper->getRecipientEmails($survey));
+    }
+
+    public function testSendManualReminderDoesNotDispatchToBlacklistedEmail(): void
+    {
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $messageBusMock
+            ->expects($this->never())
+            ->method('dispatch');
+
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $entityManagerMock
+            ->expects($this->never())
+            ->method('persist');
+        $entityManagerMock
+            ->expects($this->never())
+            ->method('flush');
+
+        $emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
+        $emailBlacklistServiceMock
+            ->method('filterBlacklistedEmails')
+            ->willReturn([]);
+
+        $auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
+        $auditLogRepositoryMock
+            ->method('getLogs')
+            ->willReturn([]);
+
+        $notificationInterceptionServiceMock = $this->createMock(NotificationInterceptionService::class);
+        $notificationInterceptionServiceMock
+            ->method('getAllEmailsForSurvey')
+            ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
+
+        $helper = new ManualReminderHelper(
+            $auditLogRepositoryMock,
+            $entityManagerMock,
+            $messageBusMock,
+            $this->createMock(PersonalisationHelper::class),
+            $this->createMock(Security::class),
+            $notificationInterceptionServiceMock,
+            $emailBlacklistServiceMock,
+        );
+
+        $survey = (new DomesticSurvey())
+            ->setId('abc-123')
+            ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
+            ->setInvitationEmails(null)
+            ->setInvitationSentDate(null)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate((new \DateTime())->modify('-8 days'))
+            ->setResponse(
+                (new DomesticResponse())
+                    ->setContactEmail('blacklisted@example.com')
+            );
+
+        $result = $helper->sendManualReminder($survey);
+
+        $this->assertFalse($result);
+    }
+
+    public function testSendManualReminderReturnsTrueOnSuccess(): void
+    {
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $messageBusMock
+            ->expects($this->once())
+            ->method('dispatch')
+            ->willReturn(new \Symfony\Component\Messenger\Envelope(new \stdClass()));
+
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+
+        $securityMock = $this->createMock(Security::class);
+        $userMock = $this->createMock(\Symfony\Component\Security\Core\User\UserInterface::class);
+        $userMock->method('getUserIdentifier')->willReturn('test-user');
+        $securityMock->method('getUser')->willReturn($userMock);
+
+        $emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
+        $emailBlacklistServiceMock
+            ->method('filterBlacklistedEmails')
+            ->willReturnCallback(fn(array $emails) => $emails);
+
+        $auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
+        $auditLogRepositoryMock
+            ->method('getLogs')
+            ->willReturn([]);
+
+        $notificationInterceptionServiceMock = $this->createMock(NotificationInterceptionService::class);
+        $notificationInterceptionServiceMock
+            ->method('getAllEmailsForSurvey')
+            ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
+
+        $helper = new ManualReminderHelper(
+            $auditLogRepositoryMock,
+            $entityManagerMock,
+            $messageBusMock,
+            $this->createMock(PersonalisationHelper::class),
+            $securityMock,
+            $notificationInterceptionServiceMock,
+            $emailBlacklistServiceMock,
+        );
+
+        $survey = (new DomesticSurvey())
+            ->setId('abc-123')
+            ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
+            ->setInvitationEmails(null)
+            ->setInvitationSentDate(null)
+            ->setFirstReminderSentDate(null)
+            ->setSecondReminderSentDate(null)
+            ->setLatestManualReminderSentDate((new \DateTime())->modify('-8 days'))
+            ->setResponse(
+                (new DomesticResponse())
+                    ->setContactEmail('valid@example.com')
+            );
+
+        $result = $helper->sendManualReminder($survey);
+
+        $this->assertTrue($result);
     }
 }

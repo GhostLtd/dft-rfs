@@ -5,6 +5,7 @@ namespace App\Controller\Admin\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Common\Admin\SendReminderConfirmAction;
+use App\Utility\LcniDisplayService;
 use App\Utility\Reminder\ManualReminderHelper;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SurveyManualReminderController extends AbstractController
 {
+    public function __construct(
+        protected LcniDisplayService $lcniDisplayService,
+    ) {}
+
     #[Route(path: '/csrgt/manual-reminder/{id}', name: 'admin_domestic_survey_manual_reminder')]
     #[IsGranted(AdminSurveyVoter::MANUAL_REMINDER_BUTTON, subject: 'survey')]
     #[Template('admin/domestic/send_reminder/send-reminder.html.twig')]
@@ -34,10 +39,16 @@ class SurveyManualReminderController extends AbstractController
             ]);
         }
 
+        $hasResponseContactEmail = (bool) $survey->getResponseContactEmail();
+        $recipientEmails = $reminderHelper->getRecipientEmails($survey);
+        $lcniInfo = $this->lcniDisplayService->getDisplayInfoForSurvey($survey);
+
         return $confirmAction
             ->setSubject($survey)
             ->setExtraViewData([
-                'recipients' => join(', ', $reminderHelper->getRecipientEmails($survey)),
+                'hasResponseContactEmail' => $hasResponseContactEmail,
+                'recipientEmails' => $recipientEmails,
+                'lcniInfo' => $lcniInfo,
             ])
             ->controller(
                 $request,

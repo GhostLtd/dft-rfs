@@ -13,6 +13,7 @@ use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
+use App\Utility\EmailBlacklistService;
 use App\Utility\NotificationInterceptionService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,17 +35,23 @@ class ManualReminderHelper
         protected PersonalisationHelper  $personalisationHelper,
         protected Security               $security,
         protected NotificationInterceptionService $notificationInterceptionService,
+        protected EmailBlacklistService  $emailBlacklistService,
     ) {}
 
-    public function sendManualReminder(SurveyManualReminderInterface $survey): void
+    public function sendManualReminder(SurveyManualReminderInterface $survey): bool
     {
         if (!$this->canSendManualReminder($survey)) {
-            return;
+            return false;
         }
 
         $templateId = $this->getNotifyTemplateId($survey);
+        $recipients = $this->emailBlacklistService->filterBlacklistedEmails($this->getRecipientEmails($survey));
 
-        foreach ($this->getRecipientEmails($survey) as $email) {
+        if (empty($recipients)) {
+            return false;
+        }
+
+        foreach ($recipients as $email) {
             $this->messageBus->dispatch(new Email(
                 Reference::EVENT_MANUAL_REMINDER,
                 $survey::class,
@@ -77,6 +84,8 @@ class ManualReminderHelper
 
         $this->entityManager->persist($note);
         $this->entityManager->flush();
+
+        return true;
     }
 
     public function canSendManualReminder(SurveyManualReminderInterface $survey): bool

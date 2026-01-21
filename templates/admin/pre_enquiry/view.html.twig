@@ -63,7 +63,7 @@
             {%- endif -%}
 
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab-invitation-details">
-                {%- with {marginBottom: 5, survey: preEnquiry} -%}
+                {%- with {marginBottom: 5, survey: preEnquiry, pendingNotifications: pendingNotifications, showEmails: false} -%}
                     {%- include "admin/includes/invitation-details.html.twig" -%}
                 {%- endwith -%}
             </div>

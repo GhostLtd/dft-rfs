@@ -1,0 +1,12 @@
+{%- macro lcniStatus(lcniInfo) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- if not lcniInfo -%}
+        {{- tag({text: 'LCNI', classes: 'govuk-tag--grey'}) }} No match found
+    {%- else -%}
+        {%- for email in lcniInfo.emails -%}
+            <div{% if not loop.last %} class="govuk-!-margin-bottom-2"{% endif %}>
+                {{- tag({text: 'LCNI', classes: 'govuk-tag--blue'}) }} {{ email }}
+            </div>
+        {%- endfor -%}
+    {%- endif -%}
+{%- endmacro -%}

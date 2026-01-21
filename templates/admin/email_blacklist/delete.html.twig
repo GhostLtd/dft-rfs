@@ -1,0 +1,16 @@
+{% extends 'admin/base-with-nav.html.twig' %}
+
+{% set translation_prefix = "email-blacklist.delete" %}
+{% set headingDomain = 'admin' %}
+{% set headingParams = {
+    email: email
+} %}
+{% trans_default_domain 'admin' %}
+
+{% block adminContent %}
+    {% from '@GhostGovUkFrontend/components/macros.html.twig' import warningText -%}
+    <div class="govuk-width-container">
+        {{- warningText({text: "#{translation_prefix}.warning" | trans({'{email}': email}) }) -}}
+        {{ form(form) }}
+    </div>
+{% endblock %}

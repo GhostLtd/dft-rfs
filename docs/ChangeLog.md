@@ -3,7 +3,10 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: Global Email Blacklist - prevent emails being sent to specified addresses with admin UI for management and visual indicators in survey views
+- **Feature**: LCNI information shown in CSRGT/IRHS invitation/reminders tab, send manual reminder page, and add survey page
 - **Update**: Add WeekNumber to CSRGT export views
+- **Update**: Add businessName, state, weekNumber and isNorthernIreland to DriverAvailability export views
 - **Fix**: Domestic stop reorder bug
 
 ## 2025-12-04

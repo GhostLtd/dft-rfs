@@ -108,3 +108,8 @@ span.code {
 .govuk-label--s {
   font-weight: 700;
 }
+
+.lcni-display--hidden,
+.email-blacklist-display--hidden {
+  display: none;
+}
