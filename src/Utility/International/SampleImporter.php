@@ -32,7 +32,7 @@ class SampleImporter extends AbstractBulkSurveyImporter
     #[\Override]
     protected function parseLine($line)
     {
-        if ($fields = str_getcsv($line))
+        if ($fields = str_getcsv($line, ',', '"', '\\'))
         {
             if (count($fields) !== 11) {
                 return null;

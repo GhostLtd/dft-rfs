@@ -114,7 +114,7 @@ class PortController extends AbstractController
         return $this->delete($request, $port);
     }
 
-    protected function addOrEdit(Request $request, string $portType, PortInterface $port=null): Response
+    protected function addOrEdit(Request $request, string $portType, ?PortInterface $port=null): Response
     {
         $isAdd = ($port === null);
 

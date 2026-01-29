@@ -82,7 +82,7 @@ class OperatorController extends AbstractController
         return $this->addOrEdit($request, $operator);
     }
 
-    protected function addOrEdit(Request $request, Operator $operator=null): Response
+    protected function addOrEdit(Request $request, ?Operator $operator=null): Response
     {
         $isAdd = ($operator === null);
 

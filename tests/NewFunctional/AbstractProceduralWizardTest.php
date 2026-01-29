@@ -40,7 +40,7 @@ abstract class AbstractProceduralWizardTest extends AbstractWizardTest
         $this->perform($action);
     }
 
-    protected function formTestAction(string $expectedPath, string $submitButtonId = null, array $formTestCases = [], array $options = []): void
+    protected function formTestAction(string $expectedPath, ?string $submitButtonId = null, array $formTestCases = [], array $options = []): void
     {
         $this->perform(new FormTestAction($expectedPath, $submitButtonId, $formTestCases, $options));
     }

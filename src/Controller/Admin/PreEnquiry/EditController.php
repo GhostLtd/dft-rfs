@@ -90,7 +90,7 @@ class EditController extends AbstractController
         ]);
     }
 
-    protected function getRedirectUrl(PreEnquiry $preEnquiry, string $hash = null): string
+    protected function getRedirectUrl(PreEnquiry $preEnquiry, ?string $hash = null): string
     {
         return $this->generateUrl(self::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()]) . ($hash ? ("#" . $hash) : null);
     }

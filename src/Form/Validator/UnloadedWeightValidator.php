@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 class UnloadedWeightValidator extends ConstraintValidator
 {
     #[\Override]
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UnloadedWeight) {
             throw new UnexpectedTypeException($constraint, UnloadedWeight::class);

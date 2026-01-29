@@ -20,7 +20,7 @@ class WorkflowExtraExtension extends AbstractExtension
         ];
     }
 
-    public function canTransitionToAny(object $subject, array $transitionNames, string $name = null): bool
+    public function canTransitionToAny(object $subject, array $transitionNames, ?string $name = null): bool
     {
         $workflow = $this->workflowRegistry->get($subject, $name);
 

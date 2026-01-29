@@ -24,19 +24,19 @@ class EntryFilesTwigExtension extends AbstractExtension
         ];
     }
 
-    public function inlineJavascript(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function inlineJavascript(string $entryName, ?string $packageName = null, string $entrypointName = '_default'): string
     {
         $paths = $this->entrypointLookupCollection->getEntrypointLookup($entrypointName)->getJavaScriptFiles($entryName);
         return '<script>'.$this->getFilesContent($paths, $packageName).'</script>';
     }
 
-    public function inlineStyles(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function inlineStyles(string $entryName, ?string $packageName = null, string $entrypointName = '_default'): string
     {
         $paths = $this->entrypointLookupCollection->getEntrypointLookup($entrypointName)->getCssFiles($entryName);
         return '<style type="text/css">'.$this->getFilesContent($paths, $packageName).'</style>';
     }
 
-    private function getFilesContent(array $paths, string $packageName = null) : string {
+    private function getFilesContent(array $paths, ?string $packageName = null) : string {
         $content = '';
 
         $fileSystemPaths = $this->getFilesystemPaths($this->getAssetsPaths($paths, $packageName));
@@ -55,12 +55,12 @@ class EntryFilesTwigExtension extends AbstractExtension
         return array_map(fn($assetPath) => $webRootDirWithoutTrailingSlash . $assetPath, $assetPaths);
     }
 
-    private function getAssetsPaths(array $paths, string $packageName = null) : array
+    private function getAssetsPaths(array $paths, ?string $packageName = null) : array
     {
         return array_map(fn($path) => $this->getAssetPath($path, $packageName), $paths);
     }
 
-    private function getAssetPath(string $assetPath, string $packageName = null): string
+    private function getAssetPath(string $assetPath, ?string $packageName = null): string
     {
         if (null === $this->packages) {
             throw new Exception('To render the script or link tags, run "composer require symfony/asset".');

@@ -12,9 +12,9 @@ class TripRoute extends Constraint
     public string $direction;
 
     public function __construct(
-        string $message = null,
-        string $formField = null,
-        string $direction = null,
+        ?string $message = null,
+        ?string $formField = null,
+        ?string $direction = null,
         array  $groups = [],
         mixed  $payload = null,
     )

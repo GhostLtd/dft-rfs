@@ -21,12 +21,12 @@ class ValidAddress extends Constraint
 
     public function __construct(
 
-        string $line1BlankMessage = null,
-        string $postcodeBlankMessage = null,
-        string $maxLengthMessage = null,
-        bool   $allowBlank = null,
-        bool   $validatePostcode = null,
-        bool   $includeAddressee = null,
+        ?string $line1BlankMessage = null,
+        ?string $postcodeBlankMessage = null,
+        ?string $maxLengthMessage = null,
+        ?bool   $allowBlank = null,
+        ?bool   $validatePostcode = null,
+        ?bool   $includeAddressee = null,
         array  $groups = [],
         mixed  $payload = null,
     )

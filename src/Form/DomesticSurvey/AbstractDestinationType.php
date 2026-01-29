@@ -6,26 +6,57 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DayStop;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\StopInterface;
+use App\Form\Validator\Postcode;
+use App\Utility\PostcodeChangeoverHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
 abstract class AbstractDestinationType extends AbstractType
 {
+    public function __construct(private PostcodeChangeoverHelper $changeoverHelper)
+    {
+    }
+
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationKeyPrefix = "domestic.{$options['translation_entity_key']}.destination";
         $portsTranslationKeyPrefix = "domestic.{$options['translation_entity_key']}.destination-ports";
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($translationKeyPrefix): void {
+            $form = $event->getForm();
+            /** @var StopInterface $data */
+            $data = $event->getData();
+
+            if (!$data) {
+                return;
+            }
+
+            $survey = $data->getDay()?->getResponse()?->getSurvey();
+            $isPostcodeOnly = $this->changeoverHelper->isPostcodeOnly($survey);
+
+            if ($isPostcodeOnly) {
+                $form->add('destinationLocation', Gds\InputType::class, [
+                    'label' => "{$translationKeyPrefix}.destination-location.postcode-only.label",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'help' => "{$translationKeyPrefix}.destination-location.postcode-only.help",
+                    'constraints' => [new Postcode(allowPartial: true, groups: ['destination-day', 'destination-day-stop'])],
+                ]);
+            } else {
+                $form->add('destinationLocation', Gds\InputType::class, [
+                    'label' => "{$translationKeyPrefix}.destination-location.label",
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                    'help' => "{$translationKeyPrefix}.destination-location.help",
+                ]);
+            }
+        });
+
         $builder
-            ->add('destinationLocation', Gds\InputType::class, [
-                'label' => "{$translationKeyPrefix}.destination-location.label",
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'help' => "{$translationKeyPrefix}.destination-location.help",
-            ])
             ->add('goodsUnloaded', Gds\ChoiceType::class, [
                 'choices' => ['Yes' => true, 'No' => false],
                 'choice_options' => ['Yes' => ['conditional_form_name' => 'goodsTransferredTo']],

@@ -26,7 +26,7 @@ class SurveyAddController extends AbstractController
 
     #[Route(path: '/csrgt/survey-add/', name: SurveyController::ADD_ROUTE)]
     #[Route(path: '/csrgt/survey-reissue/{originalSurveyId}', name: 'admin_domestic_survey_reissue')]
-    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, string $originalSurveyId = null): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, PasscodeGenerator $passcodeGenerator, ?string $originalSurveyId = null): Response
     {
         if ($originalSurveyId) {
             $originalSurvey = $this->surveyRepository->find($originalSurveyId);

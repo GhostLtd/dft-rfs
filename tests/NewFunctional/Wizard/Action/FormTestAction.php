@@ -8,7 +8,7 @@ class FormTestAction extends AbstractFormTestAction
 {
     protected ?string $submitButtonId = null;
 
-    public function __construct(string $expectedPath, string $submitButtonId = null, /** @var AbstractFormTestCase[]|array */
+    public function __construct(string $expectedPath, ?string $submitButtonId = null, /** @var AbstractFormTestCase[]|array */
     protected array $formTestCases = [], array $options = [])
     {
         parent::__construct($expectedPath, $submitButtonId, $options);

@@ -80,18 +80,18 @@ abstract class AbstractFunctionalTest extends WebTestCase
         return $client->click($link);
     }
 
-    protected function summaryListPart(string $part, string $text = null): string
+    protected function summaryListPart(string $part, ?string $text = null): string
     {
         $textPart = $text ? " and normalize-space()='{$text}'" : '';
         return "*[@class='govuk-summary-list__{$part}'{$textPart}]";
     }
 
-    protected function clickLink(KernelBrowser $client, string $text, string $linkClass=null): Crawler
+    protected function clickLink(KernelBrowser $client, string $text, ?string $linkClass=null): Crawler
     {
         return $client->click($this->getLink($client, $text, $linkClass));
     }
 
-    protected function getLink(KernelBrowser $client, string $text, string $linkClass=null): Link
+    protected function getLink(KernelBrowser $client, string $text, ?string $linkClass=null): Link
     {
         $parts = [];
 

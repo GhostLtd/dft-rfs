@@ -1,8 +1,25 @@
 const fullPageScreenshot = require('./fullPageScreenshot.js');
 const {addDayStop} = require("./domestic-day-stop");
-const {clickButtonWithText, clickLink, clickLinkWithText, getScreenshotPathHelper, goto, submit, type, waitForOptions,
+const {clickButtonWithText, clickLink, clickLinkWithText, clickOptionValue, getScreenshotPathHelper, goto, submit, type, waitForOptions,
     setupBrowserAndPage
 } = require("./common");
+
+const LOCATIONS = {
+    'place-name': {
+        origin: 'Flightston',
+        destination: 'Destinstown',
+        furthestStop: "Land's end",
+        dayStopSecond: 'Secondfield',
+        dayStopStart: 'Starttown',
+    },
+    'postcode': {
+        origin: 'SO14 0YG',
+        destination: 'PO1 2UP',
+        furthestStop: 'EX34 9EQ',
+        dayStopSecond: 'BH1 1AA',
+        dayStopStart: 'BS1 5TR',
+    }
+};
 
 async function doLogin(page, username, password) {
     await type(page, '#passcode_login_passcode_0', username);
@@ -125,9 +142,114 @@ async function doBusinessBodyChoice(page, option) {
     await submit(page, '#vehicle_body_buttons_continue');
 }
 
-module.exports.run = async function(argv) {
+async function doNiBorderCrossingScreenshots(argv) {
     const {outputDir, baseUrl, username, password} = argv;
     const screenshotPath = getScreenshotPathHelper(outputDir);
+    const locationMode = argv.locationMode || argv['location-mode'] || 'place-name';
+
+    const [browser, page] = await setupBrowserAndPage();
+
+    try {
+        // Login
+        await goto(page, baseUrl);
+        await submit(page, 'a[href="/login"]');
+        await doLogin(page, username, password);
+
+        // Fast-track initial details (no screenshots)
+        await submit(page, '#form_buttons_continue'); // intro
+        await doInitialContact(page); // contact
+        await doInitialPossesion(page, '0', '1'); // possession: yes, not exempt
+
+        // Fast-track business details (no screenshots)
+        await goto(page, baseUrl + 'domestic-survey/vehicle-and-business-details');
+        await doBusinessDetails(page);
+        await doBusinessTrailerChoice(page, '2'); // artic
+        await doBusinessAxleChoice(page, '2');
+        await doBusinessBodyChoice(page, '3');
+        await doBusinessVehicleWeights(page);
+
+        // Day-stop border crossing screenshot
+        await goto(page, baseUrl + 'domestic-survey/day-1/add');
+        await page.click('#number_of_stops_hasMoreThanFiveStops_0'); // 5-or-fewer
+        await submit(page, '#number_of_stops_buttons_continue');
+        await submit(page, '#form_buttons_continue'); // intro
+
+        await page.click('#origin_goodsLoaded_1'); // not loaded
+        await type(page, '#origin_originLocation', 'Belfast');
+        if (locationMode === 'postcode') {
+            await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/2-NI_ONLY-journey-start.png')});
+        }
+        await submit(page, '#origin_buttons_continue');
+
+        await page.click('#destination_goodsUnloaded_1'); // not unloaded
+        await type(page, '#destination_destinationLocation', 'Dublin');
+        if (locationMode === 'postcode') {
+            await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/3-NI_ONLY-journey-end.png')});
+        }
+        await submit(page, '#destination_buttons_continue');
+
+        await page.click('#border_crossing_borderCrossed_0');
+        await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/4-NI_ONLY-border-crossing.png')});
+
+        // Submit through rest of wizard
+        await type(page, '#border_crossing_borderCrossingLocation', 'Newry');
+        await submit(page, '#border_crossing_buttons_continue');
+
+        await page.click('#distance_travelled_distanceTravelled_unit_0');
+        await type(page, '#distance_travelled_distanceTravelled_value', '100');
+        await submit(page, '#distance_travelled_buttons_continue');
+
+        await clickOptionValue(page, 'empty');
+        await submit(page, '#goods_description_buttons_continue');
+
+        // Delete the stop
+        await page.goto(baseUrl + 'domestic-survey/day-1/delete-day-stop-1', waitForOptions);
+        await submit(page, '#confirm_action_buttons_confirm');
+
+        // Day-summary border crossing screenshot
+        await goto(page, baseUrl + 'domestic-survey/day-2/add');
+        await page.click('#number_of_stops_hasMoreThanFiveStops_1'); // 6-or-more
+        await submit(page, '#number_of_stops_buttons_continue');
+        await submit(page, '#form_buttons_continue'); // intro
+
+        await page.click('#origin_goodsLoaded_1'); // not loaded
+        await type(page, '#origin_originLocation', 'Belfast');
+        if (locationMode === 'postcode') {
+            await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/2-NI_ONLY-journey-start.png')});
+        }
+        await submit(page, '#origin_buttons_continue');
+
+        await page.click('#destination_goodsUnloaded_1'); // not unloaded
+        await type(page, '#destination_destinationLocation', 'Dublin');
+        if (locationMode === 'postcode') {
+            await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/3-NI_ONLY-journey-end.png')});
+        }
+        await submit(page, '#destination_buttons_continue');
+
+        await type(page, '#furthest_stop_furthestStop', 'Newry');
+        await submit(page, '#furthest_stop_buttons_continue');
+
+        await page.click('#border_crossing_borderCrossed_0');
+        await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/5-NI_ONLY-border-crossing.png')});
+    } catch (e) {
+        console.log(e.toString(), e.stack);
+        await fullPageScreenshot.default(page, {path: screenshotPath('error-ni-border-crossing.png')});
+        console.log('Image generated: error-ni-border-crossing.png');
+        throw e;
+    }
+
+    await browser.close();
+}
+
+module.exports.run = async function(argv) {
+    if (argv.niBorderCrossingOnly || argv['ni-border-crossing-only']) {
+        return doNiBorderCrossingScreenshots(argv);
+    }
+
+    const {outputDir, baseUrl, username, password} = argv;
+    const screenshotPath = getScreenshotPathHelper(outputDir);
+    const locationMode = argv.locationMode || argv['location-mode'] || 'place-name';
+    const locations = LOCATIONS[locationMode];
 
     const [browser, page] = await setupBrowserAndPage();
 
@@ -223,7 +345,7 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/2b-journey-start-goods-loaded.png')});
 
         await page.click('#origin_goodsTransferredFrom_2');
-        await type(page, '#origin_originLocation', 'Flightston');
+        await type(page, '#origin_originLocation', locations.origin);
         await submit(page, '#origin_buttons_continue');
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/3a-journey-end-goods-not-loaded.png')});
 
@@ -231,15 +353,8 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/3b-journey-end-goods-loaded.png')});
 
         await page.click('#destination_goodsUnloaded_1');
-        await type(page, '#destination_destinationLocation', 'Destinstown');
+        await type(page, '#destination_destinationLocation', locations.destination);
         await submit(page, '#destination_buttons_continue');
-
-        await page.click('#border_crossing_borderCrossed_0');
-        await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/4-NI_ONLY-border-crossing.png')});
-
-        await page.click('#border_crossing_borderCrossed_0');
-        await type(page, '#border_crossing_borderCrossingLocation', 'Lacklom');
-        await submit(page, '#border_crossing_buttons_continue');
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/5-distance-travelled.png')});
 
         await page.click('#distance_travelled_distanceTravelled_unit_0');
@@ -279,8 +394,8 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops/11-delete.png')});
 
 
-        await addDayStop(page, baseUrl,'Destinstown', true, 'Secondfield', true, '200', '', 'Apples', '300');
-        await addDayStop(page, baseUrl,'Starttown', false, 'Flightston', false, '100', '', null, null);
+        await addDayStop(page, baseUrl, locations.destination, true, locations.dayStopSecond, true, '200', null, 'Apples', '300');
+        await addDayStop(page, baseUrl, locations.dayStopStart, false, locations.origin, false, '100', null, null, null);
         await fullPageScreenshot.default(page, {path: screenshotPath('day-stops-reorder/1-summary-initial.png')});
 
         await clickLinkWithText(page, 'Re-order stages');
@@ -312,7 +427,7 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/2b-journey-start-goods-loaded.png')});
 
         await page.click('#origin_goodsTransferredFrom_2');
-        await type(page, '#origin_originLocation', 'Flightston');
+        await type(page, '#origin_originLocation', locations.origin);
         await submit(page, '#origin_buttons_continue');
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/3a-journey-end-goods-not-loaded.png')});
 
@@ -320,18 +435,12 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/3b-journey-end-goods-loaded.png')});
 
         await page.click('#destination_goodsUnloaded_1');
-        await type(page, '#destination_destinationLocation', 'Destinstown');
+        await type(page, '#destination_destinationLocation', locations.destination);
         await submit(page, '#destination_buttons_continue');
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/4-furthest-point.png')});
 
-        await type(page, '#furthest_stop_furthestStop', "Land's end");
+        await type(page, '#furthest_stop_furthestStop', locations.furthestStop);
         await submit(page, '#furthest_stop_buttons_continue');
-
-        await page.click('#border_crossing_borderCrossed_0');
-        await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/5-NI_ONLY-border-crossing.png')});
-
-        await type(page, '#border_crossing_borderCrossingLocation', 'Lacklom');
-        await submit(page, '#border_crossing_buttons_continue');
         await fullPageScreenshot.default(page, {path: screenshotPath('day-summary/6-distance-travelled.png')});
 
         await page.click('#distance_travelled_distanceTravelledLoaded_unit_0');

@@ -6,7 +6,7 @@ use App\Tests\NewFunctional\Wizard\Action\Context;
 
 class FormTestCase extends AbstractFormTestCase
 {
-    public function __construct(protected array $formData, array $expectedErrorIds = [], string $submitButtonId = null, $skipPageUrlChangeCheck = false)
+    public function __construct(protected array $formData, array $expectedErrorIds = [], ?string $submitButtonId = null, $skipPageUrlChangeCheck = false)
     {
         parent::__construct($expectedErrorIds, $submitButtonId, $skipPageUrlChangeCheck);
     }

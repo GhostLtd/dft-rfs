@@ -9,9 +9,9 @@ class LessThanOrEqualDate extends LessThanOrEqual
 {
     public function __construct(
         mixed $value = null,
-        string $propertyPath = null,
+        ?string $propertyPath = null,
         string $message = 'common.date.less-than-or-equal',
-        array $groups = null,
+        ?array $groups = null,
         mixed $payload = null,
         array $options = []
     )

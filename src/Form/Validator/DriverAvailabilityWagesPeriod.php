@@ -12,7 +12,7 @@ class DriverAvailabilityWagesPeriod extends Constraint
     public function __construct(
         public string $triggerField,
         public string $targetField,
-        string $message = null,
+        ?string $message = null,
         array  $groups = [],
         mixed  $payload = null,
     )

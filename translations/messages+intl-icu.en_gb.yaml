@@ -1205,7 +1205,10 @@ domestic:
       help: ''
       origin-location:
         label: Postcode or place name
-        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+        help: "Please provide the postcode if you know it, otherwise enter the place name."
+        postcode-only:
+          label: Origin postcode
+          help: "Enter a postcode e.g. HD1 3LE"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -1220,7 +1223,10 @@ domestic:
       help: ''
       destination-location:
         label: Postcode or place name
-        help: "Please provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+        help: "Please provide the postcode if you know it, otherwise enter the place name."
+        postcode-only:
+          label: Destination postcode
+          help: "Enter a postcode e.g. HD1 3LE"
       goods-unloaded:
         label: Were goods unloaded?
         help: ''
@@ -1233,7 +1239,10 @@ domestic:
     furthest-stop:
       furthest-stop:
         label: Furthest point on this day
-        help: "Record the furthest place from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nPlease provide the postcode if you know it eg. HD1 3LE. Where it is not available, please write the place name eg. Sheffield"
+        help: "Record the furthest point from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nPlease provide the postcode if you know it, otherwise enter the place name."
+        postcode-only:
+          label: Furthest point on this day
+          help: "Record the furthest point from the starting point that the vehicle stopped to load and/or unload goods during this day.\n\nEnter a postcode e.g. HD1 3LE"
 
     border-crossing: &border-crossing
       border-crossed:
@@ -1324,7 +1333,10 @@ domestic:
       help: ''
       origin-location:
         label: Postcode or place name
-        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
+        help: "Please provide the postcode if you know it, otherwise enter the place name."
+        postcode-only:
+          label: Origin postcode
+          help: "Enter a postcode e.g. HD1 3LE"
       goods-loaded:
         label: Were goods loaded?
         help: ''
@@ -1339,7 +1351,10 @@ domestic:
       help: ''
       destination-location:
         label: Postcode or place name
-        help: "Please provide the postcode if you know it e.g. HD1 3LE. Where it is not available, please write the place name e.g. Sheffield"
+        help: "Please provide the postcode if you know it, otherwise enter the place name."
+        postcode-only:
+          label: Destination postcode
+          help: "Enter a postcode e.g. HD1 3LE"
       goods-unloaded:
         label: Were goods unloaded?
         help: ''

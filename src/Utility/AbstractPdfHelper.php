@@ -42,7 +42,7 @@ abstract class AbstractPdfHelper
         ]);
     }
 
-    public function getExistingSurveyPdfByTimestamp(SurveyInterface $survey, int $timestamp=null): ?PdfObjectInterface
+    public function getExistingSurveyPdfByTimestamp(SurveyInterface $survey, ?int $timestamp=null): ?PdfObjectInterface
     {
         $pdfs = $this->getExistingSurveyPDFs($survey);
 

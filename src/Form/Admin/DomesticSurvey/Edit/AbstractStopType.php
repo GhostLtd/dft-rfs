@@ -11,7 +11,9 @@ use App\Entity\Embeddable\Distance;
 use App\Form\DomesticSurvey\AbstractDistanceTravelledType;
 use App\Form\DomesticSurvey\DayStop as DayStopForms;
 use App\Form\DomesticSurvey\DaySummary as DaySummaryForms;
+use App\Form\Validator\Postcode;
 use App\Utility\HazardousGoodsHelper;
+use App\Utility\PostcodeChangeoverHelper;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
@@ -29,8 +31,11 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
 {
     protected string $dataClass;
 
-    public function __construct(protected TranslatorInterface $translator, protected HazardousGoodsHelper $hazardousGoodsHelper)
-    {}
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected HazardousGoodsHelper $hazardousGoodsHelper,
+        protected PostcodeChangeoverHelper $changeoverHelper,
+    ) {}
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -40,6 +45,8 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $isNorthernIreland = $this->isNorthernIreland($event->getData());
+            $survey = $event->getData()->getDay()->getResponse()->getSurvey();
+            $isPostcodeOnly = $this->changeoverHelper->isPostcodeOnly($survey);
 
             $yesTransferChoices = array_flip(array_map(
                 fn($v) => "Yes, via " . strtolower($this->translator->trans($v)),
@@ -53,18 +60,24 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
             }
 
             $event->getForm()
-                ->add('originLocation', Gds\InputType::class, [
+                ->add('originLocation', Gds\InputType::class, array_merge([
                     'label_attr' => ['class' => 'govuk-label--s'],
-                ])
+                ], $isPostcodeOnly ? [
+                    'label' => 'domestic.day-stop.origin.origin-location.postcode-only.label',
+                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop'])],
+                ] : []))
                 ->add('goodsTransferredFrom', Gds\ChoiceType::class, [
                     'label' => 'Were goods loaded?',
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'choices' => $transferChoices,
                     'expanded' => false,
                 ])
-                ->add('destinationLocation', Gds\InputType::class, [
+                ->add('destinationLocation', Gds\InputType::class, array_merge([
                     'label_attr' => ['class' => 'govuk-label--s'],
-                ])
+                ], $isPostcodeOnly ? [
+                    'label' => 'domestic.day-stop.destination.destination-location.postcode-only.label',
+                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop'])],
+                ] : []))
                 ->add('goodsTransferredTo', Gds\ChoiceType::class, [
                     'label' => 'Were goods unloaded?',
                     'label_attr' => ['class' => 'govuk-label--s'],
@@ -73,9 +86,12 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                 ]);
 
             if ($this->dataClass === DaySummary::class) {
-                $event->getForm()->add('furthestStop', Gds\InputType::class, [
+                $event->getForm()->add('furthestStop', Gds\InputType::class, array_merge([
                     'label_attr' => ['class' => 'govuk-label--s'],
-                ]);
+                ], $isPostcodeOnly ? [
+                    'label' => 'domestic.day-summary.furthest-stop.furthest-stop.postcode-only.label',
+                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop', 'admin-day-summary'])],
+                ] : []));
             }
 
             // border crossing

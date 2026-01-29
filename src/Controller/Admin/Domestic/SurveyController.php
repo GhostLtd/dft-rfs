@@ -151,7 +151,7 @@ class SurveyController extends AbstractController
 
     protected function getRedirectUrl(
         Survey $survey,
-        string $hash = null
+        ?string $hash = null
     ): string
     {
         return $this->generateUrl(self::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . ($hash ? ("#".$hash) : null);

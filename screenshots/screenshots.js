@@ -47,6 +47,16 @@ const generateCommand = (yargs, isRoro) => {
                 type: 'string',
                 description: 'Password',
             })
+            .option('location-mode', {
+                type: 'string',
+                default: 'place-name',
+                hidden: true  // Auto-detected from feature flag, passed by PHP
+            })
+            .option('ni-border-crossing-only', {
+                type: 'boolean',
+                default: false,
+                hidden: true
+            })
             .demandOption(['password'])
     }
 

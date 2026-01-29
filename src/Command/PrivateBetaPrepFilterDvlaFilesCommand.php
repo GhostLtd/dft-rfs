@@ -93,7 +93,7 @@ class PrivateBetaPrepFilterDvlaFilesCommand extends Command
             unset($lines[0]);
         }
         foreach ($lines as $line) {
-            $csvData[] = str_getcsv($line);
+            $csvData[] = str_getcsv($line, ',', '"', '\\');
         }
         return $csvData;
     }

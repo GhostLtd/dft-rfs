@@ -4,13 +4,16 @@ namespace App;
 
 class Features
 {
-    public const DEV_RORO_AUTO_LOGIN = 'DEV_RORO_AUTO_LOGIN';
-    public const GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
-    public const SMARTLOOK_USER_SESSION_RECORDING = 'SMARTLOOK_USER_SESSION_RECORDING';
+    public const string DEV_RORO_AUTO_LOGIN = 'DEV_RORO_AUTO_LOGIN';
+    public const string GAE_ENVIRONMENT = 'GAE_ENVIRONMENT';
+    public const string SMARTLOOK_USER_SESSION_RECORDING = 'SMARTLOOK_USER_SESSION_RECORDING';
+    public const string POSTCODE_CHANGEOVER = 'POSTCODE_CHANGEOVER';
 
-    public const FEATURE_MAP = [
+    /** @var array<string, string> */
+    public const array FEATURE_MAP = [
         'dev-roro-auto-login' => self::DEV_RORO_AUTO_LOGIN,
         'smartlook-user-session-recording' => self::SMARTLOOK_USER_SESSION_RECORDING,
+        'postcode-changeover' => self::POSTCODE_CHANGEOVER,
     ];
 
     private array $enabledFeatures;

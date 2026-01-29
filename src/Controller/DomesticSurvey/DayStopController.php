@@ -9,7 +9,12 @@ use App\Entity\Domestic\DayStop;
 use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDayStopConfirmAction;
+use App\Utility\PostcodeChangeoverHelper;
 use App\Workflow\DomesticSurvey\DayStopState;
+use App\Workflow\FormWizardManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use App\Workflow\FormWizardStateInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -31,6 +36,16 @@ class DayStopController extends AbstractSessionStateWorkflowController
     protected ?DayStop $dayStop = null;
 
     use SurveyHelperTrait;
+
+    public function __construct(
+        FormWizardManager $formWizardManager,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $log,
+        RequestStack $requestStack,
+        protected PostcodeChangeoverHelper $postcodeChangeoverHelper,
+    ) {
+        parent::__construct($formWizardManager, $entityManager, $log, $requestStack);
+    }
 
     public function getSessionKey(): string
     {
@@ -62,18 +77,21 @@ class DayStopController extends AbstractSessionStateWorkflowController
 
     protected function getExampleDayStops(): array
     {
+        // Use postcode instead of place name when postcode-only mode is active
+        $binley = $this->postcodeChangeoverHelper->isPostcodeOnly($this->getSurvey()) ? 'CV3 2NU' : 'Binley';
+
         return [
             (new DayStop())
                 ->setNumber(1)
                 ->setOriginLocation('HD1 3LE')
-                ->setDestinationLocation('Binley')
+                ->setDestinationLocation($binley)
                 ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER)
                 ->setGoodsDescriptionOther('Building materials')
                 ->setGoodsLoaded(true)
                 ->setGoodsUnloaded(true),
             (new DayStop())
                 ->setNumber(2)
-                ->setOriginLocation('Binley')
+                ->setOriginLocation($binley)
                 ->setDestinationLocation('S20 3FF')
                 ->setGoodsDescription(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE)
                 ->setGoodsLoaded(true)

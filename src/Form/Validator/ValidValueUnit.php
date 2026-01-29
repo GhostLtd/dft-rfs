@@ -13,10 +13,10 @@ class ValidValueUnit extends Constraint
     public bool $allowBlank = false;
 
     public function __construct(
-        string $unitBlankMessage = null,
-        string $valueBlankMessage = null,
-        string $valuePositiveMessage = null,
-        bool   $allowBlank = null,
+        ?string $unitBlankMessage = null,
+        ?string $valueBlankMessage = null,
+        ?string $valuePositiveMessage = null,
+        ?bool   $allowBlank = null,
         array  $groups = [],
         mixed  $payload = null,
     )

@@ -188,7 +188,7 @@ class AddSurveyTypeTest extends AbstractSurveyTypeTest
         return [$survey, $data];
     }
 
-    protected function performTest(array $formData, bool $expectedValid, array $formOptions=[], Survey $survey=null, array $existingData=[]): void
+    protected function performTest(array $formData, bool $expectedValid, array $formOptions=[], ?Survey $survey=null, array $existingData=[]): void
     {
         $form = $this->factory->create(AddSurveyType::class, $survey, $formOptions);
 

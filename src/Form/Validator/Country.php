@@ -11,8 +11,8 @@ class Country extends Constraint
     public string $otherMessage = "common.country.other";
 
     public function __construct(
-        string $message = null,
-        string $otherMessage = null,
+        ?string $message = null,
+        ?string $otherMessage = null,
         array  $groups = [],
         mixed  $payload = null,
     )

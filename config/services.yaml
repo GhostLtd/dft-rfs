@@ -66,6 +66,10 @@ services:
         arguments:
             $enableFeatures: '%env(csv:default:app_features_empty:APP_FEATURES)%'
 
+    App\Utility\PostcodeChangeoverHelper:
+        arguments:
+            $changeoverDate: '%env(default::POSTCODE_CHANGEOVER_DATE)%'
+
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - !service { class: PDO, factory: ['@database_connection', 'getNativeConnection'] }

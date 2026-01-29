@@ -25,7 +25,11 @@ class PostcodeValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        if (!PostcodeHelper::isValidPostcode($value)) {
+        $isValid = $constraint->allowPartial
+            ? (bool) preg_match(PostcodeHelper::getRegex(true), $value)
+            : PostcodeHelper::isValidPostcode($value);
+
+        if (!$isValid) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }
     }

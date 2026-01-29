@@ -14,6 +14,7 @@ use App\Entity\RoRo\OperatorGroup;
 use App\Entity\RoRo\Survey;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
+use App\Features;
 use App\Utility\Domestic\DeleteHelper as DomesticDeleteHelper;
 use App\Utility\PasscodeGenerator;
 use App\Utility\PreEnquiry\DeleteHelper as PreEnquiryDeleteHelper;
@@ -56,6 +57,7 @@ class ScreenshotsCommand extends Command
         protected string                    $frontendHostname,
         protected ?string                   $appEnvironment,
         protected PasscodeGenerator         $passcodeGenerator,
+        protected Features                  $features,
     ) {
         parent::__construct();
     }
@@ -86,6 +88,9 @@ class ScreenshotsCommand extends Command
             throw new RuntimeException('mode must be either all, domestic, international, pre-enquiry or roro');
         }
 
+        // Detect location mode from feature flag (for domestic surveys)
+        $locationMode = $this->features->isEnabled(Features::POSTCODE_CHANGEOVER) ? 'postcode' : 'place-name';
+
         $modes = ($mode === self::MODE_ALL) ?
             [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY, self::MODE_RORO] :
             [$mode];
@@ -95,40 +100,91 @@ class ScreenshotsCommand extends Command
         $outputBaseDir = dirname($path) . "/output/" . (new \DateTime())->format('Ymd-His');
 
         foreach ($modes as $activeMode) {
-            $this->createUserAndSurvey($activeMode);
-
-
+            $outputSubdir = ($activeMode === self::MODE_DOMESTIC && $locationMode === 'postcode') ? "{$activeMode}-postcode" : $activeMode;
             $protocol = $input->getOption('protocol');
-            $processArgs = [
-                $path,
-                $activeMode,
-                "{$protocol}:/{$this->frontendHostname}/",
-                "{$outputBaseDir}/{$activeMode}/",
-            ];
 
-            if ($activeMode === self::MODE_RORO) {
-                $roroUser = $this->getRoroUser();
-                $loginLink = $this->roroLoginLinkHandler->createLoginLink($roroUser);
+            if ($activeMode === self::MODE_DOMESTIC) {
+                // Pass 1: GB survey (main screenshots)
+                $this->createUserAndSurvey($activeMode, false);
+                try {
+                    $processArgs = [
+                        $path,
+                        $activeMode,
+                        "{$protocol}:/{$this->frontendHostname}/",
+                        "{$outputBaseDir}/{$outputSubdir}/",
+                        "--username={$this->userId}",
+                        "--password={$this->userPassword}",
+                        "--location-mode={$locationMode}",
+                    ];
 
-                $processArgs[] = "--email={$this->roroUserIdOne}";
-                $processArgs[] = "--login-link={$loginLink}";
+                    $process = new Process($processArgs);
+                    $process->setTimeout(3600);
+                    $process->mustRun();
+                    echo $process->getOutput();
+                } catch (ProcessFailedException $exception) {
+                    echo $exception->getMessage();
+                    return Command::FAILURE;
+                } finally {
+                    $this->deleteExistingUser([$activeMode]);
+                }
+
+                // Pass 2: NI survey (border crossing screenshots only)
+                $this->createUserAndSurvey($activeMode, true);
+                try {
+                    $processArgs = [
+                        $path,
+                        $activeMode,
+                        "{$protocol}:/{$this->frontendHostname}/",
+                        "{$outputBaseDir}/{$outputSubdir}/",
+                        "--username={$this->userId}",
+                        "--password={$this->userPassword}",
+                        "--ni-border-crossing-only",
+                        "--location-mode={$locationMode}",
+                    ];
+
+                    $process = new Process($processArgs);
+                    $process->setTimeout(3600);
+                    $process->mustRun();
+                    echo $process->getOutput();
+                } catch (ProcessFailedException $exception) {
+                    echo $exception->getMessage();
+                    return Command::FAILURE;
+                } finally {
+                    $this->deleteExistingUser([$activeMode]);
+                }
             } else {
-                $processArgs[] = "--username={$this->userId}";
-                $processArgs[] = "--password={$this->userPassword}";
-            }
+                $this->createUserAndSurvey($activeMode);
 
-            $process = new Process($processArgs);
-            $process->setTimeout(3600);
+                $processArgs = [
+                    $path,
+                    $activeMode,
+                    "{$protocol}:/{$this->frontendHostname}/",
+                    "{$outputBaseDir}/{$outputSubdir}/",
+                ];
 
-            try {
-                $process->mustRun();
+                if ($activeMode === self::MODE_RORO) {
+                    $roroUser = $this->getRoroUser();
+                    $loginLink = $this->roroLoginLinkHandler->createLoginLink($roroUser);
 
-                echo $process->getOutput();
-            } catch (ProcessFailedException $exception) {
-                echo $exception->getMessage();
-                return Command::FAILURE;
-            } finally {
-                $this->deleteExistingUser($modes);
+                    $processArgs[] = "--email={$this->roroUserIdOne}";
+                    $processArgs[] = "--login-link={$loginLink}";
+                } else {
+                    $processArgs[] = "--username={$this->userId}";
+                    $processArgs[] = "--password={$this->userPassword}";
+                }
+
+                $process = new Process($processArgs);
+                $process->setTimeout(3600);
+
+                try {
+                    $process->mustRun();
+                    echo $process->getOutput();
+                } catch (ProcessFailedException $exception) {
+                    echo $exception->getMessage();
+                    return Command::FAILURE;
+                } finally {
+                    $this->deleteExistingUser($modes);
+                }
             }
         }
 
@@ -193,7 +249,7 @@ class ScreenshotsCommand extends Command
         }
     }
 
-    protected function createUserAndSurvey(string $mode): void
+    protected function createUserAndSurvey(string $mode, bool $isNorthernIreland = false): void
     {
         if ($this->isDomesticInternationOrPreEnquiry([$mode])) {
             $userOne = (new PasscodeUser())
@@ -205,7 +261,7 @@ class ScreenshotsCommand extends Command
             if ($mode === self::MODE_DOMESTIC) {
                 $survey = (new DomesticSurvey())
                     ->setRegistrationMark('TE01 STT')
-                    ->setIsNorthernIreland(true)
+                    ->setIsNorthernIreland($isNorthernIreland)
                     ->setSurveyPeriodStart($start)
                     ->setSurveyPeriodEnd($end)
                     ->setPasscodeUser($userOne)

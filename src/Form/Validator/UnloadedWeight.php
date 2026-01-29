@@ -12,9 +12,9 @@ class UnloadedWeight extends Constraint
     public string $maxMessage = 'international.action.unloaded.weight-positive';
 
     public function __construct(
-        string $message = null,
-        string $minMessage = null,
-        string $maxMessage = null,
+        ?string $message = null,
+        ?string $minMessage = null,
+        ?string $maxMessage = null,
         array  $groups = [],
         mixed  $payload = null,
     )

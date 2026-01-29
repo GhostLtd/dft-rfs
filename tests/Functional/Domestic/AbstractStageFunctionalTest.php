@@ -18,7 +18,7 @@ abstract class AbstractStageFunctionalTest extends AbstractFrontendFunctionalTes
         return $this->startingLocations($browser)->count();
     }
 
-    private function startingLocations(KernelBrowser $browser, string $stage = null): Crawler
+    private function startingLocations(KernelBrowser $browser, ?string $stage = null): Crawler
     {
         $xpathHeader = ($stage === null) ? "h2" : "h2[normalize-space()='{$stage}']";
 

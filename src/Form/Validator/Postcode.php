@@ -10,7 +10,8 @@ class Postcode extends Constraint
     public string $message = "common.address.postcode.invalid";
 
     public function __construct(
-        string $message = null,
+        ?string $message = null,
+        public bool $allowPartial = false,
         array  $groups = [],
         mixed  $payload = null,
     )

@@ -20,13 +20,15 @@ module.exports.addDayStop = async (page, baseUrl, start, loaded, destination, un
     await location(page, 'origin', start, loaded);
     await location(page, 'destination', destination, unloaded);
 
-    if (border === '') {
-        await page.click('#border_crossing_borderCrossed_1');
-    } else {
-        await page.click('#border_crossing_borderCrossed_0');
-        await type(page, '#border_crossing_borderCrossingLocation', border);
+    if (border !== null) {
+        if (border === '') {
+            await page.click('#border_crossing_borderCrossed_1');
+        } else {
+            await page.click('#border_crossing_borderCrossed_0');
+            await type(page, '#border_crossing_borderCrossingLocation', border);
+        }
+        await submit(page, '#border_crossing_buttons_continue');
     }
-    await submit(page, '#border_crossing_buttons_continue');
 
     await page.click('#distance_travelled_distanceTravelled_unit_0');
     await type(page, '#distance_travelled_distanceTravelled_value', distance);

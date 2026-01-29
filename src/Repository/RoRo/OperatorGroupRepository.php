@@ -39,7 +39,7 @@ class OperatorGroupRepository extends ServiceEntityRepository
         }
     }
 
-    public function isNamePrefixAlreadyInUse(string $name, OperatorGroup $excluding = null): bool
+    public function isNamePrefixAlreadyInUse(string $name, ?OperatorGroup $excluding = null): bool
     {
         // We need to escape % and _ because we're using LIKE, and don't want the user to be able to
         // add arbitrary wildcards to the expression.

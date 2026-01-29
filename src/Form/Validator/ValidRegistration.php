@@ -11,8 +11,8 @@ class ValidRegistration extends Constraint
     public string $alreadyExistsMessage = "common.vehicle.vehicle-registration.not-exists";
 
     public function __construct(
-        string $validMessage = null,
-        string $alreadyExistsMessage = null,
+        ?string $validMessage = null,
+        ?string $alreadyExistsMessage = null,
         array  $groups = [],
         mixed  $payload = null,
     )

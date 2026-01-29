@@ -75,7 +75,7 @@ class RouteController extends AbstractController
         return $this->addOrEdit($request, $route);
     }
 
-    protected function addOrEdit(Request $request, RouteEntity $route=null): Response
+    protected function addOrEdit(Request $request, ?RouteEntity $route=null): Response
     {
         $isAdd = ($route === null);
 

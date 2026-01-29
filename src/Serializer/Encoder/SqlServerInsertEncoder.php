@@ -4,7 +4,7 @@ namespace App\Serializer\Encoder;
 
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Twig\Environment;
-use Twig\Extension\EscaperExtension;
+use Twig\Runtime\EscaperRuntime;
 
 class SqlServerInsertEncoder implements EncoderInterface
 {
@@ -25,7 +25,7 @@ class SqlServerInsertEncoder implements EncoderInterface
     {
         $this->twig = $twig;
         $this->twig
-            ->getExtension(EscaperExtension::class)
+            ->getRuntime(EscaperRuntime::class)
             ->setEscaper('sql', $this->sqlEscape(...));
     }
 

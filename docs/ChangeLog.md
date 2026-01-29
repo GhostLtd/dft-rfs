@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: Postcode changeover feature ("Postcode or place name" -> "Postcode" [or first part, thereof])
 - **Feature**: Global Email Blacklist - prevent emails being sent to specified addresses with admin UI for management and visual indicators in survey views
 - **Feature**: LCNI information shown in CSRGT/IRHS invitation/reminders tab, send manual reminder page, and add survey page
 - **Update**: Add SubmissionDate to CSRGT and IRHS export views

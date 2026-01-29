@@ -25,7 +25,7 @@ class ClosingDetailsController extends AbstractSessionStateWorkflowController
 
     #[Route(path: '/international-survey/closing-details/{state}', name: self::WIZARD_ROUTE)]
     #[Route(path: '/international-survey/closing-details', name: self::START_ROUTE)]
-    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, string $state = null): Response
+    public function index(WorkflowInterface $internationalSurveyClosingDetailsStateMachine, Request $request, ?string $state = null): Response
     {
         $this->survey = $this->getSurvey();
 

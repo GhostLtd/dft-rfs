@@ -10,7 +10,7 @@ class OperatorGroupNameNotPrefixOfExisting extends Constraint
     public string $message = "operator-groups.name.prefix";
 
     public function __construct(
-        string $message = null,
+        ?string $message = null,
         array $groups = [],
         mixed $payload = null,
     )

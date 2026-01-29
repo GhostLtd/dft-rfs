@@ -13,8 +13,8 @@ class OtherNotBlank extends Constraint
     public function __construct(
         public string $selectField,
         public ?string $otherField = null,
-        string $message = null,
-        string $triggerValue = null,
+        ?string $message = null,
+        ?string $triggerValue = null,
         array $groups = [],
         mixed $payload = null,
     )
