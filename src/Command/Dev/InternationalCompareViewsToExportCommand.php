@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'rfs:dev:irhs-compare-views-to-export',
     description: 'Compare the IRHS export views to export files',
 )]
-class InternationalCompareViewsToExportCommand extends AbstractComparisonCommand
+class InternationalCompareViewsToExportCommand extends AbstractInsertComparisonCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

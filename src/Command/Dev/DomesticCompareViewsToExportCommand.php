@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'rfs:dev:csrgt-compare-views-to-export',
     description: 'Compare the CSRGT export views to export files',
 )]
-class DomesticCompareViewsToExportCommand extends AbstractComparisonCommand
+class DomesticCompareViewsToExportCommand extends AbstractInsertComparisonCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

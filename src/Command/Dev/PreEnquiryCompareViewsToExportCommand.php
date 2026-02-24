@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'rfs:dev:pre-enquiry-compare-views-to-export',
     description: 'Compare the PreEnquiry export views to export files',
 )]
-class PreEnquiryCompareViewsToExportCommand extends AbstractComparisonCommand
+class PreEnquiryCompareViewsToExportCommand extends AbstractInsertComparisonCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

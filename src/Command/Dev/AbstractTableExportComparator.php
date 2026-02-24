@@ -195,4 +195,63 @@ abstract class AbstractTableExportComparator
             $this->errorReporter->error("Mismatch - expected [export] {$exportColumnName} = {$exportValue}, got [db] {$dbValue}");
         }
     }
+
+    protected function checkMoneyColumn(string $exportColumnName, mixed $csvValue, mixed $dbValue): void
+    {
+        $this->columnWatcher->columnSeen($exportColumnName);
+
+        // CSV: number_format($v/100, 2) e.g. "50.00", or empty for null
+        // DB: pence as integer/string e.g. "5000", or null
+        $csvValue = ($csvValue === null || $csvValue === '') ? null : $csvValue;
+        $dbValue = ($dbValue === null) ? null : number_format($dbValue / 100, 2);
+
+        if ($csvValue !== $dbValue) {
+            $this->errorReporter->error("Mismatch - expected [export] {$exportColumnName} = {$csvValue}, got [db] {$dbValue}");
+        }
+    }
+
+    protected function checkExpandedJsonArrayColumn(array $exportRow, string $jsonColumnName, mixed $dbJsonValue, array $choices): void
+    {
+        // The original JSON array column is still in the CSV (joined with ', ') - mark as seen
+        $this->columnWatcher->columnSeen($jsonColumnName);
+
+        $dbArray = $dbJsonValue;
+        if (is_string($dbArray)) {
+            $dbArray = json_decode($dbArray, true) ?? [];
+        }
+        if ($dbArray === null) {
+            $dbArray = [];
+        }
+
+        foreach ($choices as $choice) {
+            $choiceForColumn = $choice;
+            if ($choiceForColumn === 'other') {
+                $choiceForColumn = 'isOther';
+            }
+
+            $camelCaseChoice = join('', array_map('ucfirst', explode('-', $choiceForColumn)));
+            $expandedColumnName = "{$jsonColumnName} -{$camelCaseChoice}";
+
+            $this->columnWatcher->columnSeen($expandedColumnName);
+
+            // The exporter checks in_array($choice, ...) but uses 'isOther' not 'other',
+            // so isOther columns are always 0
+            $expectedValue = in_array($choiceForColumn, $dbArray) ? '1' : '0';
+            $csvValue = $this->getColumn($exportRow, $expandedColumnName);
+
+            if ($csvValue !== $expectedValue) {
+                $this->errorReporter->error("Mismatch - expected [export] {$expandedColumnName} = {$csvValue}, got [db] {$expectedValue}");
+            }
+        }
+    }
+
+    protected function dbToNullableInt(mixed $value): ?int
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return intval($value);
+    }
+
 }

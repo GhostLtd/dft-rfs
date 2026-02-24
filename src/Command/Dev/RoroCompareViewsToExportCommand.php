@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'rfs:dev:roro-compare-views-to-export',
     description: 'Compare the RoRo export views to export files',
 )]
-class RoroCompareViewsToExportCommand extends AbstractComparisonCommand
+class RoroCompareViewsToExportCommand extends AbstractInsertComparisonCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
