@@ -11,7 +11,7 @@ final class Version20260224150142 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add State, IsNorthernIreland, WeekNumber, BusinessName to driver availability export view';
+        return 'Add State, IsNorthernIreland, YearNumber, WeekNumber, BusinessName, BusinessNature, NumberOfEmployees to driver availability export view';
     }
 
     public function up(Schema $schema): void
@@ -25,8 +25,11 @@ CREATE OR REPLACE VIEW view_export_domestic_driver_availability AS (
         , MONTH(sv.submission_date)                     AS SubmissionMonth
         , sv.state                                      AS State
         , sv.is_northern_ireland                        AS IsNorthernIreland
+        , sv.week_year                                  AS YearNumber
         , sv.week_number                                AS WeekNumber
         , r.contact_business_name                       AS BusinessName
+        , r.business_nature                             AS BusinessNature
+        , r.number_of_employees                         AS NumberOfEmployees
         , da.id                                         AS DriverAvailabilityID
         , da.number_of_drivers_employed                 AS NumberOfDriversEmployed
         , da.has_vacancies                              AS HasVacancies

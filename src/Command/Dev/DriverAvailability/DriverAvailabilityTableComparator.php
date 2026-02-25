@@ -51,17 +51,14 @@ class DriverAvailabilityTableComparator extends AbstractTableExportComparator
 
     public function checkRow(array $dbRow, array $exportRow): void
     {
-        // CSV-only columns - mark as seen but don't compare
-        $this->columnWatcher
-            ->columnSeen('businessNature')
-            ->columnSeen('numberOfEmployees')
-            ->columnSeen('yearNumber');
-
         // Survey columns
         $this->checkStringColumn('state', $this->getColumn($exportRow, 'state'), $dbRow['State']);
         $this->checkIntegerColumn('isNorthernIreland', intval($this->getColumn($exportRow, 'isNorthernIreland')), intval($dbRow['IsNorthernIreland']));
+        $this->checkIntegerColumn('yearNumber', $this->csvToNullableInt($this->getColumn($exportRow, 'yearNumber')), $this->dbToNullableInt($dbRow['YearNumber']));
         $this->checkIntegerColumn('weekNumber', $this->csvToNullableInt($this->getColumn($exportRow, 'weekNumber')), $this->dbToNullableInt($dbRow['WeekNumber']));
         $this->checkStringColumn('businessName', $this->csvEmptyToNull($this->getColumn($exportRow, 'businessName')), $dbRow['BusinessName']);
+        $this->checkStringColumn('businessNature', $this->csvEmptyToNull($this->getColumn($exportRow, 'businessNature')), $dbRow['BusinessNature']);
+        $this->checkIntegerColumn('numberOfEmployees', $this->csvToNullableInt($this->getColumn($exportRow, 'numberOfEmployees')), $this->dbToNullableInt($dbRow['NumberOfEmployees']));
 
         // String columns (CSV empty strings are equivalent to DB nulls)
         $this->checkStringColumn('registrationMark', $this->getColumn($exportRow, 'registrationMark'), $dbRow['RegistrationMark']);
