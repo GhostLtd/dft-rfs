@@ -44,7 +44,7 @@ class PostcodeChangeoverHelper
         try {
             $changeover = new \DateTime($this->changeoverDate);
         } catch (\Exception $e) {
-            $this->logger->error("Invalid POSTCODE_CHANGEOVER_DATE: '{$this->changeoverDate}' — postcode feature disabled");
+            $this->logger->error("Invalid APP_POSTCODE_CHANGEOVER_DATE: '{$this->changeoverDate}' — postcode feature disabled");
             return false;
         }
         return $survey->getSurveyPeriodStart() >= $changeover;

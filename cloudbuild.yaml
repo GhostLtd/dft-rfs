@@ -43,6 +43,7 @@ steps:
           - 'APP_ENV_LABEL_COLOUR="${_APP_ENV_LABEL_COLOUR}"'
           - 'APP_ENV_LABEL_BACKGROUND="${_APP_ENV_LABEL_BACKGROUND}"'
           - 'APP_SMARTLOOK_API_KEY=${_APP_SMARTLOOK_API_KEY}'
+          - 'APP_POSTCODE_CHANGEOVER_DATE=${_APP_POSTCODE_CHANGEOVER_DATE}'
 
       waitFor: ['install-ghost-bundle']
 

@@ -155,7 +155,7 @@ class PostcodeChangeoverHelperTest extends TestCase
         $logger
             ->expects($this->once())
             ->method('error')
-            ->with("Invalid POSTCODE_CHANGEOVER_DATE: 'not-a-date' — postcode feature disabled");
+            ->with("Invalid APP_POSTCODE_CHANGEOVER_DATE: 'not-a-date' — postcode feature disabled");
 
         $helper = new PostcodeChangeoverHelper($features, $logger, 'not-a-date');
         $survey = $this->createSurvey(new \DateTime('2025-06-01'));

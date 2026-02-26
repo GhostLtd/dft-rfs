@@ -68,7 +68,7 @@ services:
 
     App\Utility\PostcodeChangeoverHelper:
         arguments:
-            $changeoverDate: '%env(default::POSTCODE_CHANGEOVER_DATE)%'
+            $changeoverDate: '%env(default::APP_POSTCODE_CHANGEOVER_DATE)%'
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
