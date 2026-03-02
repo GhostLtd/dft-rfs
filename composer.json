@@ -88,7 +88,8 @@
         "symfony/maker-bundle": "v1.50.0",
         "symfony/phpunit-bridge": "^6.0",
         "symfony/stopwatch": "^6.0",
-        "symfony/var-dumper": "^6.0"
+        "symfony/var-dumper": "^6.0",
+        "symfony/web-profiler-bundle": "6.4.*"
     },
     "config": {
         "optimize-autoloader": true,
