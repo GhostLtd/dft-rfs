@@ -9,6 +9,7 @@
 - **Update**: Add SubmissionDate to CSRGT and IRHS export views
 - **Update**: Add WeekNumber to CSRGT export views
 - **Update**: Add businessName, state, weekNumber and isNorthernIreland to DriverAvailability export views
+- **Update**: Add "We only used LGVs" answer to international reason-for-empty-survey
 - **Fix**: Domestic stop reorder bug
 
 ## 2025-12-04

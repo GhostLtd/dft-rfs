@@ -53,6 +53,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     public const string REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY = 'on-holiday';
     public const string REASON_FOR_EMPTY_SURVEY_REPAIR = 'repair';
     public const string REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE = 'no-vehicles';
+    public const string REASON_FOR_EMPTY_SURVEY_LGVS_ONLY = 'lgvs-only';
     public const string REASON_FOR_EMPTY_SURVEY_OTHER = 'other';
 
     public const string REASON_FOR_EMPTY_SURVEY_PREFIX = 'international.survey-response.reason-for-empty-survey.';
@@ -62,6 +63,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY => self::REASON_FOR_EMPTY_SURVEY_ON_HOLIDAY,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_REPAIR => self::REASON_FOR_EMPTY_SURVEY_REPAIR,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE => self::REASON_FOR_EMPTY_SURVEY_NO_VEHICLES_AVAILABLE,
+        self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_LGVS_ONLY => self::REASON_FOR_EMPTY_SURVEY_LGVS_ONLY,
         self::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX . self::REASON_FOR_EMPTY_SURVEY_OTHER => self::REASON_FOR_EMPTY_SURVEY_OTHER,
     ];
 
