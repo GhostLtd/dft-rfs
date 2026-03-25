@@ -61,7 +61,7 @@ class SqlServerInsertEncoder implements EncoderInterface
         return self::FORMAT === $format;
     }
 
-    public function sqlEscape(Environment $twig, $data, $charset)
+    public function sqlEscape($data, $charset)
     {
         if (is_null($data)) {
             return 'NULL';
