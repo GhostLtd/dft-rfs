@@ -134,19 +134,52 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
     protected function clearEmptyRecords(): void
     {
-        $this->entityManager->createQueryBuilder()
-            ->delete(NotificationInterception::class, 'ni')
-            ->where('ni.dvlaEmails IS NULL and ni.csrgtEmails is NULL and ni.irhsEmails is NULL');
+        // Can't use a simple DQL delete because the FK to notification_interception_company_name
+        // has no ON DELETE CASCADE, so the child rows must be removed first.
+        $connection = $this->entityManager->getConnection();
+        $connection->executeStatement(<<<SQL
+            DELETE cn FROM notification_interception_company_name cn
+            INNER JOIN notification_interception ni ON cn.notification_interception_id = ni.id
+            WHERE ni.dvla_emails IS NULL AND ni.csrgt_emails IS NULL AND ni.irhs_emails IS NULL
+        SQL);
+        $connection->executeStatement(<<<SQL
+            DELETE FROM notification_interception
+            WHERE dvla_emails IS NULL AND csrgt_emails IS NULL AND irhs_emails IS NULL
+        SQL);
     }
 
     protected function batchImportDvlaDataFromTempFile(): void
     {
+        $this->deduplicateImportData();
         $batchSize = 1000;
 
         for ($i = 0; $i < ceil(count($this->dvlaImportData) / $batchSize) ; $i++) {
             $this->processImportBatch(array_slice($this->dvlaImportData, $i * $batchSize, $batchSize));
             $this->lock->refresh();
         }
+    }
+
+    protected function deduplicateImportData(): void
+    {
+        $seen = [];
+        $deduplicated = [];
+        foreach ($this->dvlaImportData as $i => [$companyName, $email]) {
+            unset($this->dvlaImportData[$i]);
+            $key = mb_strtolower($companyName);
+            if (isset($seen[$key])) {
+                // Merge email into the existing entry
+                $idx = $seen[$key];
+                $existingEmails = array_filter(explode(',', $deduplicated[$idx][1]));
+                if (!in_array($email, $existingEmails)) {
+                    $existingEmails[] = $email;
+                    $deduplicated[$idx][1] = implode(',', $existingEmails);
+                }
+            } else {
+                $seen[$key] = count($deduplicated);
+                $deduplicated[] = [$companyName, $email];
+            }
+        }
+        $this->dvlaImportData = $deduplicated;
     }
 
     protected function processImportBatch(array $batch): void
@@ -161,21 +194,28 @@ class NotificationInterceptionDvlaImportController extends AbstractController
             ->getQuery()
             ->execute()
         ;
-        $existingRecordsByName = array_change_key_case($existingRecordsByName, CASE_LOWER);
+        $existingRecordsByName = array_combine(
+            array_map(fn($k) => mb_strtolower($k), array_keys($existingRecordsByName)),
+            array_values($existingRecordsByName),
+        );
 
-        foreach ($batch as [$companyName, $email]) {
+        foreach ($batch as [$companyName, $emails]) {
             // we want to merge in the DVLA email address with existing records where the business name matches,
             // but we don't want to merge in business names with existing records where the email address matches
             // as this is a one way thing, and can't be undone the next time we import the DVLA data
-            if ($existing = ($existingRecordsByName[strtolower($companyName)] ?? false)) {
-                $existing->getNotificationInterception()->addDvlaEmail(strtolower($email));
+            $key = mb_strtolower($companyName);
+            if ($existing = ($existingRecordsByName[$key] ?? false)) {
+                // $emails may be comma-delimited due to the deduplication step
+                foreach (explode(',', $emails) as $email) {
+                    $existing->getNotificationInterception()->addDvlaEmail(strtolower($email));
+                }
             } else {
                 $record = (new NotificationInterception())
                     ->addName($companyName)
-                    ->setDvlaEmails(strtolower($email))
+                    ->setDvlaEmails($emails)
                 ;
                 $this->entityManager->persist($record);
-                $existingRecordsByName[strtolower($companyName)] = $record->getNames()[0];
+                $existingRecordsByName[$key] = $record->getNames()[0];
             }
         }
         $this->entityManager->flush();
