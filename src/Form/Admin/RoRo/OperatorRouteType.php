@@ -15,9 +15,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class OperatorRouteType extends AbstractType
 {
@@ -46,6 +48,9 @@ class OperatorRouteType extends AbstractType
             ->add('route', ChoiceType::class, [
                 'placeholder' => '-',
                 'choices' => $routeChoices,
+                // choice_attr only greys out <option>s visually; a <select> has no per-choice
+                // sub-forms, so Symfony cannot enforce `disabled` server-side. The Callback
+                // constraint below rejects tampered submissions of excluded route IDs.
                 'choice_attr' => fn(Route $route) => in_array($route->getId(), $routeIdsToExclude) ?
                     ['disabled' => 'disabled'] :
                     [],
@@ -57,6 +62,11 @@ class OperatorRouteType extends AbstractType
                 },
                 'constraints' => [
                     new NotBlank([], "common.choice.not-null"),
+                    new Callback(function(?Route $route, ExecutionContextInterface $context) use ($routeIdsToExclude) {
+                        if ($route !== null && in_array($route->getId(), $routeIdsToExclude)) {
+                            $context->buildViolation('common.choice.invalid')->addViolation();
+                        }
+                    }),
                 ],
                 'expanded' => false,
                 'attr' => ['class' => 'govuk-input--width-10'],
