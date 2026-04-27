@@ -11,4 +11,5 @@
 - [Env files](docs/Env.md)
 - [Reminders](docs/Reminders.md)
 - [RoRo](docs/RoRo.md)
+- [Database views and functions](docs/Views.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

@@ -10,6 +10,9 @@
 - **Update**: Add WeekNumber to CSRGT export views
 - **Update**: Add businessName, state, weekNumber and isNorthernIreland to DriverAvailability export views
 - **Update**: Add "We only used LGVs" answer to international reason-for-empty-survey
+- **Update**: Move DB views and SQL functions out of Doctrine migrations into a dedicated `sql/` directory, applied by `bin/console app:views:apply`. See [Database views and functions](Views.md).
+- **Fix**: `view_international_firms` / `view_export_international_survey` regression — the Feb 2026 SubmissionDate migration wholesale-replaced these views with a pre-HGV/LGV-split body. Corrected bodies now live in `sql/views/`.
+- **Fix**: Fresh-DB migrations restored — patched DBAL 2->4 and Symfony Uid API mismatches in some migrations.
 - **Fix**: Domestic stop reorder bug
 
 ## 2025-12-04

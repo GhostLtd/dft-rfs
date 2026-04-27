@@ -20,6 +20,7 @@ if (file_exists(dirname(__DIR__).'/config/bootstrap.php')) {
 $bootstrapCommands = [
     ['bin/console', '--env=test', 'd:d:d', '-f'],
     ['bin/console', '--env=test', 'd:s:c'],
+    ['bin/console', '--env=test', 'app:views:apply'],
     ['bin/console', '--env=test', 'messenger:setup'],
 ];
 
