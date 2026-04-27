@@ -63,7 +63,7 @@ final class Version20220608133503 extends AbstractMigration
                         }
 
                         $recipientHash = hash('sha256', $recipient);
-                        $apiResponseId = Uuid::v1();
+                        $apiResponseId = Uuid::v1()->toRfc4122();
 
                         $this->addSql('INSERT INTO notify_api_response (id, event_name, message_class, recipient, recipient_hash, timestamp, data, endpoint) VALUES (:id, :event_name, :message_class, :recipient, :recipient_hash, :timestamp, :data, :endpoint)', [
                             'id' => $apiResponseId,

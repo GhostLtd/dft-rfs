@@ -69,7 +69,7 @@ final class Version20230330113030 extends AbstractMigration
 
         foreach (self::COUNTRY_CODES as $countryCode) {
             $this->addSql('INSERT INTO roro_country(id, code) VALUES(:id, :country)', [
-                'id' => Uuid::v1(),
+                'id' => Uuid::v1()->toRfc4122(),
                 'country' => $countryCode,
             ]);
         }

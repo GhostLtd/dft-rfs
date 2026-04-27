@@ -70,7 +70,7 @@ EOQ);
         $mapping = [];
 
         foreach($ports as [$code, $name]) {
-            $id = Uuid::v1();
+            $id = Uuid::v1()->toRfc4122();
             $mapping[$name] = $id;
 
             $this->addSql("INSERT INTO {$table} (id, name, code) VALUES (:id, :name, :code)", [
@@ -86,7 +86,7 @@ EOQ);
     protected function addRoute(mixed $ukPortId, mixed $foreignPortId): void
     {
         $this->addSql('INSERT INTO route (id, uk_port_id, foreign_port_id, is_active) VALUES (:id, :ukPortId, :foreignPortId, true)', [
-            'id' => Uuid::v1(),
+            'id' => Uuid::v1()->toRfc4122(),
             'ukPortId' => $ukPortId,
             'foreignPortId' => $foreignPortId,
         ]);

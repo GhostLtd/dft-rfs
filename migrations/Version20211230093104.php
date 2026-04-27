@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -20,7 +20,7 @@ final class Version20211230093104 extends AbstractMigration
         $daysWithMisnumberedStops = $this->connection->fetchAllAssociative("SELECT ds.day_id, MAX(ds.number) AS maxNumber, COUNT(ds.id) as cnt FROM domestic_day_stop ds GROUP BY ds.day_id HAVING maxNumber <> cnt");
         $dayIds = array_map(fn(array $data) => $data['day_id'], $daysWithMisnumberedStops);
 
-        $misnumberedStops = $this->connection->fetchAllAssociative("SELECT ds.id, ds.day_id, ds.number FROM domestic_day_stop ds WHERE ds.day_id IN (:dayIds) ORDER BY ds.day_id, ds.number", ['dayIds' => $dayIds], ['dayIds' => Connection::PARAM_STR_ARRAY]);
+        $misnumberedStops = $this->connection->fetchAllAssociative("SELECT ds.id, ds.day_id, ds.number FROM domestic_day_stop ds WHERE ds.day_id IN (:dayIds) ORDER BY ds.day_id, ds.number", ['dayIds' => $dayIds], ['dayIds' => ArrayParameterType::STRING]);
 
         $currentDay = null;
         $number = 1;

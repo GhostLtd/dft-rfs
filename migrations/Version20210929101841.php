@@ -7,14 +7,10 @@ namespace DoctrineMigrations;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Doctrine\ORM\Id\UuidGenerator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Uid\Uuid;
 
-final class Version20210929101841 extends AbstractMigration implements ContainerAwareInterface
+final class Version20210929101841 extends AbstractMigration
 {
-    use ContainerAwareTrait;
-
     public function getDescription(): string
     {
         return 'Adds the missing audit_log counterparts that should have been created to accompany the state changes of migration Version20210722103600';
@@ -22,15 +18,12 @@ final class Version20210929101841 extends AbstractMigration implements Container
 
     public function getUsername(): string
     {
-
         return str_replace('DoctrineMigrations\Version', 'migration-', self::class);
     }
 
     public function up(Schema $schema): void
     {
-        $conn = $this->connection->getWrappedConnection();
-
-        $rows = $conn->query(<<<EOQ
+        $rows = $this->connection->executeQuery(<<<EOQ
 SELECT s.id, s.state, a.timestamp, a.data FROM audit_log a
 INNER JOIN domestic_survey s ON a.entity_id = s.id
 INNER JOIN (
@@ -42,17 +35,14 @@ INNER JOIN (
 WHERE a.category = "survey-state"
 AND s.state = "reissued"
 AND a.data LIKE "%""to"":""rejected""%"
-EOQ, \PDO::FETCH_ASSOC);
+EOQ)->fetchAllAssociative();
 
         $problematicMigrationDate = '2021-08-26 13:25:06';
         $username = $this->getUsername();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $uuidGenerator = new UuidGenerator();
-
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $this->addSql('INSERT INTO audit_log SET id=:id,category=:category,username=:username, entity_id=:entity_id, entity_class=:class, timestamp=:timestamp, data=:data', [
-                'id' => $uuidGenerator->generate($entityManager, null),
+                'id' => Uuid::v4()->toRfc4122(),
                 'category' => 'survey-state',
                 'username' => $username,
                 'entity_id' => $row['id'],
