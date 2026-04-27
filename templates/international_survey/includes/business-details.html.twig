@@ -69,12 +69,12 @@
     {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
             {{- summaryListRow({
                 key: 'international.correspondence-and-business-details.number-of-hgv-trips' | trans,
-                value: ('common.number.plain'|trans({value: response.annualInternationalHGVJourneyCount})),
+                value: response.annualInternationalHGVJourneyCount is null ? '-' : ('common.number.plain'|trans({value: response.annualInternationalHGVJourneyCount})),
                 actions: showActions ? numberOfTripsChangeLink : []
             }, showActions) -}}
         {{- summaryListRow({
             key: 'international.correspondence-and-business-details.number-of-lgv-trips' | trans,
-            value: ('common.number.plain'|trans({value: response.annualInternationalLGVJourneyCount})),
+            value: response.annualInternationalLGVJourneyCount is null ? '-' : ('common.number.plain'|trans({value: response.annualInternationalLGVJourneyCount})),
             actions: showActions ? numberOfTripsChangeLink : []
         }, showActions) -}}
     {{- summaryListEnd() -}}
