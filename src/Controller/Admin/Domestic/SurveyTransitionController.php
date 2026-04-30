@@ -34,10 +34,7 @@ class SurveyTransitionController extends AbstractController
 
         return $surveyWorkflowConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            )
+            $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
         );
     }
 
@@ -56,10 +53,7 @@ class SurveyTransitionController extends AbstractController
 
         return $flagQaConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            )
+            $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
         );
     }
 }

@@ -46,8 +46,8 @@ class TripController extends AbstractController
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]),
-            fn() => $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]),
+            $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $trip->getVehicle()->getId()]),
+            $this->generateUrl(self::TRIP_ROUTE, ['id' => $trip->getId()]),
         );
     }
 

@@ -9,6 +9,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Features;
 use App\Utility\PostcodeChangeoverHelper;
+use Ghost\GovUkCoreBundle\Features as CoreFeatures;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
 
@@ -54,16 +55,14 @@ trait PostcodeChangeoverTestTrait
     }
 
     /**
-     * Create a mock Features with POSTCODE_CHANGEOVER flag set as specified.
+     * Toggle POSTCODE_CHANGEOVER via $_ENV['APP_FEATURES'] and reset the
+     * bundle's static feature cache so the change is visible to the next call.
      */
-    protected function createMockFeatures(bool $isEnabled): MockObject&Features
+    protected function setPostcodeChangeoverFeature(bool $isEnabled): void
     {
-        $features = $this->createMock(Features::class);
-        $features->method('isEnabled')
-            ->with(Features::POSTCODE_CHANGEOVER)
-            ->willReturn($isEnabled);
-
-        return $features;
+        $_ENV['APP_FEATURES'] = $isEnabled ? Features::POSTCODE_CHANGEOVER : '';
+        $prop = new \ReflectionProperty(CoreFeatures::class, 'enabledFeatures');
+        $prop->setValue(null, []);
     }
 
     /**
@@ -71,9 +70,9 @@ trait PostcodeChangeoverTestTrait
      */
     protected function createChangeoverHelper(bool $featureEnabled): PostcodeChangeoverHelper
     {
-        $features = $this->createMockFeatures($featureEnabled);
+        $this->setPostcodeChangeoverFeature($featureEnabled);
 
-        return new PostcodeChangeoverHelper($features, new NullLogger());
+        return new PostcodeChangeoverHelper(new NullLogger());
     }
 
     /**

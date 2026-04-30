@@ -25,7 +25,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/stage-start',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_button_group_continue", [
                         new FormTestCase([
                             "origin" => [
                                 "originLocation" => "",
@@ -41,7 +41,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_button_group_continue", [
                         new FormTestCase([
                             "destination" => [
                                 "destinationLocation" => "",
@@ -57,7 +57,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_button_group_continue", [
                         new FormTestCase([
                             "border_crossing" => [
                                 "borderCrossed" => 1,
@@ -84,7 +84,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/stage-start',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_button_group_continue", [
                         new FormTestCase([
                             "origin" => [
                                 "originLocation" => "",
@@ -102,7 +102,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_button_group_continue", [
                         new FormTestCase([
                             "destination" => [
                                 "destinationLocation" => "",
@@ -120,7 +120,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_button_group_continue", [
                         new FormTestCase([
                             "border_crossing" => [
                                 "borderCrossed" => 1,
@@ -147,7 +147,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/distance-travelled',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/distance-travelled", "distance_travelled_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/distance-travelled", "distance_travelled_button_group_continue", [
                         new FormTestCase([
                             "distance_travelled" => [
                                 "distanceTravelled" => [
@@ -185,7 +185,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-description',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_button_group_continue", [
                         new FormTestCase([
                             "goods_description" => [
                                 "goodsDescription" => AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY,
@@ -212,14 +212,14 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-description',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_button_group_continue", [
                         new FormTestCase([
                             "goods_description" => [
                                 "goodsDescription" => AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE,
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/hazardous-goods", "hazardous_goods_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/hazardous-goods", "hazardous_goods_button_group_continue", [
                         new FormTestCase([
                             "hazardous_goods" => [
                                 "isHazardousGoods" => "yes",
@@ -227,14 +227,14 @@ class DayStopEditTest extends AbstractWizardTest
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/cargo-type", "cargo_type_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/cargo-type", "cargo_type_button_group_continue", [
                         new FormTestCase([
                             "cargo_type" => [
                                 "cargoTypeCode" => CargoType::CODE_PL_PALLETISED_GOODS,
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_button_group_continue", [
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,
@@ -276,7 +276,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-weight',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_button_group_continue", [
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,

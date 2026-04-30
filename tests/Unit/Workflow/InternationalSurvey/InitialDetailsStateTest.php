@@ -4,17 +4,26 @@ namespace App\Tests\Unit\Workflow\InternationalSurvey;
 
 use App\Entity\International\SurveyResponse;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
-use PHPUnit\Framework\TestCase;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
 use ReflectionProperty;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class InitialDetailsStateTest extends TestCase
+class InitialDetailsStateTest extends KernelTestCase
 {
+    private FormWizardManager $formWizardManager;
+
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $this->formWizardManager = self::getContainer()->get(FormWizardManager::class);
+    }
+
     /**
-     * @dataProvider dataIsValidAlternativeStartState
+     * @dataProvider dataIsValidAlternativeStartPlace
      */
-    public function testIsValidAlternativeStartState(
+    public function testIsValidAlternativeStartPlace(
         ?string $activityStatus,
-        string $state,
+        string $place,
         bool $expectedValid
     ): void {
         $response = new SurveyResponse();
@@ -29,17 +38,17 @@ class InitialDetailsStateTest extends TestCase
 
         $this->assertSame(
             $expectedValid,
-            $stateObject->isValidAlternativeStartState($state),
+            $this->formWizardManager->isValidAlternativeStartPlace($stateObject, $place),
             sprintf(
-                'Expected state "%s" to be %s when activity status is "%s"',
-                $state,
+                'Expected place "%s" to be %s when activity status is "%s"',
+                $place,
                 $expectedValid ? 'valid' : 'invalid',
                 $activityStatus ?? 'null'
             )
         );
     }
 
-    public function dataIsValidAlternativeStartState(): array
+    public function dataIsValidAlternativeStartPlace(): array
     {
         return [
             // Still active - can access all change screens
@@ -132,7 +141,7 @@ class InitialDetailsStateTest extends TestCase
         ];
     }
 
-    public function testIsValidAlternativeStartStateReturnsFalseWhenNotCommitted(): void
+    public function testIsValidAlternativeStartPlaceReturnsFalseWhenNotCommitted(): void
     {
         $response = new SurveyResponse();
         // ID is null by default - not committed
@@ -141,7 +150,7 @@ class InitialDetailsStateTest extends TestCase
         $stateObject->setSubject($response);
 
         $this->assertFalse(
-            $stateObject->isValidAlternativeStartState(InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS)
+            $this->formWizardManager->isValidAlternativeStartPlace($stateObject, InitialDetailsState::STATE_CHANGE_CONTACT_DETAILS)
         );
     }
 }

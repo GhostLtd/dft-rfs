@@ -2,78 +2,91 @@
 
 namespace App\Controller\DomesticSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Workflow\DomesticSurvey\InitialDetailsState;
-use App\Workflow\FormWizardStateInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class InitialDetailsController extends AbstractSessionStateWorkflowController
+class InitialDetailsController extends AbstractSessionStateFormWizardController
 {
     public const ROUTE_NAME = 'app_domesticsurvey_initialdetails_index';
 
-    protected SurveyResponse $surveyResponse;
-
     use SurveyHelperTrait;
 
-    #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
-    #[Route(path: '/domestic-survey/initial-details', name: 'app_domesticsurvey_initialdetails_start')]
-    #[Route(path: '/domestic-survey/initial-details/{state}', name: self::ROUTE_NAME)]
-    public function index(WorkflowInterface $domesticSurveyInitialDetailsStateMachine, Request $request, $state = null): Response
-    {
-        return $this->doWorkflow($domesticSurveyInitialDetailsStateMachine, $request, $state);
+    public function __construct(
+        FormWizardManager                $formWizardManager,
+        RequestStack                     $requestStack,
+        PropertyMerger                   $propertyMerger,
+        protected EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
+    #[Route(path: '/domestic-survey/initial-details/{state}', name: self::ROUTE_NAME)]
+    #[Route(path: '/domestic-survey/initial-details', name: 'app_domesticsurvey_initialdetails_start')]
+    public function index(Request $request, ?string $state = null): Response
+    {
+        return $this->doWorkflow($request, $state);
+    }
+
+    protected function getState(): FormWizardStateInterface
     {
         $survey = $this->getSurvey();
         $databaseSurvey = $this->entityManager->getRepository(Survey::class)
             ->findOneByIdWithResponseAndVehicle($survey->getId());
 
-        /** @var InitialDetailsState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), (new InitialDetailsState())->setSubject($databaseSurvey->getResponse()));
+        /** @var InitialDetailsState|null $state */
+        $state = $this->session->get($this->getSessionKey(), null);
 
-        // it's the start of the wizard, and it's a fresh survey (not editing)
-        if (is_null($formWizard->getSubject())) {
-            (new Vehicle())
-                ->setRegistrationMark($databaseSurvey->getRegistrationMark())
-                ->setResponse($surveyResponse = $databaseSurvey->getResponse() ?? (new SurveyResponse()));
-
-            $surveyResponse->setSurvey($databaseSurvey);
-            $formWizard->setSubject($surveyResponse);
+        if (!$state) {
+            $state = new InitialDetailsState();
+            $databaseResponse = $databaseSurvey->getResponse();
+            if (!$databaseResponse) {
+                // Fresh survey: create response + vehicle
+                $databaseResponse = new SurveyResponse();
+                (new Vehicle())
+                    ->setRegistrationMark($databaseSurvey->getRegistrationMark())
+                    ->setResponse($databaseResponse);
+                $databaseResponse->setSurvey($databaseSurvey);
+            }
+            $state->setSubject($databaseResponse);
         }
 
-        if ($formWizard->getSubject()->getId()) {
-            $surveyResponse = $databaseSurvey->getResponse();
-            $surveyResponse
-                ->mergeInitialDetails($formWizard->getSubject())
-              ;
-            $formWizard->setSubject($surveyResponse);
+        if ($state->getSubject()->getId()) {
+            $databaseResponse = $databaseSurvey->getResponse();
+            $databaseResponse->mergeInitialDetails($state->getSubject());
+            $state->setSubject($databaseResponse);
         } else {
-            $databaseSurvey->setResponse($formWizard->getSubject());
+            $databaseSurvey->setResponse($state->getSubject());
         }
 
-        $this->surveyResponse = $formWizard->getSubject();
-        return $formWizard;
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
+        return new RedirectResponse($this->generateUrl(self::ROUTE_NAME, ['state' => (string) $place]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->surveyResponse->getId() ? $this->redirectToRoute('app_domesticsurvey_contactdetails') : null;
+        $response = $this->getState()->getSubject();
+        return $response->getId()
+            ? new RedirectResponse($this->generateUrl('app_domesticsurvey_contactdetails'))
+            : null;
     }
 }

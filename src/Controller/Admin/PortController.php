@@ -161,7 +161,7 @@ class PortController extends AbstractController
             ->setSubject($port)
             ->controller(
                 $request,
-                fn() => $this->getListPagePathForPortClass($port::class)
+                $this->getListPagePathForPortClass($port::class)
             );
 
         if ($data instanceof RedirectResponse) {

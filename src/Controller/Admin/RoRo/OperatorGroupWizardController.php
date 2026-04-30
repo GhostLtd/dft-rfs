@@ -2,25 +2,25 @@
 
 namespace App\Controller\Admin\RoRo;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\RoRo\OperatorGroup;
 use App\Repository\RoRo\OperatorRepository;
-use App\Workflow\FormWizardManager;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\RoRo\OperatorGroupState;
-use App\Workflow\RoRo\RoRoState;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route("/operator-groups", name: "admin_operator_groups_")]
-class OperatorGroupWizardController extends AbstractSessionStateWorkflowController
+class OperatorGroupWizardController extends AbstractSessionStateFormWizardController
 {
     private const string MODE_ADD = 'add';
     private const string MODE_EDIT = 'edit';
@@ -29,14 +29,13 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
     protected OperatorGroup $databaseOperatorGroup;
 
     public function __construct(
-        EntityManagerInterface       $entityManager,
         FormWizardManager            $formWizardManager,
-        LoggerInterface              $log,
         RequestStack                 $requestStack,
+        PropertyMerger               $propertyMerger,
+        protected EntityManagerInterface $entityManager,
         protected OperatorRepository $operatorRepository,
-    )
-    {
-        parent::__construct($formWizardManager, $entityManager, $log, $requestStack);
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
     }
 
     /**
@@ -45,11 +44,11 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
     #[Route("/add/{state}", name: "add_place")]
     #[Route("/add", name: "add_start")]
     #[IsGranted("CAN_ADD_OPERATOR_GROUP")]
-    public function add(WorkflowInterface $operatorGroupStateMachine, Request $request, ?string $state = null): Response
+    public function add(Request $request, ?string $state = null): Response
     {
         $this->mode = self::MODE_ADD;
         $this->databaseOperatorGroup = new OperatorGroup();
-        return $this->doWorkflow($operatorGroupStateMachine, $request, $state, $this->getAdditionalViewData($state));
+        return $this->doWorkflow($request, $state, $this->getAdditionalViewDataClosure());
     }
 
     /**
@@ -59,70 +58,76 @@ class OperatorGroupWizardController extends AbstractSessionStateWorkflowControll
     #[Route("/{operatorGroupId}/edit", name: "edit_start")]
     #[IsGranted("CAN_EDIT_OPERATOR_GROUP", subject: "operatorGroup")]
     public function edit(
-        WorkflowInterface $operatorGroupStateMachine,
         Request           $request,
         #[MapEntity(expr: "repository.findOneById(operatorGroupId)")]
         OperatorGroup     $operatorGroup,
-        ?string           $state = null
+        ?string           $state = null,
     ): Response
     {
         $this->mode = self::MODE_EDIT;
         $this->databaseOperatorGroup = $operatorGroup;
-        return $this->doWorkflow($operatorGroupStateMachine, $request, $state, $this->getAdditionalViewData($state));
+        return $this->doWorkflow($request, $state, $this->getAdditionalViewDataClosure());
     }
 
-    protected function getAdditionalViewData(?string $state): array
+    private function getAdditionalViewDataClosure(): \Closure
     {
-        $name = $this->getFormWizard()->getSubject()->getName();
-
-        return match ($state) {
-            OperatorGroupState::STATE_PREVIEW => [
-                'mode' => $this->mode,
-                'name' => $name,
-                'operatorsInGroup' => $this->operatorRepository->findOperatorsWithNamePrefix($name),
-            ],
-            default => [
-                'mode' => $this->mode,
-            ]
+        return function (FormWizardStateInterface $state) {
+            $name = $state->getSubject()->getName();
+            return match ((string) $state->getPlace()) {
+                OperatorGroupState::STATE_PREVIEW => [
+                    'mode' => $this->mode,
+                    'name' => $name,
+                    'operatorsInGroup' => $this->operatorRepository->findOperatorsWithNamePrefix($name),
+                ],
+                default => [
+                    'mode' => $this->mode,
+                ],
+            };
         };
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
-        /** @var RoRoState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), null);
+        /** @var OperatorGroupState|null $state */
+        $state = $this->session->get($this->getSessionKey(), null);
 
-        // If there's no session currently in progress, or if the survey in the session is a different survey to the
-        // one mentioned in the URL, generate a new state.
-        if (!$formWizard || $formWizard->getSubject()->getId() !== $this->databaseOperatorGroup->getId()) {
-            $formWizard = (new OperatorGroupState())
+        // If there's no session currently in progress, or if the operator group in the session is a different one to
+        // the one mentioned in the URL, generate a new state.
+        if (!$state || $state->getSubject()->getId() !== $this->databaseOperatorGroup->getId()) {
+            $state = (new OperatorGroupState())
                 ->setSubject($this->databaseOperatorGroup)
                 ->setMode($this->mode);
         }
 
-        $formData = $formWizard->getSubject();
-
+        $formData = $state->getSubject();
         $this->databaseOperatorGroup->merge($formData);
-        $formWizard->setSubject($this->databaseOperatorGroup);
-        return $formWizard;
+        $state->setSubject($this->databaseOperatorGroup);
+
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
         return match ($this->mode) {
-            self::MODE_ADD => $this->redirectToRoute('admin_operator_groups_add_place', ['state' => $state]),
-            self::MODE_EDIT => $this->redirectToRoute('admin_operator_groups_edit_place', ['operatorGroupId' => $this->databaseOperatorGroup->getId(), 'state' => $state]),
+            self::MODE_ADD => new RedirectResponse(
+                $this->generateUrl('admin_operator_groups_add_place', ['state' => (string) $place])
+            ),
+            self::MODE_EDIT => new RedirectResponse(
+                $this->generateUrl('admin_operator_groups_edit_place', [
+                    'operatorGroupId' => $this->databaseOperatorGroup->getId(),
+                    'state' => (string) $place,
+                ])
+            ),
         };
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
         return match ($this->mode) {
-            self::MODE_ADD => $this->redirectToRoute('admin_operator_groups_list'),
-            self::MODE_EDIT => $this->redirectToRoute('admin_operator_groups_view', ['operatorGroupId' => $this->databaseOperatorGroup->getId()]),
+            self::MODE_ADD => new RedirectResponse($this->generateUrl('admin_operator_groups_list')),
+            self::MODE_EDIT => new RedirectResponse($this->generateUrl('admin_operator_groups_view', [
+                'operatorGroupId' => $this->databaseOperatorGroup->getId(),
+            ])),
         };
     }
 }

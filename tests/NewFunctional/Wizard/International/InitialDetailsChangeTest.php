@@ -9,7 +9,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
     public function testChangeCorrespondenceDetails(): void
     {
         $this->performChangeTest(0, function(array &$expectedData) {
-            $this->formTestAction('/international-survey/initial-details/change-contact-details', 'contact_details_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/change-contact-details', 'contact_details_button_group_continue', [
                 new FormTestCase([
                     'contact_details[contactName]' => 'Mark',
                     'contact_details[contactTelephone]' => '',
@@ -33,7 +33,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
     public function testChangeNumberOfTrips(): void
     {
         $this->performChangeTest(6, function(array &$expectedData) {
-            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_button_group_continue', [
                 new FormTestCase([
                     'number_of_trips[annualInternationalHGVJourneyCount]' => '75',
                     'number_of_trips[annualInternationalLGVJourneyCount]' => '25',
@@ -56,7 +56,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
     public function testChangeBusinessDetails(): void
     {
         $this->performChangeTest(4, function(array &$expectedData) {
-            $this->formTestAction('/international-survey/initial-details/business-details', 'business_details_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/business-details', 'business_details_button_group_continue', [
                 new FormTestCase([
                     'business_details[numberOfEmployees]' => '1-9',
                     'business_details[businessNature]' => 'Owls',
@@ -64,7 +64,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
             ]);
 
             // After business-details, wizard continues to number-of-trips
-            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_button_group_continue', [
                 new FormTestCase([
                     'number_of_trips[annualInternationalHGVJourneyCount]' => '150',
                     'number_of_trips[annualInternationalLGVJourneyCount]' => '0',
@@ -87,7 +87,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
     {
         $this->performChangeTest(6, function(array &$expectedData) {
             // First, change trips to 0
-            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_button_group_continue', [
                 new FormTestCase([
                     'number_of_trips[annualInternationalHGVJourneyCount]' => '0',
                     'number_of_trips[annualInternationalLGVJourneyCount]' => '0',
@@ -99,7 +99,7 @@ class InitialDetailsChangeTest extends AbstractInitialDetailsTest
             $this->pathTestAction('/international-survey/correspondence-and-business-details');
             $this->clickLinkContaining('Change', 3);
 
-            $this->formTestAction('/international-survey/initial-details/activity-status', 'activity_status_buttons_continue', [
+            $this->formTestAction('/international-survey/initial-details/activity-status', 'activity_status_button_group_continue', [
                 new FormTestCase([
                     'activity_status[activityStatus]' => 'only-domestic-work',
                 ]),

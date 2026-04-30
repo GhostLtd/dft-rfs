@@ -7,10 +7,8 @@ use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\IndexController as InternationalIndexController;
 use App\Entity\PasscodeUser;
 use App\Repository\MaintenanceWarningRepository;
-use App\Utility\SessionTimeoutHelper;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -39,15 +37,6 @@ class HomeController extends AbstractController
     public function sitemap(): Response
     {
         return $this->render('home/sitemap.txt.twig');
-    }
-
-    #[Route(path: '/refresh-session')]
-    public function refreshSession(SessionTimeoutHelper $timeoutHelper): JsonResponse
-    {
-        return new JsonResponse([
-            'warning' => $timeoutHelper->getWarningTime(),
-            'expiry' => $timeoutHelper->getExpiryTime(),
-        ]);
     }
 
     #[Route(path: '/accessibility-statement')]

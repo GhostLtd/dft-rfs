@@ -8,7 +8,7 @@ nelmio_security:
         hosts: [ ]
         content_types: [ ]
         enforce:
-            level1_fallback: true
+            level1_fallback: false
             browser_adaptive:
                 enabled: false
             # report-uri: '%router.request_context.base_url%/csp/report'

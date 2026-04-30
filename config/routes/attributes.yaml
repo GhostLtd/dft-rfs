@@ -4,7 +4,6 @@ front_end:
     exclude:
         - '../../src/Controller/Cron/'
         - '../../src/Controller/Admin/'
-        - '../../src/Controller/Workflow/'
     type: attribute
     host: '%frontend_hostname%'
 
@@ -33,4 +32,10 @@ cron:
 
 kernel:
     resource: ../../src/Kernel.php
+    type: attribute
+
+core_controllers:
+    resource:
+        path: '@GhostGovUkCoreBundle/src/Controller'
+        namespace: Ghost\GovUkCoreBundle\Controller
     type: attribute

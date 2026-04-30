@@ -117,6 +117,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.1"
     },
+    "ghost/govuk-core-bundle": {
+        "version": "6.0.2"
+    },
     "ghost/govuk-frontend-bundle": {
         "version": "dev-master"
     },

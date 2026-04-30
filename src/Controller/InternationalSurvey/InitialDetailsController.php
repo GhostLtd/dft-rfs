@@ -2,62 +2,71 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
+use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
-class InitialDetailsController extends AbstractSessionStateWorkflowController
+class InitialDetailsController extends AbstractSessionStateFormWizardController
 {
     use SurveyHelperTrait;
 
-    public const START_ROUTE = 'app_internationalsurvey_initial_start';
-    public const WIZARD_ROUTE = 'app_internationalsurvey_initial_state';
-
     protected SurveyResponse $surveyResponse;
 
-    #[Route(path: '/international-survey/initial-details/{state}', name: self::WIZARD_ROUTE)]
-    #[Route(path: '/international-survey/initial-details', name: self::START_ROUTE)]
-    public function index(WorkflowInterface $internationalSurveyInitialDetailsStateMachine, Request $request, $state = null): Response
-    {
-        return $this->doWorkflow($internationalSurveyInitialDetailsStateMachine, $request, $state);
+    public function __construct(
+        FormWizardManager                $formWizardManager,
+        RequestStack                     $requestStack,
+        PropertyMerger                   $propertyMerger,
+        protected EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    #[Route(path: '/international-survey/initial-details', name: 'app_internationalsurvey_initial_start')]
+    #[Route(path: '/international-survey/initial-details/{state}', name: 'app_internationalsurvey_initial_wizard')]
+    public function index(Request $request, ?string $state = null): Response
+    {
+        return $this->doWorkflow($request, $state);
+    }
+
+    protected function getState(): FormWizardStateInterface
     {
         $survey = $this->getSurvey();
 
-        /** @var FormWizardStateInterface $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new InitialDetailsState());
+        /** @var InitialDetailsState $state */
+        $state = $this->session->get($this->getSessionKey(), new InitialDetailsState());
 
-        $response = $formWizard->getSubject() ?? $survey->getResponse() ?? new SurveyResponse();
-
+        $response = $state->getSubject() ?? $survey->getResponse() ?? new SurveyResponse();
         $databaseResponse = $survey->getResponse() ?? new SurveyResponse();
         $databaseResponse->mergeInitialDetails($response);
         $survey->setResponse($databaseResponse);
-        $formWizard->setSubject($databaseResponse);
+        $state->setSubject($databaseResponse);
 
-        $this->surveyResponse = $formWizard->getSubject();
-        return $formWizard;
+        $this->surveyResponse = $databaseResponse;
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
+        return new RedirectResponse($this->generateUrl('app_internationalsurvey_initial_wizard', ['state' => (string) $place]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->surveyResponse->getId() ? $this->redirectToRoute(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE) : null;
+        return $this->surveyResponse->getId()
+            ? new RedirectResponse($this->generateUrl(BusinessAndCorrespondenceDetailsController::SUMMARY_ROUTE))
+            : null;
     }
 }

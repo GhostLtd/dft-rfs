@@ -4,10 +4,11 @@ namespace App\Entity\Embeddable;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\AddressInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Embeddable]
-class Address implements \Stringable
+class Address implements \Stringable, AddressInterface
 {
     public function toArray(): array
     {

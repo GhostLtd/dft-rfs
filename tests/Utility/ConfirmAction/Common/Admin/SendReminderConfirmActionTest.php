@@ -3,14 +3,13 @@
 namespace App\Tests\Utility\ConfirmAction\Common\Admin;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Utility\ConfirmAction\ActionFailedException;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\ActionFailedException;
 use App\Utility\ConfirmAction\Common\Admin\SendReminderConfirmAction;
 use App\Utility\Reminder\ManualReminderHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendReminderConfirmActionTest extends TestCase
 {
@@ -24,7 +23,6 @@ class SendReminderConfirmActionTest extends TestCase
         $confirmAction = new SendReminderConfirmAction(
             $this->createMock(FormFactoryInterface::class),
             $this->createMock(RequestStack::class),
-            $this->createMock(TranslatorInterface::class),
             $this->createMock(EntityManagerInterface::class),
             $reminderHelperMock,
         );
@@ -45,7 +43,6 @@ class SendReminderConfirmActionTest extends TestCase
         $confirmAction = new SendReminderConfirmAction(
             $this->createMock(FormFactoryInterface::class),
             $this->createMock(RequestStack::class),
-            $this->createMock(TranslatorInterface::class),
             $this->createMock(EntityManagerInterface::class),
             $reminderHelperMock,
         );

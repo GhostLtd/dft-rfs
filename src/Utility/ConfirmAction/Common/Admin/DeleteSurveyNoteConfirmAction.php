@@ -4,31 +4,28 @@ namespace App\Utility\ConfirmAction\Common\Admin;
 
 use App\Entity\Domestic\SurveyNote as DomesticSurveyNote;
 use App\Entity\International\SurveyNote as InternationalSurveyNote;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
 {
     /** @var DomesticSurveyNote | InternationalSurveyNote */
-    protected $subject;
+    protected mixed $subject;
     protected array $extraViewData;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, protected EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
     public function getFormOptions(): array
     {
-        return array_merge(parent::getFormOptions(), [
-            'confirm_button_options' => [
-                'attr' => ['class' => 'govuk-button--warning'],
-            ],
-        ]);
+        $options = parent::getFormOptions();
+        $options['confirm_button_options']['attr'] = ['class' => 'govuk-button--warning'];
+        return $options;
     }
 
     #[\Override]
@@ -38,7 +35,7 @@ class DeleteSurveyNoteConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

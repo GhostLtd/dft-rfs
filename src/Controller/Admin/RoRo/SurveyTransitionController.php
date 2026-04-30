@@ -33,7 +33,7 @@ class SurveyTransitionController extends AbstractController
 
         return $surveyWorkflowConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl('admin_roro_surveys_view', ['surveyId' => $survey->getId()])
+            $this->generateUrl('admin_roro_surveys_view', ['surveyId' => $survey->getId()])
         );
     }
 }

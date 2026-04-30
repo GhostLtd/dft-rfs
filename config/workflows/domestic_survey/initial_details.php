@@ -2,6 +2,11 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Entity\Domestic\SurveyResponse;
+use App\Form\DomesticSurvey\InitialDetails\ContactDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\HireeDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\InPossessionOfVehicleType;
+use App\Form\DomesticSurvey\InitialDetails\ScrappedDetailsType;
+use App\Form\DomesticSurvey\InitialDetails\SoldDetailsType;
 use App\Workflow\DomesticSurvey\InitialDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -12,18 +17,63 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_INTRODUCTION,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_INTRODUCTION,
-                    StateObject::STATE_REQUEST_CONTACT_DETAILS,
-                    StateObject::STATE_CHANGE_CONTACT_DETAILS,
-                    StateObject::STATE_ASK_IN_POSSESSION,
-                    StateObject::STATE_ASK_HIREE_DETAILS,
-                    StateObject::STATE_ASK_SCRAPPED_DETAILS,
-                    StateObject::STATE_ASK_SOLD_DETAILS,
-                    StateObject::STATE_END,
+                    [
+                        'name' => StateObject::STATE_INTRODUCTION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/introduction.html.twig',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_REQUEST_CONTACT_DETAILS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-contact-details.html.twig',
+                            'form_class' => ContactDetailsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CHANGE_CONTACT_DETAILS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-contact-details.html.twig',
+                            'form_class' => ContactDetailsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ASK_IN_POSSESSION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-in-possession.html.twig',
+                            'form_class' => InPossessionOfVehicleType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ASK_HIREE_DETAILS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-hiree-details.html.twig',
+                            'form_class' => HireeDetailsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ASK_SCRAPPED_DETAILS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-scrapped-details.html.twig',
+                            'form_class' => ScrappedDetailsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ASK_SOLD_DETAILS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/initial_details/form-sold-details.html.twig',
+                            'form_class' => SoldDetailsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_END,
+                    ],
                 ],
                 'transitions' => [
                     'start' => [
@@ -54,7 +104,7 @@ return static function (ContainerConfigurator $container) {
                             'persist' => true,
                             // The contact details route redirects to the index if business details is incomplete
                             // Redirecting here, means we always end up in the right place regardless of state
-                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
+                            'redirect_route' => 'app_domesticsurvey_contactdetails',
                         ],
                         'from' => [
                             StateObject::STATE_ASK_HIREE_DETAILS,
@@ -67,8 +117,8 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_contactdetails',
-                            'submitLabel' => 'Continue'
+                            'redirect_route' => 'app_domesticsurvey_contactdetails',
+                            'submit_label' => 'Continue'
                         ],
                         'from' => StateObject::STATE_ASK_IN_POSSESSION,
                         'to' =>  StateObject::STATE_END,
@@ -86,7 +136,7 @@ return static function (ContainerConfigurator $container) {
                         'name' => 'finish',
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => 'app_domesticsurvey_contactdetails'
+                            'redirect_route' => 'app_domesticsurvey_contactdetails'
                         ],
                         'from' =>  StateObject::STATE_CHANGE_CONTACT_DETAILS,
                         'to' =>  StateObject::STATE_END,

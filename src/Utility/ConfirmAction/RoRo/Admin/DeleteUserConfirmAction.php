@@ -3,30 +3,27 @@
 namespace App\Utility\ConfirmAction\RoRo\Admin;
 
 use App\Entity\RoRoUser;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteUserConfirmAction extends AbstractConfirmAction
 {
     /** @var RoRoUser */
-    protected $subject;
+    protected mixed $subject;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, protected EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
     public function getFormOptions(): array
     {
-        return array_merge(parent::getFormOptions(), [
-            'confirm_button_options' => [
-                'attr' => ['class' => 'govuk-button--warning'],
-            ],
-        ]);
+        $options = parent::getFormOptions();
+        $options['confirm_button_options']['attr'] = ['class' => 'govuk-button--warning'];
+        return $options;
     }
 
     #[\Override]
@@ -51,7 +48,7 @@ class DeleteUserConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();

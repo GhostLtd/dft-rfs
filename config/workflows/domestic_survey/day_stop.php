@@ -1,17 +1,24 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Form\DomesticSurvey\DayStop\BorderCrossingType;
+use App\Form\DomesticSurvey\DayStop\CargoTypeType;
+use App\Form\DomesticSurvey\DayStop\DestinationType;
+use App\Form\DomesticSurvey\DayStop\DistanceTravelledType;
+use App\Form\DomesticSurvey\DayStop\GoodsDescriptionType;
+use App\Form\DomesticSurvey\DayStop\GoodsWeightType;
+use App\Form\DomesticSurvey\DayStop\HazardousGoodsType;
+use App\Form\DomesticSurvey\DayStop\OriginType;
 use App\Workflow\DomesticSurvey\DayStopState as StateObject;
 
 return static function (ContainerConfigurator $container) {
     $editEndMetadata =  [
         'persist' => true,
-        'redirectRoute' => [
-            'routeName' => 'app_domesticsurvey_day_view',
-            'parameterMappings' => ['dayNumber' => 'day.number'],
+        'redirect_route' => [
+            'name' => 'app_domesticsurvey_day_view',
+            'parameters' => ['dayNumber' => 'subject.day.number'],
         ],
     ];
-
 
     $container->extension('framework', [
         'workflows' => [
@@ -20,21 +27,80 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_ORIGIN,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_INTRO,
-                    StateObject::STATE_ORIGIN,
-                    StateObject::STATE_DESTINATION,
-                    StateObject::STATE_BORDER_CROSSING,
-                    StateObject::STATE_DISTANCE_TRAVELLED,
-                    StateObject::STATE_GOODS_DESCRIPTION,
-                    StateObject::STATE_HAZARDOUS_GOODS,
-                    StateObject::STATE_CARGO_TYPE,
-                    StateObject::STATE_GOODS_WEIGHT,
-
-                    StateObject::STATE_END,
+                    [
+                        'name' => StateObject::STATE_INTRO,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/intro.html.twig',
+                            'is_valid_alternative_start_place' => 'is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ORIGIN,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-origin.html.twig',
+                            'form_class' => OriginType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_DESTINATION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-destination.html.twig',
+                            'form_class' => DestinationType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_BORDER_CROSSING,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-border-crossing.html.twig',
+                            'form_class' => BorderCrossingType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-distance-travelled.html.twig',
+                            'form_class' => DistanceTravelledType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_GOODS_DESCRIPTION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-goods-description.html.twig',
+                            'form_class' => GoodsDescriptionType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-hazardous-goods.html.twig',
+                            'form_class' => HazardousGoodsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CARGO_TYPE,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-cargo-type.html.twig',
+                            'form_class' => CargoTypeType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_GOODS_WEIGHT,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_stop/form-goods-weight.html.twig',
+                            'form_class' => GoodsWeightType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId()) and state.getSubject().getGoodsDescription() !== "empty"',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_END,
+                    ],
                 ],
                 'transitions' => [
                     'intro_to_origin' => [
@@ -74,10 +140,10 @@ return static function (ContainerConfigurator $container) {
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => [
                             'persist' => true,
-                            'submitLabel' => 'Continue',
-                            'redirectRoute' => [
-                                'routeName' => 'app_domesticsurvey_day_view',
-                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            'submit_label' => 'Continue',
+                            'redirect_route' => [
+                                'name' => 'app_domesticsurvey_day_view',
+                                'parameters' => ['dayNumber' => 'subject.day.number'],
                             ],
                         ],
                     ],
@@ -98,9 +164,9 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => 'app_domesticsurvey_day_view',
-                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            'redirect_route' => [
+                                'name' => 'app_domesticsurvey_day_view',
+                                'parameters' => ['dayNumber' => 'subject.day.number'],
                             ],
                         ],
                         'from' => StateObject::STATE_GOODS_WEIGHT,
@@ -140,7 +206,7 @@ return static function (ContainerConfigurator $container) {
                         'guard' => '!is_empty(subject.getSubject().getId())
                             && subject.getSubject().isGoodsDescriptionEmptyOption()',
                         'metadata' => array_merge($editEndMetadata, [
-                            'submitLabel' => 'Continue',
+                            'submit_label' => 'Continue',
                         ]),
                     ],
 

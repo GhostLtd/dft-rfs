@@ -1,14 +1,24 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Form\DomesticSurvey\DaySummary\BorderCrossingType;
+use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
+use App\Form\DomesticSurvey\DaySummary\DestinationType;
+use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
+use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
+use App\Form\DomesticSurvey\DaySummary\GoodsDescriptionType;
+use App\Form\DomesticSurvey\DaySummary\GoodsWeightType;
+use App\Form\DomesticSurvey\DaySummary\HazardousGoodsType;
+use App\Form\DomesticSurvey\DaySummary\NumberOfStopsType;
+use App\Form\DomesticSurvey\DaySummary\OriginType;
 use App\Workflow\DomesticSurvey\DaySummaryState as StateObject;
 
 return static function (ContainerConfigurator $container) {
-    $editEndMetadata =  [
+    $editEndMetadata = [
         'persist' => true,
-        'redirectRoute' => [
-            'routeName' => 'app_domesticsurvey_day_view',
-            'parameterMappings' => ['dayNumber' => 'day.number'],
+        'redirect_route' => [
+            'name' => 'app_domesticsurvey_day_view',
+            'parameters' => ['dayNumber' => 'subject.day.number'],
         ],
     ];
 
@@ -19,23 +29,97 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_ORIGIN,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_INTRO,
-                    StateObject::STATE_ORIGIN,
-                    StateObject::STATE_DESTINATION,
-                    StateObject::STATE_BORDER_CROSSING,
-                    StateObject::STATE_DISTANCE_TRAVELLED,
-                    StateObject::STATE_FURTHEST_STOP,
-                    StateObject::STATE_GOODS_DESCRIPTION,
-                    StateObject::STATE_HAZARDOUS_GOODS,
-                    StateObject::STATE_CARGO_TYPE,
-                    StateObject::STATE_GOODS_WEIGHT,
-                    StateObject::STATE_NUMBER_OF_STOPS,
-                    StateObject::STATE_END,
+                    [
+                        'name' => StateObject::STATE_INTRO,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/intro.html.twig',
+                            'is_valid_alternative_start_place' => 'is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ORIGIN,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-origin.html.twig',
+                            'form_class' => OriginType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_DESTINATION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-destination.html.twig',
+                            'form_class' => DestinationType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_BORDER_CROSSING,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-border-crossing.html.twig',
+                            'form_class' => BorderCrossingType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_DISTANCE_TRAVELLED,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-distance-travelled.html.twig',
+                            'form_class' => DistanceTravelledType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_FURTHEST_STOP,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-furthest-stop.html.twig',
+                            'form_class' => FurthestStopType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_GOODS_DESCRIPTION,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-goods-description.html.twig',
+                            'form_class' => GoodsDescriptionType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-hazardous-goods.html.twig',
+                            'form_class' => HazardousGoodsType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CARGO_TYPE,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-cargo-type.html.twig',
+                            'form_class' => CargoTypeType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_GOODS_WEIGHT,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-goods-weight.html.twig',
+                            'form_class' => GoodsWeightType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_NUMBER_OF_STOPS,
+                        'metadata' => [
+                            'template' => 'domestic_survey/day_summary/form-number-of-stops.html.twig',
+                            'form_class' => NumberOfStopsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_END,
+                    ],
                 ],
+
                 'transitions' => [
                     'intro_to_origin' => [
                         'from' => StateObject::STATE_INTRO,
@@ -93,9 +177,9 @@ return static function (ContainerConfigurator $container) {
                     'finish' => [
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => [
-                                'routeName' => 'app_domesticsurvey_day_view',
-                                'parameterMappings' => ['dayNumber' => 'day.number'],
+                            'redirect_route' => [
+                                'name' => 'app_domesticsurvey_day_view',
+                                'parameters' => ['dayNumber' => 'subject.day.number'],
                             ],
                         ],
                         'from' => StateObject::STATE_NUMBER_OF_STOPS,

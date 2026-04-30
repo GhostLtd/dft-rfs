@@ -2,6 +2,12 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Controller\PreEnquiry\PreEnquiryController;
+use App\Form\PreEnquiry\BusinessDetailsType;
+use App\Form\PreEnquiry\CompanyNameType;
+use App\Form\PreEnquiry\CorrespondenceAddressType;
+use App\Form\PreEnquiry\CorrespondenceDetailsType;
+use App\Form\PreEnquiry\HgvDetailsType;
+use App\Form\PreEnquiry\LgvDetailsType;
 use App\Workflow\PreEnquiry\PreEnquiryState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -9,7 +15,7 @@ return static function (ContainerConfigurator $container) {
 
     $endMetadata = [
         'persist' => true,
-        'redirectRoute' => $preEnquirySummaryRoute,
+        'redirect_route' => $preEnquirySummaryRoute,
     ];
 
     $guardNotPersisted = 'is_empty(subject.getSubject().getId())';
@@ -22,18 +28,68 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_INTRODUCTION,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_INTRODUCTION,
-                    StateObject::STATE_COMPANY_NAME,
-                    StateObject::STATE_CORRESPONDENCE_DETAILS,
-                    StateObject::STATE_CORRESPONDENCE_ADDRESS,
-                    StateObject::STATE_HGV_DETAILS,
-                    StateObject::STATE_LGV_DETAILS,
-                    StateObject::STATE_BUSINESS_DETAILS,
-                    StateObject::STATE_SUMMARY,
+                    [
+                        'name' => StateObject::STATE_INTRODUCTION,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/introduction.html.twig',
+                            'is_valid_start_place' => 'is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_COMPANY_NAME,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-company-name.html.twig',
+                            'form_class' => CompanyNameType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CORRESPONDENCE_DETAILS,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-correspondence-details.html.twig',
+                            'form_class' => CorrespondenceDetailsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CORRESPONDENCE_ADDRESS,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-correspondence-address.html.twig',
+                            'form_class' => CorrespondenceAddressType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_HGV_DETAILS,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-hgv-details.html.twig',
+                            'form_class' => HgvDetailsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_LGV_DETAILS,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-lgv-details.html.twig',
+                            'form_class' => LgvDetailsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_BUSINESS_DETAILS,
+                        'metadata' => [
+                            'template' => 'pre_enquiry/form-business-details.html.twig',
+                            'form_class' => BusinessDetailsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_SUMMARY,
+                    ],
                 ],
                 'transitions' => [
                     'start' => [

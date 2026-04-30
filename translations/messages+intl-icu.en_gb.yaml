@@ -5,6 +5,10 @@ service:
   international:
     name: International Road Haulage Survey
 
+actions:
+  confirm: Confirm
+  cancel: Cancel
+
 format:
   date:
     written-with-year: 'jS F Y'
@@ -17,6 +21,12 @@ format:
     default: 'g:i a'
   date-time:
     default: 'd/m/Y g:i a'
+
+notification:
+  failed: Failed
+  important: Important
+  success: Success
+  warning: Warning
 
 common:
   logout: Sign out
@@ -75,11 +85,6 @@ common:
       help: ''
   error-summary:
     problem: There is a problem
-  notification:
-    failed: Failed
-    important: Important
-    success: Success
-    warning: Warning
   action:
     place: Place
     type: Action

@@ -121,7 +121,7 @@ class RouteController extends AbstractController
             ->setSubject($route)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_routes_list')
+                $this->generateUrl('admin_routes_list')
             );
 
         if ($data instanceof RedirectResponse) {

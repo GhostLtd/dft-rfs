@@ -2,8 +2,9 @@
 
 namespace App\ListPage;
 
-use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilter;
+use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\TextFilter;
 use App\Repository\Route\ForeignPortRepository;
 use App\Repository\Route\UkPortRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -12,8 +13,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PortListPage extends AbstractListPage
 {
-    public const TYPE_PORT_FOREIGN = 'foreign';
-    public const TYPE_PORT_UK = 'uk';
+    public const string TYPE_PORT_FOREIGN = 'foreign';
+    public const string TYPE_PORT_UK = 'uk';
 
     protected string $portType;
 

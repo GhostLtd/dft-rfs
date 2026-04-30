@@ -10,7 +10,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testChangeCompanyNameIncorrect(): void
     {
         $this->performChangeTest(0, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/company-name', 'company_name_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/company-name', 'company_name_button_group_continue', [
                 new FormTestCase([
                     'company_name[isCorrectCompanyName]' => 'no',
                     'company_name[companyName]' => 'Dabble Sockets Ltd',
@@ -25,7 +25,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testChangeCompanyNameCorrect(): void
     {
         $this->performChangeTest(0, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/company-name', 'company_name_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/company-name', 'company_name_button_group_continue', [
                 new FormTestCase([
                     'company_name[isCorrectCompanyName]' => 'yes',
                 ]),
@@ -39,7 +39,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testHgvDetailsChange(): void
     {
         $this->performChangeTest(2, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_button_group_continue', [
                 new FormTestCase([
                     'hgv_details[totalHgvCount]' => '123',
                     'hgv_details[internationalJourneyHgvCount]' => '22',
@@ -56,7 +56,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testLgvDetailsChange(): void
     {
         $this->performChangeTest(5, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_button_group_continue', [
                 new FormTestCase([
                     'lgv_details[totalLgvCount]' => '50',
                     'lgv_details[internationalJourneyLgvCount]' => '15',
@@ -73,7 +73,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testNumberOfEmployeesChange(): void
     {
         $this->performChangeTest(1, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/business-details', 'business_details_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/business-details', 'business_details_button_group_continue', [
                 new FormTestCase([
                     'business_details[numberOfEmployees]' => '10001-30000',
                 ]),
@@ -86,7 +86,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testCorrespondenceDetailsChange(): void
     {
         $this->performChangeTest(8, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_button_group_continue', [
                 new FormTestCase([
                     'correspondence_details[contactName]' => 'Charlie',
                     'correspondence_details[contactTelephone]' => '07700 900999',
@@ -103,7 +103,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testChangeCompanyAddressIncorrect(): void
     {
         $this->performChangeTest(11, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_button_group_continue', [
                 new FormTestCase([
                     'correspondence_address[isCorrectAddress]' => 'no',
                     'correspondence_address[contactAddress][lines][line2]' => 'Apple',
@@ -128,7 +128,7 @@ class PreEnquiryChangeTest extends AbstractPreEnquiryTest
     public function testChangeCompanyAddressCorrect(): void
     {
         $this->performChangeTest(11, function(array &$expectedData) {
-            $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
+            $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_button_group_continue', [
                 new FormTestCase([
                     'correspondence_address[isCorrectAddress]' => 'yes',
                 ]),

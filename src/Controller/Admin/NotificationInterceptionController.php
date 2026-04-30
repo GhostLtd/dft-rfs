@@ -54,7 +54,7 @@ class NotificationInterceptionController extends AbstractController
             ->setSubject($notificationInterception)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_notification_interception_list')
+                $this->generateUrl('admin_notification_interception_list')
             );
 
         if ($data instanceof RedirectResponse) {
@@ -89,7 +89,7 @@ class NotificationInterceptionController extends AbstractController
 
                 if ($mode === self::MODE_ADD) {
                     $banner = new NotificationBanner(
-                        'common.notification.success',
+                        'notification.success',
                         new TranslatableMessage("notification-interception.add.confirmed-notification.heading", [], 'admin'),
                         new TranslatableMessage("notification-interception.add.confirmed-notification.content", [], 'admin'),
                         ['style' => NotificationBanner::STYLE_SUCCESS]

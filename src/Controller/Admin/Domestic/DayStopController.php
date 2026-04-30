@@ -143,7 +143,7 @@ class DayStopController extends AbstractController
             ->setSubject($stop)
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#{$day->getId()}"
+                $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#{$day->getId()}"
             );
     }
 }

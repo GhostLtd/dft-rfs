@@ -80,7 +80,7 @@ class MaintenanceWarningController extends AbstractController
             ->setSubject($maintenanceWarning)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_maintenance_warning_list')
+                $this->generateUrl('admin_maintenance_warning_list')
             );
     }
 }

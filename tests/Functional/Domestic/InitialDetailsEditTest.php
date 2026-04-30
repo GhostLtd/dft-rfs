@@ -39,7 +39,7 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/change-contact-details',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-contact-details", "contact_details_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/change-contact-details", "contact_details_button_group_continue", [
                         new FormTestCase([
                             "contact_details" => [
                                 "contactName" => null,
@@ -88,7 +88,7 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_YES,
@@ -104,14 +104,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_ON_HIRE,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/hiree-details", "hiree_details_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/hiree-details", "hiree_details_button_group_continue", [
                         new FormTestCase([], [
                             '#hiree_details_hireeName',
                             '#hiree_details_hireeTelephone',
@@ -161,14 +161,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_SOLD,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/sold-details", "sold_details_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/sold-details", "sold_details_button_group_continue", [
                         new FormTestCase([], [
                             "#sold_details_soldDate",
                             "#sold_details_newOwnerName",
@@ -224,14 +224,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/scrapped-details", "scrapped_details_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/scrapped-details", "scrapped_details_button_group_continue", [
                         new FormTestCase([], [
                             "#scrapped_details_scrappedDate",
                         ]),

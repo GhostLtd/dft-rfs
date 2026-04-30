@@ -9,15 +9,11 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 class FeaturesCollector extends DataCollector
 {
-    public function __construct(protected Features $features)
-    {
-    }
-
     #[\Override]
     public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         $this->data = [
-            'features' => $this->features->getEnabledFeatures(),
+            'features' => Features::getEnabledFeatures(),
         ];
     }
 

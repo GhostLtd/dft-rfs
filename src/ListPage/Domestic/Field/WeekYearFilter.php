@@ -5,8 +5,8 @@ namespace App\ListPage\Domestic\Field;
 
 
 use App\Form\Admin\DomesticSurvey\SurveyListField\WeekYearFilterType;
-use App\ListPage\Field\FilterableInterface;
-use App\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\FilterableInterface;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use App\Utility\Domestic\WeekNumberHelper;
 use Doctrine\ORM\QueryBuilder;
 
@@ -32,7 +32,7 @@ class WeekYearFilter extends Simple implements FilterableInterface
     }
 
     #[\Override]
-    public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
+    public function addFilterCondition(QueryBuilder $queryBuilder, string|array $formData): QueryBuilder
     {
         if (!isset($formData['year']) || !is_numeric($formData['year'])) {
             return $queryBuilder;

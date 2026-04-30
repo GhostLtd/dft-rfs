@@ -4,16 +4,17 @@ namespace App\ListPage\Field;
 
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Ghost\GovUkCoreBundle\ListPage\Field\TextFilter;
 
-class MultiFieldTextFilter extends TextFilter implements FilterableInterface
+class MultiFieldTextFilter extends TextFilter
 {
-    public function __construct(string $label, private readonly array $propertyPaths, protected array $formOptions = [], array $cellOptions = [])
+    public function __construct(string $label, private readonly array $propertyPaths, array $formOptions = [], array $cellOptions = [])
     {
-        parent::__construct($label, "", $cellOptions);
+        parent::__construct($label, "", $formOptions, $cellOptions);
     }
 
     #[\Override]
-    public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
+    public function addFilterCondition(QueryBuilder $queryBuilder, string $formData): QueryBuilder
     {
         $trimmed = trim($formData);
         return $queryBuilder

@@ -161,11 +161,11 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 
     protected function introAndContactDetails(): void
     {
-        $this->formTestAction('/international-survey/initial-details/introduction', 'form_buttons_continue', [
+        $this->formTestAction('/international-survey/initial-details/introduction', 'form_button_group_continue', [
             new FormTestCase([]),
         ]);
 
-        $this->formTestAction('/international-survey/initial-details/contact-details', 'contact_details_buttons_continue', [
+        $this->formTestAction('/international-survey/initial-details/contact-details', 'contact_details_button_group_continue', [
             new FormTestCase([
                 'contact_details[contactName]' => 'My name',
                 'contact_details[contactTelephone]' => 'My telephone',
@@ -176,7 +176,7 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 
     protected function activityStatus(string $status): void
     {
-        $this->formTestAction('/international-survey/initial-details/activity-status', 'activity_status_buttons_continue', [
+        $this->formTestAction('/international-survey/initial-details/activity-status', 'activity_status_button_group_continue', [
             new FormTestCase([
                 'activity_status[activityStatus]' => $status,
             ]),
@@ -185,7 +185,7 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 
     protected function businessDetails(string $numberOfEmployees, string $businessNature): void
     {
-        $this->formTestAction('/international-survey/initial-details/business-details', 'business_details_buttons_continue', [
+        $this->formTestAction('/international-survey/initial-details/business-details', 'business_details_button_group_continue', [
             new FormTestCase([
                 'business_details[numberOfEmployees]' => $numberOfEmployees,
                 'business_details[businessNature]' => $businessNature,
@@ -195,7 +195,7 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 
     protected function annualJourneyCount(int $hgvJourneyCount, int $lgvJourneyCount): void
     {
-        $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_buttons_continue', [
+        $this->formTestAction('/international-survey/initial-details/number-of-trips', 'number_of_trips_button_group_continue', [
             new FormTestCase([
                 'number_of_trips[annualInternationalHGVJourneyCount]' => $hgvJourneyCount,
                 'number_of_trips[annualInternationalLGVJourneyCount]' => $lgvJourneyCount,

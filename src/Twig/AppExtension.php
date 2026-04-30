@@ -19,7 +19,6 @@ use App\Utility\Domestic\WeekNumberHelper;
 use App\Utility\LoadingPlaceHelper;
 use App\Utility\PostcodeHelper;
 use App\Utility\RegistrationMarkHelper;
-use App\Utility\SessionTimeoutHelper;
 use App\Workflow\InternationalSurvey\ActionState;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use App\Workflow\InternationalSurvey\TripState;
@@ -39,8 +38,8 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    public const TRANSFER_UNLOADING = 'unloading';
-    public const TRANSFER_LOADING = 'loading';
+    public const string TRANSFER_UNLOADING = 'unloading';
+    public const string TRANSFER_LOADING = 'loading';
 
     protected string $iconsDir;
 
@@ -48,9 +47,7 @@ class AppExtension extends AbstractExtension
         KernelInterface $kernel,
         protected RouterInterface $router,
         protected TranslatorInterface $translator,
-        protected Features $features,
         protected LoadingPlaceHelper $loadingPlaceHelper,
-        protected SessionTimeoutHelper $sessionTimeoutHelper
     ) {
         $projectDir = $kernel->getProjectDir();
         $this->iconsDir = "$projectDir/assets/icons";
@@ -93,8 +90,6 @@ class AppExtension extends AbstractExtension
             new TwigFunction('flattenChoices', $this->flattenChoices(...)),
             new TwigFunction('formatGoodsDescription', $this->formatGoodsDescription(...)),
             new TwigFunction('labelForLoadingAction', $this->loadingPlaceHelper->getLabelForLoadingAction(...)),
-            new TwigFunction('sessionExpiryTime', $this->sessionTimeoutHelper->getExpiryTime(...)),
-            new TwigFunction('sessionWarningTime', $this->sessionTimeoutHelper->getWarningTime(...)),
             new TwigFunction('shiftMapping', $this->shiftMapping(...)),
             new TwigFunction('svgIcon', $this->svgIcon(...), ['is_safe' => ['html']]),
             new TwigFunction('unloadingSummary', $this->loadingPlaceHelper->getUnloadingSummary(...)),
@@ -114,7 +109,7 @@ class AppExtension extends AbstractExtension
 
     public function isFeatureEnabled($str): bool {
         try {
-            return $this->features->isEnabled($str, true);
+            return Features::isEnabled($str);
         } catch(Exception) {
             throw new SyntaxError("Unknown feature '{$str}'");
         }
@@ -211,10 +206,10 @@ class AppExtension extends AbstractExtension
 
     protected array $wizardMapping = [
         'pre-enquiry' => ['class' => PreEnquiryState::class, 'route' => PreEnquiryController::WIZARD_ROUTE],
-        'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => InitialDetailsController::WIZARD_ROUTE],
-        'international-vehicle' => ['class' => VehicleState::class, 'route' => VehicleEditController::WIZARD_ROUTE],
-        'international-trip' => ['class' => TripState::class, 'route' => TripEditController::WIZARD_ROUTE],
-        'international-action' => ['class' => ActionState::class, 'route' => 'app_internationalsurvey_action_edit_state'],
+        'international-initial-details' => ['class' => InitialDetailsState::class, 'route' => 'app_internationalsurvey_initial_wizard'],
+        'international-vehicle' => ['class' => VehicleState::class, 'route' => 'app_internationalsurvey_vehicle_edit_wizard'],
+        'international-trip' => ['class' => TripState::class, 'route' => 'app_internationalsurvey_trip_edit_wizard'],
+        'international-action' => ['class' => ActionState::class, 'route' => 'app_internationalsurvey_action_edit_wizard'],
     ];
 
     protected function getWizardMeta(string $wizard): array {

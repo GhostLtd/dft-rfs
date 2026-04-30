@@ -3,8 +3,9 @@
 namespace App\ListPage;
 
 use App\ListPage\Field\MultiFieldTextFilter;
-use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilter;
+use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\TextFilter;
 use App\Repository\NotificationInterceptionRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;

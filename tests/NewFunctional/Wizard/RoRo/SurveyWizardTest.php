@@ -31,11 +31,11 @@ class SurveyWizardTest extends AbstractRoRoTest
         $options = [FormTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
         $this->pathTestAction($url('/view'), $options);
-        $this->client->clickLink('Start');
+        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Start'));
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_buttons_continue',
+            'introduction_button_group_continue',
             [
                 new FormTestCase([], ['#introduction_isActiveForPeriod']),
                 new FormTestCase([
@@ -51,11 +51,11 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         // We test the bulk-entry form elsewhere, in its own test
         $this->pathTestAction($url('/edit/data-entry'), $options);
-        $this->client->clickLink('Back');
+        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Back'));
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_buttons_continue',
+            'introduction_button_group_continue',
             [
                 new FormTestCase([
                     'introduction[isActiveForPeriod]' => 'true',
@@ -72,7 +72,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/vehicle-counts'),
-            'vehicle_counts_buttons_continue',
+            'vehicle_counts_button_group_continue',
             [
                 new FormTestCase([
                     "vehicle_counts[countryVehicleCounts][{$albaniaId}][vehicleCount]" => '-1',
@@ -88,7 +88,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/comments'),
-            'comments_buttons_continue',
+            'comments_button_group_continue',
             [
                 new FormTestCase([]),
             ],
@@ -116,11 +116,11 @@ class SurveyWizardTest extends AbstractRoRoTest
         $options = [FormTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
         $this->pathTestAction($url('/view'), $options);
-        $this->client->clickLink('Start');
+        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Start'));
 
         $this->formTestAction(
             $url('/edit/introduction'),
-            'introduction_buttons_continue',
+            'introduction_button_group_continue',
             [
                 new FormTestCase([
                     'introduction[isActiveForPeriod]' => 'false',
@@ -131,7 +131,7 @@ class SurveyWizardTest extends AbstractRoRoTest
 
         $this->formTestAction(
             $url('/edit/comments'),
-            'comments_buttons_continue',
+            'comments_button_group_continue',
             [
                 new FormTestCase([]),
             ],

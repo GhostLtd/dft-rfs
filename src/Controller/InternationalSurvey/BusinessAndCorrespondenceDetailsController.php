@@ -32,7 +32,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
         $survey = $this->getSurvey();
 
         if (!$survey->isInitialDetailsComplete()) {
-            return $this->redirectToRoute(InitialDetailsController::WIZARD_ROUTE, ['state' => InitialDetailsState::STATE_INTRODUCTION]);
+            return $this->redirectToRoute('app_internationalsurvey_initial_wizard', ['state' => InitialDetailsState::STATE_INTRODUCTION]);
         }
 
         $response = $survey->getResponse();

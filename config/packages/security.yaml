@@ -58,7 +58,7 @@ security:
             lazy: true
             stateless: true
             custom_authenticators:
-                - App\Security\GoogleIapAuthenticator
+                - App\Security\GoogleIap\IapAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

@@ -24,10 +24,10 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/introduction", "form_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/introduction", "form_button_group_continue", [
                 new FormTestCase([], []),
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/day-start", "origin_buttons_continue", $originTests),
+            new WizardStepUrlTestCase("{$baseUrl}/summary/day-start", "origin_button_group_continue", $originTests),
         ];
 
         $destinationUrl = "{$baseUrl}/summary/day-end";
@@ -39,7 +39,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
 
         $destinationTests = self::getLocationFormTestCases('destination', $goodsUnloaded, 'Worthing');
         $testData = array_merge($testData, [
-            new WizardStepUrlTestCase($destinationUrl, "destination_buttons_continue", $destinationTests),
+            new WizardStepUrlTestCase($destinationUrl, "destination_button_group_continue", $destinationTests),
         ]);
 
         if ($isHazardous === null) {
@@ -47,7 +47,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
         }
 
         return array_merge($testData, [
-            new WizardStepUrlTestCase($furthestStopUrl, "furthest_stop_buttons_continue", [
+            new WizardStepUrlTestCase($furthestStopUrl, "furthest_stop_button_group_continue", [
                 new FormTestCase([], [
                     "#furthest_stop_furthestStop",
                 ]),
@@ -57,7 +57,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/border-crossing", "border_crossing_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/border-crossing", "border_crossing_button_group_continue", [
                 new FormTestCase([
                     "border_crossing" => [
                         "borderCrossed" => 1,
@@ -65,7 +65,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/distance-travelled", "distance_travelled_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/distance-travelled", "distance_travelled_button_group_continue", [
                 new FormTestCase([], [
                     "#distance_travelled_distanceTravelledLoaded_value",
                     "#distance_travelled_distanceTravelledLoaded_unit",
@@ -85,7 +85,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ]
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-description", "goods_description_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-description", "goods_description_button_group_continue", [
                 new FormTestCase([], ["#goods_description_goodsDescription"]),
                 new FormTestCase([
                     "goods_description" => [
@@ -101,8 +101,8 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ]
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/hazardous-goods", "hazardous_goods_buttons_continue", self::getHazardousTests($isHazardous)),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/cargo-type", "cargo_type_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/hazardous-goods", "hazardous_goods_button_group_continue", self::getHazardousTests($isHazardous)),
+            new WizardStepUrlTestCase("{$baseUrl}/summary/cargo-type", "cargo_type_button_group_continue", [
                 new FormTestCase([], [
                     "#cargo_type_cargoTypeCode",
                 ]),
@@ -112,7 +112,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-weight", "goods_weight_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/goods-weight", "goods_weight_button_group_continue", [
                 new FormTestCase([], [
                     "#goods_weight_weightOfGoodsLoaded",
                     "#goods_weight_weightOfGoodsUnloaded",
@@ -124,7 +124,7 @@ class DaySummaryData extends AbstractDayStopOrSummaryData
                     ],
                 ])
             ]),
-            new WizardStepUrlTestCase("{$baseUrl}/summary/number-of-stops", "number_of_stops_buttons_continue", [
+            new WizardStepUrlTestCase("{$baseUrl}/summary/number-of-stops", "number_of_stops_button_group_continue", [
                 new FormTestCase([], [
                     "#number_of_stops_group_numberOfStopsLoading",
                     "#number_of_stops_group_numberOfStopsUnloading",

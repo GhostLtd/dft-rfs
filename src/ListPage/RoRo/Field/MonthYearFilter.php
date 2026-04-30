@@ -3,8 +3,8 @@
 namespace App\ListPage\RoRo\Field;
 
 use App\Form\Admin\RoRo\SurveyListField\MonthYearFilterType;
-use App\ListPage\Field\FilterableInterface;
-use App\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\FilterableInterface;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use Doctrine\ORM\QueryBuilder;
 
 class MonthYearFilter extends Simple implements FilterableInterface

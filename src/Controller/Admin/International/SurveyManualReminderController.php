@@ -52,7 +52,7 @@ class SurveyManualReminderController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
+                $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
             );
     }
 }

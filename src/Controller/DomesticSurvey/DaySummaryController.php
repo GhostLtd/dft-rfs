@@ -2,7 +2,6 @@
 
 namespace App\Controller\DomesticSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
 use App\Entity\Domestic\Day;
@@ -12,23 +11,27 @@ use App\Exception\DayTypeMismatchException;
 use App\Repository\Domestic\DayRepository;
 use App\Repository\Domestic\DaySummaryRepository;
 use App\Utility\ConfirmAction\Domestic\Admin\DeleteDaySummaryConfirmAction;
-use App\Workflow\DomesticSurvey\DayStopState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
-use App\Workflow\FormWizardStateInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
 #[Route(path: '/domestic-survey/day-{dayNumber}', name: 'app_domesticsurvey_daysummary_', requirements: ['dayNumber' => '[1-7]'])]
-class DaySummaryController extends AbstractSessionStateWorkflowController
+class DaySummaryController extends AbstractSessionStateFormWizardController
 {
     protected int $dayNumber;
 
@@ -36,27 +39,36 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
     private DaySummary $daySummary;
 
+    public function __construct(
+        FormWizardManager                $formWizardManager,
+        protected RequestStack                     $requestStack,
+        PropertyMerger                   $propertyMerger,
+        protected EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
+    }
+
     public function getSessionKey(): string
     {
         $routeParams = $this->requestStack->getCurrentRequest()->attributes->get('_route_params', []);
-        $dayNumber = 'day-' . $routeParams['dayNumber'];
+        $dayNumber = 'day-' . ($routeParams['dayNumber'] ?? $this->dayNumber);
         $class = static::class;
         return "wizard.{$class}.summary.{$dayNumber}";
     }
 
     #[Route(path: '/summary/start', name: 'start')]
     #[Route(path: '/summary/{state}', name: 'wizard')]
-    public function index(WorkflowInterface $domesticSurveyDaySummaryStateMachine, Request $request, $dayNumber, $state = null): Response
+    public function index(Request $request, $dayNumber, ?string $state = null): Response
     {
         $this->dayNumber = intval($dayNumber);
 
         $additionalViewData = [];
-        if ($state === DayStopState::STATE_INTRO) {
+        if ($state === DaySummaryState::STATE_INTRO) {
             $additionalViewData['exampleSummaryDay'] = $this->getExampleDay();
         }
 
         try {
-            return $this->doWorkflow($domesticSurveyDaySummaryStateMachine, $request, $state, $additionalViewData);
+            return $this->doWorkflow($request, $state, $additionalViewData);
         }
         catch(DayTypeMismatchException) {
             return $this->redirectToRoute('app_domesticsurvey_day_view', ['dayNumber' => $dayNumber]);
@@ -87,37 +99,42 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             ;
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
         $databaseDaySummary = $this->getDaySummary();
 
-        /** @var DaySummaryState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new DaySummaryState());
-        $sessionDaySummary = $formWizard->getSubject();
+        /** @var DaySummaryState|null $state */
+        $state = $this->session->get($this->getSessionKey(), null);
 
-        if ($sessionDaySummary && $sessionDaySummary->getId() === $databaseDaySummary->getId()) {
+        if (!$state) {
+            $state = new DaySummaryState();
+            $state->setSubject($databaseDaySummary);
+        }
+
+        $sessionDaySummary = $state->getSubject();
+        if ($sessionDaySummary->getId() === $databaseDaySummary->getId()) {
             $databaseDaySummary->merge($sessionDaySummary);
         }
 
-        $formWizard->setSubject($databaseDaySummary);
-        return $formWizard;
+        $state->setSubject($databaseDaySummary);
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute('app_domesticsurvey_daysummary_wizard', ['dayNumber' => $this->dayNumber, 'state' => $state]);
+        return new RedirectResponse($this->generateUrl('app_domesticsurvey_daysummary_wizard', [
+            'dayNumber' => $this->dayNumber,
+            'state' => (string) $place,
+        ]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
         if (!$this->daySummary->getId()) {
             // new summary on this day - redirect to dashboard
-            return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
+            return new RedirectResponse($this->generateUrl(IndexController::SUMMARY_ROUTE));
         }
-        return $this->redirectToRoute(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]);
+        return new RedirectResponse($this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]));
     }
 
     #[Route(path: '/delete-summary-day', name: 'delete')]
@@ -131,8 +148,8 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
             ->setSubject($daySummary)
             ->controller(
                 $request,
-                fn() => $this->generateUrl(IndexController::SUMMARY_ROUTE),
-                fn() => $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
+                $this->generateUrl(IndexController::SUMMARY_ROUTE),
+                $this->generateUrl(DayController::VIEW_ROUTE, ['dayNumber' => $this->dayNumber]),
             );
     }
 
@@ -152,7 +169,6 @@ class DaySummaryController extends AbstractSessionStateWorkflowController
 
             if ($day) {
                 if (!$day->getStops()->isEmpty()) {
-                    // This is already a detailed day (one with stops), so you can't use the summary wizard
                     throw new DayTypeMismatchException();
                 }
 

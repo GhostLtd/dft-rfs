@@ -28,7 +28,6 @@ class LoginController extends AbstractController
 {
     #[Route("/login", name: "login")]
     public function login(
-        Features $features,
         LoginLinkHandlerInterface $loginLinkHandler,
         LoggerInterface $logger,
         MaintenanceWarningRepository $maintenanceWarningRepository,
@@ -60,7 +59,7 @@ class LoginController extends AbstractController
                     $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
 
                     if ($this->getParameter('kernel.environment') === 'dev' &&
-                        $features->isEnabled(Features::DEV_RORO_AUTO_LOGIN)
+                        Features::isEnabled(Features::DEV_RORO_AUTO_LOGIN)
                     ) {
                         $logger->info("RoRo Login submitted: {$email} - success - DEV mode auto-redirect");
                         return new RedirectResponse($loginLinkDetails->getUrl());

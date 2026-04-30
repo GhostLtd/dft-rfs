@@ -2,13 +2,13 @@
 
 namespace App\ListPage\Domestic\Field;
 
-use App\ListPage\Field\ChoiceFilter;
+use Ghost\GovUkCoreBundle\ListPage\Field\ChoiceFilter;
 use Doctrine\ORM\QueryBuilder;
 
 class InPossessionFilter extends ChoiceFilter
 {
     #[\Override]
-    public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
+    public function addFilterCondition(QueryBuilder $queryBuilder, string $formData): QueryBuilder
     {
         if ($formData === 'yes-exempt' || $formData === 'yes') {
             $qb = $queryBuilder

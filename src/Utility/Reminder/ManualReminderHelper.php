@@ -8,7 +8,7 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
-use App\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 use App\Repository\AuditLog\AuditLogRepository;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;

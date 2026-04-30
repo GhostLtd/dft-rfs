@@ -15,7 +15,6 @@ class LoadingWithoutUnloadingType extends AbstractType
     {
         $builder
             ->add('is_correct', Gds\BooleanChoiceType::class, [
-                'mapped' => false,
                 'choices' => [
                     'international.closing-details.loading-without-unloading.is-correct.yes' => "true",
                     'international.closing-details.loading-without-unloading.is-correct.no' => "false",

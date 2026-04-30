@@ -2,27 +2,38 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\Trip;
 use App\Repository\International\TripRepository;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\TripState;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
-class TripEditController extends AbstractSessionStateWorkflowController
+class TripEditController extends AbstractSessionStateFormWizardController
 {
     use SurveyHelperTrait;
 
-    public const WIZARD_ROUTE = 'app_internationalsurvey_trip_edit_state';
-
     protected ?Trip $trip = null;
+
+    public function __construct(
+        FormWizardManager       $formWizardManager,
+        protected RequestStack  $requestStack,
+        PropertyMerger          $propertyMerger,
+        protected TripRepository $tripRepository,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
+    }
 
     public function getSessionKey(): string
     {
@@ -32,15 +43,10 @@ class TripEditController extends AbstractSessionStateWorkflowController
         return "wizard.{$class}.{$tripId}";
     }
 
-    #[Route(path: '/international-survey/trips/{tripId}/edit/{state}', name: self::WIZARD_ROUTE)]
-    public function index(WorkflowInterface $internationalSurveyTripStateMachine,
-                          Request $request,
-                          TripRepository $tripRepository,
-                          string $tripId,
-                          string $state): Response
+    #[Route(path: '/international-survey/trips/{tripId}/edit/{state}', name: 'app_internationalsurvey_trip_edit_wizard')]
+    public function index(Request $request, string $tripId, string $state): Response
     {
-        $surveyResponse = $this->getSurveyResponse();
-        $this->trip = $tripRepository->findOneByIdAndSurveyResponse($tripId, $surveyResponse);
+        $this->trip = $this->tripRepository->findOneByIdAndSurveyResponse($tripId, $this->getSurveyResponse());
 
         if (!$this->trip) {
             throw new NotFoundHttpException();
@@ -50,31 +56,31 @@ class TripEditController extends AbstractSessionStateWorkflowController
             throw new NotFoundHttpException();
         }
 
-        return $this->doWorkflow($internationalSurveyTripStateMachine, $request, $state);
+        return $this->doWorkflow($request, $state);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
-        /** @var FormWizardStateInterface $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new TripState());
+        /** @var TripState $state */
+        $state = $this->session->get($this->getSessionKey(), new TripState());
 
-        $trip = $formWizard->getSubject() ?? $this->trip;
+        $trip = $state->getSubject() ?? $this->trip;
         $this->trip->mergeTripChanges($trip);
-        $formWizard->setSubject($this->trip);
+        $state->setSubject($this->trip);
 
-        return $formWizard;
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['tripId' => $this->trip->getId(), 'state' => $state]);
+        return new RedirectResponse($this->generateUrl('app_internationalsurvey_trip_edit_wizard', [
+            'tripId' => $this->trip->getId(),
+            'state' => (string) $place,
+        ]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->redirectToRoute(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]);
+        return new RedirectResponse($this->generateUrl(TripController::TRIP_ROUTE, ['id' => $this->trip->getId()]));
     }
 }

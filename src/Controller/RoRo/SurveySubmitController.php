@@ -33,9 +33,7 @@ class SurveySubmitController extends AbstractController
 
         return $surveyCompleteConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl('app_roro_survey_view', [
-                'surveyId' => $survey->getId(),
-            ])
+            $this->generateUrl('app_roro_survey_view', ['surveyId' => $survey->getId()])
         );
     }
 }

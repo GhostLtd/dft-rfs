@@ -73,7 +73,7 @@ class ViewController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(EditController::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()]) . "#tab-notes"
+                $this->generateUrl(EditController::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()]) . "#tab-notes"
             );
     }
 }

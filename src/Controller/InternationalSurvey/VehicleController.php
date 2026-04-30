@@ -53,8 +53,8 @@ class VehicleController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(IndexController::SUMMARY_ROUTE),
-                fn() => $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]),
+                $this->generateUrl(IndexController::SUMMARY_ROUTE),
+                $this->generateUrl(VehicleController::VEHICLE_ROUTE, ['vehicleId' => $vehicleId]),
             );
     }
 

@@ -2,13 +2,9 @@
 
 namespace App\ExpressionLanguage;
 
-use App\Features;
-use App\PreKernelFeatures;
 use App\Utility\International\LoadingWithoutUnloadingHelper;
-use Exception;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class GeneralExpressionProvider implements ExpressionFunctionProviderInterface
 {

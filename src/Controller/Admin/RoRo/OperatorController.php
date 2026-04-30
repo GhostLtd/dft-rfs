@@ -128,7 +128,7 @@ class OperatorController extends AbstractController
             ->setSubject($operator)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_operators_list')
+                $this->generateUrl('admin_operators_list')
             );
 
         if ($data instanceof RedirectResponse) {

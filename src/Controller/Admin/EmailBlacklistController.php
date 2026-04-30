@@ -102,8 +102,8 @@ class EmailBlacklistController extends AbstractController
             ->setSubject($emailBlacklist)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_email_blacklist_list'),
-                fn() => $this->generateUrl('admin_email_blacklist_list'),
+                $this->generateUrl('admin_email_blacklist_list'),
+                $this->generateUrl('admin_email_blacklist_list'),
             );
 
         if ($data instanceof RedirectResponse) {

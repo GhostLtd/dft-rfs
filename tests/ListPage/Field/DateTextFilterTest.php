@@ -2,7 +2,7 @@
 
 namespace App\Tests\ListPage\Field;
 
-use App\ListPage\Field\DateTextFilter;
+use Ghost\GovUkCoreBundle\ListPage\Field\DateTextFilter;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

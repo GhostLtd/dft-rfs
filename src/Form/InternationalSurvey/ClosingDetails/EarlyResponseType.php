@@ -14,7 +14,6 @@ class EarlyResponseType extends AbstractType
     {
         $builder
             ->add('is_correct', Gds\BooleanChoiceType::class, [
-                'mapped' => false,
                 'choices' => [
                     'international.closing-details.early-response.is-correct.yes' => "true",
                     'international.closing-details.early-response.is-correct.no' => "false",

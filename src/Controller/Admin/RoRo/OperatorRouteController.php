@@ -94,7 +94,7 @@ class OperatorRouteController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_operators_view', ['operatorId' => $operator->getId()])
+                $this->generateUrl('admin_operators_view', ['operatorId' => $operator->getId()])
             );
 
         if ($data instanceof RedirectResponse) {

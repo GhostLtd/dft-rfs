@@ -16,7 +16,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
     protected function businessAndVehiclesData(string $trailerConfiguration, string $axleConfiguration): array
     {
         return [
-            new WizardStepUrlTestCase("{$this->baseUrl}/business-details", "business_details_buttons_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/business-details", "business_details_button_group_continue", [
                 new FormTestCase([
                 ], [
                     "#business_details_contactBusinessName",
@@ -33,7 +33,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ]
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-trailer-configuration","vehicle_trailer_configuration_buttons_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-trailer-configuration","vehicle_trailer_configuration_button_group_continue", [
                 new FormTestCase([], [
                     "#vehicle_trailer_configuration_trailerConfiguration",
                 ]),
@@ -43,7 +43,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-axle-configuration","vehicle_axle_configuration_buttons_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-axle-configuration","vehicle_axle_configuration_button_group_continue", [
                 new FormTestCase([], [
                     "#vehicle_axle_configuration_axleConfiguration",
                 ]),
@@ -53,7 +53,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-body","vehicle_body_buttons_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-body","vehicle_body_button_group_continue", [
                 new FormTestCase([], [
                     "#vehicle_body_bodyType",
                 ]),
@@ -63,7 +63,7 @@ class BusinessAndVehiclesTest extends AbstractWizardTest
                     ],
                 ]),
             ]),
-            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-weights","vehicle_weights_buttons_continue", [
+            new WizardStepUrlTestCase("{$this->baseUrl}/vehicle-weights","vehicle_weights_button_group_continue", [
                 new FormTestCase([], [
                     "#vehicle_weights_grossWeight",
                     "#vehicle_weights_carryingCapacity",

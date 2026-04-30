@@ -48,9 +48,9 @@ abstract class AbstractPasscodeWizardTest extends AbstractProceduralWizardTest
             ->increaseActionIndex();
 
         $this->client->request('GET', '/login');
-        $this->client->submitForm('passcode_login_sign_in', [
+        $this->runAndWaitForNavigation(fn() => $this->client->submitForm('passcode_login_sign_in', [
             'passcode_login[passcode][0]' => $passcodeOne,
             'passcode_login[passcode][1]' => $passcodeTwo,
-        ]);
+        ]));
     }
 }

@@ -3,7 +3,8 @@
 namespace App\ListPage;
 
 use App\Entity\Utility\MaintenanceWarning;
-use App\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use App\Repository\MaintenanceWarningRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;

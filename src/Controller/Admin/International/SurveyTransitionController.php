@@ -33,10 +33,7 @@ class SurveyTransitionController extends AbstractController
             ->setTransition($transition);
         return $surveyWorkflowConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            ));
+            $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]));
     }
 
     #[Route(path: '/irhs/surveys/{surveyId}/flag-qa', name: SurveyController::FLAG_QA_ROUTE)]
@@ -54,10 +51,7 @@ class SurveyTransitionController extends AbstractController
 
         return $flagQaConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            )
+            $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
         );
     }
 }

@@ -184,7 +184,7 @@ abstract class AbstractFormTestAction extends PathTestAction
 
                 $this->outputPostFormFillDebug($context, $testCaseIdx);
 
-                $client->submit($form, []);
+                $context->getTestCase()->runAndWaitForNavigation(fn() => $client->submit($form, []));
 
                 $this->outputPostFormSubmitDebug($context, $testCaseIdx);
             } catch (\InvalidArgumentException $e) {

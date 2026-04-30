@@ -2,6 +2,9 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use App\Controller\InternationalSurvey\IndexController;
+use App\Form\InternationalSurvey\ClosingDetails\EarlyResponseType;
+use App\Form\InternationalSurvey\ClosingDetails\LoadingWithoutUnloadingType;
+use App\Form\InternationalSurvey\ClosingDetails\ReasonEmptySurveyType;
 use App\Workflow\InternationalSurvey\ClosingDetailsState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -12,16 +15,45 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_START,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_START,
-                    StateObject::STATE_EARLY_RESPONSE,
-                    StateObject::STATE_REASON_EMPTY_SURVEY,
-                    StateObject::STATE_LOADING_WITHOUT_UNLOADING,
-                    StateObject::STATE_CONFIRM,
-                    StateObject::STATE_END,
+                    [
+                        'name' => StateObject::STATE_START,
+                    ],
+                    [
+                        'name' => StateObject::STATE_EARLY_RESPONSE,
+                        'metadata' => [
+                            'template' => 'international_survey/closing_details/form-early-response.html.twig',
+                            'form_class' => EarlyResponseType::class,
+                            'form_data_property' => null,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_REASON_EMPTY_SURVEY,
+                        'metadata' => [
+                            'template' => 'international_survey/closing_details/form-reason-for-empty-survey.html.twig',
+                            'form_class' => ReasonEmptySurveyType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
+                        'metadata' => [
+                            'template' => 'international_survey/closing_details/form-loading-without-unloading.html.twig',
+                            'form_class' => LoadingWithoutUnloadingType::class,
+                            'form_data_property' => null,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CONFIRM,
+                        'metadata' => [
+                            'template' => 'international_survey/closing_details/confirm.html.twig',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_END,
+                    ],
                 ],
                 'transitions' => [
                     // Early response
@@ -33,33 +65,24 @@ return static function (ContainerConfigurator $container) {
                     'early_response_to_not_filled_out' => [
                         'from' => StateObject::STATE_EARLY_RESPONSE,
                         'to' => StateObject::STATE_REASON_EMPTY_SURVEY,
-                        'guard' => 'subject.getSubject().shouldAskWhyEmptySurvey()',
-                        'metadata' => [
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
-                        ],
+                        'guard' => 'subject.getIsCorrect() === true && subject.getSubject().shouldAskWhyEmptySurvey()',
                     ],
                     'early_response_to_loading_without_unloading' => [
                         'from' => StateObject::STATE_EARLY_RESPONSE,
                         'to' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
-                        'guard' => '!subject.getSubject().shouldAskWhyEmptySurvey() && irhs_has_loading_without_unloading(subject.getSubject())',
-                        'metadata' => [
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
-                        ],
+                        'guard' => 'subject.getIsCorrect() === true && !subject.getSubject().shouldAskWhyEmptySurvey() && irhs_has_loading_without_unloading(subject.getSubject())',
                     ],
                     'early_response_to_filled_out' => [
                         'from' => StateObject::STATE_EARLY_RESPONSE,
                         'to' => StateObject::STATE_CONFIRM,
-                        'guard' => '!subject.getSubject().shouldAskWhyEmptySurvey() && !irhs_has_loading_without_unloading(subject.getSubject())',
-                        'metadata' => [
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
-                        ],
+                        'guard' => 'subject.getIsCorrect() === true && !subject.getSubject().shouldAskWhyEmptySurvey() && !irhs_has_loading_without_unloading(subject.getSubject())',
                     ],
                     'early_response_to_dashboard' => [
                         'from' => StateObject::STATE_EARLY_RESPONSE,
                         'to' => StateObject::STATE_END,
+                        'guard' => 'subject.getIsCorrect() === false',
                         'metadata' => [
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => false]
+                            'redirect_route' => IndexController::SUMMARY_ROUTE,
                         ],
                     ],
 
@@ -78,23 +101,20 @@ return static function (ContainerConfigurator $container) {
                     'start_to_loading_but_not_unloading' => [
                         'from' => StateObject::STATE_START,
                         'to' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
-                        'guard' => '!subject.getSubject().isEarlierThanSurveyPeriodEnd() && !subject.getSubject().shouldAskWhyEmptySurvey() && irhs_has_loading_without_unloading(subject.getSubject())'
+                        'guard' => '!subject.getSubject().isEarlierThanSurveyPeriodEnd() && !subject.getSubject().shouldAskWhyEmptySurvey() && 
+  irhs_has_loading_without_unloading(subject.getSubject())',
                     ],
-
                     'loading_but_not_unloading' => [
                         'from' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
                         'to' => StateObject::STATE_CONFIRM,
-                        'metadata' => [
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => true]
-                        ],
+                        'guard' => 'subject.getIsCorrect() === true',
                     ],
-
                     'loading_but_not_unloading_to_dashboard' => [
                         'from' => StateObject::STATE_LOADING_WITHOUT_UNLOADING,
                         'to' => StateObject::STATE_END,
+                        'guard' => 'subject.getIsCorrect() === false',
                         'metadata' => [
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
-                            'transitionWhenFormData' => ['property' => 'is_correct', 'value' => false]
+                            'redirect_route' => IndexController::SUMMARY_ROUTE,
                         ],
                     ],
 
@@ -108,14 +128,14 @@ return static function (ContainerConfigurator $container) {
                     // Confirm
                     'finish' => [
                         'from' => StateObject::STATE_CONFIRM,
-                        'to' =>  StateObject::STATE_END,
+                        'to' => StateObject::STATE_END,
                         'metadata' => [
                             'persist' => true,
-                            'redirectRoute' => IndexController::SUMMARY_ROUTE,
-                            'submitLabel' => 'Confirm and submit survey',
+                            'redirect_route' => IndexController::SUMMARY_ROUTE,
+                            'submit_label' => 'Confirm and submit survey',
                         ],
                     ],
-                ]
+                ],
             ],
         ],
     ]);

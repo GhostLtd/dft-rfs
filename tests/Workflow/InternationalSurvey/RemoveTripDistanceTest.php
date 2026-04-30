@@ -30,7 +30,7 @@ class RemoveTripDistanceTest extends AbstractWorkflowTestCase
         $this->survey = (new Survey())
             ->setResponse($surveyResponse);
         $this->workflowState = (new TripState())
-            ->setState(TripState::STATE_SWAPPED_TRAILER)
+            ->setPlace(TripState::STATE_SWAPPED_TRAILER)
             ->setSubject($trip);
 
         $this->workflow = $this->workflowRegistry->get($this->workflowState);
@@ -58,16 +58,17 @@ class RemoveTripDistanceTest extends AbstractWorkflowTestCase
      */
     public function testTripDistance(?string $surveyStartDateModifier, bool $editing, string $initialState, array $states): void
     {
-        if ($editing && empty($states)) {
-            $this->assertFalse($this->workflowState->isValidAlternativeStartState($initialState));
-        }
         $surveyStart = new \DateTime(Survey::DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE . ' midnight');
         if ($surveyStartDateModifier) {
             $surveyStart->modify($surveyStartDateModifier);
         }
         $this->survey->setSurveyPeriodStart($surveyStart);
         $this->setSubjectPersisted($editing);
-        $this->workflowState->setState($initialState);
+
+        if ($editing && empty($states)) {
+            $this->assertFalse($this->formWizardManager->isValidAlternativeStartPlace($this->workflowState, $initialState));
+        }
+        $this->workflowState->setPlace($initialState);
 
         $this->assertStateTransitions($states);
     }

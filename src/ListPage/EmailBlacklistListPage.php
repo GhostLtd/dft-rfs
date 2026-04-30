@@ -2,8 +2,9 @@
 
 namespace App\ListPage;
 
-use App\ListPage\Field\Simple;
-use App\ListPage\Field\TextFilter;
+use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\TextFilter;
 use App\Repository\EmailBlacklistRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;

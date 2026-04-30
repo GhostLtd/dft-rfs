@@ -20,41 +20,41 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(name: 'idx_dsr_survey_vehicle', columns: ['survey_id', 'vehicle_id', 'id'])]
 class SurveyResponse extends AbstractSurveyResponse
 {
-    public const IN_POSSESSION_YES = 'yes';
-    public const IN_POSSESSION_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
-    public const IN_POSSESSION_SOLD = 'sold';
-    public const IN_POSSESSION_ON_HIRE = 'on-hire';
+    public const string IN_POSSESSION_YES = 'yes';
+    public const string IN_POSSESSION_SCRAPPED_OR_STOLEN = 'scrapped-or-stolen';
+    public const string IN_POSSESSION_SOLD = 'sold';
+    public const string IN_POSSESSION_ON_HIRE = 'on-hire';
 
-    public const REASON_NOT_TAXED = 'not-taxed';
-    public const REASON_NO_WORK = 'no-work';
-    public const REASON_REPAIR = 'repair';
-    public const REASON_SITE_WORK_ONLY = 'site-work-only';
-    public const REASON_HOLIDAY = 'holiday';
-    public const REASON_MAINTENANCE = 'maintenance';
-    public const REASON_NO_DRIVER = 'no-driver';
-    public const REASON_OTHER = 'other';
+    public const string REASON_NOT_TAXED = 'not-taxed';
+    public const string REASON_NO_WORK = 'no-work';
+    public const string REASON_REPAIR = 'repair';
+    public const string REASON_SITE_WORK_ONLY = 'site-work-only';
+    public const string REASON_HOLIDAY = 'holiday';
+    public const string REASON_MAINTENANCE = 'maintenance';
+    public const string REASON_NO_DRIVER = 'no-driver';
+    public const string REASON_OTHER = 'other';
 
-    public const IN_POSSESSION_TRANSLATION_PREFIX = 'domestic.survey-response.in-possession-of-vehicle.option.';
+    public const string IN_POSSESSION_TRANSLATION_PREFIX = 'domestic.survey-response.in-possession-of-vehicle.option.';
 
-    public const IN_POSSESSION_CHOICES = [
+    public const array IN_POSSESSION_CHOICES = [
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_YES => self::IN_POSSESSION_YES,
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_ON_HIRE => self::IN_POSSESSION_ON_HIRE,
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SCRAPPED_OR_STOLEN => self::IN_POSSESSION_SCRAPPED_OR_STOLEN,
         self::IN_POSSESSION_TRANSLATION_PREFIX . self::IN_POSSESSION_SOLD => self::IN_POSSESSION_SOLD,
     ];
 
-    public const IS_EXEMPT_TRANSLATION_PREFIX = 'domestic.survey-response.is-exempt-vehicle-type.option.';
+    public const string IS_EXEMPT_TRANSLATION_PREFIX = 'domestic.survey-response.is-exempt-vehicle-type.option.';
 
-    public const IS_EXEMPT_YES = 'yes';
-    public const IS_EXEMPT_NO = 'no';
+    public const string IS_EXEMPT_YES = 'yes';
+    public const string IS_EXEMPT_NO = 'no';
 
-    public const IS_EXEMPT_CHOICES = [
+    public const array IS_EXEMPT_CHOICES = [
         self::IS_EXEMPT_TRANSLATION_PREFIX . self::IS_EXEMPT_YES => true,
         self::IS_EXEMPT_TRANSLATION_PREFIX . self::IS_EXEMPT_NO => false,
     ];
 
-    public const EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-empty-survey.option.';
-    public const EMPTY_SURVEY_REASON_CHOICES = [
+    public const string EMPTY_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-empty-survey.option.';
+    public const array EMPTY_SURVEY_REASON_CHOICES = [
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_TAXED => self::REASON_NOT_TAXED,
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NO_WORK => self::REASON_NO_WORK,
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_REPAIR => self::REASON_REPAIR,
@@ -65,7 +65,7 @@ class SurveyResponse extends AbstractSurveyResponse
         self::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_OTHER => self::REASON_OTHER,
     ];
 
-    public const EMPTY_SURVEY_REASON_EXPORT_IDS = [
+    public const array EMPTY_SURVEY_REASON_EXPORT_IDS = [
         self::REASON_NOT_TAXED => 7,
         self::REASON_NO_WORK => 4,
         self::REASON_REPAIR => 1,

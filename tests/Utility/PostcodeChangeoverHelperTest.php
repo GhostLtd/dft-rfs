@@ -5,25 +5,46 @@ namespace App\Tests\Utility;
 use App\Entity\Domestic\Survey;
 use App\Features;
 use App\Utility\PostcodeChangeoverHelper;
+use Ghost\GovUkCoreBundle\Features as CoreFeatures;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class PostcodeChangeoverHelperTest extends TestCase
 {
+    /**
+     * Bundle's Features class caches resolved feature states statically.
+     * Reset between tests so APP_FEATURES env-var changes are picked up.
+     */
+    private function resetStaticFeatureCache(): void
+    {
+        $prop = new \ReflectionProperty(CoreFeatures::class, 'enabledFeatures');
+        $prop->setValue(null, []);
+    }
+
+    private function setFeatureEnvVar(bool $postcodeChangeoverEnabled): void
+    {
+        $_ENV['APP_FEATURES'] = $postcodeChangeoverEnabled ? Features::POSTCODE_CHANGEOVER : '';
+        $this->resetStaticFeatureCache();
+    }
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->resetStaticFeatureCache();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        unset($_ENV['APP_FEATURES']);
+        $this->resetStaticFeatureCache();
+        parent::tearDown();
+    }
+
     private function createMockLogger(): LoggerInterface
     {
         return $this->createMock(LoggerInterface::class);
-    }
-
-    private function createMockFeatures(bool $isEnabled): Features
-    {
-        $features = $this->createMock(Features::class);
-        $features
-            ->method('isEnabled')
-            ->with(Features::POSTCODE_CHANGEOVER)
-            ->willReturn($isEnabled);
-
-        return $features;
     }
 
     private function createSurvey(?\DateTime $surveyPeriodStart, bool $isNorthernIreland = false): Survey
@@ -41,8 +62,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testFeatureDisabledReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(false);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(false);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2025-06-01'));
 
         $this->assertFalse($helper->isPostcodeOnly($survey));
@@ -50,16 +71,16 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testNullSurveyReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
 
         $this->assertFalse($helper->isPostcodeOnly(null));
     }
 
     public function testNullSurveyPeriodStartReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(null);
 
         $this->assertFalse($helper->isPostcodeOnly($survey));
@@ -67,8 +88,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testNoChangeoverDateReturnsNewModeForAllSurveys(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), null);
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), null);
         $survey = $this->createSurvey(new \DateTime('2020-01-01'));
 
         $this->assertTrue($helper->isPostcodeOnly($survey));
@@ -76,8 +97,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testEmptyChangeoverDateReturnsNewModeForAllSurveys(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '');
         $survey = $this->createSurvey(new \DateTime('2020-01-01'));
 
         $this->assertTrue($helper->isPostcodeOnly($survey));
@@ -85,8 +106,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testSurveyBeforeChangeoverDateReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2024-12-31'));
 
         $this->assertFalse($helper->isPostcodeOnly($survey));
@@ -94,8 +115,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testSurveyOnChangeoverDateReturnsNewMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2025-01-01'));
 
         $this->assertTrue($helper->isPostcodeOnly($survey));
@@ -103,8 +124,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testSurveyAfterChangeoverDateReturnsNewMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2025-01-02'));
 
         $this->assertTrue($helper->isPostcodeOnly($survey));
@@ -112,8 +133,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testChangeoverDateWithTime(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01 12:00:00');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01 12:00:00');
         $surveyBefore = $this->createSurvey(new \DateTime('2025-01-01 11:59:59'));
         $surveyAfter = $this->createSurvey(new \DateTime('2025-01-01 12:00:00'));
 
@@ -123,8 +144,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testNorthernIrelandSurveyAlwaysReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2025-06-01'), true);
 
         $this->assertFalse($helper->isPostcodeOnly($survey));
@@ -132,8 +153,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testNorthernIrelandSurveyWithNoChangeoverDateReturnsOldMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), null);
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), null);
         $survey = $this->createSurvey(new \DateTime('2025-06-01'), true);
 
         $this->assertFalse($helper->isPostcodeOnly($survey));
@@ -141,8 +162,8 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testNonNorthernIrelandSurveyStillReturnsNewMode(): void
     {
-        $features = $this->createMockFeatures(true);
-        $helper = new PostcodeChangeoverHelper($features, $this->createMockLogger(), '2025-01-01');
+        $this->setFeatureEnvVar(true);
+        $helper = new PostcodeChangeoverHelper($this->createMockLogger(), '2025-01-01');
         $survey = $this->createSurvey(new \DateTime('2025-06-01'), false);
 
         $this->assertTrue($helper->isPostcodeOnly($survey));
@@ -150,14 +171,14 @@ class PostcodeChangeoverHelperTest extends TestCase
 
     public function testMalformedChangeoverDateReturnsFalseAndLogsError(): void
     {
-        $features = $this->createMockFeatures(true);
+        $this->setFeatureEnvVar(true);
         $logger = $this->createMock(LoggerInterface::class);
         $logger
             ->expects($this->once())
             ->method('error')
             ->with("Invalid APP_POSTCODE_CHANGEOVER_DATE: 'not-a-date' — postcode feature disabled");
 
-        $helper = new PostcodeChangeoverHelper($features, $logger, 'not-a-date');
+        $helper = new PostcodeChangeoverHelper($logger, 'not-a-date');
         $survey = $this->createSurvey(new \DateTime('2025-06-01'));
 
         $this->assertFalse($helper->isPostcodeOnly($survey));

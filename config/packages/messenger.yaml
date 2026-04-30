@@ -34,5 +34,5 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
 
-            'App\Messenger\AlphagovNotify\AbstractMessage': async_notify
+            'Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\AbstractMessage': async_notify
             'App\Messenger\AlphagovNotify\AbstractHighPrioMessage': async_notify_high_prio

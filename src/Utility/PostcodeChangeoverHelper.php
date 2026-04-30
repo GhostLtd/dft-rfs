@@ -11,7 +11,6 @@ class PostcodeChangeoverHelper
     private ?string $changeoverDate;
 
     public function __construct(
-        private Features $features,
         private LoggerInterface $logger,
         ?string $changeoverDate = null,
     ) {
@@ -21,7 +20,7 @@ class PostcodeChangeoverHelper
     public function isPostcodeOnly(?Survey $survey): bool
     {
         // Feature disabled → always old mode (kill switch)
-        if (!$this->features->isEnabled(Features::POSTCODE_CHANGEOVER)) {
+        if (!Features::isEnabled(Features::POSTCODE_CHANGEOVER)) {
             return false;
         }
 

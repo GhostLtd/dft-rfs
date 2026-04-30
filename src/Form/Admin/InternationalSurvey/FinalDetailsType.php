@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class FinalDetailsType extends AbstractType implements DataMapperInterface
 {
@@ -32,6 +33,7 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
                             'choices' => Survey::REASON_FOR_EMPTY_SURVEY_CHOICES,
                             'label' => "{$translationKeyPrefix}.reason-for-empty-survey.label",
                             'label_attr' => ['class' => 'govuk-label--s'],
+                            'translation_domain' => 'messages',
                             'choice_options' => [
                                 Survey::REASON_FOR_EMPTY_SURVEY_CHOICES_PREFIX.Survey::REASON_FOR_EMPTY_SURVEY_OTHER => [
                                     'conditional_form_name' => 'reasonForEmptySurveyOther',
@@ -42,33 +44,37 @@ class FinalDetailsType extends AbstractType implements DataMapperInterface
                             'label' => "{$translationKeyPrefix}.reason-for-empty-survey-other.label",
                             'help' => "{$translationKeyPrefix}.reason-for-empty-survey-other.help",
                             'label_attr' => ['class' => 'govuk-label--s'],
+                            'translation_domain' => 'messages',
                         ])
-                        ;
+                    ;
                 }
 
-                $form
-                    ->add('buttons', Gds\ButtonGroupType::class)
-                    ->get('buttons')
-                    ->add($options['submit_name'], Gds\ButtonType::class, [
-                        'label' => $options['submit_label'],
-                        'translation_domain' => $options['label_translation_domain']
+                $form->add('button_group', Gds\ButtonGroupType::class);
+                $form->get('button_group')
+                    ->add('confirm', Gds\ButtonType::class, [
+                        'type' => 'submit',
+                        'label' => new TranslatableMessage('actions.confirm', [], 'messages'),
                     ])
-                    ->add('cancel', Gds\ButtonType::class, [
-                        'label' => 'Cancel',
-                        'attr' => ['class' => 'govuk-button--secondary'],
-                    ]);
+                    ->add('cancel', Gds\LinkType::class, array_merge(
+                        $options['cancel_link_options'],
+                        ['label' => new TranslatableMessage('actions.cancel', [], 'messages')]
+                    ));
             });
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,
-            'submit_name' => 'submit',
-            'submit_label' => 'Save changes',
-            'label_translation_domain' => null,
         ]);
+
+        $resolver->setRequired('cancel_link_options');
+        $resolver->setAllowedTypes('cancel_link_options', ['array']);
+        // Bundle's AbstractConfirmAction passes confirm_button_options too —
+        // accept (and ignore) it; this form builds its own button.
+        $resolver->setDefault('confirm_button_options', []);
+        $resolver->setAllowedTypes('confirm_button_options', ['array']);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
             /** @var Survey $survey */

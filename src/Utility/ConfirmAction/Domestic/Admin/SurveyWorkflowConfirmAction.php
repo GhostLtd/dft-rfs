@@ -5,23 +5,22 @@ namespace App\Utility\ConfirmAction\Domestic\Admin;
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
-use App\Form\ConfirmActionType;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\ConfirmAction\ActionFailedException;
+use Ghost\GovUkCoreBundle\Form\ConfirmActionType;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\ActionFailedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 {
     protected string $transition;
 
     /** @var Survey */
-    protected $subject;
+    protected mixed $subject;
 
     public function getTransition(): string
     {
@@ -34,9 +33,9 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         return $this;
     }
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $domesticSurveyStateMachine, private EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, private WorkflowInterface $domesticSurveyStateMachine, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -84,33 +83,18 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         $formClass = $this->getFormClass();
         $survey = $this->getSurvey();
 
-        switch($formClass) {
-            case ConfirmApprovedActionType::class:
-                $data = $survey;
-                $formOptions = $this->getFormOptions();
-                break;
-            case ConfirmActionType::class:
-                $data = null;
-                $formOptions = $this->getFormOptions();
-                break;
-            case FinalDetailsType::class:
-                $data = $survey->getResponse();
-                $formOptions = [
-                    'submit_name' => 'confirm',
-                    'submit_label' => $this->getTranslationKeyPrefix().".confirm.label",
-                    'label_translation_domain' => $this->getTranslationDomain(),
-                    'label_translation_parameters' => $this->getTranslationParameters(),
-                ];
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid formClass');
-        }
+        $data = match($formClass) {
+            ConfirmApprovedActionType::class => $survey,
+            FinalDetailsType::class => $survey->getResponse(),
+            ConfirmActionType::class => null,
+            default => throw new \InvalidArgumentException('Invalid formClass'),
+        };
 
-        return $this->formFactory->create($formClass, $data, $formOptions);
+        return $this->formFactory->create($formClass, $data, $this->getFormOptions());
     }
 
     #[\Override]
-    public function doConfirmedAction($formData): void
+    public function doConfirmedAction(mixed $formData): void
     {
         $survey = $this->getSurvey();
 

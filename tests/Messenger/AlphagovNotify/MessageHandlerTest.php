@@ -6,7 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Embeddable\Address;
 use App\Entity\NotifyApiResponse;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
-use App\Messenger\AlphagovNotify\Letter;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 use App\Tests\DataFixtures\AlphagovNotify\MessageHandlerSurveyFixtures;
 use App\Tests\Functional\AbstractFunctionalTest;
 use App\Utility\AlphagovNotify\PersonalisationHelper;

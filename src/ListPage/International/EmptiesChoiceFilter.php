@@ -2,20 +2,17 @@
 
 namespace App\ListPage\International;
 
-use App\Entity\International\Action;
-use App\ListPage\Field\FilterableInterface;
-use App\ListPage\Field\Simple;
+use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use Doctrine\ORM\QueryBuilder;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 
-class EmptiesChoiceFilter extends Simple implements FilterableInterface
+class EmptiesChoiceFilter extends Simple
 {
     public function __construct(string $label, private array $formOptions = [], array $cellOptions = [])
     {
         parent::__construct($label, 'emptiesCount', $cellOptions);
     }
 
-    #[\Override]
     public function getFormOptions(): array
     {
         return array_merge([
@@ -25,14 +22,12 @@ class EmptiesChoiceFilter extends Simple implements FilterableInterface
         ], $this->formOptions);
     }
 
-    #[\Override]
     public function getFormClass(): string
     {
         return Gds\ChoiceType::class;
     }
 
-    #[\Override]
-    public function addFilterCondition(QueryBuilder $queryBuilder, $formData): QueryBuilder
+    public function addFilterCondition(QueryBuilder $queryBuilder, string $formData): QueryBuilder
     {
         if ($formData === 'Yes') {
             $queryBuilder->andHaving('emptiesCount > 0');

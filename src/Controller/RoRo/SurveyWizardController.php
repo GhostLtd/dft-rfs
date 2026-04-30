@@ -2,77 +2,73 @@
 
 namespace App\Controller\RoRo;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\RoRo\Survey;
 use App\Utility\RoRo\VehicleCountHelper;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\RoRo\RoRoState;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/roro/survey/{surveyId}/edit/{state}", name: "app_roro_survey_")]
 #[IsGranted("CAN_EDIT_RORO_SURVEY", "survey")]
-class SurveyWizardController extends AbstractSessionStateWorkflowController
+class SurveyWizardController extends AbstractSessionStateFormWizardController
 {
     protected Survey $databaseSurvey;
 
     #[Route(name: "edit")]
     public function wizard(
-        WorkflowInterface $roroStateMachine,
         Request $request,
         #[MapEntity(expr: "repository.find(surveyId)")]
         Survey $survey,
         VehicleCountHelper $vehicleCountHelper,
-        ?string $state = null
-    ): array | Response
-    {
+        ?string $state = null,
+    ): Response {
         $this->databaseSurvey = $survey;
         $vehicleCountHelper->setVehicleCountLabels($survey->getVehicleCounts());
 
-        return $this->doWorkflow($roroStateMachine, $request, $state, [
+        return $this->doWorkflow($request, $state, [
             'operator' => $survey->getOperator(),
         ]);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
-        /** @var RoRoState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), null);
+        /** @var RoRoState|null $state */
+        $state = $this->session->get($this->getSessionKey(), null);
 
         // If there's no session currently in progress, or if the survey in the session is a different survey to the
         // one mentioned in the URL, generate a new state.
-        if (!$formWizard || $formWizard->getSubject()->getId() !== $this->databaseSurvey->getId()) {
-            $formWizard = (new RoRoState())
-                ->setSubject($this->databaseSurvey)->determineWhetherWizardPreviouslyCompleted();
+        if (!$state || $state->getSubject()->getId() !== $this->databaseSurvey->getId()) {
+            $state = (new RoRoState())
+                ->setSubject($this->databaseSurvey)
+                ->determineWhetherWizardPreviouslyCompleted();
         }
 
-
-        $formData = $formWizard->getSubject();
-
+        $formData = $state->getSubject();
         $this->databaseSurvey->merge($formData);
-        $formWizard->setSubject($this->databaseSurvey);
-        return $formWizard;
+        $state->setSubject($this->databaseSurvey);
+
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute('app_roro_survey_edit', [
+        return new RedirectResponse($this->generateUrl('app_roro_survey_edit', [
             'surveyId' => $this->databaseSurvey->getId(),
-            'state' => $state
-        ]);
+            'state' => (string) $place,
+        ]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->redirectToRoute('app_roro_survey_view', [
+        return new RedirectResponse($this->generateUrl('app_roro_survey_view', [
             'surveyId' => $this->databaseSurvey->getId(),
-        ]);
+        ]));
     }
 }

@@ -6,9 +6,12 @@ use Alphagov\Notifications\Exception\ApiException;
 use App\Entity\NotifyApiResponse;
 use App\Entity\SurveyReminderInterface;
 use App\Entity\SurveyInterface;
-use App\Messenger\AlphagovNotify\AbstractSendMessage;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Utility\AlphagovNotify\Reference;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\AbstractMessage;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Sms;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -29,7 +32,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
     public function onMessageFailed(WorkerMessageFailedEvent $event): void
     {
         $originalMessage = $event->getEnvelope()->getMessage();
-        if (!$originalMessage instanceof AbstractSendMessage) {
+        if (!$originalMessage instanceof AbstractMessage) {
             return;
         }
 
@@ -66,7 +69,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
     public function onMessageHandled(WorkerMessageHandledEvent $event): void
     {
         $originalMessage = $event->getEnvelope()->getMessage();
-        if (!$originalMessage instanceof AbstractSendMessage) {
+        if (!$originalMessage instanceof AbstractMessage) {
             return;
         }
 
@@ -77,7 +80,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
         $this->logResponse($originalMessage, $apiResponseData);
     }
 
-    protected function logResponse(AbstractSendMessage $message, array $apiResponseData): void
+    protected function logResponse(AbstractMessage $message, array $apiResponseData): void
     {
         /** @var ApiResponseInterface|SurveyInterface $entity */
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
@@ -86,7 +89,11 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
            $timestamp = new \DateTime();
 
             $notifyApiResponse = (new NotifyApiResponse())
-                ->setEndpoint($message->getEndpoint())
+                ->setEndpoint(match ($message::class) {
+                    Email::class => '/v2/notifications/email',
+                    Letter::class => '/v2/notifications/letter',
+                    Sms::class => '/v2/notifications/sms',
+                })
                 ->setEventName($message->getEventName())
                 ->setMessageClass($message::class)
                 ->setData($apiResponseData)

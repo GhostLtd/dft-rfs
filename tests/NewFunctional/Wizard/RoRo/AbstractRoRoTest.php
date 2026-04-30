@@ -28,7 +28,7 @@ abstract class AbstractRoRoTest extends AbstractProceduralWizardTest
             ->reduce(fn(Crawler $node) => str_contains($node->text(), $summaryRowContains))
             ->first();
 
-        $this->client->click($node->selectLink($linkText)->link());
+        $this->runAndWaitForNavigation(fn() => $this->client->click($node->selectLink($linkText)->link()));
     }
 
     #[\Override]
@@ -57,13 +57,13 @@ abstract class AbstractRoRoTest extends AbstractProceduralWizardTest
             ->increaseActionIndex();
 
         $this->client->request('GET', '/roro');
-        $this->client->submitForm('ro_ro_login_sign_in', [
+        $this->runAndWaitForNavigation(fn() => $this->client->submitForm('ro_ro_login_sign_in', [
             'ro_ro_login[username]' => $email,
-        ]);
+        ]));
 
         $personalisation = $this->fetchMessage()->getPersonalisation();
         $this->client->request('GET', $personalisation['login_link']);
-        $this->client->submitForm('login');
+        $this->runAndWaitForNavigation(fn() => $this->client->submitForm('login'));
     }
 
     protected function fetchMessage(): ?RoRoLoginEmail

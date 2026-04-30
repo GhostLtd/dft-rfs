@@ -42,7 +42,9 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
     {
         $data = $this->getSurveyResponse(true);
 
-        $form = $this->factory->create(FinalDetailsType::class, $data);
+        $form = $this->factory->create(FinalDetailsType::class, $data, [
+            'cancel_link_options' => ['href' => '/test-cancel'],
+        ]);
 
         $form->submit($formData);
 
@@ -102,7 +104,9 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
     {
         $data = $this->getSurveyResponse(false);
 
-        $form = $this->factory->create(FinalDetailsType::class, $data);
+        $form = $this->factory->create(FinalDetailsType::class, $data, [
+            'cancel_link_options' => ['href' => '/test-cancel'],
+        ]);
 
         $form->submit($formData);
 

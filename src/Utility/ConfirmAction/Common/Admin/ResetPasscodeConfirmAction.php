@@ -3,32 +3,29 @@
 namespace App\Utility\ConfirmAction\Common\Admin;
 
 use App\Entity\PasscodeUser;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ResetPasscodeConfirmAction extends AbstractConfirmAction
 {
     /** @var PasscodeUser */
-    protected $subject;
+    protected mixed $subject;
     protected ?string $passcode = null;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected PasscodeGenerator $passcodeGenerator, protected EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, protected PasscodeGenerator $passcodeGenerator, protected EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
     public function getFormOptions(): array
     {
-        return array_merge(parent::getFormOptions(), [
-            'confirm_button_options' => [
-                'attr' => ['class' => 'govuk-button--warning'],
-            ],
-        ]);
+        $options = parent::getFormOptions();
+        $options['confirm_button_options']['attr'] = ['class' => 'govuk-button--warning'];
+        return $options;
     }
 
     #[\Override]
@@ -38,7 +35,7 @@ class ResetPasscodeConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->subject->setPassword(null);
         $this->entityManager->flush();

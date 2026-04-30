@@ -2,72 +2,75 @@
 
 namespace App\Controller\PreEnquiry;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\PreEnquiry\PreEnquiryState;
+use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getPreEnquiry())"))]
-class InitialDetailsController extends AbstractSessionStateWorkflowController
+class InitialDetailsController extends AbstractSessionStateFormWizardController
 {
-    protected ?PreEnquiryResponse $preEnquiryResponse = null;
+    public function __construct(
+        FormWizardManager                $formWizardManager,
+        RequestStack                     $requestStack,
+        PropertyMerger                   $propertyMerger,
+        protected EntityManagerInterface $entityManager,
+    )
+    {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
+    }
 
     #[Route(path: '/pre-enquiry/{state}', name: PreEnquiryController::WIZARD_ROUTE, requirements: ['state' => '^(?!completed).+$'])]
-    public function wizard(WorkflowInterface $preEnquiryInitialDetailsStateMachine, Request $request, string $state): Response
+    public function wizard(Request $request, string $state): Response
     {
-        return $this->doWorkflow($preEnquiryInitialDetailsStateMachine, $request, $state);
+        return $this->doWorkflow($request, $state);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
-        $preEnquiry = $this->getPreEnquiry($this->getUser());
-
-        /** @var PreEnquiryState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new PreEnquiryState());
-
-        $response = $formWizard->getSubject() ?? $preEnquiry->getResponse() ?? new PreEnquiryResponse();
-
-        $databaseResponse = $preEnquiry->getResponse() ?? new PreEnquiryResponse();
-        $databaseResponse->mergeInitialDetails($response);
-
-        $preEnquiry->setResponse($databaseResponse);
-        $formWizard->setSubject($databaseResponse);
-
-        $this->preEnquiryResponse = $databaseResponse;
-        return $formWizard;
-    }
-
-    #[\Override]
-    protected function getRedirectUrl($state): Response
-    {
-        return $this->redirectToRoute(PreEnquiryController::WIZARD_ROUTE, ['state' => $state]);
-    }
-
-    #[\Override]
-    protected function getCancelUrl(): ?Response
-    {
-        return $this->preEnquiryResponse->getId() ? $this->redirectToRoute(PreEnquiryController::SUMMARY_ROUTE) : null;
-    }
-
-    protected function getPreEnquiry(UserInterface $user): PreEnquiry
-    {
-        $preEnquiry = ($user instanceof PasscodeUser) ? $user->getPreEnquiry() : null;
-
-        if (!$preEnquiry || !$preEnquiry instanceof PreEnquiry) {
+        /** @var PasscodeUser $user */
+        $user = $this->getUser();
+        $preEnquiry = $user instanceof PasscodeUser ? $user->getPreEnquiry() : null;
+        if (!$preEnquiry instanceof PreEnquiry) {
             throw new AccessDeniedHttpException('No such pre-enquiry');
         }
 
-        return $preEnquiry;
+        /** @var PreEnquiryState $state */
+        $state = $this->session->get($this->getSessionKey(), new PreEnquiryState());
+
+        $response = $state->getSubject() ?? $preEnquiry->getResponse() ?? new PreEnquiryResponse();
+        $databaseResponse = $preEnquiry->getResponse() ?? new PreEnquiryResponse();
+        $databaseResponse->mergeInitialDetails($response);
+        $preEnquiry->setResponse($databaseResponse);
+        $state->setSubject($databaseResponse);
+
+        return $state;
+    }
+
+    protected function getRedirectResponse(?Place $place): RedirectResponse
+    {
+        return new RedirectResponse($this->generateUrl(PreEnquiryController::WIZARD_ROUTE, ['state' => (string) $place]));
+    }
+
+    protected function getCancelRedirectResponse(): ?RedirectResponse
+    {
+        $response = $this->getState()->getSubject();
+        return $response->getId()
+            ? new RedirectResponse($this->generateUrl(PreEnquiryController::SUMMARY_ROUTE))
+            : null;
     }
 }

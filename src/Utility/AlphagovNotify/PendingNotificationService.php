@@ -3,8 +3,8 @@
 namespace App\Utility\AlphagovNotify;
 
 use App\Entity\SurveyInterface;
-use App\Messenger\AlphagovNotify\Email;
-use App\Messenger\AlphagovNotify\Letter;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 

@@ -13,8 +13,8 @@
 
 {% block beforeContent -%}
     {%- block backLink -%}
-        {%- if (formWizardState | default(false)) and formWizardState.previousHistoryState -%}
-            <a href="{{ url(app.request.get('_route'), app.request.get('_route_params') | default({}) | merge({state: formWizardState.previousHistoryState})) }}" class="govuk-back-link">Back</a>
+        {%- if (formWizardState | default(false)) and formWizardState.previousHistoryPlace -%}
+            <a href="{{ url(app.request.get('_route'), app.request.get('_route_params') | default({}) | merge({state: formWizardState.previousHistoryPlace.name})) }}" class="govuk-back-link">Back</a>
         {%- endif -%}
     {%- endblock -%}
 {%- endblock %}

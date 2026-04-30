@@ -3,15 +3,15 @@
 namespace App\Utility\ConfirmAction;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeleteEmailBlacklistConfirmAction extends AbstractConfirmAction
 {
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -27,7 +27,7 @@ class DeleteEmailBlacklistConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData = null): void
+    public function doConfirmedAction(mixed $formData = null): void
     {
         $this->entityManager->remove($this->subject);
         $this->entityManager->flush();
@@ -36,9 +36,9 @@ class DeleteEmailBlacklistConfirmAction extends AbstractConfirmAction
     #[\Override]
     public function getFormOptions(): array
     {
-        return array_merge(parent::getFormOptions(), [
-            'confirm_button_options' => ['attr' => ['class' => 'govuk-button--warning']],
-        ]);
+        $options = parent::getFormOptions();
+        $options['confirm_button_options']['attr'] = ['class' => 'govuk-button--warning'];
+        return $options;
     }
 
     #[\Override]

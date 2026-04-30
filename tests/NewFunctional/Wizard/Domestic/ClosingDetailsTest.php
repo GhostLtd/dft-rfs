@@ -43,7 +43,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         $this->pathTestAction('/domestic-survey');
         $this->clickLinkContaining('Review survey details');
 
-        $this->formTestAction('/domestic-survey/close-not-in-possession', 'confirm_action_buttons_confirm', [
+        $this->formTestAction('/domestic-survey/close-not-in-possession', 'confirm_action_button_group_confirm', [
             new FormTestCase([]),
         ]);
 
@@ -82,14 +82,14 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             '/domestic-survey/closing-details/start',
-            'form_buttons_continue',
+            'form_button_group_continue',
             [new FormTestCase([])]
         );
 
         if ($expectedEarlyResponse) {
             $this->formTestAction(
                 '/domestic-survey/closing-details/early-response',
-                'early_response_buttons_continue',
+                'early_response_button_group_continue',
                 [
                     new FormTestCase([], ['#early_response_is_correct']),
                     new FormTestCase([
@@ -102,7 +102,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedMissingDays) {
             $this->formTestAction(
                 '/domestic-survey/closing-details/missing-days',
-                'missing_days_buttons_continue',
+                'missing_days_button_group_continue',
                 [
                     new FormTestCase([], ['#missing_days_missing_days']),
                     new FormTestCase([
@@ -115,7 +115,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedEmptySurvey) {
             $this->formTestAction(
                 '/domestic-survey/closing-details/empty-survey',
-                'reason_empty_survey_buttons_continue',
+                'reason_empty_survey_button_group_continue',
                 [
                     new FormTestCase([], ['#reason_empty_survey_reasonForEmptySurvey']),
                     new FormTestCase([
@@ -128,7 +128,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
         if ($expectedFuelQuantity) {
              $this->formTestAction(
                  '/domestic-survey/closing-details/vehicle-fuel',
-                 'vehicle_fuel_buttons_continue',
+                 'vehicle_fuel_button_group_continue',
                  [
                     new FormTestCase([
                         'vehicle_fuel[fuelType]' => 'gas',
@@ -147,7 +147,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             "/domestic-survey/closing-details/da-drivers",
-            "drivers_and_vacancies_buttons_continue",
+            "drivers_and_vacancies_button_group_continue",
             [
                 new FormTestCase([
                     'drivers_and_vacancies[numberOfDriversEmployed]' => '100',
@@ -161,7 +161,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             "/domestic-survey/closing-details/da-deliveries",
-            "deliveries_buttons_continue",
+            "deliveries_button_group_continue",
             [
                 new FormTestCase([
                     'deliveries[numberOfLorriesOperated]' => '10',
@@ -174,7 +174,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             "/domestic-survey/closing-details/da-wages",
-            "wages_buttons_continue",
+            "wages_button_group_continue",
             [
                 new FormTestCase([
                     'wages[haveWagesIncreased]' => 'yes',
@@ -187,7 +187,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             "/domestic-survey/closing-details/da-bonuses",
-        "bonuses_buttons_continue",
+        "bonuses_button_group_continue",
             [
                 new FormTestCase([
                     'bonuses[hasPaidBonus]' => 'yes',
@@ -198,7 +198,7 @@ class ClosingDetailsTest extends AbstractPasscodeWizardTest
 
         $this->formTestAction(
             '/domestic-survey/closing-details/confirm',
-        'form_buttons_continue', [
+        'form_button_group_continue', [
             new FormTestCase([]),
         ]);
 

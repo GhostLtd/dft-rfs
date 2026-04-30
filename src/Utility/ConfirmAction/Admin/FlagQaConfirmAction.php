@@ -4,22 +4,21 @@ namespace App\Utility\ConfirmAction\Admin;
 
 use App\Entity\International\Survey;
 use App\Entity\QualityAssuranceInterface;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FlagQaConfirmAction extends AbstractConfirmAction
 {
     protected string $transition;
 
     /** @var Survey */
-    protected $subject;
+    protected mixed $subject;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -41,7 +40,7 @@ class FlagQaConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData): void
+    public function doConfirmedAction(mixed $formData): void
     {
         $survey = $this->getSubject();
 

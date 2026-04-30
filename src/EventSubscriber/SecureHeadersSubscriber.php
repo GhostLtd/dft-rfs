@@ -2,14 +2,29 @@
 
 namespace App\EventSubscriber;
 
-use App\Features;
 use App\Twig\SmartlookExtension;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class SecureHeadersSubscriber implements EventSubscriberInterface
 {
+    private const array CSP_HEADERS = [
+        'Content-Security-Policy',
+        'Content-Security-Policy-Report-Only',
+    ];
+
+    private const array CSP_DIRECTIVES_TO_REWRITE = [
+        'child-src',
+        'connect-src',
+        'font-src',
+        'img-src',
+        'media-src',
+        'script-src',
+        'style-src',
+    ];
+
     public function __construct(protected SmartlookExtension $smartlookExtension)
     {}
 
@@ -20,7 +35,15 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
     public function kernelResponseEvent(ResponseEvent $event): void
     {
         $headers = $event->getResponse()->headers;
-        $cspHeader = $headers->get('Content-Security-Policy');
+
+        foreach (self::CSP_HEADERS as $headerName) {
+            $this->rewriteCspHeader($headers, $headerName);
+        }
+    }
+
+    private function rewriteCspHeader(ResponseHeaderBag $headers, string $headerName): void
+    {
+        $cspHeader = $headers->get($headerName);
 
         if ($cspHeader === null) {
             // If there's no CSP header, no point trying to add things to it!
@@ -50,16 +73,7 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
             $cspRuleName = $cspRuleParts[0] ?? null;
             $cspRuleEntries = array_slice($cspRuleParts, 1);
 
-            // N.B. Not exhaustive - amend as needed
-            if (in_array($cspRuleName, [
-                'child-src',
-                'connect-src',
-                'font-src',
-                'img-src',
-                'media-src',
-                'script-src',
-                'style-src',
-            ])) {
+            if (in_array($cspRuleName, self::CSP_DIRECTIVES_TO_REWRITE)) {
                 if ($isSmartlookEnabled) {
                     // Add a couple of hostnames if smartlook enabled...
                     if (in_array($cspRuleName, ['connect-src', 'script-src'])) {
@@ -78,7 +92,7 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
             }
         }
 
-        $headers->set('Content-Security-Policy', join('; ', $cspRules));
+        $headers->set($headerName, join('; ', $cspRules));
     }
 
 

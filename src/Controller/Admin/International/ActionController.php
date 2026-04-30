@@ -135,7 +135,7 @@ class ActionController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . '#actions-' . $trip->getId()
+                $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . '#actions-' . $trip->getId()
             );
     }
 }

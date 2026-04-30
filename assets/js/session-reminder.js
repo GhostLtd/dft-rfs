@@ -32,7 +32,7 @@
 
                 console.log(expiryDate)
             })
-            req.open("GET", "/refresh-session")
+            req.open("GET", "/core/refresh-session")
             req.send()
         })
 

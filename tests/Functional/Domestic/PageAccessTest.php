@@ -69,10 +69,16 @@ class PageAccessTest extends AbstractWizardTest
 
             [[VehicleFixtures::class], '/domestic-survey', 200],
             [[VehicleFixtures::class], '/domestic-survey/contact-and-business-details', 200],
-            [[VehicleFixtures::class], '/domestic-survey/closing-details', 302, '/domestic-survey/closing-details/start'],
+            [[VehicleFixtures::class], '/domestic-survey/closing-details', 302, '/domestic-survey/closing-details/start#'],
             [[VehicleFixtures::class], '/domestic-survey/close-exempt', 403],
             [[VehicleFixtures::class], '/domestic-survey/close-not-in-possession', 403],
             [[VehicleFixtures::class], '/domestic-survey/completed', 302, '/domestic-survey'],
+
+            // Wizard _start route entry points where the URL path contains a literal `/start`
+            // segment alongside a `/{state}` placeholder route. Regression coverage for the
+            // route-ordering bug where `/start` matched the `{state}` route literally.
+            [[VehicleFixtures::class], '/domestic-survey/day-1/summary/start', 302, '/domestic-survey/day-1/summary/day-start#'],
+            [[VehicleFixtures::class], '/domestic-survey/day-1/stop-add/start', 302, '/domestic-survey/day-1/stop-add/stage-start#'],
         ];
     }
 

@@ -3,33 +3,30 @@
 namespace App\Utility\ConfirmAction\Common\Admin;
 
 use App\Entity\SurveyInterface;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
-use App\Utility\ConfirmAction\ActionFailedException;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\ActionFailedException;
 use App\Utility\Reminder\ManualReminderHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendReminderConfirmAction extends AbstractConfirmAction
 {
     /** @var SurveyInterface */
-    protected $subject;
+    protected mixed $subject;
     protected ?string $passcode = null;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, protected EntityManagerInterface $entityManager, protected ManualReminderHelper $reminderHelper)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, protected EntityManagerInterface $entityManager, protected ManualReminderHelper $reminderHelper)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
     public function getFormOptions(): array
     {
-        return array_merge(parent::getFormOptions(), [
-            'confirm_button_options' => [
-                'attr' => ['class' => 'govuk-button--primary'],
-            ],
-        ]);
+        $options = parent::getFormOptions();
+        $options['confirm_button_options']['attr'] = ['class' => 'govuk-button--primary'];
+        return $options;
     }
 
     #[\Override]
@@ -39,7 +36,7 @@ class SendReminderConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         if (!$this->reminderHelper->sendManualReminder($this->subject)) {
             throw new ActionFailedException();

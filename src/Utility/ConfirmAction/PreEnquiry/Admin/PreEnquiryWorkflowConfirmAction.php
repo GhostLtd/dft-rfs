@@ -3,19 +3,18 @@
 namespace App\Utility\ConfirmAction\PreEnquiry\Admin;
 
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
 {
     protected string $transition;
 
     /** @var PreEnquiry */
-    protected $subject;
+    protected mixed $subject;
 
     public function getTransition(): string
     {
@@ -28,9 +27,9 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
         return $this;
     }
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $preEnquiryStateMachine, private EntityManagerInterface $entityManager)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, private WorkflowInterface $preEnquiryStateMachine, private EntityManagerInterface $entityManager)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -55,7 +54,7 @@ class PreEnquiryWorkflowConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->preEnquiryStateMachine->apply($this->getSubject(), $this->transition);
         $this->entityManager->flush();

@@ -2,65 +2,64 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\International\SurveyResponse;
 use App\Entity\International\Vehicle;
-use App\Workflow\FormWizardStateInterface;
 use App\Workflow\InternationalSurvey\VehicleState;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted(new Expression("is_granted('EDIT', user.getInternationalSurvey())"))]
-class VehicleAddController extends AbstractSessionStateWorkflowController
+class VehicleAddController extends AbstractSessionStateFormWizardController
 {
     use SurveyHelperTrait;
 
-    public const START_ROUTE = 'app_internationalsurvey_vehicle_add_start';
-    public const WIZARD_ROUTE = 'app_internationalsurvey_vehicle_add_state';
-
     protected SurveyResponse $surveyResponse;
 
-    #[Route(path: '/international-survey/add-vehicle/{state}', name: self::WIZARD_ROUTE)]
-    #[Route(path: '/international-survey/add-vehicle', name: self::START_ROUTE)]
-    public function index(WorkflowInterface $internationalSurveyVehicleStateMachine,
-                          Request $request,
-                          $state = null): Response
+    public function __construct(
+        FormWizardManager $formWizardManager,
+        RequestStack      $requestStack,
+        PropertyMerger    $propertyMerger,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
+    }
+
+    #[Route(path: '/international-survey/add-vehicle', name: 'app_internationalsurvey_vehicle_add_start')]
+    #[Route(path: '/international-survey/add-vehicle/{state}', name: 'app_internationalsurvey_vehicle_add_wizard')]
+    public function index(Request $request, ?string $state = null): Response
     {
         $this->surveyResponse = $this->getSurveyResponse();
-        return $this->doWorkflow($internationalSurveyVehicleStateMachine, $request, $state);
+        return $this->doWorkflow($request, $state);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    protected function getState(): FormWizardStateInterface
     {
-        /** @var FormWizardStateInterface $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new VehicleState());
+        /** @var VehicleState $state */
+        $state = $this->session->get($this->getSessionKey(), new VehicleState());
 
-        $this->setSubjectOnWizard($this->surveyResponse, $formWizard);
+        $vehicle = $state->getSubject() ?? new Vehicle();
+        $vehicle->setSurveyResponse($this->surveyResponse);
+        $state->setSubject($vehicle);
 
-        return $formWizard;
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute(self::WIZARD_ROUTE, ['state' => $state]);
+        return new RedirectResponse($this->generateUrl('app_internationalsurvey_vehicle_add_wizard', ['state' => (string) $place]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
-    }
-
-    protected function setSubjectOnWizard(SurveyResponse $response, FormWizardStateInterface $formWizard): void
-    {
-        $vehicle = $formWizard->getSubject() ?? new Vehicle();
-        $vehicle->setSurveyResponse($response);
-        $formWizard->setSubject($vehicle);
+        return new RedirectResponse($this->generateUrl(IndexController::SUMMARY_ROUTE));
     }
 }

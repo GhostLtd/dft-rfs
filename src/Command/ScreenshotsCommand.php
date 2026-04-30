@@ -57,7 +57,6 @@ class ScreenshotsCommand extends Command
         protected string                    $frontendHostname,
         protected ?string                   $appEnvironment,
         protected PasscodeGenerator         $passcodeGenerator,
-        protected Features                  $features,
     ) {
         parent::__construct();
     }
@@ -89,7 +88,7 @@ class ScreenshotsCommand extends Command
         }
 
         // Detect location mode from feature flag (for domestic surveys)
-        $locationMode = $this->features->isEnabled(Features::POSTCODE_CHANGEOVER) ? 'postcode' : 'place-name';
+        $locationMode = Features::isEnabled(Features::POSTCODE_CHANGEOVER) ? 'postcode' : 'place-name';
 
         $modes = ($mode === self::MODE_ALL) ?
             [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY, self::MODE_RORO] :
@@ -255,7 +254,9 @@ class ScreenshotsCommand extends Command
             $userOne = (new PasscodeUser())
                 ->setUsername($this->userId);
 
-            $start = new DateTime();
+            // N.B. Arbitrary fixed date used here to improve screenshot
+            //      comparability and reproducibility, to improve change detection
+            $start = new DateTime('2050-05-08 00:00:00');
             $end = (clone $start)->add(new DateInterval('P6D'));
 
             if ($mode === self::MODE_DOMESTIC) {

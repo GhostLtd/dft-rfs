@@ -2,59 +2,70 @@
 
 namespace App\Controller\DomesticSurvey;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
 use App\Entity\Domestic\SurveyResponse;
 use App\Workflow\DomesticSurvey\VehicleAndBusinessDetailsState;
-use App\Workflow\FormWizardStateInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\Place;
+use Ghost\GovUkCoreBundle\FormWizard\PropertyMerger;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class VehicleAndBusinessDetailsController extends AbstractSessionStateWorkflowController
+class VehicleAndBusinessDetailsController extends AbstractSessionStateFormWizardController
 {
-    public const ROUTE_NAME = 'app_domesticsurvey_vehicleandbusinessdetails_index';
-
     use SurveyHelperTrait;
 
-    #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
-    #[Route(path: '/domestic-survey/vehicle-and-business-details', name: 'app_domesticsurvey_vehicleandbusinessdetails_start')]
-    #[Route(path: '/domestic-survey/vehicle-and-business-details/{state}', name: self::ROUTE_NAME)]
-    public function index(WorkflowInterface $domesticSurveyVehicleAndBusinessDetailsStateMachine, Request $request, $state = null): Response
-    {
-        return $this->doWorkflow($domesticSurveyVehicleAndBusinessDetailsStateMachine, $request, $state);
+    public function __construct(
+        FormWizardManager                $formWizardManager,
+        RequestStack                     $requestStack,
+        PropertyMerger                   $propertyMerger,
+        protected EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct($formWizardManager, $requestStack, $propertyMerger);
     }
 
-    #[\Override]
-    protected function getFormWizard(): FormWizardStateInterface
+    #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
+    #[Route(path: '/domestic-survey/vehicle-and-business-details/{state}', name: 'app_domesticsurvey_vehicleandbusinessdetails_index')]
+    #[Route(path: '/domestic-survey/vehicle-and-business-details', name: 'app_domesticsurvey_vehicleandbusinessdetails_start')]
+    public function index(Request $request, ?string $state = null): Response
+    {
+        return $this->doWorkflow($request, $state);
+    }
+
+    protected function getState(): FormWizardStateInterface
     {
         $survey = $this->getSurvey();
         $databaseResponse = $this->entityManager->getRepository(SurveyResponse::class)->getBySurvey($survey);
 
-        /** @var VehicleAndBusinessDetailsState $formWizard */
-        $formWizard = $this->session->get($this->getSessionKey(), new VehicleAndBusinessDetailsState());
+        /** @var VehicleAndBusinessDetailsState|null $state */
+        $state = $this->session->get($this->getSessionKey(), null);
 
-        $sessionResponse = $formWizard->getSubject();
-
-        if ($sessionResponse) {
-            $databaseResponse->mergeVehicleAndBusinessDetails($sessionResponse);
+        if (!$state) {
+            $state = new VehicleAndBusinessDetailsState();
+            $state->setSubject($databaseResponse);
         }
 
-        $formWizard->setSubject($databaseResponse);
-        return $formWizard;
+        $sessionResponse = $state->getSubject();
+        $databaseResponse->mergeVehicleAndBusinessDetails($sessionResponse);
+        $state->setSubject($databaseResponse);
+
+        return $state;
     }
 
-    #[\Override]
-    protected function getRedirectUrl($state): Response
+    protected function getRedirectResponse(?Place $place): RedirectResponse
     {
-        return $this->redirectToRoute(self::ROUTE_NAME, ['state' => $state]);
+        return new RedirectResponse($this->generateUrl('app_domesticsurvey_vehicleandbusinessdetails_index', ['state' => (string) $place]));
     }
 
-    #[\Override]
-    protected function getCancelUrl(): ?Response
+    protected function getCancelRedirectResponse(): ?RedirectResponse
     {
-        return $this->redirectToRoute('app_domesticsurvey_contactdetails');
+        return new RedirectResponse($this->generateUrl('app_domesticsurvey_contactdetails'));
     }
 }

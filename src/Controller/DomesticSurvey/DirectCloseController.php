@@ -3,8 +3,8 @@
 namespace App\Controller\DomesticSurvey;
 
 use App\Attribute\Redirect;
-use App\Form\ConfirmActionType;
 use Doctrine\ORM\EntityManagerInterface;
+use Ghost\GovUkCoreBundle\Form\ConfirmActionType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\SubmitButton;
@@ -41,15 +41,19 @@ class DirectCloseController extends AbstractController
     protected function handleSurveyConfirmationAndClose(Request $request, string $translationKeyPrefix, string $transition): Response
     {
         $survey = $this->getSurvey();
+        $summaryUrl = $this->generateUrl('app_domesticsurvey_summary');
         $form = $this->createForm(ConfirmActionType::class, null, [
-            'translation_key_prefix' => $translationKeyPrefix,
+            'cancel_link_options' => ['href' => $summaryUrl],
+            'confirm_button_options' => [
+                'label' => "{$translationKeyPrefix}.confirm.label",
+            ],
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $redirectResponse = new RedirectResponse($this->generateUrl('app_domesticsurvey_summary'));
+            $redirectResponse = new RedirectResponse($summaryUrl);
 
-            $confirmButton = $form->get('buttons')->get('confirm');
+            $confirmButton = $form->get('button_group')->get('confirm');
             if ($confirmButton instanceof SubmitButton && $confirmButton->isClicked()) {
                 $this->domesticSurveyStateMachine->apply($survey, $transition);
                 $this->entityManager->flush();

@@ -16,4 +16,5 @@ return [
     Liip\TestFixturesBundle\LiipTestFixturesBundle::class => ['dev' => true, 'test' => true],
     Ghost\GovUkFrontendBundle\GhostGovUkFrontendBundle::class => ['all' => true],
     Nelmio\SecurityBundle\NelmioSecurityBundle::class => ['all' => true],
+    Ghost\GovUkCoreBundle\GhostGovUkCoreBundle::class => ['all' => true],
 ];

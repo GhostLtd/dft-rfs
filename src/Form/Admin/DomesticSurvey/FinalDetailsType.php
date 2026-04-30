@@ -3,16 +3,15 @@
 namespace App\Form\Admin\DomesticSurvey;
 
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\Embeddable\Volume;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
-use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class FinalDetailsType extends AbstractType
 {
@@ -43,6 +42,7 @@ class FinalDetailsType extends AbstractType
                                 'label' => "{$translationKeyPrefix}.reason-for-empty-survey.label",
                                 'label_attr' => ['class' => 'govuk-label--s'],
                                 'expanded' => true,
+                                'translation_domain' => 'messages',
                                 'choice_options' => [
                                     SurveyResponse::EMPTY_SURVEY_REASON_TRANSLATION_PREFIX.SurveyResponse::REASON_OTHER => [
                                         'conditional_form_name' => 'reasonForEmptySurveyOther',
@@ -52,21 +52,21 @@ class FinalDetailsType extends AbstractType
                             ->add('reasonForEmptySurveyOther', Gds\InputType::class, [
                                 'label' => "{$translationKeyPrefix}.other.help",
                                 'label_attr' => ['class' => 'govuk-label--s'],
+                                'translation_domain' => 'messages',
                             ]);
                     }
                 }
 
-                $form
-                    ->add('buttons', Gds\ButtonGroupType::class)
-                    ->get('buttons')
-                    ->add($options['submit_name'], Gds\ButtonType::class, [
-                        'label' => $options['submit_label'],
-                        'translation_domain' => $options['label_translation_domain']
+                $form->add('button_group', Gds\ButtonGroupType::class);
+                $form->get('button_group')
+                    ->add('confirm', Gds\ButtonType::class, [
+                        'type' => 'submit',
+                        'label' => new TranslatableMessage('actions.confirm', [], 'messages'),
                     ])
-                    ->add('cancel', Gds\ButtonType::class, [
-                        'label' => 'Cancel',
-                        'attr' => ['class' => 'govuk-button--secondary'],
-                    ]);
+                    ->add('cancel', Gds\LinkType::class, array_merge(
+                        $options['cancel_link_options'],
+                        ['label' => new TranslatableMessage('actions.cancel', [], 'messages')]
+                    ));
             });
     }
 
@@ -75,13 +75,17 @@ class FinalDetailsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
-            'submit_name' => 'submit',
-            'submit_label' => 'Save changes',
-            'label_translation_domain' => null,
             'error_mapping' => [
                 'vehicle' => 'fuel',
             ],
         ]);
+
+        $resolver->setRequired('cancel_link_options');
+        $resolver->setAllowedTypes('cancel_link_options', ['array']);
+        // Bundle's AbstractConfirmAction passes confirm_button_options too —
+        // accept (and ignore) it; this form builds its own button.
+        $resolver->setDefault('confirm_button_options', []);
+        $resolver->setAllowedTypes('confirm_button_options', ['array']);
 
         $resolver->setDefault('validation_groups', function(FormInterface $form) {
             /** @var SurveyResponse $response */

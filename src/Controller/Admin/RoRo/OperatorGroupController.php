@@ -70,7 +70,7 @@ class OperatorGroupController extends AbstractController
             ->setSubject($operatorGroup)
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_operator_groups_list')
+                $this->generateUrl('admin_operator_groups_list')
             );
 
         if ($data instanceof RedirectResponse) {

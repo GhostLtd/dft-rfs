@@ -1,4 +1,4 @@
-{% if is_feature_enabled('SMARTLOOK_USER_SESSION_RECORDING') %}
+{% if is_feature_enabled(constant('App\\Features::SMARTLOOK_USER_SESSION_RECORDING')) %}
     {% if (app.request.host == frontend_hostname) %}
         <script type='text/javascript' nonce="{{ csp_nonce('script') }}">
             window.smartlook||(function(d) {

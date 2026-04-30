@@ -32,9 +32,6 @@ class TransitionController extends AbstractController
 
         return $surveyWorkflowConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                EditController::VIEW_ROUTE,
-                ['preEnquiryId' => $preEnquiry->getId()]
-            ));
+            $this->generateUrl(EditController::VIEW_ROUTE, ['preEnquiryId' => $preEnquiry->getId()]));
     }
 }

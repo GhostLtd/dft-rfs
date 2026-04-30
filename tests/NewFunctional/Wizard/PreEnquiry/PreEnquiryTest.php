@@ -118,7 +118,7 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
 
     protected function introPage(): void
     {
-        $this->formTestAction('/pre-enquiry/introduction', 'form_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/introduction', 'form_button_group_continue', [
             new FormTestCase([]),
         ]);
     }
@@ -133,14 +133,14 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             $formData['company_name[companyName]'] = $companyName;
         }
 
-        $this->formTestAction('/pre-enquiry/company-name', 'company_name_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/company-name', 'company_name_button_group_continue', [
             new FormTestCase($formData),
         ]);
     }
 
     protected function correspondenceDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/correspondence-details', 'correspondence_details_button_group_continue', [
             new FormTestCase([
                 'correspondence_details[contactName]' => 'Mark',
                 'correspondence_details[contactTelephone]' => '123456',
@@ -172,14 +172,14 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
             $formData['correspondence_address[contactAddress][lines][postcode]'] = $postcode ?? '';
         }
 
-        $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/correspondence-address', 'correspondence_address_button_group_continue', [
             new FormTestCase($formData),
         ]);
     }
 
     protected function hgvDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/hgv-details', 'hgv_details_button_group_continue', [
             new FormTestCase([
                 'hgv_details[totalHgvCount]' => '100',
                 'hgv_details[internationalJourneyHgvCount]' => '50',
@@ -190,7 +190,7 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
 
     protected function lgvDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/lgv-details', 'lgv_details_button_group_continue', [
             new FormTestCase([
                 'lgv_details[totalLgvCount]' => '40',
                 'lgv_details[internationalJourneyLgvCount]' => '20',
@@ -201,7 +201,7 @@ class PreEnquiryTest extends AbstractPreEnquiryTest
 
     protected function businessDetails(): void
     {
-        $this->formTestAction('/pre-enquiry/business-details', 'business_details_buttons_continue', [
+        $this->formTestAction('/pre-enquiry/business-details', 'business_details_button_group_continue', [
             new FormTestCase([
                 'business_details[numberOfEmployees]' => '10-49',
             ]),

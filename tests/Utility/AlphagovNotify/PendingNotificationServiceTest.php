@@ -4,8 +4,8 @@ namespace App\Tests\Utility\AlphagovNotify;
 
 use App\Entity\Embeddable\Address;
 use App\Entity\SurveyInterface;
-use App\Messenger\AlphagovNotify\Email;
-use App\Messenger\AlphagovNotify\Letter;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 use App\Utility\AlphagovNotify\PendingNotificationService;
 use App\Utility\AlphagovNotify\Reference;
 use Doctrine\DBAL\Connection;

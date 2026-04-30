@@ -16,7 +16,6 @@ class MissingDaysType extends AbstractType
         $translationKeyPrefix = "domestic.closing-details.missing-days";
         $builder
             ->add('missing_days', Gds\ChoiceType::class, [
-                'mapped' => false,
                 'label' => "{$translationKeyPrefix}.missing-days.label",
                 'help' => "{$translationKeyPrefix}.missing-days.help",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--s'],

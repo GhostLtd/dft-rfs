@@ -94,7 +94,7 @@ class SurveyViewController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#tab-notes"
+                $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]) . "#tab-notes"
             );
     }
 }

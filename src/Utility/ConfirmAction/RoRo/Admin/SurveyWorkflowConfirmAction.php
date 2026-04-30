@@ -3,19 +3,18 @@
 namespace App\Utility\ConfirmAction\RoRo\Admin;
 
 use App\Entity\RoRo\Survey;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SurveyWorkflowConfirmAction extends AbstractConfirmAction
 {
     protected string $transition;
 
     /** @var Survey */
-    protected $subject;
+    protected mixed $subject;
 
     public function getTransition(): string
     {
@@ -33,9 +32,8 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
         protected EntityManagerInterface $entityManager,
         FormFactoryInterface $formFactory,
         RequestStack $requestStack,
-        TranslatorInterface $translator
     ) {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -60,7 +58,7 @@ class SurveyWorkflowConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData): void
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->roroSurveyStateMachine->apply($this->getSubject(), $this->transition);
         $this->entityManager->flush();

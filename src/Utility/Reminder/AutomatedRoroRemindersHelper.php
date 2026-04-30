@@ -6,7 +6,7 @@ use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey;
 use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
-use App\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 use App\Repository\RoRo\SurveyRepository;
 use App\Utility\AlphagovNotify\Reference;
 use Doctrine\ORM\EntityManagerInterface;

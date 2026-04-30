@@ -21,7 +21,6 @@
 namespace App\EventSubscriber;
 
 use App\Features;
-use App\PreKernelFeatures;
 use Google\Cloud\ErrorReporting\Bootstrap;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -46,7 +45,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
     public function logException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();
-        if (PreKernelFeatures::isEnabled(Features::GAE_ENVIRONMENT)) {
+        if (Features::isEnabled(Features::GAE_ENVIRONMENT)) {
             Bootstrap::init();
             Bootstrap::exceptionHandler($exception);
         }

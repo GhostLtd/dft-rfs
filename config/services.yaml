@@ -21,7 +21,6 @@ parameters:
 
     alphagov_notify_api_key: '%env(string:ALPHAGOV_NOTIFY_API_KEY)%'
     google_bucket_export: '%env(string:GOOGLE_BUCKET_EXPORT)%'
-    app_features_empty: none
     app_smartlook_api_key: '%env(default::APP_SMARTLOOK_API_KEY)%'
 
 services:
@@ -61,10 +60,6 @@ services:
             - '@Doctrine\Bundle\DoctrineBundle\Dbal\ManagerRegistryAwareConnectionProvider'
         tags:
             - { name: console.command, command: doctrine:query:sql }
-
-    App\Features:
-        arguments:
-            $enableFeatures: '%env(csv:default:app_features_empty:APP_FEATURES)%'
 
     App\Utility\PostcodeChangeoverHelper:
         arguments:
@@ -117,9 +112,14 @@ services:
             $hostname: '%admin_hostname%'
 
     Alphagov\Notifications\Client:
-        factory: '@App\Utility\AlphagovNotify\ClientFactory'
+        factory: '@Ghost\GovUkCoreBundle\Utility\AlphagovNotify\ClientFactory'
         arguments:
             $apiKey: '%alphagov_notify_api_key%'
+
+    # Bundle's MessageHandler lives outside App\ namespace, so RFS's autoconfigure
+    # block doesn't pick up its #[AsMessageHandler] attribute. Register it explicitly.
+    Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\MessageHandler:
+        autoconfigure: true
 
     App\DataCollector\FeaturesCollector:
         tags:
@@ -145,6 +145,9 @@ services:
     App\Security\ManagementUserHelper:
         arguments:
             $managementDomains: '%env(json:default::MANAGEMENT_DOMAINS)%'
+
+    Ghost\GovUkCoreBundle\Security\GoogleIap\RoleResolverInterface:
+        alias: App\Security\GoogleIap\IapRoleResolver
 
     App\Serializer\Encoder\SqlServerInsertEncoder:
         calls:

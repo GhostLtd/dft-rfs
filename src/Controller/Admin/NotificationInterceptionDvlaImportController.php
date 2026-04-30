@@ -78,7 +78,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
             /** @var FlashBagAwareSessionInterface $session */
             $session = $this->requestStack->getSession();
             $session->getFlashBag()->add(NotificationBanner::FLASH_BAG_TYPE, new NotificationBanner(
-                new TranslatableMessage('common.notification.success', [], 'messages'),
+                new TranslatableMessage('notification.success', [], 'messages'),
                 'notification-interception.dvla-import.confirmed-notification.heading',
                 'notification-interception.dvla-import.confirmed-notification.content',
                 ['style' => NotificationBanner::STYLE_SUCCESS],

@@ -3,16 +3,14 @@
 namespace App\Workflow\RoRo;
 
 use App\Entity\RoRo\OperatorGroup;
-use App\Form\Admin\RoRo\OperatorGroupType;
-use App\Workflow\AbstractFormWizardState;
-use App\Workflow\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\FormWizard\AbstractFormWizardState;
 use InvalidArgumentException;
 
-class OperatorGroupState extends AbstractFormWizardState implements FormWizardStateInterface
+class OperatorGroupState extends AbstractFormWizardState
 {
-    public const STATE_CHOOSE_NAME = 'choose-name';
-    public const STATE_PREVIEW = 'preview';
-    public const STATE_FINISH = 'finish';
+    public const string STATE_CHOOSE_NAME = 'choose-name';
+    public const string STATE_PREVIEW = 'preview';
+    public const string STATE_FINISH = 'finish';
 
     private OperatorGroup $subject;
     protected string $mode;
@@ -26,8 +24,8 @@ class OperatorGroupState extends AbstractFormWizardState implements FormWizardSt
     #[\Override]
     public function setSubject($subject): self
     {
-        if ($subject::class !== OperatorGroup::class) {
-            throw new InvalidArgumentException("Got " . $subject::class . ", expected " . OperatorGroup::class);
+        if (!$subject instanceof OperatorGroup) {
+            throw new InvalidArgumentException('Got ' . $subject::class . ', expected ' . OperatorGroup::class);
         }
         $this->subject = $subject;
         return $this;
@@ -42,34 +40,5 @@ class OperatorGroupState extends AbstractFormWizardState implements FormWizardSt
     {
         $this->mode = $mode;
         return $this;
-    }
-
-    #[\Override]
-    public function getStateFormMap(): array
-    {
-        return [
-            self::STATE_CHOOSE_NAME => OperatorGroupType::class,
-        ];
-    }
-
-    #[\Override]
-    public function getStateTemplateMap(): array
-    {
-        return [
-            self::STATE_CHOOSE_NAME => 'admin/roro/operator-groups/add/form-choose-name.html.twig',
-            self::STATE_PREVIEW => 'admin/roro/operator-groups/add/form-preview.html.twig',
-        ];
-    }
-
-    #[\Override]
-    public function getDefaultTemplate(): ?string
-    {
-        return null;
-    }
-
-    #[\Override]
-    public function isValidAlternativeStartState($state): bool
-    {
-        return false;
     }
 }

@@ -23,7 +23,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                 '/change-business-details',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-business-details", "business_details_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/change-business-details", "business_details_button_group_continue", [
                         new FormTestCase([
                             "business_details" => [
                                 "contactBusinessName" => null,
@@ -54,7 +54,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                 '/change-vehicle-weights',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-weights", "vehicle_weights_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-weights", "vehicle_weights_button_group_continue", [
                         new FormTestCase([
                             "vehicle_weights" => [
                                 "grossWeight" => null,
@@ -89,7 +89,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                 '/change-vehicle-trailer-configuration',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-trailer-configuration", "vehicle_trailer_configuration_buttons_continue", [
+                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-trailer-configuration", "vehicle_trailer_configuration_button_group_continue", [
                         new FormTestCase([
                             "vehicle_trailer_configuration" => [
                                 "trailerConfiguration" => "300",
@@ -99,12 +99,12 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                             "vehicle_axle_configuration" => [
                                 "axleConfiguration" => "321",
                             ]
-                        ], [], "vehicle_axle_configuration_buttons_continue"),
+                        ], [], "vehicle_axle_configuration_button_group_continue"),
                         new FormTestCase([
                             "vehicle_body" => [
                                 "bodyType" => Vehicle::BODY_TYPE_CAR,
                             ]
-                        ], [], "vehicle_body_buttons_continue"),
+                        ], [], "vehicle_body_button_group_continue"),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(DomesticVehicle::class, function(DomesticVehicle $vehicle) {
                         $this->assertEquals(300, $vehicle->getTrailerConfiguration());

@@ -3,20 +3,19 @@
 namespace App\Utility\ConfirmAction\International\Admin;
 
 use App\Entity\International\Survey;
-use App\Utility\ConfirmAction\AbstractConfirmAction;
+use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ApproveSurveyConfirmAction extends AbstractConfirmAction
 {
     /** @var Survey */
-    protected $subject;
+    protected mixed $subject;
 
-    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, TranslatorInterface $translator, private WorkflowInterface $internationalSurveyStateMachine)
+    public function __construct(FormFactoryInterface $formFactory, RequestStack $requestStack, private WorkflowInterface $internationalSurveyStateMachine)
     {
-        parent::__construct($formFactory, $requestStack, $translator);
+        parent::__construct($formFactory, $requestStack);
     }
 
     #[\Override]
@@ -32,7 +31,7 @@ class ApproveSurveyConfirmAction extends AbstractConfirmAction
     }
 
     #[\Override]
-    public function doConfirmedAction($formData)
+    public function doConfirmedAction(mixed $formData): void
     {
         $this->internationalSurveyStateMachine->apply($this->getSubject(), 'approve');
     }

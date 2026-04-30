@@ -104,10 +104,7 @@ class TripController extends AbstractController
         $deleteTripConfirmAction->setSubject($trip);
         return $deleteTripConfirmAction->controller(
             $request,
-            fn() => $this->generateUrl(
-                SurveyController::VIEW_ROUTE,
-                ['surveyId' => $survey->getId()]
-            )
+            $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
         );
     }
 }

@@ -151,7 +151,7 @@
 
     <div>
         {%- set dashboardUrl = url(constant('App\\Controller\\InternationalSurvey\\IndexController::SUMMARY_ROUTE')) -%}
-        <a href="{{ url('app_internationalsurvey_trip_add_state', {vehicleId: vehicle.id}) }}"
+        <a href="{{ url('app_internationalsurvey_trip_add_wizard', {vehicleId: vehicle.id}) }}"
            class="govuk-button govuk-!-margin-bottom-9">{{ 'common.actions.add-trip' | trans }}</a>
     </div>
 

@@ -26,10 +26,10 @@
         {%- include "international_survey/includes/vehicles.html.twig" -%}
 
         <div class="govuk-button-group">
-            {%- set addVehicleRoute = constant('App\\Controller\\InternationalSurvey\\VehicleAddController::START_ROUTE') -%}
+            {%- set addVehicleRoute = 'app_internationalsurvey_vehicle_add_start' -%}
             <a href="{{ url(addVehicleRoute) }}" class="govuk-button">{{ 'common.actions.add-vehicle'|trans }}</a>
 
-            {%- set submitSurveyRoute = constant('App\\Controller\\InternationalSurvey\\ClosingDetailsController::START_ROUTE') -%}
+            {%- set submitSurveyRoute = 'app_internationalsurvey_closing_start' -%}
             <a href="{{ url(submitSurveyRoute) }}" class="govuk-button">{{ 'common.actions.submit-survey'|trans }}</a>
         </div>
     {% endif %}

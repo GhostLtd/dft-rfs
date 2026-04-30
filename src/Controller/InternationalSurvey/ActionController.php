@@ -74,8 +74,8 @@ class ActionController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl(TripController::TRIP_ROUTE, ['id' => $tripId]),
-                fn() => $this->generateUrl('app_internationalsurvey_action_view', ['actionId' => $actionId]),
+                $this->generateUrl(TripController::TRIP_ROUTE, ['id' => $tripId]),
+                $this->generateUrl('app_internationalsurvey_action_view', ['actionId' => $actionId]),
             );
     }
 

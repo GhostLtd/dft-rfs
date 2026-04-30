@@ -49,7 +49,7 @@ class SurveyNoteController extends AbstractController
             ])
             ->controller(
                 $request,
-                fn() => $this->generateUrl('admin_roro_surveys_view', ['surveyId' => $survey->getId()]) . "#tab-notes"
+                $this->generateUrl('admin_roro_surveys_view', ['surveyId' => $survey->getId()]) . "#tab-notes"
             );
     }
 }

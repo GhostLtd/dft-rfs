@@ -12,7 +12,7 @@ class VehicleChangeTest extends AbstractVehicleTest
         $this->performChangeTest(0, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-registration$#', 'vehicle_details_buttons_continue', [
+            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-registration$#', 'vehicle_details_button_group_continue', [
                 new FormTestCase([
                     'vehicle_details[registrationMark]' => 'BB02 DCE',
                     'vehicle_details[operationType]' => 'for-hire-and-reward',
@@ -29,13 +29,13 @@ class VehicleChangeTest extends AbstractVehicleTest
         $this->performChangeTest(2, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-trailer-configuration$#', 'vehicle_trailer_configuration_buttons_continue', [
+            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-trailer-configuration$#', 'vehicle_trailer_configuration_button_group_continue', [
                 new FormTestCase([
                     'vehicle_trailer_configuration[trailerConfiguration]' => '100',
                 ]),
             ], $options);
 
-            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-axle-configuration$#', 'vehicle_axle_configuration_buttons_continue', [
+            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-axle-configuration$#', 'vehicle_axle_configuration_button_group_continue', [
                 new FormTestCase([
                     'vehicle_axle_configuration[axleConfiguration]' => '140',
                 ]),
@@ -51,7 +51,7 @@ class VehicleChangeTest extends AbstractVehicleTest
         $this->performChangeTest(3, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-body$#', 'vehicle_body_buttons_continue', [
+            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-body$#', 'vehicle_body_button_group_continue', [
                 new FormTestCase([
                     'vehicle_body[bodyType]' => 'tipper',
                 ]),
@@ -66,7 +66,7 @@ class VehicleChangeTest extends AbstractVehicleTest
         $this->performChangeTest(4, function(array &$expectedData) {
             $options = [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
-            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-weight$#', 'vehicle_weight_buttons_continue', [
+            $this->formTestAction('#^\/international-survey\/vehicles\/[a-f0-9-]+\/change-vehicle-weight$#', 'vehicle_weight_button_group_continue', [
                 new FormTestCase([
                     'vehicle_weight[grossWeight]' => '44444',
                     'vehicle_weight[carryingCapacity]' => '33333',

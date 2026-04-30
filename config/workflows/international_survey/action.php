@@ -1,9 +1,15 @@
 <?php
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Controller\InternationalSurvey\AbstractActionController;
-use App\Controller\InternationalSurvey\ActionController;
 use App\Controller\InternationalSurvey\TripController;
+use App\Form\InternationalSurvey\Action\AddAnotherType;
+use App\Form\InternationalSurvey\Action\CargoTypeType;
+use App\Form\InternationalSurvey\Action\GoodsDescriptionType;
+use App\Form\InternationalSurvey\Action\GoodsLoadedWeightType;
+use App\Form\InternationalSurvey\Action\GoodsUnloadedWeightType;
+use App\Form\InternationalSurvey\Action\HazardousGoodsType;
+use App\Form\InternationalSurvey\Action\LoadingPlaceType;
+use App\Form\InternationalSurvey\Action\PlaceType;
 use App\Workflow\InternationalSurvey\ActionState as StateObject;
 
 return static function (ContainerConfigurator $container) {
@@ -14,10 +20,10 @@ return static function (ContainerConfigurator $container) {
         'to' => StateObject::STATE_END,
         'guard' => $expressionEditing,
         'metadata' => [
-            'redirectRoute' => [
-                'routeName' => 'app_internationalsurvey_action_view',
-                'parameterMappings' => [
-                    'actionId' => 'id',
+            'redirect_route' => [
+                'name' => 'app_internationalsurvey_action_view',
+                'parameters' => [
+                    'actionId' => 'subject.id',
                 ],
             ],
             'persist' => true,
@@ -31,22 +37,79 @@ return static function (ContainerConfigurator $container) {
                 'initial_marking' => StateObject::STATE_PLACE,
                 'marking_store' => [
                     'type' => 'method',
-                    'property' => 'state',
+                    'property' => 'place',
                 ],
                 'supports' => [StateObject::class],
                 'places' => [
-                    StateObject::STATE_GOODS_DESCRIPTION,
-                    StateObject::STATE_HAZARDOUS_GOODS,
-                    StateObject::STATE_CARGO_TYPE,
-                    StateObject::STATE_WEIGHT_LOADED,
-                    StateObject::STATE_PLACE,
-                    StateObject::STATE_CONSIGNMENT_UNLOADED,
-                    StateObject::STATE_WEIGHT_UNLOADED,
-                    StateObject::STATE_ADD_ANOTHER,
-                    StateObject::STATE_END,
+                    [
+                        'name' => StateObject::STATE_PLACE,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-place.html.twig',
+                            'form_class' => PlaceType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_GOODS_DESCRIPTION,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-goods-description.html.twig',
+                            'form_class' => GoodsDescriptionType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId()) and state.getSubject().getLoading()',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_HAZARDOUS_GOODS,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-hazardous-goods.html.twig',
+                            'form_class' => HazardousGoodsType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId()) and state.getSubject().getLoading()',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CARGO_TYPE,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-cargo-type.html.twig',
+                            'form_class' => CargoTypeType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_WEIGHT_LOADED,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-weight-loaded.html.twig',
+                            'form_class' => GoodsLoadedWeightType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_CONSIGNMENT_UNLOADED,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-unloaded.html.twig',
+                            'form_class' => LoadingPlaceType::class,
+                            'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId()) and !state.getSubject().getLoading()',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_WEIGHT_UNLOADED,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-weight-unloaded.html.twig',
+                            'form_class' => GoodsUnloadedWeightType::class,
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_ADD_ANOTHER,
+                        'metadata' => [
+                            'template' => 'international_survey/action/form-add-another.html.twig',
+                            'form_class' => AddAnotherType::class,
+                            'form_data_property' => null,
+                            // Add-another needs to be a jump-in for new actions because the session is cleared
+                            // while rendering the add-another page.
+                            'is_valid_alternative_start_place' => 'is_empty(state.getSubject().getId())',
+                        ],
+                    ],
+                    [
+                        'name' => StateObject::STATE_END,
+                    ],
                 ],
                 'transitions' => [
-        // Loading
+                    // Loading
                     'goods_loaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_GOODS_DESCRIPTION,
@@ -74,7 +137,7 @@ return static function (ContainerConfigurator $container) {
                         ],
                     ],
 
-        // Edit loaded
+                    // Edit loaded
                     'finish_edit_goods_loaded' => array_merge($defaultEditingConfig, [
                         'from' => StateObject::STATE_PLACE,
                         'guard' => "{$expressionEditing} && subject.getSubject().getLoading()",
@@ -87,8 +150,7 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_CARGO_TYPE,
                     ]),
 
-
-        // Unloading
+                    // Unloading
                     'goods_unloaded' => [
                         'from' => StateObject::STATE_PLACE,
                         'to' => StateObject::STATE_CONSIGNMENT_UNLOADED,
@@ -107,8 +169,7 @@ return static function (ContainerConfigurator $container) {
                         ],
                     ],
 
-
-        // Edit unload
+                    // Edit unload
                     'finish_edit_goods_unloaded' => array_merge($defaultEditingConfig, [
                         'from' => StateObject::STATE_PLACE,
                         'guard' => "{$expressionEditing} && !subject.getSubject().getLoading()",
@@ -117,41 +178,34 @@ return static function (ContainerConfigurator $container) {
                         'from' => StateObject::STATE_WEIGHT_UNLOADED,
                     ]),
 
-
-        // Add another
+                    // Add another
                     'finish_dont_add_another' => [
                         'from' => StateObject::STATE_ADD_ANOTHER,
                         'to' => StateObject::STATE_END,
+                        'guard' => 'subject.getConfirm() === false',
                         'metadata' => [
-                            'redirectRoute' => [
-                                'routeName' => TripController::TRIP_ROUTE,
-                                'parameterMappings' => [
-                                    'id' => 'trip.id',
+                            'redirect_route' => [
+                                'name' => TripController::TRIP_ROUTE,
+                                'parameters' => [
+                                    'id' => 'subject.trip.id',
                                 ],
-                            ],
-                            'transitionWhenFormData' => [
-                                'property' => 'confirm',
-                                'value' => false,
                             ],
                         ],
                     ],
                     'finish_add_another' => [
                         'from' => StateObject::STATE_ADD_ANOTHER,
                         'to' => StateObject::STATE_END,
+                        'guard' => 'subject.getConfirm() === true',
                         'metadata' => [
-                            'redirectRoute' => [
-                                'routeName' => 'app_internationalsurvey_action_add_another',
-                                'parameterMappings' => [
-                                    'tripId' => 'trip.id',
+                            'redirect_route' => [
+                                'name' => 'app_internationalsurvey_action_add_another',
+                                'parameters' => [
+                                    'tripId' => 'subject.trip.id',
                                 ],
-                            ],
-                            'transitionWhenFormData' => [
-                                'property' => 'confirm',
-                                'value' => true,
                             ],
                         ],
                     ],
-                ]
+                ],
             ],
         ],
     ]);

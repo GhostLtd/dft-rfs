@@ -3,6 +3,9 @@
 namespace App\Tests\NewFunctional;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Facebook\WebDriver\Exception\StaleElementReferenceException;
+use Facebook\WebDriver\Exception\TimeoutException;
+use Facebook\WebDriver\Exception\UnknownErrorException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
@@ -14,7 +17,7 @@ use Symfony\Component\Panther\ServerExtensionLegacy;
 
 class AbstractFunctionalTestCase extends PantherTestCase
 {
-    public const WAIT_TIMEOUT = 5;
+    public const int WAIT_TIMEOUT = 5;
     protected Client $client;
 
     protected ReferenceRepository $fixtureReferenceRepository;
@@ -100,8 +103,6 @@ class AbstractFunctionalTestCase extends PantherTestCase
 
     protected function clickLinkContaining(string $textContains, int $index = 0, string $xpathBase = '//'): void
     {
-        // Doing things this way seems to mean that we don't need to use client->waitFor()
-        // (compared with client->findElement->click)
         $textContains = str_replace("'", "\'", $textContains);
         $xpath = $xpathBase.'a[contains(., "' . $textContains . '")]';
 
@@ -112,7 +113,46 @@ class AbstractFunctionalTestCase extends PantherTestCase
             $this->fail("No such link found (contains: \"$textContains\", index: $index)");
         }
 
-        $this->client->click($link);
+        $this->runAndWaitForNavigation(fn() => $this->client->click($link));
+    }
+
+    /**
+     * Run a callable that triggers a page navigation, then block until the navigation actually
+     * completes (or up to WAIT_TIMEOUT seconds). Also refreshes Panther's cached Crawler so
+     * subsequent getCrawler() calls don't try to traverse now-stale old-page elements.
+     *
+     * Panther's Client::click() and Client::submit() only wait for navigation on Firefox; on
+     * Chrome they return immediately, racing the page load. Chrome 147 is fast enough that the
+     * race virtually always bites. ChromeDriver 121+ also has a regression where staleness
+     * sometimes surfaces as an "unknown error" instead of a proper StaleElementReferenceException
+     * (see https://github.com/SeleniumHQ/selenium/issues/15401) — both exception flavours are
+     * accepted as the success signal here.
+     *
+     * Public because consumers in App\Tests\NewFunctional\Wizard\Action call this externally;
+     * Panther's Client is declared `final` so we can't put this logic in a Client subclass.
+     */
+    public function runAndWaitForNavigation(callable $action): void
+    {
+        $previousHtml = $this->client->getWebDriver()->findElement(WebDriverBy::cssSelector('html'));
+        $action();
+        try {
+            $this->client->getWebDriver()->wait(self::WAIT_TIMEOUT)->until(function () use ($previousHtml): bool {
+                try {
+                    $previousHtml->isEnabled();
+                    return false;
+                } catch (StaleElementReferenceException) {
+                    return true;
+                } catch (UnknownErrorException $e) {
+                    if (str_contains($e->getMessage(), 'Node with given id does not belong to the document')) {
+                        return true;
+                    }
+                    throw $e;
+                }
+            });
+            $this->client->refreshCrawler();
+        } catch (TimeoutException) {
+            // No navigation (e.g. AJAX/no-op submit). Carry on.
+        }
     }
 
     protected function getElementByTextContains(string $elementType, string $textContains, int $elementNumber = 0): WebDriverElement

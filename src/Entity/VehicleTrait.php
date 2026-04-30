@@ -6,9 +6,7 @@ use App\Utility\RegistrationMarkHelper;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Workflow\FormWizardManager;
 
 trait VehicleTrait
 {
@@ -20,7 +18,6 @@ trait VehicleTrait
     private ?string $id = null;
 
     #[Assert\NotBlank(message: 'common.vehicle.vehicle-registration.not-blank', groups: ['vehicle_registration', 'admin_vehicle'])]
-    #[Groups([FormWizardManager::NOTIFICATION_BANNER_NORMALIZER_GROUP])]
     #[ORM\Column(type: Types::STRING, length: 10)]
     private ?string $registrationMark = null;
 

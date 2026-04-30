@@ -31,7 +31,7 @@ class ConfirmApprovedActionTypeTest extends AbstractSurveyTypeTest
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $form = $this->factory->create(ConfirmApprovedActionType::class, null, [
-            'translation_key_prefix' => 'test_',
+            'cancel_link_options' => ['href' => '/test-cancel'],
         ]);
 
         $form->submit($formData);

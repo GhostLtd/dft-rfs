@@ -5,7 +5,7 @@ namespace App\Tests\Utility\Reminder;
 use App\DTO\RoRo\OperatorRoute;
 use App\Entity\RoRo\Operator;
 use App\Entity\Route\Route;
-use App\Messenger\AlphagovNotify\Email;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 use App\Tests\DataFixtures\RoRo\CountryFixtures;
 use App\Tests\DataFixtures\RoRo\OperatorRouteFixtures;
 use App\Tests\DataFixtures\RoRo\UserFixtures;

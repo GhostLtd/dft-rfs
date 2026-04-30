@@ -3,7 +3,7 @@
 namespace App\Utility;
 
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
-use App\Messenger\AlphagovNotify\Letter;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 
 class NotifyApiResponseCleaner
 {

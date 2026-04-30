@@ -2,8 +2,8 @@
 
 namespace App\EventSubscriber;
 
-use App\Controller\Workflow\AbstractSessionStateWorkflowController;
-use App\Workflow\FormWizardStateInterface;
+use Ghost\GovUkCoreBundle\Controller\FormWizard\AbstractSessionStateFormWizardController;
+use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -12,13 +12,18 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Clear all session-based wizard data from the session, except for the current wizard (if it is a wizard)
+ * Clear all session-based wizard data from the session, except for the current wizard (if it is a wizard).
+ *
+ * Bundle's FormWizardManager::cleanUp() does the same removal but is only invoked when a transition has a
+ * redirect_route. This subscriber catches every controller event so stale wizard sessions don't accumulate
+ * when the user navigates away mid-wizard.
  */
 class FormWizardCleanupSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private RequestStack $requestStack, private LoggerInterface $log)
-    {
-    }
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected LoggerInterface $log
+    ) {}
 
     public function kernelControllerEvent(ControllerEvent $event): void
     {
@@ -39,7 +44,7 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
 
         $this->log->notice("[FormWizard] Running on Controller: {$controllerClass}");
 
-        if ($controller instanceof AbstractSessionStateWorkflowController) {
+        if ($controller instanceof AbstractSessionStateFormWizardController) {
             // in wizard
             $this->cleanUp($controller->getSessionKey());
         } else {
