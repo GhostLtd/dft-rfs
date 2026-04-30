@@ -2,7 +2,14 @@
 
 # Changelog
 
-## Upcoming
+## 2026-04-30
+- **Update**: Move DB views and SQL functions out of Doctrine migrations into a dedicated `sql/` directory, applied by `bin/console app:views:apply`. See [Database views and functions](Views.md).
+- **Fix**: `view_international_firms` / `view_export_international_survey` regression — the Feb 2026 SubmissionDate migration wholesale-replaced these views with a pre-HGV/LGV-split body. Corrected bodies now live in `sql/views/`.
+- **Fix**: Fresh-DB migrations restored — patched DBAL 2->4 and Symfony Uid API mismatches in some migrations.
+- **Fix**: Domestic stop reorder bug
+- **Fix**: view_export_domestic_driver_availability - correctly output averageWageIncrease and averageBonus as decimal columns
+
+## 2026-03-11
 - **Feature**: Postcode changeover feature ("Postcode or place name" -> "Postcode" [or first part, thereof])
 - **Feature**: Global Email Blacklist - prevent emails being sent to specified addresses with admin UI for management and visual indicators in survey views
 - **Feature**: LCNI information shown in CSRGT/IRHS invitation/reminders tab, send manual reminder page, and add survey page
@@ -10,10 +17,6 @@
 - **Update**: Add WeekNumber to CSRGT export views
 - **Update**: Add businessName, state, weekNumber and isNorthernIreland to DriverAvailability export views
 - **Update**: Add "We only used LGVs" answer to international reason-for-empty-survey
-- **Update**: Move DB views and SQL functions out of Doctrine migrations into a dedicated `sql/` directory, applied by `bin/console app:views:apply`. See [Database views and functions](Views.md).
-- **Fix**: `view_international_firms` / `view_export_international_survey` regression — the Feb 2026 SubmissionDate migration wholesale-replaced these views with a pre-HGV/LGV-split body. Corrected bodies now live in `sql/views/`.
-- **Fix**: Fresh-DB migrations restored — patched DBAL 2->4 and Symfony Uid API mismatches in some migrations.
-- **Fix**: Domestic stop reorder bug
 
 ## 2025-12-04
 - **Feature**: Federated queries export views

@@ -35,14 +35,16 @@ CREATE OR REPLACE VIEW view_export_domestic_driver_availability AS (
               WHEN JSON_LENGTH(reasons_for_bonuses) = 0 THEN NULL
               ELSE da.reasons_for_bonuses
           END                                           AS ReasonsForBonuses
-        , da.average_bonus                              AS AverageBonus
+        , CAST(CAST(da.average_bonus AS signed) / 100 AS DECIMAL(19,2))
+                                                        AS AverageBonus
         , da.number_of_lorries_operated                 AS NumberOfLorriesOperated
         , da.number_of_parked_lorries                   AS NumberOfParkedLorries
         , da.has_missed_deliveries                      AS HasMissedDeliveries
         , da.number_of_missed_deliveries                AS NumberOfMissedDeliveries
         , da.wage_increase_period                       AS WageIncreasePeriod
         , da.wage_increase_period_other                 AS WageIncreasePeriodOther
-        , da.average_wage_increase                      AS AverageWageIncrease
+        , CAST(CAST(da.average_wage_increase AS signed) / 100 AS DECIMAL(19,2))
+                                                        AS AverageWageIncrease
         -- Always NULL / not used:
         -- , da.legacy_average_wage_increase_percentage    AS LegacyAverageWageIncreasePercentage
     FROM domestic_driver_availablity da
