@@ -262,7 +262,8 @@
         {%- endwith -%}
     {%- endif -%}
 
-    {% if workflow_can_any(survey, ['approve', 'complete', 'reissue', 'reject', 're_open', 'un_approve', 'un_reject']) %}
+    {%- set canMarkFlagsSeen = is_granted(constant('App\\Security\\Voter\\AdminSurveyVoter::MARK_FLAGS_SEEN'), survey) -%}
+    {% if workflow_can_any(survey, ['approve', 'complete', 'reissue', 'reject', 're_open', 'un_approve', 'un_reject']) or canMarkFlagsSeen %}
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <div class="govuk-!-margin-bottom-9 govuk-body">
             <h2 class="govuk-heading-m">Survey actions</h2>
@@ -284,6 +285,17 @@
                     })} -%}
                         <a {{ govukAttributes(attr) }}>Flag as QA'd</a>
                     {%- endwith -%}
+                {%- endif -%}
+
+                {%- if canMarkFlagsSeen -%}
+                    {%- set flagsSeen = survey.response.qualityFlagsSeen -%}
+                    <form method="post" action="{{ path('admin_domestic_survey_mark_flags_seen', {surveyId: survey.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('mark-flags-seen-' ~ survey.id) }}">
+                        <input type="hidden" name="seen" value="{{ flagsSeen ? '0' : '1' }}">
+                        <button type="submit" class="govuk-button{{ flagsSeen ? ' govuk-button--secondary' }}" data-module="govuk-button">
+                            {{ flagsSeen ? 'Mark flags as unreviewed' : 'Mark flags as reviewed' }}
+                        </button>
+                    </form>
                 {%- endif -%}
             </div>
         </div>

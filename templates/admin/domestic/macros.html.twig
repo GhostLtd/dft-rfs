@@ -60,9 +60,11 @@
     {%- endif -%}
     <div>Day {{ dayNumber }} — {{ (survey.surveyPeriodStartModifiedBy('+' ~ (dayNumber-1) ~ ' day')) | date ('format.date.full' | trans) }}</div>
     {%- if day|default(false) %}
+        {%- set flagSet = csrgt_quality_checks.run(survey.response) -%}
+        {%- set flagColour = survey.response.qualityFlagsSeen ? 'govuk-tag--green' : 'govuk-tag--red' -%}
         <div class="journeys-table__subcaption govuk-!-margin-bottom-1">
             {{ dayText(day) }}
-            {% if csrgt_empty_detector.dayEmpty(day) %}<span class="govuk-tag govuk-tag--yellow govuk-!-font-size-16">Possible empty</span>{% endif %}
+            {% for flag in flagSet.forDay(day) %}<span class="govuk-tag govuk-tag--quality-flag {{ flagColour }} govuk-!-font-size-16">{% if flag.payload.numbers is defined %}{{ 'admin.domestic.quality-check.stop-prefix' | trans(flag.payload) }}: {% endif %}{{ ('admin.domestic.quality-check.reason.' ~ flag.reasonCode) | trans(flag.payload) }}</span> {% endfor %}
         </div>
     {%- endif -%}
 {%- endmacro -%}

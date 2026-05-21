@@ -24,6 +24,7 @@ class AdminSurveyVoter extends Voter
     public const ENTER_INITIAL_DETAILS = 'ENTER_INITIAL_DETAILS';
     public const FLAG_QA = 'FLAG_QA';
     public const MANUAL_REMINDER = 'MANUAL_REMINDER';
+    public const MARK_FLAGS_SEEN = 'MARK_FLAGS_SEEN';
     public const MANUAL_REMINDER_BUTTON = 'MANUAL_REMINDER_BUTTON';
     public const RESEND = 'RESEND';
     public const RESET_PASSCODE = 'RESET_PASSCODE';
@@ -56,7 +57,7 @@ class AdminSurveyVoter extends Voter
         $qaInterfaceSupport = $subject instanceof QualityAssuranceInterface && ($attribute == self::FLAG_QA);
 
         // CSRGT
-        $domesticOnlySupport = $subject instanceof DomesticSurvey && in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS, self::ENTER_INITIAL_DETAILS]);
+        $domesticOnlySupport = $subject instanceof DomesticSurvey && in_array($attribute, [self::ENTER_BUSINESS_AND_VEHICLE_DETAILS, self::ENTER_INITIAL_DETAILS, self::MARK_FLAGS_SEEN]);
 
         return $surveyStateInterfaceSupport || $surveyInterfaceSupport || $manuallyReminderSupport || $haulageInterfaceSupport || $qaInterfaceSupport || $domesticOnlySupport;
     }
@@ -140,6 +141,12 @@ class AdminSurveyVoter extends Voter
             case self::FLAG_QA:
                 assert($subject instanceof QualityAssuranceInterface);
                 return $state === SurveyStateInterface::STATE_APPROVED && !$subject->getQualityAssured();
+            case self::MARK_FLAGS_SEEN:
+                if (!$subject instanceof DomesticSurvey) {
+                    return false;
+                }
+
+                return ($subject->getResponse()?->getQualityFlagCount() ?? 0) > 0;
         }
 
         return false;

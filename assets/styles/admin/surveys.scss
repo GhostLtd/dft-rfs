@@ -11,6 +11,13 @@
   }
 }
 
+// Quality-flag tags carry reason text that exceeds the GDS 160px tag width;
+// let them expand to fit so reasons stay on a single line.
+.govuk-tag--quality-flag {
+  max-width: none;
+  margin-left: govuk-spacing(2);
+}
+
 .api-response {
   & + .api-response {
     @include govuk-responsive-margin(4, "top");

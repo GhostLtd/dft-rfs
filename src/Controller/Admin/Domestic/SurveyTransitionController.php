@@ -6,6 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\ConfirmAction\Admin\FlagQaConfirmAction;
 use App\Utility\ConfirmAction\Domestic\Admin\SurveyWorkflowConfirmAction;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,5 +56,24 @@ class SurveyTransitionController extends AbstractController
             $request,
             $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()])
         );
+    }
+
+    #[Route(path: '/csrgt/surveys/{surveyId}/quality-flags/mark-seen', name: SurveyController::MARK_FLAGS_SEEN_ROUTE, methods: ['POST'])]
+    #[IsGranted(AdminSurveyVoter::MARK_FLAGS_SEEN, subject: 'survey')]
+    public function markFlagsSeen(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        #[MapEntity(expr: "repository.find(surveyId)")]
+        Survey $survey
+    ): RedirectResponse
+    {
+        $viewUrl = $this->generateUrl(SurveyController::VIEW_ROUTE, ['surveyId' => $survey->getId()]);
+
+        if ($this->isCsrfTokenValid('mark-flags-seen-' . $survey->getId(), (string) $request->request->get('_token'))) {
+            $survey->getResponse()?->setQualityFlagsSeen($request->request->get('seen') === '1');
+            $entityManager->flush();
+        }
+
+        return new RedirectResponse($viewUrl);
     }
 }

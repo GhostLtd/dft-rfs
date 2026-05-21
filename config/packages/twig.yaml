@@ -14,4 +14,4 @@ twig:
         env_label_frontend: '%env_label_frontend%'
         frontend_hostname: '%frontend_hostname%'
 
-        csrgt_empty_detector: '@App\Utility\Domestic\EmptyDayDetection\DetectorService'
+        csrgt_quality_checks: '@App\Utility\QualityCheck\QualityCheckEngine'

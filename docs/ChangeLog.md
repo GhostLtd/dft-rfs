@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: CSRGT quality flags
 - **Update**: Add ActivityStatusOther to IRHS export views
 - **Update**: Add AskedNewLgvQuestions flag to IRHS export views
 

@@ -656,6 +656,16 @@ admin:
       message: Export successfully generated for {year} Q{quarter}
     re-order-day-stops:
       heading: Re-order stages
+    quality-check:
+      reason:
+        whole-day-empty: No cargo carried this day
+        zero-distance-stop: No distance recorded
+        same-origin-destination-stop: Same origin and destination
+      stop-prefix: >-
+        {count, plural,
+          one {Stop {numbers}}
+          other {Stops {numbers}}
+        }
   international:
     export:
       heading: IRHS export

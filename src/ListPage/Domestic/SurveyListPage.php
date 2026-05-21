@@ -7,6 +7,7 @@ use App\Entity\Domestic\SurveyResponse;
 use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\DaysFilter;
 use App\ListPage\Domestic\Field\InPossessionFilter;
+use App\ListPage\Domestic\Field\QualityFlagsChoiceFilter;
 use App\ListPage\Domestic\Field\WeekYearFilter;
 use Ghost\GovUkCoreBundle\ListPage\Field\ChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
@@ -52,7 +53,7 @@ class SurveyListPage extends AbstractListPage
             (new TextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
             (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
-            (new Simple('Empties?')),
+            (new QualityFlagsChoiceFilter('Quality flags'))->sortable(),
             (new InPossessionFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),
             (new DaysFilter('Days')),

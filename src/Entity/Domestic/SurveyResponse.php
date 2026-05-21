@@ -169,6 +169,26 @@ class SurveyResponse extends AbstractSurveyResponse
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $isExemptVehicleType = null;
 
+    /**
+     * Populated by QualityCheckEngine::computeAndPersist().
+     */
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $qualityFlagCount = null;
+
+    /**
+     * Cleared automatically when an edit changes the flag set (see QualityFlagRecomputeListener)
+     * Null is treated as not-seen.
+     */
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $qualityFlagsSeen = null;
+
+    /**
+     * Signature of the last-computed flag set (FlagSet::signature()), used to detect when an edit
+     * changes the flags so the "seen" state can be cleared
+     */
+    #[ORM\Column(type: Types::STRING, length: 32, nullable: true)]
+    private ?string $qualityFlagSignature = null;
+
     #[Assert\Callback(groups: ['admin_sold'])]
     public function validateSoldDateAdmin(ExecutionContextInterface $context): void
     {
@@ -612,5 +632,38 @@ class SurveyResponse extends AbstractSurveyResponse
         return
             $this->isInPossessionOfVehicle === self::IN_POSSESSION_YES &&
             $now < $this->getSurvey()->getSurveyPeriodEnd();
+    }
+
+    public function getQualityFlagCount(): ?int
+    {
+        return $this->qualityFlagCount;
+    }
+
+    public function setQualityFlagCount(?int $count): self
+    {
+        $this->qualityFlagCount = $count;
+        return $this;
+    }
+
+    public function getQualityFlagsSeen(): ?bool
+    {
+        return $this->qualityFlagsSeen;
+    }
+
+    public function setQualityFlagsSeen(?bool $qualityFlagsSeen): self
+    {
+        $this->qualityFlagsSeen = $qualityFlagsSeen;
+        return $this;
+    }
+
+    public function getQualityFlagSignature(): ?string
+    {
+        return $this->qualityFlagSignature;
+    }
+
+    public function setQualityFlagSignature(?string $qualityFlagSignature): self
+    {
+        $this->qualityFlagSignature = $qualityFlagSignature;
+        return $this;
     }
 }
