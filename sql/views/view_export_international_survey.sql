@@ -14,6 +14,7 @@ SELECT
     , f.NumberOfInternationalHGVJourneys
     , f.NumberOfInternationalLGVJourneys
     , f.ActivityStatus
+    , f.ActivityStatusOther
     , f.BusinessNature
     , f.NumberOfEmployees
     , f.ReasonForEmptySurvey

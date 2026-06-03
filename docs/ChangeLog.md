@@ -2,6 +2,9 @@
 
 # Changelog
 
+## Upcoming
+- **Update**: Add ActivityStatusOther to IRHS export views
+
 ## 2026-04-30
 - **Update**: Move DB views and SQL functions out of Doctrine migrations into a dedicated `sql/` directory, applied by `bin/console app:views:apply`. See [Database views and functions](Views.md).
 - **Fix**: `view_international_firms` / `view_export_international_survey` regression — the Feb 2026 SubmissionDate migration wholesale-replaced these views with a pre-HGV/LGV-split body. Corrected bodies now live in `sql/views/`.
