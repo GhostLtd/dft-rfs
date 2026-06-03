@@ -13,6 +13,7 @@ SELECT
     , f.NumberOfReminders
     , f.NumberOfInternationalHGVJourneys
     , f.NumberOfInternationalLGVJourneys
+    , f.AskedNewLgvQuestions
     , f.ActivityStatus
     , f.ActivityStatusOther
     , f.BusinessNature
