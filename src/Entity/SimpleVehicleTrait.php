@@ -10,14 +10,12 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 trait SimpleVehicleTrait
 {
     #[Assert\NotBlank(message: 'common.vehicle.gross-weight.not-blank', groups: ['vehicle_weight', 'admin_vehicle'])]
-    #[Assert\Positive(message: 'common.number.positive', groups: ['vehicle_weight', 'admin_vehicle'])]
     #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['vehicle_weight', 'admin_vehicle'])]
     #[Assert\Range(minMessage: 'common.vehicle.gross-weight.minimum', min: 3500, groups: ['vehicle_weight', 'admin_vehicle'])]
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $grossWeight = null;
 
     #[Assert\NotBlank(message: 'common.vehicle.carrying-capacity.not-blank', groups: ['vehicle_weight', 'admin_vehicle'])]
-    #[Assert\Positive(message: 'common.number.positive', groups: ['vehicle_weight', 'admin_vehicle'])]
     #[Assert\Range(maxMessage: 'common.number.max', max: 2000000000, groups: ['vehicle_weight', 'admin_vehicle'])]
     #[Assert\Range(minMessage: 'common.vehicle.carrying-capacity.minimum', min: 1000, groups: ['vehicle_weight', 'admin_vehicle'])]
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
@@ -38,9 +36,9 @@ trait SimpleVehicleTrait
     #[Assert\Callback(groups: ['vehicle_weight', 'admin_vehicle'])]
     public function validateWeight(ExecutionContextInterface $context): void
     {
-        if ($this->carryingCapacity !== null && $this->carryingCapacity >= $this->grossWeight) {
+        if ($this->carryingCapacity !== null && $this->grossWeight !== null && $this->carryingCapacity >= $this->grossWeight) {
             $context
-                ->buildViolation('common.vehicle.carrying-capacity.not-more-than-gross-weight')
+                ->buildViolation('common.vehicle.carrying-capacity.less-than-gross-weight')
                 ->atPath('carryingCapacity')
                 ->addViolation();
         }

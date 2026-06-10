@@ -26,3 +26,7 @@ li ul.govuk-list--indent {
 .govuk-list--circle {
   list-style-type: circle;
 }
+
+.govuk-hint > p {
+  margin-block-start: 0;
+}

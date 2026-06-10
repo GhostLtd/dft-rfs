@@ -17,19 +17,27 @@ class VehicleWeightsType extends AbstractType
         $builder
             ->add('grossWeight', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.gross-weight.label",
-                'help' => "{$translationKeyPrefix}.gross-weight.help",
                 'label_attr' => ['class' => 'govuk-label--s'],
+                'help' => "{$translationKeyPrefix}.gross-weight.help",
+                'help_html' => 'markdown',
                 'property_path' => 'vehicle.grossWeight',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
+                'strip_thousands_separators' => true,
+                'strip_units' => ['kg'],
+                'convert_tonnes' => true,
             ])
             ->add('carryingCapacity', Gds\IntegerType::class, [
                 'label' => "{$translationKeyPrefix}.carrying-capacity.label",
                 'help' => "{$translationKeyPrefix}.carrying-capacity.help",
+                'help_html' => 'markdown',
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'property_path' => 'vehicle.carryingCapacity',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
+                'strip_thousands_separators' => true,
+                'strip_units' => ['kg'],
+                'convert_tonnes' => true,
             ])
         ;
     }

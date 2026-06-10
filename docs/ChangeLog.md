@@ -6,6 +6,8 @@
 - **Feature**: CSRGT quality flags
 - **Update**: Add ActivityStatusOther to IRHS export views
 - **Update**: Add AskedNewLgvQuestions flag to IRHS export views
+- **Update**: Tune up CSRGT vehicle weight validations
+- **Update**: Remove "kg" units, and comma/dot thousand separators from CSRGT vehicle weights inputs, and convert explicit tonnes (e.g. "3.8 T") to kilograms (common user errors)
 
 ## 2026-04-30
 - **Update**: Move DB views and SQL functions out of Doctrine migrations into a dedicated `sql/` directory, applied by `bin/console app:views:apply`. See [Database views and functions](Views.md).
