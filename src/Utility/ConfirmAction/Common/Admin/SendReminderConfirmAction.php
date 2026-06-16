@@ -2,7 +2,7 @@
 
 namespace App\Utility\ConfirmAction\Common\Admin;
 
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyManualReminderInterface;
 use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Ghost\GovUkCoreBundle\Utility\ConfirmAction\ActionFailedException;
 use App\Utility\Reminder\ManualReminderHelper;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SendReminderConfirmAction extends AbstractConfirmAction
 {
-    /** @var SurveyInterface */
+    /** @var SurveyManualReminderInterface */
     protected mixed $subject;
     protected ?string $passcode = null;
 

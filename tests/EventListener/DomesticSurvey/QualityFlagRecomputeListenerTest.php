@@ -38,7 +38,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
 
     public function testStopChangeResolvesToOwningResponse(): void
     {
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $day = $this->createMock(Day::class);
         $day->method('getResponse')->willReturn($response);
         $stop = $this->createMock(DayStop::class);
@@ -54,7 +54,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
 
     public function testSummaryChangeResolvesToOwningResponse(): void
     {
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $day = $this->createMock(Day::class);
         $day->method('getResponse')->willReturn($response);
         $summary = $this->createMock(DaySummary::class);
@@ -69,7 +69,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
 
     public function testDayChangeResolvesToOwningResponse(): void
     {
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $day = $this->createMock(Day::class);
         $day->method('getResponse')->willReturn($response);
 
@@ -82,7 +82,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
 
     public function testMultipleChangesToSameResponseDeduplicate(): void
     {
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $day = $this->createMock(Day::class);
         $day->method('getResponse')->willReturn($response);
 
@@ -100,7 +100,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
 
     public function testUnrelatedEntityIsIgnored(): void
     {
-        $unrelated = $this->createMock(Survey::class);
+        $unrelated = $this->createStub(Survey::class);
         $this->scheduleUpdates([$unrelated]);
 
         $this->engine->expects($this->never())->method('computeAndPersist');
@@ -115,7 +115,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
         // SurveyResponse itself is not a trigger entity — only its descendants.
         // (We rely on this to avoid recursion when our own flush writes the
         // aggregate columns back onto the response.)
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $this->scheduleUpdates([$response]);
 
         $this->engine->expects($this->never())->method('computeAndPersist');
@@ -138,7 +138,7 @@ class QualityFlagRecomputeListenerTest extends TestCase
         // Simulate the engine's flush triggering its own onFlush via
         // the post-flush flow. The recomputing flag should make that re-entry
         // a no-op.
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $day = $this->createMock(Day::class);
         $day->method('getResponse')->willReturn($response);
         $stop = $this->createMock(DayStop::class);

@@ -3,8 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Repository\Domestic\SurveyRepository as DomesticSurveyRepository;
+use App\Attribute\MaintenanceWarningBanner;
 use App\Repository\International\SurveyRepository as InternationalSurveyRepository;
-use App\Repository\MaintenanceWarningRepository;
 use App\Repository\PreEnquiry\PreEnquiryRepository;
 use App\Repository\RoRo\SurveyRepository as RoroSurveyRepository;
 use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
@@ -16,12 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class IndexController extends AbstractController
 {
     #[Route(path: '', name: 'admin_index')]
+    #[MaintenanceWarningBanner]
     public function index(
         DomesticSurveyRepository      $domesticRepo,
         InternationalSurveyRepository $internationalRepo,
         PreEnquiryRepository          $preEnquiryRepo,
         RoroSurveyRepository          $roroRepo,
-        MaintenanceWarningRepository  $maintenanceWarningRepository,
     ): Response
     {
         $now = new \DateTime();
@@ -46,7 +46,6 @@ class IndexController extends AbstractController
             'preEnquiryOverdueCount' => $preEnquiryRepo->getOverdueCount(),
             'roroInProgressCount' => $roroRepo->getInProgressCount(),
             'roroOverdueCount' => $roroRepo->getOverdueCount(),
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 }

@@ -1,0 +1,62 @@
+[
+    {
+        "location": "App\\Tests\\Functional\\Admin\\Domestic\\ApproveSurveyTest::testApprovalForm",
+        "message": "Since symfony/translation 7.4: Method \"Symfony\\Component\\Translation\\TranslatableMessage::__toString()\" is deprecated.",
+        "count": 1
+    },
+    {
+        "location": "App\\Tests\\Functional\\Admin\\Domestic\\ApproveSurveyTest::testApprovalFormRendersCorrectly",
+        "message": "Since symfony/translation 7.4: Method \"Symfony\\Component\\Translation\\TranslatableMessage::__toString()\" is deprecated.",
+        "count": 1
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\BusinessAndVehiclesEditTest::testBusinessAndVehiclesEditWizards",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 4
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\BusinessAndVehiclesTest::testBusinessAndVehiclesWizard",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 54
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\DayStopEditTest::testDayStopEditWizards",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 20
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\InitialDetailsEditTest::testInitialDetailsEditWizards",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 24
+    },
+    {
+        "location": "Facebook\\WebDriver\\Firefox\\FirefoxOptions",
+        "message": "Method \"JsonSerializable::jsonSerialize()\" might add \"mixed\" as a native return type declaration in the future. Do the same in implementation \"Facebook\\WebDriver\\Firefox\\FirefoxOptions\" now to avoid errors or add an explicit @return annotation to suppress this message.",
+        "count": 1
+    },
+    {
+        "location": "Facebook\\WebDriver\\Local\\LocalWebDriver",
+        "message": "The \"Facebook\\WebDriver\\Local\\LocalWebDriver::createBySessionID()\" method will require a new \"bool $isW3cCompliant\" argument in the next major version of its parent class \"Facebook\\WebDriver\\Remote\\RemoteWebDriver\", not defining it is deprecated.",
+        "count": 1
+    },
+    {
+        "location": "Facebook\\WebDriver\\Local\\LocalWebDriver",
+        "message": "The \"Facebook\\WebDriver\\Local\\LocalWebDriver::createBySessionID()\" method will require a new \"WebDriverCapabilities|null $existingCapabilities\" argument in the next major version of its parent class \"Facebook\\WebDriver\\Remote\\RemoteWebDriver\", not defining it is deprecated.",
+        "count": 1
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\DayStopTestExtended::testDayStopWizard",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 1248
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\DaySummaryTestExtended::testDaySummaryWizard",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 360
+    },
+    {
+        "location": "App\\Tests\\Functional\\Domestic\\InitialDetailsTestExtended::testInitialDetails",
+        "message": "Since symfony/http-foundation 7.4: Request::get() is deprecated, use properties ->attributes, query or request directly instead.",
+        "count": 46
+    }
+]

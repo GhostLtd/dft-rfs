@@ -31,7 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/domestic-survey/day-{dayNumber}', name: 'app_domesticsurvey_daystop_', requirements: ['dayNumber' => '[1-7]'])]
 class DayStopController extends AbstractSessionStateFormWizardController
 {
-    protected string $dayNumber;
+    protected int $dayNumber;
     protected string $stopNumber;
 
     protected ?DayStop $dayStop = null;
@@ -58,7 +58,7 @@ class DayStopController extends AbstractSessionStateFormWizardController
 
     #[Route(path: '/stop-{stopNumber}/start', name: 'start', requirements: ['stopNumber' => '\d+|(add)'])]
     #[Route(path: '/stop-{stopNumber}/{state}', name: 'wizard', requirements: ['stopNumber' => '\d+|(add)'])]
-    public function init(Request $request, $dayNumber, string $stopNumber = "add", ?string $state = null): Response
+    public function init(Request $request, int $dayNumber, string $stopNumber = "add", ?string $state = null): Response
     {
         $this->stopNumber = $stopNumber;
         $this->dayNumber = $dayNumber;
@@ -153,7 +153,7 @@ class DayStopController extends AbstractSessionStateFormWizardController
 
     #[Route(path: '/delete-day-stop-{stopNumber}', name: 'delete')]
     #[Template('domestic_survey/day_stop/delete.html.twig')]
-    public function delete(string $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request): RedirectResponse|array
+    public function delete(int $dayNumber, string $stopNumber, DeleteDayStopConfirmAction $confirmAction, Request $request): RedirectResponse|array
     {
         $this->dayNumber = $dayNumber;
         $this->stopNumber = $stopNumber;

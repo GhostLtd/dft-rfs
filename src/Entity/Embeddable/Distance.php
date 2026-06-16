@@ -9,14 +9,14 @@ use Ghost\GovUkFrontendBundle\Model\ValueUnitInterface;
 #[ORM\Embeddable]
 class Distance implements ValueUnitInterface, \Stringable
 {
-    public const UNIT_KILOMETRES = 'kilometres';
-    public const UNIT_MILES = 'miles';
+    public const string UNIT_KILOMETRES = 'kilometres';
+    public const string UNIT_MILES = 'miles';
 
-    public const UNIT_CONVERSION_FACTOR = 1.609344;
+    public const float UNIT_CONVERSION_FACTOR = 1.609344;
 
-    public const UNIT_TRANSLATION_PREFIX = 'unit.distance.';
+    public const string UNIT_TRANSLATION_PREFIX = 'unit.distance.';
 
-    public const UNIT_CHOICES = [
+    public const array UNIT_CHOICES = [
         self::UNIT_TRANSLATION_PREFIX . self::UNIT_MILES => self::UNIT_MILES,
         self::UNIT_TRANSLATION_PREFIX . self::UNIT_KILOMETRES => self::UNIT_KILOMETRES,
     ];
@@ -50,8 +50,8 @@ class Distance implements ValueUnitInterface, \Stringable
         }
 
         return match ($unit) {
-            self::UNIT_KILOMETRES => $this->value * self::UNIT_CONVERSION_FACTOR,
-            self::UNIT_MILES => $this->value / self::UNIT_CONVERSION_FACTOR,
+            self::UNIT_KILOMETRES => (float) $this->value * self::UNIT_CONVERSION_FACTOR,
+            self::UNIT_MILES => (float) $this->value / self::UNIT_CONVERSION_FACTOR,
             default => throw new \InvalidArgumentException('Unexpected unit type'),
         };
     }

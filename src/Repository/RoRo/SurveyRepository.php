@@ -122,7 +122,7 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyDeletion
 
     public function getSurveyPeriodStartForYearAndMonth(int $currentYear, int $currentMonth): \DateTime
     {
-        $monthPadded = str_pad($currentMonth, 2, '0', STR_PAD_LEFT);
+        $monthPadded = str_pad((string) $currentMonth, 2, '0', STR_PAD_LEFT);
         return \DateTime::createFromFormat(\DateTime::ATOM, "{$currentYear}-{$monthPadded}-01T00:00:00+00:00");
     }
 

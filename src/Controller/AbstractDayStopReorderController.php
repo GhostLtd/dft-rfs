@@ -25,12 +25,12 @@ abstract class AbstractDayStopReorderController extends AbstractController
     abstract protected function getRedirectResponse(Day $day): RedirectResponse;
     abstract protected function getTemplate(): string;
 
-    protected function getDay(Survey $survey, string $dayNumber)
+    protected function getDay(Survey $survey, int $dayNumber)
     {
         $dayRepository = $this->entityManager->getRepository(Day::class);
 
         try {
-            return $dayRepository->getBySurveyAndDayNumber($survey, intval($dayNumber));
+            return $dayRepository->getBySurveyAndDayNumber($survey, $dayNumber);
         }
         catch(NonUniqueResultException) {}
 

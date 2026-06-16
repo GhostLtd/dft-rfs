@@ -8,12 +8,13 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Embeddable\Volume;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
-use App\Tests\Form\Type\Admin\AbstractSurveyTypeTest;
+use App\Tests\Form\Type\Admin\AbstractSurveyTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Form\FormError;
 
-class FinalDetailsTypeTest extends AbstractSurveyTypeTest
+class FinalDetailsTypeTest extends AbstractSurveyTypeTestCase
 {
-    protected function dataInPossession(): array
+    public static function dataInPossession(): array
     {
         return [
             [['banana' => '123'], false],
@@ -35,9 +36,7 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataInPossession
-     */
+    #[DataProvider('dataInPossession')]
     public function testInPossession(array $formData, bool $expectedValid): void
     {
         $data = $this->getSurveyResponse(true);
@@ -55,7 +54,7 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
             $data = $form->getData();
 
             $this->assertInstanceOf(SurveyResponse::class, $data);
-            $vehicle = $data?->getVehicle();
+            $vehicle = $data->getVehicle();
             $type = $vehicle?->getFuelType();
 
             $this->assertEquals($formData['fuel']['fuelType'] ?? null, $vehicle->getFuelType());
@@ -68,7 +67,7 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
         }
     }
 
-    protected function dataNotInPossession(): array
+    public static function dataNotInPossession(): array
     {
         return [
             [[], false],
@@ -97,9 +96,7 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataNotInPossession
-     */
+    #[DataProvider('dataNotInPossession')]
     public function testNotInPossession(array $formData, bool $expectedValid): void
     {
         $data = $this->getSurveyResponse(false);
@@ -131,7 +128,7 @@ class FinalDetailsTypeTest extends AbstractSurveyTypeTest
         $vehicle = (new Vehicle())
             ->setFuelType('petrol')
             ->setIsFuelTypeHybrid(true)
-            ->setFuelQuantity(125)
+            ->setFuelQuantity('125')
             ->setResponse($response);
 
         if ($hasJourneys) {

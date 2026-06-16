@@ -7,12 +7,8 @@
 {%- endblock -%}
 
 {%- block content -%}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary, notificationBanner -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import errorSummary -%}
     {%- from 'roro/macros.html.twig' import contactDetails -%}
-
-    {%- if maintenanceWarningBanner ?? false -%}
-        {{- notificationBanner(maintenanceWarningBanner) -}}
-    {%- endif -%}
 
     {%- if authenticationError -%}
         {{- errorSummary({

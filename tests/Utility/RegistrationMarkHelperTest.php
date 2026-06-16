@@ -3,11 +3,12 @@
 namespace App\Tests\Utility;
 
 use App\Utility\RegistrationMarkHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RegistrationMarkHelperTest extends TestCase
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             // ## Valid Current Style
@@ -125,9 +126,7 @@ class RegistrationMarkHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testRepeatingDigits(string $registrationMark, bool $isValid, bool $isCurrent, ?string $expectedOutput): void
     {
         $helper = new RegistrationMarkHelper($registrationMark);

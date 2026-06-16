@@ -8,7 +8,7 @@ use App\Tests\DataFixtures\RoRo\RouteAndPortFixtures;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class TripTest extends AbstractTripTest
+class TripTest extends AbstractTripTestCase
 {
     public function testArticulated(): void
     {
@@ -107,7 +107,7 @@ class TripTest extends AbstractTripTest
 
         $this->originDestinationDatesAndPorts();
         $this->swappedTrailer('232'); // Becomes a rigid with trailer
-        $this->weight(31000,26000);
+        $this->weight('31000', '26000');
         $this->distanceAndCountries();
 
         $this->pathTestAction('#^/international-survey/trips/[^/]+$#', [PathTestAction::OPTION_EXPECTED_PATH_REGEX => true]);

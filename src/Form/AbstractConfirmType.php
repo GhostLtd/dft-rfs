@@ -29,7 +29,7 @@ abstract class AbstractConfirmType extends AbstractType
                     false => "no",
                     null => ""
                 },
-                'constraints' => new NotNull(['message' => $options['null_message']]),
+                'constraints' => new NotNull(message: $options['null_message']),
             ]))
         ;
     }

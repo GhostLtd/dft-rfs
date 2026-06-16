@@ -18,9 +18,10 @@ class LoadingWithoutUnloadingHelper
             Survey::class => $this->getLoadingWithoutUnloadingForSurvey($target),
             Trip::class => $this->getLoadingWithoutUnloadingForTrip($target),
             Vehicle::class => $this->getLoadingWithoutUnloadingForVehicle($target),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected target class "%s"', $class)),
         };
 
-        return $gen->current() !== null;
+        return $gen->valid();
     }
 
     /**

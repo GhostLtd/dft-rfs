@@ -114,16 +114,7 @@ class InputAnalyser
                 foreach($fileMapping->getMapping() as ['header' => $header, 'key' => $key]) {
                     $text = trim($row[$key]);
                     if (mb_check_encoding($text, 'ISO-8859-1')) {
-                        $convertedText = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
-
-                        if ($convertedText === false) {
-                            // Couldn't convert to UTF-8
-                            $recordStats && $this->stats->record(Stats::INVALID_TEXT);
-                            $this->consoleLogger->log("Invalid text: {$text}", ConsoleLogger::LEVEL_INVALID_TEXT);
-                            continue;
-                        }
-
-                        $text = $convertedText;
+                        $text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
                     } else {
                         // Input text doesn't look like expected ISO-8859-1
                         $recordStats && $this->stats->record(Stats::INVALID_TEXT);

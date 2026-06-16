@@ -4,11 +4,12 @@ namespace App\Tests\Form\Type\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Form\Admin\DomesticSurvey\ConfirmApprovedActionType;
-use App\Tests\Form\Type\Admin\AbstractSurveyTypeTest;
+use App\Tests\Form\Type\Admin\AbstractSurveyTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class ConfirmApprovedActionTypeTest extends AbstractSurveyTypeTest
+class ConfirmApprovedActionTypeTest extends AbstractSurveyTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -25,9 +26,7 @@ class ConfirmApprovedActionTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $form = $this->factory->create(ConfirmApprovedActionType::class, null, [

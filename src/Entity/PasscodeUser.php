@@ -8,7 +8,6 @@ use App\Entity\PreEnquiry\PreEnquiry;
 use App\Repository\PasscodeUserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -23,7 +22,7 @@ class PasscodeUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 10, unique: true)]
@@ -111,6 +110,7 @@ class PasscodeUser implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[\Override]
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
     }

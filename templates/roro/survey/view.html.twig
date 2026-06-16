@@ -52,7 +52,7 @@
             actions: canEdit ?
                 [
                     {
-                        href: path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_INTRODUCTION')}),
+                        href: path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\\App\\Workflow\\RoRo\\RoRoState::STATE_INTRODUCTION')}),
                         text: 'common.actions.change' | trans,
                         visuallyHiddenText: 'roro.survey.view.change.activity' | trans,
                     }
@@ -64,7 +64,7 @@
             actions: canEdit ?
                 [
                     {
-                        href: path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_COMMENTS')}),
+                        href: path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\\App\\Workflow\\RoRo\\RoRoState::STATE_COMMENTS')}),
                         text: 'common.actions.change' | trans,
                         visuallyHiddenText: 'roro.survey.view.change.comments' | trans,
                     }
@@ -92,10 +92,10 @@
         {% if isActiveAndCanEdit %}
             <ul class="govuk-list govuk-!-margin-bottom-6">
                 <li>
-                    <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_VEHICLE_COUNTS')}) }}">{{ 'roro.survey.edit-vehicle-counts' | trans }}</a>
+                    <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\\App\\Workflow\\RoRo\\RoRoState::STATE_VEHICLE_COUNTS')}) }}">{{ 'roro.survey.edit-vehicle-counts' | trans }}</a>
                 </li>
                 <li>
-                    <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\App\\Workflow\\RoRo\\RoRoState::STATE_DATA_ENTRY')}) }}">{{ 'roro.survey.edit-vehicle-counts-advanced' | trans }}</a>
+                    <a class="govuk-link" href="{{ path('app_roro_survey_edit', {surveyId: survey.id, state: constant('\\App\\Workflow\\RoRo\\RoRoState::STATE_DATA_ENTRY')}) }}">{{ 'roro.survey.edit-vehicle-counts-advanced' | trans }}</a>
                 </li>
             </ul>
         {% endif %}

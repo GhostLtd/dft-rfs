@@ -3,7 +3,7 @@
 namespace App\Utility\QualityCheck;
 
 use App\Entity\Domestic\SurveyResponse;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class QualityCheckEngine
 {
@@ -11,7 +11,7 @@ class QualityCheckEngine
      * @param iterable<QualityCheckInterface> $checks
      */
     public function __construct(
-        #[TaggedIterator('csrgt.quality_check')]
+        #[AutowireIterator('csrgt.quality_check')]
         protected iterable $checks,
     ) {}
 

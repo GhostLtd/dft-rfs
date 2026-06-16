@@ -49,6 +49,7 @@ class PortListPage extends AbstractListPage
         $repository = match($this->portType) {
             self::TYPE_PORT_FOREIGN => $this->foreignPortRepository,
             self::TYPE_PORT_UK => $this->ukPortRepository,
+            default => throw new \InvalidArgumentException(sprintf('Unexpected port type "%s"', $this->portType)),
         };
 
         return $repository->createQueryBuilder('port')

@@ -66,7 +66,7 @@ class DriverAvailabilityExportController extends AbstractController
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
 
                 $filename = ($year !== null && $month !== null) ?
-                    $dataExporter->generateExportDataForYearAndMonth($year, $month) :
+                    $dataExporter->generateExportDataForYearAndMonth((int) $year, (int) $month) :
                     $dataExporter->generateAllExportData();
 
                 if ($filename) {

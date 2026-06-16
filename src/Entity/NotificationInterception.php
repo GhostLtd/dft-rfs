@@ -86,6 +86,7 @@ class NotificationInterception
         return match ($surveyTypeOrClass) {
             DomesticSurvey::class, 'csrgt', 'domestic' => $this->aggregateWithDvlaEmails($this->csrgtEmails),
             InternationalSurvey::class, 'irhs', 'international' => $this->aggregateWithDvlaEmails($this->irhsEmails),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected survey type or class "%s"', $surveyTypeOrClass)),
         };
     }
 

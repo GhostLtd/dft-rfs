@@ -9,7 +9,6 @@ use Facebook\WebDriver\Exception\UnknownErrorException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
-use PHPUnit\Runner\BaseTestRunner;
 use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\PantherTestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -251,11 +250,12 @@ class AbstractFunctionalTestCase extends PantherTestCase
     #[\Override]
     public function takeScreenshotIfTestFailed(): void
     {
-        if (!\in_array($this->getStatus(), [BaseTestRunner::STATUS_ERROR, BaseTestRunner::STATUS_FAILURE], true)) {
+        $status = $this->status();
+        if (!$status->isError() && !$status->isFailure()) {
             return;
         }
 
-        $type = BaseTestRunner::STATUS_FAILURE === $this->getStatus() ? 'failure' : 'error';
+        $type = $status->isFailure() ? 'failure' : 'error';
         $test = md5($this->toString());
 
         // It's deprecated, but at least phpstan can detect the method on the class
@@ -290,7 +290,14 @@ class AbstractFunctionalTestCase extends PantherTestCase
 
             if (is_array($expectedValue)) {
                 if (is_array($actualValue)) {
-                    $this->assertEqualsCanonicalizing($expectedValue, $actualValue);
+                    // PHPUnit 12's canonicalizing comparison preserves array keys (it no longer
+                    // reindexes via sort()). For list-style values (e.g. countriesTransitted) the
+                    // keys are positional artifacts, so compare by value only.
+                    if (array_is_list($expectedValue)) {
+                        $this->assertEqualsCanonicalizing($expectedValue, array_values($actualValue));
+                    } else {
+                        $this->assertEqualsCanonicalizing($expectedValue, $actualValue);
+                    }
                     continue;
                 } else if (!is_object($actualValue)) {
                     $type = gettype($actualValue);

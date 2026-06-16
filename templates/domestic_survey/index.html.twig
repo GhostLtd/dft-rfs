@@ -7,10 +7,6 @@
 {% block content %}
     {% from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow %}
 
-    {%- if maintenanceWarningBanner ?? false -%}
-        {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner -%}
-        {{- notificationBanner(maintenanceWarningBanner) -}}
-    {%- endif -%}
 
     <h1 class="page-heading__heading govuk-heading-xl">{{ 'domestic.summary.heading'|trans }}</h1>
 

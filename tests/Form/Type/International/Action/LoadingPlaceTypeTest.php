@@ -8,16 +8,17 @@ use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Form\InternationalSurvey\Action\LoadingPlaceType;
 use App\Repository\International\ActionRepository;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\CountryHelper;
 use App\Utility\LoadingPlaceHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class LoadingPlaceTypeTest extends AbstractTypeTest
+class LoadingPlaceTypeTest extends AbstractTypeTestCase
 {
     protected array $mockedReturnValue = [];
     protected ActionRepository&MockObject $actionRepositoryMock;
@@ -64,7 +65,7 @@ class LoadingPlaceTypeTest extends AbstractTypeTest
         );
     }
 
-    protected function dataLoadingPlace(): array
+    public static function dataLoadingPlace(): array
     {
         return [
             [[], false],
@@ -78,9 +79,7 @@ class LoadingPlaceTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataLoadingPlace
-     */
+    #[DataProvider('dataLoadingPlace')]
     public function testLoadingPlace(array $formData, bool $expectedValid, ?string $expectedLoadingActionId=null): void
     {
         $surveyResponse = new SurveyResponse();

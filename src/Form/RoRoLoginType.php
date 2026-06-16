@@ -24,12 +24,12 @@ class RoRoLoginType extends AbstractType
                 'label' => 'roro.login.username.label',
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'roro.login.username-blank',
-                    ]),
-                    new Email([
-                        'message' => 'roro.login.invalid-email',
-                    ]),
+                    new NotBlank(
+                        message: 'roro.login.username-blank',
+                    ),
+                    new Email(
+                        message: 'roro.login.invalid-email',
+                    ),
                 ],
             ])
             ->add('sign_in', ButtonType::class, ['type' => 'submit'])

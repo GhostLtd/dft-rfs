@@ -21,7 +21,7 @@ class EarlyResponseType extends AbstractType
                 'label' => "international.closing-details.early-response.is-correct.label",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "international.closing-details.early-response.is-correct.help",
-                'constraints' => new NotNull(['message' => 'international.closing-details.early-response.not-null']),
+                'constraints' => new NotNull(message: 'international.closing-details.early-response.not-null'),
                 'choice_translation_domain' => 'messages',
             ]);
     }

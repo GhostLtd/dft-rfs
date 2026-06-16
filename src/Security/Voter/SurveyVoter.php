@@ -8,6 +8,7 @@ use App\Entity\PasscodeUser;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyStateInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -45,7 +46,7 @@ class SurveyVoter extends Voter
      * @param SurveyInterface $subject
      */
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (!$this->authorizationChecker->isGranted(PasscodeUser::ROLE_PASSCODE_USER)) {
             return false;
@@ -74,7 +75,7 @@ class SurveyVoter extends Voter
                 $subject->getState() === SurveyStateInterface::STATE_IN_PROGRESS &&
                 $subject->getResponse()?->getIsInPossessionOfVehicle() === SurveyResponse::IN_POSSESSION_YES &&
                 $subject->isBusinessAndVehicleDetailsComplete() &&
-                !$subject->getResponse()?->getIsExemptVehicleType(),
+                !$subject->getResponse()->getIsExemptVehicleType(),
 
             self::EDIT => in_array($subject->getState(), [
                 SurveyStateInterface::STATE_IN_PROGRESS,

@@ -5,11 +5,11 @@ namespace App\Tests\NewFunctional\Wizard\Admin\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Tests\DataFixtures\Domestic\ResponseOnHireFixtures;
 use App\Tests\NewFunctional\Wizard\Action\Context;
-use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTest;
+use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use App\Utility\RegistrationMarkHelper;
 
-class ReissueSurveyTest extends AbstractAdminTest
+class ReissueSurveyTest extends AbstractAdminTestCase
 {
     public function testReissueSurvey(): void
     {

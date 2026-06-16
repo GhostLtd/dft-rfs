@@ -9,15 +9,16 @@ use App\Tests\DataFixtures\Domestic\ResponseScrappedFixtures;
 use App\Tests\DataFixtures\Domestic\ResponseSoldFixtures;
 use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
 use App\Tests\DataFixtures\Domestic\VehicleFixtures;
-use App\Tests\Functional\Admin\AbstractAdminFunctionalTest;
+use App\Tests\Functional\Admin\AbstractAdminFunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class ApproveSurveyTest extends AbstractAdminFunctionalTest
+class ApproveSurveyTest extends AbstractAdminFunctionalTestCase
 {
-    public const BUTTON_ONLY_FORM_NAME = 'confirm_action';
-    public const FINAL_DETAILS_FORM_NAME = 'final_details';
-    public const UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
+    public const string BUTTON_ONLY_FORM_NAME = 'confirm_action';
+    public const string FINAL_DETAILS_FORM_NAME = 'final_details';
+    public const string UNFILLED_SURVEY_FORM_NAME = 'confirm_approved_action';
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [
@@ -48,9 +49,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testApprovalForm(array $fixtures, string $expectedFormName)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
@@ -69,9 +68,8 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
      * Asserts the rendered approve form has the bundle's button_group
      * structure (cancel-as-link rather than button) and the right
      * survey-specific fields for each form-class scenario.
-     *
-     * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testApprovalFormRendersCorrectly(array $fixtures, string $expectedFormName): void
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
@@ -101,6 +99,7 @@ class ApproveSurveyTest extends AbstractAdminFunctionalTest
             self::UNFILLED_SURVEY_FORM_NAME => $this->assertHasUnfilledSurveyField($crawler),
             self::FINAL_DETAILS_FORM_NAME => $this->assertHasEmptySurveyField($crawler),
             self::BUTTON_ONLY_FORM_NAME => $this->assertNoExtraSurveyFields($crawler),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected form name "%s"', $expectedFormName)),
         };
     }
 

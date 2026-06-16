@@ -4,10 +4,10 @@ namespace App\Tests\NewFunctional\Wizard\Admin\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Tests\NewFunctional\Wizard\Action\Context;
-use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTest;
+use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class AddSurveyTest extends AbstractAdminTest
+class AddSurveyTest extends AbstractAdminTestCase
 {
     public function testAddSurvey(): void
     {
@@ -59,7 +59,6 @@ class AddSurveyTest extends AbstractAdminTest
             $test->assertCount(1, $surveys, 'Expected a single survey to be in the database');
 
             $survey = $surveys[0];
-            $test->assertInstanceOf(Survey::class, $survey);
 
             $this->assertDataMatches($survey, $data, 'survey');
         });

@@ -4,11 +4,12 @@ namespace App\Tests\Form\Type\International\InitialDetails;
 
 use App\Entity\International\SurveyResponse;
 use App\Form\InternationalSurvey\InitialDetails\BusinessDetailsType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class BusinessDetailsTypeTest extends AbstractTypeTest
+class BusinessDetailsTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -30,9 +31,7 @@ class BusinessDetailsTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $data = new SurveyResponse();

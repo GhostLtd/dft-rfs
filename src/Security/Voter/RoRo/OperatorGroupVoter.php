@@ -5,6 +5,7 @@ namespace App\Security\Voter\RoRo;
 use App\Entity\RoRo\OperatorGroup;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class OperatorGroupVoter extends Voter
@@ -37,7 +38,7 @@ class OperatorGroupVoter extends Voter
      * @param OperatorGroup $subject
      */
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         return $this->security->isGranted('ROLE_ADMIN_USER');
     }

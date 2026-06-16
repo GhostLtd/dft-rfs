@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Form;
 
 use App\Utility\Form\UnitStripper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class UnitStripperTest extends TestCase
 {
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             'space before unit' => ['3,500 kg', ['kg'], '3,500'],
@@ -23,9 +24,9 @@ class UnitStripperTest extends TestCase
     }
 
     /**
-     * @dataProvider provider
      * @param string[] $units
      */
+    #[DataProvider('provider')]
     public function testStrip(string $input, array $units, string $expected): void
     {
         $this->assertSame($expected, (new UnitStripper())->strip($input, $units));

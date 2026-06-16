@@ -103,10 +103,10 @@ class AutomatedRoroRemindersHelper
                         $user->getEmail(),
                         $template,
                         [
-                            'operator' => $operator->getName(),
+                            'operator' => (string) $operator->getName(),
                             'route_names' => $routeNamesForEmail,
                             'login_link' => $this->roroLoginLinkHandler->createLoginLink($user)->getUrl(),
-                            'year' => $mostRecentSurveyYear,
+                            'year' => (string) $mostRecentSurveyYear,
                             'month' => $formattedMostRecentSurveyMonth,
                         ],
                     ));

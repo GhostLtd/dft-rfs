@@ -8,13 +8,13 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Embeddable\Distance;
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
-use App\Tests\Functional\Admin\AbstractAdminFunctionalTest;
+use App\Tests\Functional\Admin\AbstractAdminFunctionalTestCase;
 
 /**
  * End-to-end: when several stops on a day share a quality-check reason, the survey view renders a
  * single grouped tag ("Stops 1,2: ...") rather than one tag per stop.
  */
-class QualityFlagRenderingTest extends AbstractAdminFunctionalTest
+class QualityFlagRenderingTest extends AbstractAdminFunctionalTestCase
 {
     public function testRepeatedStopReasonRendersAsOneGroupedTag(): void
     {

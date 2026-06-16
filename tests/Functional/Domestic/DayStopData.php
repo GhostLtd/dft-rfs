@@ -119,7 +119,7 @@ class DayStopData extends AbstractDayStopOrSummaryData
             } else {
                 if ($atCapacityBySpace && !$atCapacityByWeight) {
                     $wasLimitedBy = [0 => "space"];
-                } else if (!$atCapacityBySpace && $atCapacityByWeight) {
+                } else if (!$atCapacityBySpace) {
                     $wasLimitedBy = [1 => "weight"];
                 } else {
                     $wasLimitedBy = [0 => "space", 1 => "weight"];

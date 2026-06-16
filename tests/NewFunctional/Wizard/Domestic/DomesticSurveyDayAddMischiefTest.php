@@ -4,9 +4,9 @@ namespace App\Tests\NewFunctional\Wizard\Domestic;
 
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 use App\Tests\DataFixtures\Domestic\DaySummaryFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
+use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 
-class DomesticSurveyDayAddMischiefTest extends AbstractPasscodeWizardTest
+class DomesticSurveyDayAddMischiefTest extends AbstractPasscodeWizardTestCase
 {
     public function testSummaryDayThenAddStopSwitcharooFails(): void
     {

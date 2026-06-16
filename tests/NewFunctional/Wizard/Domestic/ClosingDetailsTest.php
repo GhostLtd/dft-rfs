@@ -11,11 +11,11 @@ use App\Tests\DataFixtures\Domestic\DaySummaryFixtures;
 use App\Tests\DataFixtures\Domestic\EarlySurveyFixtures;
 use App\Tests\DataFixtures\Domestic\ResponseOnHireButInProgress;
 use App\Tests\DataFixtures\Domestic\VehicleFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
+use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class ClosingDetailsTest extends AbstractPasscodeWizardTest
+class ClosingDetailsTest extends AbstractPasscodeWizardTestCase
 {
     public function testFinalQuestionsWithSomeMissingDays(): void
     {

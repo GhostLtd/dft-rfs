@@ -10,6 +10,7 @@ use App\Entity\Vehicle;
 use App\Tests\Workflow\AbstractWorkflowTestCase;
 use App\Workflow\InternationalSurvey\TripState;
 use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -48,7 +49,7 @@ class TripStateTest extends AbstractWorkflowTestCase
      * Tests
      ***/
 
-    public function rigidTestDataProvider(): array
+    public static function rigidTestDataProvider(): array
     {
         return [
             [false, false, [TripState::STATE_DISTANCE]],
@@ -59,9 +60,7 @@ class TripStateTest extends AbstractWorkflowTestCase
         ];
     }
 
-    /**
-     * @dataProvider rigidTestDataProvider
-     */
+    #[DataProvider('rigidTestDataProvider')]
     public function testRigid(bool $editing, bool $swappedTrailer, array $states): void
     {
         $this->setSubjectPersisted($editing);
@@ -72,7 +71,7 @@ class TripStateTest extends AbstractWorkflowTestCase
         $this->assertStateTransitions($states);
     }
 
-    public function articulatedTestDataProvider(): array
+    public static function articulatedTestDataProvider(): array
     {
         return [
             [false, false, false, [TripState::STATE_CHANGED_BODY_TYPE, TripState::STATE_DISTANCE]],
@@ -87,9 +86,7 @@ class TripStateTest extends AbstractWorkflowTestCase
         ];
     }
 
-    /**
-     * @dataProvider articulatedTestDataProvider
-     */
+    #[DataProvider('articulatedTestDataProvider')]
     public function testArticulated(bool $editing, bool $swappedTrailer, bool $changeBodyType, array $states): void
     {
         $this->setSubjectPersisted($editing);

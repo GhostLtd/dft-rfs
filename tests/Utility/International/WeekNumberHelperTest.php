@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\International;
 
 use App\Utility\International\WeekNumberHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeekNumberHelperTest extends TestCase
 {
-    public function providerWeekNumber()
+    public static function providerWeekNumber()
     {
         return [
             ['2021/07/24', 1556],
@@ -17,9 +18,7 @@ class WeekNumberHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerWeekNumber
-     */
+    #[DataProvider('providerWeekNumber')]
     public function testWeekNumber(string $date, int $expectedWeekNumber)
     {
         $weekNumber = WeekNumberHelper::getWeekNumber(new \DateTime($date));
@@ -27,7 +26,7 @@ class WeekNumberHelperTest extends TestCase
         $this->assertEquals($expectedWeekNumber, $weekNumber);
     }
 
-    public function providerDateFromWeekAndYear()
+    public static function providerDateFromWeekAndYear()
     {
         return [
             [1557, '2021/07/25'],
@@ -35,9 +34,7 @@ class WeekNumberHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerDateFromWeekAndYear
-     */
+    #[DataProvider('providerDateFromWeekAndYear')]
     public function testDateFromWeekAndYear(int $weekNumber, ?string $expectedDate)
     {
         $date = WeekNumberHelper::getDateForWeekNumber($weekNumber);

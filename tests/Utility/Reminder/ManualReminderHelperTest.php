@@ -21,6 +21,7 @@ use App\Utility\NotificationInterceptionService;
 use App\Utility\Reminder\ManualReminderHelper;
 use App\Utility\Reminder\UnavailabilityReason;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -62,7 +63,7 @@ class ManualReminderHelperTest extends KernelTestCase
         );
     }
 
-    public function dataCanShowManualReminderButton(): array
+    public static function dataCanShowManualReminderButton(): array
     {
         $domesticSurvey = fn(string $state): DomesticSurvey => (new DomesticSurvey())->setState($state);
         $internationalSurvey = fn(string $state): InternationalSurvey => (new InternationalSurvey())->setState($state);
@@ -85,15 +86,13 @@ class ManualReminderHelperTest extends KernelTestCase
         return $testCases;
     }
 
-    /**
-     * @dataProvider dataCanShowManualReminderButton
-     */
+    #[DataProvider('dataCanShowManualReminderButton')]
     public function testCanShowManualReminderButton(SurveyManualReminderInterface $survey, bool $expectedResult): void
     {
         $this->assertEquals($expectedResult, $this->manualReminderHelper->canShowManualReminderButton($survey));
     }
 
-    public function dataGetRecipientEmails(): array
+    public static function dataGetRecipientEmails(): array
     {
         $domesticSurvey = fn(?string $contactEmail, ?string $invitationEmails): DomesticSurvey =>
             (new DomesticSurvey())
@@ -140,15 +139,13 @@ class ManualReminderHelperTest extends KernelTestCase
         return $testCases;
     }
 
-    /**
-     * @dataProvider dataGetRecipientEmails
-     */
+    #[DataProvider('dataGetRecipientEmails')]
     public function testGetRecipientEmails(SurveyManualReminderInterface $survey, ?array $expectedResult): void
     {
         $this->assertEquals($expectedResult, $this->manualReminderHelper->getRecipientEmails($survey));
     }
 
-    public function dataGetInProgressDate(): array
+    public static function dataGetInProgressDate(): array
     {
         $auditLog = fn(\DateTime $timestamp, array $data = [], string $category = SurveyStateLogger::CATEGORY) =>
             (new AuditLog())->setTimestamp($timestamp)->setCategory($category)->setData($data);
@@ -176,9 +173,7 @@ class ManualReminderHelperTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetInProgressDate
-     */
+    #[DataProvider('dataGetInProgressDate')]
     public function testGetInProgressDate(array $logResults, ?\DateTime $expectedResult): void
     {
         $this->auditLogRepositoryMock
@@ -195,7 +190,7 @@ class ManualReminderHelperTest extends KernelTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function dataGetReasonWhyCannotSendManualReminder(): array
+    public static function dataGetReasonWhyCannotSendManualReminder(): array
     {
         $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): DomesticSurvey =>
         (new DomesticSurvey())
@@ -276,9 +271,7 @@ class ManualReminderHelperTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetReasonWhyCannotSendManualReminder
-     */
+    #[DataProvider('dataGetReasonWhyCannotSendManualReminder')]
     public function testGetReasonWhyCannotSendManualReminder(SurveyManualReminderInterface $survey, ?string $expectedResult): void
     {
         $this->auditLogRepositoryMock
@@ -287,14 +280,15 @@ class ManualReminderHelperTest extends KernelTestCase
 
         $reason = $this->manualReminderHelper->getReasonWhyCannotSendManualReminder($survey);
 
-        if ($reason) {
-            $this->assertEquals($reason->getReason(), $expectedResult);
-        } else {
+        if ($expectedResult === null) {
             $this->assertNull($reason);
+        } else {
+            $this->assertNotNull($reason);
+            $this->assertEquals($expectedResult, $reason->getReason());
         }
     }
 
-    public function dataGetMostRecentEventDate(): array
+    public static function dataGetMostRecentEventDate(): array
     {
         $one = new \DateTime('2021-01-01');
         $two = new \DateTime('2021-03-01');
@@ -362,9 +356,7 @@ class ManualReminderHelperTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetMostRecentEventDate
-     */
+    #[DataProvider('dataGetMostRecentEventDate')]
     public function testGetMostRecentEventDate(SurveyManualReminderInterface $survey, array $logs, ?\DateTime $expectedDate, ?string $expectedEventType): void
     {
         $this->auditLogRepositoryMock
@@ -467,7 +459,7 @@ class ManualReminderHelperTest extends KernelTestCase
             ->method('dispatch')
             ->willReturn(new \Symfony\Component\Messenger\Envelope(new \stdClass()));
 
-        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $entityManagerMock = $this->createStub(EntityManagerInterface::class);
 
         $securityMock = $this->createMock(Security::class);
         $userMock = $this->createMock(\Symfony\Component\Security\Core\User\UserInterface::class);

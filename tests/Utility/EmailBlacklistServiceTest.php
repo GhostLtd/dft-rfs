@@ -4,13 +4,14 @@ namespace App\Tests\Utility;
 
 use App\Repository\EmailBlacklistRepository;
 use App\Utility\EmailBlacklistService;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class EmailBlacklistServiceTest extends TestCase
 {
-    private EmailBlacklistRepository $repository;
-    private LoggerInterface $logger;
+    private EmailBlacklistRepository&MockObject $repository;
+    private LoggerInterface&MockObject $logger;
     private EmailBlacklistService $service;
 
     protected function setUp(): void

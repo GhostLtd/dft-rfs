@@ -3,12 +3,13 @@
 namespace App\Tests\ListPage\Field;
 
 use Ghost\GovUkCoreBundle\ListPage\Field\DateTextFilter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 class DateTextFilterTest extends TestCase
 {
-    public function dataNormaliseDate(): array
+    public static function dataNormaliseDate(): array
     {
         return [
             ['2022-08-11', '2022-08-11'], // YMD
@@ -36,9 +37,7 @@ class DateTextFilterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataNormaliseDate
-     */
+    #[DataProvider('dataNormaliseDate')]
     public function testNormaliseDate(string $input, string $expectedOutput): void
     {
         $dateTextFilter = $this->createStub(DateTextFilter::class);

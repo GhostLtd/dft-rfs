@@ -297,7 +297,7 @@ module.exports.run = async function(argv) {
         await doInitialPossesion(page, '0', '0');
         await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4b-summary-after-exempt-vehicle.png')});
 
-        await clickLink(page,'//dt[text() = "Is your vehicle a horsebox, jetter, cherry-picker or exhibition/showperson\'s vehicle?"]/../dd[contains(concat(" ",normalize-space(@class)," ")," govuk-summary-list__actions ")]/a')
+        await clickLink(page,'//dt[text() = "Is your vehicle exempt from taking part in this survey?"]/../dd[contains(concat(" ",normalize-space(@class)," ")," govuk-summary-list__actions ")]/a')
         await doInitialPossesion(page, '0', '1');
         await fullPageScreenshot.default(page, {path: screenshotPath('initial-details/4a-summary.png')});
 

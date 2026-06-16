@@ -17,6 +17,7 @@ use App\Utility\International\LoadingWithoutUnloadingHelper;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class LoadingWithoutUnloadingTest extends KernelTestCase
@@ -43,7 +44,7 @@ class LoadingWithoutUnloadingTest extends KernelTestCase
         return $fixtures->getReferenceRepository();
     }
 
-    public function dataLoadingWithoutUnloading(): array
+    public static function dataLoadingWithoutUnloading(): array
     {
         return [
             [[UnloadedNothing::class], 1, 0],
@@ -55,9 +56,7 @@ class LoadingWithoutUnloadingTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataLoadingWithoutUnloading
-     */
+    #[DataProvider('dataLoadingWithoutUnloading')]
     public function testLoadingWithoutUnloading(array $fixtures, int $expectedLoadingWithoutUnloadingCount, ?int $weightUnloaded=null): void
     {
         $referenceRepository = $this->loadFixtures($fixtures);
@@ -75,7 +74,6 @@ class LoadingWithoutUnloadingTest extends KernelTestCase
             $loadingAction = $referenceRepository->getReference('action:loading:1', Action::class);
 
             $loadingWithoutUnloading = $loadingWithoutUnloadings[0];
-            $this->assertInstanceOf(LoadingWithoutUnloading::class, $loadingWithoutUnloading);
 
             $this->assertEquals($loadingAction, $loadingWithoutUnloading->getAction());
             $this->assertEquals($trip, $loadingWithoutUnloading->getTrip());

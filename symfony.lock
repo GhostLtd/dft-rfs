@@ -8,9 +8,6 @@
     "composer/composer": {
         "version": "2.0.8"
     },
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99"
-    },
     "composer/semver": {
         "version": "3.2.4"
     },
@@ -197,12 +194,6 @@
     },
     "nikic/php-parser": {
         "version": "v4.10.2"
-    },
-    "phenx/php-font-lib": {
-        "version": "0.5.2"
-    },
-    "phenx/php-svg-lib": {
-        "version": "v0.3.3"
     },
     "php": {
         "version": "7.4"

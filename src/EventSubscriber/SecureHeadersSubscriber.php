@@ -70,7 +70,7 @@ class SecureHeadersSubscriber implements EventSubscriberInterface
         foreach($cspRules as $idx => $cspRule) {
             $cspRuleParts = explode(' ', $cspRule);
 
-            $cspRuleName = $cspRuleParts[0] ?? null;
+            $cspRuleName = $cspRuleParts[0];
             $cspRuleEntries = array_slice($cspRuleParts, 1);
 
             if (in_array($cspRuleName, self::CSP_DIRECTIVES_TO_REWRITE)) {

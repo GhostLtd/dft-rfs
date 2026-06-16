@@ -6,7 +6,7 @@ use App\Tests\DataFixtures\RoRo\UserFixtures;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class LoginTest extends AbstractRoRoTest
+class LoginTest extends AbstractRoRoTestCase
 {
     #[\Override]
     protected function setUp(): void

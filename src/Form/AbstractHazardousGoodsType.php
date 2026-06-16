@@ -46,7 +46,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
                     return $v ? 'yes' : 'no';
                 },
                 'mapped' => false,
-                'constraints' => new NotNull(['message' => 'common.hazardous-goods.not-null', 'groups' => 'is-hazardous-goods']),
+                'constraints' => new NotNull(message: 'common.hazardous-goods.not-null', groups: ['is-hazardous-goods']),
             ])
             ->add('hazardousGoodsCode', Gds\ChoiceType::class, [
                 'choices' => $choices,
@@ -54,7 +54,7 @@ abstract class AbstractHazardousGoodsType extends AbstractType implements DataMa
                 'label' => "{$translationKeyPrefix}.hazardous-goods-code.label",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'help' => "{$translationKeyPrefix}.hazardous-goods-code.help",
-                'constraints' => new NotNull(['message' => 'common.hazardous-goods.type-not-null', 'groups' => 'hazardous-goods-code']),
+                'constraints' => new NotNull(message: 'common.hazardous-goods.type-not-null', groups: ['hazardous-goods-code']),
             ])
             ;
     }

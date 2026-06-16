@@ -5,7 +5,7 @@ namespace App\Tests\NewFunctional\Wizard\International;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class TripChangeTest extends AbstractTripTest
+class TripChangeTest extends AbstractTripTestCase
 {
     public function testChangeOriginAndDestination(): void
     {

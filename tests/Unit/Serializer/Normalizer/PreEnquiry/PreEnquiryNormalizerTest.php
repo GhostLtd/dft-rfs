@@ -6,6 +6,7 @@ use App\Entity\Embeddable\LongAddress;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Serializer\Normalizer\PreEnquiry\PreEnquiryNormalizer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class PreEnquiryNormalizerTest extends TestCase
 {
     private PreEnquiryNormalizer $normalizer;
-    private NormalizerInterface $dateTimeNormalizer;
+    private NormalizerInterface&MockObject $dateTimeNormalizer;
 
     protected function setUp(): void
     {

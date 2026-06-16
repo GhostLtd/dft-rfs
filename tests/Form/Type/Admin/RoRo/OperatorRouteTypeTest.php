@@ -8,14 +8,14 @@ use App\Entity\Route\Route;
 use App\Entity\Route\UkPort;
 use App\Form\Admin\RoRo\OperatorRouteType;
 use App\Repository\Route\RouteRepository;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
-class OperatorRouteTypeTest extends AbstractTypeTest
+class OperatorRouteTypeTest extends AbstractTypeTestCase
 {
     private const string AVAILABLE_ROUTE_ID = 'route-available';
     private const string ASSIGNED_ROUTE_ID = 'route-already-assigned';

@@ -11,7 +11,6 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,9 +52,8 @@ class TripController extends AbstractController
 
     protected function getTrip(string $id): Trip
     {
-        if (!$response = $this->getSurveyResponse()) {
-            throw new AccessDeniedHttpException();
-        } else if (!$trip = $this->tripRepository->findOneByIdAndSurveyResponse($id, $response)) {
+        $response = $this->getSurveyResponse();
+        if (!$trip = $this->tripRepository->findOneByIdAndSurveyResponse($id, $response)) {
             throw new NotFoundHttpException();
         }
         return $trip;

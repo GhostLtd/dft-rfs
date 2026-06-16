@@ -5,7 +5,7 @@ namespace App\Tests\NewFunctional\Wizard\International;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class ActionLoadingChangeTest extends AbstractActionTest
+class ActionLoadingChangeTest extends AbstractActionTestCase
 {
     public function testChangePlace(): void
     {

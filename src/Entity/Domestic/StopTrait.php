@@ -7,7 +7,6 @@ use App\Entity\CargoTypeTrait;
 use App\Entity\HazardousGoodsTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait StopTrait
@@ -15,7 +14,7 @@ trait StopTrait
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     

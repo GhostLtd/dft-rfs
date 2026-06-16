@@ -3,11 +3,12 @@
 namespace App\Tests\ML;
 
 use App\ML\Config\DefaultTextConfig;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DefaultTextConfigTest extends TestCase
 {
-    public function dataNormalizeCode(): array
+    public static function dataNormalizeCode(): array
     {
         return [
             ['10.1', '10.1'],
@@ -20,9 +21,7 @@ class DefaultTextConfigTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataNormalizeCode
-     */
+    #[DataProvider('dataNormalizeCode')]
     public function testNormalizeCode(string $input, string $expectedOutput): void
     {
         $config = new DefaultTextConfig();

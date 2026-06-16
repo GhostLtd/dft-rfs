@@ -5,7 +5,7 @@ namespace App\Tests\NewFunctional\Wizard\PreEnquiry;
 use App\Tests\DataFixtures\PreEnquiry\ResponseFixtures;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class PreEnquiryChangeTest extends AbstractPreEnquiryTest
+class PreEnquiryChangeTest extends AbstractPreEnquiryTestCase
 {
     public function testChangeCompanyNameIncorrect(): void
     {

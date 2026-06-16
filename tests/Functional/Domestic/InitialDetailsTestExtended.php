@@ -5,12 +5,13 @@ namespace App\Tests\Functional\Domestic;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Embeddable\Address;
 use App\Tests\DataFixtures\Domestic\SurveyFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\InitialDetailsDatabaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class InitialDetailsTestExtended extends AbstractWizardTest
+class InitialDetailsTestExtended extends AbstractWizardTestCase
 {
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         return [
             'In possession of vehicle' => [
@@ -92,9 +93,7 @@ class InitialDetailsTestExtended extends AbstractWizardTest
         ];
     }
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testInitialDetails($wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin([SurveyFixtures::class]);

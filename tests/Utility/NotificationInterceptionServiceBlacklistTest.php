@@ -6,7 +6,7 @@ use App\Entity\Domestic\Survey;
 use App\Entity\EmailBlacklist;
 use App\Entity\Embeddable\LongAddress;
 
-class NotificationInterceptionServiceBlacklistTest extends AbstractNotificationInterceptionServiceTest
+class NotificationInterceptionServiceBlacklistTest extends AbstractNotificationInterceptionServiceTestCase
 {
     public function testGetAllEmailsForSurveyFiltersBlacklistedEmails(): void
     {

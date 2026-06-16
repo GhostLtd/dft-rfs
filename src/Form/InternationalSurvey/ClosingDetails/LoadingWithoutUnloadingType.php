@@ -22,7 +22,7 @@ class LoadingWithoutUnloadingType extends AbstractType
                 'label' => "international.closing-details.loading-without-unloading.is-correct.label",
                 'label_attr' => ['class' => 'govuk-fieldset__legend--s'],
                 'help' => "international.closing-details.loading-without-unloading.is-correct.help",
-                'constraints' => new NotNull(['message' => 'international.closing-details.loading-without-unloading.not-null']),
+                'constraints' => new NotNull(message: 'international.closing-details.loading-without-unloading.not-null'),
                 'choice_translation_domain' => 'messages',
             ]);
     }

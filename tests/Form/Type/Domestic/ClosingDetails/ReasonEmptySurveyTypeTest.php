@@ -4,11 +4,12 @@ namespace App\Tests\Form\Type\Domestic\ClosingDetails;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Form\DomesticSurvey\ClosingDetails\ReasonEmptySurveyType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class ReasonEmptySurveyTypeTest extends AbstractTypeTest
+class ReasonEmptySurveyTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -62,9 +63,7 @@ class ReasonEmptySurveyTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $data = new SurveyResponse();

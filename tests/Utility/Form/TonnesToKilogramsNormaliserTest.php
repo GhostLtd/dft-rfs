@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Form;
 
 use App\Utility\Form\TonnesToKilogramsNormaliser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TonnesToKilogramsNormaliserTest extends TestCase
 {
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             // Converted: explicit tonnes unit + value < 100
@@ -35,7 +36,7 @@ class TonnesToKilogramsNormaliserTest extends TestCase
         ];
     }
 
-    /** @dataProvider provider */
+    #[DataProvider('provider')]
     public function testNormalise(string $input, string $expected): void
     {
         $this->assertSame($expected, (new TonnesToKilogramsNormaliser())->normalise($input));

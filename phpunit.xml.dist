@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="tests/bootstrap.php" defaultTestSuite="default">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">src</directory>
-    </include>
-  </coverage>
-
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="tests/bootstrap.php" defaultTestSuite="default" cacheDirectory=".phpunit.cache">
   <php>
     <ini name="error_reporting" value="-1"/>
     <server name="APP_DEBUG" value="false"/>
     <server name="APP_ENV" value="test" force="true"/>
     <server name="SHELL_VERBOSITY" value="-1"/>
     <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-    <server name="SYMFONY_PHPUNIT_VERSION" value="9.5"/>
+    <server name="SYMFONY_PHPUNIT_VERSION" value="11.5"/>
   </php>
-
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
@@ -24,12 +17,13 @@
       <directory suffix="TestExtended.php">tests</directory>
     </testsuite>
   </testsuites>
-
-  <listeners>
-    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-  </listeners>
-
   <extensions>
-    <extension class="Symfony\Component\Panther\ServerExtension" />
+    <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension"/>
+    <bootstrap class="Symfony\Component\Panther\ServerExtension"/>
   </extensions>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 </phpunit>

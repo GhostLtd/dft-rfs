@@ -5,11 +5,12 @@ namespace App\Tests\Form\Type\International\Trip;
 use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Form\InternationalSurvey\Trip\ChangedBodyTypeType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class ChangedBodyTypeTest extends AbstractTypeTest
+class ChangedBodyTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             ['box', [], false],
@@ -38,9 +39,7 @@ class ChangedBodyTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(string $initialBodyType, array $formData, bool $expectedValid, ?string $expectedBodyType=null): void
     {
         $vehicle = (new Vehicle())

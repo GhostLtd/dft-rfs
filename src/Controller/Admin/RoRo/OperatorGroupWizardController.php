@@ -118,6 +118,7 @@ class OperatorGroupWizardController extends AbstractSessionStateFormWizardContro
                     'state' => (string) $place,
                 ])
             ),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected mode "%s"', $this->mode)),
         };
     }
 
@@ -128,6 +129,7 @@ class OperatorGroupWizardController extends AbstractSessionStateFormWizardContro
             self::MODE_EDIT => new RedirectResponse($this->generateUrl('admin_operator_groups_view', [
                 'operatorGroupId' => $this->databaseOperatorGroup->getId(),
             ])),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected mode "%s"', $this->mode)),
         };
     }
 }

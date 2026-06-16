@@ -5,11 +5,12 @@ namespace App\Tests\Repository\International;
 use App\Entity\International\Survey;
 use App\Repository\International\SurveyRepository;
 use App\Tests\DataFixtures\International\SurveyFixtures;
-use App\Tests\Repository\AbstractRepositoryTest;
+use App\Tests\Repository\AbstractRepositoryTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class SurveyRepositoryTest extends AbstractRepositoryTest
+class SurveyRepositoryTest extends AbstractRepositoryTestCase
 {
-    public function dataGetSurveysForExport(): array
+    public static function dataGetSurveysForExport(): array
     {
         // survey dates: 2021-05-01 => 2021-05-10
         // survey end date uses less than comparison (not less than or equal)
@@ -23,9 +24,7 @@ class SurveyRepositoryTest extends AbstractRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider dataGetSurveysForExport
-     */
+    #[DataProvider('dataGetSurveysForExport')]
     public function testGetSurveysForExport(string $minDate, string $maxDate, bool $surveyExpected): void
     {
         $this->loadFixtures([SurveyFixtures::class]);

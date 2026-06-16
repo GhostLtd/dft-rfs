@@ -11,13 +11,14 @@ use App\Utility\Reminder\AutomatedRemindersHelper;
 use App\Utility\Reminder\DisabledRemindersHelper;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBus;
 
 class AutomatedRemindersTest extends KernelTestCase
 {
-    public function dataDisabledReminders(): array
+    public static function dataDisabledReminders(): array
     {
         return [
             [null, true, true, true],
@@ -37,9 +38,7 @@ class AutomatedRemindersTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataDisabledReminders
-     */
+    #[DataProvider('dataDisabledReminders')]
     public function testDisabledReminders(?string $disabledRemindersEnv, bool $expectedCsrgt, bool $expectedIrhs, bool $expectedPreEnquiry): void
     {
         $automatedRemindersHelperMock = $this->getAutomatedRemindersMock($disabledRemindersEnv);

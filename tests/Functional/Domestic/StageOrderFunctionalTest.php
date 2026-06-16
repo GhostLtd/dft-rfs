@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 
-class StageOrderFunctionalTest extends AbstractStageFunctionalTest
+class StageOrderFunctionalTest extends AbstractStageFunctionalTestCase
 {
     public function testStageReordering()
     {

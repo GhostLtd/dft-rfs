@@ -8,9 +8,9 @@ use App\Entity\Route\Route;
 use App\Entity\SurveyStateInterface;
 use App\Tests\DataFixtures\RoRo\OperatorRouteFixtures;
 
-class RoRoDataDeleteTest extends AbstractSurveyDeleteTest
+class RoRoDataDeleteTest extends AbstractSurveyDeleteTestCase
 {
-    public function dataDelete(): array
+    public static function dataDelete(): array
     {
         return [
             // Q1 2021 -> Q1 2020

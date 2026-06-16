@@ -3,11 +3,12 @@
 namespace App\Tests\Utility;
 
 use App\Utility\ReorderUtils;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ReorderUtilsTest extends TestCase
 {
-    public function isMappingValidDataProvider(): array
+    public static function isMappingValidDataProvider(): array
     {
         return [
             'valid 3 items' => [[1, 2, 3], 3, true],
@@ -23,9 +24,7 @@ class ReorderUtilsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider isMappingValidDataProvider
-     */
+    #[DataProvider('isMappingValidDataProvider')]
     public function testIsMappingValid(array $mapping, int $numberOfItems, bool $expected): void
     {
         $this->assertEquals($expected, ReorderUtils::isMappingValid($mapping, $numberOfItems));

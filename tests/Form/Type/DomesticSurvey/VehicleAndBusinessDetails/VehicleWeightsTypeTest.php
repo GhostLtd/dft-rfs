@@ -8,14 +8,14 @@ use App\Form\DomesticSurvey\VehicleAndBusinessDetails\VehicleWeightsType;
 use App\Form\Extension\ConvertTonnesExtension;
 use App\Form\Extension\StripThousandsSeparatorsExtension;
 use App\Form\Extension\StripUnitsExtension;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\Form\ThousandsSeparatorNormaliser;
 use App\Utility\Form\TonnesToKilogramsNormaliser;
 use App\Utility\Form\UnitStripper;
 use Ghost\GovUkFrontendBundle\Form\Type\IntegerType;
 use Symfony\Component\Form\FormInterface;
 
-class VehicleWeightsTypeTest extends AbstractTypeTest
+class VehicleWeightsTypeTest extends AbstractTypeTestCase
 {
     #[\Override]
     protected function getTypeExtensions(): array

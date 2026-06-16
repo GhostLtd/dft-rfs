@@ -21,7 +21,7 @@ class MaintenanceWarningRepository extends ServiceEntityRepository
 
     public function getNotificationBanner($warningPeriodDateModifier = '+1 week'): ?NotificationBanner
     {
-        /** @var MaintenanceWarning $warning */
+        /** @var MaintenanceWarning|null $warning */
         $warning = $this->createQueryBuilder('maintenanceWarning')
             ->andWhere('maintenanceWarning.start >= :now')
             ->andWhere('maintenanceWarning.start < :future')

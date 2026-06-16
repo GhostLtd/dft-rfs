@@ -8,7 +8,7 @@ use App\Entity\NotifyApiResponse;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
 use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 use App\Tests\DataFixtures\AlphagovNotify\MessageHandlerSurveyFixtures;
-use App\Tests\Functional\AbstractFunctionalTest;
+use App\Tests\Functional\AbstractFunctionalTestCase;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class MessageHandlerTest extends AbstractFunctionalTest
+class MessageHandlerTest extends AbstractFunctionalTestCase
 {
     protected MessageBusInterface $bus;
     private EntityManagerInterface $entityManager;

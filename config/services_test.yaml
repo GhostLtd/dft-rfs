@@ -17,5 +17,5 @@ services:
         public: true
 
     app.test.security:
-        alias: Symfony\Component\Security\Core\Security
+        alias: Symfony\Bundle\SecurityBundle\Security
         public: true

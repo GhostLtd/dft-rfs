@@ -49,7 +49,7 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
     private ?Route $route = null;
 
     /**
-     * @var Collection<int, VehicleCount>
+     * @var Collection<string, VehicleCount>
      */
     #[Assert\Valid(groups: ['roro.vehicle-counts'])]
     #[ORM\OneToMany(mappedBy: 'survey', targetEntity: VehicleCount::class, cascade: ['persist'], orphanRemoval: true, indexBy: 'id')]
@@ -204,14 +204,14 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
     }
 
     /**
-     * @return Collection<int, VehicleCount>
+     * @return Collection<string, VehicleCount>
      */
     public function getVehicleCounts(): Collection
     {
         return $this->vehicleCounts;
     }
 
-    /** @return Collection<int, VehicleCount> */
+    /** @return Collection<string, VehicleCount> */
     public function getCountryVehicleCounts(): Collection
     {
         return $this->vehicleCounts->filter(fn(VehicleCount $cvc) => $cvc->getCountryCode() !== null)->matching($this->getVehicleCountOrderCriteria());
@@ -239,7 +239,7 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
         return null;
     }
 
-    /** @return Collection<int, VehicleCount> */
+    /** @return Collection<string, VehicleCount> */
     public function getOtherVehicleCounts(): Collection
     {
         return $this->vehicleCounts->filter(fn(VehicleCount $cvc) => $cvc->getCountryCode() === null)->matching($this->getVehicleCountOrderCriteria());

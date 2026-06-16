@@ -141,7 +141,7 @@ class ManualReminderHelper
         $latestEvents = array_keys($eventDates, $latestEventDate);
         $eventType = $latestEvents[0];
 
-        if ($eventType === 'was_chased' && array_key_exists('manual_reminder', $latestEvents)) {
+        if ($eventType === 'was_chased' && in_array('manual_reminder', $latestEvents, true)) {
             // Given that a manual reminder also adds a note at the same time, we might end up with both,
             // but ultimately want to choose the manual_reminder as the cause in such a case.
             $eventType = 'manual_reminder';

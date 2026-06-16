@@ -8,9 +8,9 @@ use App\Entity\International\Survey;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
 
-class IrhsPersonalDataCleanupTest extends AbstractPersonalDataCleanupTest
+class IrhsPersonalDataCleanupTest extends AbstractPersonalDataCleanupTestCase
 {
-    public function dataCleanup(): array
+    public static function dataCleanup(): array
     {
         return [
             // Q1 2021 -> Q1 2020

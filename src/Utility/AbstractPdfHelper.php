@@ -106,7 +106,6 @@ abstract class AbstractPdfHelper
     {
         $dompdf = new Dompdf();
         $dompdf->getOptions()
-            ->setIsHtml5ParserEnabled(true)
             ->setIsRemoteEnabled(true)
             ->setIsJavascriptEnabled(false)
             ->setIsPhpEnabled(true)

@@ -8,7 +8,8 @@ use App\Form\CountryType;
 use App\Form\InternationalSurvey\Action\PlaceType;
 use App\Form\Validator\CanBeUnloadedValidator;
 use App\Repository\International\ActionRepository;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PlaceTypeTest extends AbstractTypeTest
+class PlaceTypeTest extends AbstractTypeTestCase
 {
     protected array $mockedReturnValue = [];
     protected ActionRepository&MockObject $actionRepositoryMock;
@@ -63,7 +64,7 @@ class PlaceTypeTest extends AbstractTypeTest
         ];
     }
 
-    protected function dataPlaceWithNoExistingLoadingActions(): array
+    public static function dataPlaceWithNoExistingLoadingActions(): array
     {
         return [
             [[], false],
@@ -87,9 +88,7 @@ class PlaceTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataPlaceWithNoExistingLoadingActions
-     */
+    #[DataProvider('dataPlaceWithNoExistingLoadingActions')]
     public function testPlaceWithNoExistingLoadingActions(array $formData, bool $expectedValid): void
     {
         $trip = (new Trip())
@@ -101,7 +100,7 @@ class PlaceTypeTest extends AbstractTypeTest
         $this->performPlaceTypeTests($data, $formData, $expectedValid);
     }
 
-    protected function dataPlaceWithExistingLoadingActions(): array
+    public static function dataPlaceWithExistingLoadingActions(): array
     {
         return [
             [[], false],
@@ -129,9 +128,7 @@ class PlaceTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataPlaceWithExistingLoadingActions
-     */
+    #[DataProvider('dataPlaceWithExistingLoadingActions')]
     public function testPlaceWithExistingLoadingActions(array $formData, bool $expectedValid): void
     {
         $trip = (new Trip())
@@ -151,7 +148,7 @@ class PlaceTypeTest extends AbstractTypeTest
         $this->performPlaceTypeTests($data, $formData, $expectedValid);
     }
 
-    protected function dataPlaceWithExistingFullyUnloadedLoadingActions(): array
+    public static function dataPlaceWithExistingFullyUnloadedLoadingActions(): array
     {
         return [
             [[], false],
@@ -174,9 +171,7 @@ class PlaceTypeTest extends AbstractTypeTest
     }
 
 
-    /**
-     * @dataProvider dataPlaceWithExistingFullyUnloadedLoadingActions
-     */
+    #[DataProvider('dataPlaceWithExistingFullyUnloadedLoadingActions')]
     public function testPlaceWithExistingFullyUnloadedLoadingActions(array $formData, bool $expectedValid): void
     {
         $trip = (new Trip())

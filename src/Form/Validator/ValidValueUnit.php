@@ -21,7 +21,7 @@ class ValidValueUnit extends Constraint
         mixed  $payload = null,
     )
     {
-        parent::__construct([], $groups, $payload);
+        parent::__construct(null, $groups, $payload);
 
         $this->unitBlankMessage = $unitBlankMessage ?? $this->unitBlankMessage;
         $this->valueBlankMessage = $valueBlankMessage ?? $this->valueBlankMessage;

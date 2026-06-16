@@ -415,7 +415,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     public function getDayByNumber(int $dayNumber): ?Day
     {
-        foreach ($this->days ?? [] as $day) {
+        foreach ($this->days as $day) {
             if ($day->getNumber() === $dayNumber) {
                 return $day;
             }

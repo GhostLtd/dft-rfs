@@ -6,12 +6,13 @@ use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
 use App\Entity\Embeddable\Volume;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Form\FormError;
 
-class VehicleFuelTypeTest extends AbstractTypeTest
+class VehicleFuelTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false], // We're allowed to leave this form blank
@@ -83,9 +84,7 @@ class VehicleFuelTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid, ?string $expectedType=null, ?string $expectedQuantity=null, ?bool $expectedIsHybrid=null): void
     {
         $data = new SurveyResponse();

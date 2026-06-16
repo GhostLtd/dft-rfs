@@ -9,6 +9,7 @@ use App\Entity\HazardousGoodsInterface;
 interface StopInterface extends CargoTypeInterface, HazardousGoodsInterface
 {
     public function getId(): ?string;
+    public function getDay(): ?Day;
     public function getOriginLocation(): ?string;
     public function setOriginLocation(?string $originLocation): self;
     public function getDestinationLocation(): ?string;

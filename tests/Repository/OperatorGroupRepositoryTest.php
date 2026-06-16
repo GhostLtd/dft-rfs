@@ -5,10 +5,11 @@ namespace App\Tests\Repository;
 use App\Entity\RoRo\OperatorGroup;
 use App\Repository\RoRo\OperatorGroupRepository;
 use App\Tests\DataFixtures\TestSpecific\OperatorGroupRepositoryFixtures;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class OperatorGroupRepositoryTest extends AbstractRepositoryTest
+class OperatorGroupRepositoryTest extends AbstractRepositoryTestCase
 {
-    public function dataIsNamePrefixAlreadyInUse(): array
+    public static function dataIsNamePrefixAlreadyInUse(): array
     {
         return [
             ['ban', true],
@@ -25,9 +26,7 @@ class OperatorGroupRepositoryTest extends AbstractRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider dataIsNamePrefixAlreadyInUse
-     */
+    #[DataProvider('dataIsNamePrefixAlreadyInUse')]
     public function testIsNamePrefixAlreadyInUse(string $name, bool $expectedToBeInUse, ?string $excludingGroupRef = null): void
     {
         $this->loadFixtures([OperatorGroupRepositoryFixtures::class]);

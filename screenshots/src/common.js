@@ -5,12 +5,11 @@ const puppeteer = require("puppeteer");
 module.exports.setupBrowserAndPage = async () => {
     const browser = await puppeteer.launch({
         args: [
-            '--single-process',
             '--no-sandbox',
             '--disable-back-forward-cache',
         ],
         executablePath: '/usr/local/bin/google-chrome',
-        ignoreHTTPSErrors: true,
+        acceptInsecureCerts: true,
         // headless: false,
     });
     const page = await browser.newPage();
@@ -86,7 +85,7 @@ const predicate = function(options)
 module.exports.predicate = predicate
 
 const findElement = async function(page, expression, index=0) {
-    const elements = await page.$x(expression)
+    const elements = await page.$$('xpath/' + expression)
 
     if (!elements[index]) {
         throw new Error(`Element not found for ${expression}[${index}]`);

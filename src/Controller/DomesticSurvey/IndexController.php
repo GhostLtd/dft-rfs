@@ -2,8 +2,8 @@
 
 namespace App\Controller\DomesticSurvey;
 
+use App\Attribute\MaintenanceWarningBanner;
 use App\Attribute\Redirect;
-use App\Repository\MaintenanceWarningRepository;
 use App\Utility\Domestic\PdfHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -28,7 +28,8 @@ class IndexController extends AbstractController
     #[Redirect("is_granted('VIEW_SUBMISSION_SUMMARY', user.getDomesticSurvey())", route: "app_domesticsurvey_completed")]
     #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
     #[Route(name: self::SUMMARY_ROUTE)]
-    public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response
+    #[MaintenanceWarningBanner]
+    public function index(): Response
     {
         $survey = $this->getSurvey();
 
@@ -38,7 +39,6 @@ class IndexController extends AbstractController
 
         return $this->render('domestic_survey/index.html.twig', [
             'survey' => $survey,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

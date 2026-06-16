@@ -7,9 +7,9 @@ use App\Entity\Embeddable\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
 
-class CsrgtDataDeleteTest extends AbstractSurveyDeleteTest
+class CsrgtDataDeleteTest extends AbstractSurveyDeleteTestCase
 {
-    public function dataDelete(): array
+    public static function dataDelete(): array
     {
         return [
             // Q1 2021 -> Q1 2020

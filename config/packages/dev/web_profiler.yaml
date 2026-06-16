@@ -4,5 +4,5 @@ web_profiler:
 
 framework:
     profiler:
-#        collect: false
+        collect_serializer_data: true
         only_exceptions: false

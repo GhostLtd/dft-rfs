@@ -3,12 +3,13 @@
 namespace App\Tests\Utility;
 
 use App\Utility\PasscodeGenerator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 class PasscodeGeneratorTest extends TestCase
 {
-    public function repeatingFixtureProvider() : array
+    public static function repeatingFixtureProvider() : array
     {
         return [
             [true, "01235555", 4],
@@ -27,7 +28,7 @@ class PasscodeGeneratorTest extends TestCase
         ];
     }
 
-    public function sequentialFixtureProvider() : array
+    public static function sequentialFixtureProvider() : array
     {
         return [
             [true, "12349797", 4],
@@ -47,7 +48,7 @@ class PasscodeGeneratorTest extends TestCase
         ];
     }
 
-    public function passcodesFixtureProvider() : array
+    public static function passcodesFixtureProvider() : array
     {
         return [
             [true, "12312312"],
@@ -71,9 +72,9 @@ class PasscodeGeneratorTest extends TestCase
     }
 
     /**
-     * @dataProvider repeatingFixtureProvider
      * @throws \ReflectionException
      */
+    #[DataProvider('repeatingFixtureProvider')]
     public function testRepeatingDigits(bool $isRepeating, string $passcode, int $repeatCount)
     {
         $pc = new ReflectionClass(new PasscodeGenerator(null, 'secret'));
@@ -84,9 +85,9 @@ class PasscodeGeneratorTest extends TestCase
     }
 
     /**
-     * @dataProvider sequentialFixtureProvider
      * @throws \ReflectionException
      */
+    #[DataProvider('sequentialFixtureProvider')]
     public function testSequentialDigits(bool $isSequential, string $passcode, int $repeatCount)
     {
         $pc = new ReflectionClass(new PasscodeGenerator(null, 'secret'));
@@ -96,9 +97,7 @@ class PasscodeGeneratorTest extends TestCase
         $this->assertEquals($isSequential, $method->invoke(new PasscodeGenerator(null, 'secret'), $passcode, $repeatCount));
     }
 
-    /**
-     * @dataProvider passcodesFixtureProvider
-     */
+    #[DataProvider('passcodesFixtureProvider')]
     public function testPasscodeValidator(bool $isValid, string $passcode)
     {
         $pc = new PasscodeGenerator(null, 'secret');

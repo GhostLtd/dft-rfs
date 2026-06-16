@@ -47,6 +47,7 @@ class NotificationInterceptionService
         $businessName = match(get_class($survey)) {
             DomesticSurvey::class => $survey->getInvitationAddress()->getLine1(),
             InternationalSurvey::class => $survey->getCompany()->getBusinessName(),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected survey class "%s"', get_class($survey))),
         };
         if (!$businessName) {
             return null;

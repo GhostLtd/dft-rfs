@@ -38,6 +38,7 @@ class DayStop implements BorderCrossingInterface, GoodsDescriptionInterface, Haz
      * !! unused - needed for validation attachment
      */
     #[Assert\Expression('!this.getWasAtCapacity() or (this.getWasLimitedBySpace() or this.getWasLimitedByWeight())', message: 'domestic.day-stop.was-at-capacity.invalid', groups: ['at-capacity', 'admin-day-stop-not-empty'])]
+    // @phpstan-ignore property.unused (anchors the cross-field Assert\Expression constraint above; intentionally not read in PHP)
     private $wasLimitedBy;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]

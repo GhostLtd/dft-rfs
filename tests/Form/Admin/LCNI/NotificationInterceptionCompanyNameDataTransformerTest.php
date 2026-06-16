@@ -7,6 +7,7 @@ namespace App\Tests\Form\Admin\LCNI;
 use App\Entity\NotificationInterceptionCompanyName;
 use App\Form\Admin\LCNI\NotificationInterceptionCompanyNameDataTransformer;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NotificationInterceptionCompanyNameDataTransformerTest extends TestCase
@@ -39,9 +40,9 @@ class NotificationInterceptionCompanyNameDataTransformerTest extends TestCase
     }
 
     /**
-     * @dataProvider lineEndingProvider
      * @param array<string> $expectedNames
      */
+    #[DataProvider('lineEndingProvider')]
     public function testReverseTransformSplitsOnAnyLineEnding(string $submitted, array $expectedNames): void
     {
         $result = $this->transformer->reverseTransform($submitted);

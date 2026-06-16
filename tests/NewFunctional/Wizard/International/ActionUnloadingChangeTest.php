@@ -6,7 +6,7 @@ use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use Symfony\Component\Panther\ServerExtension;
 
-class ActionUnloadingChangeTest extends AbstractActionTest
+class ActionUnloadingChangeTest extends AbstractActionTestCase
 {
     public function testChangePlace(): void
     {

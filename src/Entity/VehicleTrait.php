@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Utility\RegistrationMarkHelper;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait VehicleTrait
@@ -14,7 +13,7 @@ trait VehicleTrait
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     #[Assert\NotBlank(message: 'common.vehicle.vehicle-registration.not-blank', groups: ['vehicle_registration', 'admin_vehicle'])]

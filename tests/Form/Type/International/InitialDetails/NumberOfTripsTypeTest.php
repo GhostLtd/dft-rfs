@@ -4,7 +4,8 @@ namespace App\Tests\Form\Type\International\InitialDetails;
 
 use App\Entity\International\SurveyResponse;
 use App\Form\InternationalSurvey\InitialDetails\NumberOfTripsType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests the NumberOfTripsType form.
@@ -12,9 +13,9 @@ use App\Tests\Form\Type\AbstractTypeTest;
  * Note: This form is only reached when activity status is STILL_ACTIVE,
  * so we don't test activity status transitions here.
  */
-class NumberOfTripsTypeTest extends AbstractTypeTest
+class NumberOfTripsTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             'empty submission' => [[], false],
@@ -28,9 +29,7 @@ class NumberOfTripsTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         // Form is only reached when activity status is STILL_ACTIVE

@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Controller\DomesticSurvey\IndexController as DomesticIndexController;
 use App\Controller\PreEnquiry\PreEnquiryController;
 use App\Controller\InternationalSurvey\IndexController as InternationalIndexController;
+use App\Attribute\MaintenanceWarningBanner;
 use App\Entity\PasscodeUser;
-use App\Repository\MaintenanceWarningRepository;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     #[Route(path: '/')]
-    public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response
+    #[MaintenanceWarningBanner]
+    public function index(): Response
     {
         $user = $this->getUser();
         if ($user instanceof PasscodeUser) {
@@ -28,9 +29,7 @@ class HomeController extends AbstractController
             }
         }
 
-        return $this->render('home/index.html.twig', [
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
-        ]);
+        return $this->render('home/index.html.twig');
     }
 
     #[Route(path: '/sitemap.txt')]

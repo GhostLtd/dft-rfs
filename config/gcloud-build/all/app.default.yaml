@@ -10,6 +10,11 @@ automatic_scaling:
   max_concurrent_requests: 50
   target_throughput_utilization: 0.8
 
+# cache:clear during the build needs >128M (the buildpack PHP default);
+# symfony/flex passes this to bin/console as -d memory_limit
+build_env_variables:
+  COMPOSER_MEMORY_LIMIT: 512M
+
 handlers:
   - url: /build
     static_dir: public/build

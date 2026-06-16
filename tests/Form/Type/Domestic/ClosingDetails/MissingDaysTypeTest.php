@@ -3,11 +3,12 @@
 namespace App\Tests\Form\Type\Domestic\ClosingDetails;
 
 use App\Form\DomesticSurvey\ClosingDetails\MissingDaysType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class MissingDaysTypeTest extends AbstractTypeTest
+class MissingDaysTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -20,9 +21,7 @@ class MissingDaysTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $form = $this->factory->create(MissingDaysType::class);

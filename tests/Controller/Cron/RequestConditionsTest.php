@@ -2,20 +2,19 @@
 
 namespace App\Tests\Controller\Cron;
 
-use App\Tests\Functional\AbstractFrontendFunctionalTest;
+use App\Tests\Functional\AbstractFrontendFunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class RequestConditionsTest extends AbstractFrontendFunctionalTest
+class RequestConditionsTest extends AbstractFrontendFunctionalTestCase
 {
-    public function cronUrlsProvider(): array
+    public static function cronUrlsProvider(): array
     {
         return [
             ['/cron/test'],
         ];
     }
 
-    /**
-     * @dataProvider cronUrlsProvider
-     */
+    #[DataProvider('cronUrlsProvider')]
     public function testConditionsNotMet($url): void
     {
         $this->loadFixtures([]);
@@ -34,9 +33,7 @@ class RequestConditionsTest extends AbstractFrontendFunctionalTest
         self::assertResponseStatusCodeSame(404);
     }
 
-    /**
-     * @dataProvider cronUrlsProvider
-     */
+    #[DataProvider('cronUrlsProvider')]
     public function testConditionsMet($url): void
     {
         $this->loadFixtures([]);

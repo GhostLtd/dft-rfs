@@ -78,6 +78,9 @@ class AppExtension extends AbstractExtension
                 preg_match('/^(?:[^:"]+\:)?(?<email>.*)$/', $username, $matches);
                 return $matches['email'] ?? 'unknown';
             }),
+            // Replacement for Twig's `spaceless` filter, deprecated in twig/twig 3.12. Identical
+            // behaviour (collapse whitespace between HTML tags); used by base-pdf.html.twig.
+            new TwigFilter('collapseWhitespace', $this->collapseWhitespace(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -96,6 +99,11 @@ class AppExtension extends AbstractExtension
             new TwigFunction('wizardState', $this->wizardState(...)),
             new TwigFunction('wizardUrl', $this->wizardUrl(...)),
         ];
+    }
+
+    public function collapseWhitespace(string $content): string
+    {
+        return trim(preg_replace('/>\s+</', '><', $content));
     }
 
     public function formatGoodsDescription(?string $goodsDescription, ?string $goodsDescriptionOther, bool $short = false): ?string

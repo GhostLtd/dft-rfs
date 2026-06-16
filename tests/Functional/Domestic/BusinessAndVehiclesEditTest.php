@@ -7,23 +7,24 @@ use App\Entity\Domestic\Vehicle as DomesticVehicle;
 use App\Entity\SurveyResponse as BaseSurveyResponse;
 use App\Entity\Vehicle;
 use App\Tests\DataFixtures\Domestic\VehicleFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\CallbackSingleEntityDatabaseTestCase;
 use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class BusinessAndVehiclesEditTest extends AbstractWizardTest
+class BusinessAndVehiclesEditTest extends AbstractWizardTestCase
 {
-    protected string $baseUrl = "/domestic-survey/vehicle-and-business-details";
+    protected static string $baseUrl = "/domestic-survey/vehicle-and-business-details";
 
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         return [
             'Change business details' => [
                 '/change-business-details',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-business-details", "business_details_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/change-business-details", "business_details_button_group_continue", [
                         new FormTestCase([
                             "business_details" => [
                                 "contactBusinessName" => null,
@@ -43,10 +44,10 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) {
-                        $this->assertEquals("Example Ltd", $response->getContactBusinessName());
-                        $this->assertEquals("Waste removal", $response->getBusinessNature());
-                        $this->assertEquals(BaseSurveyResponse::EMPLOYEES_250_TO_499, $response->getNumberOfEmployees());
-                        $this->assertEquals(Vehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD, $response->getVehicle()->getOperationType());
+                        self::assertEquals("Example Ltd", $response->getContactBusinessName());
+                        self::assertEquals("Waste removal", $response->getBusinessNature());
+                        self::assertEquals(BaseSurveyResponse::EMPLOYEES_250_TO_499, $response->getNumberOfEmployees());
+                        self::assertEquals(Vehicle::OPERATION_TYPE_FOR_HIRE_AND_REWARD, $response->getVehicle()->getOperationType());
                     })
                 ], // Wizard steps
             ],
@@ -54,7 +55,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                 '/change-vehicle-weights',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-weights", "vehicle_weights_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/change-vehicle-weights", "vehicle_weights_button_group_continue", [
                         new FormTestCase([
                             "vehicle_weights" => [
                                 "grossWeight" => null,
@@ -80,8 +81,8 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(DomesticVehicle::class, function(DomesticVehicle $vehicle) {
-                        $this->assertEquals("31987", $vehicle->getGrossWeight());
-                        $this->assertEquals("21987", $vehicle->getCarryingCapacity());
+                        self::assertEquals("31987", $vehicle->getGrossWeight());
+                        self::assertEquals("21987", $vehicle->getCarryingCapacity());
                     })
                 ], // Wizard steps
             ],
@@ -89,7 +90,7 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                 '/change-vehicle-trailer-configuration',
                 [VehicleFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-vehicle-trailer-configuration", "vehicle_trailer_configuration_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/change-vehicle-trailer-configuration", "vehicle_trailer_configuration_button_group_continue", [
                         new FormTestCase([
                             "vehicle_trailer_configuration" => [
                                 "trailerConfiguration" => "300",
@@ -107,22 +108,20 @@ class BusinessAndVehiclesEditTest extends AbstractWizardTest
                         ], [], "vehicle_body_button_group_continue"),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(DomesticVehicle::class, function(DomesticVehicle $vehicle) {
-                        $this->assertEquals(300, $vehicle->getTrailerConfiguration());
-                        $this->assertEquals(321, $vehicle->getAxleConfiguration());
-                        $this->assertEquals(Vehicle::BODY_TYPE_CAR, $vehicle->getBodyType());
+                        self::assertEquals(300, $vehicle->getTrailerConfiguration());
+                        self::assertEquals(321, $vehicle->getAxleConfiguration());
+                        self::assertEquals(Vehicle::BODY_TYPE_CAR, $vehicle->getBodyType());
                     })
                 ], // Wizard steps
             ],
         ];
     }
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testBusinessAndVehiclesEditWizards($startRelativeUrl, $fixtures, $wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
-        $browser->request('GET', "{$this->baseUrl}{$startRelativeUrl}");
+        $browser->request('GET', self::$baseUrl."{$startRelativeUrl}");
 
         $this->doWizardTest($browser, $wizardData);
     }

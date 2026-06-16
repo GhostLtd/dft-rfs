@@ -15,6 +15,7 @@ use App\Utility\RoRo\VehicleCountHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Ghost\GovUkFrontendBundle\Form\Extension\ConditionalTypeExtension;
 use Ghost\GovUkFrontendBundle\Form\Extension\FormTypeExtension;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
@@ -29,15 +30,15 @@ class DataEntryTypeTest extends TypeTestCase
     protected SurveyCreationHelper $surveyCreationHelper;
     protected VehicleCountHelper $vehicleCountHelper;
 
-    protected function getCountryCodes(): array
+    protected static function getCountryCodes(): array
     {
         return ['AL', 'AT', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'GE', 'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'XK', 'LV', 'LT', 'LU', 'MT', 'MD', 'ME', 'NL', 'MK', 'NO', 'PL', 'PT', 'RO', 'RU', 'RS', 'SK', 'SI', 'ES', 'SE', 'CH', 'TR', 'UA', 'GB'];
     }
 
-    protected function getAllCodes(): array
+    protected static function getAllCodes(): array
     {
         return array_merge(
-            $this->getCountryCodes(),
+            self::getCountryCodes(),
             [VehicleCount::OTHER_CODE_OTHER, VehicleCount::OTHER_CODE_UNKNOWN, VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS]
         );
     }
@@ -57,7 +58,7 @@ class DataEntryTypeTest extends TypeTestCase
             ->method('findAll')
             ->willReturnCallback(fn() => array_map(
                 fn(string $code) => (new Country())->setCode($code)->setId(Uuid::v4()),
-                $this->getCountryCodes()
+                self::getCountryCodes()
             ));
 
         $this->surveyCreationHelper = new SurveyCreationHelper(
@@ -100,38 +101,38 @@ class DataEntryTypeTest extends TypeTestCase
         ];
     }
 
-    public function dataMapper(): array
+    public static function dataMapper(): array
     {
         $testCases = [
-            'Simple' => ["Spain\t   (ES)\t\t\t292", $this->zeroesApartFrom(['ES' => 292])],
-            'Simple (multiple)' => ["United Kingdom\t(GB)\t100\nFrance\t(FR)  300\r\nGermany  (DE)\t\t\t201", $this->zeroesApartFrom(['GB' => 100, 'FR' => 300, 'DE' => 201])],
-            'Other countries - variation #1' => ["Other 202", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 202])],
-            'Other countries - variation #2' => ["Other country 203", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 203])],
-            'Other countries - variation #3' => ["Other countries 204", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 204])],
-            'Unaccompanied trailers - variation #1' => ["Unaccompanied 502", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 502])],
-            'Unaccompanied trailers - variation #2' => ["Unaccompanied trailer 503", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 503])],
-            'Unaccompanied trailers - variation #3' => ["Unaccompanied trailers 504", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 504])],
-            'Unaccompanied trailers - variation #4' => ["unacc 505", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 505])],
-            'Unknown countries - variation #1' => ["Unknown 302", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 302])],
-            'Unknown countries - variation #2' => ["Unknown country 303", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 303])],
-            'Unknown countries - variation #3' => ["Unknown countries 304", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 304])],
-            'Commas in number' => ["Portugal\t   (PT)\t\t\t2,396", $this->zeroesApartFrom(['PT' => 2396])],
+            'Simple' => ["Spain\t   (ES)\t\t\t292", self::zeroesApartFrom(['ES' => 292])],
+            'Simple (multiple)' => ["United Kingdom\t(GB)\t100\nFrance\t(FR)  300\r\nGermany  (DE)\t\t\t201", self::zeroesApartFrom(['GB' => 100, 'FR' => 300, 'DE' => 201])],
+            'Other countries - variation #1' => ["Other 202", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 202])],
+            'Other countries - variation #2' => ["Other country 203", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 203])],
+            'Other countries - variation #3' => ["Other countries 204", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 204])],
+            'Unaccompanied trailers - variation #1' => ["Unaccompanied 502", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 502])],
+            'Unaccompanied trailers - variation #2' => ["Unaccompanied trailer 503", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 503])],
+            'Unaccompanied trailers - variation #3' => ["Unaccompanied trailers 504", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 504])],
+            'Unaccompanied trailers - variation #4' => ["unacc 505", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNACCOMPANIED_TRAILERS => 505])],
+            'Unknown countries - variation #1' => ["Unknown 302", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 302])],
+            'Unknown countries - variation #2' => ["Unknown country 303", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 303])],
+            'Unknown countries - variation #3' => ["Unknown countries 304", self::zeroesApartFrom([VehicleCount::OTHER_CODE_UNKNOWN => 304])],
+            'Commas in number' => ["Portugal\t   (PT)\t\t\t2,396", self::zeroesApartFrom(['PT' => 2396])],
 
             // Kosovo copies strangely out of the sample spreadsheets (further comments in DataEntryDataMapper.php)
-            'Kosovo weirdness' => ["   Kosovo\t\tKosovo\t\t\t 101", $this->zeroesApartFrom(['XK' => 101])],
+            'Kosovo weirdness' => ["   Kosovo\t\tKosovo\t\t\t 101", self::zeroesApartFrom(['XK' => 101])],
 
-            'Country codes only' => ["     PT 1234", $this->zeroesApartFrom(['PT' => 1234])],
-            'Country codes only - brackets' => [" (PT) 2345", $this->zeroesApartFrom(['PT' => 2345])],
-            'Country names only' => [" Portugal 3456", $this->zeroesApartFrom(['PT' => 3456])],
+            'Country codes only' => ["     PT 1234", self::zeroesApartFrom(['PT' => 1234])],
+            'Country codes only - brackets' => [" (PT) 2345", self::zeroesApartFrom(['PT' => 2345])],
+            'Country names only' => [" Portugal 3456", self::zeroesApartFrom(['PT' => 3456])],
 
-            'Non-survey country codes - variation #1' => ["ZA 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567])],
-            'Non-survey country codes - variation #2' => ["Other 123 ZA 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123])],
-            'Non-survey country codes - variation #3' => ["Other 123 Latvia (LV) 101 ZA 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123, 'LV' => 101])],
-            'Non-survey country names - variation #1' => ["South Africa 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567])],
-            'Non-survey country names - variation #2' => ["Other 123 South Africa 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123])],
-            'Non-survey country names - variation #3' => ["Other 123 Latvia (LV) 101 South Africa 4567", $this->zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123, 'LV' => 101])],
+            'Non-survey country codes - variation #1' => ["ZA 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567])],
+            'Non-survey country codes - variation #2' => ["Other 123 ZA 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123])],
+            'Non-survey country codes - variation #3' => ["Other 123 Latvia (LV) 101 ZA 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123, 'LV' => 101])],
+            'Non-survey country names - variation #1' => ["South Africa 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567])],
+            'Non-survey country names - variation #2' => ["Other 123 South Africa 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123])],
+            'Non-survey country names - variation #3' => ["Other 123 Latvia (LV) 101 South Africa 4567", self::zeroesApartFrom([VehicleCount::OTHER_CODE_OTHER => 4567 + 123, 'LV' => 101])],
 
-            'Sample spreadsheet - variation #1 (PO:3/March)' => [$this->getSampleSpreadsheetOne(), $this->zeroesApartFrom([
+            'Sample spreadsheet - variation #1 (PO:3/March)' => [self::getSampleSpreadsheetOne(), self::zeroesApartFrom([
                     'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
                     'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
                     'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
@@ -151,7 +152,7 @@ class DataEntryTypeTest extends TypeTestCase
                 ]
             ],
 
-            'Sample spreadsheet - variation #2 (PO:4/Import col G+H)' => [$this->getSampleSpreadsheetTwo(), $this->zeroesApartFrom([
+            'Sample spreadsheet - variation #2 (PO:4/Import col G+H)' => [self::getSampleSpreadsheetTwo(), self::zeroesApartFrom([
                     'AL' => 1, 'AT' => 29, 'BY' => 515, 'BE' => 159, 'BA' => 80, 'BG' => 2607, 'HR' => 89, 'CY' => 4,
                     'CZ' => 356,  'DK' => 4, 'IE' => 109, 'EE' => 18, 'FI' => 1, 'FR' => 314, 'GE' => 4, 'DE' => 264,
                     'GR' => 46, 'HU' => 2191, 'IS' => 1, 'IT' => 199, 'LV' => 379, 'LT' => 3229, 'LU' => 14, 'MK' => 162,
@@ -171,7 +172,7 @@ class DataEntryTypeTest extends TypeTestCase
                 ]
             ],
 
-            'Sample spreadsheet - variation #3 (ET:1)' => [$this->getSampleSpreadsheetThree(), $this->zeroesApartFrom([
+            'Sample spreadsheet - variation #3 (ET:1)' => [self::getSampleSpreadsheetThree(), self::zeroesApartFrom([
                     'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
                     'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
                     'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
@@ -185,7 +186,7 @@ class DataEntryTypeTest extends TypeTestCase
                 []
             ],
 
-            'Sample spreadsheet - variation #4 (ET:2)' => [$this->getSampleSpreadsheetFour(), $this->zeroesApartFrom([
+            'Sample spreadsheet - variation #4 (ET:2)' => [self::getSampleSpreadsheetFour(), self::zeroesApartFrom([
                     'AT' => 911, 'BE' => 3613, 'BG' => 48, 'CZ' => 652, 'DK' => 370, 'IE' => 397, 'EE' => 37, 'FI' => 1,
                     'FR' => 3345, 'DE' => 3869, 'GR' => 77, 'HU' => 330, 'IT' => 987, 'LV' => 139, 'LT' => 1032, 'LU' => 467,
                     'MK' => 199, 'MT' => 8, 'ME' => 15, 'NL' => 7582, 'PL' => 2148, 'PT' => 609, 'RO' => 1028, 'SK' => 625,
@@ -202,7 +203,7 @@ class DataEntryTypeTest extends TypeTestCase
                 ]
             ],
 
-            'Sample spreadsheet - variation #5 (DFDS:2/AprMayJun col A+BN)' => [$this->getSampleSpreadsheetFive(), $this->zeroesApartFrom([
+            'Sample spreadsheet - variation #5 (DFDS:2/AprMayJun col A+BN)' => [self::getSampleSpreadsheetFive(), self::zeroesApartFrom([
                     'AT' => 4, 'BE' => 3, 'BA' => 1, 'BG' => 2, 'CZ' => 4, 'DK' => 3, 'IE' => 39, 'EE' => 9, 'DE' => 6,
                     'HU' => 3, 'LT' => 7, 'NL' => 16, 'NO' => 2, 'PL' => 33, 'PT' => 1, 'RO' => 54, 'SK' => 2, 'ES' => 6,
                     'TR' => 44, 'GB' => 48, 'UA' => 5,
@@ -219,7 +220,7 @@ class DataEntryTypeTest extends TypeTestCase
 
             'Unused rows - variation #1' => [
                 'Banana 123 Latvia 234',
-                $this->zeroesApartFrom(['LV' => 234]),
+                self::zeroesApartFrom(['LV' => 234]),
                 null,
                 null,
                 [
@@ -233,7 +234,7 @@ class DataEntryTypeTest extends TypeTestCase
 
             'Unused rows - variation #2' => [
                 'ZZ 123 Latvia 234',
-                $this->zeroesApartFrom(['LV' => 234]),
+                self::zeroesApartFrom(['LV' => 234]),
                 null,
                 null,
                 [
@@ -247,7 +248,7 @@ class DataEntryTypeTest extends TypeTestCase
 
             'Unparsable rows' => [
                 "One Two Three Four\nLatvia 234\nFive Six Seven Eight",
-                $this->zeroesApartFrom(['LV' => 234]),
+                self::zeroesApartFrom(['LV' => 234]),
                 null,
                 null,
                 [],
@@ -260,7 +261,7 @@ class DataEntryTypeTest extends TypeTestCase
             // This weird row is actually just skipped/ignored
             'Skipped zero row' => [
                 "											0\nLatvia 345",
-                $this->zeroesApartFrom(['LV' => 345]),
+                self::zeroesApartFrom(['LV' => 345]),
                 null,
                 null,
                 [],
@@ -277,26 +278,24 @@ class DataEntryTypeTest extends TypeTestCase
         ];
 
         foreach($oldCountryNames as $oldCountryName => $expectedCode) {
-            $testCases["Old country name with code: $oldCountryName"] = ["$oldCountryName 105", $this->zeroesApartFrom([$expectedCode => 105])];
-            $testCases["Old country name without code: $oldCountryName"] = ["Wibble ({$expectedCode}) 106", $this->zeroesApartFrom([$expectedCode => 106])];
+            $testCases["Old country name with code: $oldCountryName"] = ["$oldCountryName 105", self::zeroesApartFrom([$expectedCode => 105])];
+            $testCases["Old country name without code: $oldCountryName"] = ["Wibble ({$expectedCode}) 106", self::zeroesApartFrom([$expectedCode => 106])];
         }
 
-        foreach($this->getCountryCodes() as $expectedCode) {
+        foreach(self::getCountryCodes() as $expectedCode) {
             $name = match($expectedCode) {
                 'XK' => 'Kosovo',
                 default => Countries::getName($expectedCode),
             };
 
-            $testCases["Country with code: {$name}"] = ["{$name} 107", $this->zeroesApartFrom([$expectedCode => 107])];
-            $testCases["Country without code: {$name}"] = ["Wibble ({$expectedCode}) 108", $this->zeroesApartFrom([$expectedCode => 108])];
+            $testCases["Country with code: {$name}"] = ["{$name} 107", self::zeroesApartFrom([$expectedCode => 107])];
+            $testCases["Country without code: {$name}"] = ["Wibble ({$expectedCode}) 108", self::zeroesApartFrom([$expectedCode => 108])];
         }
 
         return $testCases;
     }
 
-    /**
-     * @dataProvider dataMapper
-     */
+    #[DataProvider('dataMapper')]
     public function testMapper(
         string $input,
         array $expectedCounts,
@@ -345,7 +344,7 @@ class DataEntryTypeTest extends TypeTestCase
         }
     }
 
-    public function dataTotals(): array
+    public static function dataTotals(): array
     {
         return [
             ["Nothing 100", null, null],
@@ -355,13 +354,12 @@ class DataEntryTypeTest extends TypeTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataTotals
-     */
+    #[DataProvider('dataTotals')]
     public function testTotals(string $input, ?int $expectedTotalVehicles, ?int $expectedTotalPoweredVehicles): void
     {
         $survey = $this->getSurvey();
-        $this->assertNull($survey->getDataEntryDebugInfo());
+        $debugBefore = $survey->getDataEntryDebugInfo();
+        $this->assertNull($debugBefore);
 
         $this->submitForm($survey, $input);
 
@@ -376,7 +374,7 @@ class DataEntryTypeTest extends TypeTestCase
 
     protected function getSurvey(): Survey
     {
-        $operatorRoute = new OperatorRoute(111, 222);
+        $operatorRoute = new OperatorRoute('111', '222');
         $survey = $this->surveyCreationHelper->createSurvey(new \DateTime('now'), $operatorRoute);
         $this->vehicleCountHelper->setVehicleCountLabels($survey->getVehicleCounts());
         return $survey;
@@ -390,17 +388,17 @@ class DataEntryTypeTest extends TypeTestCase
         return $form;
     }
 
-    protected function zeroesApartFrom(array $expected): array
+    protected static function zeroesApartFrom(array $expected): array
     {
         $allZeroes = [];
-        foreach($this->getAllCodes() as $code) {
+        foreach(self::getAllCodes() as $code) {
             $allZeroes[$code] = 0;
         }
 
         return array_merge($allZeroes, $expected);
     }
 
-    protected function getSampleSpreadsheetOne(): string
+    protected static function getSampleSpreadsheetOne(): string
     {
         return <<<EOS
 Country of Vehicle Registration						Powered Vehicles						Country of Vehicle Registration						Powered Vehicles
@@ -436,7 +434,7 @@ Please tick this box if the country breakdown is only estimated:												Unac
 EOS;
     }
 
-    protected function getSampleSpreadsheetTwo(): string
+    protected static function getSampleSpreadsheetTwo(): string
     {
         return <<<EOS
 Month 3	40164
@@ -491,7 +489,7 @@ Unaccompanied Trailers	3
 EOS;
     }
 
-    protected function getSampleSpreadsheetThree(): string
+    protected static function getSampleSpreadsheetThree(): string
     {
         return <<<EOS
 Unaccompanied	127
@@ -531,7 +529,7 @@ Overall Result	43,499
 EOS;
     }
 
-    public function getSampleSpreadsheetFour(): string
+    public static function getSampleSpreadsheetFour(): string
     {
         return <<<EOS
 Country of Vehicle Registration						Powered Vehicles							Country of Vehicle Registration						Powered Vehicles
@@ -567,7 +565,7 @@ Please tick this box if the country breakdown is only estimated:													Una
 EOS;
     }
 
-    public function getSampleSpreadsheetFive(): string
+    public static function getSampleSpreadsheetFive(): string
     {
         // N.B. The numbers are a long way to the right for some reason (lots of whitespace?!)
         //

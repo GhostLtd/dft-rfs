@@ -15,7 +15,7 @@ trait SurveyHelperTrait
         $user = $this->getUser();
         $survey = ($user instanceof PasscodeUser) ? $user->getDomesticSurvey() : null;
 
-        if (!$survey || !$survey instanceof Survey) {
+        if (!$survey) {
             throw new AccessDeniedHttpException('No such survey');
         }
 
@@ -26,7 +26,7 @@ trait SurveyHelperTrait
     {
         $response = $this->getSurvey()->getResponse();
 
-        if (!$response || !$response instanceof SurveyResponse) {
+        if (!$response) {
             throw new AccessDeniedHttpException('No such survey response');
         }
 

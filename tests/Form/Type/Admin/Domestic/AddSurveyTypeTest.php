@@ -5,11 +5,12 @@ namespace App\Tests\Form\Type\Admin\Domestic;
 use App\Entity\Domestic\Survey;
 use App\Entity\Embeddable\LongAddress;
 use App\Form\Admin\DomesticSurvey\AddSurveyType;
-use App\Tests\Form\Type\Admin\AbstractSurveyTypeTest;
+use App\Tests\Form\Type\Admin\AbstractSurveyTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class AddSurveyTypeTest extends AbstractSurveyTypeTest
+class AddSurveyTypeTest extends AbstractSurveyTypeTestCase
 {
-    protected function dataNeitherResendNorReissue(): array
+    public static function dataNeitherResendNorReissue(): array
     {
         $now = new \DateTime();
 
@@ -59,15 +60,13 @@ class AddSurveyTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataNeitherResendNorReissue
-     */
+    #[DataProvider('dataNeitherResendNorReissue')]
     public function testNeitherResendNorReissue(array $formData, bool $expectedValid): void
     {
         $this->performTest($formData, $expectedValid);
     }
 
-    protected function dataResend(): array
+    public static function dataResend(): array
     {
         $validData = [];
 
@@ -99,9 +98,7 @@ class AddSurveyTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataResend
-     */
+    #[DataProvider('dataResend')]
     public function testResend(array $formData, bool $expectedValid): void
     {
         [$survey, $data] = $this->getExistingSurveyAndData();
@@ -109,7 +106,7 @@ class AddSurveyTypeTest extends AbstractSurveyTypeTest
     }
 
 
-    protected function dataReissue(): array
+    public static function dataReissue(): array
     {
         $now = new \DateTime();
 
@@ -159,9 +156,7 @@ class AddSurveyTypeTest extends AbstractSurveyTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataReissue
-     */
+    #[DataProvider('dataReissue')]
     public function testReissue(array $formData, bool $expectedValid): void
     {
         [$survey, $data] = $this->getExistingSurveyAndData();

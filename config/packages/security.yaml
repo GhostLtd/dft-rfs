@@ -1,6 +1,4 @@
 security:
-    enable_authenticator_manager: true
-
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -57,6 +55,7 @@ security:
             host: '^%admin_hostname%$'
             lazy: true
             stateless: true
+            provider: null_provider
             custom_authenticators:
                 - App\Security\GoogleIap\IapAuthenticator
 

@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Quarter;
 
 use App\Utility\Quarter\NaturalQuarterHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NaturalQuarterHelperTest extends TestCase
 {
-    public function dataGetStartOfQuarterOffset(): array
+    public static function dataGetStartOfQuarterOffset(): array
     {
         return [
             [new \DateTime('2024-11-01'), 0, new \DateTime('2024-10-01')],
@@ -19,9 +20,7 @@ class NaturalQuarterHelperTest extends TestCase
       ];
     }
 
-    /**
-     * @dataProvider dataGetStartOfQuarterOffset
-     */
+    #[DataProvider('dataGetStartOfQuarterOffset')]
     public function testGetStartOfQuarterOffset(\DateTime $currentDate, int $deltaQuarter, \DateTime $expectedDate): void
     {
         $helper =  new NaturalQuarterHelper();
@@ -30,7 +29,7 @@ class NaturalQuarterHelperTest extends TestCase
         $this->assertEquals($expectedDate, $actualDate);
     }
 
-    public function dataGetDateRangeForYearAndQuarter(): array
+    public static function dataGetDateRangeForYearAndQuarter(): array
     {
         return [
             [2022, 1, ['2022/01/01', '2022/04/01']],
@@ -43,9 +42,7 @@ class NaturalQuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetDateRangeForYearAndQuarter
-     */
+    #[DataProvider('dataGetDateRangeForYearAndQuarter')]
     public function testGetDateRangeForYearAndQuarter(int $year, int $quarter, array $expectedDateRange)
     {
         $helper =  new NaturalQuarterHelper();
@@ -55,7 +52,7 @@ class NaturalQuarterHelperTest extends TestCase
         $this->assertEquals($expectedDateRange, $dateRange);
     }
 
-    public function dataGetQuarterAndYear(): array
+    public static function dataGetQuarterAndYear(): array
     {
         return [
             ['2021/12/27', 4, 2021],
@@ -75,9 +72,7 @@ class NaturalQuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetQuarterAndYear
-     */
+    #[DataProvider('dataGetQuarterAndYear')]
     public function testGetQuarterAndYear(string $date, int $expectedQuarter, int $expectedYear)
     {
         $helper =  new NaturalQuarterHelper();

@@ -22,7 +22,7 @@ class UserIdLookupController extends AbstractController
             $userIdField = $form->get('user_id');
 
             $userId = intval($userIdField->getData());
-            $user = $userRepository->lookupUserByIdentifier($userId);
+            $user = $userRepository->lookupUserByIdentifier((string) $userId);
 
             if ($user) {
                 if ($survey = $user->getDomesticSurvey()) {

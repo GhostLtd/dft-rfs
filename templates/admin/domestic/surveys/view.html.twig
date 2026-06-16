@@ -34,7 +34,7 @@
                 'Vehicle details': 'tab-vehicle-details',
             } : {})
             | merge(canViewUnfilledReason ? {'Final details': 'tab-final-details'} : {})
-            | merge(not survey.inActiveState and survey.driverAvailability ?? false ? {'Driver availability': 'tab-driver-availability'} : {})
+            | merge(not survey.inActiveState and (survey.driverAvailability ?? false) ? {'Driver availability': 'tab-driver-availability'} : {})
         %}
     {%- endif -%}
     {%- set tabs = tabs

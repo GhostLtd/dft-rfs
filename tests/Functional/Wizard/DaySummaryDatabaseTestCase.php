@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DaySummaryDatabaseTestCase implements DatabaseTestCase
 {
-    public function __construct(protected ?bool $goodsLoaded, protected ?string $originLocation, protected ?bool $goodsUnloaded, protected ?string $destinationLocation, protected ?string $hazardousGoodsCode, protected ?string $furthestStop, protected ?string $borderCrossing, protected ?string $distanceLoadedValue, protected ?string $distanceLoadedUnit, protected ?string $distanceUnloadedValue, protected ?string $distanceUnloadedUnit, protected ?string $goodsDescription, protected ?string $goodsDescriptionOther, protected ?string $cargoTypeCode, protected ?string $weightOfGoodsLoaded, protected ?string $weightOfGoodsUnloaded, protected ?string $numberOfStopsLoading, protected ?string $numberOfStopsUnloading, protected ?string $numberOfStopsLoadingAndUnloading)
+    public function __construct(protected ?bool $goodsLoaded, protected ?string $originLocation, protected ?bool $goodsUnloaded, protected ?string $destinationLocation, protected ?string $hazardousGoodsCode, protected ?string $furthestStop, protected ?string $borderCrossing, protected ?string $distanceLoadedValue, protected ?string $distanceLoadedUnit, protected ?string $distanceUnloadedValue, protected ?string $distanceUnloadedUnit, protected ?string $goodsDescription, protected ?string $goodsDescriptionOther, protected ?string $cargoTypeCode, protected ?int $weightOfGoodsLoaded, protected ?int $weightOfGoodsUnloaded, protected ?int $numberOfStopsLoading, protected ?int $numberOfStopsUnloading, protected ?int $numberOfStopsLoadingAndUnloading)
     {
     }
 

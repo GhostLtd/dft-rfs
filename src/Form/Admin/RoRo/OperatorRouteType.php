@@ -61,7 +61,7 @@ class OperatorRouteType extends AbstractType
                     return $label;
                 },
                 'constraints' => [
-                    new NotBlank([], "common.choice.not-null"),
+                    new NotBlank(message: "common.choice.not-null"),
                     new Callback(function(?Route $route, ExecutionContextInterface $context) use ($routeIdsToExclude) {
                         if ($route !== null && in_array($route->getId(), $routeIdsToExclude)) {
                             $context->buildViolation('common.choice.invalid')->addViolation();
@@ -105,8 +105,8 @@ class OperatorRouteType extends AbstractType
                 'label' => 'Year',
                 'mapped' => false,
                 'constraints' => [
-                    new NotNull(['groups' => self::ROUTE_BACKDATE_SURVEYS]),
-                    new Range(['min' => $lastYear, 'max' => $currentYear]),
+                    new NotNull(groups: [self::ROUTE_BACKDATE_SURVEYS]),
+                    new Range(min: $lastYear, max: $currentYear),
                 ],
             ])
             ->add('month', IntegerType::class, [
@@ -114,8 +114,8 @@ class OperatorRouteType extends AbstractType
                 'label' => 'Month',
                 'mapped' => false,
                 'constraints' => [
-                    new NotNull(['groups' => self::ROUTE_BACKDATE_SURVEYS]),
-                    new Range(['min' => 1, 'max' => 12]),
+                    new NotNull(groups: [self::ROUTE_BACKDATE_SURVEYS]),
+                    new Range(min: 1, max: 12),
                 ],
             ]);
 

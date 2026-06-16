@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Domestic;
 
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
 
-class StageDeleteFunctionalTest extends AbstractStageFunctionalTest
+class StageDeleteFunctionalTest extends AbstractStageFunctionalTestCase
 {
     public function testStageDeletion()
     {

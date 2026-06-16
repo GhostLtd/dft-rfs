@@ -4,11 +4,8 @@
 {% block beforeContent %}{% endblock %}
 
 {% block content %}
-    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner, summaryListStart, summaryListEnd, summaryListRow -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import summaryListStart, summaryListEnd, summaryListRow -%}
 
-    {%- if maintenanceWarningBanner ?? false -%}
-        {{- notificationBanner(maintenanceWarningBanner) -}}
-    {%- endif -%}
 
     <h1 class="govuk-heading-xl">{{ 'pre-enquiry.summary.heading' | trans }}</h1>
 

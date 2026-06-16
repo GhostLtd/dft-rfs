@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 abstract class AbstractSurveyResendController extends AbstractController
@@ -27,10 +26,6 @@ abstract class AbstractSurveyResendController extends AbstractController
 
             if ($form->isValid()) {
                 $survey = $form->getData();
-
-                if (!$survey instanceof SurveyInterface) {
-                    throw new BadRequestHttpException();
-                }
 
                 $survey->setState(SurveyStateInterface::STATE_NEW);
                 $survey->getPasscodeUser()->setPassword(null);

@@ -6,7 +6,6 @@ use App\Repository\Domestic\DriverAvailabilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Form\Validator as AppAssert;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[AppAssert\OtherNotBlank(selectField: "reasonsForDriverVacancies", message: "driver-availability.reasons-for-driver-vacancies.other", groups: ["driver-availability.drivers-and-vacancies"])]
@@ -81,7 +80,7 @@ class DriverAvailability
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     #[Assert\PositiveOrZero(groups: ['driver-availability.drivers-and-vacancies'])]

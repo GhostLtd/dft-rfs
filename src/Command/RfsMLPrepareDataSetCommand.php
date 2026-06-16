@@ -69,9 +69,7 @@ class RfsMLPrepareDataSetCommand extends AbstractMLDataSetCommand
             foreach($duplicateAndContradictionTracker->getContradictionsAndConfusions() as $confusion) {
                 $contractions = $confusion->getContradictions();
                 $sourceData = array_values($confusion->getSourceData());
-                $firstCell = (is_string($sourceData) && $sourceData !== '') ?
-                    $sourceData :
-                    json_encode($sourceData);
+                $firstCell = json_encode($sourceData);
 
                 if ($addSep) {
                     $rows[] = new TableSeparator();

@@ -4,7 +4,7 @@ namespace App\Tests\NewFunctional\Wizard\International;
 
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class InitialDetailsChangeTest extends AbstractInitialDetailsTest
+class InitialDetailsChangeTest extends AbstractInitialDetailsTestCase
 {
     public function testChangeCorrespondenceDetails(): void
     {

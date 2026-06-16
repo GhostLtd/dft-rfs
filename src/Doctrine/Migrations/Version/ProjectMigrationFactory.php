@@ -5,7 +5,6 @@ namespace App\Doctrine\Migrations\Version;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Version\MigrationFactory;
 use Google\Cloud\Storage\Bucket;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProjectMigrationFactory implements MigrationFactory
@@ -23,7 +22,7 @@ class ProjectMigrationFactory implements MigrationFactory
             $instance->setExportBucket($this->exportBucket);
         }
 
-        if ($instance instanceof ContainerAwareInterface) {
+        if (method_exists($instance, "setContainer")) {
             $instance->setContainer($this->container);
         }
 

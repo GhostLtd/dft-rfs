@@ -14,6 +14,7 @@ use App\Utility\RoRo\SurveyCreationHelper;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Envelope;
@@ -53,7 +54,7 @@ class AutomatedRoroRemindersHelperTest extends KernelTestCase
         $this->referenceRepository = $fixtures->getReferenceRepository();
     }
 
-    public function dataReminder(): array
+    public static function dataReminder(): array
     {
         // N.B. Current year / month is hard-coded to October 2023 and passed into sendReminders() below, in the test
         return [
@@ -168,21 +169,17 @@ class AutomatedRoroRemindersHelperTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataReminder
-     */
+    #[DataProvider('dataReminder')]
     public function testReminder(?array $expectedPersonalisation, array $surveyRoutesAndDates): void
     {
         // Add surveys for given routes and dates
         $operator = $this->referenceRepository->getReference('roro:operator:1', Operator::class);
-        $this->assertInstanceOf(Operator::class, $operator);
 
         foreach ($surveyRoutesAndDates as $surveyRouteAndDates) {
             $routeReference = $surveyRouteAndDates[0];
             $surveyDateTimes = $surveyRouteAndDates[1];
 
             $route = $this->referenceRepository->getReference($routeReference, Route::class);
-            $this->assertInstanceOf(Route::class, $route);
 
             $operatorRoute = new OperatorRoute($operator->getId(), $route->getId());
 

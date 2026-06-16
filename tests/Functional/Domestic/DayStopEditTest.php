@@ -8,24 +8,25 @@ use App\Entity\Domestic\Day;
 use App\Entity\Embeddable\Distance;
 use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\Domestic\DayStopFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\Domestic\CallbackDayDatabaseTestCase;
 use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardEndUrlTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class DayStopEditTest extends AbstractWizardTest
+class DayStopEditTest extends AbstractWizardTestCase
 {
-    protected string $baseUrl = "/domestic-survey/day-1/stop-1";
+    protected static string $baseUrl = "/domestic-survey/day-1/stop-1";
 
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         return [
             'Change start/destination' => [
                 '/stage-start',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/stage-start", "origin_button_group_continue", [
                         new FormTestCase([
                             "origin" => [
                                 "originLocation" => "",
@@ -41,7 +42,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/stage-end", "destination_button_group_continue", [
                         new FormTestCase([
                             "destination" => [
                                 "destinationLocation" => "",
@@ -57,7 +58,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/border-crossing", "border_crossing_button_group_continue", [
                         new FormTestCase([
                             "border_crossing" => [
                                 "borderCrossed" => 1,
@@ -69,14 +70,14 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
-                        $this->assertEquals("Worthing", $dayStop->getOriginLocation());
-                        $this->assertEquals("Portsmouth", $dayStop->getDestinationLocation());
-                        $this->assertEquals(false, $dayStop->getGoodsLoadedIsPort());
-                        $this->assertEquals(false, $dayStop->getGoodsUnloadedIsPort());
-                        $this->assertEquals(null, $dayStop->getGoodsTransferredFrom());
-                        $this->assertEquals(null, $dayStop->getGoodsTransferredTo());
-                        $this->assertEquals("Littlehampton", $dayStop->getBorderCrossingLocation());
+                        self::assertNotNull($dayStop);
+                        self::assertEquals("Worthing", $dayStop->getOriginLocation());
+                        self::assertEquals("Portsmouth", $dayStop->getDestinationLocation());
+                        self::assertEquals(false, $dayStop->getGoodsLoadedIsPort());
+                        self::assertEquals(false, $dayStop->getGoodsUnloadedIsPort());
+                        self::assertEquals(null, $dayStop->getGoodsTransferredFrom());
+                        self::assertEquals(null, $dayStop->getGoodsTransferredTo());
+                        self::assertEquals("Littlehampton", $dayStop->getBorderCrossingLocation());
                     })
                 ],
             ],
@@ -84,7 +85,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/stage-start',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-start", "origin_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/stage-start", "origin_button_group_continue", [
                         new FormTestCase([
                             "origin" => [
                                 "originLocation" => "",
@@ -102,7 +103,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/stage-end", "destination_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/stage-end", "destination_button_group_continue", [
                         new FormTestCase([
                             "destination" => [
                                 "destinationLocation" => "",
@@ -120,7 +121,7 @@ class DayStopEditTest extends AbstractWizardTest
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/border-crossing", "border_crossing_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/border-crossing", "border_crossing_button_group_continue", [
                         new FormTestCase([
                             "border_crossing" => [
                                 "borderCrossed" => 1,
@@ -132,14 +133,14 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
-                        $this->assertEquals("Brighton", $dayStop->getOriginLocation());
-                        $this->assertEquals("Havant", $dayStop->getDestinationLocation());
-                        $this->assertEquals(true, $dayStop->getGoodsLoadedIsPort());
-                        $this->assertEquals(true, $dayStop->getGoodsUnloadedIsPort());
-                        $this->assertEquals(Day::TRANSFERRED_RAIL, $dayStop->getGoodsTransferredFrom());
-                        $this->assertEquals(Day::TRANSFERRED_AIR, $dayStop->getGoodsTransferredTo());
-                        $this->assertEquals("Felpham", $dayStop->getBorderCrossingLocation());
+                        self::assertNotNull($dayStop);
+                        self::assertEquals("Brighton", $dayStop->getOriginLocation());
+                        self::assertEquals("Havant", $dayStop->getDestinationLocation());
+                        self::assertEquals(true, $dayStop->getGoodsLoadedIsPort());
+                        self::assertEquals(true, $dayStop->getGoodsUnloadedIsPort());
+                        self::assertEquals(Day::TRANSFERRED_RAIL, $dayStop->getGoodsTransferredFrom());
+                        self::assertEquals(Day::TRANSFERRED_AIR, $dayStop->getGoodsTransferredTo());
+                        self::assertEquals("Felpham", $dayStop->getBorderCrossingLocation());
                     })
                 ],
             ],
@@ -147,7 +148,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/distance-travelled',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/distance-travelled", "distance_travelled_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/distance-travelled", "distance_travelled_button_group_continue", [
                         new FormTestCase([
                             "distance_travelled" => [
                                 "distanceTravelled" => [
@@ -171,13 +172,13 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
+                        self::assertNotNull($dayStop);
                         $distance = $dayStop->getDistanceTravelled();
 
-                        $this->assertNotNull($distance);
+                        self::assertNotNull($distance);
 
-                        $this->assertEquals(76, $distance->getValue());
-                        $this->assertEquals(Distance::UNIT_MILES, $distance->getUnit());
+                        self::assertEquals(76, $distance->getValue());
+                        self::assertEquals(Distance::UNIT_MILES, $distance->getUnit());
                     })
                 ],
             ],
@@ -185,7 +186,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-description',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/goods-description", "goods_description_button_group_continue", [
                         new FormTestCase([
                             "goods_description" => [
                                 "goodsDescription" => AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY,
@@ -196,15 +197,15 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
-                        $this->assertEquals(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY, $dayStop->getGoodsDescription());
-                        $this->assertEquals(null, $dayStop->getGoodsDescriptionOther());
-                        $this->assertEquals(null, $dayStop->getHazardousGoodsCode());
-                        $this->assertEquals(null, $dayStop->getCargoTypeCode());
-                        $this->assertEquals(null, $dayStop->getWeightOfGoodsCarried());
-                        $this->assertEquals(null, $dayStop->getWasAtCapacity());
-                        $this->assertEquals(null, $dayStop->getWasLimitedByWeight());
-                        $this->assertEquals(null, $dayStop->getWasLimitedBySpace());
+                        self::assertNotNull($dayStop);
+                        self::assertEquals(AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY, $dayStop->getGoodsDescription());
+                        self::assertEquals(null, $dayStop->getGoodsDescriptionOther());
+                        self::assertEquals(null, $dayStop->getHazardousGoodsCode());
+                        self::assertEquals(null, $dayStop->getCargoTypeCode());
+                        self::assertEquals(null, $dayStop->getWeightOfGoodsCarried());
+                        self::assertEquals(null, $dayStop->getWasAtCapacity());
+                        self::assertEquals(null, $dayStop->getWasLimitedByWeight());
+                        self::assertEquals(null, $dayStop->getWasLimitedBySpace());
                     })
                 ],
             ],
@@ -212,14 +213,14 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-description',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-description", "goods_description_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/goods-description", "goods_description_button_group_continue", [
                         new FormTestCase([
                             "goods_description" => [
                                 "goodsDescription" => AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE,
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/hazardous-goods", "hazardous_goods_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/hazardous-goods", "hazardous_goods_button_group_continue", [
                         new FormTestCase([
                             "hazardous_goods" => [
                                 "isHazardousGoods" => "yes",
@@ -227,14 +228,14 @@ class DayStopEditTest extends AbstractWizardTest
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/cargo-type", "cargo_type_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/cargo-type", "cargo_type_button_group_continue", [
                         new FormTestCase([
                             "cargo_type" => [
                                 "cargoTypeCode" => CargoType::CODE_PL_PALLETISED_GOODS,
                             ],
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/goods-weight", "goods_weight_button_group_continue", [
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,
@@ -260,15 +261,15 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
-                        $this->assertEquals(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE, $dayStop->getGoodsDescription());
-                        $this->assertEquals(null, $dayStop->getGoodsDescriptionOther());
-                        $this->assertEquals(HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL, $dayStop->getHazardousGoodsCode());
-                        $this->assertEquals(CargoType::CODE_PL_PALLETISED_GOODS, $dayStop->getCargoTypeCode());
-                        $this->assertEquals("7613", $dayStop->getWeightOfGoodsCarried());
-                        $this->assertEquals(true, $dayStop->getWasAtCapacity());
-                        $this->assertEquals(true, $dayStop->getWasLimitedByWeight());
-                        $this->assertEquals(false, $dayStop->getWasLimitedBySpace());
+                        self::assertNotNull($dayStop);
+                        self::assertEquals(AbstractGoodsDescription::GOODS_DESCRIPTION_GROUPAGE, $dayStop->getGoodsDescription());
+                        self::assertEquals(null, $dayStop->getGoodsDescriptionOther());
+                        self::assertEquals(HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL, $dayStop->getHazardousGoodsCode());
+                        self::assertEquals(CargoType::CODE_PL_PALLETISED_GOODS, $dayStop->getCargoTypeCode());
+                        self::assertEquals("7613", $dayStop->getWeightOfGoodsCarried());
+                        self::assertEquals(true, $dayStop->getWasAtCapacity());
+                        self::assertEquals(true, $dayStop->getWasLimitedByWeight());
+                        self::assertEquals(false, $dayStop->getWasLimitedBySpace());
                     })
                 ],
             ],
@@ -276,7 +277,7 @@ class DayStopEditTest extends AbstractWizardTest
                 '/goods-weight',
                 [DayStopFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/goods-weight", "goods_weight_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/goods-weight", "goods_weight_button_group_continue", [
                         new FormTestCase([
                             "goods_weight" => [
                                 "weightOfGoodsCarried" => null,
@@ -304,24 +305,22 @@ class DayStopEditTest extends AbstractWizardTest
                     new CallbackDayDatabaseTestCase(1, function(Day $day) {
                         $dayStop = $day->getStopByNumber(1);
 
-                        $this->assertNotNull($dayStop);
-                        $this->assertEquals("8843", $dayStop->getWeightOfGoodsCarried());
-                        $this->assertEquals(true, $dayStop->getWasAtCapacity());
-                        $this->assertEquals(true, $dayStop->getWasLimitedByWeight());
-                        $this->assertEquals(true, $dayStop->getWasLimitedBySpace());
+                        self::assertNotNull($dayStop);
+                        self::assertEquals("8843", $dayStop->getWeightOfGoodsCarried());
+                        self::assertEquals(true, $dayStop->getWasAtCapacity());
+                        self::assertEquals(true, $dayStop->getWasLimitedByWeight());
+                        self::assertEquals(true, $dayStop->getWasLimitedBySpace());
                     })
                 ],
             ],
         ];
     }
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testDayStopEditWizards($startRelativeUrl, $fixtures, $wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
-        $browser->request('GET', "{$this->baseUrl}{$startRelativeUrl}");
+        $browser->request('GET', self::$baseUrl."{$startRelativeUrl}");
 
         $this->doWizardTest($browser, $wizardData);
     }

@@ -2,15 +2,16 @@
 
 namespace App\Tests\Utility;
 
-use App\Tests\Functional\AbstractFunctionalTest;
+use App\Tests\Functional\AbstractFunctionalTestCase;
 use App\Utility\RemoteActions;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class RemoteActionsHmacTest extends AbstractFunctionalTest
+class RemoteActionsHmacTest extends AbstractFunctionalTestCase
 {
     public const HMAC_ACTION = 'test-function';
 
-    public function getAccessDeniedData(): array
+    public static function getAccessDeniedData(): array
     {
         return [
             ['wrong-action', 'now', $_ENV['APP_SECRET']],
@@ -20,9 +21,7 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
         ];
     }
 
-    /**
-     * @dataProvider getAccessDeniedData
-     */
+    #[DataProvider('getAccessDeniedData')]
     public function testHmacAccessDenied($testAction, $testTimeString, $testSecret)
     {
         $testTimestamp = date_create($testTimeString)->getTimestamp();
@@ -38,7 +37,7 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
         throw new \AssertionError("Access was not denied");
     }
 
-    public function getAccessGrantedData(): array
+    public static function getAccessGrantedData(): array
     {
         return [
             [self::HMAC_ACTION, 'now', $_ENV['APP_SECRET']],
@@ -47,9 +46,7 @@ class RemoteActionsHmacTest extends AbstractFunctionalTest
         ];
     }
 
-    /**
-     * @dataProvider getAccessGrantedData
-     */
+    #[DataProvider('getAccessGrantedData')]
     public function testHmacAccessGranted($testAction, $testTimeString, $testSecret)
     {
         $testTimestamp = date_create($testTimeString)->getTimestamp();

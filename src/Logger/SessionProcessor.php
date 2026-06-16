@@ -17,10 +17,12 @@ class SessionProcessor
 
     public function __invoke(LogRecord $record): LogRecord
     {
-        $request = $this->requestStack->getMainRequest();
+        $request = $this->requestStack->getCurrentRequest();
 
         if ($request) {
-            $record->extra['_ghost_meta']['session'] = $request->cookies->get('PHPSESSID', null);
+            // truncate session IDs to prevent hijacking
+            $sId = $request->cookies->get('PHPSESSID', null);
+            $record->extra['_ghost_meta']['session'] = $sId ? substr($sId, 0, 16) : null;
         }
 
         return $record;

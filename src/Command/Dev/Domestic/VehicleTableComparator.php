@@ -120,7 +120,7 @@ SQL,
         $this->checkStringColumn('RegMark', $this->getColumn($exportRow, 'RegMark'), $dbRow['RegistrationMark']);
         $this->checkStringColumn('CarryingCapacity', $this->getColumn($exportRow, 'CarryingCapacity'), $dbRow['CarryingCapacity']);
         $this->checkStringColumn('GrossWeight', $this->getColumn($exportRow, 'GrossWeight'), $dbRow['GrossWeight']);
-        $this->checkStringColumn('SurveyType', $this->getColumn($exportRow, 'SurveyType'), $dbRow['IsNorthernIreland'] === 1 ? 2 : 1);
+        $this->checkStringColumn('SurveyType', $this->getColumn($exportRow, 'SurveyType'), $dbRow['IsNorthernIreland'] === 1 ? '2' : '1');
 
         $this->columnWatcher->columnSeen('FuelTypeIsHybrid');
         $fuelType = $this->getColumn($exportRow, 'FuelType');
@@ -168,7 +168,7 @@ SQL,
 
 
         $dbReasonForEmptySurvey = SurveyResponse::EMPTY_SURVEY_REASON_EXPORT_IDS[$dbRow['ReasonForEmptySurvey']] ?? null;
-        $this->checkStringColumn('NotUsedReasonID', $this->getColumn($exportRow, 'NotUsedReasonID'), $dbReasonForEmptySurvey);
+        $this->checkStringColumn('NotUsedReasonID', $this->getColumn($exportRow, 'NotUsedReasonID'), $dbReasonForEmptySurvey === null ? null : (string) $dbReasonForEmptySurvey);
 
 // Really this is purely testing the DB/view output.
 //

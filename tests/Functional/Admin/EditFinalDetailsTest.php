@@ -18,7 +18,7 @@ use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
  * /csrgt|irhs/surveys/{id}/edit-final-details — where the controller previously passed no
  * options, causing MissingOptionsException.
  */
-class EditFinalDetailsTest extends AbstractAdminFunctionalTest
+class EditFinalDetailsTest extends AbstractAdminFunctionalTestCase
 {
     public function testDomesticEditFinalDetailsRenders(): void
     {

@@ -6,12 +6,13 @@ use App\Entity\AbstractGoodsDescription;
 use App\Entity\Embeddable\Distance;
 use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\Domestic\BusinessFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\DayStopDatabaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class DayStopTestExtended extends AbstractWizardTest
+class DayStopTestExtended extends AbstractWizardTestCase
 {
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         $data = [];
 
@@ -29,7 +30,7 @@ class DayStopTestExtended extends AbstractWizardTest
                                         $goodsUnloaded,
                                         'Worthing',
                                         'Hove',
-                                        120,
+                                        '120',
                                         Distance::UNIT_MILES,
                                         AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
                                         "Bread",
@@ -39,7 +40,7 @@ class DayStopTestExtended extends AbstractWizardTest
                                         $atCapacityBySpace,
                                         $atCapacityByWeight
                                     );
-                                    $data[$this->getTestName($goodsLoaded, $goodsUnloaded, $isEmpty, $isHazardous, $atCapacityBySpace, $atCapacityByWeight)] = [$testData];
+                                    $data[self::getTestName($goodsLoaded, $goodsUnloaded, $isEmpty, $isHazardous, $atCapacityBySpace, $atCapacityByWeight)] = [$testData];
                                 }
                             }
                         }
@@ -51,7 +52,7 @@ class DayStopTestExtended extends AbstractWizardTest
                             $goodsUnloaded,
                             'Worthing',
                             'Hove',
-                            120,
+                            '120',
                             Distance::UNIT_MILES,
                             AbstractGoodsDescription::GOODS_DESCRIPTION_EMPTY,
                             null,
@@ -61,7 +62,7 @@ class DayStopTestExtended extends AbstractWizardTest
                             null,
                             null,
                         );
-                        $data[$this->getTestName($goodsLoaded, $goodsUnloaded, true)] = [$testData];
+                        $data[self::getTestName($goodsLoaded, $goodsUnloaded, true)] = [$testData];
                     }
                 }
             }
@@ -70,7 +71,7 @@ class DayStopTestExtended extends AbstractWizardTest
         return $data;
     }
 
-    protected function getTestName(bool $goodsLoaded, bool $goodsUnloaded, bool $isEmpty, bool $isHazardous=null, bool $atCapacityBySpace=null, bool $atCapacityByWeight=null): string
+    protected static function getTestName(bool $goodsLoaded, bool $goodsUnloaded, bool $isEmpty, bool $isHazardous=null, bool $atCapacityBySpace=null, bool $atCapacityByWeight=null): string
     {
         $parts = [];
         $parts[] = $goodsLoaded ? 'Goods loaded' : 'No goods loaded';
@@ -98,9 +99,7 @@ class DayStopTestExtended extends AbstractWizardTest
         return join(', ', $parts);
     }
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testDayStopWizard($wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin([BusinessFixtures::class]);

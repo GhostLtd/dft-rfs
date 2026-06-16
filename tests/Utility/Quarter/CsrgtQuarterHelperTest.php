@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Quarter;
 
 use App\Utility\Quarter\CsrgtQuarterHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CsrgtQuarterHelperTest extends TestCase
 {
-    public function dataGetStartOfQuarterOffset(): array
+    public static function dataGetStartOfQuarterOffset(): array
     {
         return [
             [new \DateTime('2025-11-01'), 0, new \DateTime('2025-09-29')],
@@ -19,9 +20,7 @@ class CsrgtQuarterHelperTest extends TestCase
       ];
     }
 
-    /**
-     * @dataProvider dataGetStartOfQuarterOffset
-     */
+    #[DataProvider('dataGetStartOfQuarterOffset')]
     public function testGetStartOfQuarterOffset(\DateTime $currentDate, int $deltaQuarter, \DateTime $expectedDate): void
     {
         $helper =  new CsrgtQuarterHelper();
@@ -31,7 +30,7 @@ class CsrgtQuarterHelperTest extends TestCase
     }
 
 
-    public function dataGetDateRangeForYearAndQuarter(): array
+    public static function dataGetDateRangeForYearAndQuarter(): array
     {
         return [
             [2022, 1, ['2021/12/27', '2022/03/28']],
@@ -44,9 +43,7 @@ class CsrgtQuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetDateRangeForYearAndQuarter
-     */
+    #[DataProvider('dataGetDateRangeForYearAndQuarter')]
     public function testGetDateRangeForYearAndQuarter(int $year, int $quarter, array $expectedDateRange)
     {
         $helper =  new CsrgtQuarterHelper();
@@ -56,7 +53,7 @@ class CsrgtQuarterHelperTest extends TestCase
         $this->assertEquals($expectedDateRange, $dateRange);
     }
 
-    public function dataGetQuarterAndYear(): array
+    public static function dataGetQuarterAndYear(): array
     {
         return [
             ['2021/12/27', 1, 2022],
@@ -76,9 +73,7 @@ class CsrgtQuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetQuarterAndYear
-     */
+    #[DataProvider('dataGetQuarterAndYear')]
     public function testGetQuarterAndYear(string $date, int $expectedQuarter, int $expectedYear)
     {
         $helper =  new CsrgtQuarterHelper();

@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Workflow\InternationalSurvey;
 use App\Entity\International\SurveyResponse;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
 use Ghost\GovUkCoreBundle\FormWizard\FormWizardManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -18,9 +19,7 @@ class InitialDetailsStateTest extends KernelTestCase
         $this->formWizardManager = self::getContainer()->get(FormWizardManager::class);
     }
 
-    /**
-     * @dataProvider dataIsValidAlternativeStartPlace
-     */
+    #[DataProvider('dataIsValidAlternativeStartPlace')]
     public function testIsValidAlternativeStartPlace(
         ?string $activityStatus,
         string $place,
@@ -48,7 +47,7 @@ class InitialDetailsStateTest extends KernelTestCase
         );
     }
 
-    public function dataIsValidAlternativeStartPlace(): array
+    public static function dataIsValidAlternativeStartPlace(): array
     {
         return [
             // Still active - can access all change screens

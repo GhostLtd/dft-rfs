@@ -4,28 +4,23 @@ namespace App\Utility\Menu;
 
 class RoleMenuItem extends MenuItem
 {
-    /** @var array */
-    protected $roles;
+    /** @var string[] */
+    protected array $roles;
 
     /**
-     * RoleMenuItem constructor.
-     * @param string $id
-     * @param string $title
-     * @param string $url
-     * @param array $children
-     * @param array $roles
-     * @param array $options
+     * @param MenuItemInterface[] $children
+     * @param string[] $roles
      */
-    public function __construct($id, $title, $url, array $children = [], array $roles = [], $options = [])
+    public function __construct(?string $id, ?string $title, ?string $url, array $children = [], array $roles = [], array $options = [])
     {
         parent::__construct($id, $title, $url, $children, $options);
         $this->roles = $roles;
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }

@@ -4,11 +4,12 @@ namespace App\Tests\Form\Type\Domestic\DaySummary;
 
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class DistanceTravelledTypeTest extends AbstractTypeTest
+class DistanceTravelledTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -185,9 +186,7 @@ class DistanceTravelledTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid, ?string $expectedLoadedValue=null, ?string $expectedLoadedUnit=null, ?string $expectedUnloadedValue=null, ?string $expectedUnloadedUnit=null): void
     {
         $data = new DaySummary();

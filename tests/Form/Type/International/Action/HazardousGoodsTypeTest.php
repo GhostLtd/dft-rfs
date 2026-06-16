@@ -4,9 +4,9 @@ namespace App\Tests\Form\Type\International\Action;
 
 use App\Entity\International\Action;
 use App\Form\InternationalSurvey\Action\HazardousGoodsType;
-use App\Tests\Form\Type\AbstractHazardousGoodsTypeTest;
+use App\Tests\Form\Type\AbstractHazardousGoodsTypeTestCase;
 
-class HazardousGoodsTypeTest extends AbstractHazardousGoodsTypeTest
+class HazardousGoodsTypeTest extends AbstractHazardousGoodsTypeTestCase
 {
     #[\Override]
     protected function getDataClass(): string

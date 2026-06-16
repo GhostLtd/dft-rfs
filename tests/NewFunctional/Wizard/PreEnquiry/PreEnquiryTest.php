@@ -7,7 +7,7 @@ use App\Tests\DataFixtures\PreEnquiry\SurveyFixtures;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class PreEnquiryTest extends AbstractPreEnquiryTest
+class PreEnquiryTest extends AbstractPreEnquiryTestCase
 {
     public function testAcceptExistingCompanyNameAndAddress(): void
     {

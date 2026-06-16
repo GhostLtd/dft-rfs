@@ -44,8 +44,7 @@ trait HaulageSurveyTrait {
     public function getSurveyPeriodStartModifiedBy(string $modifier): ?DateTime
     {
         if (is_null($this->surveyPeriodStart)) return null;
-        $modifiedDate = (clone $this->surveyPeriodStart)->modify($modifier);
-        return $modifiedDate === false ? null : $modifiedDate;
+        return (clone $this->surveyPeriodStart)->modify($modifier);
     }
 
     public function getSurveyPeriodEnd(): ?DateTime

@@ -31,7 +31,7 @@ class ValidAddressValidator extends ConstraintValidator
 
         $validator = $this->context->getValidator()->inContext($this->context);
 
-        $lengthValidator = new Length(['max' => 255, 'maxMessage' => $constraint->maxLengthMessage]);
+        $lengthValidator = new Length(max: 255, maxMessage: $constraint->maxLengthMessage);
 
         if (!$constraint->allowBlank || $value->isFilled()) {
             // If it's a long postcode (for submission to notify, or import from DVLA), we need a minimum of 3 lines
@@ -42,7 +42,7 @@ class ValidAddressValidator extends ConstraintValidator
 
             $validator->atPath($constraint->includeAddressee ? 'line1' : 'line2')
                 ->validate($constraint->includeAddressee ? $value->getLine1() : $value->getLine2(), [
-                    new NotBlank(['message' => $constraint->line1BlankMessage]),
+                    new NotBlank(message: $constraint->line1BlankMessage),
                     $lengthValidator,
                 ], ['Default']
             );
@@ -55,13 +55,13 @@ class ValidAddressValidator extends ConstraintValidator
             }
 
             $postcodeValidators = [
-                new NotBlank(['message' => $constraint->postcodeBlankMessage]),
+                new NotBlank(message: $constraint->postcodeBlankMessage),
             ];
 
             if ($constraint->validatePostcode) {
                 $postcodeValidators[] = new Postcode(groups: ['Default']);
             } else {
-                $postcodeValidators[] = new Length(['max' => 10, 'maxMessage' => $constraint->maxLengthMessage]);
+                $postcodeValidators[] = new Length(max: 10, maxMessage: $constraint->maxLengthMessage);
             }
 
             $validator->atPath('postcode')->validate($value->getPostcode(), $postcodeValidators, ['Default']);

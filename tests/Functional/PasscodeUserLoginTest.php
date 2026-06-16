@@ -6,8 +6,9 @@ use App\Entity\PasscodeUser;
 use App\Tests\DataFixtures\Domestic\SurveyFixtures;
 use App\Tests\DataFixtures\UserFixtures;
 use App\Utility\PasscodeGenerator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class PasscodeUserLoginTest extends AbstractFunctionalTest
+class PasscodeUserLoginTest extends AbstractFunctionalTestCase
 {
     private PasscodeGenerator $passcodeGenerator;
 
@@ -21,7 +22,7 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
         $this->passcodeGenerator = $container->get(PasscodeGenerator::class);
     }
 
-    protected function getMangler(array $options): \Closure {
+    protected static function getMangler(array $options): \Closure {
         return function(string $str) use ($options): string {
             if ($options['insert'] ?? null) {
                 $midpoint = intval(strlen($str) / 2);
@@ -43,7 +44,7 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
         };
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         // Q: Why do we use the mangler rather than directly coding the mangled strings
         // A: When password is set to null here, we use the auto-generated password which we don't know ahead of time.
@@ -53,34 +54,32 @@ class PasscodeUserLoginTest extends AbstractFunctionalTest
             ['other', 'test', false],
 
             // Test options for mangling the username (hash, space, dash at various points)
-            ['user:frontend', null, true, $this->getMangler(['prefix' => '#'])],
-            ['user:frontend', null, true, $this->getMangler(['prefix' => ' '])],
-            ['user:frontend', null, true, $this->getMangler(['prefix' => '-'])],
-            ['user:frontend', null, true, $this->getMangler(['postfix' => '#'])],
-            ['user:frontend', null, true, $this->getMangler(['postfix' => ' '])],
-            ['user:frontend', null, true, $this->getMangler(['postfix' => '-'])],
-            ['user:frontend', null, true, $this->getMangler(['insert' => '#'])],
-            ['user:frontend', null, true, $this->getMangler(['insert' => ' '])],
-            ['user:frontend', null, true, $this->getMangler(['insert' => '-'])],
-            ['user:frontend', null, true, $this->getMangler(['prefix' => '- #', 'postfix' => ' #-', 'insert' => '#- '])],
+            ['user:frontend', null, true, self::getMangler(['prefix' => '#'])],
+            ['user:frontend', null, true, self::getMangler(['prefix' => ' '])],
+            ['user:frontend', null, true, self::getMangler(['prefix' => '-'])],
+            ['user:frontend', null, true, self::getMangler(['postfix' => '#'])],
+            ['user:frontend', null, true, self::getMangler(['postfix' => ' '])],
+            ['user:frontend', null, true, self::getMangler(['postfix' => '-'])],
+            ['user:frontend', null, true, self::getMangler(['insert' => '#'])],
+            ['user:frontend', null, true, self::getMangler(['insert' => ' '])],
+            ['user:frontend', null, true, self::getMangler(['insert' => '-'])],
+            ['user:frontend', null, true, self::getMangler(['prefix' => '- #', 'postfix' => ' #-', 'insert' => '#- '])],
 
             // Now do the same but with the password
-            ['user:frontend', null, true, null, $this->getMangler(['prefix' => '#'])],
-            ['user:frontend', null, true, null, $this->getMangler(['prefix' => ' '])],
-            ['user:frontend', null, true, null, $this->getMangler(['prefix' => '-'])],
-            ['user:frontend', null, true, null, $this->getMangler(['postfix' => '#'])],
-            ['user:frontend', null, true, null, $this->getMangler(['postfix' => ' '])],
-            ['user:frontend', null, true, null, $this->getMangler(['postfix' => '-'])],
-            ['user:frontend', null, true, null, $this->getMangler(['insert' => '#'])],
-            ['user:frontend', null, true, null, $this->getMangler(['insert' => ' '])],
-            ['user:frontend', null, true, null, $this->getMangler(['insert' => '-'])],
-            ['user:frontend', null, true, null, $this->getMangler(['prefix' => '- #', 'postfix' => ' #-', 'insert' => '#- '])],
+            ['user:frontend', null, true, null, self::getMangler(['prefix' => '#'])],
+            ['user:frontend', null, true, null, self::getMangler(['prefix' => ' '])],
+            ['user:frontend', null, true, null, self::getMangler(['prefix' => '-'])],
+            ['user:frontend', null, true, null, self::getMangler(['postfix' => '#'])],
+            ['user:frontend', null, true, null, self::getMangler(['postfix' => ' '])],
+            ['user:frontend', null, true, null, self::getMangler(['postfix' => '-'])],
+            ['user:frontend', null, true, null, self::getMangler(['insert' => '#'])],
+            ['user:frontend', null, true, null, self::getMangler(['insert' => ' '])],
+            ['user:frontend', null, true, null, self::getMangler(['insert' => '-'])],
+            ['user:frontend', null, true, null, self::getMangler(['prefix' => '- #', 'postfix' => ' #-', 'insert' => '#- '])],
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testLogin(
         string    $usernameOrRef,
         ?string   $password,

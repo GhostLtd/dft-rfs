@@ -51,7 +51,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
         $resolver->setDefaults([
             'data_class' => SurveyResponse::class,
             'validation_groups' => function(FormInterface $form) {
-                /** @var SurveyResponse $data */
+                /** @var SurveyResponse|null $data */
                 $data = $form->getData();
 
                 $validationGroups = ['admin_correspondence'];

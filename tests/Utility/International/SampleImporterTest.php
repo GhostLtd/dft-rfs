@@ -4,11 +4,12 @@ namespace App\Tests\Utility\International;
 
 use App\Entity\International\Survey;
 use App\Utility\International\SampleImporter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SampleImporterTest extends WebTestCase
 {
-    private ?SampleImporter $sampleImporter;
+    private SampleImporter $sampleImporter;
 
     private string $tempFilename;
 
@@ -30,7 +31,7 @@ class SampleImporterTest extends WebTestCase
         }
     }
 
-    public function validSurveyFixtureProvider(): array
+    public static function validSurveyFixtureProvider(): array
     {
         $startDate = new \DateTime();
         $startDate->modify('+7 days');
@@ -41,9 +42,7 @@ class SampleImporterTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider validSurveyFixtureProvider
-     */
+    #[DataProvider('validSurveyFixtureProvider')]
     public function testValidSurveys($csvLine)
     {
         file_put_contents($this->tempFilename, $csvLine);
@@ -58,7 +57,7 @@ class SampleImporterTest extends WebTestCase
     }
 
 
-    public function invalidLineFixtureProvider(): array
+    public static function invalidLineFixtureProvider(): array
     {
         return [
             ['"1537","2021-03-07","2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
@@ -66,9 +65,7 @@ class SampleImporterTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidLineFixtureProvider
-     */
+    #[DataProvider('invalidLineFixtureProvider')]
     public function testInvalidFileData($csvLine)
     {
         file_put_contents($this->tempFilename, $csvLine);
@@ -82,7 +79,7 @@ class SampleImporterTest extends WebTestCase
 
 
 
-    public function invalidArrayDataFixtureProvider(): array
+    public static function invalidArrayDataFixtureProvider(): array
     {
         return [
             ['"3770","1537",not-a-date,"2021-03-13","Test Company (Diss) LTD.","Building Name","The Street","An Industrial Estate","","","NR31 0NN"'],
@@ -90,9 +87,7 @@ class SampleImporterTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidArrayDataFixtureProvider
-     */
+    #[DataProvider('invalidArrayDataFixtureProvider')]
     public function testInvalidArrayData($csvLine)
     {
         file_put_contents($this->tempFilename, $csvLine);
@@ -105,7 +100,7 @@ class SampleImporterTest extends WebTestCase
     }
 
 
-    public function invalidSurveyFixtureProvider(): array
+    public static function invalidSurveyFixtureProvider(): array
     {
         $validStartDate = new \DateTime();
         $validStartDate->modify('+7 days');
@@ -124,9 +119,7 @@ class SampleImporterTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidSurveyFixtureProvider
-     */
+    #[DataProvider('invalidSurveyFixtureProvider')]
     public function testInvalidSurvey($csvLine)
     {
         file_put_contents($this->tempFilename, $csvLine);

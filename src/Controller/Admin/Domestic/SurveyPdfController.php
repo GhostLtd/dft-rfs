@@ -23,7 +23,8 @@ class SurveyPdfController extends AbstractController
         Request   $request
     ): Response
     {
-        $pdf = $pdfHelper->getExistingSurveyPdfByTimestamp($survey, $request->query->get('timestamp'));
+        $timestamp = $request->query->get('timestamp');
+        $pdf = $pdfHelper->getExistingSurveyPdfByTimestamp($survey, $timestamp === null ? null : (int) $timestamp);
 
         if (!$pdf) {
             throw new NotFoundHttpException();

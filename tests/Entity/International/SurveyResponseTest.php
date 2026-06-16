@@ -3,11 +3,12 @@
 namespace App\Tests\Entity\International;
 
 use App\Entity\International\SurveyResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SurveyResponseTest extends TestCase
 {
-    public function dataNoLongerActive(): array
+    public static function dataNoLongerActive(): array
     {
         return [
             [SurveyResponse::ACTIVITY_STATUS_ONLY_DOMESTIC_WORK, true],
@@ -16,7 +17,7 @@ class SurveyResponseTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataNoLongerActive */
+    #[DataProvider('dataNoLongerActive')]
     public function testNoLongerActive(string $activityStatus, bool $expectedNoLongerActive): void
     {
         $response = (new SurveyResponse())
@@ -33,7 +34,7 @@ class SurveyResponseTest extends TestCase
      * still go on to add vehicles (or submit an empty survey), so the journey counts do
      * not affect this method.
      */
-    public function dataShouldSurveyBeSubmittedWithoutJourneys(): array
+    public static function dataShouldSurveyBeSubmittedWithoutJourneys(): array
     {
         return [
             'still-active with positive HGV' => [
@@ -54,7 +55,7 @@ class SurveyResponseTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataShouldSurveyBeSubmittedWithoutJourneys */
+    #[DataProvider('dataShouldSurveyBeSubmittedWithoutJourneys')]
     public function testShouldSurveyBeSubmittedWithoutJourneys(
         string $activityStatus,
         ?int $hgvCount,

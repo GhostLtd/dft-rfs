@@ -9,7 +9,7 @@ use App\Tests\DataFixtures\RoRo\RouteAndPortFixtures;
  * Exercises the most-used surface: rendering, default ordering, sortable column header,
  * filtering form submission. PortListPage is small enough to be a clean canary.
  */
-class PortListPageTest extends AbstractAdminFunctionalTest
+class PortListPageTest extends AbstractAdminFunctionalTestCase
 {
     private const string UK_PORTS_URL = '/ports/uk';
 

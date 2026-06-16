@@ -14,7 +14,7 @@ use App\Form\Extension\StripThousandsSeparatorsExtension;
 use App\Form\Extension\StripUnitsExtension;
 use App\Form\Validator\ValidRegistrationValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\Form\ThousandsSeparatorNormaliser;
 use App\Utility\Form\TonnesToKilogramsNormaliser;
 use App\Utility\Form\UnitStripper;
@@ -26,7 +26,7 @@ use Symfony\Component\Form\PreloadedExtension;
  * The IRHS admin vehicle and trip forms take the same weight inputs as the public forms,
  * so they get the same input normalisation (strip units/separators, convert tonnes).
  */
-class VehicleWeightNormalisationTest extends AbstractTypeTest
+class VehicleWeightNormalisationTest extends AbstractTypeTestCase
 {
     #[\Override]
     protected function getTypeExtensions(): array

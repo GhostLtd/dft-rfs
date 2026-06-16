@@ -3,11 +3,12 @@
 namespace App\Tests\Form\Type\Domestic\CreateDay;
 
 use App\Form\DomesticSurvey\CreateDay\NumberOfStopsType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class NumberOfStopsTypeTest extends AbstractTypeTest
+class NumberOfStopsTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -19,9 +20,7 @@ class NumberOfStopsTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $form = $this->factory->create(NumberOfStopsType::class, null, ['day_number' => 2]);

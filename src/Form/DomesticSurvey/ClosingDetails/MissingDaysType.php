@@ -26,7 +26,7 @@ class MissingDaysType extends AbstractType
                     "common.choices.boolean.no" => false,
                 ],
                 'attr' => ['class' => 'govuk-radios--inline'],
-                'constraints' => new NotNull(['message' => 'domestic.closing-details.missing-days.not-null'])
+                'constraints' => new NotNull(message: 'domestic.closing-details.missing-days.not-null')
             ])
         ;
     }

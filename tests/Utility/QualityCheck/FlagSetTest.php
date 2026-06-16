@@ -15,7 +15,7 @@ class FlagSetTest extends TestCase
     {
         $set = new FlagSet();
         $this->assertTrue($set->isEmpty());
-        $this->assertSame(0, $set->count());
+        $this->assertCount(0, $set);
         $this->assertSame([], $set->all());
     }
 
@@ -26,7 +26,7 @@ class FlagSetTest extends TestCase
         $set->add($this->makeFlag(SubjectType::DAY, 'd2'));
 
         $this->assertFalse($set->isEmpty());
-        $this->assertSame(2, $set->count());
+        $this->assertCount(2, $set);
     }
 
     public function testForSubjectFiltersByTypeAndId(): void
@@ -38,7 +38,7 @@ class FlagSetTest extends TestCase
         ]);
 
         $filtered = $set->forSubject(SubjectType::DAY, 'd1');
-        $this->assertSame(1, $filtered->count());
+        $this->assertCount(1, $filtered);
         $this->assertSame('a', $filtered->all()[0]->reasonCode);
     }
 
@@ -52,7 +52,7 @@ class FlagSetTest extends TestCase
         ]);
 
         $filtered = $set->forResponse();
-        $this->assertSame(2, $filtered->count());
+        $this->assertCount(2, $filtered);
         $codes = array_map(fn($f) => $f->reasonCode, $filtered->all());
         $this->assertSame(['a', 'd'], $codes);
     }
@@ -69,7 +69,7 @@ class FlagSetTest extends TestCase
         ]);
 
         $filtered = $set->forDay($day);
-        $this->assertSame(1, $filtered->count());
+        $this->assertCount(1, $filtered);
         $this->assertSame('matches', $filtered->all()[0]->reasonCode);
     }
 
@@ -84,7 +84,7 @@ class FlagSetTest extends TestCase
         ]);
 
         $filtered = $set->forStop($stop);
-        $this->assertSame(1, $filtered->count());
+        $this->assertCount(1, $filtered);
         $this->assertSame('matches', $filtered->all()[0]->reasonCode);
     }
 

@@ -5,11 +5,12 @@ namespace App\Tests\Form\Type\Domestic\DaySummary;
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
 use App\Form\Validator\PostcodeValidator;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Tests\Form\Type\PostcodeChangeoverTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Form\PreloadedExtension;
 
-class FurthestStopTypeTest extends AbstractTypeTest
+class FurthestStopTypeTest extends AbstractTypeTestCase
 {
     use PostcodeChangeoverTestTrait;
 
@@ -38,7 +39,7 @@ class FurthestStopTypeTest extends AbstractTypeTest
         ]);
     }
 
-    public function dataSubmitFeatureDisabled(): array
+    public static function dataSubmitFeatureDisabled(): array
     {
         return [
             // Valid when feature disabled - any text is accepted
@@ -53,9 +54,7 @@ class FurthestStopTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmitFeatureDisabled
-     */
+    #[DataProvider('dataSubmitFeatureDisabled')]
     public function testSubmitFeatureDisabled(array $formData, bool $expectedValid): void
     {
         $this->featureEnabled = false;
@@ -88,7 +87,7 @@ class FurthestStopTypeTest extends AbstractTypeTest
         }
     }
 
-    public function dataSubmitFeatureEnabled(): array
+    public static function dataSubmitFeatureEnabled(): array
     {
         return [
             // Valid postcodes
@@ -108,9 +107,7 @@ class FurthestStopTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmitFeatureEnabled
-     */
+    #[DataProvider('dataSubmitFeatureEnabled')]
     public function testSubmitFeatureEnabled(array $formData, bool $expectedValid): void
     {
         $this->featureEnabled = true;

@@ -15,8 +15,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         $operator = $this->getReference('roro:operator:1', Operator::class);
 
-        assert($operator instanceof Operator);
-
         $user = (new RoRoUser())
             ->setUsername('test@example.com')
             ->setOperator($operator);

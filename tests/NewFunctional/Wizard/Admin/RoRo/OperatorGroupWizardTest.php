@@ -6,11 +6,11 @@ use App\Entity\RoRo\OperatorGroup;
 use App\Tests\DataFixtures\TestSpecific\OperatorGroupRepositoryFixtures;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
-use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTest;
+use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use Facebook\WebDriver\WebDriverBy;
 
-class OperatorGroupWizardTest extends AbstractAdminTest
+class OperatorGroupWizardTest extends AbstractAdminTestCase
 {
     public function testAddOperatorGroup(): void
     {

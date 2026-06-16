@@ -9,10 +9,11 @@ use App\Security\Voter\RoRo\OperatorSwitchVoter;
 use App\Security\Voter\RoRo\SurveyVoter;
 use App\Tests\DataFixtures\TestSpecific\RoRoVoterFixtures;
 use Doctrine\ORM\NonUniqueResultException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class RoRoVoterTest extends AbstractVoterTest
+class RoRoVoterTest extends AbstractVoterTestCase
 {
-    public function dataCanSwitch(): array
+    public static function dataCanSwitch(): array
     {
         return [
             ['user:test-dover', true, false],
@@ -27,9 +28,7 @@ class RoRoVoterTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider dataCanSwitch
-     */
+    #[DataProvider('dataCanSwitch')]
     public function testCanSwitch(string $userRef, ?bool $expectedToBeAbleToSwitch, bool $expectedToThrowException)
     {
         $this->loadFixtures([RoRoVoterFixtures::class]);
@@ -47,7 +46,7 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->assertEquals($expectedToBeAbleToSwitch, $canSwitch);
     }
 
-    public function dataCanViewDashboard(): array
+    public static function dataCanViewDashboard(): array
     {
         return [
             ['user:test-dover', 'operator:test-dover', true, false],
@@ -63,9 +62,7 @@ class RoRoVoterTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider dataCanViewDashboard
-     */
+    #[DataProvider('dataCanViewDashboard')]
     public function testCanViewDashboard(string $userRef, string $operatorRef, ?bool $expectedToBeAbleToView, bool $expectedToThrowException)
     {
         $this->loadFixtures([RoRoVoterFixtures::class]);
@@ -87,7 +84,7 @@ class RoRoVoterTest extends AbstractVoterTest
     }
 
 
-    public function dataCanViewSurvey(): array
+    public static function dataCanViewSurvey(): array
     {
         return [
             ['user:test-dover', 'survey:test-dover', true, false],
@@ -103,9 +100,7 @@ class RoRoVoterTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider dataCanViewSurvey
-     */
+    #[DataProvider('dataCanViewSurvey')]
     public function testCanViewSurvey(string $userRef, string $surveyRef, ?bool $expectedToBeAbleToView, bool $expectedToThrowException)
     {
         $this->loadFixtures([RoRoVoterFixtures::class]);
@@ -126,7 +121,7 @@ class RoRoVoterTest extends AbstractVoterTest
         $this->assertEquals($expectedToBeAbleToView, $canView);
     }
 
-    public function dataCanEditSurvey(): array
+    public static function dataCanEditSurvey(): array
     {
         return [
             ['user:test-dover', 'survey:test-dover', true, false],
@@ -142,9 +137,7 @@ class RoRoVoterTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider dataCanEditSurvey
-     */
+    #[DataProvider('dataCanEditSurvey')]
     public function testCanEditSurvey(string $userRef, string $surveyRef, ?bool $expectedToBeAbleToEdit, bool $expectedToThrowException)
     {
         $this->loadFixtures([RoRoVoterFixtures::class]);

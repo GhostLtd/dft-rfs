@@ -8,9 +8,9 @@ use App\Entity\International\Survey;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
 
-class IrhsDataDeleteTest extends AbstractSurveyDeleteTest
+class IrhsDataDeleteTest extends AbstractSurveyDeleteTestCase
 {
-    public function dataDelete(): array
+    public static function dataDelete(): array
     {
         return [
             // Q1 2021 -> Q1 2020

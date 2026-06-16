@@ -54,6 +54,6 @@ class PdfObject implements PdfObjectInterface
 
     public function getDate(): DateTime
     {
-        return DateTime::createFromFormat('U', $this->timestamp);
+        return DateTime::createFromFormat('U', (string) $this->timestamp);
     }
 }

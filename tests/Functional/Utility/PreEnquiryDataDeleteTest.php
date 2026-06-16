@@ -6,9 +6,9 @@ use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyStateInterface;
 
-class PreEnquiryDataDeleteTest extends AbstractSurveyDeleteTest
+class PreEnquiryDataDeleteTest extends AbstractSurveyDeleteTestCase
 {
-    public function dataDelete(): array
+    public static function dataDelete(): array
     {
         return [
             // Q1 2021 -> Q1 2020

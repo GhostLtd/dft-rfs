@@ -4,6 +4,7 @@ namespace App\Tests\Utility;
 
 use App\Utility\Url;
 use App\Utility\UrlSigner;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UrlSignerTest extends WebTestCase
@@ -17,7 +18,7 @@ class UrlSignerTest extends WebTestCase
         $this->urlSigner = static::getContainer()->get(UrlSigner::class);
     }
     
-    public function dataValidFor(): array
+    public static function dataValidFor(): array
     {
         $url = 'https://example.com/wibble?wobble=12&wubble=toast';
 
@@ -52,9 +53,7 @@ class UrlSignerTest extends WebTestCase
             [$time, null];
     }
 
-    /**
-     * @dataProvider dataValidFor
-     */
+    #[DataProvider('dataValidFor')]
     public function testValidFor(string $url, string $signatureTime, int $validFor, string $testTime, bool $expectedToBeValid): void
     {
         [$signatureTimeSecs, $signatureTimeNano] = $this->parseTimeString($signatureTime);
@@ -66,7 +65,7 @@ class UrlSignerTest extends WebTestCase
         $this->assertEquals($expectedToBeValid, $isValid);
     }
 
-    public function dataUrlModificationAttempts(): array
+    public static function dataUrlModificationAttempts(): array
     {
         $url = 'https://example.com/wibble?wobble=12&wubble=toast';
 
@@ -81,10 +80,10 @@ class UrlSignerTest extends WebTestCase
         $modifyFragment = fn($fragment): callable => fn(string $url) => (new Url($url))->setFragment($fragment)->__toString();
 
         return [
-            'Add key/value' => [$url, $modifyPair('wabble', 5), false],
-            'Modify existing key/value' => [$url, $modifyPair('wobble', 13), false],
+            'Add key/value' => [$url, $modifyPair('wabble', '5'), false],
+            'Modify existing key/value' => [$url, $modifyPair('wobble', '13'), false],
             'Remove key/value' => [$url, $removePair('wobble'), false],
-            'Modify _until' => [$url, $modifyPair('_until', 9999999999), false],
+            'Modify _until' => [$url, $modifyPair('_until', '9999999999'), false],
             'Remove _until' => [$url, $removePair('_until'), false],
             'Modify _signature' => [$url, $modifyPair('_signature', '18c143d7e91a8c4a6472518c2960dc1d'), false],
             'Remove _signature' => [$url, $removePair('_signature'), false],
@@ -96,14 +95,12 @@ class UrlSignerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataUrlModificationAttempts
-     */
+    #[DataProvider('dataUrlModificationAttempts')]
     public function testUrlModificationAttempts(string $url, callable $urlModifier, bool $expectedToBeValid): void
     {
-        $signedUrl = $this->urlSigner->sign($url, 10000, '1600000000');
+        $signedUrl = $this->urlSigner->sign($url, 10000, 1600000000);
         $modifiedUrl = $urlModifier($signedUrl);
-        $isValid = $this->urlSigner->isValid($modifiedUrl, '1600001000');
+        $isValid = $this->urlSigner->isValid($modifiedUrl, 1600001000);
 
         $this->assertEquals($expectedToBeValid, $isValid);
     }

@@ -3,11 +3,12 @@
 namespace App\Tests\Utility;
 
 use App\Utility\PostcodeHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PostcodeHelperTest extends TestCase
 {
-    public function validPostcodeDataProvider(): array
+    public static function validPostcodeDataProvider(): array
     {
         return [
             // 1. With spaces
@@ -54,15 +55,13 @@ class PostcodeHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validPostcodeDataProvider
-     */
+    #[DataProvider('validPostcodeDataProvider')]
     public function testValidPostcode(string $potentialPostcode, bool $isValid): void
     {
         $this->assertEquals($isValid, PostcodeHelper::isValidPostcode($potentialPostcode));
     }
 
-    public function fullPostcodeFormattingDataProvider(): array
+    public static function fullPostcodeFormattingDataProvider(): array
     {
         return [
             ['SW1W0NY', 'SW1W 0NY'],
@@ -96,15 +95,13 @@ class PostcodeHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider fullPostcodeFormattingDataProvider
-     */
+    #[DataProvider('fullPostcodeFormattingDataProvider')]
     public function testFullPostcodeFormatting(string $potentialPostcode, string $expectedOutput): void
     {
         $this->assertEquals($expectedOutput, PostcodeHelper::formatIfPostcode($potentialPostcode));
     }
 
-    public function partialPostcodeFormattingDataProvider(): array
+    public static function partialPostcodeFormattingDataProvider(): array
     {
         return [
             ['SW1W0NY', 'SW1W 0NY'],
@@ -138,9 +135,7 @@ class PostcodeHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider partialPostcodeFormattingDataProvider
-     */
+    #[DataProvider('partialPostcodeFormattingDataProvider')]
     public function testPartialPostcodeFormatting(string $potentialPostcode, string $expectedOutput): void
     {
         $this->assertEquals($expectedOutput, PostcodeHelper::formatIfPostcode($potentialPostcode, true));

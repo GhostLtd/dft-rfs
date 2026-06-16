@@ -3,6 +3,7 @@
 namespace App\Tests\Entity\International;
 
 use App\Entity\International\Survey;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SurveyTest extends TestCase
@@ -12,7 +13,7 @@ class SurveyTest extends TestCase
      * it starts the day after the survey period ends, and is suffixed with the
      * <startYear>-<2-digit next year> range.
      */
-    public function dataEstimatePeriodLabel(): array
+    public static function dataEstimatePeriodLabel(): array
     {
         return [
             'period ending 31 Dec 2026' => ['2026-12-31', '1 January 2027-28'],
@@ -21,7 +22,7 @@ class SurveyTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataEstimatePeriodLabel */
+    #[DataProvider('dataEstimatePeriodLabel')]
     public function testEstimatePeriodLabel(string $surveyPeriodEnd, string $expected): void
     {
         $survey = (new Survey())

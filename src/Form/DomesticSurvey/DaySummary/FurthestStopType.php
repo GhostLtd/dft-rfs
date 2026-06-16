@@ -25,7 +25,7 @@ class FurthestStopType extends AbstractType
             $translationKeyPrefix = "domestic.day-summary.furthest-stop";
 
             $form = $event->getForm();
-            /** @var DaySummary $data */
+            /** @var DaySummary|null $data */
             $data = $event->getData();
 
             if (!$data) {

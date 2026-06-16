@@ -7,9 +7,9 @@ use App\Entity\Embeddable\LongAddress;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
 
-class CsrgtPersonalDataCleanupTest extends AbstractPersonalDataCleanupTest
+class CsrgtPersonalDataCleanupTest extends AbstractPersonalDataCleanupTestCase
 {
-    public function dataCleanup(): array
+    public static function dataCleanup(): array
     {
         return [
             // Q1 2021 -> Q1 2020

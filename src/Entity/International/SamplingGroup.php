@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SamplingGroupRepository::class)]
 class SamplingGroup
@@ -15,7 +14,7 @@ class SamplingGroup
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     #[ORM\Column(type: Types::SMALLINT)]

@@ -2,7 +2,6 @@
 
 namespace App\Twig;
 
-use Exception;
 use Symfony\Component\Asset\Packages;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 use Twig\Extension\AbstractExtension;
@@ -62,10 +61,6 @@ class EntryFilesTwigExtension extends AbstractExtension
 
     private function getAssetPath(string $assetPath, ?string $packageName = null): string
     {
-        if (null === $this->packages) {
-            throw new Exception('To render the script or link tags, run "composer require symfony/asset".');
-        }
-
         return $this->packages->getUrl(
             $assetPath,
             $packageName

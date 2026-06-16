@@ -9,7 +9,7 @@ use App\Form\Extension\StripThousandsSeparatorsExtension;
 use App\Form\Extension\StripUnitsExtension;
 use App\Form\InternationalSurvey\Trip\VehicleWeightType as TripVehicleWeightType;
 use App\Form\InternationalSurvey\Vehicle\VehicleWeightType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\Form\ThousandsSeparatorNormaliser;
 use App\Utility\Form\TonnesToKilogramsNormaliser;
 use App\Utility\Form\UnitStripper;
@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormInterface;
  * comma/dot thousands separators, and convert explicitly tonnes-denominated values to
  * kilograms (common user errors — see docs/features/2026-06-10-vehicle-weights-research.md).
  */
-class VehicleWeightTypeTest extends AbstractTypeTest
+class VehicleWeightTypeTest extends AbstractTypeTestCase
 {
     #[\Override]
     protected function getTypeExtensions(): array

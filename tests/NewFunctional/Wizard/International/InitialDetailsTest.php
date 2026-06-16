@@ -6,7 +6,7 @@ use App\Entity\International\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Repository\International\SurveyRepository;
 use App\Tests\DataFixtures\International\SurveyFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
+use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
@@ -19,7 +19,7 @@ use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
  * 3. (if STILL_ACTIVE) business-details
  * 4. (if STILL_ACTIVE) number-of-trips
  */
-class InitialDetailsTest extends AbstractInitialDetailsTest
+class InitialDetailsTest extends AbstractInitialDetailsTestCase
 {
     /**
      * Tests the flow when user selects "still-active" with zero HGV journeys.

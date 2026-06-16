@@ -38,7 +38,7 @@ class ChangedBodyTypeType extends AbstractType implements DataMapperInterface
                         'conditional_form_name' => 'bodyType',
                     ],
                 ],
-                'choice_value' => fn($x) => match($x) {
+                'choice_value' => fn(?bool $x) => match($x) {
                     true => 'yes',
                     false => 'no',
                     null => null,

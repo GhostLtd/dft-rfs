@@ -8,6 +8,7 @@ use App\ListPage\EmailBlacklistListPage;
 use App\Utility\ConfirmAction\DeleteEmailBlacklistConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +47,8 @@ class EmailBlacklistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('buttons')->get('cancel')->isClicked()) {
+            $cancelButton = $form->get('buttons')->get('cancel');
+            if ($cancelButton instanceof ClickableInterface && $cancelButton->isClicked()) {
                 return $this->redirectToRoute('admin_email_blacklist_list');
             }
 
@@ -76,7 +78,8 @@ class EmailBlacklistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->get('buttons')->get('cancel')->isClicked()) {
+            $cancelButton = $form->get('buttons')->get('cancel');
+            if ($cancelButton instanceof ClickableInterface && $cancelButton->isClicked()) {
                 return $this->redirectToRoute('admin_email_blacklist_list');
             }
 

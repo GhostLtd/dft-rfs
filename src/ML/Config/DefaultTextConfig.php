@@ -72,15 +72,15 @@ class DefaultTextConfig extends DefaultTabularConfig
         if ($code === '18.0') {
             // Some erroneously marked as 18.0 - Groupage
 
-            if ($code === 'FOOD') {
+            if ($text === 'FOOD') {
                 $code = '4.9'; // Various food products ... in parcel service or grouped
             }
 
-            if ($code === 'BEER') {
+            if ($text === 'BEER') {
                 $code = '4.7'; // Beverages
             }
 
-            if ($code === 'EMPTY LFC' || $row[$textColumn] === 'EMPTY CONTAINER') {
+            if ($text === 'EMPTY LFC' || $row[$textColumn] === 'EMPTY CONTAINER') {
                 $code = '16.1'; // Pallets and other packaging in service
             }
         }

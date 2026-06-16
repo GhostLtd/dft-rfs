@@ -9,6 +9,7 @@ use App\Entity\International\Vehicle as InternationalVehicle;
 use App\Entity\Vehicle;
 use App\Tests\Workflow\AbstractWorkflowTestCase;
 use App\Workflow\InternationalSurvey\TripState;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RemoveTripDistanceTest extends AbstractWorkflowTestCase
 {
@@ -40,7 +41,7 @@ class RemoveTripDistanceTest extends AbstractWorkflowTestCase
      * Tests
      ***/
 
-    public function tripDistanceDataProvider(): array
+    public static function tripDistanceDataProvider(): array
     {
         return [
             ['-1 sec', true, TripState::STATE_DISTANCE, [TripState::STATE_SUMMARY]],
@@ -53,9 +54,7 @@ class RemoveTripDistanceTest extends AbstractWorkflowTestCase
         ];
     }
 
-    /**
-     * @dataProvider tripDistanceDataProvider
-     */
+    #[DataProvider('tripDistanceDataProvider')]
     public function testTripDistance(?string $surveyStartDateModifier, bool $editing, string $initialState, array $states): void
     {
         $surveyStart = new \DateTime(Survey::DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE . ' midnight');

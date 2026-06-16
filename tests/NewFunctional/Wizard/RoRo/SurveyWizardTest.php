@@ -9,7 +9,7 @@ use App\Tests\NewFunctional\Wizard\Action\FormTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-class SurveyWizardTest extends AbstractRoRoTest
+class SurveyWizardTest extends AbstractRoRoTestCase
 {
 
     #[\Override]

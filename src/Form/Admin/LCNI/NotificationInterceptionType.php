@@ -74,6 +74,7 @@ class NotificationInterceptionType extends AbstractType
                         self::EDIT_ALL => ['notification_interception_names', 'notification_interception_emails'],
                         self::EDIT_EMAILS => ['notification_interception_emails'],
                         self::EDIT_NAMES => ['notification_interception_names'],
+                        default => throw new \InvalidArgumentException('Unexpected edit_mode option'),
                     };
                 },
             'edit_mode' => self::EDIT_ALL,

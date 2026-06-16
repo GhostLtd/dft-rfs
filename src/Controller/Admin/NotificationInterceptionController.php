@@ -76,6 +76,7 @@ class NotificationInterceptionController extends AbstractController
                 self::MODE_ADD, self::MODE_EDIT_ALL => NotificationInterceptionType::EDIT_ALL,
                 self::MODE_EDIT_NAMES => NotificationInterceptionType::EDIT_NAMES,
                 self::MODE_EDIT_EMAILS => NotificationInterceptionType::EDIT_EMAILS,
+                default => throw new \InvalidArgumentException(sprintf('Unexpected mode "%s"', $mode)),
             },
             'cancel_url' => $successUrl,
         ]);

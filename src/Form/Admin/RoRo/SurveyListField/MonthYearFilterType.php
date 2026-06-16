@@ -18,7 +18,7 @@ class MonthYearFilterType extends AbstractType
 
         $months = [];
         for($monthNum = 1; $monthNum<=12; $monthNum++) {
-            $monthDate = \DateTime::createFromFormat('!m', $monthNum);
+            $monthDate = \DateTime::createFromFormat('!m', (string) $monthNum);
             $months[$monthDate->format('F')] = $monthNum;
         }
 

@@ -70,6 +70,7 @@ class SurveyStateTransitionSubscriber implements EventSubscriberInterface
 
         $address = $survey->getInvitationAddress();
         $addressIsFilled = $address && $address->isFilled();
+        // @phpstan-ignore booleanAnd.rightAlwaysTrue (keep the defensive check in case of future survey type additions)
         if ($addressIsFilled && self::TEMPLATE_MAP[$survey::class][self::TYPE_LETTER]) {
             $this->messageBus->dispatch(new Letter(
                 Reference::EVENT_INVITE,

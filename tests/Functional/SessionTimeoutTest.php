@@ -5,7 +5,7 @@ namespace App\Tests\Functional;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SessionTimeoutTest extends AbstractFrontendFunctionalTest
+class SessionTimeoutTest extends AbstractFrontendFunctionalTestCase
 {
     public function testRefreshSessionEndpointReturnsTimeoutTimes(): void
     {

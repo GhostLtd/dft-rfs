@@ -2,13 +2,14 @@
 
 namespace App\Tests\NewFunctional\Wizard\Admin\Domestic;
 
-use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminUploadTest;
+use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminUploadTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use Facebook\WebDriver\WebDriverBy;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class DvlaBulkImportTest extends AbstractAdminUploadTest
+class DvlaBulkImportTest extends AbstractAdminUploadTestCase
 {
-    public function dataInitialPage(): array
+    public static function dataInitialPage(): array
     {
         return [
             // Fails to auto-detect region / start-date
@@ -67,9 +68,7 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
     }
 
 
-    /**
-     * @dataProvider dataInitialPage
-     */
+    #[DataProvider('dataInitialPage')]
     public function testInitialPage(bool $expectedToSucceed, bool $addContentsToFixtureFile, string $filename, array $otherFormData): void
     {
         $this->initialiseTest([]);
@@ -92,7 +91,7 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
         }
     }
 
-    public function dataReviewPage(): array
+    public static function dataReviewPage(): array
     {
         // TODO: This could do with more tests...
         $nextWeek = (new \DateTime('next week'));
@@ -120,9 +119,7 @@ class DvlaBulkImportTest extends AbstractAdminUploadTest
         ];
     }
 
-    /**
-     * @dataProvider dataReviewPage
-     */
+    #[DataProvider('dataReviewPage')]
     public function testReviewPage(int $expectedValidRecords, string $filename, string $fileData, array $otherFormData=[]): void
     {
         $this->initialiseTest([]);

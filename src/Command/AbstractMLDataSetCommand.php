@@ -74,7 +74,7 @@ abstract class AbstractMLDataSetCommand extends Command
     {
         $readableBytes = function(int $size): string {
             $sizeNames = [" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"];
-            return $size ? round($size/1024 ** ($i = floor(log($size, 1024))), 2) .$sizeNames[$i] : '0 Bytes';
+            return $size ? round($size/1024 ** ($i = (int) floor(log($size, 1024))), 2) .$sizeNames[$i] : '0 Bytes';
         };
 
         $usage = $readableBytes(memory_get_peak_usage());

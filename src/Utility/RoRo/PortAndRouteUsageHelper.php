@@ -171,6 +171,7 @@ class PortAndRouteUsageHelper
         return match ($class) {
             UkPort::class => 'r.ukPort',
             ForeignPort::class => 'r.foreignPort',
+            default => throw new \InvalidArgumentException(sprintf('Unexpected port class "%s"', $class)),
         };
     }
 
@@ -179,6 +180,7 @@ class PortAndRouteUsageHelper
         return match ($class) {
             UkPort::class => $this->ukPortRepository,
             ForeignPort::class => $this->foreignPortRepository,
+            default => throw new \InvalidArgumentException(sprintf('Unexpected port class "%s"', $class)),
         };
     }
 }

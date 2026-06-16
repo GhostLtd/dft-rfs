@@ -2,7 +2,7 @@
 
 namespace App\Utility\Menu;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class RoleMenu implements MenuInterface
 {
@@ -16,9 +16,9 @@ class RoleMenu implements MenuInterface
     /**
      * @param array<RoleMenuItem> $roleMenuItems
      */
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, array $roleMenuItems)
+    public function __construct(Security $security, array $roleMenuItems)
     {
-        $this->menuItems = $this->filterMenuItemsByRole($authorizationChecker, $roleMenuItems);
+        $this->menuItems = $this->filterMenuItemsByRole($security, $roleMenuItems);
     }
 
     /**

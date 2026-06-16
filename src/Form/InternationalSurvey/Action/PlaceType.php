@@ -76,7 +76,7 @@ class PlaceType extends AbstractType
                             "international.action.place.loading.choices.load" => true,
                             "international.action.place.loading.choices.unload" => false,
                         ],
-                        'choice_value' => fn($x) => match($x) {
+                        'choice_value' => fn(?bool $x) => match($x) {
                             true => 'load',
                             false => 'unload',
                             null => null,

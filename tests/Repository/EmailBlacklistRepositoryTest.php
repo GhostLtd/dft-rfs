@@ -5,10 +5,11 @@ namespace App\Tests\Repository;
 use App\Entity\EmailBlacklist;
 use App\Repository\EmailBlacklistRepository;
 use App\Tests\DataFixtures\TestSpecific\EmailBlacklistRepositoryFixtures;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
+class EmailBlacklistRepositoryTest extends AbstractRepositoryTestCase
 {
-    public function dataIsBlacklisted(): array
+    public static function dataIsBlacklisted(): array
     {
         return [
             'exact match lowercase' => ['blocked@example.com', true],
@@ -25,9 +26,7 @@ class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider dataIsBlacklisted
-     */
+    #[DataProvider('dataIsBlacklisted')]
     public function testIsBlacklisted(string $email, bool $expected): void
     {
         $this->loadFixtures([EmailBlacklistRepositoryFixtures::class]);
@@ -38,7 +37,7 @@ class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
         $this->assertEquals($expected, $repo->isBlacklisted($email));
     }
 
-    public function dataFilterBlacklistedEmails(): array
+    public static function dataFilterBlacklistedEmails(): array
     {
         return [
             'mixed blocked and allowed' => [
@@ -68,9 +67,7 @@ class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider dataFilterBlacklistedEmails
-     */
+    #[DataProvider('dataFilterBlacklistedEmails')]
     public function testFilterBlacklistedEmails(array $emails, array $expected): void
     {
         $this->loadFixtures([EmailBlacklistRepositoryFixtures::class]);
@@ -83,7 +80,7 @@ class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
         $this->assertEquals($expected, $result);
     }
 
-    public function dataGetBlacklistedFromList(): array
+    public static function dataGetBlacklistedFromList(): array
     {
         return [
             'mixed blocked and allowed' => [
@@ -117,9 +114,7 @@ class EmailBlacklistRepositoryTest extends AbstractRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider dataGetBlacklistedFromList
-     */
+    #[DataProvider('dataGetBlacklistedFromList')]
     public function testGetBlacklistedFromList(array $emails, array $expected): void
     {
         $this->loadFixtures([EmailBlacklistRepositoryFixtures::class]);

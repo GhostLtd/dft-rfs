@@ -113,7 +113,7 @@ SQL,
         $this->checkStringColumn('UKPort', $this->getColumn($exportRow, 'UKPort'), $dbRow['UKPortCode']);
         $this->checkStringColumn('ForeignPort', $this->getColumn($exportRow, 'ForeignPort'), $dbRow['ForeignPortCode']);
         $this->checkStringColumn('Comments', $this->getColumn($exportRow, 'Comments'), $dbRow['Comments'], true);
-        $this->checkStringColumn('IsApproved', $this->getColumn($exportRow, 'IsApproved'), $dbRow['SurveyState'] === 'approved' ? 1 : 0);
+        $this->checkStringColumn('IsApproved', $this->getColumn($exportRow, 'IsApproved'), $dbRow['SurveyState'] === 'approved' ? '1' : '0');
         $this->checkStringColumn('DataEntryMethod', $this->getColumn($exportRow, 'DataEntryMethod'), $dbRow['DataEntryMethod']);
     }
 }

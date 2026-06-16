@@ -7,30 +7,15 @@ interface MenuItemInterface
     /**
      * @return MenuItemInterface[]
      */
-    public function getChildren();
+    public function getChildren(): array;
 
-    /**
-     * @return string
-     */
-    public function getId();
+    public function getId(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getTitle();
+    public function getTitle(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getUrl();
+    public function getUrl(): ?string;
 
-    /**
-     * @return bool
-     */
-    public function hasChildren();
+    public function hasChildren(): bool;
 
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getOptions(): array;
 }

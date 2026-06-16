@@ -3,6 +3,7 @@
 namespace App\Doctrine\Dbal;
 
 use Doctrine\DBAL\Schema\AbstractAsset;
+use Doctrine\DBAL\Schema\NamedObject;
 use Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration;
 use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Symfony\Component\Console\ConsoleEvents;
@@ -29,8 +30,8 @@ class DoctrineMigrationsFilter implements EventSubscriberInterface
         if (!class_exists(TableMetadataStorageConfiguration::class)) {
             return true;
         }
-        if ($asset instanceof AbstractAsset) {
-            $asset = $asset->getName();
+        if ($asset instanceof NamedObject) {
+            $asset = $asset->getObjectName()->toString();
         }
         return $asset !== (new TableMetadataStorageConfiguration())->getTableName();
     }

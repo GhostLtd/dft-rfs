@@ -17,7 +17,7 @@ class ValidRegistration extends Constraint
         mixed  $payload = null,
     )
     {
-        parent::__construct([], $groups, $payload);
+        parent::__construct(null, $groups, $payload);
 
         $this->alreadyExistsMessage = $alreadyExistsMessage ?? $this->alreadyExistsMessage;
         $this->validMessage = $validMessage ?? $this->validMessage;

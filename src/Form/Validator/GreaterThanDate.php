@@ -13,9 +13,8 @@ class GreaterThanDate extends GreaterThan
         string $message = 'common.date.greater-than',
         array  $groups = null,
         mixed  $payload = null,
-        array  $options = []
     )
     {
-        parent::__construct($value, $propertyPath, $message, $groups, $payload, $options);
+        parent::__construct($value, $propertyPath, $message, $groups, $payload);
     }
 }

@@ -6,13 +6,13 @@ use App\Entity\International\Action;
 use App\Entity\International\Trip;
 use App\Tests\DataFixtures\International\LoadingActionFixtures;
 use App\Tests\DataFixtures\International\TripFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
+use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 use Symfony\Component\Panther\ServerExtension;
 
-class ActionTest extends AbstractPasscodeWizardTest
+class ActionTest extends AbstractPasscodeWizardTestCase
 {
     public function testLoading(): void
     {

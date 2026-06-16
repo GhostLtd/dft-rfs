@@ -4,7 +4,6 @@ namespace App\EventListener;
 
 use App\Utility\AuditLogger;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
@@ -18,8 +17,6 @@ class AuditLogEventListener
     {
         $objectManager = $eventArgs->getObjectManager();
 
-        if ($objectManager instanceof EntityManagerInterface) {
-            $this->auditLogger->log($objectManager);
-        }
+        $this->auditLogger->log($objectManager);
     }
 }

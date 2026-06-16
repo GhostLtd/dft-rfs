@@ -7,10 +7,6 @@
 {% endblock %}
 
 {% block content %}
-    {%- if maintenanceWarningBanner ?? false -%}
-        {% from '@GhostGovUkFrontend/components/macros.html.twig' import notificationBanner %}
-        {{- notificationBanner(maintenanceWarningBanner) -}}
-    {%- endif -%}
 
     <h1 class="govuk-heading-xl">Sign in</h1>
     {{ form(form) }}

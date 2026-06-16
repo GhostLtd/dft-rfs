@@ -5,6 +5,7 @@ namespace App\Security\Voter\RoRo;
 use App\Entity\RoRoUser;
 use App\Utility\RoRo\OperatorSwitchHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class OperatorSwitchVoter extends Voter
@@ -21,7 +22,7 @@ class OperatorSwitchVoter extends Voter
     }
 
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 
@@ -31,6 +32,7 @@ class OperatorSwitchVoter extends Voter
 
         return match($attribute) {
             self::CAN_SWITCH_OPERATOR => $this->operatorSwitchHelper->canSwitchOperator($user->getOperator()),
+            default => throw new \InvalidArgumentException(sprintf('Unexpected attribute "%s"', $attribute)),
         };
     }
 }

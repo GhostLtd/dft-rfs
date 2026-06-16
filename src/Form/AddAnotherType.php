@@ -27,7 +27,7 @@ class AddAnotherType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-radios--inline'],
                 'constraints' => [
-                    new NotNull(['message' => 'common.choice.not-null']),
+                    new NotNull(message: 'common.choice.not-null'),
                 ]
             ])->add('submit', ButtonType::class, [
                 'label' => 'common.actions.continue',

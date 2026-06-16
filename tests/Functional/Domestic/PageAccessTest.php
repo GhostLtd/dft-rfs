@@ -10,11 +10,12 @@ use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
 use App\Tests\DataFixtures\Domestic\SurveyFixtures;
 use App\Tests\DataFixtures\Domestic\ResponseOnHireButInProgress;
 use App\Tests\DataFixtures\Domestic\VehicleFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class PageAccessTest extends AbstractWizardTest
+class PageAccessTest extends AbstractWizardTestCase
 {
-    public function dataNewSurveyPageAccess(): array
+    public static function dataNewSurveyPageAccess(): array
     {
         return [
             [[SurveyFixtures::class], '/domestic-survey', 302],
@@ -82,9 +83,7 @@ class PageAccessTest extends AbstractWizardTest
         ];
     }
 
-    /**
-     * @dataProvider dataNewSurveyPageAccess
-     */
+    #[DataProvider('dataNewSurveyPageAccess')]
     public function testNewSurveyPageAccess(array $fixtures, string $url, int $expectedCode, ?string $expectedLocation=null): void
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);

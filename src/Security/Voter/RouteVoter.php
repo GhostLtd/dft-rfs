@@ -6,6 +6,7 @@ use App\Entity\Route\Route;
 use App\Utility\RoRo\PortAndRouteUsageHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class RouteVoter extends Voter
@@ -32,7 +33,7 @@ class RouteVoter extends Voter
      * @param Route $subject
      */
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (!$this->security->isGranted('ROLE_ADMIN_USER')) {
             return false;

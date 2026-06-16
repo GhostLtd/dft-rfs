@@ -2,8 +2,8 @@
 
 namespace App\Controller\RoRo;
 
+use App\Attribute\MaintenanceWarningBanner;
 use App\Entity\RoRo\Operator;
-use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRo\SurveyRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,15 +19,13 @@ class DashboardController extends AbstractController
     {}
 
     #[Route(name: "app_roro_dashboard")]
+    #[MaintenanceWarningBanner]
     public function dashboard(
-        MaintenanceWarningRepository $maintenanceWarningRepository,
         #[MapEntity(expr: "repository.find(operatorId)")]
         Operator $operator
     ): Response
     {
-        return $this->renderTemplate($operator, 'roro/dashboard.html.twig', [
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
-        ]);
+        return $this->renderTemplate($operator, 'roro/dashboard.html.twig');
     }
 
     #[Route("/completed-surveys", name: "app_roro_completed_surveys")]

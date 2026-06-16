@@ -38,11 +38,11 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
             in_array($controllerClass, $controllerBlacklist)
             || !str_starts_with($controllerClass, "App\\Controller\\")
         ) {
-            $this->log->notice("[FormWizard] Ignoring controller: {$controllerClass}");
+            $this->log->debug("[FormWizard] Ignoring controller: {$controllerClass}");
             return;
         }
 
-        $this->log->notice("[FormWizard] Running on Controller: {$controllerClass}");
+        $this->log->debug("[FormWizard] Running on Controller: {$controllerClass}");
 
         if ($controller instanceof AbstractSessionStateFormWizardController) {
             // in wizard
@@ -51,18 +51,18 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
             // not in wizard
             $this->cleanUp();
         }
-        $this->log->notice("[FormWizard] Done");
+        $this->log->debug("[FormWizard] Done");
     }
 
     private function cleanUp($exclude = null): void
     {
-        $this->log->notice("[FormWizard] Exclude from search: {$exclude}");
+        $this->log->debug("[FormWizard] Exclude from search: {$exclude}");
 
         $session = $this->requestStack->getSession();
         $sessionVars = $session->all();
         foreach ($sessionVars as $key => $var) {
             if ($var instanceof FormWizardStateInterface && $key != $exclude) {
-                $this->log->notice("[FormWizard] Removing wizard var: {$key}");
+                $this->log->debug("[FormWizard] Removing wizard var: {$key}");
                 $session->remove($key);
             }
         }

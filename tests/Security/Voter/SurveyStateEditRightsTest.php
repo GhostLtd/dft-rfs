@@ -6,10 +6,11 @@ use App\Entity\Domestic\Survey;
 use App\Entity\SurveyStateInterface;
 use App\Security\Voter\SurveyVoter;
 use App\Tests\DataFixtures\Domestic\SurveyFixtures;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class SurveyStateEditRightsTest extends AbstractVoterTest
+class SurveyStateEditRightsTest extends AbstractVoterTestCase
 {
-    public function passcodeUserData(): array
+    public static function passcodeUserData(): array
     {
         return [
             [SurveyStateInterface::STATE_IN_PROGRESS, true],
@@ -26,9 +27,7 @@ class SurveyStateEditRightsTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider passcodeUserData
-     */
+    #[DataProvider('passcodeUserData')]
     public function testPasscodeUserAccess($state, $canEdit)
     {
         $this->loadFixtures([SurveyFixtures::class]);
@@ -42,7 +41,7 @@ class SurveyStateEditRightsTest extends AbstractVoterTest
         self::assertSame($canEdit, $this->authChecker->isGranted(SurveyVoter::EDIT, $survey));
     }
 
-    public function adminUserData(): array
+    public static function adminUserData(): array
     {
         return [
             [SurveyStateInterface::STATE_IN_PROGRESS, true],
@@ -59,9 +58,7 @@ class SurveyStateEditRightsTest extends AbstractVoterTest
         ];
     }
 
-    /**
-     * @dataProvider adminUserData
-     */
+    #[DataProvider('adminUserData')]
     public function testAdminUserAccess(string $state, bool $expectedToBeAbleToEdit): void
     {
         $this->loadFixtures([SurveyFixtures::class]);

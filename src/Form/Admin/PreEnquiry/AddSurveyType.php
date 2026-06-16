@@ -81,7 +81,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
      * @return mixed
      */
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         return $value;
     }
@@ -90,7 +90,7 @@ class AddSurveyType extends AbstractType implements DataTransformerInterface
      * @return mixed
      */
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value instanceof PreEnquiry) {
             $businessName = $value->getCompanyName();

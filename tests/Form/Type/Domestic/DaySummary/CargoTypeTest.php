@@ -4,9 +4,9 @@ namespace App\Tests\Form\Type\Domestic\DaySummary;
 
 use App\Entity\Domestic\DaySummary;
 use App\Form\DomesticSurvey\DaySummary\CargoTypeType;
-use App\Tests\Form\Type\AbstractCargoTypeTypeTest;
+use App\Tests\Form\Type\AbstractCargoTypeTypeTestCase;
 
-class CargoTypeTest extends AbstractCargoTypeTypeTest
+class CargoTypeTest extends AbstractCargoTypeTypeTestCase
 {
     #[\Override]
     protected function getDataClass(): string

@@ -121,6 +121,7 @@ class PortController extends AbstractController
         $dataClass = match($portType) {
             PortListPage::TYPE_PORT_FOREIGN => ForeignPort::class,
             PortListPage::TYPE_PORT_UK => UkPort::class,
+            default => throw new \InvalidArgumentException(sprintf('Unexpected port type "%s"', $portType)),
         };
 
         $form = $this->createForm(PortType::class, $port, [
@@ -176,6 +177,7 @@ class PortController extends AbstractController
         $route = match ($dataClass) {
             ForeignPort::class => 'admin_ports_foreign_list',
             UkPort::class => 'admin_ports_uk_list',
+            default => throw new \InvalidArgumentException(sprintf('Unexpected port class "%s"', $dataClass)),
         };
 
         return $this->generateUrl($route);

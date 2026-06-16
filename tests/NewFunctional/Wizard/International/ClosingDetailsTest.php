@@ -11,11 +11,11 @@ use App\Tests\DataFixtures\International\LoadingActionFixtures;
 use App\Tests\DataFixtures\International\ResponseCeasedTradingFixtures;
 use App\Tests\DataFixtures\International\ResponseDomesticOnlyFixtures;
 use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTest;
+use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
-class ClosingDetailsTest extends AbstractPasscodeWizardTest
+class ClosingDetailsTest extends AbstractPasscodeWizardTestCase
 {
     public function testFinalQuestionsWithEmptySurvey(): void
     {

@@ -8,9 +8,6 @@ use App\Serializer\Normalizer\Mapper\Mapper;
 
 class DayOfWeekProperty implements Mapper
 {
-    private string $datePropertyPath;
-    private string $dayNumberProperty;
-
     #[\Override]
     public function getData($sourceData): ?string
     {

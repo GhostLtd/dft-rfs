@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Quarter;
 
 use App\Utility\Quarter\NaturalQuarterHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class QuarterHelperTest extends TestCase
 {
-    public function dataAddQuartersToQuarterAndYear(): array
+    public static function dataAddQuartersToQuarterAndYear(): array
     {
         return [
             [2023, 4, 0, 2023, 4],
@@ -20,9 +21,7 @@ class QuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataAddQuartersToQuarterAndYear
-     */
+    #[DataProvider('dataAddQuartersToQuarterAndYear')]
     public function testAddQuartersToQuarterAndYear(int $year, int $quarter, int $delta, int $expectedYear, int $expectedQuarter): void
     {
         $helper =  new NaturalQuarterHelper();
@@ -32,7 +31,7 @@ class QuarterHelperTest extends TestCase
         $this->assertEquals($expectedQuarter, $resultQuarter);
     }
 
-    public function dateToQuarterAndYearConversion(): array
+    public static function dateToQuarterAndYearConversion(): array
     {
         return [
             ['2020/12/31', 4, 2020],
@@ -48,9 +47,7 @@ class QuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dateToQuarterAndYearConversion
-     */
+    #[DataProvider('dateToQuarterAndYearConversion')]
     public function testDateToQuarterAndYearConversion(string $date, int $expectedQuarter, int $expectedYear)
     {
         $helper =  new NaturalQuarterHelper();
@@ -60,7 +57,7 @@ class QuarterHelperTest extends TestCase
         $this->assertEquals($expectedYear, $year);
     }
 
-    public function quarterAndYearToDateRangeConversion(): array
+    public static function quarterAndYearToDateRangeConversion(): array
     {
         return [
             [1, 2021, '2021-01-01', '2021-04-01'],
@@ -70,9 +67,7 @@ class QuarterHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider quarterAndYearToDateRangeConversion
-     */
+    #[DataProvider('quarterAndYearToDateRangeConversion')]
     public function testQuarterAndYearToDateRangeConversion(int $quarter, int $year, string $expectedLowerBound, string $expectedUpperBound)
     {
         $helper =  new NaturalQuarterHelper();

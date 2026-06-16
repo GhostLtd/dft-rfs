@@ -4,6 +4,7 @@ namespace App\Tests\Form\Validator;
 
 use App\Form\Validator\Postcode;
 use App\Form\Validator\PostcodeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PostcodeValidatorTest extends ConstraintValidatorTestCase
@@ -13,7 +14,7 @@ class PostcodeValidatorTest extends ConstraintValidatorTestCase
         return new PostcodeValidator();
     }
 
-    public function dataAllowPartialValid(): array
+    public static function dataAllowPartialValid(): array
     {
         return [
             'full with space' => ['NN6 6EA'],
@@ -28,14 +29,14 @@ class PostcodeValidatorTest extends ConstraintValidatorTestCase
         ];
     }
 
-    /** @dataProvider dataAllowPartialValid */
+    #[DataProvider('dataAllowPartialValid')]
     public function testAllowPartialValid(string $value): void
     {
         $this->validator->validate($value, new Postcode(allowPartial: true));
         $this->assertNoViolation();
     }
 
-    public function dataAllowPartialInvalid(): array
+    public static function dataAllowPartialInvalid(): array
     {
         return [
             'incomplete incode' => ['NN66E'],
@@ -47,7 +48,7 @@ class PostcodeValidatorTest extends ConstraintValidatorTestCase
         ];
     }
 
-    /** @dataProvider dataAllowPartialInvalid */
+    #[DataProvider('dataAllowPartialInvalid')]
     public function testAllowPartialInvalid(string $value): void
     {
         $this->validator->validate($value, new Postcode(allowPartial: true));

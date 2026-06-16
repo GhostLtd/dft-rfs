@@ -4,9 +4,9 @@ namespace App\Tests\Functional\Admin\EmailBlacklist;
 
 use App\Entity\EmailBlacklist;
 use App\Tests\DataFixtures\TestSpecific\EmailBlacklistRepositoryFixtures;
-use App\Tests\Functional\Admin\AbstractAdminFunctionalTest;
+use App\Tests\Functional\Admin\AbstractAdminFunctionalTestCase;
 
-class DeleteEmailBlacklistFunctionalTest extends AbstractAdminFunctionalTest
+class DeleteEmailBlacklistFunctionalTest extends AbstractAdminFunctionalTestCase
 {
     public function testDeletePageRenders(): void
     {

@@ -4,6 +4,7 @@ namespace App\Tests\Validator;
 
 use App\Entity\Domestic\Survey;
 use App\Form\Validator\CommaSeparatedEmails;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -15,7 +16,7 @@ class CommaSeparatedEmailsValidatorTest extends WebTestCase
         static::bootKernel();
     }
 
-    public function dataCommaSeparatedEmails(): array
+    public static function dataCommaSeparatedEmails(): array
     {
         // The validator checks that all data contained within are valid emails
         // It doesn't check for empty values like ,,,,, filtering those out will be done elsewhere (see tests below)
@@ -32,9 +33,7 @@ class CommaSeparatedEmailsValidatorTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataCommaSeparatedEmails
-     */
+    #[DataProvider('dataCommaSeparatedEmails')]
     public function testCommaSeparatedEmails(string $input, bool $expectedValid): void
     {
         $validator = Validation::createValidator();
@@ -45,7 +44,7 @@ class CommaSeparatedEmailsValidatorTest extends WebTestCase
         $this->assertEquals($expectedValid, $violations->count() === 0);
     }
 
-    public function dataGetArrayOfInvitationEmails(): array
+    public static function dataGetArrayOfInvitationEmails(): array
     {
         return [
             [null, 0],
@@ -60,9 +59,7 @@ class CommaSeparatedEmailsValidatorTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetArrayOfInvitationEmails
-     */
+    #[DataProvider('dataGetArrayOfInvitationEmails')]
     public function testGetArrayOfInvitationEmails(?string $input, int $expectedEmailCount): void
     {
         $survey = new Survey();
@@ -73,9 +70,7 @@ class CommaSeparatedEmailsValidatorTest extends WebTestCase
         $this->assertCount($expectedEmailCount, $emails);
     }
 
-    /**
-     * @dataProvider dataGetArrayOfInvitationEmails
-     */
+    #[DataProvider('dataGetArrayOfInvitationEmails')]
     public function testHasValidInvitationEmails(?string $input, int $expectedEmailCount): void
     {
         $survey = new Survey();

@@ -47,7 +47,7 @@ class ExportController extends AbstractController
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($this->generateUrl('admin_international_export_list'));
             } else if ($export instanceof SubmitButton && $export->isClicked()) {
-                if ($filename = $dataExporter->generateExportData($year, $quarter)) {
+                if ($filename = $dataExporter->generateExportData((int) $year, (int) $quarter)) {
                     $now = new DateTime();
                     return $this
                         ->file(new File($filename), "IRHS_export_{$year}_Q{$quarter}_{$now->format('Ymd_Hi')}.sql")

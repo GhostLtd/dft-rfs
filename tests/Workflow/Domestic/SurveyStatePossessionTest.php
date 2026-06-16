@@ -4,6 +4,7 @@ namespace App\Tests\Workflow\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -20,32 +21,32 @@ class SurveyStatePossessionTest extends WebTestCase
         $this->workflow = $container->get('state_machine.domestic_survey');
     }
 
-    public function surveyProvider(): array
+    public static function surveyProvider(): array
     {
         return [
             [ // first hire
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_ON_HIRE,
                 ]),
                 ['reissue', 're_open'],
                 ['approve'],
             ],
             [ // first sold
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_SOLD,
                 ]),
                 ['reissue', 'approve', 're_open'],
                 [],
             ],
             [ // scrapped
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN,
                 ]),
                 ['approve', 're_open'],
                 ['reissue'],
             ],
             [ // in possession
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_YES,
                 ]),
                 ['approve', 're_open'],
@@ -53,9 +54,9 @@ class SurveyStatePossessionTest extends WebTestCase
             ],
 
             [ // multi hire
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_ON_HIRE,
-                    'originalSurvey' => $this->createSurveyEntity([
+                    'originalSurvey' => self::createSurveyEntity([
                         'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_ON_HIRE,
                     ]),
                 ]),
@@ -64,9 +65,9 @@ class SurveyStatePossessionTest extends WebTestCase
             ],
 
             [ // multi sold
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_SOLD,
-                    'originalSurvey' => $this->createSurveyEntity([
+                    'originalSurvey' => self::createSurveyEntity([
                         'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_SOLD,
                     ]),
                 ]),
@@ -75,7 +76,7 @@ class SurveyStatePossessionTest extends WebTestCase
             ],
 
             [ // on-hire, reissued
-                $this->createSurveyEntity([
+                self::createSurveyEntity([
                     'state' => Survey::STATE_REISSUED,
                     'isInPossessionOfVehicle' => SurveyResponse::IN_POSSESSION_ON_HIRE,
                 ]),
@@ -104,9 +105,7 @@ class SurveyStatePossessionTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider surveyProvider
-     */
+    #[DataProvider('surveyProvider')]
     public function testSurveyStatePossession($survey, $allowedTransitions, $notAllowedTransitions)
     {
         foreach ($allowedTransitions as $allowedTransition) {
@@ -137,7 +136,7 @@ class SurveyStatePossessionTest extends WebTestCase
         $this->assertEquals($missing, $excess, $message);
     }
 
-    protected function createSurveyEntity($config = []): ?Survey
+    protected static function createSurveyEntity($config = []): ?Survey
     {
         return (new Survey())
             ->setState($config['state'] ?? Survey::STATE_CLOSED)

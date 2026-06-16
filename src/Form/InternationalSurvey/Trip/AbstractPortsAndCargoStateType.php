@@ -40,7 +40,7 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         $direction = $options['direction'];
         $this->portsData = $this->portsHelper->getData($direction);
 
-        $booleanChoiceMapper = fn($x) => match ($x) {
+        $booleanChoiceMapper = fn(?bool $x) => match ($x) {
             true => 'yes',
             false => 'no',
             null => null,
@@ -70,10 +70,10 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
                     ],
                 ],
                 'choice_value' => $booleanChoiceMapper,
-                'constraints' => new NotNull([
-                    'message' => $options['at_capacity_null_message'],
-                    'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
-                ]),
+                'constraints' => new NotNull(
+                    message: $options['at_capacity_null_message'],
+                    groups: ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
+                ),
             ])
             ->add("wasEmpty", Gds\ChoiceType::class, [
                 'label' => $options['cargo_empty_label'],
@@ -110,10 +110,10 @@ abstract class AbstractPortsAndCargoStateType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Trip::class,
             'constraints' => [
-                new Callback([
-                    'callback' => $this->validateCapacity(...),
-                    'groups' => ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
-                ])
+                new Callback(
+                    callback: $this->validateCapacity(...),
+                    groups: ['trip_outbound_cargo_state', 'trip_return_cargo_state'],
+                )
             ],
             'at_capacity_null_message' => 'common.choice.not-null',
         ]);

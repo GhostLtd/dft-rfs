@@ -11,7 +11,7 @@ use App\Repository\NotificationInterceptionRepository;
 use App\Utility\LcniDisplayService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Lock\SharedLockInterface;
 
 class LcniDisplayServiceTest extends TestCase
 {
@@ -24,9 +24,8 @@ class LcniDisplayServiceTest extends TestCase
 
     private function createMockLockFactory(bool $lockIsHeld = false): LockFactory
     {
-        $lock = $this->createMock(LockInterface::class);
+        $lock = $this->createMock(SharedLockInterface::class);
         $lock->method('acquire')->willReturn(!$lockIsHeld);
-        $lock->method('release')->willReturn(null);
 
         $lockFactory = $this->createMock(LockFactory::class);
         $lockFactory->method('createLock')->willReturn($lock);
@@ -185,9 +184,7 @@ class LcniDisplayServiceTest extends TestCase
 
         $result = $service->getDisplayInfoForSurvey($survey);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result['locked']);
-        $this->assertArrayNotHasKey('emails', $result);
+        $this->assertSame(['locked' => true], $result);
     }
 
     public function testReturnsLockedForCompanyNameWhenDvlaImportInProgress(): void
@@ -199,8 +196,6 @@ class LcniDisplayServiceTest extends TestCase
 
         $result = $service->getDisplayInfoForCompanyName('Acme Corp', 'csrgt');
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result['locked']);
-        $this->assertArrayNotHasKey('emails', $result);
+        $this->assertSame(['locked' => true], $result);
     }
 }

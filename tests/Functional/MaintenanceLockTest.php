@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
-class MaintenanceLockTest extends AbstractFrontendFunctionalTest
+class MaintenanceLockTest extends AbstractFrontendFunctionalTestCase
 {
     public function testMaintenanceLockInactive()
     {

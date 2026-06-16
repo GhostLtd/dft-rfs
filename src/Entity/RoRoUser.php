@@ -99,6 +99,7 @@ class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[\Override]
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
     }

@@ -27,6 +27,8 @@ class QuarterHelperProvider
             PreEnquiry::class,
             RoRoSurvey::class =>
                 $this->naturalQuarterHelper,
+
+            default => throw new \InvalidArgumentException(sprintf('Unexpected survey class "%s"', $className)),
         };
     }
 
@@ -50,6 +52,8 @@ class QuarterHelperProvider
 
             ReportFilterType::TYPE_IRHS =>
                 $this->irhsQuarterHelper,
+
+            default => throw new \InvalidArgumentException(sprintf('Unexpected report class "%s"', $className)),
         };
     }
 }

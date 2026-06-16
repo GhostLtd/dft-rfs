@@ -21,7 +21,7 @@ class ImportDvlaFileUploadType extends AbstractType implements DataMapperInterfa
                 'label' => 'DVLA file',
                 'constraints' => [
                     new File(),
-                    new NotNull(['message' => 'Select a DVLA file to import']),
+                    new NotNull(message: 'Select a DVLA file to import'),
                 ],
             ])
             ->add('override_defaults', Gds\ChoiceType::class, [

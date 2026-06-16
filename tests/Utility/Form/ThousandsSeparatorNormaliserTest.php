@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Form;
 
 use App\Utility\Form\ThousandsSeparatorNormaliser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ThousandsSeparatorNormaliserTest extends TestCase
 {
-    public function provider(): array
+    public static function provider(): array
     {
         return [
             // Clearly thousands-separated → stripped
@@ -34,7 +35,7 @@ class ThousandsSeparatorNormaliserTest extends TestCase
         ];
     }
 
-    /** @dataProvider provider */
+    #[DataProvider('provider')]
     public function testNormalise(string $input, string $expected): void
     {
         $this->assertSame($expected, (new ThousandsSeparatorNormaliser())->normalise($input));

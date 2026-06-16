@@ -3,11 +3,12 @@
 namespace App\Tests\Utility\Domestic;
 
 use App\Utility\Domestic\WeekNumberHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeekNumberHelperTest extends TestCase
 {
-    public function providerWeekNumber()
+    public static function providerWeekNumber()
     {
         return [
             ['2021/12/27', 1, 2022],
@@ -25,9 +26,7 @@ class WeekNumberHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerWeekNumber
-     */
+    #[DataProvider('providerWeekNumber')]
     public function testWeekNumber(string $date, int $expectedWeekNumber, int $expectedYear)
     {
         [$weekNumber, $year] = WeekNumberHelper::getYearlyWeekNumberAndYear(new \DateTime($date));
@@ -36,7 +35,7 @@ class WeekNumberHelperTest extends TestCase
         $this->assertEquals($expectedYear, $year);
     }
 
-    public function providerDateFromWeekAndYear()
+    public static function providerDateFromWeekAndYear()
     {
         return [
             [2022, 1, '2021/12/27'],
@@ -63,9 +62,7 @@ class WeekNumberHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerDateFromWeekAndYear
-     */
+    #[DataProvider('providerDateFromWeekAndYear')]
     public function testDateFromWeekAndYear(int $year, int $weekNumber, ?string $expectedDate)
     {
         $date = WeekNumberHelper::getDateForYearAndWeek($year, $weekNumber);
@@ -77,7 +74,7 @@ class WeekNumberHelperTest extends TestCase
         }
     }
 
-    public function providerYearForWeekNumberAndGenDate()
+    public static function providerYearForWeekNumberAndGenDate()
     {
         return [
             [1, '202011191435', 2021],
@@ -87,9 +84,7 @@ class WeekNumberHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerYearForWeekNumberAndGenDate
-     */
+    #[DataProvider('providerYearForWeekNumberAndGenDate')]
     public function testYearForWeekNumberAndGenDate(int $weekNumber, string $genDate, int $expectedYear)
     {
         $genYear = WeekNumberHelper::getYearForWeekNumberAndGenDate($weekNumber, new \DateTime($genDate));

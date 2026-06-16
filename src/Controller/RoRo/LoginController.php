@@ -5,8 +5,8 @@ namespace App\Controller\RoRo;
 use App\Entity\RoRoUser;
 use App\Features;
 use App\Form\RoRoLoginType;
+use App\Attribute\MaintenanceWarningBanner;
 use App\Messenger\AlphagovNotify\RoRoLoginEmail;
-use App\Repository\MaintenanceWarningRepository;
 use App\Repository\RoRoUserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,10 +27,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class LoginController extends AbstractController
 {
     #[Route("/login", name: "login")]
+    #[MaintenanceWarningBanner]
     public function login(
         LoginLinkHandlerInterface $loginLinkHandler,
         LoggerInterface $logger,
-        MaintenanceWarningRepository $maintenanceWarningRepository,
         MessageBusInterface $messageBus,
         Request $request,
         RequestRateLimiterInterface $roroLoginLimiter,
@@ -87,7 +87,6 @@ class LoginController extends AbstractController
         return $this->render('roro/login.html.twig', [
             'form' => $form,
             'authenticationError' => $authenticationError,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

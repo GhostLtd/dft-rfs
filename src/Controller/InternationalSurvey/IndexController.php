@@ -2,7 +2,7 @@
 
 namespace App\Controller\InternationalSurvey;
 
-use App\Repository\MaintenanceWarningRepository;
+use App\Attribute\MaintenanceWarningBanner;
 use App\Security\Voter\SurveyVoter;
 use App\Utility\International\PdfHelper;
 use App\Workflow\InternationalSurvey\InitialDetailsState;
@@ -25,7 +25,8 @@ class IndexController extends AbstractController
     public const SUMMARY_ROUTE = self::ROUTE_PREFIX.'summary';
 
     #[Route(path: '', name: self::SUMMARY_ROUTE)]
-    public function index(MaintenanceWarningRepository $maintenanceWarningRepository): Response {
+    #[MaintenanceWarningBanner]
+    public function index(): Response {
         $survey = $this->getSurvey();
 
         if ($this->isGranted(SurveyVoter::VIEW_SUBMISSION_SUMMARY, $survey)) {
@@ -48,7 +49,6 @@ class IndexController extends AbstractController
         return $this->render('international_survey/summary.html.twig', [
             'response' => $response,
             'vehicles' => $vehicles,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

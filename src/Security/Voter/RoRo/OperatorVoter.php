@@ -6,6 +6,7 @@ use App\Entity\RoRo\Operator;
 use App\Utility\RoRo\OperatorUsageHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class OperatorVoter extends Voter
@@ -32,7 +33,7 @@ class OperatorVoter extends Voter
      * @param Operator $subject
      */
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (!$this->security->isGranted('ROLE_ADMIN_USER')) {
             return false;

@@ -5,21 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Entity;
 
 use App\Entity\NotificationInterceptionCompanyName;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NotificationInterceptionCompanyNameTest extends TestCase
 {
-    /**
-     * @dataProvider nameProvider
-     */
-    public function testSetNameNormalisesWhitespace(?string $input, ?string $expected): void
-    {
-        $companyName = (new NotificationInterceptionCompanyName())->setName($input);
-
-        $this->assertSame($expected, $companyName->getName());
-    }
-
-    public function nameProvider(): array
+    public static function nameProvider(): array
     {
         return [
             'null' => [null, null],
@@ -35,5 +26,13 @@ class NotificationInterceptionCompanyNameTest extends TestCase
             // leaving them for the rfs:dev:lcni-fix-jammed-names command
             'newline preserved' => ["Acme Ltd\nAcme Limited", "Acme Ltd\nAcme Limited"],
         ];
+    }
+
+    #[DataProvider('nameProvider')]
+    public function testSetNameNormalisesWhitespace(?string $input, ?string $expected): void
+    {
+        $companyName = (new NotificationInterceptionCompanyName())->setName($input);
+
+        $this->assertSame($expected, $companyName->getName());
     }
 }

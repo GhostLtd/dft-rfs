@@ -4,8 +4,8 @@ namespace App\Controller\PreEnquiry;
 
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Attribute\MaintenanceWarningBanner;
 use App\Form\PreEnquiry\SubmitPreEnquiryType;
-use App\Repository\MaintenanceWarningRepository;
 use App\Security\Voter\SurveyVoter;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,9 +39,9 @@ class PreEnquiryController extends AbstractController
     }
 
     #[Route(path: '/pre-enquiry', name: PreEnquiryController::SUMMARY_ROUTE)]
+    #[MaintenanceWarningBanner]
     public function index(
         EntityManagerInterface $entityManager,
-        MaintenanceWarningRepository $maintenanceWarningRepository,
         Request $request,
         UserInterface $user,
         WorkflowInterface $preEnquiryStateMachine,
@@ -77,7 +77,6 @@ class PreEnquiryController extends AbstractController
         return $this->render('pre_enquiry/summary.html.twig', [
             'preEnquiry' => $preEnquiry,
             'form' => $form,
-            'maintenanceWarningBanner' => $maintenanceWarningRepository->getNotificationBanner(),
         ]);
     }
 

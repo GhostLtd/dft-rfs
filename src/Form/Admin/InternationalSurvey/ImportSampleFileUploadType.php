@@ -19,7 +19,7 @@ class ImportSampleFileUploadType extends AbstractType
                 'label' => 'Sample file',
                 'constraints' => [
                     new File(),
-                    new NotNull(['message' => 'Select a Sample file to import']),
+                    new NotNull(message: 'Select a Sample file to import'),
                 ],
             ])
             ->add('submit', Gds\ButtonType::class, ['type' => 'submit'])

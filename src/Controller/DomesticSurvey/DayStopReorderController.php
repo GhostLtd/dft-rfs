@@ -29,7 +29,7 @@ class DayStopReorderController extends AbstractDayStopReorderController
 
     #[IsGranted(new Expression("is_granted('EDIT', user.getDomesticSurvey())"))]
     #[Route(path: '/domestic-survey/day-{dayNumber}/reorder-stops', name: 'app_domesticsurvey_daystop_reorder', requirements: ['dayNumber' => '[1-7]'])]
-    public function reorderStops(string $dayNumber, Request $request): Response
+    public function reorderStops(int $dayNumber, Request $request): Response
     {
         return parent::reorder($request, $this->getDay($this->getSurvey(), $dayNumber));
     }

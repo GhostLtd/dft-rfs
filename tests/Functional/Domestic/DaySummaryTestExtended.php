@@ -6,12 +6,13 @@ use App\Entity\AbstractGoodsDescription;
 use App\Entity\Embeddable\Distance;
 use App\Entity\HazardousGoods;
 use App\Tests\DataFixtures\Domestic\BusinessFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\DaySummaryDatabaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class DaySummaryTestExtended extends AbstractWizardTest
+class DaySummaryTestExtended extends AbstractWizardTestCase
 {
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         $data = [];
 
@@ -27,9 +28,9 @@ class DaySummaryTestExtended extends AbstractWizardTest
                             $isHazardous ? HazardousGoods::CODE_7_RADIOACTIVE_MATERIAL : HazardousGoods::CODE_0_NOT_HAZARDOUS,
                         'The Moon',
                         'Hove',
-                        10,
+                        '10',
                         Distance::UNIT_MILES,
-                        16,
+                        '16',
                         Distance::UNIT_KILOMETRES,
                         AbstractGoodsDescription::GOODS_DESCRIPTION_OTHER,
                         'Bread',
@@ -39,7 +40,7 @@ class DaySummaryTestExtended extends AbstractWizardTest
                         2,
                         8,
                         0);
-                        $data[$this->getTestName($goodsLoaded, $goodsUnloaded, $isHazardous)] = [$testData];
+                        $data[self::getTestName($goodsLoaded, $goodsUnloaded, $isHazardous)] = [$testData];
                 }
             }
         }
@@ -47,7 +48,7 @@ class DaySummaryTestExtended extends AbstractWizardTest
         return $data;
     }
 
-    protected function getTestName(bool $goodsLoaded, bool $goodsUnloaded=null, bool $isHazardous=null): string
+    protected static function getTestName(bool $goodsLoaded, bool $goodsUnloaded=null, bool $isHazardous=null): string
     {
         $parts = [];
         $parts[] = $goodsLoaded ? 'Goods loaded' : 'No goods loaded';
@@ -63,9 +64,7 @@ class DaySummaryTestExtended extends AbstractWizardTest
         return join(', ', $parts);
     }
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testDaySummaryWizard($wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin([BusinessFixtures::class]);

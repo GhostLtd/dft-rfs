@@ -13,6 +13,7 @@ use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Utility\Reminder\ManualReminderHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -63,7 +64,7 @@ class AdminSurveyVoter extends Voter
     }
 
     #[\Override]
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (!$this->authorizationChecker->isGranted('ROLE_ADMIN_USER')) {
             return false;
@@ -129,7 +130,7 @@ class AdminSurveyVoter extends Voter
                     in_array($state, $openStatusesOrClosed) &&
                     !$subject->isBusinessAndVehicleDetailsComplete() &&
                     $response?->getIsInPossessionOfVehicle() === DomesticResponse::IN_POSSESSION_YES &&
-                    !$response?->getIsExemptVehicleType();
+                    !$response->getIsExemptVehicleType();
             case self::ENTER_INITIAL_DETAILS:
                 if (!$subject instanceof DomesticSurvey) {
                     return false;

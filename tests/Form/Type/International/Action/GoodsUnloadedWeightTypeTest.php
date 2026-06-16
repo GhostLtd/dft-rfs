@@ -8,15 +8,16 @@ use App\Entity\International\Trip;
 use App\Entity\International\Vehicle;
 use App\Form\InternationalSurvey\Action\GoodsUnloadedWeightType;
 use App\Repository\International\ActionRepository;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\CountryHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class GoodsUnloadedWeightTypeTest extends AbstractTypeTest
+class GoodsUnloadedWeightTypeTest extends AbstractTypeTestCase
 {
     protected ?Action $mockedReturnValue = null;
     protected ActionRepository&MockObject $actionRepositoryMock;
@@ -58,7 +59,7 @@ class GoodsUnloadedWeightTypeTest extends AbstractTypeTest
         );
     }
 
-    protected function dataNotAlreadyPartiallyUnloaded(): array
+    public static function dataNotAlreadyPartiallyUnloaded(): array
     {
         return [
             [[], false],
@@ -80,9 +81,7 @@ class GoodsUnloadedWeightTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataNotAlreadyPartiallyUnloaded
-     */
+    #[DataProvider('dataNotAlreadyPartiallyUnloaded')]
     public function testNotAlreadyPartiallyUnloaded(array $formData, bool $expectedValid): void
     {
         ['loadingAction' => $loadingAction, 'unloadingAction' => $data] = $this->getLoadingActionAndUnloadingAction();
@@ -103,7 +102,7 @@ class GoodsUnloadedWeightTypeTest extends AbstractTypeTest
         }
     }
 
-    protected function dataAlreadyPartiallyUnloaded(): array
+    public static function dataAlreadyPartiallyUnloaded(): array
     {
         return [
             [[], false],
@@ -131,9 +130,7 @@ class GoodsUnloadedWeightTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataAlreadyPartiallyUnloaded
-     */
+    #[DataProvider('dataAlreadyPartiallyUnloaded')]
     public function testAlreadyPartiallyUnloaded(array $formData, bool $expectedValid): void
     {
         ['loadingAction' => $loadingAction, 'unloadingAction' => $data] = $this->getLoadingActionAndUnloadingAction();

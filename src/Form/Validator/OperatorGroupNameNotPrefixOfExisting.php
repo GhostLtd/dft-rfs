@@ -15,7 +15,7 @@ class OperatorGroupNameNotPrefixOfExisting extends Constraint
         mixed $payload = null,
     )
     {
-        parent::__construct([], $groups, $payload);
+        parent::__construct(null, $groups, $payload);
 
         $this->message = $message ?? $this->message;
     }

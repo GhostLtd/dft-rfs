@@ -129,9 +129,6 @@ trait SurveyTrait
         return $this->invitationEmails ?? null;
     }
 
-    /**
-     * @return string|null
-     */
     public function setInvitationEmails(?string $invitationEmails): self
     {
         $this->invitationEmails = $invitationEmails;

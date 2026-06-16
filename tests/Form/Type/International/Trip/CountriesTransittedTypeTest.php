@@ -4,11 +4,12 @@ namespace App\Tests\Form\Type\International\Trip;
 
 use App\Entity\International\Trip;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class CountriesTransittedTypeTest extends AbstractTypeTest
+class CountriesTransittedTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], true], // Form is allowed to be submitted empty...
@@ -22,9 +23,7 @@ class CountriesTransittedTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid): void
     {
         $data = (new Trip());

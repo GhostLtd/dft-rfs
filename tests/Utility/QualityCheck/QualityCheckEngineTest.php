@@ -44,7 +44,7 @@ class QualityCheckEngineTest extends TestCase
 
     public function testEachCheckReceivesTheSameResponse(): void
     {
-        $response = $this->createMock(SurveyResponse::class);
+        $response = $this->createStub(SurveyResponse::class);
         $seen = [];
         $recordingCheck = new class($seen) implements QualityCheckInterface {
             public function __construct(public array &$seen) {}
@@ -74,7 +74,7 @@ class QualityCheckEngineTest extends TestCase
         ]);
 
         $set = $engine->computeAndPersist($response);
-        $this->assertSame(3, $set->count());
+        $this->assertCount(3, $set);
     }
 
     public function testComputeAndPersistWritesZeroForEmptyResult(): void

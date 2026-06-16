@@ -4,9 +4,9 @@ namespace App\Tests\Form\Type\Domestic\DayStop;
 
 use App\Entity\Domestic\DayStop;
 use App\Form\DomesticSurvey\DayStop\GoodsDescriptionType;
-use App\Tests\Form\Type\AbstractGoodsDescriptionTypeTest;
+use App\Tests\Form\Type\AbstractGoodsDescriptionTypeTestCase;
 
-class GoodsDescriptionTypeTest extends AbstractGoodsDescriptionTypeTest
+class GoodsDescriptionTypeTest extends AbstractGoodsDescriptionTypeTestCase
 {
     #[\Override]
     protected function getDataClass(): string
@@ -21,7 +21,7 @@ class GoodsDescriptionTypeTest extends AbstractGoodsDescriptionTypeTest
     }
 
     #[\Override]
-    protected function shouldIncludeEmpty(): bool
+    protected static function shouldIncludeEmpty(): bool
     {
         return true;
     }

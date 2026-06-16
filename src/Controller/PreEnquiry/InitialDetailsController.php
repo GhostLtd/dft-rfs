@@ -42,7 +42,6 @@ class InitialDetailsController extends AbstractSessionStateFormWizardController
 
     protected function getState(): FormWizardStateInterface
     {
-        /** @var PasscodeUser $user */
         $user = $this->getUser();
         $preEnquiry = $user instanceof PasscodeUser ? $user->getPreEnquiry() : null;
         if (!$preEnquiry instanceof PreEnquiry) {

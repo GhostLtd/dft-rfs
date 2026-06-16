@@ -5,16 +5,17 @@ namespace App\Tests\Functional\Domestic;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Embeddable\Address;
 use App\Tests\DataFixtures\Domestic\ResponseFixtures;
-use App\Tests\Functional\AbstractWizardTest;
+use App\Tests\Functional\AbstractWizardTestCase;
 use App\Tests\Functional\Wizard\CallbackSingleEntityDatabaseTestCase;
 use App\Tests\Functional\Wizard\FormTestCase;
 use App\Tests\Functional\Wizard\WizardStepUrlTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class InitialDetailsEditTest extends AbstractWizardTest
+class InitialDetailsEditTest extends AbstractWizardTestCase
 {
-    protected string $baseUrl = "/domestic-survey/initial-details";
+    protected static string $baseUrl = "/domestic-survey/initial-details";
 
-    public function wizardData(): array
+    public static function wizardData(): array
     {
         $address = (new Address())
             ->setLine1('30 Testing Street')
@@ -39,7 +40,7 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/change-contact-details',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/change-contact-details", "contact_details_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/change-contact-details", "contact_details_button_group_continue", [
                         new FormTestCase([
                             "contact_details" => [
                                 "contactName" => null,
@@ -78,9 +79,9 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) use ($email) {
-                        $this->assertEquals("Test", $response->getContactName());
-                        $this->assertEquals($email, $response->getContactEmail());
-                        $this->assertEquals(null, $response->getContactTelephone());
+                        self::assertEquals("Test", $response->getContactName());
+                        self::assertEquals($email, $response->getContactEmail());
+                        self::assertEquals(null, $response->getContactTelephone());
                     })
                 ],
             ],
@@ -88,7 +89,7 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_YES,
@@ -96,7 +97,7 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) {
-                        $this->assertEquals(SurveyResponse::IN_POSSESSION_YES, $response->getIsInPossessionOfVehicle());
+                        self::assertEquals(SurveyResponse::IN_POSSESSION_YES, $response->getIsInPossessionOfVehicle());
                     })
                 ],
             ],
@@ -104,14 +105,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_ON_HIRE,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/hiree-details", "hiree_details_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/hiree-details", "hiree_details_button_group_continue", [
                         new FormTestCase([], [
                             '#hiree_details_hireeName',
                             '#hiree_details_hireeTelephone',
@@ -149,11 +150,11 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) use ($address, $email, $name, $phone) {
-                        $this->assertEquals(SurveyResponse::IN_POSSESSION_ON_HIRE, $response->getIsInPossessionOfVehicle());
-                        $this->assertEquals($name, $response->getHireeName());
-                        $this->assertEquals($phone, $response->getHireeTelephone());
-                        $this->assertEquals($email, $response->getHireeEmail());
-                        $this->assertEquals($address, $response->getHireeAddress());
+                        self::assertEquals(SurveyResponse::IN_POSSESSION_ON_HIRE, $response->getIsInPossessionOfVehicle());
+                        self::assertEquals($name, $response->getHireeName());
+                        self::assertEquals($phone, $response->getHireeTelephone());
+                        self::assertEquals($email, $response->getHireeEmail());
+                        self::assertEquals($address, $response->getHireeAddress());
                     })
                 ],
             ],
@@ -161,14 +162,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_SOLD,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/sold-details", "sold_details_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/sold-details", "sold_details_button_group_continue", [
                         new FormTestCase([], [
                             "#sold_details_soldDate",
                             "#sold_details_newOwnerName",
@@ -211,12 +212,12 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) use ($address, $email, $name, $phone, $unableToCompleteDateTime) {
-                        $this->assertEquals(SurveyResponse::IN_POSSESSION_SOLD, $response->getIsInPossessionOfVehicle());
-                        $this->assertEquals($name, $response->getNewOwnerName());
-                        $this->assertEquals($phone, $response->getNewOwnerTelephone());
-                        $this->assertEquals($email, $response->getNewOwnerEmail());
-                        $this->assertEquals($address, $response->getNewOwnerAddress());
-                        $this->assertEquals($unableToCompleteDateTime, $response->getUnableToCompleteDate());
+                        self::assertEquals(SurveyResponse::IN_POSSESSION_SOLD, $response->getIsInPossessionOfVehicle());
+                        self::assertEquals($name, $response->getNewOwnerName());
+                        self::assertEquals($phone, $response->getNewOwnerTelephone());
+                        self::assertEquals($email, $response->getNewOwnerEmail());
+                        self::assertEquals($address, $response->getNewOwnerAddress());
+                        self::assertEquals($unableToCompleteDateTime, $response->getUnableToCompleteDate());
                     })
                 ],
             ],
@@ -224,14 +225,14 @@ class InitialDetailsEditTest extends AbstractWizardTest
                 '/in-possession',
                 [ResponseFixtures::class], // extra fixtures
                 [
-                    new WizardStepUrlTestCase("{$this->baseUrl}/in-possession", "in_possession_of_vehicle_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/in-possession", "in_possession_of_vehicle_button_group_continue", [
                         new FormTestCase([
                             "in_possession_of_vehicle" => [
                                 "isInPossessionOfVehicle" => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN,
                             ]
                         ]),
                     ]),
-                    new WizardStepUrlTestCase("{$this->baseUrl}/scrapped-details", "scrapped_details_button_group_continue", [
+                    new WizardStepUrlTestCase(self::$baseUrl."/scrapped-details", "scrapped_details_button_group_continue", [
                         new FormTestCase([], [
                             "#scrapped_details_scrappedDate",
                         ]),
@@ -242,8 +243,8 @@ class InitialDetailsEditTest extends AbstractWizardTest
                         ]),
                     ]),
                     new CallbackSingleEntityDatabaseTestCase(SurveyResponse::class, function(SurveyResponse $response) use ($unableToCompleteDateTime) {
-                        $this->assertEquals(SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN, $response->getIsInPossessionOfVehicle());
-                        $this->assertEquals($unableToCompleteDateTime, $response->getUnableToCompleteDate());
+                        self::assertEquals(SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN, $response->getIsInPossessionOfVehicle());
+                        self::assertEquals($unableToCompleteDateTime, $response->getUnableToCompleteDate());
                     })
                 ],
             ],
@@ -251,13 +252,11 @@ class InitialDetailsEditTest extends AbstractWizardTest
     }
 
 
-    /**
-     * @dataProvider wizardData
-     */
+    #[DataProvider('wizardData')]
     public function testInitialDetailsEditWizards($startRelativeUrl, $fixtures, $wizardData)
     {
         $browser = $this->getBrowserLoadFixturesAndLogin($fixtures);
-        $browser->request('GET', "{$this->baseUrl}{$startRelativeUrl}");
+        $browser->request('GET', self::$baseUrl."{$startRelativeUrl}");
 
         $this->doWizardTest($browser, $wizardData);
     }

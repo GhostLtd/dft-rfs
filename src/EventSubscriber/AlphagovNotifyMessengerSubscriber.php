@@ -82,7 +82,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 
     protected function logResponse(AbstractMessage $message, array $apiResponseData): void
     {
-        /** @var ApiResponseInterface|SurveyInterface $entity */
+        /** @var ApiResponseInterface|SurveyInterface|null $entity */
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
 
         if ($entity) {
@@ -93,6 +93,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
                     Email::class => '/v2/notifications/email',
                     Letter::class => '/v2/notifications/letter',
                     Sms::class => '/v2/notifications/sms',
+                    default => throw new \InvalidArgumentException(sprintf('Unexpected message class "%s"', $message::class)),
                 })
                 ->setEventName($message->getEventName())
                 ->setMessageClass($message::class)

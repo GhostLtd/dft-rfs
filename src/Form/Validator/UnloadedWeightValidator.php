@@ -40,19 +40,19 @@ class UnloadedWeightValidator extends ConstraintValidator
             $loadingAction = $value->getLoadingAction();
 
             $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
-                new Positive([
-                    'message' => $constraint->minMessage,
-                ]),
-                new Range([
-                    'max' => 2000000000,
-                    'maxMessage' => $constraint->maxMessage,
-                ]),
+                new Positive(
+                    message: $constraint->minMessage,
+                ),
+                new Range(
+                    max: 2000000000,
+                    maxMessage: $constraint->maxMessage,
+                ),
             ], ['Default']);
 
             if ($validator->getViolations()->count() === 0) {
                 if (!$value->getWeightUnloadedAll()) {
                     $validator->atPath('weightOfGoods')->validate($value->getWeightOfGoods(), [
-                        new NotBlank(['message' => 'international.action.unloaded.weight-not-blank'])
+                        new NotBlank(message: 'international.action.unloaded.weight-not-blank')
                     ], ['Default']);
 
                     if ($loadingAction) {

@@ -13,9 +13,8 @@ class LessThanOrEqualDate extends LessThanOrEqual
         string $message = 'common.date.less-than-or-equal',
         ?array $groups = null,
         mixed $payload = null,
-        array $options = []
     )
     {
-        parent::__construct($value, $propertyPath, $message, $groups, $payload, $options);
+        parent::__construct($value, $propertyPath, $message, $groups, $payload);
     }
 }

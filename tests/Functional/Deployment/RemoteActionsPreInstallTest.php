@@ -4,13 +4,13 @@ namespace App\Tests\Functional\Deployment;
 
 use App\Tests\DataFixtures\DoctrineMigrationFixtures;
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
-use App\Tests\Functional\AbstractFunctionalTest;
+use App\Tests\Functional\AbstractFunctionalTestCase;
 use App\Utility\RemoteActions;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Process\Process;
 
-class RemoteActionsPreInstallTest extends AbstractFunctionalTest
+class RemoteActionsPreInstallTest extends AbstractFunctionalTestCase
 {
     private array $addedMigrations = [];
 

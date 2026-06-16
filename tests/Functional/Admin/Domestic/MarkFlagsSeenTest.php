@@ -6,9 +6,9 @@ use App\Controller\Admin\Domestic\SurveyController;
 use App\Entity\Domestic\SurveyResponse;
 use App\Tests\DataFixtures\Domestic\ResponseFixtures;
 use App\Tests\DataFixtures\Domestic\SurveyClosedFixtures;
-use App\Tests\Functional\Admin\AbstractAdminFunctionalTest;
+use App\Tests\Functional\Admin\AbstractAdminFunctionalTestCase;
 
-class MarkFlagsSeenTest extends AbstractAdminFunctionalTest
+class MarkFlagsSeenTest extends AbstractAdminFunctionalTestCase
 {
     private const FIXTURES = [SurveyClosedFixtures::class, ResponseFixtures::class];
 

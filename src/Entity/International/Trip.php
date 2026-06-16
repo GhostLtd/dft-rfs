@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,7 +30,7 @@ class Trip
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?string $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -562,8 +561,8 @@ class Trip
 
         // filter the choices so only the middle digit matches (or other in same category)
         return array_filter($choices, fn($value) =>
-            substr($value, 1, 1) === substr($vehicleAxleConfig, 1, 1) ||
-            substr($value, 1, 2) === '99'
+            substr((string) $value, 1, 1) === substr((string) $vehicleAxleConfig, 1, 1) ||
+            substr((string) $value, 1, 2) === '99'
         );
     }
 
@@ -606,7 +605,7 @@ class Trip
 
     public function isDistanceEnabled(): bool
     {
-        if (is_null($this?->getVehicle()?->getSurveyResponse()?->getSurvey()?->isTripDistanceEnabled())) {
+        if (is_null($this->getVehicle()?->getSurveyResponse()?->getSurvey()?->isTripDistanceEnabled())) {
             throw new \RuntimeException('Cannot determine if distance field is enabled');
         }
         return $this->getVehicle()->getSurveyResponse()->getSurvey()->isTripDistanceEnabled();

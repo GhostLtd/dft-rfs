@@ -12,7 +12,7 @@ class LongAddress extends Address
     #[\Override]
     public function toArray(): array
     {
-        return [
+        return array_filter([
             'line1' => $this->line1,
             'line2' => $this->line2,
             'line3' => $this->line3,
@@ -20,7 +20,7 @@ class LongAddress extends Address
             'line5' => $this->line5,
             'line6' => $this->line6,
             'postcode' => $this->postcode,
-        ];
+        ], fn(?string $line): bool => $line !== null && trim($line) !== '');
     }
 
     #[Assert\Regex("#^[@()=\[\]\",<>\\\/]#", message: 'Address lines must not start with a symbol (@ ( ) = [ ] "" , < > \ /)', match: false, groups: ['notify_api'])]

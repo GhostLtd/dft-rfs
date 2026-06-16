@@ -6,11 +6,12 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\International\Action;
 use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\InternationalSurvey\Action\GoodsLoadedWeightType;
-use App\Tests\Form\Type\AbstractTypeTest;
+use App\Tests\Form\Type\AbstractTypeTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class GoodsLoadedWeightTypeTest extends AbstractTypeTest
+class GoodsLoadedWeightTypeTest extends AbstractTypeTestCase
 {
-    protected function dataSubmit(): array
+    public static function dataSubmit(): array
     {
         return [
             [[], false],
@@ -28,9 +29,7 @@ class GoodsLoadedWeightTypeTest extends AbstractTypeTest
         ];
     }
 
-    /**
-     * @dataProvider dataSubmit
-     */
+    #[DataProvider('dataSubmit')]
     public function testSubmit(array $formData, bool $expectedValid, ?string $expectedWeight=null): void
     {
         $data = new Action();

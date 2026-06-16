@@ -30,7 +30,7 @@ abstract class AbstractOriginType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($translationKeyPrefix): void {
             $form = $event->getForm();
-            /** @var StopInterface $data */
+            /** @var StopInterface|null $data */
             $data = $event->getData();
 
             if (!$data) {

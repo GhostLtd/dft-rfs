@@ -2,7 +2,7 @@
 
 namespace App\Tests\NewFunctional\Wizard\Action;
 
-use App\Tests\NewFunctional\AbstractWizardTest;
+use App\Tests\NewFunctional\AbstractWizardTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Panther\Client;
@@ -19,7 +19,7 @@ class Context
     public function __construct(
         protected Client $client,
         protected EntityManagerInterface $entityManager,
-        protected AbstractWizardTest $testCase,
+        protected AbstractWizardTestCase $testCase,
         protected ?OutputInterface $output,
         protected array $config,
         protected int $debugLevel = 0,
@@ -55,7 +55,7 @@ class Context
         return $this->entityManager;
     }
 
-    public function getTestCase(): AbstractWizardTest
+    public function getTestCase(): AbstractWizardTestCase
     {
         return $this->testCase;
     }

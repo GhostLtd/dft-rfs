@@ -22,7 +22,7 @@ class PasscodeGenerator
     {
         $hash = hash('sha256', $this->secret.$user->getId());
         $passcode = hexdec(substr($hash, -8, 8));
-        return str_pad($passcode % 100000000, 8, '0', STR_PAD_LEFT);
+        return str_pad((string) ($passcode % 100000000), 8, '0', STR_PAD_LEFT);
     }
 
     public function generateUsernameCode(): string
@@ -33,7 +33,7 @@ class PasscodeGenerator
 
     protected function generateUntestedCode(): string
     {
-        return str_pad(random_int(1, 99999999), 8, '0', STR_PAD_LEFT);
+        return str_pad((string) random_int(1, 99999999), 8, '0', STR_PAD_LEFT);
     }
 
     protected function checkPasscode($passcode, $enforceUniqueUsername = false): ?string
