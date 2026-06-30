@@ -69,6 +69,7 @@ class BusinessDetailsType extends AbstractType
             ])
             ->add('annualInternationalHGVJourneyCount', Gds\IntegerType::class, [
                 'label' => 'international.survey-response.number-of-trips.admin-hgv-count.label',
+                'label_translation_parameters' => ['estimatePeriod' => $options['estimate_period']],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => [
                     'class' => 'govuk-input--width-5',
@@ -76,6 +77,7 @@ class BusinessDetailsType extends AbstractType
             ])
             ->add('annualInternationalLGVJourneyCount', Gds\IntegerType::class, [
                 'label' => 'international.survey-response.number-of-trips.admin-lgv-count.label',
+                'label_translation_parameters' => ['estimatePeriod' => $options['estimate_period']],
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => [
                     'class' => 'govuk-input--width-5',
@@ -102,6 +104,8 @@ class BusinessDetailsType extends AbstractType
                 return $groups;
             },
             'include_buttons' => true,
+            'estimate_period' => null,
         ]);
+        $resolver->setAllowedTypes('estimate_period', ['null', 'string']);
     }
 }

@@ -26,9 +26,12 @@ class SurveyResponseTest extends TestCase
     }
 
     /**
-     * Tests shouldSurveyBeSubmittedWithoutJourneys() which returns true if:
-     * - isNoLongerActive() is true (ceased-trading, only-domestic-work, no-road-haulage), OR
-     * - annualInternationalHGVJourneyCount is 0 (includes LGV-only firms)
+     * Tests shouldSurveyBeSubmittedWithoutJourneys() which returns true only if
+     * isNoLongerActive() is true (ceased-trading, only-domestic-work, no-road-haulage).
+     *
+     * An estimated HGV journey count of 0 no longer ends the survey: an active firm may
+     * still go on to add vehicles (or submit an empty survey), so the journey counts do
+     * not affect this method.
      */
     public function dataShouldSurveyBeSubmittedWithoutJourneys(): array
     {
@@ -37,10 +40,10 @@ class SurveyResponseTest extends TestCase
                 SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, 100, 50, false
             ],
             'still-active with zero HGV and zero LGV' => [
-                SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, 0, 0, true
+                SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, 0, 0, false
             ],
             'still-active with zero HGV and positive LGV (LGV-only firm)' => [
-                SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, 0, 100, true
+                SurveyResponse::ACTIVITY_STATUS_STILL_ACTIVE, 0, 100, false
             ],
             'ceased-trading (journey counts ignored)' => [
                 SurveyResponse::ACTIVITY_STATUS_CEASED_TRADING, null, null, true

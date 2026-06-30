@@ -23,7 +23,8 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 {
     /**
      * Tests the flow when user selects "still-active" with zero HGV journeys.
-     * Zero HGV journeys means no vehicle data needed (survey ends after trips).
+     * Zero HGV journeys no longer ends the survey: the firm reaches the dashboard and
+     * may still add vehicles or submit an empty survey.
      */
     public function testZeroJourneysAndStillActive(): void
     {
@@ -133,7 +134,8 @@ class InitialDetailsTest extends AbstractInitialDetailsTest
 
     /**
      * Tests the LGV-only scenario (0 HGV, positive LGV).
-     * Since the survey only collects HGV vehicle data, this ends without vehicle data.
+     * The survey only collects HGV vehicle data, but a still-active firm is no longer
+     * ended here: it reaches the dashboard and may add vehicles or submit empty.
      */
     public function testLgvOnlyJourneys(): void
     {

@@ -38,6 +38,9 @@ return static function (ContainerConfigurator $container) {
                         'metadata' => [
                             'template' => 'international_survey/initial_details/form-number-of-trips.html.twig',
                             'form_class' => NumberOfTripsType::class,
+                            'form_options' => [
+                                'estimate_period' => 'subject.survey.estimatePeriodLabel',
+                            ],
                             'is_valid_alternative_start_place' => '!is_empty(state.getSubject().getId()) and !state.getSubject().isNoLongerActive()',
                         ],
                     ],

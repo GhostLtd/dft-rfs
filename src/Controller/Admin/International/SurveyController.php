@@ -54,7 +54,7 @@ class SurveyController extends AbstractController
         $this->entityManager->persist($response);
 
         $redirectUrl = $this->getRedirectUrl($survey);
-        return $this->handleRequest($survey, InitialDetailsType::class, "admin/international/surveys/enter-initial-details.html.twig", $redirectUrl);
+        return $this->handleRequest($survey, InitialDetailsType::class, "admin/international/surveys/enter-initial-details.html.twig", $redirectUrl, formOptions: ['estimate_period' => $survey->getEstimatePeriodLabel()]);
     }
 
     #[Route(path: '/edit-correspondence-details', name: self::EDIT_CORRESPONDENCE_ROUTE)]
@@ -74,7 +74,7 @@ class SurveyController extends AbstractController
     ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, "tab-business-details");
-        return $this->handleRequest($survey, BusinessDetailsType::class, "admin/international/surveys/edit-business-details.html.twig", $redirectUrl);
+        return $this->handleRequest($survey, BusinessDetailsType::class, "admin/international/surveys/edit-business-details.html.twig", $redirectUrl, formOptions: ['estimate_period' => $survey->getEstimatePeriodLabel()]);
     }
 
     #[Route(path: '/edit-final-details', name: self::EDIT_FINAL_DETAILS_ROUTE)]
@@ -93,9 +93,9 @@ class SurveyController extends AbstractController
         );
     }
 
-    protected function handleRequest(Survey $survey, string $formClass, string $template, string $redirectUrl, bool $formUsesSurvey = false): Response
+    protected function handleRequest(Survey $survey, string $formClass, string $template, string $redirectUrl, bool $formUsesSurvey = false, array $formOptions = []): Response
     {
-        $form = $this->createForm($formClass, $formUsesSurvey ? $survey : $this->getResponse($survey));
+        $form = $this->createForm($formClass, $formUsesSurvey ? $survey : $this->getResponse($survey), $formOptions);
         $request = $this->requestStack->getCurrentRequest();
 
         if ($request->getMethod() === Request::METHOD_POST) {

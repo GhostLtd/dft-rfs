@@ -32,3 +32,6 @@ yarn-error.log
 /*keys.json
 /drivers/
 /.claude/
+
+/config/reference.php
+/.phpunit.cache

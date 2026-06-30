@@ -209,9 +209,7 @@ class SurveyResponse extends AbstractSurveyResponse
 
     public function shouldSurveyBeSubmittedWithoutJourneys(): bool
     {
-        return
-            $this->isNoLongerActive() ||
-            $this->annualInternationalHGVJourneyCount === 0;
+        return $this->isNoLongerActive();
     }
 
     public function mergeInitialDetails(SurveyResponse $response): void

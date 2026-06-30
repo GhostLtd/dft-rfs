@@ -309,6 +309,19 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
         return $now < $this->getSurveyPeriodEnd();
     }
 
+    public function getEstimatePeriodLabel(): ?string
+    {
+        $end = $this->getSurveyPeriodEnd();
+        if (!$end) {
+            return null;
+        }
+
+        $start = (clone $end)->modify('+1 day');
+        $nextYearShort = str_pad((string) (($start->format('Y') + 1) % 100), 2, '0', STR_PAD_LEFT);
+
+        return sprintf('%s-%s', $start->format('j F Y'), $nextYearShort);
+    }
+
     #[\Override]
     public function getResponseContactEmail(): ?string
     {

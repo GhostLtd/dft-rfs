@@ -31,6 +31,7 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
                 'label' => false,
                 'include_buttons' => false,
                 'validation_groups' => $options['validation_groups'],
+                'estimate_period' => $options['estimate_period'],
             ])
             ->add('buttons', Gds\ButtonGroupType::class)
 
@@ -61,7 +62,9 @@ class InitialDetailsType extends AbstractType implements DataMapperInterface
 
                 return $validationGroups;
             },
+            'estimate_period' => null,
         ]);
+        $resolver->setAllowedTypes('estimate_period', ['null', 'string']);
     }
 
     #[\Override]

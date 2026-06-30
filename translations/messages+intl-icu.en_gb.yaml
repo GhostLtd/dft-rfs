@@ -1865,16 +1865,16 @@ international:
     number-of-trips:
       heading: Annual international trips
       hgv-count:
-        label: Estimate the number of international trips that will be made by your firm using **HGVs** in the next 12 months
+        label: Estimate the number of international trips that will be made by your firm using **HGVs** in the 12 months following the survey period ({estimatePeriod})
         help: ''
       lgv-count:
-        label: Estimate the number of international trips that will be made by your firm using **LGVs / Vans** in the next 12 months
+        label: Estimate the number of international trips that will be made by your firm using **LGVs / Vans** in the 12 months following the survey period ({estimatePeriod})
         help: ''
       admin-hgv-count:
-        label: Estimated annual HGV count
+        label: 'Estimated HGV count in the 12 months following the survey period ({estimatePeriod})'
         help: ''
       admin-lgv-count:
-        label: Estimated annual LGV count
+        label: 'Estimated LGV count in the 12 months following the survey period ({estimatePeriod})'
         help: ''
     activity-status:
       choices:
