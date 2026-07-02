@@ -2,6 +2,11 @@
 
 # Changelog
 
+## 2026-07-02
+- **Update**: IRHS: Port the CSRGT vehicle-weights input normalisation (remove of "kg" etc) to the IRHS vehicle/trip weight forms and clarify the carrying-capacity help text
+- **Fix**: Fix broken state change button translation strings
+- **Fix**: Fix admin final-details screen regression
+
 ## 2026-06-30
 - **Feature**: CSRGT quality flags
 - **Update**: Add ActivityStatusOther to IRHS export views

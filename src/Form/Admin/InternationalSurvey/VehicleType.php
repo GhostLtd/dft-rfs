@@ -59,12 +59,18 @@ class VehicleType extends AbstractType
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
+                'strip_thousands_separators' => true,
+                'strip_units' => ['kg'],
+                'convert_tonnes' => true,
             ])
             ->add('carryingCapacity', Gds\IntegerType::class, [
                 'label' => "Carrying capacity",
                 'label_attr' => ['class' => 'govuk-label--s'],
                 'attr' => ['class' => 'govuk-input--width-10'],
                 'suffix' => 'kg',
+                'strip_thousands_separators' => true,
+                'strip_units' => ['kg'],
+                'convert_tonnes' => true,
             ])
             ->add('buttons', Gds\ButtonGroupType::class)
 

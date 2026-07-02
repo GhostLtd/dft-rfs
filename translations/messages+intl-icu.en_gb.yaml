@@ -1961,7 +1961,10 @@ international:
         help: Total weight of the vehicle in kg including any trailer plus the maximum weight of cargo that the vehicle is permitted to carry on public roads
       carrying-capacity:
         label: Carrying capacity
-        help: Maximum weight of the cargo in kg that the vehicle is permitted to carry on public roads
+        help: |-
+          Maximum weight of the **cargo** in kg that the vehicle is permitted to carry on public roads.
+
+          This **excludes** the weight of the vehicle and trailer.
 
   actions:
     re-order:

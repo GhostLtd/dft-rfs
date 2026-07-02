@@ -124,12 +124,18 @@ class TripType extends AbstractType
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],
                     'suffix' => 'kg',
+                    'strip_thousands_separators' => true,
+                    'strip_units' => ['kg'],
+                    'convert_tonnes' => true,
                 ])
                 ->add('carrying_capacity', Gds\IntegerType::class, [
                     'label' => "Carrying capacity (kg)",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'attr' => ['class' => 'govuk-input--width-10'],
                     'suffix' => 'kg',
+                    'strip_thousands_separators' => true,
+                    'strip_units' => ['kg'],
+                    'convert_tonnes' => true,
                 ])
                 ;
         });
