@@ -70,7 +70,9 @@ class SurveyController extends AbstractController
     ): Response
     {
         $redirectUrl = $this->getRedirectUrl($survey, 'tab-final-details');
-        return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/domestic/surveys/edit-final-details.html.twig', $redirectUrl);
+        return $this->handleRequest($this->getResponse($survey), FinalDetailsType::class, 'admin/domestic/surveys/edit-final-details.html.twig', $redirectUrl, [
+            'cancel_link_options' => ['href' => $redirectUrl],
+        ]);
     }
 
     #[IsGranted(AdminSurveyVoter::ENTER_INITIAL_DETAILS, subject: 'survey')]
@@ -125,15 +127,16 @@ class SurveyController extends AbstractController
         return $this->handleRequest($this->getResponse($survey), VehicleDetailsType::class, 'admin/domestic/surveys/edit-vehicle-details.html.twig', $redirectUrl);
     }
 
-    protected function handleRequest(SurveyResponse $response, string $formClass, string $templateName, string $redirectUrl): Response
+    protected function handleRequest(SurveyResponse $response, string $formClass, string $templateName, string $redirectUrl, array $formOptions = []): Response
     {
-        $form = $this->createForm($formClass, $response);
+        $form = $this->createForm($formClass, $response, $formOptions);
         $request = $this->requestStack->getCurrentRequest();
 
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            $cancel = $form->get('buttons')->get('cancel');
+            // Some forms (e.g. FinalDetailsType) have a button_group with a cancel link instead
+            $cancel = $form->has('buttons') ? $form->get('buttons')->get('cancel') : null;
             if ($cancel instanceof SubmitButton && $cancel->isClicked()) {
                 return new RedirectResponse($redirectUrl);
             };
