@@ -2,6 +2,9 @@
 
 # Changelog
 
+## Upcoming
+- **Fix**: Migrate notify data_class to their new bundle equivalents so that invites are correctly shown
+
 ## 2026-07-02
 - **Update**: IRHS: Port the CSRGT vehicle-weights input normalisation (remove of "kg" etc) to the IRHS vehicle/trip weight forms and clarify the carrying-capacity help text
 - **Fix**: Fix broken state change button translation strings

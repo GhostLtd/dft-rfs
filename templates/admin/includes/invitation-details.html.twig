@@ -15,7 +15,7 @@
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
+                'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Letter',
                 true
             ),
             pendingNotifications.pendingInviteLetters | default([]),
@@ -27,7 +27,7 @@
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
+                'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Letter',
                 true
             ),
             pendingNotifications.pendingReminder1Letters | default([]),
@@ -39,7 +39,7 @@
         value: {html: _self.notificationStatus(
             survey.notifyApiResponsesMatching(
                 constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
-                'App\\Messenger\\AlphagovNotify\\Letter',
+                'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Letter',
                 true
             ),
             pendingNotifications.pendingReminder2Letters | default([]),
@@ -60,7 +60,7 @@
             value: {html: _self.notificationStatus(
                 survey.notifyApiResponsesMatching(
                     constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_INVITE'),
-                    'App\\Messenger\\AlphagovNotify\\Email',
+                    'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Email',
                     true
                 ),
                 pendingNotifications.pendingInviteEmails | default([]),
@@ -72,7 +72,7 @@
             value: {html: _self.notificationStatus(
                 survey.notifyApiResponsesMatching(
                     constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_1'),
-                    'App\\Messenger\\AlphagovNotify\\Email',
+                    'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Email',
                     true
                 ),
                 pendingNotifications.pendingReminder1Emails | default([]),
@@ -84,7 +84,7 @@
             value: {html: _self.notificationStatus(
                 survey.notifyApiResponsesMatching(
                     constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_REMINDER_2'),
-                    'App\\Messenger\\AlphagovNotify\\Email',
+                    'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Email',
                     true
                 ),
                 pendingNotifications.pendingReminder2Emails | default([]),
@@ -95,7 +95,7 @@
 
     {%- set manualReminders = survey.notifyApiResponsesMatching(
         constant('App\\Utility\\AlphagovNotify\\Reference::EVENT_MANUAL_REMINDER'),
-        'App\\Messenger\\AlphagovNotify\\Email',
+        'Ghost\\GovUkCoreBundle\\Messenger\\AlphagovNotify\\Email',
         true,
         true
     ) -%}
