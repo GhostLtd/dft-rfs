@@ -951,8 +951,8 @@ domestic:
       change-link-sr-suffix: vehicle possession details
 
     is-exempt-vehicle-type:
-      label: Is your vehicle a horsebox, jetter, cherry-picker or exhibition/showperson's vehicle?
-      help: ''
+      label: Is your vehicle exempt from taking part in this survey?
+      help: "For example: a horsebox, jetter, cherry-picker or exhibition/showperson's vehicle?"
       option:
         yes: Yes
         no: No
