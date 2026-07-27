@@ -1,0 +1,161 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Controller\Admin;
+
+use App\Controller\Admin\NotificationInterceptionDvlaImportController;
+use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+
+/**
+ * The CSV and XLSX upload paths must produce identically-normalised import data:
+ * header row excluded, blank rows skipped, names trimmed, emails trimmed + lowercased.
+ * The parity test feeds the same logical rows through both file formats and requires
+ * byte-identical results, so the two implementations cannot drift apart.
+ */
+class NotificationInterceptionDvlaImportCsvTest extends TestCase
+{
+    private const string BOM = "\u{FEFF}";
+    private const array HEADER = ['Operator Name', 'Email address'];
+
+    /** @var array<string> */
+    private array $tempFiles = [];
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        foreach ($this->tempFiles as $file) {
+            @unlink($file);
+        }
+        $this->tempFiles = [];
+    }
+
+    private function createTestableController(): object
+    {
+        return new class(
+            new RequestStack(),
+            $this->createMock(EntityManagerInterface::class),
+            'test',
+            new CsvEncoder(),
+            $this->createMock(LockFactory::class),
+        ) extends NotificationInterceptionDvlaImportController {
+            public function preProcessCsv(string $filename): array
+            {
+                $this->preProcessUploadedDvlaSpreadsheetFile($filename);
+                return $this->dvlaImportData;
+            }
+
+            public function preProcessXlsx(string $filename): array
+            {
+                $this->preProcessUploadedDvlaSpreadsheetFilePhpOffice($filename);
+                return $this->dvlaImportData;
+            }
+        };
+    }
+
+    private function tempFile(string $suffix): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'dvla-import-test-') . $suffix;
+        $this->tempFiles[] = $path;
+        return $path;
+    }
+
+    /**
+     * @param array<array{0: string, 1: string}> $rows
+     */
+    private function writeCsvRows(array $rows, array $header = self::HEADER): string
+    {
+        $lines = array_map(fn(array $row) => implode(',', $row), [$header, ...$rows]);
+        $path = $this->tempFile('.csv');
+        file_put_contents($path, self::BOM . implode("\r\n", $lines) . "\r\n");
+        return $path;
+    }
+
+    /**
+     * @param array<array{0: string, 1: string}> $rows
+     */
+    private function writeXlsxRows(array $rows, array $header = self::HEADER): string
+    {
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getActiveSheet()->fromArray([$header, ...$rows]);
+
+        $path = $this->tempFile('.xlsx');
+        (new XlsxWriter($spreadsheet))->save($path);
+        $spreadsheet->disconnectWorksheets();
+        return $path;
+    }
+
+    /**
+     * Rows exercising every normalisation rule, in both file formats.
+     *
+     * @return array<array{0: string, 1: string}>
+     */
+    private static function awkwardRows(): array
+    {
+        return [
+            ['RJM CONSTRUCTION & EARTHWORKS LIMITED', 'Rob.maggs@rjmconstruction.co.uk'],
+            [' Zeus Packaging (UK) Ltd ', ' richard.sullivan@zeuspackaging.com '],
+            ['', ''],
+            ['Kelda  Transport Management Ltd', 'DAVID.HIBBS@YORKSHIREWATER.CO.UK'],
+        ];
+    }
+
+    /**
+     * @return array<array{0: string, 1: string}>
+     */
+    private static function expectedNormalisedRows(): array
+    {
+        return [
+            ['RJM CONSTRUCTION & EARTHWORKS LIMITED', 'rob.maggs@rjmconstruction.co.uk'],
+            ['Zeus Packaging (UK) Ltd', 'richard.sullivan@zeuspackaging.com'],
+            // blank row skipped; internal whitespace is deliberately preserved here —
+            // NotificationInterceptionCompanyName::setName() collapses it at the entity level
+            ['Kelda  Transport Management Ltd', 'david.hibbs@yorkshirewater.co.uk'],
+        ];
+    }
+
+    public function testCsvAndXlsxProduceIdenticalImportData(): void
+    {
+        $csvData = $this->createTestableController()->preProcessCsv($this->writeCsvRows(self::awkwardRows()));
+        $xlsxData = $this->createTestableController()->preProcessXlsx($this->writeXlsxRows(self::awkwardRows()));
+
+        $this->assertSame($csvData, $xlsxData);
+        $this->assertSame(self::expectedNormalisedRows(), $csvData);
+    }
+
+    public function testCsvWithoutBomIsAccepted(): void
+    {
+        $path = $this->tempFile('.csv');
+        file_put_contents($path, "Operator Name,Email address\nAcme Ltd,fleet@acme.example\n");
+
+        $data = $this->createTestableController()->preProcessCsv($path);
+
+        $this->assertSame([['Acme Ltd', 'fleet@acme.example']], $data);
+    }
+
+    public function testCsvWithUnexpectedHeaderIsRejected(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Column titles not as expected');
+
+        $this->createTestableController()->preProcessCsv(
+            $this->writeCsvRows([['Acme Ltd', 'fleet@acme.example']], header: ['Company', 'Contact'])
+        );
+    }
+
+    public function testXlsxWithUnexpectedHeaderIsRejected(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Column titles not as expected');
+
+        $this->createTestableController()->preProcessXlsx(
+            $this->writeXlsxRows([['Acme Ltd', 'fleet@acme.example']], header: ['Company', 'Contact'])
+        );
+    }
+}

@@ -22,7 +22,10 @@ class NotificationInterceptionCompanyNameDataTransformer implements DataTransfor
     #[\Override]
     public function reverseTransform($value): array
     {
-        $data = explode("\r\n", $value);
+        // Split on any line ending: Symfony's TextareaType normalizes submitted
+        // values to LF before this model transformer runs (symfony/form >= 6.4.42)
+        // See: https://github.com/symfony/symfony/issues/62611
+        $data = preg_split('/\R+/u', $value);
         $data = array_map(fn($d) => mb_trim($d), $data);
         $data = array_filter($data, fn($d) => !empty($d));
         return array_map(fn($d) => $this->getTransformValueOrNewCompanyName($d), array_values($data));

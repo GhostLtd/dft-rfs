@@ -4,7 +4,6 @@ namespace App\Command;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Utility\QualityCheck\QualityCheckEngine;
-use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,17 +20,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class RecomputeCsrgtQualityFlagsCommand extends Command
 {
-    private const int BATCH_SIZE = 100;
+    use MySqlGoneAwayRetryTrait;
 
-    /**
-     * This command can run for a long time against the database, and we have seen intermittent
-     * "MySQL server has gone away" (error 2006) failures. To survive those, each database unit of
-     * work below is wrapped in {@see withRetry()}, which reconnects and retries with exponential
-     * backoff. Recompute is idempotent, so re-running a batch after a reconnect is safe.
-     */
-    private const int MAX_DB_ATTEMPTS = 10;
-    private const int BASE_DELAY_MS = 250;
-    private const int MAX_DELAY_MS = 30_000;
+    private const int BATCH_SIZE = 100;
 
     public function __construct(
         private readonly QualityCheckEngine $engine,
@@ -160,66 +151,5 @@ class RecomputeCsrgtQualityFlagsCommand extends Command
         }
 
         return $qb;
-    }
-
-    /**
-     * Run a database operation, retrying with exponential backoff if the connection is lost
-     * ("MySQL server has gone away" and similar). Reconnects between attempts; rethrows once
-     * {@see MAX_DB_ATTEMPTS} is exhausted.
-     *
-     * @template T
-     * @param callable(): T $op
-     * @return T
-     */
-    private function withRetry(SymfonyStyle $io, string $what, callable $op): mixed
-    {
-        for ($attempt = 1; ; $attempt++) {
-            try {
-                return $op();
-            } catch (ConnectionException $e) {
-                if ($attempt >= self::MAX_DB_ATTEMPTS) {
-                    $io->error(sprintf(
-                        'Database connection lost while %s and did not recover after %d attempts.',
-                        $what,
-                        self::MAX_DB_ATTEMPTS,
-                    ));
-                    throw $e;
-                }
-
-                $delayMs = $this->backoffDelayMs($attempt);
-                $io->warning(sprintf(
-                    'Database connection lost while %s (attempt %d/%d): %s — reconnecting in %.1fs…',
-                    $what,
-                    $attempt,
-                    self::MAX_DB_ATTEMPTS,
-                    $e->getMessage(),
-                    $delayMs / 1000,
-                ));
-
-                usleep($delayMs * 1000);
-                $this->reconnect();
-            }
-        }
-    }
-
-    private function backoffDelayMs(int $attempt): int
-    {
-        return (int) min(self::BASE_DELAY_MS * (2 ** ($attempt - 1)), self::MAX_DELAY_MS);
-    }
-
-    private function reconnect(): void
-    {
-        // A failure during flush() leaves the EntityManager closed; it must be replaced before use.
-        if (!$this->entityManager->isOpen()) {
-            $manager = $this->registry->resetManager();
-            assert($manager instanceof EntityManagerInterface);
-            $this->entityManager = $manager;
-        }
-
-        // Drop the stale connection so the next query establishes a fresh one.
-        $connection = $this->entityManager->getConnection();
-        if ($connection->isConnected()) {
-            $connection->close();
-        }
     }
 }

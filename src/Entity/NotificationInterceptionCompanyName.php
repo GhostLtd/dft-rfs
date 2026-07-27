@@ -30,7 +30,10 @@ class NotificationInterceptionCompanyName
 
     public function setName(?string $name): self
     {
-        $this->name = $name === null ? null : mb_trim($name);
+        // Collapse runs of horizontal whitespace (incl. NBSP) so stored names always match
+        // NotificationInterceptionRepository::normaliseBusinessName() lookups. Line breaks are
+        // preserved: historical jammed rows contain them and must reach the fix command intact.
+        $this->name = $name === null ? null : mb_trim(preg_replace('/[ \t\x{00A0}]+/u', ' ', $name));
         return $this;
     }
 

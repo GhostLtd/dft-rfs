@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Fix**: LCNI: `rfs:dev:lcni-fix-jammed-names` repair command (jam splitting, DVLA-duplicate merging, comma/double-space cleanup; resumable, dry-run, per-flag opt-in)
 - **Fix**: Migrate notify data_class to their new bundle equivalents so that invites are correctly shown
 
 ## 2026-07-02

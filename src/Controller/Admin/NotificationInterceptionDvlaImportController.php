@@ -96,10 +96,28 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
     protected function preProcessUploadedDvlaSpreadsheetFile(string $uploadedFilename): void
     {
-        $this->dvlaImportData = $this->decoder->decode(file_get_contents($uploadedFilename), 'csv', [
+        // Strip the UTF-8 BOM the DVLA files carry; the CSV decoder does not
+        $contents = preg_replace('/^\x{FEFF}/u', '', file_get_contents($uploadedFilename));
+
+        $rows = $this->decoder->decode($contents, 'csv', [
             CsvEncoder::NO_HEADERS_KEY => true,
-            CsvEncoder::OUTPUT_UTF8_BOM_KEY => true,
         ]);
+
+        // Same header validation and normalisation as the XLSX path, so both
+        // file types produce identical import data
+        $headerRow = array_shift($rows);
+        if ($headerRow !== ['Operator Name', 'Email address']) {
+            throw new \RuntimeException('Column titles not as expected');
+        }
+
+        foreach ($rows as $row) {
+            $companyName = mb_trim($row[0] ?? '');
+            $email = strtolower(mb_trim($row[1] ?? ''));
+            if ($companyName === '' && $email === '') {
+                continue;
+            }
+            $this->dvlaImportData[] = [$companyName, $email];
+        }
     }
     protected function preProcessUploadedDvlaSpreadsheetFilePhpOffice(string $uploadedFilename): void
     {
@@ -117,8 +135,13 @@ class NotificationInterceptionDvlaImportController extends AbstractController
         }
 
         foreach ($sheet->getRowIterator(2) as $row) {
-            ['A' => $companyName, 'B' => $email] = $this->getRowValues($row);
-            $this->dvlaImportData[] = [mb_trim($companyName), strtolower(mb_trim($email))];
+            $values = $this->getRowValues($row);
+            $companyName = mb_trim((string) ($values['A'] ?? ''));
+            $email = strtolower(mb_trim((string) ($values['B'] ?? '')));
+            if ($companyName === '' && $email === '') {
+                continue;
+            }
+            $this->dvlaImportData[] = [$companyName, $email];
         }
         $spreadsheet->disconnectWorksheets();
     }
