@@ -310,7 +310,7 @@ class LcniFixJammedNamesCommand extends Command
 
     protected function collapseSpaces(string $name): string
     {
-        return mb_trim(preg_replace('/[ \t\x{00A0}]+/u', ' ', $name));
+        return NotificationInterceptionCompanyName::normaliseName($name);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\NotificationInterception;
+use App\Entity\NotificationInterceptionCompanyName;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,17 +22,12 @@ class NotificationInterceptionRepository extends ServiceEntityRepository
 
     public function findOneByBusinessName(string $businessName): ?NotificationInterception
     {
+        // N.B. Case-insensitive matching comes from the name column's _ci collation
         return $this->createQueryBuilder('ni')
             ->leftJoin('ni.names', 'nn')
             ->andWhere('nn.name = :name')
-            ->setParameter('name', $this->normaliseBusinessName($businessName))
+            ->setParameter('name', NotificationInterceptionCompanyName::normaliseName($businessName))
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    protected function normaliseBusinessName(string $businessName): string
-    {
-        // Collapse all whitespace (including NBSP) to single space, then trim
-        return strtolower(mb_trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $businessName)));
     }
 }

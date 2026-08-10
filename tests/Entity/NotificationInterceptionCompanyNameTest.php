@@ -21,10 +21,11 @@ class NotificationInterceptionCompanyNameTest extends TestCase
             'nbsp collapsed' => ["Acme\u{00A0}Ltd", 'Acme Ltd'],
             'nbsp run collapsed' => ["Acme \u{00A0} Ltd", 'Acme Ltd'],
             'tab collapsed' => ["Acme\tLtd", 'Acme Ltd'],
-            // Line breaks are deliberately preserved: historical jammed records contain them, and
-            // silently collapsing on load-and-save would corrupt them differently instead of
-            // leaving them for the rfs:dev:lcni-fix-jammed-names command
-            'newline preserved' => ["Acme Ltd\nAcme Limited", "Acme Ltd\nAcme Limited"],
+            // Line breaks collapse like any other whitespace: normaliseName() is the single
+            // stored-name rule that lookups and the DVLA import build on. Historical jammed
+            // rows are unaffected — they only exist as DB data, which hydrates via reflection
+            // and reaches the rfs:dev:lcni-fix-jammed-names command without passing setName()
+            'newline collapsed' => ["Acme Ltd\nAcme Limited", 'Acme Ltd Acme Limited'],
         ];
     }
 

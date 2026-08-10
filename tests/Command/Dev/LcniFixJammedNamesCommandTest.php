@@ -33,6 +33,11 @@ class LcniFixJammedNamesCommandTest extends KernelTestCase
 
     protected function createInterception(array $names, ?string $csrgtEmails = 'fleet@example.com', ?string $dvlaEmails = null): NotificationInterception
     {
+        // setName() collapses line breaks, so jammed fixtures can only be seeded raw
+        if (array_filter($names, fn(string $name) => preg_match('/\R/u', $name) === 1)) {
+            return $this->createInterceptionWithRawNames($names, $csrgtEmails, $dvlaEmails);
+        }
+
         $interception = (new NotificationInterception())
             ->setCsrgtEmails($csrgtEmails)
             ->setDvlaEmails($dvlaEmails);
@@ -49,10 +54,10 @@ class LcniFixJammedNamesCommandTest extends KernelTestCase
      * Seed names exactly as given, bypassing setName()'s whitespace normalisation —
      * needed to reproduce historically-corrupted rows.
      */
-    protected function createInterceptionWithRawNames(array $rawNames, ?string $csrgtEmails = 'fleet@example.com'): NotificationInterception
+    protected function createInterceptionWithRawNames(array $rawNames, ?string $csrgtEmails = 'fleet@example.com', ?string $dvlaEmails = null): NotificationInterception
     {
         $placeholders = array_map(fn(int $i) => "__raw_{$i}__" . bin2hex(random_bytes(4)), array_keys($rawNames));
-        $interception = $this->createInterception($placeholders, $csrgtEmails);
+        $interception = $this->createInterception($placeholders, $csrgtEmails, $dvlaEmails);
 
         $connection = $this->entityManager->getConnection();
         foreach ($placeholders as $i => $placeholder) {

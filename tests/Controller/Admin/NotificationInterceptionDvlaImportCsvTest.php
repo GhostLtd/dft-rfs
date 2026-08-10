@@ -56,6 +56,13 @@ class NotificationInterceptionDvlaImportCsvTest extends TestCase
                 $this->preProcessUploadedDvlaSpreadsheetFilePhpOffice($filename);
                 return $this->dvlaImportData;
             }
+
+            public function deduplicate(array $importData): array
+            {
+                $this->dvlaImportData = $importData;
+                $this->deduplicateImportData();
+                return $this->dvlaImportData;
+            }
         };
     }
 
@@ -103,6 +110,7 @@ class NotificationInterceptionDvlaImportCsvTest extends TestCase
             [' Zeus Packaging (UK) Ltd ', ' richard.sullivan@zeuspackaging.com '],
             ['', ''],
             ['Kelda  Transport Management Ltd', 'DAVID.HIBBS@YORKSHIREWATER.CO.UK'],
+            ["VLD65\u{00A0}TRANS UK LTD", 'ops@vld65.example'],
         ];
     }
 
@@ -114,9 +122,11 @@ class NotificationInterceptionDvlaImportCsvTest extends TestCase
         return [
             ['RJM CONSTRUCTION & EARTHWORKS LIMITED', 'rob.maggs@rjmconstruction.co.uk'],
             ['Zeus Packaging (UK) Ltd', 'richard.sullivan@zeuspackaging.com'],
-            // blank row skipped; internal whitespace is deliberately preserved here —
-            // NotificationInterceptionCompanyName::setName() collapses it at the entity level
-            ['Kelda  Transport Management Ltd', 'david.hibbs@yorkshirewater.co.uk'],
+            // blank row skipped; internal whitespace (incl. NBSP) is collapsed to match
+            // NotificationInterceptionCompanyName::setName() — otherwise whitespace variants
+            // miss the existing-record lookup and violate the unique index on insert
+            ['Kelda Transport Management Ltd', 'david.hibbs@yorkshirewater.co.uk'],
+            ['VLD65 TRANS UK LTD', 'ops@vld65.example'],
         ];
     }
 
@@ -137,6 +147,46 @@ class NotificationInterceptionDvlaImportCsvTest extends TestCase
         $data = $this->createTestableController()->preProcessCsv($path);
 
         $this->assertSame([['Acme Ltd', 'fleet@acme.example']], $data);
+    }
+
+    public function testWhitespaceVariantsOfSameNameDeduplicateToOneRecord(): void
+    {
+        // Regression: 'VLD65  TRANS UK LTD' / 'VLD65 TRANS UK LTD' survived dedup as two
+        // records, then setName() collapsed both to the same value → unique index violation
+        $controller = $this->createTestableController();
+        $preProcessed = $controller->preProcessCsv($this->writeCsvRows([
+            ['VLD65  TRANS UK LTD', 'a@vld65.example'],
+            ['VLD65 TRANS UK LTD', 'b@vld65.example'],
+        ]));
+
+        $this->assertSame(
+            [['VLD65 TRANS UK LTD', 'a@vld65.example,b@vld65.example']],
+            $controller->deduplicate($preProcessed)
+        );
+    }
+
+    public function testNamesWithLineBreaksAreCollapsed(): void
+    {
+        // A quoted CSV field can contain a line break; it must be collapsed like any
+        // other whitespace rather than stored (which would create a jammed record)
+        $path = $this->tempFile('.csv');
+        file_put_contents($path, "Operator Name,Email address\n\"Acme\nHaulage Ltd\",ops@acme.example\n");
+
+        $data = $this->createTestableController()->preProcessCsv($path);
+
+        $this->assertSame([['Acme Haulage Ltd', 'ops@acme.example']], $data);
+    }
+
+    public function testWindows1252CsvIsAcceptedAndConvertedToUtf8(): void
+    {
+        // Some DVLA exports are Windows-1252 ("Non-ISO extended-ASCII"): no BOM, and
+        // accented characters encoded as single high bytes that are invalid UTF-8
+        $path = $this->tempFile('.csv');
+        file_put_contents($path, "Operator Name,Email address\nCAF\xC9 EXPRESS LTD,fleet@cafe.example\n");
+
+        $data = $this->createTestableController()->preProcessCsv($path);
+
+        $this->assertSame([['CAFÉ EXPRESS LTD', 'fleet@cafe.example']], $data);
     }
 
     public function testCsvWithUnexpectedHeaderIsRejected(): void

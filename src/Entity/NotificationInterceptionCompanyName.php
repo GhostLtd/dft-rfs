@@ -30,11 +30,19 @@ class NotificationInterceptionCompanyName
 
     public function setName(?string $name): self
     {
-        // Collapse runs of horizontal whitespace (incl. NBSP) so stored names always match
-        // NotificationInterceptionRepository::normaliseBusinessName() lookups. Line breaks are
-        // preserved: historical jammed rows contain them and must reach the fix command intact.
-        $this->name = $name === null ? null : mb_trim(preg_replace('/[ \t\x{00A0}]+/u', ' ', $name));
+        $this->name = $name === null ? null : self::normaliseName($name);
         return $this;
+    }
+
+    /**
+     * NotificationInterceptionRepository::findOneByBusinessName() normalises its lookup
+     * parameter with this, and the DVLA import applies it before deduplicating and
+     * querying for existing records, so that whitespace variants of a stored name can't
+     * miss the lookup and then collide with the unique index on insert.
+     */
+    public static function normaliseName(string $name): string
+    {
+        return mb_trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $name));
     }
 
     public function getNotificationInterception(): ?NotificationInterception

@@ -96,8 +96,17 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
     protected function preProcessUploadedDvlaSpreadsheetFile(string $uploadedFilename): void
     {
+        $contents = file_get_contents($uploadedFilename);
+
         // Strip the UTF-8 BOM the DVLA files carry; the CSV decoder does not
-        $contents = preg_replace('/^\x{FEFF}/u', '', file_get_contents($uploadedFilename));
+        if (str_starts_with($contents, "\xEF\xBB\xBF")) {
+            $contents = substr($contents, 3);
+        }
+
+        // Some DVLA exports arrive as Windows-1252 rather than UTF-8
+        if (!mb_check_encoding($contents, 'UTF-8')) {
+            $contents = mb_convert_encoding($contents, 'UTF-8', 'Windows-1252');
+        }
 
         $rows = $this->decoder->decode($contents, 'csv', [
             CsvEncoder::NO_HEADERS_KEY => true,
@@ -111,7 +120,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
         }
 
         foreach ($rows as $row) {
-            $companyName = mb_trim($row[0] ?? '');
+            $companyName = NotificationInterceptionCompanyName::normaliseName($row[0] ?? '');
             $email = strtolower(mb_trim($row[1] ?? ''));
             if ($companyName === '' && $email === '') {
                 continue;
@@ -136,7 +145,7 @@ class NotificationInterceptionDvlaImportController extends AbstractController
 
         foreach ($sheet->getRowIterator(2) as $row) {
             $values = $this->getRowValues($row);
-            $companyName = mb_trim((string) ($values['A'] ?? ''));
+            $companyName = NotificationInterceptionCompanyName::normaliseName((string) ($values['A'] ?? ''));
             $email = strtolower(mb_trim((string) ($values['B'] ?? '')));
             if ($companyName === '' && $email === '') {
                 continue;
