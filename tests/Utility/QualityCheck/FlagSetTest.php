@@ -121,7 +121,7 @@ class FlagSetTest extends TestCase
     public function testSignatureDiffersByReasonCode(): void
     {
         $one = new FlagSet([$this->makeFlag(SubjectType::STOP, 's1', 'zero-distance-stop')]);
-        $two = new FlagSet([$this->makeFlag(SubjectType::STOP, 's1', 'same-origin-destination-stop')]);
+        $two = new FlagSet([$this->makeFlag(SubjectType::STOP, 's1', 'whole-day-empty')]);
 
         $this->assertNotSame($one->signature(), $two->signature());
     }

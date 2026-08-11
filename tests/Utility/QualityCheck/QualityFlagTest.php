@@ -20,7 +20,7 @@ class QualityFlagTest extends TestCase
 
     public function testForStopsWithSingleStop(): void
     {
-        $flag = QualityFlag::forStops('day-1', 'same-origin-destination-stop', [4]);
+        $flag = QualityFlag::forStops('day-1', 'zero-distance-stop', [4]);
 
         $this->assertSame(['count' => 1, 'numbers' => '4'], $flag->payload);
     }

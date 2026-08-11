@@ -2,6 +2,9 @@
 
 # Changelog
 
+## Upcoming
+- **Change**: Remove same-origin-destination-stop flag
+
 ## 2026-08-10
 - **Update**: Update exempt vehicle question to be more inclusive / less prescription (our list of exempt vehicles wasn't exhaustive, which confused some owners of exempt vehicles)
 - **Fix**: LCNI: `rfs:dev:lcni-fix-jammed-names` repair command (jam splitting, DVLA-duplicate merging, comma/double-space cleanup; resumable, dry-run, per-flag opt-in)

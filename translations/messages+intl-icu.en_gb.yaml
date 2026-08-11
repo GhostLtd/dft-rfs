@@ -660,7 +660,6 @@ admin:
       reason:
         whole-day-empty: No cargo carried this day
         zero-distance-stop: No distance recorded
-        same-origin-destination-stop: Same origin and destination
       stop-prefix: >-
         {count, plural,
           one {Stop {numbers}}
