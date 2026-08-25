@@ -1749,7 +1749,6 @@ international:
     download: For your records, you should <a target="_blank" href="{url}" class="govuk-link">download a PDF</a> (opens in a new window or tab) of your finished survey.
 
   buttons:
-    add-vehicles: Add Vehicles
     submit-survey: Submit survey
   help:
     text:

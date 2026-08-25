@@ -42,7 +42,7 @@ class BusinessAndCorrespondenceDetailsController extends AbstractController
         if ($canSubmitAtThisPoint) {
             $submitLabel = 'international.buttons.submit-survey';
         } elseif (!$detailsComplete) {
-            $submitLabel = 'international.buttons.add-vehicles';
+            $submitLabel = 'common.actions.continue';
         } else {
             $submitLabel = null;
         }

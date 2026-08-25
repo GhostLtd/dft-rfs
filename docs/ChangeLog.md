@@ -4,6 +4,7 @@
 
 ## Upcoming
 - **Change**: Remove same-origin-destination-stop flag
+- **Change**: IRHS: Business details summary - remove "Next steps" and change "Add vehicles" -> "Continue"
 
 ## 2026-08-10
 - **Update**: Update exempt vehicle question to be more inclusive / less prescription (our list of exempt vehicles wasn't exhaustive, which confused some owners of exempt vehicles)
