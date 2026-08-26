@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e18ce5376801e0f1aa73ae50a012bab1",
+    "content-hash": "a324570faeb063826751d84f78cc0585",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -2014,11 +2014,11 @@
         },
         {
             "name": "ghost/govuk-frontend-bundle",
-            "version": "5.1.4",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://git.tomarq.net/ghost/govuk-frontend-bundle.git",
-                "reference": "980f9b0c1de8968517583e6be25edb3e06958a35"
+                "reference": "b1960bcdd218b31208f4f18080d589b71924dc70"
             },
             "require": {
                 "brick/math": "^0.12.1",
@@ -2074,7 +2074,7 @@
                 }
             ],
             "description": "Symfony integration bundle for govuk-frontend",
-            "time": "2026-08-11T10:34:05+00:00"
+            "time": "2026-08-28T15:30:09+00:00"
         },
         {
             "name": "google/auth",

@@ -1,11 +1,11 @@
 @import "pdf/reset";
 
-@import "node_modules/govuk-frontend/dist/govuk/base";
-@import "node_modules/govuk-frontend/dist/govuk/core/typography";
-@import "node_modules/govuk-frontend/dist/govuk/components/summary-list/summary-list";
-@import "node_modules/govuk-frontend/dist/govuk/components/table/table";
-@import "node_modules/govuk-frontend/dist/govuk/helpers/colour";
-@import "node_modules/govuk-frontend/dist/govuk/overrides/spacing";
+@import "govuk-frontend/dist/govuk/base";
+@import "govuk-frontend/dist/govuk/core/typography";
+@import "govuk-frontend/dist/govuk/components/summary-list/summary-list";
+@import "govuk-frontend/dist/govuk/components/table/table";
+@import "govuk-frontend/dist/govuk/helpers/colour";
+@import "govuk-frontend/dist/govuk/overrides/spacing";
 
 @import "pdf/base";
 

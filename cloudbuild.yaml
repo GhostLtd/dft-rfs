@@ -5,7 +5,7 @@ options:
 
 steps:
     # Start by running some pre-install actions
-    - name: node:20
+    - name: node:22
       id: 'pre-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a pre-install']
@@ -26,7 +26,7 @@ steps:
       waitFor: ['copy-deploy-files']
 
     # build assets, and .env.local file
-    - name: node:20
+    - name: node:22
       id: 'yarn-build'
       entrypoint: sh
       args: ['-c', 'corepack enable && yarn install --immutable --network-timeout 60000 && yarn run deploy-build && yarn run build-env-subs']
@@ -62,7 +62,7 @@ steps:
 
 
     # Finish up by calling the post-install-script
-    - name: node:20
+    - name: node:22
       id: 'post-install-script'
       entrypoint: sh
       args: ['-c', 'config/gcloud-build/call-remote-action.sh -a post-install']
