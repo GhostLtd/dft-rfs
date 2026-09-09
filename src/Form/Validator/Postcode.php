@@ -12,6 +12,8 @@ class Postcode extends Constraint
     public function __construct(
         ?string $message = null,
         public bool $allowPartial = false,
+        /** Also require the outward code to be a known UK postcode district (subject to Features::OUTWARD_CODE_CHECK) */
+        public bool $checkOutwardCode = false,
         array  $groups = [],
         mixed  $payload = null,
     )

@@ -45,7 +45,7 @@ abstract class AbstractOriginType extends AbstractType
                     'label' => "{$translationKeyPrefix}.origin-location.postcode-only.label",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'help' => "{$translationKeyPrefix}.origin-location.postcode-only.help",
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['origin-day', 'origin-day-stop'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['origin-day', 'origin-day-stop'])],
                 ]);
             } else {
                 $form->add('originLocation', Gds\InputType::class, [

@@ -45,7 +45,7 @@ abstract class AbstractDestinationType extends AbstractType
                     'label' => "{$translationKeyPrefix}.destination-location.postcode-only.label",
                     'label_attr' => ['class' => 'govuk-label--s'],
                     'help' => "{$translationKeyPrefix}.destination-location.postcode-only.help",
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['destination-day', 'destination-day-stop'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['destination-day', 'destination-day-stop'])],
                 ]);
             } else {
                 $form->add('destinationLocation', Gds\InputType::class, [

@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: Outward code checker
 - **Change**: Remove same-origin-destination-stop flag
 - **Change**: IRHS: Business details summary - remove "Next steps" and change "Add vehicles" -> "Continue"
 

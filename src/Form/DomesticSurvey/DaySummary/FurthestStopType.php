@@ -41,7 +41,7 @@ class FurthestStopType extends AbstractType
                     'label_is_page_heading' => true,
                     'label_attr' => ['class' => 'govuk-fieldset__legend--xl'],
                     'help' => "{$translationKeyPrefix}.furthest-stop.postcode-only.help",
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['day-summary.furthest-stop'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['day-summary.furthest-stop'])],
                 ]);
             } else {
                 $form->add('furthestStop', Gds\InputType::class, [

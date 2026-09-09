@@ -26,6 +26,21 @@ This setting takes a comma-delimited set of values, allowing for the disabling o
 
 Supported values are: csrgt, irhs, pre-enquiry and roro.
 
+### APP_FEATURES
+
+Comma-delimited list of enabled feature flags (see `App\Features`). Flags relevant to postcode handling:
+
+- `postcode-changeover`: domestic survey location fields accept postcodes only (see `POSTCODE_CHANGEOVER_DATE` below).
+- `outward-code-check`: CSRGT trip-location postcodes (origin, destination, furthest stop, and their admin edit forms) must also have a
+  known UK outward code (postcode district), as listed in `data/uk-outward-codes.txt` (current and terminated districts alike, since
+  respondents may quote older paperwork). That file is generated from the ONS Postcode
+  Directory by `bin/console rfs:dev:build-outward-codes` and should be regenerated when a new ONSPD release comes out. Disable the flag
+  if the data file is stale and rejecting genuine postcodes.
+
+```
+APP_FEATURES=postcode-changeover,outward-code-check
+```
+
 ### POSTCODE_CHANGEOVER_DATE
 
 Used in conjunction with the `postcode-changeover` feature flag (`APP_FEATURES`). Controls when domestic surveys switch from accepting "postcode or place name" to "postcode only" for location fields.

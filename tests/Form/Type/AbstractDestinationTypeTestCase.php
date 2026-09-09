@@ -8,7 +8,6 @@ use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Features;
-use App\Form\Validator\PostcodeValidator;
 use App\Utility\PostcodeChangeoverHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Form\PreloadedExtension;
@@ -37,14 +36,6 @@ abstract class AbstractDestinationTypeTestCase extends AbstractTypeTestCase
                 ], []),
             ]
         );
-    }
-
-    #[\Override]
-    protected function getValidators(): array
-    {
-        return array_merge(parent::getValidators(), [
-            PostcodeValidator::class => new PostcodeValidator(),
-        ]);
     }
 
     public static function dataSubmitFeatureDisabled(): array

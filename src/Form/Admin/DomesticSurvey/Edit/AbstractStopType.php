@@ -64,7 +64,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                     'label_attr' => ['class' => 'govuk-label--s'],
                 ], $isPostcodeOnly ? [
                     'label' => 'domestic.day-stop.origin.origin-location.postcode-only.label',
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['admin-day-stop'])],
                 ] : []))
                 ->add('goodsTransferredFrom', Gds\ChoiceType::class, [
                     'label' => 'Were goods loaded?',
@@ -76,7 +76,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                     'label_attr' => ['class' => 'govuk-label--s'],
                 ], $isPostcodeOnly ? [
                     'label' => 'domestic.day-stop.destination.destination-location.postcode-only.label',
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['admin-day-stop'])],
                 ] : []))
                 ->add('goodsTransferredTo', Gds\ChoiceType::class, [
                     'label' => 'Were goods unloaded?',
@@ -90,7 +90,7 @@ abstract class AbstractStopType extends AbstractType implements DataMapperInterf
                     'label_attr' => ['class' => 'govuk-label--s'],
                 ], $isPostcodeOnly ? [
                     'label' => 'domestic.day-summary.furthest-stop.furthest-stop.postcode-only.label',
-                    'constraints' => [new Postcode(allowPartial: true, groups: ['admin-day-stop', 'admin-day-summary'])],
+                    'constraints' => [new Postcode(allowPartial: true, checkOutwardCode: true, groups: ['admin-day-stop', 'admin-day-summary'])],
                 ] : []));
             }
 

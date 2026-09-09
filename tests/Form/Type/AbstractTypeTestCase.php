@@ -10,6 +10,8 @@ use Ghost\GovUkFrontendBundle\Form\Extension\FormTypeExtension;
 use Ghost\GovUkFrontendBundle\Form\Extension\LabelIsPageHeadingExtension;
 use Ghost\GovUkFrontendBundle\Form\Extension\NotRequiredExtension;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use App\Form\Validator\PostcodeValidator;
+use App\Utility\OutwardCodes\OutwardCodeChecker;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Constraint;
@@ -69,6 +71,8 @@ abstract class AbstractTypeTestCase extends TypeTestCase
         return [
             // For some reason the expression validator is keyed differently (see ConstraintValidatorFactory)
             'validator.expression' => new ExpressionValidator($expressionLanguage),
+            // Needs constructor args, so the factory can't build it on demand. Uses the real outward-code data file.
+            PostcodeValidator::class => new PostcodeValidator(new OutwardCodeChecker(dirname(__DIR__, 3) . '/' . OutwardCodeChecker::DATA_FILE)),
             // mock the unique validator, because there is no container, and therefore no doctrine to query for duplicates
             // this will **always** validate, even if there are duplicates
             'doctrine.orm.validator.unique' => (new class() implements ConstraintValidatorInterface {

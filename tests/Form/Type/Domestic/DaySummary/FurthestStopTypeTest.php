@@ -3,10 +3,11 @@
 namespace App\Tests\Form\Type\Domestic\DaySummary;
 
 use App\Entity\Domestic\DaySummary;
+use App\Features;
 use App\Form\DomesticSurvey\DaySummary\FurthestStopType;
-use App\Form\Validator\PostcodeValidator;
 use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Tests\Form\Type\PostcodeChangeoverTestTrait;
+use Ghost\GovUkCoreBundle\Features as CoreFeatures;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Form\PreloadedExtension;
 
@@ -29,14 +30,6 @@ class FurthestStopTypeTest extends AbstractTypeTestCase
                 ], []),
             ]
         );
-    }
-
-    #[\Override]
-    protected function getValidators(): array
-    {
-        return array_merge(parent::getValidators(), [
-            PostcodeValidator::class => new PostcodeValidator(),
-        ]);
     }
 
     public static function dataSubmitFeatureDisabled(): array
@@ -135,5 +128,39 @@ class FurthestStopTypeTest extends AbstractTypeTestCase
                 (string) $form->getErrors(true)
             )
         );
+    }
+
+    public static function dataSubmitOutwardCodeCheck(): array
+    {
+        return [
+            'known district, full' => ['SO14 0YG', true],
+            'known district, partial' => ['NN6', true],
+            'unknown district, full' => ['ZZ1 1AA', false],
+            'unknown district, partial' => ['ZZ1', false],
+            'terminated district (BN4) is still accepted' => ['BN4', true],
+            'district that never existed (BN19)' => ['BN19', false],
+        ];
+    }
+
+    #[DataProvider('dataSubmitOutwardCodeCheck')]
+    public function testSubmitWithOutwardCodeCheckEnabled(string $furthestStop, bool $expectedValid): void
+    {
+        $this->featureEnabled = true;
+        $this->setUp();
+
+        // Enable the outward-code check alongside postcode-changeover (setUp only enables the latter)
+        $_ENV['APP_FEATURES'] = Features::POSTCODE_CHANGEOVER . ',' . Features::OUTWARD_CODE_CHECK;
+        (new \ReflectionProperty(CoreFeatures::class, 'enabledFeatures'))->setValue(null, []);
+
+        try {
+            $data = $this->createDaySummaryWithMockedChain(true);
+            $form = $this->factory->create(FurthestStopType::class, $data);
+            $form->submit(['furthestStop' => $furthestStop]);
+
+            $this->assertTrue($form->isSynchronized());
+            $this->assertEquals($expectedValid, $form->isValid(), (string) $form->getErrors(true));
+        } finally {
+            $this->setPostcodeChangeoverFeature(false);
+        }
     }
 }
