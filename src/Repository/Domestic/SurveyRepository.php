@@ -108,11 +108,12 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyDeletion
             ->execute();
 
         $surveys = $this->createQueryBuilder('survey', 'survey.id')
-            ->select('survey, passcode_user, response, vehicle, reissued')
+            ->select('survey, passcode_user, response, vehicle, reissued, notifications')
             ->leftJoin('survey.passcodeUser', 'passcode_user')
             ->leftJoin('survey.response', 'response')
             ->leftJoin('response.vehicle', 'vehicle')
             ->leftJoin('survey.reissuedSurvey', 'reissued')
+            ->leftJoin('survey.notifications', 'notifications')
             ->where('survey.id IN (:surveyIDs)')
             ->orderBy('survey.surveyPeriodStart', 'ASC')
             ->addOrderBy('survey.id', 'ASC')

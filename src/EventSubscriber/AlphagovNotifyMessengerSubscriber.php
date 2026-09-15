@@ -4,8 +4,7 @@ namespace App\EventSubscriber;
 
 use Alphagov\Notifications\Exception\ApiException;
 use App\Entity\NotifyApiResponse;
-use App\Entity\SurveyReminderInterface;
-use App\Entity\SurveyInterface;
+use App\Entity\SurveyNotificationInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Utility\AlphagovNotify\Reference;
 use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\AbstractMessage;
@@ -22,11 +21,11 @@ use Symfony\Component\Workflow\Registry;
 
 class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 {
-    public const STATUS_KEY = 'symfony_messenger_bus.govuk_notify_status';
+    public const string STATUS_KEY = 'symfony_messenger_bus.govuk_notify_status';
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected Registry $workflowRegistry
+        protected Registry $workflowRegistry,
     ) {}
 
     public function onMessageFailed(WorkerMessageFailedEvent $event): void
@@ -82,77 +81,53 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
 
     protected function logResponse(AbstractMessage $message, array $apiResponseData): void
     {
-        /** @var ApiResponseInterface|SurveyInterface|null $entity */
         $entity = $this->entityManager->find($message->getOriginatingEntityClass(), $message->getOriginatingEntityId());
-
-        if ($entity) {
-           $timestamp = new \DateTime();
-
-            $notifyApiResponse = (new NotifyApiResponse())
-                ->setEndpoint(match ($message::class) {
-                    Email::class => '/v2/notifications/email',
-                    Letter::class => '/v2/notifications/letter',
-                    Sms::class => '/v2/notifications/sms',
-                    default => throw new \InvalidArgumentException(sprintf('Unexpected message class "%s"', $message::class)),
-                })
-                ->setEventName($message->getEventName())
-                ->setMessageClass($message::class)
-                ->setData($apiResponseData)
-                ->setRecipient($message->getRecipient())
-                ->setRecipientHash($message->getRecipientHash())
-                ->setTimestamp($timestamp);
-
-            $this->entityManager->persist($notifyApiResponse);
-            $entity->addNotifyApiResponse($notifyApiResponse);
-
-            $status = $notifyApiResponse->getData()[self::STATUS_KEY];
-
-            // We set the "sent date" immediately, otherwise upon the next cron run, the cron will see that no reminder
-            // has been sent and will immediately queue another message.
-            //
-            // This would result in failed messages being perpetually re-tried, and the daily cron run would end up
-            // hitting the notify API with an ever-increasing amount of calls.
-            //
-            // When the "sent date" is set immediately on the other hand, then failures will still be re-tried 3 times
-            // by the message consumer using its exponential backoff settings. If it fails 3 times, then the error
-            // will be permanent.
-
-            // N.B. Everything below here only applies to CSRGT / IRHS / PreEnquiry.
-            //      RoRo works a bit differently.
-
-            if ($entity instanceof SurveyReminderInterface) {
-                switch ($message->getEventName()) {
-                    case Reference::EVENT_INVITE:
-                        $entity->setInvitationSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_REMINDER_1:
-                        $entity->setFirstReminderSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_REMINDER_2:
-                        $entity->setSecondReminderSentDate($timestamp);
-                        break;
-                    case Reference::EVENT_MANUAL_REMINDER:
-                        $entity->setLatestManualReminderSentDate($timestamp);
-                        break;
-                }
-            }
-
-            if ($this->workflowRegistry->has($entity)) {
-                $workflow = $this->workflowRegistry->get($entity);
-
-                if ($status === Reference::STATUS_ACCEPTED) {
-                    if ($workflow->can($entity, 'invitation_sent')) {
-                        $workflow->apply($entity, 'invitation_sent');
-                    }
-                } else if ($status === Reference::STATUS_FAILED) {
-                    if ($workflow->can($entity, 'invitation_failed')) {
-                        $workflow->apply($entity, 'invitation_failed');
-                    }
-                }
-            }
-
-            $this->entityManager->flush();
+        if (!$entity) {
+            return;
         }
+
+        $notifyApiResponse = (new NotifyApiResponse())
+            ->setEndpoint(match ($message::class) {
+                Email::class => '/v2/notifications/email',
+                Letter::class => '/v2/notifications/letter',
+                Sms::class => '/v2/notifications/sms',
+                default => throw new \InvalidArgumentException(sprintf('Unexpected message class "%s"', $message::class)),
+            })
+            ->setEventName($message->getEventName())
+            ->setMessageClass($message::class)
+            ->setData($apiResponseData)
+            ->setRecipient($message->getRecipient())
+            ->setRecipientHash($message->getRecipientHash())
+            ->setTimestamp(new \DateTime());
+        $this->entityManager->persist($notifyApiResponse);
+
+        $survey = null;
+
+        if ($entity instanceof SurveyNotificationInterface) {
+            $survey = $entity->getSurvey();
+        }
+
+        if ($entity instanceof ApiResponseInterface) {
+            $entity->addNotifyApiResponse($notifyApiResponse);
+        }
+
+        $status = $apiResponseData[self::STATUS_KEY];
+        $workflowSubject = $survey ?? $entity;
+
+        if ($this->workflowRegistry->has($workflowSubject)) {
+            $workflow = $this->workflowRegistry->get($workflowSubject);
+            if ($status === Reference::STATUS_ACCEPTED) {
+                if ($workflow->can($workflowSubject, 'invitation_sent')) {
+                    $workflow->apply($workflowSubject, 'invitation_sent');
+                }
+            } else if ($status === Reference::STATUS_FAILED) {
+                if ($workflow->can($workflowSubject, 'invitation_failed')) {
+                    $workflow->apply($workflowSubject, 'invitation_failed');
+                }
+            }
+        }
+
+        $this->entityManager->flush();
     }
 
     #[\Override]

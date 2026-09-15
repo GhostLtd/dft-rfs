@@ -14,10 +14,11 @@ use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
 use App\Repository\AuditLog\AuditLogRepository;
-use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
-use App\Utility\EmailBlacklistService;
 use App\Utility\NotificationInterceptionService;
+use App\Utility\Notification\NotificationChannel;
+use App\Utility\Notification\NotificationSender;
+use App\Utility\Notification\NotificationType;
 use App\Utility\Reminder\ManualReminderHelper;
 use App\Utility\Reminder\UnavailabilityReason;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,12 +26,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ManualReminderHelperTest extends KernelTestCase
 {
     protected AuditLogRepository&MockObject $auditLogRepositoryMock;
-    protected EmailBlacklistService&MockObject $emailBlacklistServiceMock;
+    protected NotificationSender&MockObject $senderMock;
 
     protected ManualReminderHelper $manualReminderHelper;
 
@@ -39,28 +40,33 @@ class ManualReminderHelperTest extends KernelTestCase
     {
         $this->auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
         $entityManagerMock = $this->createMock(EntityManagerInterface::class);
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
-        $personalisationHelperMock = $this->createMock(PersonalisationHelper::class);
+        $entityManagerMock->method('wrapInTransaction')->willReturnCallback(fn(callable $f) => $f());
         $securityMock = $this->createMock(Security::class);
         $notificationInterceptionServiceMock = $this->createMock(NotificationInterceptionService::class);
         $notificationInterceptionServiceMock
             ->method('getAllEmailsForSurvey')
             ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
 
-        $this->emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
-        $this->emailBlacklistServiceMock
-            ->method('filterBlacklistedEmails')
-            ->willReturnCallback(fn(array $emails) => $emails); // Pass-through by default
+        $this->senderMock = $this->createMock(NotificationSender::class);
+        $this->senderMock->method('send')->willReturn([NotificationChannel::EMAIL]);
 
         $this->manualReminderHelper = new ManualReminderHelper(
             $this->auditLogRepositoryMock,
             $entityManagerMock,
-            $messageBusMock,
-            $personalisationHelperMock,
             $securityMock,
             $notificationInterceptionServiceMock,
-            $this->emailBlacklistServiceMock,
+            $this->senderMock,
         );
+    }
+
+    private static function withNotification(SurveyManualReminderInterface $survey, NotificationType $type, ?\DateTime $sentAt): SurveyManualReminderInterface
+    {
+        if ($sentAt === null) {
+            return $survey;
+        }
+        $n = $survey->createNotification()->setType($type)->setChannel(NotificationChannel::EMAIL)->setSentAt($sentAt);
+        $survey->addNotification($n);
+        return $survey;
     }
 
     public static function dataCanShowManualReminderButton(): array
@@ -192,49 +198,44 @@ class ManualReminderHelperTest extends KernelTestCase
 
     public static function dataGetReasonWhyCannotSendManualReminder(): array
     {
-        $domesticSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): DomesticSurvey =>
-        (new DomesticSurvey())
-            ->setResponse(
-                (new DomesticResponse())
-                    ->setContactEmail($contactEmail)
-            )
-            ->setId('abc-123')
-            ->setState($state)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate($latestManualReminderDate)
-            ->setInvitationEmails($invitationEmails)
-;
+        $domesticSurvey = function(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): SurveyManualReminderInterface {
+            $survey = (new DomesticSurvey())
+                ->setResponse(
+                    (new DomesticResponse())
+                        ->setContactEmail($contactEmail)
+                )
+                ->setId('abc-123')
+                ->setState($state)
+                ->setInvitationEmails($invitationEmails);
 
-        $internationalSurvey = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): InternationalSurvey =>
-        (new InternationalSurvey())
-            ->setResponse(
-                (new InternationalResponse())
-                    ->setContactEmail($contactEmail)
-            )            ->setId('abc-123')
-            ->setState($state)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate($latestManualReminderDate)
-            ->setInvitationEmails($invitationEmails)
-            ;
+            return self::withNotification($survey, NotificationType::MANUAL_REMINDER, $latestManualReminderDate);
+        };
 
-        $preEnquiry = fn(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): PreEnquiry =>
-        (new PreEnquiry())
-            ->setResponse(
-                (new PreEnquiryResponse())
-                    ->setContactEmail($contactEmail)
-            )
-            ->setId('abc-123')
-            ->setState($state)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate($latestManualReminderDate)
-            ->setInvitationEmails($invitationEmails)
-            ;
+        $internationalSurvey = function(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): SurveyManualReminderInterface {
+            $survey = (new InternationalSurvey())
+                ->setResponse(
+                    (new InternationalResponse())
+                        ->setContactEmail($contactEmail)
+                )
+                ->setId('abc-123')
+                ->setState($state)
+                ->setInvitationEmails($invitationEmails);
+
+            return self::withNotification($survey, NotificationType::MANUAL_REMINDER, $latestManualReminderDate);
+        };
+
+        $preEnquiry = function(string $state, ?string $contactEmail = null, ?string $invitationEmails = null, ?\DateTime $latestManualReminderDate = null): SurveyManualReminderInterface {
+            $survey = (new PreEnquiry())
+                ->setResponse(
+                    (new PreEnquiryResponse())
+                        ->setContactEmail($contactEmail)
+                )
+                ->setId('abc-123')
+                ->setState($state)
+                ->setInvitationEmails($invitationEmails);
+
+            return self::withNotification($survey, NotificationType::MANUAL_REMINDER, $latestManualReminderDate);
+        };
 
         $sixDaysAgo = (new \DateTime())->modify('-6 days');
         $eightDaysAgo = (new \DateTime())->modify('-8 days');
@@ -304,11 +305,12 @@ class ManualReminderHelperTest extends KernelTestCase
             ?\DateTime $chaseNoteDate,
         ) {
             $survey = (new DomesticSurvey())
-                ->setId('abc-123')
-                ->setInvitationSentDate($invitationDate)
-                ->setFirstReminderSentDate($firstReminderDate)
-                ->setSecondReminderSentDate($secondReminderDate)
-                ->setLatestManualReminderSentDate($manualReminderDate);
+                ->setId('abc-123');
+
+            self::withNotification($survey, NotificationType::INVITE, $invitationDate);
+            self::withNotification($survey, NotificationType::REMINDER_1, $firstReminderDate);
+            self::withNotification($survey, NotificationType::REMINDER_2, $secondReminderDate);
+            self::withNotification($survey, NotificationType::MANUAL_REMINDER, $manualReminderDate);
 
             $addNote = function(\DateTime $date, string $message) use ($survey) {
                 $note = (new SurveyNote())
@@ -395,23 +397,14 @@ class ManualReminderHelperTest extends KernelTestCase
 
     public function testSendManualReminderDoesNotDispatchToBlacklistedEmail(): void
     {
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
-        $messageBusMock
-            ->expects($this->never())
-            ->method('dispatch');
-
         $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $entityManagerMock->method('wrapInTransaction')->willReturnCallback(fn(callable $f) => $f());
         $entityManagerMock
             ->expects($this->never())
             ->method('persist');
         $entityManagerMock
             ->expects($this->never())
             ->method('flush');
-
-        $emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
-        $emailBlacklistServiceMock
-            ->method('filterBlacklistedEmails')
-            ->willReturn([]);
 
         $auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
         $auditLogRepositoryMock
@@ -423,28 +416,30 @@ class ManualReminderHelperTest extends KernelTestCase
             ->method('getAllEmailsForSurvey')
             ->willReturnCallback(fn(SurveyManualReminderInterface $s) => $s->getArrayOfInvitationEmails());
 
-        $helper = new ManualReminderHelper(
-            $auditLogRepositoryMock,
-            $entityManagerMock,
-            $messageBusMock,
-            $this->createMock(PersonalisationHelper::class),
-            $this->createMock(Security::class),
-            $notificationInterceptionServiceMock,
-            $emailBlacklistServiceMock,
-        );
-
         $survey = (new DomesticSurvey())
             ->setId('abc-123')
             ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
             ->setInvitationEmails(null)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate((new \DateTime())->modify('-8 days'))
             ->setResponse(
                 (new DomesticResponse())
                     ->setContactEmail('blacklisted@example.com')
             );
+        self::withNotification($survey, NotificationType::MANUAL_REMINDER, (new \DateTime())->modify('-8 days'));
+
+        $this->senderMock = $this->createMock(NotificationSender::class);
+        $this->senderMock
+            ->expects($this->once())
+            ->method('send')
+            ->with($survey, NotificationType::MANUAL_REMINDER)
+            ->willReturn([]); // Every recipient was blacklisted, so nothing was dispatched.
+
+        $helper = new ManualReminderHelper(
+            $auditLogRepositoryMock,
+            $entityManagerMock,
+            $this->createMock(Security::class),
+            $notificationInterceptionServiceMock,
+            $this->senderMock,
+        );
 
         $result = $helper->sendManualReminder($survey);
 
@@ -453,23 +448,13 @@ class ManualReminderHelperTest extends KernelTestCase
 
     public function testSendManualReminderReturnsTrueOnSuccess(): void
     {
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
-        $messageBusMock
-            ->expects($this->once())
-            ->method('dispatch')
-            ->willReturn(new \Symfony\Component\Messenger\Envelope(new \stdClass()));
-
-        $entityManagerMock = $this->createStub(EntityManagerInterface::class);
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $entityManagerMock->method('wrapInTransaction')->willReturnCallback(fn(callable $f) => $f());
 
         $securityMock = $this->createMock(Security::class);
-        $userMock = $this->createMock(\Symfony\Component\Security\Core\User\UserInterface::class);
+        $userMock = $this->createMock(UserInterface::class);
         $userMock->method('getUserIdentifier')->willReturn('test-user');
         $securityMock->method('getUser')->willReturn($userMock);
-
-        $emailBlacklistServiceMock = $this->createMock(EmailBlacklistService::class);
-        $emailBlacklistServiceMock
-            ->method('filterBlacklistedEmails')
-            ->willReturnCallback(fn(array $emails) => $emails);
 
         $auditLogRepositoryMock = $this->createMock(AuditLogRepository::class);
         $auditLogRepositoryMock
@@ -484,25 +469,20 @@ class ManualReminderHelperTest extends KernelTestCase
         $helper = new ManualReminderHelper(
             $auditLogRepositoryMock,
             $entityManagerMock,
-            $messageBusMock,
-            $this->createMock(PersonalisationHelper::class),
             $securityMock,
             $notificationInterceptionServiceMock,
-            $emailBlacklistServiceMock,
+            $this->senderMock,
         );
 
         $survey = (new DomesticSurvey())
             ->setId('abc-123')
             ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
             ->setInvitationEmails(null)
-            ->setInvitationSentDate(null)
-            ->setFirstReminderSentDate(null)
-            ->setSecondReminderSentDate(null)
-            ->setLatestManualReminderSentDate((new \DateTime())->modify('-8 days'))
             ->setResponse(
                 (new DomesticResponse())
                     ->setContactEmail('valid@example.com')
             );
+        self::withNotification($survey, NotificationType::MANUAL_REMINDER, (new \DateTime())->modify('-8 days'));
 
         $result = $helper->sendManualReminder($survey);
 

@@ -8,8 +8,8 @@ CREATE OR REPLACE VIEW view_international_firms AS (
         , s.state                                   AS SurveyStatus
         , s.submission_date                         AS SubmissionDate
         , CASE
-            WHEN s.second_reminder_sent_date IS NOT NULL THEN 2
-            WHEN s.first_reminder_sent_date IS NOT NULL THEN 1
+            WHEN EXISTS (SELECT 1 FROM international_survey_notification n WHERE n.survey_id = s.id AND n.type = 'reminder-2') THEN 2
+            WHEN EXISTS (SELECT 1 FROM international_survey_notification n WHERE n.survey_id = s.id AND n.type = 'reminder-1') THEN 1
             ELSE 0
           END                                       AS NumberOfReminders
         , sr.annual_international_hgv_journey_count AS NumberOfInternationalHGVJourneys
@@ -31,7 +31,7 @@ CREATE OR REPLACE VIEW view_international_firms AS (
               -- no response created yet, but the survey was issued on/after deploy
               OR (
                 sr.id IS NULL
-                AND s.invitation_sent_date >= '2026-03-11'
+                AND (SELECT MAX(n.sent_at) FROM international_survey_notification n WHERE n.survey_id = s.id AND n.type = 'invite') >= '2026-03-11'
               )
             THEN 1 ELSE 0
           END                                       AS AskedNewLgvQuestions

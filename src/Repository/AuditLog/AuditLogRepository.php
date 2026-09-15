@@ -2,6 +2,7 @@
 
 namespace App\Repository\AuditLog;
 
+use Doctrine\Common\Util\ClassUtils;
 use App\Entity\AuditLog\AuditLog;
 use App\Entity\Domestic\Survey as DomesticSurvey;
 use App\Entity\International\Survey as InternationalSurvey;
@@ -67,6 +68,8 @@ class AuditLogRepository extends ServiceEntityRepository
 
     public function getLogs(string $entityId, string $entityClass): array
     {
+        $entityClass = ClassUtils::getRealClass($entityClass);
+
         // Gets called a couple of times on the survey view admin page, from disparate places, and so a little
         // memoization is used here.
         static $localCache = [];

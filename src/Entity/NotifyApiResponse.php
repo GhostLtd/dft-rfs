@@ -11,7 +11,7 @@ class NotifyApiResponse
 {
     use IdTrait;
 
-    #[ORM\Column(type: Types::STRING, length: 16)]
+    #[ORM\Column(type: Types::STRING, length: 32)]
     private ?string $eventName = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]

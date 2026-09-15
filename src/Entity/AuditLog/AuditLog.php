@@ -2,6 +2,7 @@
 
 namespace App\Entity\AuditLog;
 
+use Doctrine\Common\Util\ClassUtils;
 use App\Entity\IdTrait;
 use App\Repository\AuditLog\AuditLogRepository;
 use DateTime;
@@ -71,7 +72,7 @@ class AuditLog
 
     public function setEntityClass(string $entityClass): self
     {
-        $this->entityClass = $entityClass;
+        $this->entityClass = ClassUtils::getRealClass($entityClass);
         return $this;
     }
 

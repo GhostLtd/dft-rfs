@@ -32,7 +32,7 @@
             survey.company.businessName,
             {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
             survey.qualityAssured ? 'Yes' : 'No',
-            reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate),
+            reminderDate(notification_sent_at(survey, 'reminder-1'), notification_sent_at(survey, 'reminder-2')),
             emptiesCount == 0 ? '-' : emptiesCount,
             countField(survey, 'numberOfVehicles'),
             countField(survey, 'totalNumberOfTrips'),

@@ -17,18 +17,6 @@ trait SurveyTrait
     use IdTrait;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $invitationSentDate;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $firstReminderSentDate;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $secondReminderSentDate;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $latestManualReminderSentDate;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $responseStartDate;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -67,28 +55,6 @@ trait SurveyTrait
                 ->atPath('invitationAddress')
                 ->addViolation();
         }
-    }
-
-    public function getInvitationSentDate(): ?DateTime
-    {
-        return $this->invitationSentDate;
-    }
-
-    public function setInvitationSentDate(?DateTime $invitationSentDate): self
-    {
-        $this->invitationSentDate = $invitationSentDate;
-        return $this;
-    }
-
-    public function getLatestManualReminderSentDate(): ?DateTime
-    {
-        return $this->latestManualReminderSentDate;
-    }
-
-    public function setLatestManualReminderSentDate(?DateTime $latestManualReminderSentDate): self
-    {
-        $this->latestManualReminderSentDate = $latestManualReminderSentDate;
-        return $this;
     }
 
     public function getResponseStartDate(): ?DateTime
@@ -155,28 +121,6 @@ trait SurveyTrait
     {
         $this->invitationAddress = $invitationAddress;
         return $this;
-    }
-
-    public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self
-    {
-        $this->firstReminderSentDate = $firstReminderSentDate;
-        return $this;
-    }
-
-    public function getFirstReminderSentDate(): ?\DateTime
-    {
-        return $this->firstReminderSentDate;
-    }
-
-    public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self
-    {
-        $this->secondReminderSentDate = $secondReminderSentDate;
-        return $this;
-    }
-
-    public function getSecondReminderSentDate(): ?\DateTime
-    {
-        return $this->secondReminderSentDate;
     }
 
     public function hasInvitationAddress(): bool

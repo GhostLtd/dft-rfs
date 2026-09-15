@@ -3,9 +3,14 @@
 namespace App\Tests\Functional\Utility;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyNotification;
 use App\Entity\Embeddable\LongAddress;
+use App\Entity\NotifyApiResponse;
 use App\Entity\PasscodeUser;
 use App\Entity\SurveyStateInterface;
+use App\Utility\Notification\NotificationChannel;
+use App\Utility\Notification\NotificationType;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 
 class CsrgtPersonalDataCleanupTest extends AbstractPersonalDataCleanupTestCase
 {
@@ -49,6 +54,20 @@ class CsrgtPersonalDataCleanupTest extends AbstractPersonalDataCleanupTestCase
             ->setState(SurveyStateInterface::STATE_NEW);
 
         $this->entityManager->persist($survey);
+
+        /** @var SurveyNotification $invite */
+        $invite = $survey->createNotification()
+            ->setType(NotificationType::INVITE)
+            ->setChannel(NotificationChannel::LETTER)
+            ->setSentAt(new \DateTime('-30 days'));
+        $survey->addNotification($invite);
+        $invite->addNotifyApiResponse((new NotifyApiResponse())
+            ->setEventName('invite')
+            ->setMessageClass(Letter::class)
+            ->setEndpoint('/v2/notifications/letter')
+            ->setTimestamp(new \DateTime('-30 days'))
+            ->setData(['content' => ['body' => 'Dear Whatever']]));
+        $this->entityManager->persist($invite);
 
         if ($createAuditLogEntry) {
             $this->createAuditLogEntry($survey);

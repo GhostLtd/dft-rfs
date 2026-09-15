@@ -2,13 +2,9 @@
 
 namespace App\Entity;
 
-use DateTime;
-
-interface SurveyManualReminderInterface extends SurveyNotesInterface
+interface SurveyManualReminderInterface extends SurveyNotesInterface, SurveyNotificationsInterface
 {
     public function getId(): ?string;
-    public function getLatestManualReminderSentDate(): ?DateTime;
-    public function setLatestManualReminderSentDate(?DateTime $latestManualReminderSentDate): self;
 
     public function getArrayOfInvitationEmails(): array;
     public function getResponseContactEmail(): ?string;

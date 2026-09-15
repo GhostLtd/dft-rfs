@@ -2,22 +2,16 @@
 
 namespace App\Controller\Cron;
 
-use App\Utility\Reminder\AutomatedRemindersHelper;
-use App\Utility\Reminder\AutomatedRoroRemindersHelper;
+use App\Utility\Notification\AutomatedNotificationsRunner;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class RemindersCronController extends AbstractCronController
 {
     #[Route(path: '/reminders/process', name: 'reminderprocessor')]
-    public function reminderProcessor(
-        AutomatedRemindersHelper $automatedRemindersHelper,
-        AutomatedRoroRemindersHelper $automatedRoroRemindersHelper
-    ): Response
+    public function reminderProcessor(AutomatedNotificationsRunner $runner): Response
     {
-        $automatedRemindersHelper->sendReminders();
-        $automatedRoroRemindersHelper->sendReminders();
-
+        $runner->run();
         return new Response("Reminders processed.");
     }
 }

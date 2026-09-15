@@ -29,7 +29,7 @@
                     classes: "admin.survey.state.#{preEnquiry.state}" | trans
                 })
             },
-            reminderDate(preEnquiry.firstReminderSentDate, preEnquiry.secondReminderSentDate),
+            reminderDate(notification_sent_at(preEnquiry, 'reminder-1'), notification_sent_at(preEnquiry, 'reminder-2')),
             {html: links},
         ]) -}}
     {%- else -%}

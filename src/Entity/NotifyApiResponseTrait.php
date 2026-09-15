@@ -31,7 +31,7 @@ trait NotifyApiResponseTrait
         return $responses;
     }
 
-    public function addNotifyApiResponse(NotifyApiResponse $apiResponse): self {
+    public function addNotifyApiResponse(NotifyApiResponse $apiResponse): static {
         if (!$this->apiResponses->contains($apiResponse)) {
             $this->apiResponses[] = $apiResponse;
         }

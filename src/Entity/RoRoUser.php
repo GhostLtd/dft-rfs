@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Entity\NotifyApiResponse;
 use App\Entity\RoRo\Operator;
-use App\Entity\Route\Route;
+use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\RoRoUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,9 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('username', message: 'roro.user.username.already-in-use', groups: ['admin_add_roro_user'])]
 #[ORM\Table(name: 'roro_user')]
 #[ORM\Entity(repositoryClass: RoRoUserRepository::class)]
-class RoRoUser implements UserInterface, PasswordAuthenticatedUserInterface
+class RoRoUser implements ApiResponseInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_RORO_USER = 'ROLE_RORO_USER';
+    public const string ROLE_RORO_USER = 'ROLE_RORO_USER';
 
     use IdTrait;
     use NotifyApiResponseTrait;

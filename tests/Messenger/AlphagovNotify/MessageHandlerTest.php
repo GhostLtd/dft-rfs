@@ -3,14 +3,23 @@
 namespace App\Tests\Messenger\AlphagovNotify;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyNotification;
 use App\Entity\Embeddable\Address;
 use App\Entity\NotifyApiResponse;
+use App\Entity\RoRoUser;
+use App\Entity\SurveyStateInterface;
 use App\EventSubscriber\AlphagovNotifyMessengerSubscriber;
+use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Letter;
 use App\Tests\DataFixtures\AlphagovNotify\MessageHandlerSurveyFixtures;
+use App\Tests\DataFixtures\RoRo\CountryFixtures;
+use App\Tests\DataFixtures\RoRo\OperatorRouteFixtures;
+use App\Tests\DataFixtures\RoRo\UserFixtures;
 use App\Tests\Functional\AbstractFunctionalTestCase;
 use App\Utility\AlphagovNotify\PersonalisationHelper;
 use App\Utility\AlphagovNotify\Reference;
+use App\Utility\Notification\NotificationChannel;
+use App\Utility\Notification\NotificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -48,7 +57,9 @@ class MessageHandlerTest extends AbstractFunctionalTestCase
 
         /** @var Survey $survey */
         $survey = $this->entityManager->find($survey::class, $survey->getId());
-        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+        /** @var SurveyNotification $row */
+        $row = $survey->getNotificationsOfType(NotificationType::INVITE, NotificationChannel::LETTER)[0];
+        $apiResponses = $row->getNotifyApiResponsesMatching(NotificationType::INVITE->value, Letter::class);
 
         /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
@@ -69,7 +80,9 @@ class MessageHandlerTest extends AbstractFunctionalTestCase
 
         /** @var Survey $survey */
         $survey = $this->entityManager->find($survey::class, $survey->getId());
-        $apiResponses = $survey->getNotifyApiResponsesMatching(Reference::EVENT_INVITE, Letter::class);
+        /** @var SurveyNotification $row */
+        $row = $survey->getNotificationsOfType(NotificationType::INVITE, NotificationChannel::LETTER)[0];
+        $apiResponses = $row->getNotifyApiResponsesMatching(NotificationType::INVITE->value, Letter::class);
 
         /** @var NotifyApiResponse|false $response */
         $response = current($apiResponses);
@@ -79,6 +92,43 @@ class MessageHandlerTest extends AbstractFunctionalTestCase
         }
 
         self::assertSame(Reference::STATUS_FAILED, $response->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+    }
+
+    public function testAcceptedInviteTransitionsSurvey(): void
+    {
+        $survey = $this->getSurvey();
+
+        $this->bus->dispatch($this->getInviteLetter($survey, $this->getValidTestAddress()));
+        $this->runAsyncNotifyMessengerConsumer();
+
+        /** @var Survey $survey */
+        $survey = $this->entityManager->find($survey::class, $survey->getId());
+
+        self::assertSame(SurveyStateInterface::STATE_INVITATION_SENT, $survey->getState());
+    }
+
+    public function testRoRoUserOriginatedMessageAttachesResponseToUser(): void
+    {
+        $this->loadFixtures([CountryFixtures::class, OperatorRouteFixtures::class, UserFixtures::class]);
+        /** @var RoRoUser $user */
+        $user = $this->fixtureReferenceRepository->getReference('roro:user:1', RoRoUser::class);
+
+        $this->bus->dispatch(new Email(
+            NotificationType::REMINDER_1->value,
+            RoRoUser::class,
+            $user->getId(),
+            $user->getEmail(),
+            Reference::EMAIL_RORO_REMINDER_1,
+            []
+        ));
+
+        $this->runAsyncNotifyMessengerConsumer();
+
+        /** @var RoRoUser $user */
+        $user = $this->entityManager->find($user::class, $user->getId());
+        $apiResponses = $user->getNotifyApiResponsesMatching(NotificationType::REMINDER_1->value, Email::class);
+
+        self::assertCount(1, $apiResponses, 'the response attaches to the RoRo user');
     }
 
     protected function runAsyncNotifyMessengerConsumer(): void
@@ -114,10 +164,18 @@ class MessageHandlerTest extends AbstractFunctionalTestCase
 
     protected function getInviteLetter(Survey $survey, Address $address): Letter
     {
+        $notification = $survey->createNotification()
+            ->setType(NotificationType::INVITE)
+            ->setChannel(NotificationChannel::LETTER)
+            ->setSentAt(new \DateTime());
+        $survey->addNotification($notification);
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
         return new Letter(
-            Reference::EVENT_INVITE,
-            $survey::class,
-            $survey->getId(),
+            NotificationType::INVITE->value,
+            $notification::class,
+            $notification->getId(),
             $address,
             Reference::LETTER_DOMESTIC_SURVEY_INVITE,
             $this->personalisationHelper->getForEntity($survey)

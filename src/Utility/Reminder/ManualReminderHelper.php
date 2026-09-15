@@ -3,39 +3,27 @@
 namespace App\Utility\Reminder;
 
 use App\Entity\AuditLog\AuditLog;
-use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\SurveyInterface;
 use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyStateInterface;
-use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 use App\Repository\AuditLog\AuditLogRepository;
-use App\Utility\AlphagovNotify\PersonalisationHelper;
-use App\Utility\AlphagovNotify\Reference;
 use App\Utility\AuditEntityLogger\SurveyStateLogger;
-use App\Utility\EmailBlacklistService;
+use App\Utility\Notification\NotificationSender;
+use App\Utility\Notification\NotificationTemplates;
+use App\Utility\Notification\NotificationType;
 use App\Utility\NotificationInterceptionService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class ManualReminderHelper
 {
-    protected const REMINDER_MAP = [
-        DomesticSurvey::class => Reference::EMAIL_DOMESTIC_SURVEY_MANUAL_REMINDER,
-        InternationalSurvey::class => Reference::EMAIL_INTERNATIONAL_SURVEY_MANUAL_REMINDER,
-        PreEnquiry::class => null,
-    ];
-
     public function __construct(
-        protected AuditLogRepository     $logRepository,
-        protected EntityManagerInterface $entityManager,
-        protected MessageBusInterface    $messageBus,
-        protected PersonalisationHelper  $personalisationHelper,
-        protected Security               $security,
+        protected AuditLogRepository              $logRepository,
+        protected EntityManagerInterface          $entityManager,
+        protected Security                        $security,
         protected NotificationInterceptionService $notificationInterceptionService,
-        protected EmailBlacklistService  $emailBlacklistService,
+        protected NotificationSender              $notificationSender,
     ) {}
 
     public function sendManualReminder(SurveyManualReminderInterface $survey): bool
@@ -44,48 +32,33 @@ class ManualReminderHelper
             return false;
         }
 
-        $templateId = $this->getNotifyTemplateId($survey);
-        $recipients = $this->emailBlacklistService->filterBlacklistedEmails($this->getRecipientEmails($survey));
-
-        if (empty($recipients)) {
-            return false;
+        // NotificationSender::send() requires SurveyInterface&SurveyNotificationsInterface;
+        // every current implementer of SurveyManualReminderInterface satisfies it.
+        if (!$survey instanceof SurveyInterface) {
+            throw new \LogicException('unhandled survey class: '.$survey::class);
         }
 
-        foreach ($recipients as $email) {
-            $this->messageBus->dispatch(new Email(
-                Reference::EVENT_MANUAL_REMINDER,
-                $survey::class,
-                $survey->getId(),
-                $email,
-                $templateId,
-                $this->personalisationHelper->getForEntity($survey),
-            ));
-        }
+        return $this->entityManager->wrapInTransaction(function () use ($survey): bool {
+            $sent = $this->notificationSender->send($survey, NotificationType::MANUAL_REMINDER);
+            if ($sent === []) {
+                return false;
+            }
 
-        $username = $this->security->getUser()->getUserIdentifier();
+            $log = (new AuditLog())
+                ->setEntityClass($survey::class)
+                ->setEntityId($survey->getId())
+                ->setTimestamp(new \DateTime())
+                ->setUsername($this->security->getUser()->getUserIdentifier())
+                ->setCategory('manual-reminder')
+                ->setData([]);
+            $this->entityManager->persist($log);
 
-        $log = (new AuditLog())
-            ->setEntityClass($survey::class)
-            ->setEntityId($survey->getId())
-            ->setTimestamp(new \DateTime())
-            ->setUsername($username)
-            ->setCategory('manual-reminder')
-            ->setData([]);
+            $note = $survey->createNote()->setNote("Manual reminder sent")->setWasChased(true);
+            $survey->addNote($note);
+            $this->entityManager->persist($note);
 
-        $this->entityManager->persist($log);
-
-        $survey->setLatestManualReminderSentDate(new \DateTime());
-
-        $note = $survey->createNote()
-                ->setNote("Manual reminder sent")
-                ->setWasChased(true);
-
-        $survey->addNote($note);
-
-        $this->entityManager->persist($note);
-        $this->entityManager->flush();
-
-        return true;
+            return true;
+        });
     }
 
     public function canSendManualReminder(SurveyManualReminderInterface $survey): bool
@@ -95,13 +68,13 @@ class ManualReminderHelper
 
     public function canShowManualReminderButton(SurveyManualReminderInterface $survey): bool
     {
-        $hasTemplate = isset(self::REMINDER_MAP[$survey::class]);
-        return $survey->getState() === SurveyStateInterface::STATE_IN_PROGRESS && $hasTemplate;
+        $hasRule = NotificationTemplates::has($survey::class, NotificationType::MANUAL_REMINDER);
+        return $survey->getState() === SurveyStateInterface::STATE_IN_PROGRESS && $hasRule;
     }
 
     public function getReasonWhyCannotSendManualReminder(SurveyManualReminderInterface $survey): ?UnavailabilityReason
     {
-        if ($this->getNotifyTemplateId($survey) === null) {
+        if (!NotificationTemplates::has($survey::class, NotificationType::MANUAL_REMINDER)) {
             return new UnavailabilityReason(UnavailabilityReason::NO_NOTIFY_TEMPLATE);
         }
 
@@ -127,7 +100,7 @@ class ManualReminderHelper
     public function getMostRecentEventDate(SurveyManualReminderInterface $survey): array
     {
         $eventDates = [
-            'manual_reminder' => $survey->getLatestManualReminderSentDate(),
+            'manual_reminder' => $survey->getLatestNotificationSentAt(NotificationType::MANUAL_REMINDER),
             'in_progress' => $this->getInProgressDate($survey),
             'was_chased' => $this->getLastChasedDate($survey),
         ];
@@ -196,10 +169,5 @@ class ManualReminderHelper
         }
 
         return $latestDate;
-    }
-
-    protected function getNotifyTemplateId(SurveyManualReminderInterface $survey): ?string
-    {
-        return self::REMINDER_MAP[$survey::class] ?? null;
     }
 }

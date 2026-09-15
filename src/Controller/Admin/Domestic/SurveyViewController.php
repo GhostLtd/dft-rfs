@@ -7,7 +7,6 @@ use App\Entity\Domestic\SurveyNote;
 use App\Entity\SurveyStateInterface;
 use App\Security\Voter\AdminSurveyVoter;
 use App\Utility\AddNotesHelper;
-use App\Utility\AlphagovNotify\PendingNotificationService;
 use App\Utility\ConfirmAction\Common\Admin\DeleteSurveyNoteConfirmAction;
 use App\Utility\LcniDisplayService;
 use App\Utility\Domestic\OnHireStatsProvider;
@@ -31,7 +30,6 @@ class SurveyViewController extends AbstractController
         protected AuditLogRepository           $auditLogRepository,
         protected LcniDisplayService           $lcniDisplayService,
         protected PdfHelper                    $pdfHelper,
-        protected PendingNotificationService   $pendingNotificationService,
     )
     {
     }
@@ -61,7 +59,6 @@ class SurveyViewController extends AbstractController
             'auditLogs' => $this->auditLogRepository->getLogs($survey->getId(), Survey::class),
             'lcniInfo' => $this->lcniDisplayService->getDisplayInfoForSurvey($survey),
             'pdfs' => $this->pdfHelper->getExistingSurveyPDFs($survey),
-            'pendingNotifications' => $this->pendingNotificationService->loadPendingMessagesFor($survey),
             'qualityAssuredBy' => $survey->getQualityAssured() ?
                 $this->auditLogRepository->getQualityAssuredBy($survey) :
                 false,

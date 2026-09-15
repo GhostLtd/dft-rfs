@@ -6,6 +6,9 @@ use App\Entity\IdTrait;
 use App\Entity\NoteInterface;
 use App\Entity\Route\Route;
 use App\Entity\SurveyNotesInterface;
+use App\Entity\SurveyNotificationInterface;
+use App\Entity\SurveyNotificationsInterface;
+use App\Entity\SurveyNotificationsTrait;
 use App\Entity\SurveyStateInterface;
 use App\Repository\RoRo\SurveyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,9 +22,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Table(name: 'roro_survey')]
 #[ORM\UniqueConstraint(name: 'roro_operation_route_date_index', columns: ['operator_id', 'route_id', 'survey_period_start'])]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
-class Survey implements SurveyNotesInterface, SurveyStateInterface
+class Survey implements SurveyNotesInterface, SurveyNotificationsInterface, SurveyStateInterface
 {
-    public const STATE_FILTER_CHOICES = [
+    public const array STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_IN_PROGRESS,
         self::STATE_CLOSED,
@@ -29,6 +32,7 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
     ];
 
     use IdTrait;
+    use SurveyNotificationsTrait;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $surveyPeriodStart = null;
@@ -67,11 +71,12 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $notes;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $firstReminderSentDate = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $secondReminderSentDate = null;
+    /**
+     * @var Collection<int, SurveyNotification>
+     */
+    #[ORM\OneToMany(targetEntity: SurveyNotification::class, mappedBy: 'survey', cascade: ['persist'])]
+    #[ORM\OrderBy(['sentAt' => 'ASC'])]
+    private Collection $notifications;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comments = null;
@@ -144,6 +149,7 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
     {
         $this->notes = new ArrayCollection();
         $this->vehicleCounts = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getSurveyPeriodStart(): ?\DateTime
@@ -333,26 +339,16 @@ class Survey implements SurveyNotesInterface, SurveyStateInterface
         return new SurveyNote();
     }
 
-    public function getFirstReminderSentDate(): ?\DateTime
+    #[\Override]
+    public function createNotification(): SurveyNotificationInterface
     {
-        return $this->firstReminderSentDate;
+        return new SurveyNotification();
     }
 
-    public function setFirstReminderSentDate(?\DateTime $firstReminderSentDate): self
+    #[\Override]
+    public static function getNotificationClass(): string
     {
-        $this->firstReminderSentDate = $firstReminderSentDate;
-        return $this;
-    }
-
-    public function getSecondReminderSentDate(): ?\DateTime
-    {
-        return $this->secondReminderSentDate;
-    }
-
-    public function setSecondReminderSentDate(?\DateTime $secondReminderSentDate): self
-    {
-        $this->secondReminderSentDate = $secondReminderSentDate;
-        return $this;
+        return SurveyNotification::class;
     }
 
     public function getComments(): ?string

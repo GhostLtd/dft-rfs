@@ -11,8 +11,8 @@ interface ApiResponseInterface
      * @return Collection|NotifyApiResponse[]
      */
     public function getNotifyApiResponses(): Collection;
-    public function addNotifyApiResponse(NotifyApiResponse $notifyApiResponse): object;
+    public function addNotifyApiResponse(NotifyApiResponse $notifyApiResponse): static;
 
     // Used in the templates
-    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass): ?array;
+    public function getNotifyApiResponsesMatching(string $eventName, string $notificationClass, bool $sorted = false, bool $reverse = false): ?array;
 }

@@ -6,6 +6,7 @@
 - **Feature**: Outward code checker
 - **Change**: Remove same-origin-destination-stop flag
 - **Change**: IRHS: Business details summary - remove "Next steps" and change "Add vehicles" -> "Continue"
+- **Change**: Notifications: replace the four sent-date columns with append-only notification rows
 - **Change**: 404 pages no longer hit the database
 - **Fix**: CSRGT quality flags getting out of sync
 - **Fix**: Edge case bug in SurveyResponse->hasJourneys()

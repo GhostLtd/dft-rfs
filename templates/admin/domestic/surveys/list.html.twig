@@ -44,7 +44,7 @@
                 ? tag({text: survey.response.qualityFlagCount, classes: survey.response.qualityFlagsSeen ? "govuk-tag--green" : "govuk-tag--red"})
                 : '—'},
             inPossessionData,
-            reminderDate(survey.firstReminderSentDate, survey.secondReminderSentDate),
+            reminderDate(notification_sent_at(survey, 'reminder-1'), notification_sent_at(survey, 'reminder-2')),
             countField(survey, 'totalDayCount'),
             {html: summaryListActionsList(actions)},
         ]) -}}

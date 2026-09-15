@@ -3,16 +3,14 @@
 namespace App\Entity\Domestic;
 
 use App\Entity\NoteInterface;
-use App\Entity\NotifyApiResponse;
-use App\Entity\NotifyApiResponseTrait;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
 use App\Entity\SurveyManualReminderInterface;
-use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyNotificationInterface;
+use App\Entity\SurveyNotificationsTrait;
 use App\Entity\SurveyStateInterface;
-use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\Domestic\SurveyRepository;
 use App\Form\Validator as AppAssert;
 use App\Utility\Cleanup\PersonalDataCleanupInterface;
@@ -33,14 +31,14 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 #[ORM\Index(name: 'idx_survey_state', columns: ['state', 'id'])]
 #[ORM\Index(name: 'idx_survey_start_id', columns: ['survey_period_start', 'id'])]
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
+class Survey implements HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
-    use NotifyApiResponseTrait;
+    use SurveyNotificationsTrait;
 
-    public const STATE_REISSUED = 'reissued';
+    public const string STATE_REISSUED = 'reissued';
 
-    public const STATE_FILTER_CHOICES = [
+    public const array STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_INVITATION_PENDING,
         self::STATE_INVITATION_SENT,
@@ -54,14 +52,14 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
         self::STATE_REISSUED,
     ];
 
-    public const REASON_NOT_DELIVERED = 'not-delivered';
-    public const REASON_REFUSED = 'respondent-refused';
-    public const REASON_EXCUSED_PERSONAL = 'excused-personal';
-    public const REASON_EXCUSED_OTHER = 'excused-other';
-    public const REASON_OTHER = 'other';
+    public const string REASON_NOT_DELIVERED = 'not-delivered';
+    public const string REASON_REFUSED = 'respondent-refused';
+    public const string REASON_EXCUSED_PERSONAL = 'excused-personal';
+    public const string REASON_EXCUSED_OTHER = 'excused-other';
+    public const string REASON_OTHER = 'other';
 
-    public const UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-unfilled-survey.option.';
-    public const UNFILLED_SURVEY_REASON_CHOICES = [
+    public const string UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX = 'domestic.survey-response.reason-for-unfilled-survey.option.';
+    public const array UNFILLED_SURVEY_REASON_CHOICES = [
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_NOT_DELIVERED => self::REASON_NOT_DELIVERED,
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_REFUSED => self::REASON_REFUSED,
         self::UNFILLED_SURVEY_REASON_TRANSLATION_PREFIX . self::REASON_EXCUSED_PERSONAL => self::REASON_EXCUSED_PERSONAL,
@@ -70,7 +68,7 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
 
     ];
 
-    public const UNFILLED_SURVEY_REASON_EXPORT_IDS = [
+    public const array UNFILLED_SURVEY_REASON_EXPORT_IDS = [
         self::REASON_NOT_DELIVERED => 6,
         self::REASON_REFUSED => 7,
         self::REASON_EXCUSED_PERSONAL => 8,
@@ -114,18 +112,16 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     private ?DriverAvailability $driverAvailability = null;
 
     /**
-     * @var Collection<int, NotifyApiResponse>
+     * @var Collection<int, SurveyNotification>
      */
-    #[ORM\JoinTable(name: 'domestic_survey_notify_api_responses')]
-    #[ORM\JoinColumn(name: 'survey_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
-    protected Collection $apiResponses;
+    #[ORM\OneToMany(targetEntity: SurveyNotification::class, mappedBy: 'survey', cascade: ['persist'])]
+    #[ORM\OrderBy(['sentAt' => 'ASC'])]
+    private Collection $notifications;
 
     public function __construct()
     {
-        $this->apiResponses = new ArrayCollection();
         $this->notes = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function isInitialDetailsComplete(): bool
@@ -256,6 +252,18 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     public function createNote(): NoteInterface
     {
         return new SurveyNote();
+    }
+
+    #[\Override]
+    public function createNotification(): SurveyNotificationInterface
+    {
+        return new SurveyNotification();
+    }
+
+    #[\Override]
+    public static function getNotificationClass(): string
+    {
+        return SurveyNotification::class;
     }
 
     #[\Override]

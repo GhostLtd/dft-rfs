@@ -3,6 +3,7 @@
 namespace App\Serializer\Normalizer\International;
 
 use App\Entity\International\Survey;
+use App\Utility\Notification\NotificationType;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -40,8 +41,8 @@ class SurveyNormalizer implements NormalizerInterface, NormalizerAwareInterface
             'refNumber' => $object->getReferenceNumber(),
             'status' => $object->getState(),
             'qa' => $this->normalizer->normalize($object->getQualityAssured() === true, $format, $context),
-            'reminders' => $object->getSecondReminderSentDate() ? 2
-                : ($object->getFirstReminderSentDate() ? 1 : 0),
+            'reminders' => $object->hasNotification(NotificationType::REMINDER_2) ? 2
+                : ($object->hasNotification(NotificationType::REMINDER_1) ? 1 : 0),
             'contactName' => $response?->getContactName(),
             'contactEmail' => $response?->getContactEmail(),
             'contactPhone' => $response?->getContactTelephone(),

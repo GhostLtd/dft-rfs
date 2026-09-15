@@ -16,7 +16,9 @@ use App\Serializer\Normalizer\Domestic\Mapper\IntegerProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\ReturnCodeIdProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\SurveyTypeProperty;
 use App\Serializer\Normalizer\Domestic\Mapper\YearlyWeekNumberProperty;
+use App\Serializer\Normalizer\Mapper\Callback;
 use App\Serializer\Normalizer\Mapper\Property;
+use App\Utility\Notification\NotificationType;
 
 class SurveyNormalizer extends AbstractExportNormalizer
 {
@@ -91,10 +93,10 @@ class SurveyNormalizer extends AbstractExportNormalizer
             'SurveyID' => new EpochWeekNumberProperty('surveyPeriodStart'),
             'SurveyWeek' => new YearlyWeekNumberProperty('surveyPeriodStart'),
 //            'VehicleOwnerID' => '', // not needed
-            'DateSurveySent' => new Property('invitationSentDate'),
+            'DateSurveySent' => new Callback(fn(Survey $s) => $s->getLatestNotificationSentAt(NotificationType::INVITE)),
 //            'DateSurveyReturned' => '',
-            'DateReminder1' => new Property('firstReminderSentDate'),
-            'DateReminder2' => new Property('secondReminderSentDate'),
+            'DateReminder1' => new Callback(fn(Survey $s) => $s->getLatestNotificationSentAt(NotificationType::REMINDER_1)),
+            'DateReminder2' => new Callback(fn(Survey $s) => $s->getLatestNotificationSentAt(NotificationType::REMINDER_2)),
 //            'SurveyDiscardedReasonID' => '', // from lookup table
             'SurveyAddressLine1' => new Property('invitationAddress.line2'),
             'SurveyAddressLine2' => new Property('invitationAddress.line3'),

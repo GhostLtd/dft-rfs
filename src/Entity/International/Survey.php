@@ -3,16 +3,14 @@
 namespace App\Entity\International;
 
 use App\Entity\NoteInterface;
-use App\Entity\NotifyApiResponse;
-use App\Entity\NotifyApiResponseTrait;
 use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
 use App\Entity\SurveyManualReminderInterface;
-use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyNotificationInterface;
+use App\Entity\SurveyNotificationsTrait;
 use App\Entity\SurveyStateInterface;
-use App\Messenger\AlphagovNotify\ApiResponseInterface;
 use App\Repository\International\SurveyRepository;
 use App\Utility\Cleanup\PersonalDataCleanupInterface;
 use App\Utility\International\WeekNumberHelper;
@@ -29,10 +27,10 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 #[UniqueEntity(['referenceNumber', 'invitationAddress.line1', 'invitationAddress.postcode'], message: 'international.add.reference-number-exists', errorPath: 'survey', groups: ['import_survey', 'add_survey'])]
 #[ORM\Table(name: 'international_survey')]
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
-class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
+class Survey implements HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyStateInterface
 {
     use HaulageSurveyTrait;
-    use NotifyApiResponseTrait;
+    use SurveyNotificationsTrait;
 
     public const string DISABLE_TRIP_DISTANCE_FROM_SURVEY_PERIOD_START_DATE = '2024-09-17';
 
@@ -114,18 +112,16 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     private ?string $reasonForEmptySurveyOther = null;
 
     /**
-     * @var Collection<int, NotifyApiResponse>
+     * @var Collection<int, SurveyNotification>
      */
-    #[ORM\JoinTable(name: 'international_survey_notify_api_responses')]
-    #[ORM\JoinColumn(name: 'survey_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
-    protected Collection $apiResponses;
+    #[ORM\OneToMany(targetEntity: SurveyNotification::class, mappedBy: 'survey', cascade: ['persist'])]
+    #[ORM\OrderBy(['sentAt' => 'ASC'])]
+    private Collection $notifications;
 
     public function __construct()
     {
-        $this->apiResponses = new ArrayCollection();
         $this->notes = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getReferenceNumber(): ?string
@@ -229,6 +225,18 @@ class Survey implements ApiResponseInterface, HaulageSurveyInterface, PersonalDa
     public function createNote(): NoteInterface
     {
         return new SurveyNote();
+    }
+
+    #[\Override]
+    public function createNotification(): SurveyNotificationInterface
+    {
+        return new SurveyNotification();
+    }
+
+    #[\Override]
+    public static function getNotificationClass(): string
+    {
+        return SurveyNotification::class;
     }
 
     #[\Override]

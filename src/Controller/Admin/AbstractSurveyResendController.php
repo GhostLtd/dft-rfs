@@ -27,11 +27,12 @@ abstract class AbstractSurveyResendController extends AbstractController
             if ($form->isValid()) {
                 $survey = $form->getData();
 
-                $survey->setState(SurveyStateInterface::STATE_NEW);
-                $survey->getPasscodeUser()->setPassword(null);
-
-                $this->stateMachine->apply($survey, 'invite_user');
-                $this->entityManager->flush();
+                $this->entityManager->wrapInTransaction(function () use ($survey) {
+                    $survey->setState(SurveyStateInterface::STATE_NEW);
+                    $survey->getPasscodeUser()->setPassword(null);
+                    // N.B. outer transaction required as messenger writes to database directly via DBAL
+                    $this->stateMachine->apply($survey, 'invite_user');
+                });
 
                 return $this->render($templatePath."/resend-success.html.twig", [
                     'survey' => $survey,

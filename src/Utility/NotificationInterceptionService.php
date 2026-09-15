@@ -7,7 +7,6 @@ use App\Entity\International\Survey as InternationalSurvey;
 use App\Entity\NotificationInterception;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyManualReminderInterface;
-use App\Entity\SurveyReminderInterface;
 use App\Repository\NotificationInterceptionRepository;
 
 class NotificationInterceptionService
@@ -17,7 +16,7 @@ class NotificationInterceptionService
         protected EmailBlacklistService $emailBlacklistService,
     ) {}
 
-    public function checkAndInterceptSurvey(SurveyInterface|SurveyReminderInterface $survey): SurveyInterface|SurveyReminderInterface
+    public function checkAndInterceptSurvey(SurveyInterface $survey): SurveyInterface
     {
         if (!$survey->getInvitationAddress()) {
             return $survey;
@@ -29,7 +28,7 @@ class NotificationInterceptionService
     }
 
     public function getAllEmailsForSurvey(
-        SurveyInterface|SurveyReminderInterface|SurveyManualReminderInterface $survey
+        SurveyInterface|SurveyManualReminderInterface $survey
     ): array {
         $this->checkAndInterceptSurvey($survey);
         $emails = $survey->getArrayOfInvitationEmails();
@@ -42,11 +41,11 @@ class NotificationInterceptionService
         return $this->emailBlacklistService->filterBlacklistedEmails($emails);
     }
 
-    protected function findInterception(SurveyInterface|SurveyReminderInterface $survey): ?NotificationInterception
+    protected function findInterception(SurveyInterface $survey): ?NotificationInterception
     {
-        $businessName = match(get_class($survey)) {
-            DomesticSurvey::class => $survey->getInvitationAddress()->getLine1(),
-            InternationalSurvey::class => $survey->getCompany()->getBusinessName(),
+        $businessName = match(true) {
+            $survey instanceof DomesticSurvey => $survey->getInvitationAddress()->getLine1(),
+            $survey instanceof InternationalSurvey => $survey->getCompany()->getBusinessName(),
             default => throw new \InvalidArgumentException(sprintf('Unexpected survey class "%s"', get_class($survey))),
         };
         if (!$businessName) {

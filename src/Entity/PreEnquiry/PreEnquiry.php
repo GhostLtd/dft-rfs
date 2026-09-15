@@ -3,10 +3,9 @@
 namespace App\Entity\PreEnquiry;
 
 use App\Entity\NoteInterface;
-use App\Entity\NotifyApiResponse;
-use App\Entity\NotifyApiResponseTrait;
 use App\Entity\SurveyManualReminderInterface;
-use App\Entity\SurveyReminderInterface;
+use App\Entity\SurveyNotificationInterface;
+use App\Entity\SurveyNotificationsTrait;
 use App\Entity\SurveyInterface;
 use App\Entity\SurveyStateInterface;
 use App\Entity\SurveyTrait;
@@ -21,12 +20,12 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 #[ORM\Table(name: 'pre_enquiry')]
 #[ORM\Entity(repositoryClass: PreEnquiryRepository::class)]
-class PreEnquiry implements SurveyInterface, SurveyManualReminderInterface, SurveyReminderInterface, SurveyStateInterface
+class PreEnquiry implements SurveyInterface, SurveyManualReminderInterface, SurveyStateInterface
 {
     use SurveyTrait;
-    use NotifyApiResponseTrait;
+    use SurveyNotificationsTrait;
 
-    public const STATE_FILTER_CHOICES = [
+    public const array STATE_FILTER_CHOICES = [
         self::STATE_NEW,
         self::STATE_INVITATION_PENDING,
         self::STATE_INVITATION_SENT,
@@ -65,18 +64,16 @@ class PreEnquiry implements SurveyInterface, SurveyManualReminderInterface, Surv
     private ?\DateTime $dispatchDate = null;
 
     /**
-     * @var Collection<NotifyApiResponse>
+     * @var Collection<int, PreEnquiryNotification>
      */
-    #[ORM\JoinTable(name: 'pre_enquiry_notify_api_responses')]
-    #[ORM\JoinColumn(name: 'survey_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(name: 'notify_api_response_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ORM\ManyToMany(targetEntity: NotifyApiResponse::class)]
-    protected Collection $apiResponses;
+    #[ORM\OneToMany(targetEntity: PreEnquiryNotification::class, mappedBy: 'survey', cascade: ['persist'])]
+    #[ORM\OrderBy(['sentAt' => 'ASC'])]
+    private Collection $notifications;
 
     public function __construct()
     {
-        $this->apiResponses = new ArrayCollection();
         $this->notes = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getResponse(): ?PreEnquiryResponse
@@ -152,6 +149,18 @@ class PreEnquiry implements SurveyInterface, SurveyManualReminderInterface, Surv
     public function createNote(): NoteInterface
     {
         return new PreEnquiryNote();
+    }
+
+    #[\Override]
+    public function createNotification(): SurveyNotificationInterface
+    {
+        return new PreEnquiryNotification();
+    }
+
+    #[\Override]
+    public static function getNotificationClass(): string
+    {
+        return PreEnquiryNotification::class;
     }
 
     #[\Override]

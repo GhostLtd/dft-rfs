@@ -3,9 +3,11 @@
 namespace App\Repository\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\PreEnquiry\PreEnquiryNotification;
 use App\Entity\SurveyStateInterface;
 use App\Repository\DashboardStatsTrait;
 use App\Repository\SurveyDeletionInterface;
+use App\Utility\Notification\NotificationType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
@@ -50,12 +52,32 @@ class PreEnquiryRepository extends ServiceEntityRepository implements SurveyDele
 
     public function getOverdueCount(): int
     {
-        return $this->createQueryBuilder('p')
+        // The legacy sent-date column this replaced held the *latest* invite date (it was overwritten on
+        // resend), so "overdue" means the latest invite is older than 14 days - not merely that some invite,
+        // however long ago, was. Hence: an invite exists, and none of them was sent in the last 14 days.
+        $invited = $this->getEntityManager()->createQueryBuilder()
+            ->select('n.id')
+            ->from(PreEnquiryNotification::class, 'n')
+            ->where('n.survey = p')
+            ->andWhere('n.type = :invite')
+            ->getDQL();
+
+        $invitedRecently = $this->getEntityManager()->createQueryBuilder()
+            ->select('n2.id')
+            ->from(PreEnquiryNotification::class, 'n2')
+            ->where('n2.survey = p')
+            ->andWhere('n2.type = :invite')
+            ->andWhere('n2.sentAt >= :fourteenDaysAgo')
+            ->getDQL();
+
+        return (int) $this->createQueryBuilder('p')
             ->select('count(p) AS count')
             ->where('p.state IN (:states)')
-            ->andWhere('p.invitationSentDate < :fourteenDaysAgo')
+            ->andWhere("EXISTS ({$invited})")
+            ->andWhere("NOT EXISTS ({$invitedRecently})")
             ->setParameters(new ArrayCollection([
                 new Parameter('states', SurveyStateInterface::ACTIVE_STATES),
+                new Parameter('invite', NotificationType::INVITE->value),
                 new Parameter('fourteenDaysAgo', (new \DateTime())->modify('-14 days')),
             ]))
             ->getQuery()
