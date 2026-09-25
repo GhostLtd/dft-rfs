@@ -20,14 +20,10 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * RoRo automated reminders: for every survey of the previous calendar month (Europe/London) that has not been
- * completed, on an active route still assigned to an active operator that has users, one digest email per
- * operator user listing that operator's outstanding routes.
- *  - reminder-1: once, as soon as the survey is in last month's window
- *  - reminder-2: 7 days after the latest reminder-1 (with the existing 12-hour tolerance)
- * Each operator's group -- its rows and its users' emails -- is one transaction. The emails originate from the
- * RoRoUser (not a notification row), so Notify responses attach to the user; hence this class records rows
- * through NotificationRecorder and dispatches itself rather than going through NotificationSender.
+ * Queues digest emails for unfinished surveys from the previous London calendar month.
+ * Only active operators with users and active, assigned routes qualify.
+ * Reminder 1 is sent once; reminder 2 waits 7 days after the latest reminder 1, with a 12-hour tolerance.
+ * Each operator group uses one transaction. Messages and Notify responses belong to operator users.
  */
 class RoRoReminders implements AutomatedRemindersInterface
 {
@@ -50,33 +46,51 @@ class RoRoReminders implements AutomatedRemindersInterface
         return DisabledRemindersHelper::RORO;
     }
 
+    /**
+     * Returns due surveys grouped by operator and reminder type, without queuing messages.
+     */
+    public function due(\DateTimeImmutable $now): DueReminders
+    {
+        $items = [];
+        foreach ([[NotificationType::REMINDER_1, $this->dueForReminder1($now)], [NotificationType::REMINDER_2, $this->dueForReminder2($now)]] as [$type, $surveys]) {
+            foreach ($this->groupByOperator($surveys) as $group) {
+                $items[] = new DueItem($type, $group);
+            }
+        }
+
+        return new DueReminders($this->getFamily(), [NotificationType::REMINDER_1, NotificationType::REMINDER_2], $items);
+    }
+
     public function run(): void
     {
         $now = \DateTimeImmutable::createFromInterface($this->clock->now());
-
-        // reminder-1 first for readability only: the "own type not sent" and cutoff checks make the two loops
-        // independent of each other's results within a run.
-        $this->sendGroups(NotificationType::REMINDER_1, $this->dueForReminder1($now), $now);
-        $this->sendGroups(NotificationType::REMINDER_2, $this->dueForReminder2($now), $now);
+        $due = $this->due($now);
+        foreach ($due->types as $type) {
+            $this->queueOperatorDigests($type, $due->ofType($type), $now);
+        }
     }
 
-    /** @param list<Survey> $due */
-    private function sendGroups(NotificationType $type, array $due, \DateTimeImmutable $now): void
+    /**
+     * Queues one digest per operator user, using one transaction per operator.
+     *
+     * @param list<DueItem> $items one per operator
+     */
+    private function queueOperatorDigests(NotificationType $type, array $items, \DateTimeImmutable $now): void
     {
-        $this->logger->info(self::LOG_PREFIX."{$type->value} for {$this->getFamily()}: ".count($due).' due');
+        $this->logger->info(self::LOG_PREFIX."{$type->value} for {$this->getFamily()}: ".array_sum(array_map(fn(DueItem $i) => count($i->surveys), $items)).' due');
 
-        foreach ($this->groupByOperator($due) as $surveys) {
-            $this->entityManager->wrapInTransaction(fn() => $this->sendDigest($surveys, $type, $now));
+        foreach ($items as $item) {
+            $this->entityManager->wrapInTransaction(fn() => $this->queueDigest($item->surveys, $type, $now));
         }
     }
 
     /** @return list<Survey> */
     public function dueForReminder1(\DateTimeImmutable $now): array
     {
-        $qb = $this->lastMonthCandidates($now);
-        $this->rows->none($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_1);
+        $qb = $this->queryLastMonthSurveys($now);
+        $this->rows->withoutNotification($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_1);
 
-        return $this->acceptable($qb->getQuery()->getResult());
+        return $this->filterActiveAssignments($qb->getQuery()->getResult());
     }
 
     /** @return list<Survey> */
@@ -84,15 +98,17 @@ class RoRoReminders implements AutomatedRemindersInterface
     {
         $cutoff = $now->sub(new \DateInterval('P7D'))->add(new \DateInterval('PT12H'));
 
-        $qb = $this->lastMonthCandidates($now);
-        $this->rows->none($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_2);
-        $this->rows->latestAtOrBefore($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_1, $cutoff);
+        $qb = $this->queryLastMonthSurveys($now);
+        $this->rows->withoutNotification($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_2);
+        $this->rows->withLatestNotificationBy($qb, 'survey', SurveyNotification::class, NotificationType::REMINDER_1, $cutoff);
 
-        return $this->acceptable($qb->getQuery()->getResult());
+        return $this->filterActiveAssignments($qb->getQuery()->getResult());
     }
 
-    /** Not-completed surveys whose period starts in the previous calendar month, for operators that have users. */
-    private function lastMonthCandidates(\DateTimeImmutable $now): QueryBuilder
+    /**
+     * Returns a query for unfinished surveys from last month, whose operators have users.
+     */
+    private function queryLastMonthSurveys(\DateTimeImmutable $now): QueryBuilder
     {
         $london = \DateTime::createFromImmutable($now->setTimezone(new \DateTimeZone('Europe/London')));
         $lastMonth = (clone $london)->modify('first day of last month midnight');
@@ -112,8 +128,13 @@ class RoRoReminders implements AutomatedRemindersInterface
             ->andWhere('survey.surveyPeriodStart < :thisMonth')->setParameter('thisMonth', $thisMonth->format('Y-m-d'));
     }
 
-    /** @param list<Survey> $surveys @return list<Survey> active operator, active route, route still assigned to the operator */
-    private function acceptable(array $surveys): array
+    /**
+     * Returns surveys whose operator and route are active and whose route is still assigned.
+     *
+     * @param list<Survey> $surveys
+     * @return list<Survey>
+     */
+    private function filterActiveAssignments(array $surveys): array
     {
         return array_values(array_filter($surveys, function (Survey $survey): bool {
             $operator = $survey->getOperator();
@@ -126,7 +147,12 @@ class RoRoReminders implements AutomatedRemindersInterface
         }));
     }
 
-    /** @param list<Survey> $surveys @return array<string, list<Survey>> operator id => surveys */
+    /**
+     * Returns surveys grouped by operator ID.
+     *
+     * @param list<Survey> $surveys
+     * @return array<string, list<Survey>>
+     */
     private function groupByOperator(array $surveys): array
     {
         $grouped = [];
@@ -136,8 +162,40 @@ class RoRoReminders implements AutomatedRemindersInterface
         return $grouped;
     }
 
-    /** One operator's group, inside the caller's transaction: a row per survey, one digest email per user. @param non-empty-list<Survey> $surveys */
-    private function sendDigest(array $surveys, NotificationType $type, \DateTimeImmutable $now): void
+    /**
+     * Records one notification per survey and queues digest emails for its operator's users.
+     * Runs within the caller's transaction.
+     *
+     * @param non-empty-list<Survey> $surveys
+     */
+    private function queueDigest(array $surveys, NotificationType $type, \DateTimeImmutable $now): void
+    {
+        foreach ($surveys as $survey) {
+            $this->recorder->record($survey, $type, NotificationChannel::EMAIL, \DateTime::createFromImmutable($now));
+        }
+
+        $emails = $this->buildDigest($surveys, $type);
+        foreach ($emails as $email) {
+            $this->messageBus->dispatch($email);
+        }
+
+        $operator = $surveys[0]->getOperator();
+        $first = $emails[0] ?? null;
+        $this->logger->info(self::LOG_PREFIX."Sending reminders for '{$operator->getName()}': "
+            .'route_names=['.str_replace("\n", '; ', $first?->getPersonalisation()['route_names'] ?? '').'], '
+            .'year='.($first?->getPersonalisation()['year'] ?? '').', month='.($first?->getPersonalisation()['month'] ?? '')
+            .', users=['.implode(', ', array_map(fn(Email $e) => $e->getEmailAddress(), $emails)).']');
+    }
+
+    /**
+     * Returns one Email message per operator user, listing the group's outstanding routes.
+     * All surveys must belong to the same operator. Returns an empty list if the operator has no users.
+     * Does not record notifications or queue messages.
+     *
+     * @param non-empty-list<Survey> $surveys
+     * @return list<Email>
+     */
+    public function buildDigest(array $surveys, NotificationType $type): array
     {
         $operator = $surveys[0]->getOperator();
         $template = NotificationTemplates::for(Survey::class, $type)[NotificationChannel::EMAIL->value];
@@ -153,13 +211,10 @@ class RoRoReminders implements AutomatedRemindersInterface
                 'foreignPort' => $route->getForeignPort()->getName(),
             ]);
 
-            // Year and month are maximised independently (as the former helper did); correct only because the
-            // window restricts a group to one calendar month.
+            // Every survey in this group belongs to the same calendar month.
             $start = $survey->getSurveyPeriodStart();
             $mostRecentSurveyYear = max($mostRecentSurveyYear, (int) $start->format('Y'));
             $mostRecentSurveyMonth = max($mostRecentSurveyMonth, (int) $start->format('n'));
-
-            $this->recorder->record($survey, $type, NotificationChannel::EMAIL, \DateTime::createFromImmutable($now));
         }
 
         $routeNames = array_values($routeNamesByRouteId);
@@ -167,9 +222,9 @@ class RoRoReminders implements AutomatedRemindersInterface
         $routeNamesForEmail = join("\n", array_map(fn($name) => "* {$name}", $routeNames));
         $formattedMonth = (new \DateTime("{$mostRecentSurveyYear}-{$mostRecentSurveyMonth}-1 00:00:00"))->format('F');
 
-        $users = [];
+        $emails = [];
         foreach ($operator->getUsers() as $user) {
-            $this->messageBus->dispatch(new Email(
+            $emails[] = new Email(
                 $type->value,
                 $user::class,
                 $user->getId(),
@@ -182,11 +237,9 @@ class RoRoReminders implements AutomatedRemindersInterface
                     'year' => (string) $mostRecentSurveyYear,
                     'month' => $formattedMonth,
                 ],
-            ));
-            $users[] = $user->getEmail();
+            );
         }
 
-        $this->logger->info(self::LOG_PREFIX."Sending reminders for '{$operator->getName()}': "
-            .'route_names=['.implode('; ', array_map(fn($name) => "* {$name}", $routeNames))."], year={$mostRecentSurveyYear}, month={$formattedMonth}, users=[".implode(', ', $users).']');
+        return $emails;
     }
 }

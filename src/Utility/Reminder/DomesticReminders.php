@@ -28,9 +28,9 @@ class DomesticReminders extends AbstractSurveyReminders
         $qb = $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's')
             ->where('s.state IN (:notStarted)')->setParameter('notStarted', self::NOT_STARTED)
             ->andWhere('s.surveyPeriodEnd <= :periodEndCutoff')->setParameter('periodEndCutoff', \DateTime::createFromImmutable($cutoff));
-        $this->rows->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
-        $this->rows->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
-        $this->rows->latestAtOrBefore($qb, 's', SurveyNotification::class, NotificationType::INVITE, $cutoff);
+        $this->rows->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
+        $this->rows->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
+        $this->rows->withLatestNotificationBy($qb, 's', SurveyNotification::class, NotificationType::INVITE, $cutoff);
 
         return $qb->getQuery()->getResult();
     }
@@ -42,8 +42,8 @@ class DomesticReminders extends AbstractSurveyReminders
 
         $qb = $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's')
             ->where('s.state IN (:notStarted)')->setParameter('notStarted', self::NOT_STARTED);
-        $this->rows->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
-        $this->rows->latestAtOrBefore($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1, $cutoff);
+        $this->rows->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
+        $this->rows->withLatestNotificationBy($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1, $cutoff);
 
         return $qb->getQuery()->getResult();
     }

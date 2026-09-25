@@ -4,15 +4,13 @@ namespace App\Utility\Notification;
 
 use App\Utility\Reminder\AutomatedRemindersInterface;
 use App\Utility\Reminder\DisabledRemindersHelper;
+use App\Utility\Reminder\DomesticInProgressReminders;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 /**
- * Nightly entry point (app:cron:reminders:process and the /reminders/process cron route): runs every tagged
- * AutomatedRemindersInterface service (one per survey family), skipping families disabled by
- * APP_DISABLE_REMINDERS. Families run in no particular order; each depends only on its own tables. There is no
- * lock: the job runs once daily and each family's "not already sent" predicates mean a completed run is never
- * repeated.
+ * Runs the enabled reminder families for the 06:00 cron.
+ * The 09:00 in-progress cron calls runOne() for its separate family.
  */
 class AutomatedNotificationsRunner
 {
@@ -20,23 +18,44 @@ class AutomatedNotificationsRunner
 
     /** @param iterable<AutomatedRemindersInterface> $families */
     public function __construct(
-        #[AutowireIterator('app.automated_reminders')]
+        #[AutowireIterator('app.automated_reminders', exclude: [DomesticInProgressReminders::class])]
         private readonly iterable $families,
         private readonly DisabledRemindersHelper $disabledRemindersHelper,
         private readonly LoggerInterface $logger,
     ) {}
 
+    /**
+     * Runs each configured family unless disabled by APP_DISABLE_REMINDERS.
+     */
     public function run(): void
     {
         foreach ($this->families as $reminders) {
-            $family = $reminders->getFamily();
-
-            if ($this->disabledRemindersHelper->isDisabled($family)) {
-                $this->logger->info(self::LOG_PREFIX."{$family} disabled; skipping");
-                continue;
-            }
-
-            $reminders->run();
+            $this->runOne($reminders);
         }
+    }
+
+    /**
+     * Returns the 06:00 reminder families; in-progress reminders are excluded.
+     *
+     * @return iterable<AutomatedRemindersInterface>
+     */
+    public function getFamilies(): iterable
+    {
+        return $this->families;
+    }
+
+    /**
+     * Runs one reminder family unless disabled by APP_DISABLE_REMINDERS.
+     */
+    public function runOne(AutomatedRemindersInterface $reminders): void
+    {
+        $family = $reminders->getFamily();
+
+        if ($this->disabledRemindersHelper->isDisabled($family)) {
+            $this->logger->info(self::LOG_PREFIX."{$family} disabled; skipping");
+            return;
+        }
+
+        $reminders->run();
     }
 }

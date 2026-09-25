@@ -32,8 +32,8 @@ class NotificationQueryHelperTest extends KernelTestCase
     public function testNoneExcludesSurveysWithARowOfThatType(): void
     {
         $qb = $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's');
-        $this->helper->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
-        $this->helper->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
+        $this->helper->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
+        $this->helper->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_2);
 
         $refs = $this->refsOf(Survey::class, $qb->getQuery()->getResult());
         self::assertNotContains('r1:already-sent', $refs);
@@ -46,7 +46,7 @@ class NotificationQueryHelperTest extends KernelTestCase
     {
         $cutoff = new \DateTime('2026-09-03 21:00:00'); // NOW - 7d + 12h
         $qb = $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's');
-        $this->helper->latestAtOrBefore($qb, 's', SurveyNotification::class, NotificationType::INVITE, $cutoff);
+        $this->helper->withLatestNotificationBy($qb, 's', SurveyNotification::class, NotificationType::INVITE, $cutoff);
 
         $refs = $this->refsOf(Survey::class, $qb->getQuery()->getResult());
         self::assertContains('r1:due', $refs);
@@ -58,9 +58,9 @@ class NotificationQueryHelperTest extends KernelTestCase
     public function testBothHelpersComposeOnOneQueryBuilder(): void
     {
         $qb = $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's');
-        $this->helper->none($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
-        $this->helper->latestAtOrBefore($qb, 's', SurveyNotification::class, NotificationType::INVITE, new \DateTime('2026-09-03 21:00:00'));
-        $this->helper->latestAtOrBefore($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1, new \DateTime('2026-08-27 21:00:00'));
+        $this->helper->withoutNotification($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1);
+        $this->helper->withLatestNotificationBy($qb, 's', SurveyNotification::class, NotificationType::INVITE, new \DateTime('2026-09-03 21:00:00'));
+        $this->helper->withLatestNotificationBy($qb, 's', SurveyNotification::class, NotificationType::REMINDER_1, new \DateTime('2026-08-27 21:00:00'));
 
         self::assertSame(
             ['none_type_reminder_1', 'latest_type_invite', 'latest_cutoff_invite', 'latest_type_reminder_1', 'latest_cutoff_reminder_1'],

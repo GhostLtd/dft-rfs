@@ -15,7 +15,7 @@ Notifications are stored in append-only tables, one row per send per channel:
 
 Each row records:
 * `type` — the notification type (e.g. `reminder-1`, `invite`, `reminder-manual`)
-* `channel` — the delivery channel: `letter` or `email`
+* `channel` — the delivery channel: `letter`, `email` or `sms`
 * `sent_at` — the timestamp when the notification was sent
 
 @see [SurveyNotificationsTrait.php](../src/Entity/SurveyNotificationsTrait.php)
@@ -31,10 +31,15 @@ id) and is the single place that knows which types apply to which survey class:
 | reminder-1 | letter, email | letter, email | letter | email |
 | reminder-2 | letter, email | letter, email | letter | email |
 | reminder-manual | email | email | – | – |
+| in-progress-reminder-1 | email, sms | – | – | – |
+| in-progress-reminder-2 | email, sms | – | – | – |
+| in-progress-reminder-3 | email, sms | – | – | – |
 
-Pre-enquiry is letter-only: the `EMAIL_PRE_ENQUIRY_*` template ids in `Reference` are empty strings, so
-`NotificationTemplates` simply omits the email channel for pre-enquiry rather than sending an empty
-template. RoRo has no invite and no manual reminder.
+Pre-enquiry is letter-only: there are no pre-enquiry email templates, so `NotificationTemplates` has no
+email channel for pre-enquiry. RoRo has no invite and no manual reminder. The three in-progress reminders
+share one email template and one SMS template: `EMAIL_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_{1,2,3}` all
+point at the same Notify id, as do `SMS_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_{1,2,3}`. The notification type
+still differs, so each reminder is scheduled and recorded separately.
 
 `NotificationSender::send($survey, $type, ?$delay)` looks up the templates for the type, resolves
 recipients from the type (invitation address / `NotificationInterceptionService::getAllEmailsForSurvey()`
@@ -77,6 +82,29 @@ All three restrict to surveys in the new/invitation-sent states and apply the ex
 (`cutoff = now − delay + 12h`), so a reminder due at 09:00 is not pushed to the next day's run by a few
 hours' drift. Each survey is sent in its own database transaction.
 
+**`DomesticInProgressReminders`** (CSRGT, in progress) is a separate family: three reminders to surveys that
+were started but not completed, sent by email and SMS. It does not extend `AbstractSurveyReminders`.
+
+* reminder-1: once `surveyPeriodEnd` is 7 days in the past, and only for surveys whose `surveyPeriodEnd` is on
+  or after `APP_IN_PROGRESS_REMINDERS_FROM`
+* reminder-2: 14 days after the latest reminder-1
+* reminder-3: 14 days after the latest reminder-2
+
+Each delay has the same 12-hour tolerance as the other families. If `APP_IN_PROGRESS_REMINDERS_FROM` is unset
+or not a valid `Y-m-d` date, the family sends nothing at all and `run()` logs an error every run instead of
+querying — going live takes two deliberate steps: deploy, then set the date.
+
+A survey contacted in the last 7 days — a manual reminder, a chased note, the move to in-progress, or one of
+these three reminders (via `ManualReminderHelper::getMostRecentEventDate()`) — is dropped from that run's due
+list; it stays due and is sent on the first weekday run once the gap has passed. Nothing is sent on a Saturday
+or Sunday (Europe/London); anything that falls due at the weekend is picked up by the Monday run.
+
+This family is excluded from the 06:00 `AutomatedNotificationsRunner::run()`. It runs from its own entry point
+at 09:00 — `app:cron:reminders:process-in-progress` / `/cron/reminders/process-in-progress` — via
+`AutomatedNotificationsRunner::runOne()`, so that a survey completed that morning is no longer selected.
+
+@see [CSRGT in-progress reminders, SMS limits and login links](features/2026-09-csrgt-in-progress-reminders.md)
+
 **`RoRoReminders`** — see [RoRo](#roro) below.
 
 @see [DomesticReminders.php](../src/Utility/Reminder/DomesticReminders.php), [InternationalReminders.php](../src/Utility/Reminder/InternationalReminders.php), [PreEnquiryReminders.php](../src/Utility/Reminder/PreEnquiryReminders.php), [NotificationQueryHelper.php](../src/Utility/Notification/NotificationQueryHelper.php)
@@ -86,12 +114,57 @@ hours' drift. Each survey is sent in its own database transaction.
 * `invite` — sent when a diary keeper is invited; 4-hour dispatch delay for letter and email
 * `reminder-manual` — sent via email from the admin panel for CSRGT and IRHS surveys
 
+## SMS allowance
+
+SMS reminders draw on a shared annual allowance, `App\Utility\Notification\SmsAllowance`, backed by an
+`sms_usage` table with one row per financial year (starting 1 April, Europe/London) and capped by
+`APP_SMS_ANNUAL_CAP` (default 20,000, the Notify free tier). SMS is only attempted when the survey's
+`SurveyResponse::contactTelephone` normalises to a UK mobile number (`App\Utility\UkMobileNumber::normalise()`);
+anything else (landline, foreign number, none given) gets email only.
+
+`NotificationSender` takes one unit of the current financial year's allowance when it queues an SMS, and in
+the same transaction records an `sms_attempt` reservation row (`SmsAllowance::recordReservation()`), so the
+ledger row and the counted unit always exist together. That pays for the message's first attempt at Notify.
+
+Every further attempt at the same message — a messenger retry, a manual `messenger:failed:retry`, or a
+Doctrine transport redelivery after a worker crash — is charged again by `App\Messenger\SmsAllowanceMiddleware`,
+which runs before the Notify handler, records the attempt (`SmsAllowance::recordAttempt()`) and charges it. The
+same applies to a first attempt that is only handled after the financial year has rolled over from the one that
+reserved it. When the allowance is used up, the middleware fails the attempt terminally
+(`UnrecoverableMessageHandlingException`): the message moves to the `failed` transport and its notification
+row is shown as failed, rather than being retried forever.
+
+Because an attempt can be charged without Notify ever confirming it, the counter is an upper bound on
+chargeable SMS — it over-counts rather than under-counts, which is what keeps it a genuine hard cap.
+
+### Per-number daily cap
+
+No mobile number is sent more than `APP_SMS_DAILY_CAP_PER_NUMBER` SMS (default 5) per Europe/London calendar day,
+which matters when several surveys share a contact number. `App\Utility\Notification\SmsRecipientDailyCap` counts
+per number per day in `sms_recipient_day`, keyed on an HMAC of the number (with `APP_SECRET`), never the number
+itself. It counts what the annual allowance counts: `NotificationSender` takes a unit when it queues an SMS (before
+the annual unit), and `SmsAllowanceMiddleware` charges every further attempt, plus a first attempt handled on a later
+day than it was queued (the ledger's `sms_attempt.reserved_on` records the day).
+
+Over the cap at queue time, the SMS is skipped and the email still goes; with no email, nothing is recorded and the
+survey stays due. Over the cap at handling time, the attempt fails terminally, as when the annual allowance is used
+up. A cap of 0, on either limit, stops all SMS, including messages already queued.
+
+Counts for earlier days are deleted at the start of each in-progress reminder run.
+
+@see [SmsAllowance.php](../src/Utility/Notification/SmsAllowance.php), [SmsAllowanceMiddleware.php](../src/Messenger/SmsAllowanceMiddleware.php), [SmsRecipientDailyCap.php](../src/Utility/Notification/SmsRecipientDailyCap.php)
+
 ## Runner
 
 `AutomatedNotificationsRunner::run()` is invoked once daily by cron (06:00 Europe/London). It receives every
-service tagged `app.automated_reminders` — the four family classes, which implement `AutomatedRemindersInterface`
-(`getFamily()`, `run()`) — through an autowired iterator, skips any family disabled by `APP_DISABLE_REMINDERS`,
-and calls the rest. Adding a family is adding a class; the runner does not change.
+service tagged `app.automated_reminders` — the family classes, which implement `AutomatedRemindersInterface`
+(`getFamily()`, `run()`) — through an autowired iterator that excludes `DomesticInProgressReminders`, and calls
+`runOne()` for each of the rest. `runOne(AutomatedRemindersInterface $reminders)` is the per-family body: skip
+and log if `$reminders->getFamily()` is disabled by `APP_DISABLE_REMINDERS`, otherwise call `run()`. Adding a
+family is adding a class; the runner does not change.
+
+`DomesticInProgressReminders` is excluded from this 06:00 loop because it has its own 09:00 entry point (see
+[Eligibility](#eligibility) above), which calls `runOne()` directly so the same disabled-family check applies.
 
 Families run in no particular order: each family's eligibility depends only on its own tables, so any order
 sends the same set. Within a family, `run()` sends its reminder-1 batch and then its reminder-2 batch, each
@@ -110,6 +183,7 @@ A manual reminder can only be sent if at least __seven__ days have passed since 
 * Sending of a previous manual reminder
 * Survey state change to in-progress
 * A note marked as "chased"
+* Sending of an automated in-progress reminder (CSRGT only)
 
 @see [ManualReminderHelper.php](../src/Utility/Reminder/ManualReminderHelper.php)
 
@@ -149,3 +223,12 @@ The admin panel shows a notification row as __pending__ (`notificationStatus()` 
 The legacy survey-keyed join tables (`domestic_survey_notify_api_responses`, `international_survey_notify_api_responses`, `pre_enquiry_notify_api_responses`) are dropped by `Version20260910130000`, after `Version20260910120000` has copied every link into the notification-keyed join tables.
 
 @see [AlphagovNotifyMessengerSubscriber.php](../src/EventSubscriber/AlphagovNotifyMessengerSubscriber.php)
+
+## Rehearsing before a release
+
+[RemindersRehearsal.md](RemindersRehearsal.md) is a step-by-step local rehearsal, run before a release that
+touches reminders. It uses four tools: `app:dev:seed-reminder-scenarios` seeds a scratch database with a survey
+for every reminder scenario, due immediately; `app:cron:reminders:process` / `process-in-progress --dry-run`
+previews what either cron would send without sending or writing anything; `app:dev:check-notify-templates`
+validates every Notify template's personalisation without sending; and `app:dev:send-test-sms` sends one real
+SMS to prove Notify delivery for this service.

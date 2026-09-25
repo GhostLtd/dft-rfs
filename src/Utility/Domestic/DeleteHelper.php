@@ -61,7 +61,9 @@ class DeleteHelper extends AbstractDeleteHelper
                 $this->entityManager->remove($availability);
             }
 
-            $this->entityManager->remove($response->getVehicle());
+            if ($vehicle = $response->getVehicle()) {
+                $this->entityManager->remove($vehicle);
+            }
             $this->entityManager->remove($response);
         }
 

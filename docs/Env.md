@@ -24,7 +24,9 @@ MANAGEMENT_DOMAINS='["example.com","example.org"]'
 
 This setting takes a comma-delimited set of values, allowing for the disabling of reminders for different surveys.
 
-Supported values are: csrgt, irhs, pre-enquiry and roro.
+Supported values are: csrgt, csrgt-in-progress, irhs, pre-enquiry and roro.
+
+`csrgt-in-progress` is a separate family from `csrgt`: disabling `csrgt` does not disable `csrgt-in-progress`.
 
 ### APP_FEATURES
 
@@ -53,3 +55,44 @@ POSTCODE_CHANGEOVER_DATE=2025-06-01
 ```
 
 See also: [Screenshots documentation](Screenshots.md) for generating screenshots with different location modes.
+
+### APP_IN_PROGRESS_REMINDERS_FROM
+
+A `Y-m-d` date: the earliest survey period end (`surveyPeriodEnd`) eligible for CSRGT in-progress reminder 1.
+Unset or invalid means none of the three in-progress reminders are sent (an error is logged on every run).
+
+On deployed environments this comes from the Cloud Build substitution `_APP_IN_PROGRESS_REMINDERS_FROM` (set
+it on each trigger — it may be left empty until go-live, which is treated the same as unset — then
+redeploy). Locally it can be set in `.env.local`.
+
+```
+APP_IN_PROGRESS_REMINDERS_FROM=2026-10-01
+```
+
+In an environment where this feature isn't meant to run (e.g. one where the go-live date is deliberately
+left unset), add `csrgt-in-progress` to `APP_DISABLE_REMINDERS` — otherwise the 09:00 run logs an error
+every day while the date is unset.
+
+### APP_SMS_ANNUAL_CAP
+
+The number of SMS messages that may be sent per financial year (resets 1 April, Europe/London). Defaults to
+`20000`, the GOV.UK Notify free allowance; empty means the default too. Every Notify attempt counts towards
+the cap, including retries. Lower it if another service starts sharing the same Notify SMS allowance.
+
+`0` stops all SMS from being sent, including messages already queued (they fail rather than going out). An
+invalid value (anything other than empty or a non-negative whole number, e.g. `20,000`, `20k`, `-5`, `abc`) does
+the same, and logs an error. Nothing else is affected (email and letter notifications carry on as normal).
+
+It's set in `.env` / `.env.local`, not a Cloud Build substitution, so changing it needs a deploy.
+
+### APP_SMS_DAILY_CAP_PER_NUMBER
+
+The most SMS messages any one mobile number may be sent per day (a Europe/London calendar day). Defaults to `5`;
+empty means the default too. Every Notify attempt counts, including retries. Once a number has reached the cap,
+further reminders to it that day go by email only (or, with no email, stay due for the next run), and a retry that
+would go over fails.
+
+`0` stops all SMS, including messages already queued. An invalid value (anything other than empty or a
+non-negative whole number) does the same, and logs an error. Email and letter notifications are unaffected.
+
+It's set in `.env` / `.env.local`, not a Cloud Build substitution, so changing it needs a deploy.

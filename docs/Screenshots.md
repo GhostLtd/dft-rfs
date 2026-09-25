@@ -219,9 +219,9 @@ cd screenshots
 
 | Mode | Username | Data Created |
 |------|----------|--------------|
-| domestic | `screenshot` | PasscodeUser + DomesticSurvey |
-| international | `screenshot` | PasscodeUser + InternationalSurvey + Company |
-| pre-enquiry | `screenshot` | PasscodeUser + PreEnquiry |
+| domestic | `00000000` | PasscodeUser + DomesticSurvey |
+| international | `00000000` | PasscodeUser + InternationalSurvey + Company |
+| pre-enquiry | `00000000` | PasscodeUser + PreEnquiry |
 | roro | `screenshot@example.com` | RoRoUser + Operators + OperatorGroup + Surveys |
 
 ### Timeout

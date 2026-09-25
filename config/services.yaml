@@ -65,6 +65,18 @@ services:
         arguments:
             $changeoverDate: '%env(default::APP_POSTCODE_CHANGEOVER_DATE)%'
 
+    App\Utility\Notification\SmsAllowance:
+        arguments:
+            $cap: '%env(default::APP_SMS_ANNUAL_CAP)%'
+
+    App\Utility\Notification\SmsRecipientDailyCap:
+        arguments:
+            $cap: '%env(default::APP_SMS_DAILY_CAP_PER_NUMBER)%'
+
+    App\Utility\Reminder\DomesticInProgressReminders:
+        arguments:
+            $remindersFromSetting: '%env(default::APP_IN_PROGRESS_REMINDERS_FROM)%'
+
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - !service { class: PDO, factory: ['@database_connection', 'getNativeConnection'] }

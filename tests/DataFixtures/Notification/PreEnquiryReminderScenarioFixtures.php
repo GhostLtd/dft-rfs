@@ -47,12 +47,13 @@ class PreEnquiryReminderScenarioFixtures extends Fixture
         // Phase 1 (insert): bare entities only -- no state, no invitation address, no invitation emails --
         // so PreEnquiryStateLifecycleSubscriber's guard blocks "invite_user" and state stays "new".
         $preEnquiries = [];
+        $code1 = 13000000;
         foreach (array_keys($scenarios) as $ref) {
             $preEnquiries[$ref] = (new PreEnquiry())
                 ->setReferenceNumber(substr(md5($ref), 0, 8))
                 ->setCompanyName("Company {$ref}")
                 ->setDispatchDate(new \DateTime('2026-08-01'))
-                ->setPasscodeUser((new PasscodeUser())->setUsername("pre-{$ref}")->setPlainPassword('test'));
+                ->setPasscodeUser((new PasscodeUser())->setUsername((string) ++$code1)->setPlainPassword('test'));
             $manager->persist($preEnquiries[$ref]);
         }
         $manager->flush();

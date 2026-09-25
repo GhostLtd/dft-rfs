@@ -8,6 +8,7 @@ use App\Utility\Notification\AutomatedNotificationsRunner;
 use App\Utility\Notification\NotificationType;
 use App\Utility\Reminder\AutomatedRemindersInterface;
 use App\Utility\Reminder\DisabledRemindersHelper;
+use App\Utility\Reminder\DomesticInProgressReminders;
 use App\Utility\Reminder\DomesticReminders;
 use App\Utility\Reminder\InternationalReminders;
 use App\Utility\Reminder\PreEnquiryReminders;
@@ -94,5 +95,45 @@ class AutomatedNotificationsRunnerTest extends KernelTestCase
 
         sort($ran);
         self::assertSame(['csrgt', 'pre-enquiry', 'roro'], $ran, 'the disabled family is skipped; the runner promises nothing about order');
+    }
+
+    public function testContainerRunnerExcludesTheInProgressFamily(): void
+    {
+        $runner = static::getContainer()->get(AutomatedNotificationsRunner::class);
+        $families = (new \ReflectionProperty($runner, 'families'))->getValue($runner);
+        $classes = array_map(fn(object $f) => $f::class, iterator_to_array($families, false));
+
+        self::assertContains(DomesticReminders::class, $classes);
+        self::assertNotContains(DomesticInProgressReminders::class, $classes, 'the in-progress family runs from its own 09:00 cron entry');
+    }
+
+    public function testRunOneRunsAnEnabledFamily(): void
+    {
+        $family = $this->createMock(AutomatedRemindersInterface::class);
+        $family->method('getFamily')->willReturn('csrgt-in-progress');
+        $family->expects(self::once())->method('run');
+
+        (new AutomatedNotificationsRunner([], new DisabledRemindersHelper('csrgt'), new NullLogger()))->runOne($family);
+    }
+
+    public function testRunOneSkipsADisabledFamily(): void
+    {
+        $family = $this->createMock(AutomatedRemindersInterface::class);
+        $family->method('getFamily')->willReturn('csrgt-in-progress');
+        $family->expects(self::never())->method('run');
+
+        (new AutomatedNotificationsRunner([], new DisabledRemindersHelper('csrgt-in-progress'), new NullLogger()))->runOne($family);
+    }
+
+    public function testGetFamiliesIsTheInjectedList(): void
+    {
+        $family = $this->createMock(AutomatedRemindersInterface::class);
+        $runner = new AutomatedNotificationsRunner([$family], new DisabledRemindersHelper(''), new NullLogger());
+        self::assertSame([$family], iterator_to_array($runner->getFamilies(), false));
+    }
+
+    public function testDisabledHelperListsTheDisabledFamilies(): void
+    {
+        self::assertSame(['csrgt', 'roro'], (new DisabledRemindersHelper(' csrgt, ROro ,'))->getDisabled());
     }
 }

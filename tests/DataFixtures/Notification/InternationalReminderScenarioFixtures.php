@@ -20,7 +20,8 @@ class InternationalReminderScenarioFixtures extends Fixture
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $make = function (string $ref, string $state, array $notifications, string $periodEnd = '2026-08-31') use ($manager): Survey {
+        $code1 = 12000000;
+        $make = function (string $ref, string $state, array $notifications, string $periodEnd = '2026-08-31') use ($manager, &$code1): Survey {
             $company = (new Company())->setBusinessName("Company {$ref}");
             $survey = (new Survey())
                 ->setSurveyPeriodStart(new \DateTime('2026-08-25'))
@@ -28,7 +29,7 @@ class InternationalReminderScenarioFixtures extends Fixture
                 ->setCompany($company)
                 ->setReferenceNumber(substr(md5($ref), 0, 6).'-'.substr(md5($ref), 6, 4))
                 ->setInvitationEmails('inv@example.com')
-                ->setPasscodeUser((new PasscodeUser())->setUsername("int-{$ref}")->setPlainPassword('test'))
+                ->setPasscodeUser((new PasscodeUser())->setUsername((string) ++$code1)->setPlainPassword('test'))
                 ->setState($state);
 
             foreach ($notifications as [$type, $sentAt]) {

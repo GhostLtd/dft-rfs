@@ -7,6 +7,7 @@ use App\Entity\PasscodeUser;
 use App\Entity\HaulageSurveyInterface;
 use App\Entity\HaulageSurveyTrait;
 use App\Entity\QualityAssuranceInterface;
+use App\Entity\SmsRecipientInterface;
 use App\Entity\SurveyManualReminderInterface;
 use App\Entity\SurveyNotificationInterface;
 use App\Entity\SurveyNotificationsTrait;
@@ -31,7 +32,7 @@ use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 #[ORM\Index(name: 'idx_survey_state', columns: ['state', 'id'])]
 #[ORM\Index(name: 'idx_survey_start_id', columns: ['survey_period_start', 'id'])]
-class Survey implements HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyStateInterface
+class Survey implements HaulageSurveyInterface, PersonalDataCleanupInterface, QualityAssuranceInterface, SurveyManualReminderInterface, SurveyStateInterface, SmsRecipientInterface
 {
     use HaulageSurveyTrait;
     use SurveyNotificationsTrait;
@@ -453,6 +454,11 @@ class Survey implements HaulageSurveyInterface, PersonalDataCleanupInterface, Qu
     public function getResponseContactEmail(): ?string
     {
         return $this->getResponse()?->getContactEmail();
+    }
+
+    public function getSmsRecipientTelephone(): ?string
+    {
+        return $this->getResponse()?->getContactTelephone();
     }
 
     public function getCompanyNameFromInvitationAddress(): ?string

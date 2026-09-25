@@ -7,18 +7,15 @@ use App\Utility\Notification\NotificationType;
 use Doctrine\Common\Collections\Collection;
 
 /**
- * Requires the using class to declare `private Collection $notifications`
- * (OneToMany to its notification class, initialised in the constructor)
- * and to implement createNotification() and getNotificationClass().
+ * Stores and queries a survey's notifications.
+ * Requires a mapped notifications Collection, createNotification() and getNotificationClass().
  */
 trait SurveyNotificationsTrait
 {
     /** @return Collection<int, SurveyNotificationInterface> */
     public function getNotifications(): Collection
     {
-        // Each using class's $notifications is typed to its own concrete notification class for
-        // Doctrine's benefit, which PHPStan's invariant generics see as narrower than this shared
-        // trait's SurveyNotificationInterface-typed return; the runtime type is correct.
+        // Concrete notification collections satisfy the shared interface at runtime.
         // @phpstan-ignore return.type (invariant generics: concrete Collection<T> vs shared interface return type)
         return $this->notifications;
     }
@@ -32,8 +29,7 @@ trait SurveyNotificationsTrait
 
         if (!$this->notifications->contains($notification)) {
             $notification->setSurvey($this);
-            // Just verified above via instanceof against $expectedClass, but PHPStan can't narrow to it
-            // since it's a runtime class-string, not a literal class name.
+            // The runtime instanceof check above validates the concrete collection type.
             // @phpstan-ignore offsetAssign.valueType (verified by the instanceof check above)
             $this->notifications[] = $notification;
         }
@@ -41,7 +37,11 @@ trait SurveyNotificationsTrait
         return $this;
     }
 
-    /** @return array<SurveyNotificationInterface> */
+    /**
+     * Returns matching notifications newest first, optionally restricted to one channel.
+     *
+     * @return array<SurveyNotificationInterface>
+     */
     public function getNotificationsOfType(NotificationType $type, ?NotificationChannel $channel = null): array
     {
         $matching = $this->notifications
@@ -55,12 +55,18 @@ trait SurveyNotificationsTrait
         return $matching;
     }
 
+    /**
+     * Returns the newest matching send date, or null when no notification matches.
+     */
     public function getLatestNotificationSentAt(NotificationType $type, ?NotificationChannel $channel = null): ?\DateTime
     {
         $matching = $this->getNotificationsOfType($type, $channel);
         return $matching === [] ? null : $matching[0]->getSentAt();
     }
 
+    /**
+     * Returns the earliest send date for this type, or null when none exists.
+     */
     public function getFirstNotificationSentAt(NotificationType $type): ?\DateTime
     {
         $matching = $this->getNotificationsOfType($type);

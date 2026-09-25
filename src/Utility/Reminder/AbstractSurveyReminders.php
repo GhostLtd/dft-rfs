@@ -13,11 +13,8 @@ use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * The execution machinery shared by the per-survey families (CSRGT, IRHS, pre-enquiry): find what is due for
- * reminder-1 then reminder-2, and send each survey through NotificationSender in its own transaction. The
- * eligibility itself -- what "due" means -- stays in each subclass's dueForReminder1()/dueForReminder2(), so a
- * family's conditions are read in one place rather than assembled from parameters. RoRo does not extend this
- * class: its per-operator digests and transactions are a different shape.
+ * Selects first and second reminders for CSRGT, IRHS and pre-enquiry surveys.
+ * Queues each survey's messages in its own transaction; subclasses define eligibility.
  */
 abstract class AbstractSurveyReminders implements AutomatedRemindersInterface
 {
@@ -39,31 +36,50 @@ abstract class AbstractSurveyReminders implements AutomatedRemindersInterface
     /** @return list<SurveyInterface&SurveyNotificationsInterface> */
     abstract public function dueForReminder2(\DateTimeImmutable $now): array;
 
-    public function run(): void
+    /**
+     * Returns due surveys grouped by reminder type, without recording or queuing messages.
+     */
+    public function due(\DateTimeImmutable $now): DueReminders
     {
-        $now = \DateTimeImmutable::createFromInterface($this->clock->now());
+        $items = [];
+        foreach ([[NotificationType::REMINDER_1, $this->dueForReminder1($now)], [NotificationType::REMINDER_2, $this->dueForReminder2($now)]] as [$type, $surveys]) {
+            foreach ($surveys as $survey) {
+                $items[] = new DueItem($type, [$survey]);
+            }
+        }
 
-        // reminder-1 first for readability only: the "own type not sent" and cutoff checks make the two loops
-        // independent of each other's results within a run.
-        $this->sendAll(NotificationType::REMINDER_1, $this->dueForReminder1($now));
-        $this->sendAll(NotificationType::REMINDER_2, $this->dueForReminder2($now));
+        return new DueReminders($this->getFamily(), [NotificationType::REMINDER_1, NotificationType::REMINDER_2], $items);
     }
 
     /**
-     * "$delay ago", less the existing 12-hour tolerance, so a reminder due at 09:00 is not pushed to the next
-     * day's run by a few hours' drift.
+     * Queues all due reminders, using one transaction per survey.
+     */
+    public function run(): void
+    {
+        $due = $this->due(\DateTimeImmutable::createFromInterface($this->clock->now()));
+        foreach ($due->types as $type) {
+            $this->queueReminders($type, $due->ofType($type));
+        }
+    }
+
+    /**
+     * Returns $now minus $delay, plus the 12-hour scheduling tolerance.
      */
     protected function cutoff(\DateTimeImmutable $now, string $delay): \DateTimeImmutable
     {
         return $now->sub(new \DateInterval($delay))->add(new \DateInterval(self::TOLERANCE));
     }
 
-    /** @param list<SurveyInterface&SurveyNotificationsInterface> $due */
-    private function sendAll(NotificationType $type, array $due): void
+    /**
+     * Queues each due survey's messages in its own transaction.
+     *
+     * @param list<DueItem> $items
+     */
+    private function queueReminders(NotificationType $type, array $items): void
     {
-        $this->logger->info(self::LOG_PREFIX."{$type->value} for {$this->getFamily()}: ".count($due).' due');
-        foreach ($due as $survey) {
-            $this->entityManager->wrapInTransaction(fn() => $this->sender->send($survey, $type));
+        $this->logger->info(self::LOG_PREFIX."{$type->value} for {$this->getFamily()}: ".count($items).' due');
+        foreach ($items as $item) {
+            $this->entityManager->wrapInTransaction(fn() => $this->sender->send($item->surveys[0], $type));
         }
     }
 }

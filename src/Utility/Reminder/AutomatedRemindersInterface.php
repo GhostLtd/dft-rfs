@@ -5,16 +5,23 @@ namespace App\Utility\Reminder;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
- * One survey family's automated reminders. Implementations are collected by tag into
- * AutomatedNotificationsRunner; adding a family means adding a class, nothing else. The runner makes no
- * promise about the order families run in -- each family's eligibility depends only on its own tables.
+ * A reminder family selected by the automated runner and APP_DISABLE_REMINDERS.
  */
 #[AutoconfigureTag('app.automated_reminders')]
 interface AutomatedRemindersInterface
 {
-    /** The APP_DISABLE_REMINDERS family name (a DisabledRemindersHelper constant). */
+    /**
+     * Returns the family name used in APP_DISABLE_REMINDERS.
+     */
     public function getFamily(): string;
 
-    /** Select what is due and send it, each survey (or group) in its own transaction. */
+    /**
+     * Selects due reminders and queues their messages, one transaction per survey or operator group.
+     */
     public function run(): void;
+
+    /**
+     * Returns due reminders, held-back surveys and selection notes without queuing messages.
+     */
+    public function due(\DateTimeImmutable $now): DueReminders;
 }

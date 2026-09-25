@@ -883,6 +883,7 @@ admin:
           in_progress {the survey recently changed state to *in-progress*.}
           manual_reminder {a *manual reminder* was recently sent.}
           was_chased {the hauler was recently contacted (see "Notes" tab).}
+          automated_reminder {an *automated reminder* was recently sent.}
           other {Other}
         }  
         A manual reminder may next be sent in *{interval}*.

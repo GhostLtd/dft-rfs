@@ -103,6 +103,11 @@ class ManualReminderHelper
             'manual_reminder' => $survey->getLatestNotificationSentAt(NotificationType::MANUAL_REMINDER),
             'in_progress' => $this->getInProgressDate($survey),
             'was_chased' => $this->getLastChasedDate($survey),
+            'automated_reminder' => max(
+                $survey->getLatestNotificationSentAt(NotificationType::IN_PROGRESS_REMINDER_1),
+                $survey->getLatestNotificationSentAt(NotificationType::IN_PROGRESS_REMINDER_2),
+                $survey->getLatestNotificationSentAt(NotificationType::IN_PROGRESS_REMINDER_3),
+            ),
         ];
 
         $latestEventDate = max($eventDates);

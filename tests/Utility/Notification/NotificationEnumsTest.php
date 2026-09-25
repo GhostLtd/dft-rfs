@@ -13,6 +13,9 @@ class NotificationEnumsTest extends TestCase
         $this->assertValuePinned('reminder-1', NotificationType::REMINDER_1);
         $this->assertValuePinned('reminder-2', NotificationType::REMINDER_2);
         $this->assertValuePinned('reminder-manual', NotificationType::MANUAL_REMINDER);
+        $this->assertValuePinned('in-progress-reminder-1', NotificationType::IN_PROGRESS_REMINDER_1);
+        $this->assertValuePinned('in-progress-reminder-2', NotificationType::IN_PROGRESS_REMINDER_2);
+        $this->assertValuePinned('in-progress-reminder-3', NotificationType::IN_PROGRESS_REMINDER_3);
     }
 
     // These values are persisted (event/log names, DB rows): routed through a plain-`string`

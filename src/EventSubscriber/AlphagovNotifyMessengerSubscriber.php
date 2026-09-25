@@ -35,9 +35,11 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $notifyApiEvent = $event->getThrowable()->getPrevious();
+        // Handler failures arrive wrapped (HandlerFailedException, then possibly UnrecoverableMessageHandlingException);
+        // middleware refusals arrive bare. Unwrap where there is something to unwrap.
+        $notifyApiEvent = $event->getThrowable()->getPrevious() ?? $event->getThrowable();
         if ($notifyApiEvent instanceof UnrecoverableMessageHandlingException) {
-            $notifyApiEvent = $notifyApiEvent->getPrevious();
+            $notifyApiEvent = $notifyApiEvent->getPrevious() ?? $notifyApiEvent;
         }
 
         if ($notifyApiEvent instanceof ApiException) {

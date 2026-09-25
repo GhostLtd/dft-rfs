@@ -42,7 +42,7 @@ class InviteDispatchTest extends KernelTestCase
             ->setIsNorthernIreland(false)
             ->setRegistrationMark('AB01ABC')
             ->setInvitationAddress((new LongAddress())->setLine1('Co')->setLine2('1 Road')->setPostcode('BA1 1HR'))
-            ->setPasscodeUser((new PasscodeUser())->setUsername('invite-test')->setPlainPassword('x'));
+            ->setPasscodeUser((new PasscodeUser())->setUsername('10000003')->setPlainPassword('x'));
 
         $this->entityManager->persist($survey);
         $this->entityManager->flush();

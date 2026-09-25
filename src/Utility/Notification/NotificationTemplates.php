@@ -10,9 +10,8 @@ use App\Utility\AlphagovNotify\Reference;
 use Doctrine\Common\Util\ClassUtils;
 
 /**
- * Which Notify template each notification type uses, per survey class and channel. This is the only
- * place that knows which types apply to which survey class; a channel that is not sent (e.g. pre-enquiry
- * email, whose Reference ids are empty) is simply absent.
+ * Maps each survey class and notification type to Notify template IDs by channel.
+ * Channels without a template are omitted.
  */
 final class NotificationTemplates
 {
@@ -23,6 +22,9 @@ final class NotificationTemplates
             'reminder-1'      => [NotificationChannel::LETTER->value => Reference::LETTER_DOMESTIC_SURVEY_REMINDER_1, NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_REMINDER_1],
             'reminder-2'      => [NotificationChannel::LETTER->value => Reference::LETTER_DOMESTIC_SURVEY_REMINDER_2, NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_REMINDER_2],
             'reminder-manual' => [NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_MANUAL_REMINDER],
+            'in-progress-reminder-1' => [NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_1, NotificationChannel::SMS->value => Reference::SMS_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_1],
+            'in-progress-reminder-2' => [NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_2, NotificationChannel::SMS->value => Reference::SMS_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_2],
+            'in-progress-reminder-3' => [NotificationChannel::EMAIL->value => Reference::EMAIL_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_3, NotificationChannel::SMS->value => Reference::SMS_DOMESTIC_SURVEY_IN_PROGRESS_REMINDER_3],
         ],
         InternationalSurvey::class => [
             'invite'          => [NotificationChannel::LETTER->value => Reference::LETTER_INTERNATIONAL_SURVEY_INVITE,     NotificationChannel::EMAIL->value => Reference::EMAIL_INTERNATIONAL_SURVEY_INVITE],
@@ -30,7 +32,7 @@ final class NotificationTemplates
             'reminder-2'      => [NotificationChannel::LETTER->value => Reference::LETTER_INTERNATIONAL_SURVEY_REMINDER_2, NotificationChannel::EMAIL->value => Reference::EMAIL_INTERNATIONAL_SURVEY_REMINDER_2],
             'reminder-manual' => [NotificationChannel::EMAIL->value => Reference::EMAIL_INTERNATIONAL_SURVEY_MANUAL_REMINDER],
         ],
-        // Letter only: Reference::EMAIL_PRE_ENQUIRY_* are empty strings, so no email is ever sent for pre-enquiries.
+        // Letter only: there are no pre-enquiry email templates, so no email is ever sent for pre-enquiries.
         PreEnquiry::class => [
             'invite'     => [NotificationChannel::LETTER->value => Reference::LETTER_PRE_ENQUIRY_INVITE],
             'reminder-1' => [NotificationChannel::LETTER->value => Reference::LETTER_PRE_ENQUIRY_REMINDER_1],
@@ -42,20 +44,30 @@ final class NotificationTemplates
         ],
     ];
 
-    /** @return array<string, string> channel value => template id; empty when the type does not apply to the class */
+    /**
+     * Returns template IDs keyed by channel, or an empty array for an unsupported type.
+     *
+     * @return array<string, string>
+     */
     public static function for(string $surveyClass, NotificationType $type): array
     {
-        // Callers pass $survey::class; a survey fetched by a query can be a Doctrine proxy whose class is
-        // Proxies\__CG__\...\Survey, so normalise to the mapped class once here rather than at every caller.
+        // Use the mapped survey class when the caller passes a Doctrine proxy.
         return self::TEMPLATES[ClassUtils::getRealClass($surveyClass)][$type->value] ?? [];
     }
 
+    /**
+     * Returns whether the survey class has at least one template for this notification type.
+     */
     public static function has(string $surveyClass, NotificationType $type): bool
     {
         return self::for($surveyClass, $type) !== [];
     }
 
-    /** Types that apply to the class, in NotificationType::cases() order (the admin display order). @return list<NotificationType> */
+    /**
+     * Returns supported notification types in the admin display order.
+     *
+     * @return list<NotificationType>
+     */
     public static function typesFor(string $surveyClass): array
     {
         return array_values(array_filter(NotificationType::cases(), fn(NotificationType $t) => self::has($surveyClass, $t)));

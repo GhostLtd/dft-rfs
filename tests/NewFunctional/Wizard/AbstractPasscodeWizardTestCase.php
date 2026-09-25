@@ -24,7 +24,7 @@ abstract class AbstractPasscodeWizardTestCase extends AbstractProceduralWizardTe
         $this->initialiseClientAndLoadFixtures($fixtures);
         $this->context = $this->createContext('');
         $user = $this->fixtureReferenceRepository->getReference('user:frontend', PasscodeUser::class);
-        $this->passcodeLogin('test', $this->passcodeGenerator->getPasswordForUser($user));
+        $this->passcodeLogin($user->getUsername(), $this->passcodeGenerator->getPasswordForUser($user));
     }
 
     #[\Override]

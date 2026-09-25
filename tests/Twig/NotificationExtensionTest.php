@@ -19,14 +19,14 @@ class NotificationExtensionTest extends TestCase
             $survey->addNotification((new SurveyNotification())->setType(NotificationType::REMINDER_1)->setChannel(NotificationChannel::LETTER)->setSentAt(new \DateTime($d)));
         }
         $ext = new NotificationExtension();
-        self::assertEquals(new \DateTime('2026-02-01'), $ext->sentAt($survey, 'reminder-1'));
-        self::assertNull($ext->sentAt($survey, 'reminder-2'));
+        self::assertEquals(new \DateTime('2026-02-01'), $ext->latestSentAt($survey, 'reminder-1'));
+        self::assertNull($ext->latestSentAt($survey, 'reminder-2'));
     }
 
     public function testUnknownTypeThrows(): void
     {
         $this->expectException(\ValueError::class);
-        (new NotificationExtension())->sentAt(new Survey(), 'nope');
+        (new NotificationExtension())->latestSentAt(new Survey(), 'nope');
     }
 
     public function testTypesForLabelsRowsWithinTheirOwnChannel(): void
@@ -37,22 +37,35 @@ class NotificationExtensionTest extends TestCase
         }
         $ext = new NotificationExtension();
 
-        $labels = fn(bool $showEmails) => array_map(fn(array $row) => $row['label'], $ext->typesFor($survey, $showEmails)[0]['rows']);
+        $labels = fn(bool $showEmails) => array_map(fn(array $row) => $row['label'], $ext->groupNotifications($survey, $showEmails)[0]['rows']);
         self::assertSame(['Letter #2', 'Letter #1', 'Email'], $labels(true), 'newest first; only the resent channel is numbered');
         self::assertSame(['Letter #2', 'Letter #1'], $labels(false));
+    }
+
+    public function testTypesForLabelsSmsRowsAsSms(): void
+    {
+        $survey = new Survey();
+        $survey->addNotification((new SurveyNotification())->setType(NotificationType::IN_PROGRESS_REMINDER_1)->setChannel(NotificationChannel::SMS)->setSentAt(new \DateTime('2026-01-01')));
+        $ext = new NotificationExtension();
+
+        $group = current(array_filter($ext->groupNotifications($survey), fn(array $g) => $g['type'] === NotificationType::IN_PROGRESS_REMINDER_1));
+        self::assertSame(['SMS'], array_map(fn(array $row) => $row['label'], $group['rows']));
     }
 
     public function testTypesForReturnsTemplateTableOrderPerSurveyClass(): void
     {
         $ext = new NotificationExtension();
 
-        $csrgtTypes = array_map(fn(array $group) => $group['type'], $ext->typesFor(new Survey()));
+        $csrgtTypes = array_map(fn(array $group) => $group['type'], $ext->groupNotifications(new Survey()));
         self::assertEquals(
-            [NotificationType::INVITE, NotificationType::REMINDER_1, NotificationType::REMINDER_2, NotificationType::MANUAL_REMINDER],
+            [
+                NotificationType::INVITE, NotificationType::REMINDER_1, NotificationType::REMINDER_2, NotificationType::MANUAL_REMINDER,
+                NotificationType::IN_PROGRESS_REMINDER_1, NotificationType::IN_PROGRESS_REMINDER_2, NotificationType::IN_PROGRESS_REMINDER_3,
+            ],
             $csrgtTypes
         );
 
-        $preEnquiryTypes = array_map(fn(array $group) => $group['type'], $ext->typesFor(new PreEnquiry()));
+        $preEnquiryTypes = array_map(fn(array $group) => $group['type'], $ext->groupNotifications(new PreEnquiry()));
         self::assertEquals(
             [NotificationType::INVITE, NotificationType::REMINDER_1, NotificationType::REMINDER_2],
             $preEnquiryTypes

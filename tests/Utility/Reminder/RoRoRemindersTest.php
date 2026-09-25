@@ -59,6 +59,8 @@ class RoRoRemindersTest extends KernelTestCase
     private ReferenceRepository $refs;
     private SurveyCreationHelper $surveyCreationHelper;
     private MockClock $clock;
+    /** @var list<object> */
+    private array $dispatched = [];
 
     protected function setUp(): void
     {
@@ -66,8 +68,12 @@ class RoRoRemindersTest extends KernelTestCase
 
         // Set before anything (including the fixtures below) can resolve the real message bus.
         $this->bus = $this->createMock(MessageBusInterface::class);
-        $this->bus->method('dispatch')->willReturnCallback(fn(object $m, array $s = []) => new Envelope($m, $s));
+        $this->bus->method('dispatch')->willReturnCallback(function (object $m, array $s = []) {
+            $this->dispatched[] = $m;
+            return new Envelope($m, $s);
+        });
         $container->set('app.test.message_bus', $this->bus);
+        $this->dispatched = [];
 
         // RoRoReminders resolves ClockInterface via the 'clock' service, as does the
         // NotificationSender used elsewhere -- so both must share the same clock, or a dispatch
@@ -581,5 +587,77 @@ class RoRoRemindersTest extends KernelTestCase
         self::assertContains($due->getId(), $dueIds);
         self::assertNotContains($tooSoon->getId(), $dueIds);
         self::assertNotContains($resent->getId(), $dueIds, 'a survey whose latest reminder-1 is recent is not due, however old an earlier reminder-1 is');
+    }
+
+    /**
+     * buildDigest() must be exactly the emails run() dispatches, and must itself record and dispatch nothing --
+     * proving queueDigest() only adds the recording and dispatch around it, not different content.
+     */
+    public function testBuildDigestEqualsWhatRunDispatchesAndRecordsNothing(): void
+    {
+        $operator = $this->refs->getReference('roro:operator:1', Operator::class);
+        $route1 = $this->refs->getReference('roro:route:1', Route::class);
+        $route4 = $this->refs->getReference('roro:route:4', Route::class);
+
+        foreach ([[$route1, '2023-09-01'], [$route1, '2023-09-15'], [$route4, '2023-09-20']] as [$route, $start]) {
+            $this->entityManager->persist($this->surveyCreationHelper->createSurvey(new \DateTime($start), new OperatorRoute($operator->getId(), $route->getId())));
+        }
+        $this->entityManager->flush();
+
+        $reminders = $this->reminders();
+        $now = $this->clock->now();
+        $due = $reminders->dueForReminder1($now);
+        self::assertNotEmpty($due);
+
+        $rowsBefore = (int) $this->entityManager->getConnection()->fetchOne('SELECT COUNT(*) FROM roro_survey_notification');
+        $built = $reminders->buildDigest($due, NotificationType::REMINDER_1);
+        self::assertSame($rowsBefore, (int) $this->entityManager->getConnection()->fetchOne('SELECT COUNT(*) FROM roro_survey_notification'), 'buildDigest records nothing');
+
+        $reminders->run();
+        $dispatchedR1 = array_values(array_filter($this->dispatched, fn(object $m) => $m instanceof Email && $m->getEventName() === 'reminder-1'));
+
+        self::assertSame(
+            array_map(fn(Email $m) => [$m->getEmailAddress(), $m->getTemplateId(), $m->getPersonalisation()['route_names']], $built),
+            array_map(fn(Email $m) => [$m->getEmailAddress(), $m->getTemplateId(), $m->getPersonalisation()['route_names']], $dispatchedR1),
+        );
+    }
+
+    public function testDueGroupsEachTypeByOperator(): void
+    {
+        $operator1 = $this->refs->getReference('roro:operator:1', Operator::class);
+        $route1 = $this->refs->getReference('roro:route:1', Route::class);
+        $route4 = $this->refs->getReference('roro:route:4', Route::class);
+
+        // A second operator, with its own user and an active route assigned to it, so due() has two operators
+        // to group: one item per operator, not one item overall.
+        $operator2 = (new Operator())->setName('Second operator')->setCode(1012)->setIsActive(true);
+        $operator2->addRoute($route4);
+        $operator2User = (new RoRoUser())->setUsername('second-operator@example.com');
+        $operator2->addUser($operator2User);
+        $this->entityManager->persist($operator2);
+        $this->entityManager->persist($operator2User);
+
+        $this->entityManager->persist($this->surveyCreationHelper->createSurvey(new \DateTime('2023-09-01 00:00:00'), new OperatorRoute($operator1->getId(), $route1->getId())));
+        $this->entityManager->persist($this->surveyCreationHelper->createSurvey(new \DateTime('2023-09-05 00:00:00'), new OperatorRoute($operator2->getId(), $route4->getId())));
+        $this->entityManager->flush();
+
+        $reminders = $this->reminders();
+        $now = $this->clock->now();
+        $due = $reminders->due($now);
+
+        self::assertSame([NotificationType::REMINDER_1, NotificationType::REMINDER_2], $due->types);
+
+        $r1Items = $due->ofType(NotificationType::REMINDER_1);
+        self::assertNotEmpty($r1Items);
+        self::assertCount(2, $r1Items, 'one item per operator');
+
+        $r1Surveys = array_merge(...array_map(fn($i) => $i->surveys, $r1Items));
+        self::assertEqualsCanonicalizing(
+            array_map(fn($s) => $s->getId(), $reminders->dueForReminder1($now)),
+            array_map(fn($s) => $s->getId(), $r1Surveys),
+        );
+        foreach ($due->items as $item) {
+            self::assertCount(1, array_unique(array_map(fn($s) => $s->getOperator()->getId(), $item->surveys)), 'one operator per item');
+        }
     }
 }

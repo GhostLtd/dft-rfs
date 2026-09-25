@@ -6,40 +6,43 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * The two notification-row predicates every family's eligibility query needs, added to the caller's
- * QueryBuilder. Sub-query aliases and parameter names include the type so several calls compose on one
- * builder.
+ * Adds notification-history filters to a survey query.
+ * Type-specific aliases and parameters allow several filters on the same QueryBuilder.
  */
 final class NotificationQueryHelper
 {
     public function __construct(private readonly EntityManagerInterface $entityManager) {}
 
-    /** AND NOT EXISTS (a row of $type for the survey aliased $alias). */
-    public function none(QueryBuilder $qb, string $alias, string $notificationClass, NotificationType $type): QueryBuilder
+    /**
+     * Excludes surveys with a notification of $type and returns the modified QueryBuilder.
+     */
+    public function withoutNotification(QueryBuilder $qb, string $alias, string $notificationClass, NotificationType $type): QueryBuilder
     {
-        $t = $this->tag($type);
-        $sub = $this->subquery("none_{$t}.id", $notificationClass, "none_{$t}", $alias, "none_{$t}.type = :none_type_{$t}");
+        $t = $this->parameterSuffix($type);
+        $sub = $this->buildSurveySubquery("none_{$t}.id", $notificationClass, "none_{$t}", $alias, "none_{$t}.type = :none_type_{$t}");
 
         return $qb->andWhere($qb->expr()->not($qb->expr()->exists($sub)))
             ->setParameter("none_type_{$t}", $type->value);
     }
 
     /**
-     * AND the LATEST row of $type for the survey is at or before $cutoff. A survey with no such row has a NULL
-     * latest, so fails the comparison; a survey with an old row and a recent one is NOT matched.
+     * Keeps surveys whose latest notification of $type was sent at or before $cutoff.
+     * Excludes surveys with no such notification. Returns the modified QueryBuilder.
      */
-    public function latestAtOrBefore(QueryBuilder $qb, string $alias, string $notificationClass, NotificationType $type, \DateTimeInterface $cutoff): QueryBuilder
+    public function withLatestNotificationBy(QueryBuilder $qb, string $alias, string $notificationClass, NotificationType $type, \DateTimeInterface $cutoff): QueryBuilder
     {
-        $t = $this->tag($type);
-        $latest = $this->subquery("MAX(latest_{$t}.sentAt)", $notificationClass, "latest_{$t}", $alias, "latest_{$t}.type = :latest_type_{$t}");
+        $t = $this->parameterSuffix($type);
+        $latest = $this->buildSurveySubquery("MAX(latest_{$t}.sentAt)", $notificationClass, "latest_{$t}", $alias, "latest_{$t}.type = :latest_type_{$t}");
 
         return $qb->andWhere("({$latest}) <= :latest_cutoff_{$t}")
             ->setParameter("latest_type_{$t}", $type->value)
             ->setParameter("latest_cutoff_{$t}", \DateTime::createFromInterface($cutoff));
     }
 
-    /** SELECT $select FROM $notificationClass rows of the survey aliased $surveyAlias that match $condition */
-    private function subquery(string $select, string $notificationClass, string $subAlias, string $surveyAlias, string $condition): string
+    /**
+     * Returns a DQL subquery selecting notification rows for the aliased survey.
+     */
+    private function buildSurveySubquery(string $select, string $notificationClass, string $subAlias, string $surveyAlias, string $condition): string
     {
         return $this->entityManager->createQueryBuilder()
             ->select($select)
@@ -49,7 +52,10 @@ final class NotificationQueryHelper
             ->getDQL();
     }
 
-    private function tag(NotificationType $type): string
+    /**
+     * Returns the notification type as a valid suffix for DQL aliases and parameter names.
+     */
+    private function parameterSuffix(NotificationType $type): string
     {
         return str_replace('-', '_', $type->value);
     }

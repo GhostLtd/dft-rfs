@@ -9,15 +9,21 @@ use App\Entity\PasscodeUser;
 use App\Entity\RoRo\Operator as RoRoOperator;
 use App\Entity\Route\Route as RoRoRoute;
 use App\Entity\RoRoUser;
+use App\Tests\DataFixtures\Notification\InProgressReminderScenarioFixtures;
 use App\Tests\DataFixtures\Notification\ReminderScenarioFixtures;
 use App\Tests\DataFixtures\RoRo\CountryFixtures;
 use App\Tests\DataFixtures\RoRo\OperatorRouteFixtures;
 use App\Tests\DataFixtures\RoRo\UserFixtures;
 use App\Utility\Notification\AutomatedNotificationsRunner;
+use App\Utility\Notification\NotificationQueryHelper;
+use App\Utility\Notification\NotificationSender;
 use App\Utility\Notification\NotificationType;
+use App\Utility\Notification\SmsRecipientDailyCap;
 use App\Utility\Reminder\DisabledRemindersHelper;
+use App\Utility\Reminder\DomesticInProgressReminders;
 use App\Utility\Reminder\DomesticReminders;
 use App\Utility\Reminder\InternationalReminders;
+use App\Utility\Reminder\ManualReminderHelper;
 use App\Utility\Reminder\PreEnquiryReminders;
 use App\Utility\Reminder\RoRoReminders;
 use App\Utility\RoRo\SurveyCreationHelper;
@@ -184,16 +190,16 @@ class DispatchAtomicityTest extends KernelTestCase
         // without ever needing a second container->set() call.
         $this->boot(3, ReminderScenarioFixtures::NOW);
 
-        $make = fn(string $name) => (new Survey())
+        $make = fn(string $name, string $code1) => (new Survey())
             ->setSurveyPeriodStart(new \DateTime('2026-08-25'))->setSurveyPeriodEnd(new \DateTime('2026-08-31'))
             ->setIsNorthernIreland(false)->setRegistrationMark(strtoupper(substr(md5($name), 0, 7)))
             ->setInvitationAddress((new LongAddress())->setLine1('Co')->setLine2('1 Road')->setPostcode('BA1 1HR'))
-            ->setPasscodeUser((new PasscodeUser())->setUsername($name)->setPlainPassword('x'));
+            ->setPasscodeUser((new PasscodeUser())->setUsername($code1)->setPlainPassword('x'));
 
         // happy path: two surveys, one flush, two letters queued, two invite rows
         $rowsBefore = $this->rowCount();
-        $this->entityManager->persist($make('bulk-a'));
-        $this->entityManager->persist($make('bulk-b'));
+        $this->entityManager->persist($make('bulk-a', '15000001'));
+        $this->entityManager->persist($make('bulk-b', '15000002'));
         $this->entityManager->flush();
         self::assertSame(2, $this->queueCount());
         self::assertSame($rowsBefore + 2, $this->rowCount());
@@ -206,8 +212,8 @@ class DispatchAtomicityTest extends KernelTestCase
         $surveysBefore = (int) $this->entityManager->getConnection()->fetchOne('SELECT COUNT(*) FROM domestic_survey');
         $rowsBeforeFailure = $this->rowCount();
 
-        $this->entityManager->persist($make('bulk-c'));
-        $this->entityManager->persist($make('bulk-d'));
+        $this->entityManager->persist($make('bulk-c', '15000003'));
+        $this->entityManager->persist($make('bulk-d', '15000004'));
         try {
             $this->entityManager->flush();
             self::fail('expected failure');
@@ -339,5 +345,44 @@ class DispatchAtomicityTest extends KernelTestCase
         foreach ($users[$failed] as $email) {
             self::assertSame(0, $messagesTo($email), "no queued email for {$email} of the failed operator");
         }
+    }
+
+    /**
+     * The SMS channel's allowance unit and ledger row are written inside the survey's transaction; when the SMS
+     * dispatch (after the email's) throws, both roll back with the email's queued message and the rows.
+     */
+    public function testSmsAllowanceAndLedgerRollBackWithTheSurveysTransaction(): void
+    {
+        $this->boot(1, InProgressReminderScenarioFixtures::NOW, [InProgressReminderScenarioFixtures::class]);
+        $container = static::getContainer();
+        $connection = $this->entityManager->getConnection();
+
+        // Only ip1:due stays a candidate: it is the one survey with a mobile, so email (allowed) then SMS (throws).
+        $surveyId = $this->refs->getReference('ip1:due', Survey::class)->getId();
+        $connection->executeStatement("UPDATE domestic_survey SET state = 'closed' WHERE id <> ?", [$surveyId]);
+
+        $family = new DomesticInProgressReminders(
+            $this->entityManager,
+            $container->get(NotificationQueryHelper::class),
+            $container->get(NotificationSender::class),
+            $container->get(ManualReminderHelper::class),
+            $container->get(SmsRecipientDailyCap::class),
+            $this->clock,
+            new NullLogger(),
+            InProgressReminderScenarioFixtures::FROM,
+        );
+
+        try {
+            $family->run();
+            self::fail('expected the simulated failure to propagate');
+        } catch (\RuntimeException $e) {
+            self::assertSame('simulated transport failure', $e->getMessage());
+        }
+
+        self::assertSame(0, $this->queueCount(), 'the email queued before the failure rolled back');
+        self::assertSame(0, (int) $connection->fetchOne('SELECT COUNT(*) FROM domestic_survey_notification WHERE survey_id = ? AND type = ?', [$surveyId, NotificationType::IN_PROGRESS_REMINDER_1->value]));
+        self::assertSame(0, (int) $connection->fetchOne('SELECT COUNT(*) FROM sms_usage'), 'the allowance unit rolled back');
+        self::assertSame(0, (int) $connection->fetchOne('SELECT COUNT(*) FROM sms_attempt'), 'the ledger row rolled back');
+        self::assertSame(0, (int) $connection->fetchOne('SELECT COUNT(*) FROM sms_recipient_day'), 'the per-number unit rolled back');
     }
 }

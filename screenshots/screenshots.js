@@ -40,7 +40,7 @@ const generateCommand = (yargs, isRoro) => {
                 alias: 'u',
                 type: 'string',
                 description: 'Username',
-                default: 'screenshot',
+                default: '00000000',
             })
             .option('password', {
                 alias: 'p',

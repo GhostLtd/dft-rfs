@@ -8,6 +8,7 @@ class DisabledRemindersHelper
     public const IRHS = 'irhs';
     public const PRE_ENQUIRY = 'pre-enquiry';
     public const RORO = 'roro';
+    public const CSRGT_IN_PROGRESS = 'csrgt-in-progress';
 
     protected array $disabledReminders;
 
@@ -24,5 +25,11 @@ class DisabledRemindersHelper
     public function isDisabled(string $type): bool
     {
         return in_array($type, $this->disabledReminders);
+    }
+
+    /** @return list<string> */
+    public function getDisabled(): array
+    {
+        return array_values($this->disabledReminders);
     }
 }

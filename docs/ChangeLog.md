@@ -2,6 +2,11 @@
 
 # Changelog
 
+## Upcoming
+- **Feature**: CSRGT: email and SMS reminders for surveys still in progress after their survey period (SMS capped per financial year)
+- **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled
+- **Fix**: Deleting an in-progress CSRGT survey whose response has no vehicle yet (survey cleanup cron / admin deletion) no longer crashes
+
 ## 2026-10-14
 - **Feature**: Outward code checker
 - **Change**: Remove same-origin-destination-stop flag

@@ -19,7 +19,7 @@ class MessageHandlerSurveyFixtures extends Fixture
             ->setSurveyPeriodEnd(new \DateTime('2021-05-10'))
             ->setIsNorthernIreland(true)
             ->setRegistrationMark('AB01 ABC')
-            ->setPasscodeUser((new PasscodeUser())->setUsername('test')->setPlainPassword('test'))
+            ->setPasscodeUser((new PasscodeUser())->setUsername('10000002')->setPlainPassword('test'))
             ->setState(SurveyStateInterface::STATE_INVITATION_PENDING);
         $manager->persist($survey);
         $this->addReference('survey:notify-message-handler', $survey);

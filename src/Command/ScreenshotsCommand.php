@@ -43,7 +43,8 @@ class ScreenshotsCommand extends Command
     public const MODE_INTERNATIONAL = 'international';
     public const MODE_PRE_ENQUIRY = 'pre-enquiry';
     public const MODE_RORO = 'roro';
-    protected string $userId = 'screenshot';
+    // 8 digits, as the login link needs; PasscodeGenerator never issues it, so cleanup can't hit a real user.
+    protected string $userId = '00000000';
     protected string $roroUserIdOne = 'screenshot@example.com';
     protected string $userPassword;
 

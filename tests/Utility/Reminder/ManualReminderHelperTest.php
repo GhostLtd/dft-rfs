@@ -488,4 +488,19 @@ class ManualReminderHelperTest extends KernelTestCase
 
         $this->assertTrue($result);
     }
+
+    public function testAutomatedInProgressReminderMakesManualReminderTooSoon(): void
+    {
+        $this->auditLogRepositoryMock->method('getLogs')->willReturn([]);
+        $sentAt = new \DateTime('-3 days');
+        // An id is required: getMostRecentEventDate() passes it to AuditLogRepository::getLogs(string $entityId, …).
+        $survey = (new DomesticSurvey())->setId('abc-123')->setState(SurveyStateInterface::STATE_IN_PROGRESS)->setInvitationEmails('one@example.com');
+        self::withNotification($survey, NotificationType::IN_PROGRESS_REMINDER_2, $sentAt);
+
+        self::assertEquals([$sentAt, 'automated_reminder'], $this->manualReminderHelper->getMostRecentEventDate($survey));
+
+        $reason = $this->manualReminderHelper->getReasonWhyCannotSendManualReminder($survey);
+        self::assertSame(UnavailabilityReason::TOO_SOON, $reason?->getReason());
+        self::assertSame('automated_reminder', $reason->getEventType());
+    }
 }

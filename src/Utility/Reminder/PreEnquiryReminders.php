@@ -28,9 +28,9 @@ class PreEnquiryReminders extends AbstractSurveyReminders
 
         $qb = $this->entityManager->createQueryBuilder()->select('p')->from(PreEnquiry::class, 'p')
             ->where('p.state IN (:notStarted)')->setParameter('notStarted', self::NOT_STARTED);
-        $this->rows->none($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_1);
-        $this->rows->none($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_2);
-        $this->rows->latestAtOrBefore($qb, 'p', PreEnquiryNotification::class, NotificationType::INVITE, $cutoff);
+        $this->rows->withoutNotification($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_1);
+        $this->rows->withoutNotification($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_2);
+        $this->rows->withLatestNotificationBy($qb, 'p', PreEnquiryNotification::class, NotificationType::INVITE, $cutoff);
 
         return $qb->getQuery()->getResult();
     }
@@ -42,8 +42,8 @@ class PreEnquiryReminders extends AbstractSurveyReminders
 
         $qb = $this->entityManager->createQueryBuilder()->select('p')->from(PreEnquiry::class, 'p')
             ->where('p.state IN (:notStarted)')->setParameter('notStarted', self::NOT_STARTED);
-        $this->rows->none($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_2);
-        $this->rows->latestAtOrBefore($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_1, $cutoff);
+        $this->rows->withoutNotification($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_2);
+        $this->rows->withLatestNotificationBy($qb, 'p', PreEnquiryNotification::class, NotificationType::REMINDER_1, $cutoff);
 
         return $qb->getQuery()->getResult();
     }

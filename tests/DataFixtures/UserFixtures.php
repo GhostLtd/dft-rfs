@@ -12,7 +12,7 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $user = (new PasscodeUser())
-            ->setUsername('test');
+            ->setUsername('10000001');
 
         $manager->persist($user);
 

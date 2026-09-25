@@ -22,14 +22,15 @@ class ReminderScenarioFixtures extends Fixture
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $make = function (string $ref, string $state, array $notifications, string $periodEnd = '2026-08-31') use ($manager): Survey {
+        $code1 = 11000000;
+        $make = function (string $ref, string $state, array $notifications, string $periodEnd = '2026-08-31') use ($manager, &$code1): Survey {
             $survey = (new Survey())
                 ->setSurveyPeriodStart(new \DateTime('2026-08-25'))
                 ->setSurveyPeriodEnd(new \DateTime($periodEnd))
                 ->setIsNorthernIreland(false)
                 ->setRegistrationMark(strtoupper(substr(md5($ref), 0, 7)))
                 ->setInvitationEmails('inv@example.com')
-                ->setPasscodeUser((new PasscodeUser())->setUsername($ref)->setPlainPassword('test'))
+                ->setPasscodeUser((new PasscodeUser())->setUsername((string) ++$code1)->setPlainPassword('test'))
                 ->setState($state);
 
             foreach ($notifications as [$type, $sentAt]) {

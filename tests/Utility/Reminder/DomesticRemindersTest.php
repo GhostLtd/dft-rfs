@@ -73,4 +73,17 @@ class DomesticRemindersTest extends KernelTestCase
         self::assertFalse($has('r2:r1-too-recent', NotificationType::REMINDER_2));
         self::assertFalse($has('r1:due', NotificationType::REMINDER_2), 'reminder-1 recorded this run has sentAt = now, so reminder-2 cannot follow in the same run');
     }
+
+    public function testDueListsExactlyWhatEachReminderQuerySelects(): void
+    {
+        $due = $this->reminders->due($this->now);
+
+        self::assertSame('csrgt', $due->family);
+        self::assertSame([NotificationType::REMINDER_1, NotificationType::REMINDER_2], $due->types);
+        $refs = fn(NotificationType $t) => $this->refsOf(Survey::class, array_map(fn($i) => $i->surveys[0], $due->ofType($t)));
+        self::assertSame($this->refsOf(Survey::class, $this->reminders->dueForReminder1($this->now)), $refs(NotificationType::REMINDER_1));
+        self::assertSame($this->refsOf(Survey::class, $this->reminders->dueForReminder2($this->now)), $refs(NotificationType::REMINDER_2));
+        self::assertSame([], $due->heldBack);
+        self::assertSame([], $due->notes);
+    }
 }
