@@ -19,7 +19,6 @@ vendor/bin/phpunit
   so it needs Chrome plus a matching chromedriver in `drivers/` (`vendor/bin/bdi detect drivers`).
 - `JavaScriptBehaviourTest` exercises the compiled bundles in `public/build`, so a stale or missing build fails it.
 - Don't run two test runs at once: they share the SQLite test database and corrupt each other.
-- See [BrowserKit-first functional tests](docs/ADRs/browserkit-first-functional-tests/index.md) for why, and what to watch out for.
 
 ## Relation documents / config
 - [Change log](docs/ChangeLog.md)

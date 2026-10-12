@@ -7,7 +7,9 @@
 - **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled
 - **Fix**: Deleting an in-progress CSRGT survey whose response has no vehicle yet (survey cleanup cron / admin deletion) no longer crashes
 - **Fix**: Admin: choosing "Empty" for goods carried on a day stage/summary once again hides the hazardous goods, cargo type, weight and number-of-stops fields
+- **Fix**: A request that doesn't match a route no longer opens a database connection or starts the session, and during maintenance an unknown URL now shows the 404 page (see [ADR](ADRs/2026-10-12-404s-without-database.md))
 - **Change**: Tests: tests that call the real GOV.UK Notify API are in the `notify-api` group, excluded by default (`vendor/bin/phpunit --group notify-api` to run them)
+- **Change**: Tests: functional tests run in-process on BrowserKit; only `JavaScriptBehaviourTest` uses a real browser (see [ADR](ADRs/2026-10-08-browserkit-first-functional-tests.md))
 - **Change**: Tests: functional tests run in-process on BrowserKit; only `JavaScriptBehaviourTest` uses a real browser (see [ADR](ADRs/browserkit-first-functional-tests/index.md))
 
 ## 2026-10-14

@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Base class for functional tests, which drive the app in-process through BrowserKit.
  *
  * Only tests that genuinely depend on JavaScript or real rendering need a browser - those live
- * in JavaScriptBehaviourTest, on AbstractPantherTestCase. See docs/BrowserKitFunctionalTestsPlan.md.
+ * in JavaScriptBehaviourTest, on AbstractPantherTestCase. See docs/ADRs/2026-10-08-browserkit-first-functional-tests.md.
  */
 class AbstractFunctionalTestCase extends WebTestCase
 {
