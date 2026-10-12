@@ -10,6 +10,10 @@ services:
     App\Utility\Cleanup\PersonalDataCleanupUtility: ~
     App\Utility\UrlSigner: ~
 
+    # Records DB connections/queries while a test has it switched on (inert otherwise)
+    App\Tests\Support\DatabaseActivityRecorder:
+        tags: ['doctrine.middleware']
+
     # Alias these services to make sure they are not removed when the container is
     # compiled, and so that they can be replaced with mocks via their alias name.
     app.test.message_bus:

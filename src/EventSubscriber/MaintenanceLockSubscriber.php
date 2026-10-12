@@ -28,6 +28,12 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
+        // Only gate the main request. Without this the maintenance DB check (isLocked()) runs on the
+        // error sub-request used to render 404 pages (and on any other sub-request).
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         if (!$this->isMaintenanceMode($event)) {
             return;
         }

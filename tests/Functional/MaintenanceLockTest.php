@@ -28,6 +28,17 @@ class MaintenanceLockTest extends AbstractFrontendFunctionalTestCase
         self::assertStringContainsString('Scheduled maintenance - Service unavailable', $response->outerHtml());
     }
 
+    public function testMaintenanceLockActiveUnknownUrlIsNotFound()
+    {
+        $this->loadFixtures([MaintenanceLockFixtures::class]);
+
+        // The maintenance lock only gates the main request, so it no longer takes over the 404 page
+        // (rendered in a sub-request) for a URL that doesn't exist
+        $response = $this->browser->request(Request::METHOD_GET, "https://{$_ENV['FRONTEND_HOSTNAME']}/no-such-page");
+        self::assertResponseStatusCodeSame(404);
+        self::assertStringNotContainsString('Scheduled maintenance', $response->outerHtml());
+    }
+
     public function testMaintenanceLockActiveWhitelist()
     {
         $this->loadFixtures([MaintenanceLockWithWhitelistFixtures::class]);

@@ -6,6 +6,10 @@
 
 {% block sessionWarning %}{% endblock %}
 
+{# Don't render flash banners on error pages: reading the flash bag starts the session, which is a
+   PdoSessionHandler DB hit (incl. on every 404). A queued flash just shows on the next normal page. #}
+{% block flashBanners %}{% endblock %}
+
 {% block content %}
 
     <div class="govuk-grid-row">
