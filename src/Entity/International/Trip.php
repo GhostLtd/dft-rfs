@@ -470,7 +470,7 @@ class Trip
     public function getAllCountriesTransitted(): string {
         $countries = array_unique(array_merge(
             array_map(fn($code) => Countries::getName($code), $this->countriesTransitted),
-            array_map('trim', explode(',', $this->countriesTransittedOther))
+            array_map('trim', explode(',', $this->countriesTransittedOther ?? ''))
         ));
 
         sort($countries);

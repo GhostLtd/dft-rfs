@@ -5,7 +5,7 @@ namespace App\Tests\NewFunctional\Wizard\Action;
 use App\Tests\NewFunctional\AbstractWizardTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Panther\Client;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 
 /**
  * Context is a simple mechanism that can be used to:
@@ -17,7 +17,7 @@ class Context
     protected array $context;
 
     public function __construct(
-        protected Client $client,
+        protected AbstractBrowser $client,
         protected EntityManagerInterface $entityManager,
         protected AbstractWizardTestCase $testCase,
         protected ?OutputInterface $output,
@@ -45,7 +45,7 @@ class Context
         return $this;
     }
 
-    public function getClient(): Client
+    public function getClient(): AbstractBrowser
     {
         return $this->client;
     }

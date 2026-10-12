@@ -13,7 +13,7 @@ class IapAuthenticator extends BundleIapAuthenticator
         if (parent::supports($request)) {
             return true;
         }
-        // Allow non-GAE environments to fake-login via the env var (used by Panther tests).
+        // Allow non-GAE environments to fake-login via a server parameter (used by the functional tests).
         return !$this->isGaeEnvironment && $request->server->has('TEST_GOOGLE_IAP_AUTH_USER');
     }
 

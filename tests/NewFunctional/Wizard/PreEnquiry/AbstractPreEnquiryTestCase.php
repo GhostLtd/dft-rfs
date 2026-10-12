@@ -30,7 +30,9 @@ abstract class AbstractPreEnquiryTestCase extends AbstractPasscodeWizardTestCase
         unset($addressWithoutLine1['line1']);
 
         $address = array_filter($addressWithoutLine1, fn(?string $x) => $x !== '' && $x !== null);
-        $address = join(",\n", $address);
+        // Rendered with nl2br. The <br>s contribute no text, so the line breaks are checked on the markup below
+        $addressLineCount = count($address);
+        $address = join(", ", $address);
 
         $dashboardData = [
             'Company name' => $data['companyName'],
@@ -48,6 +50,7 @@ abstract class AbstractPreEnquiryTestCase extends AbstractPasscodeWizardTestCase
         ];
 
         $this->assertSummaryListData($dashboardData);
+        $this->assertSummaryRowValueHtmlMatches('Address', '#^([^<]+,<br>\s*){' . ($addressLineCount - 1) . '}[^<,]+$#');
     }
 
     protected function assertDatabaseMatchesData(array $data): void

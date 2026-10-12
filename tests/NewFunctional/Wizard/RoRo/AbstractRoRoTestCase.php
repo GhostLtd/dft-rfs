@@ -8,7 +8,7 @@ use App\Tests\NewFunctional\Wizard\Action\Context;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
-use Symfony\Component\Panther\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractRoRoTestCase extends AbstractProceduralWizardTestCase
 {
@@ -28,7 +28,7 @@ abstract class AbstractRoRoTestCase extends AbstractProceduralWizardTestCase
             ->reduce(fn(Crawler $node) => str_contains($node->text(), $summaryRowContains))
             ->first();
 
-        $this->runAndWaitForNavigation(fn() => $this->client->click($node->selectLink($linkText)->link()));
+        $this->client->click($node->selectLink($linkText)->link());
     }
 
     #[\Override]
@@ -40,7 +40,6 @@ abstract class AbstractRoRoTestCase extends AbstractProceduralWizardTestCase
         $this->emptyMessageQueue(); // Message table is outside the purview of fixtures
 
         $this->context = $this->createContext('');
-        $this->client->request('GET', '/roro/logout'); // Make sure we're logged out
 
         // Sleep until the next second to avoid "Login link may only be used once" on fast machines
         // (Symfony's login link generates links with 1-second resolution, and so ends up generating the exact same link)
@@ -57,13 +56,13 @@ abstract class AbstractRoRoTestCase extends AbstractProceduralWizardTestCase
             ->increaseActionIndex();
 
         $this->client->request('GET', '/roro');
-        $this->runAndWaitForNavigation(fn() => $this->client->submitForm('ro_ro_login_sign_in', [
+        $this->client->submitForm('ro_ro_login_sign_in', [
             'ro_ro_login[username]' => $email,
-        ]));
+        ]);
 
         $personalisation = $this->fetchMessage()->getPersonalisation();
         $this->client->request('GET', $personalisation['login_link']);
-        $this->runAndWaitForNavigation(fn() => $this->client->submitForm('login'));
+        $this->client->submitForm('login');
     }
 
     protected function fetchMessage(): ?RoRoLoginEmail

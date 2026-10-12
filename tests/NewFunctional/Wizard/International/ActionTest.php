@@ -10,7 +10,6 @@ use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
-use Symfony\Component\Panther\ServerExtension;
 
 class ActionTest extends AbstractPasscodeWizardTestCase
 {
@@ -176,7 +175,7 @@ class ActionTest extends AbstractPasscodeWizardTestCase
         $tripId = $matches['tripId'];
         $addAnotherPath = "/international-survey/trips/{$tripId}/add-action/add-another";
 
-        $this->client->get($addAnotherPath);
+        $this->client->request('GET', $addAnotherPath);
         return [$tripDashboardPath, $addAnotherPath];
     }
 }

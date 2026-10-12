@@ -4,7 +4,6 @@ namespace App\Tests\NewFunctional\Wizard\Admin\Domestic;
 
 use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminUploadTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
-use Facebook\WebDriver\WebDriverBy;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class DvlaBulkImportTest extends AbstractAdminUploadTestCase
@@ -145,8 +144,8 @@ class DvlaBulkImportTest extends AbstractAdminUploadTestCase
         // second import
         $this->doDvlaImport(0, $filename, $fileData);
         $text = $this->client->getCrawler()
-            ->findElement(WebDriverBy::cssSelector('#main-content .govuk-list li'))
-            ->getText();
+            ->filter('#main-content .govuk-list li')
+            ->text();
         $this->assertStringContainsString('A survey with this start date and registration mark already exists', $text);
     }
 
@@ -166,8 +165,8 @@ class DvlaBulkImportTest extends AbstractAdminUploadTestCase
         $this->pathTestAction('/csrgt/dvla-import/review');
 
         $text = $this->client->getCrawler()
-            ->findElement(WebDriverBy::id('import_dvla_review_data_review_data-hint'))
-            ->getText();
+            ->filter('#import_dvla_review_data_review_data-hint')
+            ->text();
 
         $this->assertStringContainsString("{$expectedValidRecords} records imported", $text);
 

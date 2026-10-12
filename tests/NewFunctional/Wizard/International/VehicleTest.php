@@ -10,7 +10,6 @@ use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
-use Facebook\WebDriver\WebDriverBy;
 
 class VehicleTest extends AbstractVehicleTestCase
 {
@@ -26,12 +25,10 @@ class VehicleTest extends AbstractVehicleTestCase
         // confirm-dates 'no' transition surfaces a banner that pulls the registration mark
         // from the wizard subject via the workflow's translation_parameters config.
         $this->callbackTestAction(function (Context $context) {
-            $banner = $context->getClient()->findElement(
-                WebDriverBy::cssSelector('.govuk-notification-banner__content')
-            );
+            $banner = $context->getClient()->getCrawler()->filter('.govuk-notification-banner__content');
             $context->getTestCase()->assertStringContainsString(
                 'AB01ABC',
-                $banner->getText(),
+                $banner->text(),
                 'Expected notification banner to contain the rejected vehicle registration mark'
             );
         });

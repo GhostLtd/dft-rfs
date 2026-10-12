@@ -8,7 +8,6 @@ use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Admin\AbstractAdminTestCase;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
-use Facebook\WebDriver\WebDriverBy;
 
 class OperatorGroupWizardTest extends AbstractAdminTestCase
 {
@@ -70,12 +69,10 @@ class OperatorGroupWizardTest extends AbstractAdminTestCase
     protected function assertNotificationBannerContains(string $expectedText): void
     {
         $this->callbackTestAction(function (Context $context) use ($expectedText) {
-            $banner = $context->getClient()->findElement(
-                WebDriverBy::cssSelector('.govuk-notification-banner__content')
-            );
+            $banner = $context->getClient()->getCrawler()->filter('.govuk-notification-banner__content');
             $context->getTestCase()->assertStringContainsString(
                 $expectedText,
-                $banner->getText(),
+                $banner->text(),
                 "Expected notification banner to contain '{$expectedText}'"
             );
         });

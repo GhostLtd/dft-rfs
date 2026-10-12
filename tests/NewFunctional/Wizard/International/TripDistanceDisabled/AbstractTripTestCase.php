@@ -97,7 +97,8 @@ abstract class AbstractTripTestCase extends AbstractSurveyTestCase
                 default => throw new \InvalidArgumentException(sprintf('Unexpected axleConfiguration "%s"', $data['axleConfiguration'])),
             };
 
-            $trailer = "Yes\n\n{$bodyType}";
+            // Rendered as "Yes<br>{axle config}". The <br> contributes no text, so the line break is checked on the markup below
+            $trailer = "Yes{$bodyType}";
         } else {
             $trailer = 'No';
         }
@@ -129,6 +130,10 @@ abstract class AbstractTripTestCase extends AbstractSurveyTestCase
         }
 
         $this->assertSummaryListData($expectedData);
+
+        if ($data['isSwappedTrailer']) {
+            $this->assertSummaryRowValueHtmlMatches('Trailer', '#^Yes<br>#');
+        }
     }
 
     protected function assertDatabaseMatchesData(array $data): void

@@ -24,6 +24,9 @@ use Doctrine\ORM\Query\Expr;
 
 class AuditLogRepository extends ServiceEntityRepository
 {
+    /** @var array<string, array> getLogs() memo - per instance (i.e. per request), not process-wide */
+    private array $logsCache = [];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AuditLog::class);
@@ -72,12 +75,10 @@ class AuditLogRepository extends ServiceEntityRepository
 
         // Gets called a couple of times on the survey view admin page, from disparate places, and so a little
         // memoization is used here.
-        static $localCache = [];
-
         $key = "{$entityClass}-{$entityId}";
 
-        if (!isset($localCache[$key])) {
-            $localCache[$key] = $this
+        if (!isset($this->logsCache[$key])) {
+            $this->logsCache[$key] = $this
                 ->createQueryBuilder('l')
                 ->where('l.entityClass = :entityClass')
                 ->andWhere('l.entityId = :entityId')
@@ -90,7 +91,7 @@ class AuditLogRepository extends ServiceEntityRepository
                 ->execute();
         }
 
-        return $localCache[$key];
+        return $this->logsCache[$key];
     }
 
     /**

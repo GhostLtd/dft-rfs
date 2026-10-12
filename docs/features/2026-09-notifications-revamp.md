@@ -143,5 +143,5 @@ The implementation is in `src/Entity/SurveyNotification*.php`, the concrete noti
 Tests cover history ordering, template/type mappings, eligibility, recipient selection, dispatch
 atomicity, invitation workflow handling, RoRo digests and admin rendering. See
 `tests/Entity/SurveyNotificationsTraitTest.php`, `tests/Utility/Notification/`,
-`tests/Utility/Reminder/`, `tests/Workflow/` and `tests/Twig/`. Run PHPUnit with `APP_ENV=test`;
-exclude `tests/Messenger/AlphagovNotify/MessageHandlerTest.php`, which calls the real Notify service.
+`tests/Utility/Reminder/`, `tests/Workflow/` and `tests/Twig/`. Run PHPUnit with `APP_ENV=test`.
+`tests/Messenger/AlphagovNotify/MessageHandlerTest.php` calls the real Notify service, so it is in the `notify-api` group, which is excluded by default (`--group notify-api` to run it).

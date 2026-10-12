@@ -31,7 +31,7 @@ class SurveyWizardTest extends AbstractRoRoTestCase
         $options = [FormTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
         $this->pathTestAction($url('/view'), $options);
-        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Start'));
+        $this->client->clickLink('Start');
 
         $this->formTestAction(
             $url('/edit/introduction'),
@@ -51,7 +51,7 @@ class SurveyWizardTest extends AbstractRoRoTestCase
 
         // We test the bulk-entry form elsewhere, in its own test
         $this->pathTestAction($url('/edit/data-entry'), $options);
-        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Back'));
+        $this->client->clickLink('Back');
 
         $this->formTestAction(
             $url('/edit/introduction'),
@@ -116,7 +116,7 @@ class SurveyWizardTest extends AbstractRoRoTestCase
         $options = [FormTestAction::OPTION_EXPECTED_PATH_REGEX => true];
 
         $this->pathTestAction($url('/view'), $options);
-        $this->runAndWaitForNavigation(fn() => $this->client->clickLink('Start'));
+        $this->client->clickLink('Start');
 
         $this->formTestAction(
             $url('/edit/introduction'),

@@ -4,7 +4,6 @@ namespace App\Tests\NewFunctional\Wizard\International;
 
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
-use Symfony\Component\Panther\ServerExtension;
 
 class ActionUnloadingChangeTest extends AbstractActionTestCase
 {

@@ -3,11 +3,8 @@
 namespace App\Tests\NewFunctional\Wizard\Action;
 
 use App\Tests\NewFunctional\Wizard\Form\AbstractFormTestCase;
-use Facebook\WebDriver\Exception\NoSuchElementException;
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverElement;
-use Symfony\Component\Panther\Client;
-use Symfony\Component\Panther\ServerExtensionLegacy;
+use Symfony\Component\BrowserKit\AbstractBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractFormTestAction extends PathTestAction
 {
@@ -52,43 +49,184 @@ abstract class AbstractFormTestAction extends PathTestAction
         $testCase->assertEquals($missingErrors, $excessErrors, "Action[$actionIndex]/Form[$testCaseIdx]: Missing/excess validation errors on these fields");
     }
 
-    protected function getBrowserSideSavedFormData(Client $client): string
+    protected function getErrors(AbstractBrowser $client): array
     {
-        $attribute = 'data-test-formdata';
-        $client->executeScript("document.getElementsByTagName('html')[0].setAttribute('{$attribute}',JSON.stringify(Array.from(new FormData(document.querySelector('form'))).filter(x => !x[0].includes('_token'))))");
-        return $client->findElement(WebDriverBy::xpath('/html'))->getAttribute($attribute);
-    }
-
-    protected function getErrors(Client $client): array
-    {
-        $nodes = $client->findElements(WebDriverBy::xpath("//ul[contains(concat(' ',normalize-space(@class),' '),' govuk-error-summary__list ')]/li/a"));
+        $nodes = $client->getCrawler()
+            ->filterXPath("//ul[contains(concat(' ',normalize-space(@class),' '),' govuk-error-summary__list ')]/li/a");
 
         $errors = [];
-        foreach ($nodes as $node) {
-            $errors[$node->getAttribute('href')] = $node->getText();
+        foreach ($nodes->each(fn(Crawler $node) => [$node->attr('href'), $node->text()]) as [$href, $text]) {
+            $errors[$href] = $text;
         }
         return $errors;
     }
 
-    protected function restoreFormData(Client $client, string $formData, bool $clearFormBeforeSetting = true): void
+    /**
+     * The form exactly as the server first rendered it.
+     *
+     * Every test case after the first must be submitted against this original state. Re-requesting
+     * the page is NOT equivalent: the wizard persists partially-valid submitted data into its session
+     * state even when validation fails, so a fresh GET comes back with the previous test case's values
+     * already filled in - which silently turns a "this field is required" assertion into a pass.
+     */
+    protected function captureOriginalForm(AbstractBrowser $client): array
     {
-        $script = $clearFormBeforeSetting ?
-            "document.querySelectorAll('input[type=text],textarea').forEach(e => e.value = '');
-             document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(e => e.checked = false);" :
-            "";
+        return [$client->getInternalResponse()->getContent(), $client->getInternalRequest()->getUri()];
+    }
 
-        $script .= "
-        JSON.parse('$formData').forEach(z => {
-            let elem = document.getElementsByName(z[0])[0];
-            let type = elem.getAttribute('type');
-            if (['checkbox','radio'].includes(type)) {
-                elem.checked = z[1];
-            } else {
-                elem.value = z[1];
+    /**
+     * The crawler that test case $testCaseIdx's form should be built from: the page as it stands
+     * for the first test case, and a fresh parse of the original render for every one after it.
+     *
+     * (A DomCrawler Form writes its values back into the nodes it was built from, hence a fresh
+     * parse rather than reusing one crawler)
+     */
+    protected function getFormCrawler(AbstractBrowser $client, ?array $originalForm, int $testCaseIdx): Crawler
+    {
+        if ($testCaseIdx === 0 || $originalForm === null) {
+            return $client->getCrawler();
+        }
+
+        [$html, $uri] = $originalForm;
+        return new Crawler($html, $uri);
+    }
+
+    /**
+     * Applies radio and checkbox selections straight to the DOM, and drops those fields from the
+     * data handed to Form::setValues().
+     *
+     * DomCrawler registers each checkbox of a `name[]` group as its own single-valued field, so
+     * setting the group by its name is an "Unreachable field" error; and a choice field rejects ''
+     * outright, whereas the tests use ''/false/null to mean "leave this unselected".
+     *
+     * As with Form::setValues(), true ticks a single checkbox whatever its value (one without a value
+     * attribute submits "on"). For a radio or checkbox group it would be ambiguous, so give the value(s).
+     */
+    protected function applyChoiceSelections(Crawler $submitButtonNode, array $formSubmissionData): array
+    {
+        $form = $submitButtonNode->closest('form');
+
+        if ($form === null) {
+            return $formSubmissionData;
+        }
+
+        foreach ($formSubmissionData as $name => $value) {
+            $choices = $form->filterXPath(
+                './/input[@type="radio" or @type="checkbox"][@name=' . $this->xpathLiteral($name) . ' or @name=' . $this->xpathLiteral($name . '[]') . ']'
+            );
+
+            if ($choices->count() === 0) {
+                continue;
             }
-        });";
 
-        $client->executeScript($script);
+            // What a ticked choice submits - a checkbox or radio without a value attribute submits "on"
+            $choiceValue = fn(\DOMNode $node) => $node instanceof \DOMElement && $node->hasAttribute('value') ? $node->getAttribute('value') : 'on';
+            $available = array_map($choiceValue, iterator_to_array($choices));
+
+            if ($value === true) {
+                if ($choices->count() !== 1 || $choices->attr('type') !== 'checkbox') {
+                    throw new \InvalidArgumentException(sprintf('Input "%s" is not a single checkbox, so true is ambiguous - give the value(s) to select (possible values: "%s").', $name, join('", "', $available)));
+                }
+                // Taken as-is, rather than filtered below: the checkbox's own value may be ''
+                $wanted = [$available[0]];
+            } else {
+                // false, null, '' and [] all mean "leave this field unselected".
+                $wanted = array_filter(array_map('strval', (array) $value), fn(string $v) => $v !== '');
+            }
+
+            // Keep the strictness of Form::setValues(), which rejects a value that none of the choices have
+            $unavailable = array_diff($wanted, $available);
+            if (!empty($unavailable)) {
+                throw new \InvalidArgumentException(sprintf('Input "%s" cannot take "%s" as a value (possible values: "%s").', $name, join('", "', $unavailable), join('", "', $available)));
+            }
+
+            foreach ($choices as $node) {
+                if (!$node instanceof \DOMElement) {
+                    continue;
+                }
+
+                if (in_array($choiceValue($node), $wanted, true)) {
+                    $node->setAttribute('checked', 'checked');
+                } else {
+                    $node->removeAttribute('checked');
+                }
+            }
+
+            unset($formSubmissionData[$name]);
+        }
+
+        return $formSubmissionData;
+    }
+
+    /**
+     * Fails if the form submission produced a server error.
+     *
+     * This is an assertion rather than a conditional fail() so that it counts once per submission,
+     * which keeps per-test assertion counts predictable across runs.
+     */
+    protected function assertSubmissionDidNotError(Context $context, int $testCaseIdx): void
+    {
+        $client = $context->getClient();
+        $statusCode = $client->getInternalResponse()->getStatusCode();
+
+        // (No exception detail to add: the test env runs with APP_DEBUG=false, so the error page doesn't carry it.
+        //  The exception is in var/log/test.log)
+        $context->getTestCase()->assertLessThan(
+            500,
+            $statusCode,
+            "Action[{$context->get('_actionIndex')}]/Form[{$testCaseIdx}]: form submission returned HTTP {$statusCode}"
+        );
+    }
+
+    /**
+     * Describes the form on the current page, for use when a submit button or field could not be
+     * found. Both the field names and the button ids are listed, since either may be what was mistyped.
+     */
+    protected function describeForm(AbstractBrowser $client): string
+    {
+        $fields = [];
+
+        $described = $client->getCrawler()->filterXPath('//input|//select|//textarea')->each(function (Crawler $element) {
+            $name = $element->attr('name');
+
+            if ($name === null || str_contains($name, '_token')) {
+                return null;
+            }
+
+            if (strtolower($element->nodeName()) === 'select') {
+                return [$name, $element->children('option')->each(
+                    fn(Crawler $option) => $option->attr('value') . ": '" . $option->text() . "'"
+                )];
+            }
+
+            return in_array($element->attr('type'), ['radio', 'checkbox'], true)
+                ? [$name, [$element->attr('value')]]
+                : [$name, true];
+        });
+
+        foreach (array_filter($described) as [$name, $values]) {
+            if (is_array($values)) {
+                $fields[$name] = array_merge((array) ($fields[$name] ?? []), $values);
+            } else {
+                $fields[$name] ??= true;
+            }
+        }
+
+        $message = "Available form elements:\n";
+        foreach ($fields as $name => $values) {
+            $message .= "  - $name";
+            if (is_array($values)) {
+                $message .= " (Choices: " . join(', ', $values) . ")";
+            }
+            $message .= "\n";
+        }
+
+        $buttonIds = array_filter($client->getCrawler()->filterXPath('//button')->each(fn(Crawler $b) => $b->attr('id')));
+        $message .= empty($buttonIds)
+            ? "Available buttons: (None available)\n"
+            : "Available buttons: " . join(', ', $buttonIds) . "\n";
+
+        return $message;
     }
 
     /**
@@ -112,98 +250,51 @@ abstract class AbstractFormTestAction extends PathTestAction
         $this->outputPathDebug($context, $expectedPath, $expectedPathIsRegex, 'a.');
 
         $context->getTestCase()->assertPathMatches($expectedPath, $expectedPathIsRegex);
-        $savedFormData = $this->getBrowserSideSavedFormData($client);
+
+        // Only needed to rewind between test cases
+        $originalForm = count($formTestCases) > 1 ? $this->captureOriginalForm($client) : null;
 
         foreach ($formTestCases as $testCaseIdx => $formTestCase) {
             $submitButtonId = $formTestCase->getSubmitButtonId() ?? $wizardSubmitButtonId;
 
+            $formSubmissionData = $formTestCase->getFormData($context);
+            $expectedErrorIds = $formTestCase->getExpectedErrorIds($context);
+
+            $this->outputPreFormFillDebug($context, $formSubmissionData, $expectedErrorIds, $testCaseIdx);
+
             try {
-                $formSubmissionData = $formTestCase->getFormData($context);
-                $expectedErrorIds = $formTestCase->getExpectedErrorIds($context);
+                $submitButtonNode = $this->getFormCrawler($client, $originalForm, $testCaseIdx)
+                    ->selectButton($submitButtonId);
 
-                $this->outputPreFormFillDebug($context, $formSubmissionData, $expectedErrorIds, $testCaseIdx);
+                $formSubmissionData = $this->applyChoiceSelections($submitButtonNode, $formSubmissionData);
 
-                if ($testCaseIdx > 0) {
-                    $this->restoreFormData($client, $savedFormData);
-                }
-
-                $submitButtonNode = $client->getCrawler()->selectButton($submitButtonId);
-
-                try {
-                    $formSubmissionData = PantherBugWorkaround::clearMentionedMultiSelections($submitButtonNode, $formSubmissionData, $client);
-
-                    // Fill form and submit as per Client->submitForm(), but with a screenshot taken in the middle...
-                    $form = $submitButtonNode->form($formSubmissionData, 'POST');
-                }
-                catch(NoSuchElementException $e) {
-                    $formElements = $client->findElements(WebDriverBy::xpath('//input|//select|//textarea'));
-
-                    $formElementNames = [];
-
-                    foreach($formElements as $element) {
-                        $tagName = strtolower($element->getTagName());
-                        $name = $element->getAttribute('name');
-                        $value = $element->getAttribute('value');
-
-                        if ($tagName === 'select') {
-                            $options = $element->findElements(WebDriverBy::xpath('option'));
-                            $formElementNames[$name] ??= [];
-
-                            foreach($options as $option) {
-                                $optionValue = $option->getAttribute('value');
-                                $optionName = $option->getText();
-
-                                $formElementNames[$name][] = "{$optionValue}: '{$optionName}'";
-                            }
-                        } else {
-                            $type = $element->getAttribute('type');
-
-                            if (!str_contains($name, '_token')) {
-                                if (in_array($type, ['radio', 'checkbox'])) {
-                                    $formElementNames[$name] ??= [];
-                                    $formElementNames[$name][] = $value;
-                                } else {
-                                    $formElementNames[$name] ??= true;
-                                }
-                            }
-                        }
-                    }
-
-                    $message = "NoSuchElement\nAvailable form elements:\n";
-                    foreach($formElementNames as $name => $values) {
-                        $message .= "  - $name";
-                        if (is_array($values)) {
-                            $possibilities = join(', ', $values);
-                            $message .= " (Choices: $possibilities)";
-                        }
-                        $message .= "\n";
-                    }
-
-                    throw new \Exception($message, 0, $e);
-                }
-
-                $this->outputPostFormFillDebug($context, $testCaseIdx);
-
-                $context->getTestCase()->runAndWaitForNavigation(fn() => $client->submit($form, []));
-
-                $this->outputPostFormSubmitDebug($context, $testCaseIdx);
+                $form = $submitButtonNode->form($formSubmissionData, 'POST');
             } catch (\InvalidArgumentException $e) {
-                $buttons = $client->findElements(WebDriverBy::cssSelector('button'));
-                $buttonsWithIds = array_filter(array_map(fn(WebDriverElement $e) => $e->getAttribute('ID'), $buttons), fn($x) => $x !== null);
-
-                $hints = empty($buttonsWithIds) ?
-                    "(None available)" :
-                    "(Available buttons: ".join(', ', $buttonsWithIds).")";
-
-                throw new \InvalidArgumentException("Unable to fetch button with ID #{$submitButtonId} {$hints}");
+                throw new \InvalidArgumentException(
+                    "Could not build the form for submit button #{$submitButtonId}: {$e->getMessage()}\n" . $this->describeForm($client),
+                    0,
+                    $e
+                );
             }
+
+            $client->submit($form, []);
+
+            $this->assertSubmissionDidNotError($context, $testCaseIdx);
 
             $this->checkErrors($context, $testCaseIdx, array_flip($expectedErrorIds));
 
-
             if (!$formTestCase->getSkipPageUrlChangeCheck()) {
                 if (empty($expectedErrorIds)) {
-                    $testCase->assertPathNotMatches($expectedPath, $expectedPathIsRegex, 'Page path did not change when expected');
+                    // A step that does not advance has almost always been rejected by validation, and
+                    // checkErrors() stays quiet when nothing was expected - so name the errors here
+                    $unexpectedErrors = $this->getErrors($client);
+                    $testCase->assertPathNotMatches(
+                        $expectedPath,
+                        $expectedPathIsRegex,
+                        'Page path did not change when expected' . (empty($unexpectedErrors)
+                            ? ' (no validation errors on the page)'
+                            : ', unexpected validation errors: ' . json_encode($unexpectedErrors))
+                    );
                 } else {
                     $testCase->assertPathMatches($expectedPath, $expectedPathIsRegex, 'Page path changed unexpectedly');
                 }
@@ -233,47 +324,21 @@ abstract class AbstractFormTestAction extends PathTestAction
                 "  "
             );
         }
-
-        if ($context->isAtLeastDebugLevel(4)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'A-pre-fill');
-        }
     }
 
-    protected function outputPostFormFillDebug(Context $context, int $testCaseIdx): void
+    /**
+     * Quotes a string for use as an XPath literal, including strings containing both quote types.
+     */
+    protected function xpathLiteral(string $value): string
     {
-        if ($context->isAtLeastDebugLevel(3)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'B-post-fill');
-        }
-    }
-
-    protected function outputPostFormSubmitDebug(Context $context, int $testCaseIdx): void
-    {
-        if ($context->isAtLeastDebugLevel(5)) {
-            $this->takeDebugScreenshot($context, $testCaseIdx, 'C-post-sub');
-        }
-    }
-
-    protected function takeDebugScreenshot(Context $context, int $testCaseIdx, string $typeSuffix): void
-    {
-        $testCaseLetter = chr($testCaseIdx + ord('b'));
-        $actionIdx = intval($context->get('_actionIndex')) + 1;
-
-        // Remove filename unsafe characters
-        $dataSetName = $context->getTestCase()->getDataSetName();
-
-        if ($dataSetName !== null) {
-            $dataSetName = str_replace(array_merge(
-                array_map('chr', range(0, 31)),
-                ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
-            ), '', $dataSetName);
+        if (!str_contains($value, "'")) {
+            return "'{$value}'";
         }
 
-        $context->outputWithPrefix(
-            "<comment>Screenshot data   :</comment> {$actionIdx}{$testCaseLetter}-{$typeSuffix}, ".($dataSetName ?? 'no-set'),
-            "  "
-        );
+        if (!str_contains($value, '"')) {
+            return "\"{$value}\"";
+        }
 
-        // It's deprecated, but at least phpstan can detect the method on the class
-        ServerExtensionLegacy::takeScreenshots("{$actionIdx}{$testCaseLetter}-{$typeSuffix}", $dataSetName ?? 'no-set');
+        return "concat('" . str_replace("'", "', \"'\", '", $value) . "')";
     }
 }

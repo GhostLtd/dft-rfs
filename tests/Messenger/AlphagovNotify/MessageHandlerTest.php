@@ -21,11 +21,18 @@ use App\Utility\AlphagovNotify\Reference;
 use App\Utility\Notification\NotificationChannel;
 use App\Utility\Notification\NotificationType;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * Sends real requests to the GOV.UK Notify API (via the async_notify consumer), so it needs a real (test) key in
+ * ALPHAGOV_NOTIFY_API_KEY and is excluded from default runs by phpunit.xml.dist. Run it explicitly with:
+ *   vendor/bin/phpunit --group notify-api
+ */
+#[Group('notify-api')]
 class MessageHandlerTest extends AbstractFunctionalTestCase
 {
     protected MessageBusInterface $bus;

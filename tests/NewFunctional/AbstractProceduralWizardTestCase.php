@@ -13,11 +13,11 @@ abstract class AbstractProceduralWizardTestCase extends AbstractWizardTestCase
     protected Context $context;
 
     #[\Override]
-    public function initialiseClientAndLoadFixtures(array $fixtures, array $pantherOptions = []): void
+    public function initialiseClientAndLoadFixtures(array $fixtures, array $serverOptions = []): void
     {
         parent::initialiseClientAndLoadFixtures($fixtures, array_merge([
             'hostname' => 'rfs-frontend.localhost',
-        ], $pantherOptions));
+        ], $serverOptions));
     }
 
     protected function pathTestAction(string $expectedPath, array $options = []): void

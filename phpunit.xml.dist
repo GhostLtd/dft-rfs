@@ -17,6 +17,12 @@
       <directory suffix="TestExtended.php">tests</directory>
     </testsuite>
   </testsuites>
+  <groups>
+    <exclude>
+      <!-- Tests that call real external APIs: run them explicitly with the group option (see README) -->
+      <group>notify-api</group>
+    </exclude>
+  </groups>
   <extensions>
     <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension"/>
     <bootstrap class="Symfony\Component\Panther\ServerExtension"/>

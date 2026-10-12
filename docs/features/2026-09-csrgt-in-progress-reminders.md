@@ -313,8 +313,8 @@ Relevant suites are `tests/Utility/Reminder/DomesticInProgressRemindersTest.php`
 `tests/Messenger/SmsAllowanceMiddlewareWiringTest.php`, `tests/Utility/UkMobileNumberTest.php`,
 `tests/Utility/LoginLinkTokenTest.php`, `tests/Functional/ShortLoginLinkTest.php`,
 `tests/Utility/AlphagovNotify/PersonalisationHelperLoginLinkTest.php`, and the reminder command,
-dry-run and rehearsal tests. Run PHPUnit with `APP_ENV=test`; exclude
-`tests/Messenger/AlphagovNotify/MessageHandlerTest.php`, which calls the real Notify service.
+dry-run and rehearsal tests. Run PHPUnit with `APP_ENV=test`.
+`tests/Messenger/AlphagovNotify/MessageHandlerTest.php` calls the real Notify service, so it is in the `notify-api` group, which is excluded by default (`--group notify-api` to run it).
 
 ## Scope
 
