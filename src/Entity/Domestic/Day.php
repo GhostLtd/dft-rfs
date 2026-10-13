@@ -84,6 +84,8 @@ class Day
     public function setResponse(?SurveyResponse $response): self
     {
         $this->response = $response;
+        $response?->addDay($this);
+
         return $this;
     }
 
