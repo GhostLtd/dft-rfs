@@ -7,7 +7,8 @@
 - **Change**: Remove same-origin-destination-stop flag
 - **Change**: IRHS: Business details summary - remove "Next steps" and change "Add vehicles" -> "Continue"
 - **Change**: 404 pages no longer hit the database
-- **Fix**: CSRGT quality flags getting out of sync 
+- **Fix**: CSRGT quality flags getting out of sync
+- **Fix**: Edge case bug in SurveyResponse->hasJourneys()
 
 ## 2026-08-10
 - **Update**: Update exempt vehicle question to be more inclusive / less prescription (our list of exempt vehicles wasn't exhaustive, which confused some owners of exempt vehicles)

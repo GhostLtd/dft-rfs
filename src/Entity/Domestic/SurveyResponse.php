@@ -470,8 +470,11 @@ class SurveyResponse extends AbstractSurveyResponse
 
         foreach ($this->getDays() as $day)
         {
-            $summaryOrStops = $day->getHasMoreThanFiveStops() ? $day->getSummary() : $day->getStops();
-            if (!empty($summaryOrStops)) return true;
+            $hasJourney = $day->getHasMoreThanFiveStops()
+                ? $day->getSummary() !== null
+                : !$day->getStops()->isEmpty();
+
+            if ($hasJourney) return true;
         }
         return false;
     }
