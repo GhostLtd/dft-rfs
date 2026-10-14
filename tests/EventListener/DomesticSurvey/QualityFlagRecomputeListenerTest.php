@@ -80,6 +80,22 @@ class QualityFlagRecomputeListenerTest extends TestCase
         $this->listener->postFlush(new PostFlushEventArgs($this->em));
     }
 
+    public function testDeletedDayWithClearedResponseResolvesViaOriginalData(): void
+    {
+        // DataConsistencyListener detaches days via SurveyResponse::removeDay() (nulling Day::$response) before
+        // removing them.
+        $response = $this->createStub(SurveyResponse::class);
+        $day = $this->createMock(Day::class);
+        $day->method('getResponse')->willReturn(null);
+        $this->uow->method('getOriginalEntityData')->with($day)->willReturn(['response' => $response]);
+
+        $this->scheduleDeletions([$day]);
+        $this->engine->expects($this->once())->method('computeAndPersist')->with($response);
+
+        $this->listener->onFlush(new OnFlushEventArgs($this->em));
+        $this->listener->postFlush(new PostFlushEventArgs($this->em));
+    }
+
     public function testMultipleChangesToSameResponseDeduplicate(): void
     {
         $response = $this->createStub(SurveyResponse::class);

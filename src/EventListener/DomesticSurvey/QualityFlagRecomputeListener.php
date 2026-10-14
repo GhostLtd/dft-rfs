@@ -11,11 +11,13 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\UnitOfWork;
 
 /**
  * Recomputes the QualityCheck on the owning SurveyResponse whenever a Day/DayStop/DaySummary edit lands.
  */
-#[AsDoctrineListener(event: Events::onFlush)]
+// Runs after DataConsistencyListener (priority 0), so that the day deletions it schedules are seen
+#[AsDoctrineListener(event: Events::onFlush, priority: -10)]
 #[AsDoctrineListener(event: Events::postFlush)]
 class QualityFlagRecomputeListener
 {
@@ -39,7 +41,7 @@ class QualityFlagRecomputeListener
             $uow->getScheduledEntityDeletions(),
         ] as $entities) {
             foreach ($entities as $entity) {
-                $response = $this->resolveResponse($entity);
+                $response = $this->resolveResponse($entity, $uow);
                 if ($response !== null) {
                     $this->pendingResponses[spl_object_id($response)] = $response;
                 }
@@ -71,13 +73,16 @@ class QualityFlagRecomputeListener
         }
     }
 
-    private function resolveResponse(object $entity): ?SurveyResponse
+    private function resolveResponse(object $entity, UnitOfWork $uow): ?SurveyResponse
     {
         if ($entity instanceof DayStop || $entity instanceof DaySummary) {
-            $entity = $entity->getDay();
+            $entity = $entity->getDay() ?? $uow->getOriginalEntityData($entity)['day'] ?? null;
         }
         if ($entity instanceof Day) {
-            return $entity->getResponse();
+            // DataConsistencyListener detaches days via SurveyResponse::removeDay() (nulling the owning side) before
+            // removing them, so fall back to the response the day had when it was loaded. This relies on nothing
+            // recomputing the Day's changeset between removeDay() and this onFlush; doing so overwrites the original data.
+            return $entity->getResponse() ?? $uow->getOriginalEntityData($entity)['response'] ?? null;
         }
         return null;
     }

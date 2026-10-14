@@ -9,6 +9,7 @@
 - **Change**: 404 pages no longer hit the database
 - **Fix**: CSRGT quality flags getting out of sync
 - **Fix**: Edge case bug in SurveyResponse->hasJourneys()
+- **Fix**: CSRGT quality flags not updated when a vehicle is marked exempt, sold, scrapped or on hire (and its days deleted)
 
 ## 2026-08-10
 - **Update**: Update exempt vehicle question to be more inclusive / less prescription (our list of exempt vehicles wasn't exhaustive, which confused some owners of exempt vehicles)
