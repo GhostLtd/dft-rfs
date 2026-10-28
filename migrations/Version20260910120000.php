@@ -9,59 +9,40 @@ use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
 
 final class Version20260910120000 extends AbstractMigration
 {
-    /** notificationTable => [newJoin, oldJoin, surveyTable] */
+    /** notificationTable => [newJoin, oldJoin, guardPrefix] */
     private const array MAP = [
-        'domestic_survey_notification' => ['domestic_survey_notification_notify_api_responses', 'domestic_survey_notify_api_responses', 'domestic_survey'],
-        'international_survey_notification' => ['international_survey_notification_notify_api_responses', 'international_survey_notify_api_responses', 'international_survey'],
+        'domestic_survey_notification' => ['domestic_survey_notification_notify_api_responses', 'domestic_survey_notify_api_responses', 'domestic'],
+        'international_survey_notification' => ['international_survey_notification_notify_api_responses', 'international_survey_notify_api_responses', 'international'],
         'pre_enquiry_notification' => ['pre_enquiry_notification_notify_api_responses', 'pre_enquiry_notify_api_responses', 'pre_enquiry'],
     ];
 
-    /** newJoin => [notificationIndex, responseUniqueIndex] — Doctrine's auto-generated hashed index names */
-    private const array INDEX_NAMES = [
-        'domestic_survey_notification_notify_api_responses' => ['IDX_AC755B1EF1A9D84', 'UNIQ_AC755B1D6C71CEF'],
-        'international_survey_notification_notify_api_responses' => ['IDX_D03512B4EF1A9D84', 'UNIQ_D03512B4D6C71CEF'],
-        'pre_enquiry_notification_notify_api_responses' => ['IDX_C0F4DD14EF1A9D84', 'UNIQ_C0F4DD14D6C71CEF'],
-    ];
-
-    private const string CHANNEL_CASE = "CASE r.message_class WHEN :emailClass THEN 'email' ELSE 'letter' END";
-
     public function getDescription(): string
     {
-        return 'Notifications: link notify_api_response rows to notification rows';
+        return 'Notifications: link notify_api_response rows to notification rows (tables created by Version20260910100000)';
     }
 
     public function up(Schema $schema): void
     {
-        $channelCase = self::CHANNEL_CASE;
+        foreach (self::MAP as $notificationTable => [$newJoin, $oldJoin, $guardPrefix]) {
+            // Version20260910110000 creates at most one row per survey/type/channel, so each response has exactly
+            // one candidate notification. The tables have no such constraint (later sends add history), so check.
+            $this->addGuard(
+                "{$guardPrefix}_single_notification_candidate",
+                "SELECT 1 FROM {$notificationTable} GROUP BY survey_id, type, channel HAVING COUNT(*) > 1"
+            );
 
-        foreach (self::MAP as $notificationTable => [$newJoin, $oldJoin]) {
-            [$notificationIndex, $responseUniqueIndex] = self::INDEX_NAMES[$newJoin];
-            $this->addSql(<<<SQL
-                CREATE TABLE {$newJoin} (
-                    notification_id CHAR(36) NOT NULL,
-                    notify_api_response_id CHAR(36) NOT NULL,
-                    INDEX {$notificationIndex} (notification_id),
-                    UNIQUE INDEX {$responseUniqueIndex} (notify_api_response_id),
-                    PRIMARY KEY(notification_id, notify_api_response_id),
-                    CONSTRAINT FK_{$newJoin}_n FOREIGN KEY (notification_id) REFERENCES {$notificationTable} (id) ON DELETE CASCADE,
-                    CONSTRAINT FK_{$newJoin}_r FOREIGN KEY (notify_api_response_id) REFERENCES notify_api_response (id) ON DELETE CASCADE
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
-                SQL);
-
+            // Anti-join on the unique response column, so that a re-run only adds missing links
             $this->addSql(
                 <<<SQL
                 INSERT INTO {$newJoin} (notification_id, notify_api_response_id)
-                SELECT COALESCE(
-                    (SELECT n.id FROM {$notificationTable} n
-                      WHERE n.survey_id = j.survey_id AND n.type = r.event_name AND n.channel = ({$channelCase})
-                        AND n.sent_at <= r.timestamp
-                      ORDER BY n.sent_at DESC LIMIT 1),
-                    (SELECT n.id FROM {$notificationTable} n
-                      WHERE n.survey_id = j.survey_id AND n.type = r.event_name AND n.channel = ({$channelCase})
-                      ORDER BY n.sent_at ASC LIMIT 1)
-                ), r.id
+                SELECT n.id, r.id
                 FROM {$oldJoin} j
                 JOIN notify_api_response r ON r.id = j.notify_api_response_id
+                JOIN {$notificationTable} n
+                  ON n.survey_id = j.survey_id
+                 AND n.type = r.event_name
+                 AND n.channel = IF(r.message_class = :emailClass, 'email', 'letter')
+                WHERE NOT EXISTS (SELECT 1 FROM {$newJoin} x WHERE x.notify_api_response_id = r.id)
                 SQL,
                 ['emailClass' => Email::class]
             );
@@ -71,7 +52,21 @@ final class Version20260910120000 extends AbstractMigration
     public function down(Schema $schema): void
     {
         foreach (self::MAP as [$newJoin]) {
-            $this->addSql("DROP TABLE {$newJoin}");
+            $this->addSql("DELETE FROM {$newJoin}");
         }
+    }
+
+    /**
+     * Queues a check that fails the migration (MySQL error 3819, naming the guard) if $offendingRowsSql returns
+     * any rows. Being queued rather than run from PHP, it previews correctly under --dry-run, when the tables
+     * created earlier in this sequence don't yet exist.
+     */
+    private function addGuard(string $name, string $offendingRowsSql, array $params = []): void
+    {
+        // A failed guard leaves its (session-scoped) table behind
+        $this->addSql('DROP TEMPORARY TABLE IF EXISTS migration_guard');
+        $this->addSql("CREATE TEMPORARY TABLE migration_guard (ok TINYINT NOT NULL, CONSTRAINT {$name} CHECK (ok = 1))");
+        $this->addSql("INSERT INTO migration_guard (ok) SELECT NOT EXISTS ({$offendingRowsSql})", $params);
+        $this->addSql('DROP TEMPORARY TABLE migration_guard');
     }
 }

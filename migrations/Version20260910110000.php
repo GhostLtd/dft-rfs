@@ -37,7 +37,7 @@ final class Version20260910110000 extends AbstractMigration
 
     public function getDescription(): string
     {
-        return 'Notifications: back-fill notification rows from the legacy sent-date columns, then drop those columns';
+        return 'Notifications: back-fill notification rows from the legacy sent-date columns (dropped by Version20260910130000)';
     }
 
     public function up(Schema $schema): void
@@ -89,24 +89,14 @@ final class Version20260910110000 extends AbstractMigration
                     SQL);
                 }
             }
-
-            $drops = join(', ', array_map(fn(string $c) => "DROP {$c}", array_keys($columns)));
-            $this->addSql("ALTER TABLE {$surveyTable} {$drops}");
         }
     }
 
     public function down(Schema $schema): void
     {
-        foreach (self::MAP as $surveyTable => [$notificationTable, , $columns]) {
-            $adds = join(', ', array_map(fn(string $c) => "ADD {$c} DATETIME DEFAULT NULL", array_keys($columns)));
-            $this->addSql("ALTER TABLE {$surveyTable} {$adds}");
-
-            foreach ($columns as $column => $type) {
-                $this->addSql(<<<SQL
-                    UPDATE {$surveyTable} s
-                    SET s.{$column} = (SELECT MAX(n.sent_at) FROM {$notificationTable} n WHERE n.survey_id = s.id AND n.type = '{$type}')
-                SQL);
-            }
+        // The legacy columns are restored (from these rows) by Version20260910130000's down()
+        foreach (self::MAP as [$notificationTable]) {
+            $this->addSql("DELETE FROM {$notificationTable}");
         }
     }
 }

@@ -94,23 +94,33 @@ Personal-data cleanup walks notification rows to remove letter content from thei
 
 ## Migrations
 
-Apply these four migrations in order as one deployment:
+Apply these five migrations in order as one deployment:
 
 | Migration | Purpose |
 |---|---|
-| `Version20260910100000` | Create the four notification tables; widen `notify_api_response.event_name` to 32 characters |
-| `Version20260910110000` | Copy legacy sent dates into rows, then drop the date columns |
-| `Version20260910120000` | Create notification-keyed response joins and copy the survey-keyed response links |
-| `Version20260910130000` | Drop the survey-keyed response joins |
+| `Version20260910090000` | Delete `notify_api_response` rows orphaned by survey / RoRo user deletion (irreversible) |
+| `Version20260910100000` | Create the four notification tables and the three notification-keyed response joins; widen `notify_api_response.event_name` to 32 characters |
+| `Version20260910110000` | Copy legacy sent dates into notification rows |
+| `Version20260910120000` | Copy the survey-keyed response links onto notification rows |
+| `Version20260910130000` | Verify both copies, then drop the legacy date columns and the survey-keyed response joins |
 
 Backfilling uses response logs to identify channels. A date without a matching response is still copied:
 manual reminders use email; other types use letter when an invitation address exists, otherwise email.
-RoRo dates become email rows. Responses attach to the latest matching survey/type/channel row sent at
-or before their timestamp, falling back to the earliest matching row when none precedes it.
+RoRo dates become email rows. This creates at most one row per survey/type/channel, and each response
+attaches to that row.
+
+Each migration can be re-run after a failure (e.g. a dropped connection): DDL is only issued while still
+needed, and backfills only insert what is missing. Checks are queued as SQL that fails with MySQL error
+3819 naming the check (`Check constraint '<name>' is violated`). Before linking responses,
+`Version20260910120000` checks that each survey/type/channel has a single candidate row.
+`Version20260910130000` checks, across every survey type before dropping anything, that each response
+link was carried over to the right survey, type and channel, and that each legacy date is held by its
+rows. To preview the SQL without executing it, use `--dry-run --write-sql` (`--write-sql` alone executes).
 
 Rollback restores date columns from each type's latest row and recreates the survey-keyed response
-joins. Deployment recovery is from the pre-deploy backup: the migrations depend on each other and
-must not be treated as independent releases.
+joins; it too can be re-run after a failure. Deleted orphans are not restored. Deployment recovery is
+from the pre-deploy backup: the migrations depend on each other and must not be treated as independent
+releases.
 
 Reapply `view_international_firms` and its dependent `view_export_international_survey` using
 `app:views:apply` after migrating.

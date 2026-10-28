@@ -15,14 +15,31 @@ final class Version20260910100000 extends AbstractMigration
         'roro_survey_notification' => ['roro_survey', 'idx_roro_survey_notification_'],
     ];
 
+    /** responseJoin => [notificationTable, notificationIndex, responseUniqueIndex] — Doctrine's auto-generated hashed index names */
+    private const array RESPONSE_JOINS = [
+        'domestic_survey_notification_notify_api_responses' => ['domestic_survey_notification', 'IDX_AC755B1EF1A9D84', 'UNIQ_AC755B1D6C71CEF'],
+        'international_survey_notification_notify_api_responses' => ['international_survey_notification', 'IDX_D03512B4EF1A9D84', 'UNIQ_D03512B4D6C71CEF'],
+        'pre_enquiry_notification_notify_api_responses' => ['pre_enquiry_notification', 'IDX_C0F4DD14EF1A9D84', 'UNIQ_C0F4DD14D6C71CEF'],
+    ];
+
     public function getDescription(): string
     {
-        return 'Notifications: create per-survey-type notification tables; widen notify_api_response.event_name to 32';
+        return 'Notifications: create per-survey-type notification tables and their notify_api_response joins; widen notify_api_response.event_name to 32';
+    }
+
+    // DDL commits implicitly; each statement is guarded instead, so that a re-run only creates what is missing
+    public function isTransactional(): bool
+    {
+        return false;
     }
 
     public function up(Schema $schema): void
     {
         foreach (self::TABLES as $table => [$surveyTable, $idx]) {
+            if ($schema->hasTable($table)) {
+                continue;
+            }
+
             $this->addSql(<<<SQL
                 CREATE TABLE {$table} (
                     id CHAR(36) NOT NULL,
@@ -37,15 +54,40 @@ final class Version20260910100000 extends AbstractMigration
             SQL);
         }
 
-        $this->addSql('ALTER TABLE notify_api_response CHANGE event_name event_name VARCHAR(32) NOT NULL');
+        foreach (self::RESPONSE_JOINS as $join => [$notificationTable, $notificationIndex, $responseUniqueIndex]) {
+            if ($schema->hasTable($join)) {
+                continue;
+            }
+
+            $this->addSql(<<<SQL
+                CREATE TABLE {$join} (
+                    notification_id CHAR(36) NOT NULL,
+                    notify_api_response_id CHAR(36) NOT NULL,
+                    INDEX {$notificationIndex} (notification_id),
+                    UNIQUE INDEX {$responseUniqueIndex} (notify_api_response_id),
+                    PRIMARY KEY(notification_id, notify_api_response_id),
+                    CONSTRAINT FK_{$join}_n FOREIGN KEY (notification_id) REFERENCES {$notificationTable} (id) ON DELETE CASCADE,
+                    CONSTRAINT FK_{$join}_r FOREIGN KEY (notify_api_response_id) REFERENCES notify_api_response (id) ON DELETE CASCADE
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            SQL);
+        }
+
+        if ($schema->getTable('notify_api_response')->getColumn('event_name')->getLength() !== 32) {
+            $this->addSql('ALTER TABLE notify_api_response CHANGE event_name event_name VARCHAR(32) NOT NULL');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        foreach (array_keys(self::TABLES) as $table) {
-            $this->addSql("DROP TABLE {$table}");
+        // Joins first: they reference the notification tables
+        foreach (array_merge(array_keys(self::RESPONSE_JOINS), array_keys(self::TABLES)) as $table) {
+            if ($schema->hasTable($table)) {
+                $this->addSql("DROP TABLE {$table}");
+            }
         }
 
-        $this->addSql('ALTER TABLE notify_api_response CHANGE event_name event_name VARCHAR(16) NOT NULL');
+        if ($schema->getTable('notify_api_response')->getColumn('event_name')->getLength() !== 16) {
+            $this->addSql('ALTER TABLE notify_api_response CHANGE event_name event_name VARCHAR(16) NOT NULL');
+        }
     }
 }
