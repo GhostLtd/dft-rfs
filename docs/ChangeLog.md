@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: `app:notifications:check-legacy-messages`: read-only pre-deploy check that no queued Notify message still names a survey as its origin, with best- and worst-case times by which they will have cleared (see [notifications deployment](features/2026-09-notifications-revamp.md#deployment))
 - **Feature**: CSRGT: email and SMS reminders for surveys still in progress after their survey period (SMS capped per financial year)
 - **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled
 - **Fix**: Deleting an in-progress CSRGT survey whose response has no vehicle yet (survey cleanup cron / admin deletion) no longer crashes

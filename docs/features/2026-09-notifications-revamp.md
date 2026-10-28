@@ -122,8 +122,10 @@ joins; it too can be re-run after a failure. Deleted orphans are not restored. D
 from the pre-deploy backup: the migrations depend on each other and must not be treated as independent
 releases.
 
-Reapply `view_international_firms` and its dependent `view_export_international_survey` using
-`app:views:apply` after migrating.
+Reapply **all** views with `app:views:apply` (no `--only`) after migrating. `view_international_firms`
+and `view_export_international_survey` changed. `view_domestic_survey_eligible_with_dates` is unchanged,
+but it selects `s.*`, which MySQL expands into a column list when the view is created. Dropping the legacy
+columns therefore breaks it and the domestic views built on it (nine views in all on the 2026-10 prod copy).
 
 ## Deployment
 
@@ -132,8 +134,27 @@ the response subscriber has no compatibility path to attach them to notification
 invitation in flight can leave a survey without the history needed for later reminders.
 
 1. Stop notification producers and let running producers and workers finish.
-2. Check `messenger_messages` directly: no survey-originated messages may remain on `govuk-notify`
-   or `failed`, including delayed invitations and retries. RoRo user-originated messages are distinct.
+2. Run `bin/console app:notifications:check-legacy-messages` against production, from a checkout of
+   this release via the Cloud SQL proxy. It's read-only, so it can be run at any time. Deploy only
+   once it reports "Safe to deploy" (exit 0). Re-run it until then.
+   - It reads every queue directly, without going through Messenger (whose receivers delete messages
+     they can't decode).
+   - It fails while any outstanding (non-`failed`) message names a survey as its origin, or is one it
+     can't positively recognise as current. The IDs of unrecognised and unreadable messages are listed.
+   - Invitations are delayed four hours. While legacy messages are outstanding, the report gives two
+     **legacy queue clear times**. Re-run at the best case to see whether they've gone, and by the worst
+     case they will have.
+     - **Best case:** when the last becomes eligible for delivery, or "now" if all already are, if each is
+       sent at its first attempt.
+     - **Worst case (approx.):** when the last will have been sent or moved to `failed`, if every attempt
+       fails and each retry waits its longest (3 retries; for the Notify queues, waits of up to 33, 66 and
+       120 minutes).
+     - Both only hold while workers are running; a backlog or slow processing makes them later.
+     - As a rule of thumb, an invitation queued at T has cleared by about T + 7h40m (4h delay plus 3h39m of
+       retries), so stop producers at least that long before deploying.
+     - Until legacy invitations are sent, their surveys have no invitation date to migrate.
+   - Failed messages are reported in their own tally, but never affect the result: they are not
+     reprocessed. The 2026-10 prod copy held 7,667, all survey-originated, from 2021 to 2026.
 3. Take a backup, run the migrations and reapply the views.
 4. Resume production and consumption, with the intended reminder families enabled.
 

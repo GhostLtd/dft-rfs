@@ -14,22 +14,30 @@ framework:
             async: 'doctrine://default'
             async_notify:
                 dsn: 'doctrine://default?queue_name=govuk-notify'
+                # Mirrored by CheckLegacyNotifyMessagesCommand::RETRY_POLICIES (pinned by its test)
                 retry_strategy:
+                    max_retries: 3
                     # 30 min delay first time
                     delay: 1800000
                     # double the delay for each retry
                     multiplier: 2
                     # max delay 2 hours
                     max_delay: 7200000
+                    # +/- up to 10% randomness on each delay
+                    jitter: 0.1
             async_notify_high_prio:
                 dsn: 'doctrine://default?queue_name=govuk-notify-high-prio'
+                # Mirrored by CheckLegacyNotifyMessagesCommand::RETRY_POLICIES (pinned by its test)
                 retry_strategy:
+                    max_retries: 3
                     # 30 min delay first time
                     delay: 1800000
                     # double the delay for each retry
                     multiplier: 2
                     # max delay 2 hours
                     max_delay: 7200000
+                    # +/- up to 10% randomness on each delay
+                    jitter: 0.1
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
