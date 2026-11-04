@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: IRHS: postcode-only trip start/end (origin/destination), behind the `irhs-postcode-changeover` flag and `APP_IRHS_POSTCODE_CHANGEOVER_DATE`, with the outward-code check; `app:irhs:check-postcode-changeover` read-only pre-enable check (see [ADR](ADRs/2026-11-02-irhs-trip-postcodes.md))
 - **Feature**: `app:notifications:check-legacy-messages`: read-only pre-deploy check that no queued Notify message still names a survey as its origin, with best- and worst-case times by which they will have cleared (see [notifications deployment](features/2026-09-notifications-revamp.md#deployment))
 - **Feature**: CSRGT: email and SMS reminders for surveys still in progress after their survey period (SMS capped per financial year)
 - **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled

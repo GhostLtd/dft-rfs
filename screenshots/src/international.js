@@ -4,6 +4,18 @@ const {clickLink} = require("./common");
 const {predicate} = require("./common");
 const {clickLinkWithText, enterDate, getScreenshotPathHelper, goto, submit, type, waitForOptions} = require("./common")
 
+// Trip origin/destination: free text, or postcode-only when the IRHS postcode changeover is enabled
+const LOCATIONS = {
+    'place-name': {
+        origin: 'Sandwich',
+        destination: 'Portsmouth',
+    },
+    'postcode': {
+        origin: 'CT13 9HE',
+        destination: 'PO1 2UP',
+    },
+}
+
 async function doLogin(page, username, password) {
     await type(page, '#passcode_login_passcode_0', username)
     await type(page, '#passcode_login_passcode_1', password)
@@ -52,6 +64,8 @@ async function doVehicleBodyChoice(page, option) {
 module.exports.run = async function (argv) {
     const {outputDir, baseUrl, username, password} = argv
     const screenshotPath = getScreenshotPathHelper(outputDir)
+    const locationMode = argv.locationMode || argv['location-mode'] || 'place-name'
+    const locations = LOCATIONS[locationMode]
 
     const [browser, page] = await setupBrowserAndPage();
 
@@ -168,8 +182,8 @@ module.exports.run = async function (argv) {
         await clickLinkWithText(page, 'Add trip')
         await fullPageScreenshot.default(page, {path: screenshotPath('trip-details/1-start-and-end.png')})
 
-        await type(page, '#origin_and_destination_origin', 'Sandwich')
-        await type(page, '#origin_and_destination_destination', 'Portsmouth')
+        await type(page, '#origin_and_destination_origin', locations.origin)
+        await type(page, '#origin_and_destination_destination', locations.destination)
         await submit(page, '#origin_and_destination_button_group_continue')
         await fullPageScreenshot.default(page, {path: screenshotPath('trip-details/2-trip-dates.png')})
 

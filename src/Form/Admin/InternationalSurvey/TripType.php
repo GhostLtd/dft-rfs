@@ -7,6 +7,7 @@ use App\Entity\International\Trip;
 use App\Form\Admin\InternationalSurvey\DataMapper\TripDataMapper;
 use App\Form\InternationalSurvey\Trip\CountriesTransittedType;
 use App\Utility\PortsDataFactory;
+use App\Utility\PostcodeChangeoverHelper;
 use App\Utility\PortsDataSet;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Ghost\GovUkFrontendBundle\Form\Type\ValueUnitType;
@@ -42,8 +43,10 @@ class TripType extends AbstractType
     /** @var PortsDataSet[] $portsDataSets */
     protected array $portsDataSets;
 
-    public function __construct(protected PortsDataFactory $portsDataFactory)
-    {
+    public function __construct(
+        protected PortsDataFactory $portsDataFactory,
+        protected PostcodeChangeoverHelper $changeoverHelper,
+    ) {
     }
 
     #[\Override]
@@ -57,21 +60,28 @@ class TripType extends AbstractType
         $this->addDirectionalFields($builder, 'outbound');
         $this->addDirectionalFields($builder, 'return');
 
-        $builder
-            ->setDataMapper(new TripDataMapper($this->portsDataSets))
+        $builder->setDataMapper(new TripDataMapper($this->portsDataSets));
 
+        // Origin/destination become postcode-only for surveys in IRHS postcode-only mode (rendered by name in the theme)
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var Trip $trip */
+            $trip = $event->getData();
+            $survey = $trip->getVehicle()?->getSurveyResponse()?->getSurvey();
+            $isPostcodeOnly = $this->changeoverHelper->isIrhsPostcodeOnly($survey);
 
-            ->add('origin', Gds\InputType::class, [
-                'label' => 'Initial origin',
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-20'],
-            ])
-            ->add('destination', Gds\InputType::class, [
-                'label' => 'Final destination',
-                'label_attr' => ['class' => 'govuk-label--s'],
-                'attr' => ['class' => 'govuk-input--width-20'],
-            ])
-        ;
+            foreach (['origin' => 'Initial origin', 'destination' => 'Final destination'] as $field => $label) {
+                $event->getForm()->add($field, Gds\InputType::class, array_merge([
+                    'label_attr' => ['class' => 'govuk-label--s'],
+                ], $isPostcodeOnly ? [
+                    'label' => "{$label} postcode",
+                    'attr' => ['class' => 'govuk-input--width-10'],
+                    'constraints' => [PostcodeChangeoverHelper::createIrhsPostcodeConstraint(['admin_trip'])],
+                ] : [
+                    'label' => $label,
+                    'attr' => ['class' => 'govuk-input--width-20'],
+                ]));
+            }
+        });
 
         $this
             ->addFieldSet($builder, 'otherDetails', 'Other Details')

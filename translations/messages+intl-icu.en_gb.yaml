@@ -2130,9 +2130,15 @@ international:
       origin:
         label: Where in the UK did the trip start?
         help: 'The postcode or place name **within the UK**, where this trip first started.'
+        postcode-only:
+          label: Postcode where the trip started in the UK
+          help: For example, HD1 3LE
       destination:
         label: Where in the UK did the trip end?
         help: "The postcode or place name **within the UK**, where this trip finally ended. This might be the same place as where the trip first started."
+        postcode-only:
+          label: Postcode where the trip ended in the UK
+          help: For example, HD1 3LE. This might be the same as where the trip started.
     dates:
       heading: Dates of Trip
       help: ''

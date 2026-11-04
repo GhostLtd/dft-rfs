@@ -33,14 +33,17 @@ Supported values are: csrgt, csrgt-in-progress, irhs, pre-enquiry and roro.
 Comma-delimited list of enabled feature flags (see `App\Features`). Flags relevant to postcode handling:
 
 - `postcode-changeover`: domestic survey location fields accept postcodes only (see `POSTCODE_CHANGEOVER_DATE` below).
-- `outward-code-check`: CSRGT trip-location postcodes (origin, destination, furthest stop, and their admin edit forms) must also have a
+- `irhs-postcode-changeover`: IRHS trip start/end (origin/destination, frontend and admin) accept postcodes only (see
+  `APP_IRHS_POSTCODE_CHANGEOVER_DATE` below). Independent of `postcode-changeover`.
+- `outward-code-check`: CSRGT trip-location postcodes (origin, destination, furthest stop, and their admin edit forms) and, in IRHS
+  postcode-only mode, IRHS trip origin/destination must also have a
   known UK outward code (postcode district), as listed in `data/uk-outward-codes.txt` (current and terminated districts alike, since
   respondents may quote older paperwork). That file is generated from the ONS Postcode
   Directory by `bin/console rfs:dev:build-outward-codes` and should be regenerated when a new ONSPD release comes out. Disable the flag
   if the data file is stale and rejecting genuine postcodes.
 
 ```
-APP_FEATURES=postcode-changeover,outward-code-check
+APP_FEATURES=postcode-changeover,irhs-postcode-changeover,outward-code-check
 ```
 
 ### POSTCODE_CHANGEOVER_DATE
@@ -52,6 +55,25 @@ Used in conjunction with the `postcode-changeover` feature flag (`APP_FEATURES`)
 
 ```
 POSTCODE_CHANGEOVER_DATE=2025-06-01
+```
+
+### APP_IRHS_POSTCODE_CHANGEOVER_DATE
+
+Used with the `irhs-postcode-changeover` feature flag. Controls when IRHS surveys switch trip start/end from "postcode or
+place name" to "postcode only" (same rules as `POSTCODE_CHANGEOVER_DATE`, compared against the IRHS survey's
+`surveyPeriodStart`; an invalid date logs an error and leaves every survey in free-text mode). Deployed via
+`cloudbuild.yaml` (`_APP_IRHS_POSTCODE_CHANGEOVER_DATE` trigger substitution).
+
+```
+APP_IRHS_POSTCODE_CHANGEOVER_DATE=2027-01-04
+```
+
+**Before enabling**, pick the date with the read-only check: edit access isn't limited by survey start date, so surveys
+starting on or after the date may already hold trips with place names. Run it with the target environment's
+`APP_FEATURES` (so the outward-code check matches) and choose a date it reports nothing for:
+
+```
+bin/console app:irhs:check-postcode-changeover --date=2027-01-04
 ```
 
 See also: [Screenshots documentation](Screenshots.md) for generating screenshots with different location modes.

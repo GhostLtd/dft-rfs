@@ -3,8 +3,8 @@
 {%- set translation_prefix = "admin.international.delete-trip" -%}
 {%- set headingParams = {
     date: subject.outboundDate,
-    origin: subject.origin,
-    destination: subject.destination
+    origin: subject.origin | formatPotentialPostcode,
+    destination: subject.destination | formatPotentialPostcode
 } %}
 
 {%- block adminContent -%}

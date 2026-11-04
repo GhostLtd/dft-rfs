@@ -20,6 +20,8 @@ use App\Utility\Form\TonnesToKilogramsNormaliser;
 use App\Utility\Form\UnitStripper;
 use App\Utility\PortsDataFactory;
 use App\Utility\PortsDataSet;
+use App\Utility\PostcodeChangeoverHelper;
+use Psr\Log\NullLogger;
 use Symfony\Component\Form\PreloadedExtension;
 
 /**
@@ -59,7 +61,7 @@ class VehicleWeightNormalisationTest extends AbstractTypeTestCase
         $portsDataFactory->method('getData')->willReturn($portsDataSet);
 
         return array_merge(parent::getExtensions(), [
-            new PreloadedExtension([new TripType($portsDataFactory)], []),
+            new PreloadedExtension([new TripType($portsDataFactory, new PostcodeChangeoverHelper(new NullLogger()))], []),
         ]);
     }
 

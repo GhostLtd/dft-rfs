@@ -64,6 +64,7 @@ services:
     App\Utility\PostcodeChangeoverHelper:
         arguments:
             $changeoverDate: '%env(default::APP_POSTCODE_CHANGEOVER_DATE)%'
+            $irhsChangeoverDate: '%env(default::APP_IRHS_POSTCODE_CHANGEOVER_DATE)%'
 
     App\Utility\Notification\SmsAllowance:
         arguments:

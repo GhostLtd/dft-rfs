@@ -10,5 +10,6 @@ class Features extends CoreFeatures
     public const string SMARTLOOK_USER_SESSION_RECORDING = 'smartlook-user-session-recording';
     public const string POSTCODE_CHANGEOVER = 'postcode-changeover';
     public const string OUTWARD_CODE_CHECK = 'outward-code-check';
+    public const string IRHS_POSTCODE_CHANGEOVER = 'irhs-postcode-changeover';
     // GAE_ENVIRONMENT inherited from CoreFeatures (= 'gae-environment').
 }

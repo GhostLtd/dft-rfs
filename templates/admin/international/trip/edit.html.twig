@@ -3,8 +3,8 @@
 {%- set translation_prefix = "admin.international.edit-trip" -%}
 {%- set headingParams = {
     date: trip.outboundDate,
-    origin: trip.origin,
-    destination: trip.destination
+    origin: trip.origin | formatPotentialPostcode,
+    destination: trip.destination | formatPotentialPostcode
 } %}
 
 {%- block adminContent -%}

@@ -88,8 +88,9 @@ class ScreenshotsCommand extends Command
             throw new RuntimeException('mode must be either all, domestic, international, pre-enquiry or roro');
         }
 
-        // Detect location mode from feature flag (for domestic surveys)
+        // Detect location modes from feature flags (CSRGT: domestic; IRHS: international trip origin/destination)
         $locationMode = Features::isEnabled(Features::POSTCODE_CHANGEOVER) ? 'postcode' : 'place-name';
+        $irhsLocationMode = Features::isEnabled(Features::IRHS_POSTCODE_CHANGEOVER) ? 'postcode' : 'place-name';
 
         $modes = ($mode === self::MODE_ALL) ?
             [self::MODE_DOMESTIC, self::MODE_INTERNATIONAL, self::MODE_PRE_ENQUIRY, self::MODE_RORO] :
@@ -100,7 +101,11 @@ class ScreenshotsCommand extends Command
         $outputBaseDir = dirname($path) . "/output/" . (new \DateTime())->format('Ymd-His');
 
         foreach ($modes as $activeMode) {
-            $outputSubdir = ($activeMode === self::MODE_DOMESTIC && $locationMode === 'postcode') ? "{$activeMode}-postcode" : $activeMode;
+            $outputSubdir = match(true) {
+                $activeMode === self::MODE_DOMESTIC && $locationMode === 'postcode',
+                $activeMode === self::MODE_INTERNATIONAL && $irhsLocationMode === 'postcode' => "{$activeMode}-postcode",
+                default => $activeMode,
+            };
             $protocol = $input->getOption('protocol');
 
             if ($activeMode === self::MODE_DOMESTIC) {
@@ -171,6 +176,10 @@ class ScreenshotsCommand extends Command
                 } else {
                     $processArgs[] = "--username={$this->userId}";
                     $processArgs[] = "--password={$this->userPassword}";
+                }
+
+                if ($activeMode === self::MODE_INTERNATIONAL) {
+                    $processArgs[] = "--location-mode={$irhsLocationMode}";
                 }
 
                 $process = new Process($processArgs);

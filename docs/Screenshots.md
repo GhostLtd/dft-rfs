@@ -56,7 +56,7 @@ Screenshots the RoRo (Roll-on/Roll-off) survey. Creates test operators with rout
 
 Runs all four survey modes in sequence.
 
-## Location Mode (Domestic Only)
+## Location Mode (Domestic and International)
 
 The domestic survey supports two location input modes, determined by the `POSTCODE_CHANGEOVER` feature flag:
 
@@ -64,6 +64,20 @@ The domestic survey supports two location input modes, determined by the `POSTCO
 |--------------|----------------------|------------------|
 | Disabled | "Postcode or place name" (e.g., "Flightston") | `domestic/` |
 | Enabled | "Postcode only" (e.g., "SO14 0YG") | `domestic-postcode/` |
+
+The international survey's trip start/end fields work the same way, determined by the `IRHS_POSTCODE_CHANGEOVER`
+feature flag (`irhs-postcode-changeover`):
+
+| Feature Flag | Trip Start/End Accept | Output Directory |
+|--------------|----------------------|------------------|
+| Disabled | "Postcode or place name" (e.g., "Sandwich") | `international/` |
+| Enabled | "Postcode only" (e.g., "CT13 9HE") | `international-postcode/` |
+
+The mode is detected from the flag alone. Changeover dates don't matter here: the screenshot surveys start on a fixed
+date in 2050, so they're always after any changeover date.
+
+The same steps below apply to international: add or remove `irhs-postcode-changeover` instead of `postcode-changeover`,
+and run `rfs:dev:screenshots international`.
 
 ### Important: Web Server Environment
 
@@ -111,6 +125,13 @@ Setting `APP_FEATURES` on the command line only affects the console command itse
 | Day stop (second) | Secondfield | BH1 1AA |
 | Day stop (start) | Starttown | BS1 5TR |
 
+International trip start/end:
+
+| Field | place-name mode | postcode mode |
+|-------|----------------|---------------|
+| Origin | Sandwich | CT13 9HE |
+| Destination | Portsmouth | PO1 2UP |
+
 ## Output
 
 Screenshots are saved to timestamped directories:
@@ -132,6 +153,7 @@ screenshots/output/YYYYMMDD-HHMMSS/
 │   └── final/
 ├── domestic-postcode/     # postcode mode (if run separately)
 ├── international/
+├── international-postcode/ # postcode mode (if run separately)
 ├── pre-enquiry/
 └── roro/
 ```
