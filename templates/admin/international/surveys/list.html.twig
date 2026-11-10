@@ -5,8 +5,9 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRow, summaryListActionsList, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate, deliveryProblems -%}
 
+    {%- set deliveryProblemCounts = delivery_problem_counts(data.entities) -%}
     {{- listTableStart(data, form) -}}
     {%- for result in data.entities -%}
         {%- if result is iterable -%}
@@ -33,6 +34,7 @@
             {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
             survey.qualityAssured ? 'Yes' : 'No',
             reminderDate(notification_sent_at(survey, 'reminder-1'), notification_sent_at(survey, 'reminder-2')),
+            {html: deliveryProblems(deliveryProblemCounts[survey.id] ?? null)},
             emptiesCount == 0 ? '-' : emptiesCount,
             countField(survey, 'numberOfVehicles'),
             countField(survey, 'totalNumberOfTrips'),

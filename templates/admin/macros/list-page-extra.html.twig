@@ -15,3 +15,13 @@
         -
     {%- endif -%}
 {%- endmacro -%}
+
+{#- A list page's Delivery cell: the number of delivery problems, red while any are unseen -#}
+{%- macro deliveryProblems(counts) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- if counts.count | default(0) > 0 -%}
+        {{- tag({text: counts.count, classes: (counts.unseen > 0 ? 'govuk-tag--red' : 'govuk-tag--green') ~ ' delivery-problems'}) -}}
+    {%- else -%}
+        —
+    {%- endif -%}
+{%- endmacro -%}

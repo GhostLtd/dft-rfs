@@ -6,6 +6,7 @@ use Alphagov\Notifications\Exception\ApiException;
 use App\Entity\NotifyApiResponse;
 use App\Entity\SurveyNotificationInterface;
 use App\Messenger\AlphagovNotify\ApiResponseInterface;
+use App\Messenger\SmsCapRefusedException;
 use App\Utility\AlphagovNotify\Reference;
 use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\AbstractMessage;
 use Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\Email;
@@ -51,7 +52,9 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
                     : Reference::STATUS_FAILED,
             ];
         } else {
-            // We've got some other exception ?!
+            // Some other exception (e.g. a network failure reaching Notify). If Messenger will retry it, it's not (yet)
+            // a failure: recording it as one would wrongly apply invitation_failed, from which a later successful
+            // retry can't move the survey on to invitation_sent.
             $apiResponseData = [
                 'code' => $notifyApiEvent->getCode(),
                 'errors' => [
@@ -60,7 +63,12 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
                         'message' => $notifyApiEvent->getTraceAsString(),
                     ],
                 ],
-                self::STATUS_KEY => Reference::STATUS_FAILED,
+                self::STATUS_KEY => match (true) {
+                    // Our own SMS caps: the number was never tried, so this isn't a delivery failure
+                    $notifyApiEvent instanceof SmsCapRefusedException => Reference::STATUS_REFUSED,
+                    $event->willRetry() => Reference::STATUS_WAITING_FOR_RETRY,
+                    default => Reference::STATUS_FAILED,
+                },
             ];
         }
 
@@ -100,6 +108,7 @@ class AlphagovNotifyMessengerSubscriber implements EventSubscriberInterface
             ->setData($apiResponseData)
             ->setRecipient($message->getRecipient())
             ->setRecipientHash($message->getRecipientHash())
+            ->setNotifyId($apiResponseData[self::STATUS_KEY] === Reference::STATUS_ACCEPTED ? ($apiResponseData['id'] ?? null) : null)
             ->setTimestamp(new \DateTime());
         $this->entityManager->persist($notifyApiResponse);
 

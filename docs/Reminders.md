@@ -89,6 +89,12 @@ were started but not completed, sent by email and SMS. It does not extend `Abstr
   or after `APP_IN_PROGRESS_REMINDERS_FROM`
 * reminder-2: 14 days after the latest reminder-1
 * reminder-3: 14 days after the latest reminder-2
+* none of the three once `surveyPeriodEnd` is more than 56 days in the past
+  (`DomesticInProgressReminders::MAX_DAYS_AFTER_PERIOD_END`)
+
+The sequence normally takes about 35 days (day 7, 21 and 35 after the period end). The 56-day limit leaves room
+for weekend slippage and a chase or two (the seven-day contact gap), but stops reminders to surveys that ended
+months ago, such as SMS-only surveys left due while the allowance was exhausted.
 
 Each delay has the same 12-hour tolerance as the other families. If `APP_IN_PROGRESS_REMINDERS_FROM` is unset
 or not a valid `Y-m-d` date, the family sends nothing at all and `run()` logs an error every run instead of
@@ -131,8 +137,15 @@ Doctrine transport redelivery after a worker crash — is charged again by `App\
 which runs before the Notify handler, records the attempt (`SmsAllowance::recordAttempt()`) and charges it. The
 same applies to a first attempt that is only handled after the financial year has rolled over from the one that
 reserved it. When the allowance is used up, the middleware fails the attempt terminally
-(`UnrecoverableMessageHandlingException`): the message moves to the `failed` transport and its notification
-row is shown as failed, rather than being retried forever.
+(`SmsCapRefusedException`, an `UnrecoverableMessageHandlingException`): the message moves to the `failed`
+transport and its response is recorded as **`refused`**, not retried. "Refused" rather than "failed": the number
+was never tried, so it says nothing about whether it's good or bad, and it isn't a delivery problem (see
+[Notify callbacks](features/2026-11-notify-callbacks.md)). The per-number daily cap is refused the same way.
+
+A refused SMS is not sent again when the cap clears (e.g. in the new financial year): its notification row
+already exists, so that reminder counts as sent. This is deliberate: sending the backlog would spend the new
+year's allowance on stale reminders, leaving a bigger gap later, and the 56-day limit above would exclude most
+of them anyway. Refusals are labelled distinctly so they can be picked out if ever needed.
 
 Because an attempt can be charged without Notify ever confirming it, the counter is an upper bound on
 chargeable SMS — it over-counts rather than under-counts, which is what keeps it a genuine hard cap.

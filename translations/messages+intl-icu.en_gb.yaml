@@ -569,6 +569,7 @@ admin:
       accepted: govuk-tag--green
       failed: govuk-tag--red
       waiting-for-retry: govuk-tag--yellow
+      refused: govuk-tag--grey
   domestic:
     passcode-reveal:
       heading: Reveal passcode

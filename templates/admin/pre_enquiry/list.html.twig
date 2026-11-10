@@ -5,9 +5,10 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableRow, summaryListActionsList, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate, deliveryProblems -%}
 
     {{- listTableStart(data, form) -}}
+    {%- set deliveryProblemCounts = delivery_problem_counts(data.entities) -%}
     {%- for preEnquiry in data.entities -%}
         {%- set links = summaryListActionsList([
             {
@@ -30,6 +31,7 @@
                 })
             },
             reminderDate(notification_sent_at(preEnquiry, 'reminder-1'), notification_sent_at(preEnquiry, 'reminder-2')),
+            {html: deliveryProblems(deliveryProblemCounts[preEnquiry.id] ?? null)},
             {html: links},
         ]) -}}
     {%- else -%}

@@ -3,7 +3,9 @@
 namespace App\ListPage\Domestic;
 
 use App\Entity\Domestic\Survey;
+use App\Entity\Domestic\SurveyNotification;
 use App\Entity\Domestic\SurveyResponse;
+use App\ListPage\Field\DeliveryProblemsChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
 use App\ListPage\Domestic\Field\DaysFilter;
 use App\ListPage\Domestic\Field\InPossessionFilter;
@@ -39,23 +41,24 @@ class SurveyListPage extends AbstractListPage
     protected function getFieldsDefinition(): array
     {
         $stateChoices = array_combine(array_map(fn($x) => ucfirst($x), Survey::STATE_FILTER_CHOICES), Survey::STATE_FILTER_CHOICES);
-        $possessionChoices = array_combine(array_map(fn($x) => ucfirst($x), SurveyResponse::IN_POSSESSION_CHOICES), SurveyResponse::IN_POSSESSION_CHOICES);
-
-        // Sneak "yes - exempt" in as the second option
-        $possessionChoices = array_merge(
-            array_slice($possessionChoices, 0, 1),
-            [SurveyResponse::IN_POSSESSION_TRANSLATION_PREFIX . 'yes-exempt' => 'yes-exempt'],
-            array_slice($possessionChoices, 1),
-        );
+        // Short labels: a header dropdown is as wide as its longest option
+        $possessionChoices = [
+            'Yes' => SurveyResponse::IN_POSSESSION_YES,
+            'Yes (exempt)' => 'yes-exempt',
+            'On hire' => SurveyResponse::IN_POSSESSION_ON_HIRE,
+            'Scrapped/stolen' => SurveyResponse::IN_POSSESSION_SCRAPPED_OR_STOLEN,
+            'Sold' => SurveyResponse::IN_POSSESSION_SOLD,
+        ];
 
         return [
             (new WeekYearFilter('Week', 'survey.surveyPeriodStart'))->sortable(),
             (new TextFilter('Company', 'survey.invitationAddress.line1'))->sortable(),
             (new SpaceStrippingTextFilter('Reg mark', 'survey.registrationMark'))->sortable(),
             (new ChoiceFilter('Status', 'survey.state', $stateChoices))->sortable(),
-            (new QualityFlagsChoiceFilter('Quality flags'))->sortable(),
-            (new InPossessionFilter('In possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
+            (new QualityFlagsChoiceFilter('Flags'))->sortable(),
+            (new InPossessionFilter('Possession?', 'response.isInPossessionOfVehicle', $possessionChoices))->sortable(),
             (new Simple('Reminders')),
+            (new DeliveryProblemsChoiceFilter('Delivery', SurveyNotification::class, 'survey')),
             (new DaysFilter('Days')),
         ];
     }

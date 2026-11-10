@@ -4,6 +4,8 @@ namespace App\ListPage\International;
 
 use App\Entity\International\Action;
 use App\Entity\International\Survey;
+use App\Entity\International\SurveyNotification;
+use App\ListPage\Field\DeliveryProblemsChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
 use Ghost\GovUkCoreBundle\ListPage\Field\ChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\Field\DateTextFilter;
@@ -37,6 +39,7 @@ class SurveyListPage extends AbstractListPage
                 'No' => false,
             ]))->sortable(),
             (new Simple('Reminders')),
+            (new DeliveryProblemsChoiceFilter('Delivery', SurveyNotification::class, 'survey')),
 // Currently disabled, as it's thought that future rules will get too complex to implement in pure SQL
 //            (new EmptiesChoiceFilter('Empties'))->sortable(),
             (new Simple('Empties')),

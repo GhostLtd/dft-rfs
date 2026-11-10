@@ -42,6 +42,13 @@ class FormWizardCleanupSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // Without an existing session there's no wizard state to clean up. Reading it would start one, which a
+        // stateless route (e.g. Notify callbacks) must not do: with debug on Symfony makes that a 500.
+        if (!$event->getRequest()->hasPreviousSession()) {
+            $this->log->debug("[FormWizard] No session; nothing to clean up");
+            return;
+        }
+
         $this->log->debug("[FormWizard] Running on Controller: {$controllerClass}");
 
         if ($controller instanceof AbstractSessionStateFormWizardController) {

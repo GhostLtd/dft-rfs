@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Feature**: GOV.UK Notify callbacks: delivery receipts and returned letters are stored against their responses and shown in admin, with a seen/unseen toggle and a "Delivery" column and filter on the CSRGT, IRHS and pre-enquiry lists (see [Notify callbacks](features/2026-11-notify-callbacks.md))
 - **Feature**: `app:notifications:check-legacy-messages`: read-only pre-deploy check that no queued Notify message still names a survey as its origin, with best- and worst-case times by which they will have cleared (see [notifications deployment](features/2026-09-notifications-revamp.md#deployment))
 - **Feature**: CSRGT: email and SMS reminders for surveys still in progress after their survey period (SMS capped per financial year)
 - **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled

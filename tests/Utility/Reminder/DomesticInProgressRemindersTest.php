@@ -109,7 +109,21 @@ class DomesticInProgressRemindersTest extends KernelTestCase
 
     public function testDueForReminder3(): void
     {
-        self::assertSame(['ip3:due'], $this->dueRefs(NotificationType::IN_PROGRESS_REMINDER_3));
+        self::assertSame(['ip3:due', 'ip3:period-end-oldest-allowed'], $this->dueRefs(NotificationType::IN_PROGRESS_REMINDER_3));
+    }
+
+    /**
+     * No reminder is sent once the survey period ended more than 56 days ago: comfortably more than the ~35 days
+     * the three reminders normally take, allowing for weekends and a chase or two.
+     */
+    public function testMaximumSpanAfterPeriodEnd(): void
+    {
+        $due = $this->dueRefs(NotificationType::IN_PROGRESS_REMINDER_1, $this->family('2026-07-01'));
+
+        self::assertContains('ip1:period-end-oldest-allowed', $due);
+        self::assertNotContains('ip1:period-end-too-old', $due);
+        self::assertNotContains('ip2:period-end-too-old', $this->dueRefs(NotificationType::IN_PROGRESS_REMINDER_2));
+        self::assertNotContains('ip3:period-end-too-old', $this->dueRefs(NotificationType::IN_PROGRESS_REMINDER_3));
     }
 
     public function testRecentContactStopsDeferringAfterSevenDays(): void

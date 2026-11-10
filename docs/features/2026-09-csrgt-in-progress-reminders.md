@@ -20,7 +20,15 @@ The reminder family is `csrgt-in-progress`, implemented by `DomesticInProgressRe
 | 3 | Reminder 2 was sent at least 14 days ago | `in-progress-reminder-3` |
 
 All three require the survey to be in the `in-progress` state and to have no notification row of their
-own type. The cutoff is `now − interval + 12 hours`, matching the scheduling tolerance used by other
+own type, and none is sent once the survey period ended more than **56 days** ago
+(`DomesticInProgressReminders::MAX_DAYS_AFTER_PERIOD_END`, compared with the London date).
+
+The sequence normally takes about 35 days: day 7, then 14 days later, then 14 more. Each delay counts from
+the previous reminder's actual send, so weekends (up to 2 days each) and the seven-day contact gap push the
+rest back: about 41 days with weekend slippage, about 50 with a chase or two. 56 days covers that while
+stopping reminders to surveys that ended months ago (e.g. an SMS-only survey left due while the allowance
+was exhausted, a late move to in-progress, or a backlog after re-enabling the family). A sequence delayed
+past 56 days loses its remaining reminders. The cutoff is `now − interval + 12 hours`, matching the scheduling tolerance used by other
 reminders. Reminders 2 and 3 count from the preceding reminder's actual `sentAt`, including any delay
 caused by weekends or recent contact. Bank holidays are treated as weekdays.
 
@@ -231,9 +239,12 @@ and crashes before the API call; the counters intentionally over-count rather th
 Notify references do not deduplicate sends, so an accepted request with a lost response can be charged
 again on retry.
 
-A cap refusal throws `UnrecoverableMessageHandlingException` directly, with no manufactured cause.
-Messenger does not retry it: the message goes to `failed`, is acknowledged on `govuk-notify`, and
-`AlphagovNotifyMessengerSubscriber` records a failed response on the notification row. Daily refusals
+A cap refusal throws `SmsCapRefusedException` (an `UnrecoverableMessageHandlingException`) directly, with
+no manufactured cause. Messenger does not retry it: the message goes to `failed`, is acknowledged on
+`govuk-notify`, and `AlphagovNotifyMessengerSubscriber` records a **`refused`** response on the notification
+row. It is not "failed": the number was never tried, so it isn't a delivery problem. The notification row
+exists, so that reminder is not sent again when the cap clears (see [Reminders](../Reminders.md#sms-allowance)).
+The "no originating notification row" guard is a bug check, not a cap, and stays `failed`. Daily refusals
 say `SMS per-number daily cap reached`; annual refusals include the financial year. Logs use a survey
 ID or Notify reference, never the mobile number. Reaching the annual cap also logs a warning.
 

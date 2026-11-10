@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a324570faeb063826751d84f78cc0585",
+    "content-hash": "05f2dd84d7bd2ab2fab9f632e6e37a33",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1945,11 +1945,11 @@
         },
         {
             "name": "ghost/govuk-core-bundle",
-            "version": "6.1.5",
+            "version": "6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.tomarq.net/ghost/govuk-core-bundle.git",
-                "reference": "2eccd670d20ee2e705b68bc050a34998680ae255"
+                "reference": "b9a9c6b6b8e666201bd3578b479d2027281c1ba2"
             },
             "require": {
                 "alphagov/notifications-php-client": "^6.2 || ^7.0",
@@ -2010,7 +2010,7 @@
                 }
             ],
             "description": "Symfony bundle for core govuk-related classes",
-            "time": "2026-07-16T11:01:10+00:00"
+            "time": "2026-11-10T12:22:55+00:00"
         },
         {
             "name": "ghost/govuk-frontend-bundle",

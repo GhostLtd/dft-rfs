@@ -132,6 +132,9 @@ services:
     # block doesn't pick up its #[AsMessageHandler] attribute. Register it explicitly.
     Ghost\GovUkCoreBundle\Messenger\AlphagovNotify\MessageHandler:
         autoconfigure: true
+        arguments:
+            # Identifies the environment in Notify callbacks (all environments share one Notify service); empty on prod
+            $referencePrefix: '%env(default::APP_NOTIFY_REFERENCE_PREFIX)%'
 
     App\DataCollector\FeaturesCollector:
         tags:

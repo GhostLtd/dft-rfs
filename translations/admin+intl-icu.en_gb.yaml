@@ -107,6 +107,21 @@ international:
     content: 'The export failed'
     title: ''
 
+notify:
+  delivery-problems:
+    summary: "{count, plural, one {# delivery problem} other {# delivery problems}} ({unseen, number} unseen)"
+    mark-seen: Mark delivery problems as seen
+    mark-unseen: Mark delivery problems as unseen
+    seen: "(seen {date})"
+  callback:
+    status:
+      delivered: delivered
+      permanent-failure: permanent failure
+      temporary-failure: temporary failure
+      technical-failure: technical failure
+      returned: letter returned
+    notified: "notified {date}"
+
 notification-interception:
   dvla-import:
     heading: "LCNI: Import DVLA data"

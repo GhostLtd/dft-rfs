@@ -242,12 +242,16 @@ class SmsAllowanceMiddlewareTest extends KernelTestCase
         $responses = $this->entityManager->find(SurveyNotification::class, $row->getId())->getNotifyApiResponses()->toArray();
         $refusals = array_values(array_filter($responses, fn($r) => str_contains($r->getData()['errors'][0]['error'] ?? '', 'SMS allowance')));
         self::assertCount(1, $refusals);
-        self::assertSame(Reference::STATUS_FAILED, $refusals[0]->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        self::assertSame(Reference::STATUS_REFUSED, $refusals[0]->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
         self::assertSame(2, $this->perNumberSent('2026-09-10'), 'the per-number unit taken before the annual refusal is not given back');
     }
 
     #[DataProvider('refusalMessages')]
-    public function testRefusalWithNoPreviousExceptionIsRecordedAsAFailedResponse(int $annual, int $perNumber, string $error): void
+    /**
+     * Refused by our own caps, not by Notify: says nothing about the number, so it's "refused", not a failure (and
+     * so not a delivery problem)
+     */
+    public function testRefusalWithNoPreviousExceptionIsRecordedAsARefusedResponse(int $annual, int $perNumber, string $error): void
     {
         $row = $this->queueSms('2026-09-10 09:00:00', 5);
         $this->work($annual, $perNumber);
@@ -256,7 +260,7 @@ class SmsAllowanceMiddlewareTest extends KernelTestCase
         $responses = $this->entityManager->find(SurveyNotification::class, $row->getId())->getNotifyApiResponses()->toArray();
         self::assertCount(1, $responses);
         $data = $responses[0]->getData();
-        self::assertSame(Reference::STATUS_FAILED, $data[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        self::assertSame(Reference::STATUS_REFUSED, $data[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
         self::assertSame($error, $data['errors'][0]['error'], 'the refusal itself is logged when it has no previous exception');
     }
 
@@ -393,7 +397,7 @@ class SmsAllowanceMiddlewareTest extends KernelTestCase
         $responses = $this->entityManager->find(SurveyNotification::class, $row->getId())->getNotifyApiResponses()->toArray();
         $refusals = array_values(array_filter($responses, fn($r) => str_contains($r->getData()['errors'][0]['error'] ?? '', 'per-number')));
         self::assertCount(1, $refusals);
-        self::assertSame(Reference::STATUS_FAILED, $refusals[0]->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
+        self::assertSame(Reference::STATUS_REFUSED, $refusals[0]->getData()[AlphagovNotifyMessengerSubscriber::STATUS_KEY]);
     }
 
     #[DataProvider('stoppedCaps')]

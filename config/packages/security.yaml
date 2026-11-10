@@ -19,6 +19,13 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # GOV.UK Notify callbacks: stateless, authenticated by NotifyCallbackController's bearer token. Outside the
+        # session-based firewalls, so nothing (e.g. the log processors reading the token) loads a session.
+        notify_callback:
+            host: '^%frontend_hostname%$'
+            pattern: ^/notify/callback/
+            security: false
+
         roro:
             host: '^%frontend_hostname%$'
             pattern: ^/roro

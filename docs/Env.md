@@ -56,6 +56,31 @@ POSTCODE_CHANGEOVER_DATE=2025-06-01
 
 See also: [Screenshots documentation](Screenshots.md) for generating screenshots with different location modes.
 
+### APP_NOTIFY_CALLBACK_TOKEN
+
+The bearer token GOV.UK Notify sends with its callbacks (delivery receipts and returned letters). It's set
+alongside the callback URLs in the Notify service's *API integration → Callbacks*. Use a long random secret.
+Empty or unset means every callback is refused (401). See [Notify callbacks](features/2026-11-notify-callbacks.md).
+
+On deployed environments this comes from the Cloud Build substitution `_APP_NOTIFY_CALLBACK_TOKEN`.
+
+```
+APP_NOTIFY_CALLBACK_TOKEN=a-long-random-secret
+```
+
+### APP_NOTIFY_REFERENCE_PREFIX
+
+All environments share one Notify service, so its single callback URL (prod's) receives every environment's
+callbacks. This prefix is added to every Notify reference sent (`{prefix}::{reference}`), so that prod can tell
+other environments' callbacks apart: it logs those at info, and its own unmatched ones as warnings.
+
+**Leave it empty on prod.** Use e.g. `dev` / `test` on those environments, and `local` locally. On deployed
+environments this comes from the Cloud Build substitution `_APP_NOTIFY_REFERENCE_PREFIX`.
+
+```
+APP_NOTIFY_REFERENCE_PREFIX=local
+```
+
 ### APP_IN_PROGRESS_REMINDERS_FROM
 
 A `Y-m-d` date: the earliest survey period end (`surveyPeriodEnd`) eligible for CSRGT in-progress reminder 1.

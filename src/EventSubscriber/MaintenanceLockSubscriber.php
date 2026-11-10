@@ -4,6 +4,7 @@
 namespace App\EventSubscriber;
 
 
+use App\Controller\NotifyCallbackController;
 use App\Repository\MaintenanceLockRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,13 @@ class MaintenanceLockSubscriber implements EventSubscriberInterface
         }
 
         if (!$this->isMaintenanceMode($event)) {
+            return;
+        }
+
+        // Not the maintenance page (a 200, which Notify would take as accepted and never send again): a 503 makes
+        // Notify send the callback again later (every 5 minutes, up to 5 times)
+        if ($event->getRequest()->attributes->get('_route') === NotifyCallbackController::ROUTE) {
+            $event->setResponse(new Response('', Response::HTTP_SERVICE_UNAVAILABLE, ['Retry-After' => '300']));
             return;
         }
 

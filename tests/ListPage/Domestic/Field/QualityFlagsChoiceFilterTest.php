@@ -69,10 +69,10 @@ class QualityFlagsChoiceFilterTest extends TestCase
 
         $this->assertArrayHasKey('choices', $options);
         $this->assertSame([
-            'With flags (any)' => 'any',
-            'Unreviewed flags' => 'unseen',
-            'Reviewed flags' => 'seen',
-            'No flags' => 'none',
+            'Any' => 'any',
+            'Unreviewed' => 'unseen',
+            'Reviewed' => 'seen',
+            'None' => 'none',
         ], $options['choices']);
     }
 

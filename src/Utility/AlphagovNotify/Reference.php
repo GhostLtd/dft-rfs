@@ -8,6 +8,8 @@ class Reference
     public const string STATUS_ACCEPTED = 'accepted';
     public const string STATUS_FAILED = 'failed';
     public const string STATUS_WAITING_FOR_RETRY = 'waiting-for-retry';
+    // Not sent, by our own choice (an SMS cap), so it says nothing about the recipient: not a delivery problem
+    public const string STATUS_REFUSED = 'refused';
 
     public const string LETTER_DOMESTIC_SURVEY_INVITE = 'd271ef54-57eb-43a3-a0fb-53632ee29caa';
     public const string LETTER_DOMESTIC_SURVEY_REMINDER_1 = '2aa33b37-40f9-4dca-8701-bf080d02563c';

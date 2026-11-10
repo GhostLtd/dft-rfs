@@ -26,10 +26,10 @@ class QualityFlagsChoiceFilter extends Simple implements FilterableInterface
             'expanded' => false,
             'placeholder' => $this->label,
             'choices' => [
-                'With flags (any)' => self::CHOICE_ANY,
-                'Unreviewed flags' => self::CHOICE_UNSEEN,
-                'Reviewed flags' => self::CHOICE_SEEN,
-                'No flags' => self::CHOICE_NONE,
+                'Any' => self::CHOICE_ANY,
+                'Unreviewed' => self::CHOICE_UNSEEN,
+                'Reviewed' => self::CHOICE_SEEN,
+                'None' => self::CHOICE_NONE,
             ],
         ], $this->formOptions);
     }

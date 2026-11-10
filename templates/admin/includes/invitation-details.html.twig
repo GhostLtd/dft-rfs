@@ -10,6 +10,23 @@
     {% endif %}
 {{- summaryListEnd() -}}
 
+{%- set deliveryProblems = delivery_problems(survey) -%}
+{%- if deliveryProblems.count > 0 and deliveryProblems.type -%}
+    <div class="govuk-inset-text delivery-problems">
+        <p class="govuk-body">
+            {{- 'notify.delivery-problems.summary' | trans({count: deliveryProblems.count, unseen: deliveryProblems.unseen}, 'admin') -}}
+        </p>
+        {%- set markSeen = deliveryProblems.unseen > 0 -%}
+        <form method="post" action="{{ path('admin_delivery_problems_mark_seen', {type: deliveryProblems.type, surveyId: survey.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('delivery-problems-seen-' ~ survey.id) }}">
+            <input type="hidden" name="seen" value="{{ markSeen ? '1' : '0' }}">
+            <button type="submit" class="govuk-button govuk-!-margin-bottom-0{{ markSeen ? '' : ' govuk-button--secondary' }}" data-module="govuk-button">
+                {{- (markSeen ? 'notify.delivery-problems.mark-seen' : 'notify.delivery-problems.mark-unseen') | trans({}, 'admin') -}}
+            </button>
+        </form>
+    </div>
+{% endif %}
+
 {% for group in notification_types_for(survey, showEmails ?? true) %}
     {% if group.rows | length > 0 or group.type.value in ['invite', 'reminder-1', 'reminder-2'] %}
         {{- summaryListStart({classes: 'govuk-!-margin-bottom-' ~ (marginBottom ?? 9)}) -}}
@@ -79,7 +96,31 @@
                         {%- endfor -%}
                     {%- endif -%}
                 </span>
+                {%- for callback in response.callbacks -%}
+                    {{- _self.callbackStatus(callback, response) -}}
+                {%- endfor -%}
+                {%- if response.hasDeliveryProblem and response.problemSeenAt -%}
+                    <span class="govuk-body-s api-response__seen"> {{ 'notify.delivery-problems.seen' | trans({date: response.problemSeenAt | date('format.date-time.default' | trans)}, 'admin') }}</span>
+                {%- endif -%}
             </div>
         {% endfor %}
     {%- endif -%}
+{%- endmacro -%}
+
+{#- An outcome Notify reported after sending (a delivery receipt or returned letter) -#}
+{%- macro callbackStatus(callback, response) -%}
+    {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tag -%}
+    {%- set classes = callback.fatal
+        ? (response.problemSeenAt ? 'govuk-tag--grey' : 'govuk-tag--red')
+        : (callback.status == 'delivered' ? 'govuk-tag--green' : 'govuk-tag--yellow') -%}
+    <div class="api-response__callback govuk-!-margin-top-1">
+        {{- tag({text: "notify.callback.status.#{callback.status}" | trans({}, 'admin'), classes: classes}) -}}
+        <span class="govuk-body-s">
+            {%- if callback.status == 'returned' -%}
+                <span class="api-response__timestamp">{{ 'notify.callback.notified' | trans({date: callback.receivedAt | date('format.date-time.default' | trans)}, 'admin') }}</span>
+            {%- elseif callback.occurredAt -%}
+                <span class="api-response__timestamp">{{ callback.occurredAt | date('format.date-time.default' | trans) }}</span>
+            {%- endif -%}
+        </span>
+    </div>
 {%- endmacro -%}

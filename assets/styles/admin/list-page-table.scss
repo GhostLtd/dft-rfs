@@ -1,6 +1,10 @@
 @import "govuk-frontend/dist/govuk/base";
 
 .list-table {
+  .nowrap {
+    white-space: nowrap;
+  }
+
   .govuk-select {
     min-width: auto;
   }

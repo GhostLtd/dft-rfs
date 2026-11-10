@@ -3,6 +3,8 @@
 namespace App\ListPage\PreEnquiry;
 
 use App\Entity\PreEnquiry\PreEnquiry;
+use App\Entity\PreEnquiry\PreEnquiryNotification;
+use App\ListPage\Field\DeliveryProblemsChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\AbstractListPage;
 use Ghost\GovUkCoreBundle\ListPage\Field\ChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\Field\DateTextFilter;
@@ -33,6 +35,7 @@ class PreEnquiryListPage extends AbstractListPage
             (new TextFilter('Company name', 'preEnquiry.companyName'))->sortable(),
             (new ChoiceFilter('Status', 'preEnquiry.state', $stateChoices))->sortable(),
             (new Simple('Reminders')),
+            (new DeliveryProblemsChoiceFilter('Delivery', PreEnquiryNotification::class, 'preEnquiry')),
         ];
     }
 

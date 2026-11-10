@@ -26,6 +26,12 @@ class DomesticInProgressReminders implements AutomatedRemindersInterface
     private const string LOG_PREFIX = 'Notifications: ';
     private const string TOLERANCE = 'PT12H';
     private const string RECENT_CONTACT = 'P7D';
+    /**
+     * No reminder is sent once the survey period ended more than this long ago. The three reminders normally take
+     * about 35 days (7, then 14, then 14); this allows for weekend slippage and a chase or two (the seven-day contact
+     * gap), without reminding surveys that ended months ago (e.g. SMS-only surveys left due by an exhausted allowance).
+     */
+    public const int MAX_DAYS_AFTER_PERIOD_END = 56;
 
     private readonly ?\DateTime $remindersFrom;
 
@@ -148,7 +154,7 @@ class DomesticInProgressReminders implements AutomatedRemindersInterface
             return [];
         }
 
-        $qb = $this->queryInProgressSurveys()
+        $qb = $this->queryInProgressSurveys($now)
             ->andWhere('s.surveyPeriodEnd <= :periodEndCutoff')->setParameter('periodEndCutoff', \DateTime::createFromImmutable($this->cutoff($now, 'P7D')))
             // Typed as a date: on SQLite, a datetime string would make a period ending on the day itself compare as earlier.
             ->andWhere('s.surveyPeriodEnd >= :remindersFrom')->setParameter('remindersFrom', $this->remindersFrom, Types::DATE_MUTABLE);
@@ -164,7 +170,7 @@ class DomesticInProgressReminders implements AutomatedRemindersInterface
      */
     private function candidatesAfter(NotificationType $previous, NotificationType $type, \DateTimeImmutable $now): array
     {
-        $qb = $this->queryInProgressSurveys();
+        $qb = $this->queryInProgressSurveys($now);
         $this->rows->withoutNotification($qb, 's', SurveyNotification::class, $type);
         $this->rows->withLatestNotificationBy($qb, 's', SurveyNotification::class, $previous, $this->cutoff($now, 'P14D'));
 
@@ -172,12 +178,19 @@ class DomesticInProgressReminders implements AutomatedRemindersInterface
     }
 
     /**
-     * Returns a QueryBuilder restricted to surveys in the in-progress state.
+     * Returns a QueryBuilder restricted to surveys in the in-progress state whose period ended no more than
+     * MAX_DAYS_AFTER_PERIOD_END days ago (London date).
      */
-    private function queryInProgressSurveys(): QueryBuilder
+    private function queryInProgressSurveys(\DateTimeImmutable $now): QueryBuilder
     {
+        $oldestPeriodEnd = \DateTime::createFromImmutable($now->setTimezone(new \DateTimeZone('Europe/London')))
+            ->setTime(0, 0)
+            ->modify('-'.self::MAX_DAYS_AFTER_PERIOD_END.' days');
+
         return $this->entityManager->createQueryBuilder()->select('s')->from(Survey::class, 's')
-            ->where('s.state = :inProgress')->setParameter('inProgress', SurveyStateInterface::STATE_IN_PROGRESS);
+            ->where('s.state = :inProgress')->setParameter('inProgress', SurveyStateInterface::STATE_IN_PROGRESS)
+            // Typed as a date, as for remindersFrom
+            ->andWhere('s.surveyPeriodEnd >= :oldestPeriodEnd')->setParameter('oldestPeriodEnd', $oldestPeriodEnd, Types::DATE_MUTABLE);
     }
 
     private function contactedRecently(?\DateTime $latest, \DateTimeImmutable $now): bool

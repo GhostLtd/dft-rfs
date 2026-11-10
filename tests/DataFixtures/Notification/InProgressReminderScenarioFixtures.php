@@ -71,6 +71,10 @@ class InProgressReminderScenarioFixtures extends Fixture
         $make('ip1:period-end-on-from', periodEnd: '2026-08-15');
         $make('ip1:period-end-before-from', periodEnd: '2026-08-14');
         $make('ip1:no-period-end', periodEnd: null);
+        // Maximum span: periods ending more than 56 days before NOW (i.e. before 2026-07-16) get no reminders. These
+        // are also before FROM, so testMaximumSpan uses an earlier FROM.
+        $make('ip1:period-end-oldest-allowed', periodEnd: '2026-07-16');
+        $make('ip1:period-end-too-old', periodEnd: '2026-07-15');
         $make('ip1:wrong-state', state: SurveyStateInterface::STATE_INVITATION_SENT);
         $make('ip1:already-sent', [[$ip1, '2026-09-01 09:00']]);
         $make('ip1:no-contact', invitationEmails: null);
@@ -87,10 +91,13 @@ class InProgressReminderScenarioFixtures extends Fixture
         $make('ip2:already-sent', [[$ip1, '2026-08-01 10:00'], [$ip2, '2026-09-01 10:00']]);
         $make('ip2:closed', [[$ip1, '2026-08-20 10:00']], state: SurveyStateInterface::STATE_CLOSED);
         $chased['ip2:chased-recently'] = [$make('ip2:chased-recently', [[$ip1, '2026-08-20 10:00']]), '2026-09-05 10:00', true];
+        $make('ip2:period-end-too-old', [[$ip1, '2026-08-26 10:00']], periodEnd: '2026-07-15');
 
         // reminder 3
         $make('ip3:due', [[$ip1, '2026-07-20 10:00'], [$ip2, '2026-08-20 10:00']]);
         $make('ip3:already-sent', [[$ip1, '2026-07-01 10:00'], [$ip2, '2026-07-15 10:00'], [$ip3, '2026-07-29 10:00']]);
+        $make('ip3:period-end-too-old', [[$ip1, '2026-07-20 10:00'], [$ip2, '2026-08-20 10:00']], periodEnd: '2026-07-15');
+        $make('ip3:period-end-oldest-allowed', [[$ip1, '2026-07-20 10:00'], [$ip2, '2026-08-20 10:00']], periodEnd: '2026-07-16');
 
         $manager->flush();
 

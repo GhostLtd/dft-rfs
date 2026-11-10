@@ -67,7 +67,7 @@ class SmsAllowanceMiddleware implements MiddlewareInterface
             } else {
                 $this->dailyCap->tryConsume($mobile, $now);
             }
-            throw new UnrecoverableMessageHandlingException('SMS per-number daily cap reached');
+            throw new SmsCapRefusedException('SMS per-number daily cap reached');
         }
 
         $record = $this->smsAllowance->recordAttempt($notificationId, $now);
@@ -77,7 +77,7 @@ class SmsAllowanceMiddleware implements MiddlewareInterface
         $paidToday = $firstAttempt && $record->reservedOn === SmsRecipientDailyCap::day($now);
         if (!$paidToday && !$this->dailyCap->tryConsume($mobile, $now)) {
             $this->logger->warning(self::LOG_PREFIX."SMS per-number daily cap reached; refused attempt for {$reference}");
-            throw new UnrecoverableMessageHandlingException('SMS per-number daily cap reached');
+            throw new SmsCapRefusedException('SMS per-number daily cap reached');
         }
 
         $paidThisYear = $firstAttempt && $record->financialYear === $this->smsAllowance->financialYear($now);
@@ -87,8 +87,8 @@ class SmsAllowanceMiddleware implements MiddlewareInterface
         }
     }
 
-    private function annualCapRefusal(\DateTimeImmutable $now): UnrecoverableMessageHandlingException
+    private function annualCapRefusal(\DateTimeImmutable $now): SmsCapRefusedException
     {
-        return new UnrecoverableMessageHandlingException("SMS allowance for FY {$this->smsAllowance->financialYear($now)} exhausted");
+        return new SmsCapRefusedException("SMS allowance for FY {$this->smsAllowance->financialYear($now)} exhausted");
     }
 }

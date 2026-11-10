@@ -5,8 +5,9 @@
 {%- block adminContent -%}
     {%- from '@GhostGovUkFrontend/components/macros.html.twig' import tableHead, tableRow, summaryListActionsList, tag -%}
     {%- from 'admin/macros/list-page.html.twig' import listTableStart, listTableEnd -%}
-    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate -%}
+    {%- from 'admin/macros/list-page-extra.html.twig' import countField, reminderDate, deliveryProblems -%}
 
+    {%- set deliveryProblemCounts = delivery_problem_counts(data.entities) -%}
     {{- listTableStart(data, form) -}}
     {%- for survey in data.entities -%}
         {%- set companyNameData -%}
@@ -38,13 +39,14 @@
         {{- tableRow([
             "#{weekNumberAndYear[1]} - #{weekNumberAndYear[0]}",
             {html: companyNameData},
-            survey.registrationMark | formatRegMark,
+            {text: survey.registrationMark | formatRegMark, classes: 'nowrap'},
             {html: tag({text: survey.state, classes: "admin.survey.state.#{survey.state}" | trans})},
             {html: survey.response and survey.response.qualityFlagCount
                 ? tag({text: survey.response.qualityFlagCount, classes: survey.response.qualityFlagsSeen ? "govuk-tag--green" : "govuk-tag--red"})
                 : '—'},
             inPossessionData,
             reminderDate(notification_sent_at(survey, 'reminder-1'), notification_sent_at(survey, 'reminder-2')),
+            {html: deliveryProblems(deliveryProblemCounts[survey.id] ?? null)},
             countField(survey, 'totalDayCount'),
             {html: summaryListActionsList(actions)},
         ]) -}}
