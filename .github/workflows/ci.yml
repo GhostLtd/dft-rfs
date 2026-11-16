@@ -2,7 +2,9 @@
 name: CI
 
 on:
+  # Dependabot's branches always have a PR, which runs CI; a push run as well would just repeat it
   push:
+    branches-ignore: ['dependabot/**']
   pull_request:
   workflow_dispatch:
 

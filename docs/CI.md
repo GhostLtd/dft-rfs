@@ -9,7 +9,8 @@ No job needs a secret. The `notify-api` test group stays excluded, and nothing t
 
 ## Tests (`ci.yml`)
 
-Runs on every push and pull request, and can be started by hand from the Actions tab.
+Runs on every push (except to Dependabot's branches, whose pull requests run it) and pull request, and can be started
+by hand from the Actions tab.
 
 | Job | What it runs | Run it locally | Artifacts |
 |---|---|---|---|
@@ -35,19 +36,21 @@ have that script exit 1 when an advisory is `high` or `critical`.
 
 ## Screenshots (`screenshots.yml`)
 
-Runs by hand (Actions tab, "Run workflow", choosing the survey type and `APP_FEATURES`), and on pull requests that have
-the `screenshots` label: when the PR is opened or reopened, when any label is added, and on each push. It runs `bin/screenshots` (see
-[Screenshots](Screenshots.md)) and uploads `screenshots/output/` as the artifact `screenshots-<run number>`, kept for
-14 days. The upload happens even when a survey type fails, so `error.png` is there to look at.
+Runs by hand (Actions tab, "Run workflow", choosing the branch, the survey type and `APP_FEATURES`), and when the
+`screenshots` label is added to a pull request. Pushing more commits to a labelled PR doesn't re-run it: remove and
+re-add the label, or run it by hand on the PR's branch. It runs `bin/screenshots` (see [Screenshots](Screenshots.md))
+and uploads `screenshots/output/` as the artifact `screenshots-<run number>`, kept for 14 days. The upload happens even
+when a survey type fails, so `error.png` is there to look at.
 
-Running it by hand only becomes possible once the workflow is on the default branch (a GitHub restriction); until
-then, use the label. (Running it by hand hasn't been tried yet for that reason.)
+Adding any other label to a PR still logs a skipped Screenshots run: GitHub can't filter `labeled` events by label name
+before starting a run.
 
 ## Keeping the workflows current
 
 Actions are pinned to a full commit SHA, with the version in a comment, and Docker images to exact tags. Dependabot
-(`.github/dependabot.yml`) opens weekly PRs to update the actions and the Dockerfiles' `FROM` images. Turn down any
-that move PHP off 8.3 (production's runtime) or Node off 22. The helper images copied with `COPY --from` (Composer,
+(`.github/dependabot.yml`) opens a monthly PR for the actions and another for the Dockerfiles' `FROM` images, unlabelled
+(labels would log skipped Screenshots runs). It ignores PHP minor and major versions (production runs 8.3) and Node
+major versions (22 is the LTS line in use). The helper images copied with `COPY --from` (Composer,
 the PHP extension installer) may not be covered, so check those by hand now and then. For Composer and npm it only opens security updates, which
 need "Dependabot security updates" switched on in the repository settings. Its Composer updates may fail on the
 `ghost/*` bundles, which come from Git rather than Packagist.

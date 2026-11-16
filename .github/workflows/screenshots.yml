@@ -1,5 +1,5 @@
 # Screenshots of every survey, as a downloadable artifact (see docs/Screenshots.md). Runs by hand from the Actions
-# tab, or on pull requests labelled "screenshots".
+# tab, or when the "screenshots" label is added to a pull request.
 name: Screenshots
 
 on:
@@ -14,8 +14,10 @@ on:
         description: APP_FEATURES (every release flag by default; drop postcode-changeover for the place-name domestic set)
         type: string
         default: postcode-changeover,outward-code-check
+  # Only when a label is added (see the job's "if"), so ordinary PR activity doesn't log a skipped run.
+  # To re-run after pushing more commits, remove and re-add the label, or run it by hand on the PR's branch.
   pull_request:
-    types: [opened, reopened, labeled, synchronize]
+    types: [labeled]
 
 permissions:
   contents: read
@@ -23,12 +25,13 @@ permissions:
 jobs:
   screenshots:
     name: Screenshots
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'screenshots'))
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'screenshots'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    # Queue rather than cancel, so a skipped run (another label added) can't cancel one in progress
     concurrency:
       group: screenshots-${{ github.ref }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
