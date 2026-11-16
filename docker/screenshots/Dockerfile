@@ -44,7 +44,7 @@ RUN cd screenshots \
     && apt-get update \
     && yarn puppeteer browsers install chrome --install-deps \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s "$(node -p "require('puppeteer').executablePath()")" /usr/local/bin/google-chrome \
+    && ln -s "$(node -e "require('puppeteer').executablePath().then(console.log)")" /usr/local/bin/google-chrome \
     && google-chrome --version \
     && chmod -R a+rX /opt/puppeteer /opt/corepack
 

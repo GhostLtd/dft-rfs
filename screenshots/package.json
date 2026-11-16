@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "puppeteer": "^24",
+    "puppeteer": "^25",
     "yargs": "^16.2.0"
   },
   "packageManager": "yarn@4.17.0"
