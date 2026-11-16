@@ -1,0 +1,42 @@
+# Build context for docker/screenshots/Dockerfile is the repo root. It's an allow-list: the image must never contain
+# a developer's local secrets (.env.local files, keys.json, Symfony's decryption keys), and Docker doesn't read
+# .gitignore. A RUN guard at the end of the Dockerfile fails the build if one gets through anyway.
+*
+
+!.env
+!composer.json
+!composer.lock
+!symfony.lock
+!package.json
+!yarn.lock
+!.yarnrc.yml
+!webpack.config.js
+
+!assets
+!bin
+!config
+!data
+!migrations
+!public
+!sql
+!src
+!templates
+!translations
+
+!screenshots/package.json
+!screenshots/yarn.lock
+!screenshots/screenshots.js
+!screenshots/src
+
+!docker/screenshots
+
+# Re-excluded from the directories above (the last matching rule wins)
+public/build
+public/bundles
+public/.htaccess
+config/reference.php
+config/secrets/*/*.decrypt.private.php
+**/.env.local
+**/.env.local.php
+**/.env.*.local
+**/*keys.json

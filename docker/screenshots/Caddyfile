@@ -1,0 +1,12 @@
+# HTTPS for the frontend hostname, with a certificate from Caddy's internal CA (the screenshot tool's Chrome accepts
+# it: acceptInsecureCerts in screenshots/src/common.js). See docker/screenshots/Dockerfile.
+{
+	skip_install_trust
+	frankenphp
+}
+
+# FRONTEND_HOSTNAME is set in compose.screenshots.yaml (rfs-frontend.localhost)
+{$FRONTEND_HOSTNAME} {
+	root * /app/public
+	php_server
+}

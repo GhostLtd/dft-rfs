@@ -3,7 +3,7 @@
 ## Requirements
 - PHP 8.3+
 - Mysql / MariaDB
-- Node 14 (to build CSS/JS assets)
+- Node 22 (to build CSS/JS assets)
 - Gov.uk Notify API key
 
 ## Running the tests
@@ -21,6 +21,7 @@ vendor/bin/phpunit
 - Don't run two test runs at once: they share the SQLite test database and corrupt each other.
 - The tests run on SQLite. Code that depends on MySQL itself (the views, migrations, MySQL-only SQL) is tested by a separate
   suite on a disposable MySQL 8.0.18 matching production: `bin/test-mysql` (needs only Docker; see [MySQL tests](docs/MySqlTests.md)).
+- GitHub Actions runs both suites and static checks on every push, plus dependency audits and (on demand) screenshots (see [CI](docs/CI.md)).
 
 ## Relation documents / config
 - [Change log](docs/ChangeLog.md)
@@ -29,4 +30,5 @@ vendor/bin/phpunit
 - [RoRo](docs/RoRo.md)
 - [Database views and functions](docs/Views.md)
 - [MySQL tests](docs/MySqlTests.md)
+- [CI](docs/CI.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

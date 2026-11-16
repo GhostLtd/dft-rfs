@@ -1,0 +1,33 @@
+# Keeps the pinned actions and Docker images current (see docs/CI.md). Composer and npm get security updates only:
+# version-update PRs are switched off (open-pull-requests-limit: 0), and security updates come from the repository's
+# "Dependabot security updates" setting.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: docker
+    directories:
+      - /docker/test-php
+      - /docker/screenshots
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /screenshots
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0

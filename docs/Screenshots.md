@@ -10,6 +10,35 @@ The screenshot generation system creates automated screenshots of all survey typ
 - Node.js dependencies installed in `screenshots/` directory
 - The staging database should have the required route data for RoRo surveys
 
+## Disposable stack (`bin/screenshots`)
+
+The simplest way to take screenshots needs only Docker:
+
+```bash
+bin/screenshots                 # all survey types
+bin/screenshots pre-enquiry     # or: domestic, international, roro
+SCREENSHOTS_FEATURES=outward-code-check bin/screenshots domestic   # place-name location mode
+```
+
+Each run builds an image of the current checkout (`docker/screenshots/`), starts an empty MySQL 8.0.18, migrates it,
+serves the app over HTTPS in the staging environment, and runs the command below. Screenshots go to
+`screenshots/output/<timestamp>/`, and everything else is removed afterwards. It exits non-zero if a survey type
+fails part-way, and still leaves whatever was captured (including `error.png`). With `all`, it stops at the first
+survey type that fails, so the later ones aren't attempted.
+
+- **No `.env.local` editing.** Every setting is passed to the stack explicitly (`compose.screenshots.yaml`). The image
+  is built from an allow-list of the checkout, so `.env.local`, `keys.json` and Symfony's decryption keys never reach
+  it.
+- **Feature flags:** by default, every release flag in `App\Features` is on (today `postcode-changeover` and
+  `outward-code-check`), so the domestic screenshots are the postcode set. `SCREENSHOTS_FEATURES` replaces that list;
+  drop `postcode-changeover` for the place-name set. **When a flag is added to `App\Features`, add it to the default
+  in `compose.screenshots.yaml` and `.github/workflows/screenshots.yml`.**
+- **Fresh data:** the database starts empty every run, so screenshots never show local data. The RoRo routes come from
+  the migrations.
+- **CI:** the Screenshots workflow runs this and uploads the output as an artifact (see [CI](CI.md)).
+
+The rest of this page describes the command itself, and running it against your own staging setup.
+
 ## Command
 
 ```bash

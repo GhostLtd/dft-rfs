@@ -75,7 +75,9 @@ module.exports.run = async function (argv) {
         console.log(e.toString(), e.stack)
         await fullPageScreenshot.default(page, {path: screenshotPath('error.png')})
         console.log('Image generated: error.png')
+        // Rethrown so the run fails (and bin/console rfs:dev:screenshots with it), keeping what was captured
+        throw e
+    } finally {
+        await browser.close()
     }
-
-    await browser.close()
 }

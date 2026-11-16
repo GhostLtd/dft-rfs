@@ -1,0 +1,44 @@
+# Disposable stack for the screenshot tool (rfs:dev:screenshots). Run it with bin/screenshots, which gives each run
+# its own project name and image tag, and tears everything down afterwards. See docs/Screenshots.md.
+services:
+  # Same MySQL 8.0.18 as the MySQL test suite; empty and in memory, so screenshots never show local data
+  rfs-screenshots-mysql:
+    extends:
+      file: compose.mysql-tests.yaml
+      service: rfs-test-mysql
+
+  screenshots:
+    build:
+      context: .
+      dockerfile: docker/screenshots/Dockerfile
+    image: rfs-screenshots:${RFS_TEST_RUN:?set by bin/screenshots}
+    depends_on:
+      rfs-screenshots-mysql:
+        condition: service_healthy
+    # The host user, so the PNGs in screenshots/output are theirs
+    user: "${RFS_UID:?set by bin/screenshots}:${RFS_GID:?set by bin/screenshots}"
+    sysctls:
+      # Lets the non-root web server listen on 443
+      net.ipv4.ip_unprivileged_port_start: 0
+    tmpfs:
+      - /app/var:mode=1777
+    volumes:
+      - ./screenshots/output:/app/screenshots/output
+    # Every setting is explicit: staging would otherwise fall back to the developer's .env.local, which isn't in
+    # the image anyway (see docker/screenshots/Dockerfile.dockerignore)
+    environment:
+      APP_ENV: staging
+      APP_DEBUG: 0
+      APP_SECRET: screenshots-only
+      FRONTEND_HOSTNAME: rfs-frontend.localhost
+      ADMIN_HOSTNAME: rfs-admin.localhost
+      DATABASE_URL: mysql://rfstest:rfstest@rfs-screenshots-mysql:3306/rfstest?serverVersion=8.0.18
+      # Never used: no message worker runs, so nothing is sent to Notify
+      ALPHAGOV_NOTIFY_API_KEY: api-key-override-me-locally
+      # Every release feature flag in App\Features ("we want the latest features"): add new ones here and in
+      # .github/workflows/screenshots.yml. SCREENSHOTS_FEATURES overrides it, e.g. for the place-name domestic set.
+      APP_FEATURES: ${SCREENSHOTS_FEATURES:-postcode-changeover,outward-code-check}
+      # The host user has no home directory in the image
+      HOME: /tmp
+      XDG_DATA_HOME: /tmp/caddy-data
+      XDG_CONFIG_HOME: /tmp/caddy-config

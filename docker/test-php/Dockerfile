@@ -2,8 +2,8 @@
 # Matches production's App Engine php83 runtime. The repo is bind-mounted at /app at runtime.
 FROM php:8.3.36-cli-bookworm
 
-COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY --from=mlocati/php-extension-installer:2.13.2 /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=composer:2.11.1 /usr/bin/composer /usr/local/bin/composer
 
 # git: the ghost/* bundles are locked as Git sources only (no dist archive), so a clean install clones them.
 # unzip: lets Composer extract every other package's dist archive natively.

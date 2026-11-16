@@ -1,0 +1,75 @@
+# Dependency security audits (see docs/CI.md for the policy). Separate from ci.yml so that an advisory published
+# overnight doesn't turn the test results red.
+name: Audit
+
+on:
+  push:
+    paths:
+      - composer.lock
+      - yarn.lock
+      - screenshots/yarn.lock
+      - .github/workflows/audit.yml
+      - .github/scripts/yarn-audit-summary.mjs
+  pull_request:
+    paths:
+      - composer.lock
+      - yarn.lock
+      - screenshots/yarn.lock
+      - .github/workflows/audit.yml
+      - .github/scripts/yarn-audit-summary.mjs
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  php-audit:
+    name: PHP (composer audit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      # Fails on any advisory. Abandoned packages are listed but don't fail it (Composer's default is to fail).
+      - name: composer audit
+        run: composer audit --locked --no-interaction --abandoned=report
+
+  js-audit:
+    name: JavaScript (yarn npm audit, report-only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Enable corepack (Yarn versions from each package.json)
+        run: corepack enable
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      # Report-only: the summary script lists advisories without failing, but fails if the audit didn't run
+      - name: Audit the asset build dependencies
+        run: |
+          set +e
+          yarn npm audit --all --recursive --json > "$RUNNER_TEMP/audit-root.json"
+          status=$?
+          set -e
+          node .github/scripts/yarn-audit-summary.mjs root "$RUNNER_TEMP/audit-root.json" "$status"
+
+      - name: Audit the screenshot tool's dependencies
+        working-directory: screenshots
+        run: |
+          set +e
+          yarn npm audit --all --recursive --json > "$RUNNER_TEMP/audit-screenshots.json"
+          status=$?
+          set -e
+          node ../.github/scripts/yarn-audit-summary.mjs screenshots "$RUNNER_TEMP/audit-screenshots.json" "$status"

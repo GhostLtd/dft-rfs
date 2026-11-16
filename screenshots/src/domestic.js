@@ -236,9 +236,9 @@ async function doNiBorderCrossingScreenshots(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('error-ni-border-crossing.png')});
         console.log('Image generated: error-ni-border-crossing.png');
         throw e;
+    } finally {
+        await browser.close();
     }
-
-    await browser.close();
 }
 
 module.exports.run = async function(argv) {
@@ -544,7 +544,7 @@ module.exports.run = async function(argv) {
         await fullPageScreenshot.default(page, {path: screenshotPath('error.png')});
         console.log('Image generated: error.png');
         throw e;
+    } finally {
+        await browser.close();
     }
-
-    await browser.close();
 }
