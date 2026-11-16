@@ -9,8 +9,7 @@ No job needs a secret. The `notify-api` test group stays excluded, and nothing t
 
 ## Tests (`ci.yml`)
 
-Runs on every push (except to Dependabot's branches, whose pull requests run it) and pull request, and can be started
-by hand from the Actions tab.
+Runs on every push and pull request, and can be started by hand from the Actions tab.
 
 | Job | What it runs | Run it locally | Artifacts |
 |---|---|---|---|
@@ -47,13 +46,11 @@ before starting a run.
 
 ## Keeping the workflows current
 
-Actions are pinned to a full commit SHA, with the version in a comment, and Docker images to exact tags. Dependabot
-(`.github/dependabot.yml`) opens a monthly PR for the actions and another for the Dockerfiles' `FROM` images, unlabelled
-(labels would log skipped Screenshots runs). It ignores PHP minor and major versions (production runs 8.3) and Node
-major versions (22 is the LTS line in use). The helper images copied with `COPY --from` (Composer,
-the PHP extension installer) may not be covered, so check those by hand now and then. For Composer and npm it only opens security updates, which
-need "Dependabot security updates" switched on in the repository settings. Its Composer updates may fail on the
-`ghost/*` bundles, which come from Git rather than Packagist.
+Actions are pinned to a full commit SHA, with the version in a comment, and Docker images to exact tags. Nothing
+updates them automatically (there's deliberately no Dependabot), so bump them by hand now and then: the actions in
+`.github/workflows/`, and the `FROM` and `COPY --from` images in `docker/test-php/` and `docker/screenshots/`. Keep PHP
+on 8.3 (production's runtime) and Node on 22. Vulnerable Composer and Yarn packages are reported by the dependency
+audits above.
 
 To check a workflow change:
 
