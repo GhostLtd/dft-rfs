@@ -1,6 +1,6 @@
 # PHP image for the MySQL test suite (compose.mysql-tests.yaml, run via bin/test-mysql).
 # Matches production's App Engine php83 runtime. The repo is bind-mounted at /app at runtime.
-FROM php:8.3.36-cli-bookworm
+FROM php:8.5.12-cli-bookworm
 
 COPY --from=mlocati/php-extension-installer:2.13.2 /usr/bin/install-php-extensions /usr/local/bin/
 COPY --from=composer:2.11.1 /usr/bin/composer /usr/local/bin/composer
