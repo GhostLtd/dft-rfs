@@ -3,8 +3,6 @@
 namespace App\Controller\Admin\Reports;
 
 use App\Form\Admin\ReportFilterType;
-use App\Utility\Domestic\WeekNumberHelper as DomesticWeekNumberHelper;
-use App\Utility\International\WeekNumberHelper as InternationalWeekNumberHelper;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -7,7 +7,6 @@ use App\ListPage\Field\QaChoiceFilter;
 use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use Ghost\GovUkCoreBundle\ListPage\Field\TextFilter;
 use App\Repository\RoRo\OperatorRepository;
-use App\Repository\Route\RouteRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;

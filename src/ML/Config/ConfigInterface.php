@@ -2,7 +2,6 @@
 
 namespace App\ML\Config;
 
-use App\ML\FileMapping;
 use App\ML\ValidationException;
 
 interface ConfigInterface

@@ -16,7 +16,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 #[ORM\Table(name: 'pre_enquiry')]
 #[ORM\Entity(repositoryClass: PreEnquiryRepository::class)]

@@ -2,7 +2,6 @@
 
 namespace App\Tests\NewFunctional\Wizard\International\TripDistanceDisabled;
 
-use App\Entity\International\Vehicle;
 use App\Tests\DataFixtures\International\TripDistanceDisabled\VehicleFixtures;
 use App\Tests\DataFixtures\International\TripDistanceDisabled\VehicleRigidFixtures;
 use App\Tests\DataFixtures\RoRo\RouteAndPortFixtures;

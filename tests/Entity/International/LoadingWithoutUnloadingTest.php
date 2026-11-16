@@ -2,7 +2,6 @@
 
 namespace App\Tests\Entity\International;
 
-use App\DTO\International\LoadingWithoutUnloading;
 use App\Entity\International\Action;
 use App\Entity\International\Survey;
 use App\Entity\International\Trip;

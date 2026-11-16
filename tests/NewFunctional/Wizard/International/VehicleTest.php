@@ -3,10 +3,7 @@
 namespace App\Tests\NewFunctional\Wizard\International;
 
 use App\Entity\International\Vehicle;
-use App\Entity\Vehicle as VehicleLookup;
-use App\Repository\International\VehicleRepository;
 use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;

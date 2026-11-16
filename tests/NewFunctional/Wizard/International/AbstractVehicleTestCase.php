@@ -2,12 +2,10 @@
 
 namespace App\Tests\NewFunctional\Wizard\International;
 
-use App\Tests\DataFixtures\International\ResponseStillActiveFixtures;
 use App\Tests\DataFixtures\International\VehicleFixtures;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Action\PathTestAction;
 use App\Utility\RegistrationMarkHelper;
-use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractVehicleTestCase extends AbstractSurveyTestCase
 {

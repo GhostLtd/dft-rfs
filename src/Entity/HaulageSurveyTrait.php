@@ -8,8 +8,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-// PHPstorm indicates this isn't needed, but it is
-
 trait HaulageSurveyTrait {
     use SurveyTrait;
 

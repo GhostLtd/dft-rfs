@@ -2,7 +2,6 @@
 
 namespace App\Tests\NewFunctional\Wizard\Admin;
 
-use App\Entity\Domestic\Survey;
 use App\Tests\NewFunctional\AbstractProceduralWizardTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
 use Doctrine\ORM\EntityManagerInterface;

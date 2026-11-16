@@ -5,7 +5,6 @@ namespace App\Form\InternationalSurvey\ClosingDetails;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 class LoadingWithoutUnloadingType extends AbstractType

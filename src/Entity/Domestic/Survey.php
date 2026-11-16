@@ -24,7 +24,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 
 #[AppAssert\ValidRegistration(groups: ["add_survey", "import_survey"])]
 #[UniqueEntity(['surveyPeriodStart', 'registrationMark', 'originalSurvey'], message: 'domestic.add.duplicate-exists', errorPath: 'survey', ignoreNull: false, groups: ['add_survey', 'import_survey'])]

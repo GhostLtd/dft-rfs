@@ -9,7 +9,6 @@ use App\Repository\International\VehicleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[AppAssert\ValidRegistration(groups: ["vehicle_registration", "admin_vehicle"])]
 #[ORM\Table(name: 'international_vehicle')]

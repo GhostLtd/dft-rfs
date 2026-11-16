@@ -3,7 +3,6 @@
 namespace App\Command\Dev\RoRo;
 
 use App\Command\Dev\AbstractTableExportComparator;
-use App\Utility\Quarter\NaturalQuarterHelper;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;

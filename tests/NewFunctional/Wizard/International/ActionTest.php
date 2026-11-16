@@ -3,7 +3,6 @@
 namespace App\Tests\NewFunctional\Wizard\International;
 
 use App\Entity\International\Action;
-use App\Entity\International\Trip;
 use App\Tests\DataFixtures\International\LoadingActionFixtures;
 use App\Tests\DataFixtures\International\TripFixtures;
 use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;

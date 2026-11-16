@@ -11,8 +11,6 @@ use App\Tests\Workflow\AbstractWorkflowTestCase;
 use App\Workflow\InternationalSurvey\TripState;
 use Ghost\GovUkCoreBundle\FormWizard\FormWizardStateInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 class TripStateTest extends AbstractWorkflowTestCase
 {

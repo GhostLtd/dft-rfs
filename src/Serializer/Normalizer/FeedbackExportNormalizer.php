@@ -3,8 +3,6 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\SurveyInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;

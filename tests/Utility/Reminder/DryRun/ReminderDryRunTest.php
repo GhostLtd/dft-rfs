@@ -15,7 +15,6 @@ use App\Utility\Reminder\DomesticInProgressReminders;
 use App\Utility\Reminder\DomesticReminders;
 use App\Utility\Reminder\DryRun\DryRunOptions;
 use App\Utility\Reminder\DryRun\ReminderDryRun;
-use App\Utility\Reminder\RoRoReminders;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;

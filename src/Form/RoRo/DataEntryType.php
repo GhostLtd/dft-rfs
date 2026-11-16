@@ -5,11 +5,9 @@ namespace App\Form\RoRo;
 use App\Entity\RoRo\Survey;
 use App\Form\Admin\RoRo\DataMapper\DataEntryDataMapper;
 use Ghost\GovUkFrontendBundle\Form\Type\TextareaType;
-use PHPUnit\Framework\Constraint\Callback;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DataEntryType extends AbstractType
 {

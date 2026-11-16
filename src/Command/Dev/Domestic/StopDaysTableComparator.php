@@ -2,15 +2,8 @@
 
 namespace App\Command\Dev\Domestic;
 
-use App\Command\Dev\AbstractTableExportComparator;
-use App\Entity\AbstractGoodsDescription;
-use App\Entity\Vehicle;
-use App\Utility\Quarter\NaturalQuarterHelper;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Intl\Countries;
 
 class StopDaysTableComparator extends AbstractDaysTableComparator
 {

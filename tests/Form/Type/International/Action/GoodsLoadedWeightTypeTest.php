@@ -2,9 +2,7 @@
 
 namespace App\Tests\Form\Type\International\Action;
 
-use App\Entity\Domestic\DaySummary;
 use App\Entity\International\Action;
-use App\Form\DomesticSurvey\DaySummary\DistanceTravelledType;
 use App\Form\InternationalSurvey\Action\GoodsLoadedWeightType;
 use App\Tests\Form\Type\AbstractTypeTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;

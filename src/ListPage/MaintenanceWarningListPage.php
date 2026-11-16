@@ -8,7 +8,6 @@ use Ghost\GovUkCoreBundle\ListPage\Field\Simple;
 use App\Repository\MaintenanceWarningRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
 

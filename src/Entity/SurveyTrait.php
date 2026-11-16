@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Entity\Embeddable\LongAddress;
-use App\Entity\Feedback; // PHPstorm indicates this isn't needed, but it is
 use App\Form\Validator as AppAssert;
 use App\Utility\EmailHelper;
 use DateTime;

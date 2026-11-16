@@ -4,7 +4,6 @@ namespace App\Serializer\Normalizer\Domestic;
 
 use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
-use App\Entity\Embeddable\Volume;
 use App\Entity\Vehicle;
 use App\Entity\Vehicle as BaseVehicle;
 use App\Serializer\Normalizer\AbstractExportNormalizer;

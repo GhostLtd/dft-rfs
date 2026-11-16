@@ -3,7 +3,6 @@
 namespace App\Utility;
 
 use Psr\Cache\CacheItemPoolInterface;
-use ValueError;
 
 class UrlSigner
 {

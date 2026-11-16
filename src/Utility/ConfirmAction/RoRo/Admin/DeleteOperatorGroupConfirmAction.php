@@ -2,7 +2,6 @@
 
 namespace App\Utility\ConfirmAction\RoRo\Admin;
 
-use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\OperatorGroup;
 use Ghost\GovUkCoreBundle\Utility\ConfirmAction\AbstractConfirmAction;
 use Doctrine\ORM\EntityManagerInterface;

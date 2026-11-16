@@ -3,7 +3,6 @@
 namespace App\Form\InternationalSurvey\Trip;
 
 use App\Entity\International\Trip;
-use App\Entity\Vehicle;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;

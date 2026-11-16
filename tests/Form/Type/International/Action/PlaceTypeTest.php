@@ -14,8 +14,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Validator\ConstraintValidatorFactory;
-use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PlaceTypeTest extends AbstractTypeTestCase

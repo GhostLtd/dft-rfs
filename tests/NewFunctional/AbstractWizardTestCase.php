@@ -4,7 +4,6 @@ namespace App\Tests\NewFunctional;
 
 use App\Tests\NewFunctional\AbstractFunctionalTestCase;
 use App\Tests\NewFunctional\Wizard\Action\Context;
-use App\Tests\NewFunctional\Wizard\Action\WizardAction;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 abstract class AbstractWizardTestCase extends AbstractFunctionalTestCase

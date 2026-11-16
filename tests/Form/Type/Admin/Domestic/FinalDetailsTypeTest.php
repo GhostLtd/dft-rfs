@@ -6,11 +6,9 @@ use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\Embeddable\Volume;
 use App\Form\Admin\DomesticSurvey\FinalDetailsType;
 use App\Tests\Form\Type\Admin\AbstractSurveyTypeTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\Form\FormError;
 
 class FinalDetailsTypeTest extends AbstractSurveyTypeTestCase
 {

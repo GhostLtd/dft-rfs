@@ -4,7 +4,6 @@ namespace App\Form\DomesticSurvey\ClosingDetails;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;
 use Symfony\Component\Validator\Constraints\NotNull;
 

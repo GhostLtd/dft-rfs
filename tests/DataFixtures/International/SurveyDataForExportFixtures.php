@@ -3,8 +3,6 @@
 namespace App\Tests\DataFixtures\International;
 
 use App\Entity\International\Survey;
-use App\Entity\International\SurveyResponse;
-use App\Entity\SurveyResponse as AbstractSurveyResponse;
 use App\Entity\SurveyStateInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;

@@ -3,7 +3,6 @@
 namespace App\Tests\Functional;
 
 use App\Entity\PasscodeUser;
-use App\Repository\PasscodeUserRepository;
 use App\Utility\PasscodeGenerator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;

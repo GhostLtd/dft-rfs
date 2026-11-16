@@ -2,7 +2,6 @@
 
 namespace App\Tests\Form\Type;
 
-use App\Form\InternationalSurvey\Action\HazardousGoodsType;
 use App\Tests\Form\Type\AbstractTypeTestCase;
 use App\Utility\HazardousGoodsHelper;
 use PHPUnit\Framework\Attributes\DataProvider;

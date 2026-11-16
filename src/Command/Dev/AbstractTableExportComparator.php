@@ -2,7 +2,6 @@
 
 namespace App\Command\Dev;
 
-use App\Utility\Quarter\NaturalQuarterHelper;
 use Brick\Math\BigDecimal;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;

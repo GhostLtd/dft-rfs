@@ -2,7 +2,6 @@
 
 namespace App\Tests\Twig;
 
-use App\Features;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Twig\Environment;
 use Twig\Error\SyntaxError;

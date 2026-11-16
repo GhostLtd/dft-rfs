@@ -3,7 +3,6 @@
 namespace App\Doctrine\Hydrators;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
-use PDO;
 
 class ColumnHydrator extends AbstractHydrator
 {

@@ -4,14 +4,11 @@ namespace App\Utility\Rehearsal;
 
 use App\DTO\RoRo\OperatorRoute;
 use App\Entity\Domestic\Survey as DomesticSurvey;
-use App\Entity\Domestic\SurveyNotification as DomesticNotification;
 use App\Entity\Domestic\SurveyResponse as DomesticResponse;
 use App\Entity\Embeddable\LongAddress;
 use App\Entity\International\Company;
 use App\Entity\International\Survey as InternationalSurvey;
-use App\Entity\International\SurveyNotification as InternationalNotification;
 use App\Entity\PreEnquiry\PreEnquiry;
-use App\Entity\PreEnquiry\PreEnquiryNotification;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\Survey as RoRoSurvey;
 use App\Entity\RoRo\SurveyNotification as RoRoNotification;

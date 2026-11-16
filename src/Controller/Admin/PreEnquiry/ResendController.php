@@ -6,7 +6,6 @@ use App\Controller\Admin\AbstractSurveyResendController;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Form\Admin\PreEnquiry\AddSurveyType;
 use App\Security\Voter\AdminSurveyVoter;
-use App\Utility\PasscodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

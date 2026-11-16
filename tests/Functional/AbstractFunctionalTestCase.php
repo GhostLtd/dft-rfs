@@ -3,7 +3,6 @@
 namespace App\Tests\Functional;
 
 use Doctrine\Common\DataFixtures\Executor\AbstractExecutor;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;

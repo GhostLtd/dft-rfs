@@ -6,7 +6,6 @@ use App\Entity\Domestic\Survey;
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\PasscodeUser;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 trait SurveyHelperTrait
 {

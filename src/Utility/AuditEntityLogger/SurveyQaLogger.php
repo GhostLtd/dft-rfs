@@ -2,7 +2,6 @@
 
 namespace App\Utility\AuditEntityLogger;
 
-use App\Entity\HaulageSurveyInterface;
 use App\Entity\QualityAssuranceInterface;
 
 class SurveyQaLogger extends AbstractAuditEntityLogger

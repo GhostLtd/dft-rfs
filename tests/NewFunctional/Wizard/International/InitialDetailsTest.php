@@ -2,12 +2,7 @@
 
 namespace App\Tests\NewFunctional\Wizard\International;
 
-use App\Entity\International\Survey;
-use App\Entity\SurveyStateInterface;
-use App\Repository\International\SurveyRepository;
 use App\Tests\DataFixtures\International\SurveyFixtures;
-use App\Tests\NewFunctional\Wizard\AbstractPasscodeWizardTestCase;
-use App\Tests\NewFunctional\Wizard\Action\Context;
 use App\Tests\NewFunctional\Wizard\Form\FormTestCase;
 
 /**

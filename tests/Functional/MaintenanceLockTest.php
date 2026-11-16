@@ -4,8 +4,6 @@ namespace App\Tests\Functional;
 
 use App\Tests\DataFixtures\MaintenanceLockFixtures;
 use App\Tests\DataFixtures\MaintenanceLockWithWhitelistFixtures;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
 class MaintenanceLockTest extends AbstractFrontendFunctionalTestCase

@@ -3,7 +3,6 @@
 namespace App\Repository\Domestic;
 
 use App\Entity\Domestic\DayStop;
-use App\Entity\Domestic\DaySummary;
 use App\Entity\Domestic\Survey;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;

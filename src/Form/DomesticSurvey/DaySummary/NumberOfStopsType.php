@@ -2,10 +2,8 @@
 
 namespace App\Form\DomesticSurvey\DaySummary;
 
-use App\Entity\Domestic\Day;
 use App\Entity\Domestic\DaySummary;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ghost\GovUkFrontendBundle\Form\Type as Gds;

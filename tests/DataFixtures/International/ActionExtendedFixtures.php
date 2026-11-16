@@ -3,7 +3,6 @@
 namespace App\Tests\DataFixtures\International;
 
 use App\Entity\CargoType;
-use App\Entity\HazardousGoods;
 use App\Entity\International\Action;
 use App\Entity\International\Trip;
 use Doctrine\Bundle\FixturesBundle\Fixture;

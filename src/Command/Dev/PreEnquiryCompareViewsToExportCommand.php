@@ -3,7 +3,6 @@
 namespace App\Command\Dev;
 
 use App\Command\Dev\PreEnquiry\PreEnquiryTableComparator;
-use App\Command\Dev\RoRo\RoRoTableComparator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -4,11 +4,9 @@ namespace App\Tests\Form\Type\Domestic\ClosingDetails;
 
 use App\Entity\Domestic\SurveyResponse;
 use App\Entity\Domestic\Vehicle;
-use App\Entity\Embeddable\Volume;
 use App\Form\DomesticSurvey\ClosingDetails\VehicleFuelType;
 use App\Tests\Form\Type\AbstractTypeTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Component\Form\FormError;
 
 class VehicleFuelTypeTest extends AbstractTypeTestCase
 {

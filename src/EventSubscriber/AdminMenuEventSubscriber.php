@@ -5,8 +5,6 @@ namespace App\EventSubscriber;
 use App\Utility\Menu\AdminMenu;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Environment;
 
 class AdminMenuEventSubscriber implements EventSubscriberInterface
