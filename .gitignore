@@ -35,5 +35,7 @@ yarn-error.log
 /.claude/
 
 /config/reference.php
-/.phpunit.cache
 /lcni.log
+
+# JUnit output from bin/test-mysql
+/build/test-results/

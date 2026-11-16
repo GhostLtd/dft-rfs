@@ -19,6 +19,8 @@ vendor/bin/phpunit
   so it needs Chrome plus a matching chromedriver in `drivers/` (`vendor/bin/bdi detect drivers`).
 - `JavaScriptBehaviourTest` exercises the compiled bundles in `public/build`, so a stale or missing build fails it.
 - Don't run two test runs at once: they share the SQLite test database and corrupt each other.
+- The tests run on SQLite. Code that depends on MySQL itself (the views, migrations, MySQL-only SQL) is tested by a separate
+  suite on a disposable MySQL 8.0.18 matching production: `bin/test-mysql` (needs only Docker; see [MySQL tests](docs/MySqlTests.md)).
 
 ## Relation documents / config
 - [Change log](docs/ChangeLog.md)
@@ -26,4 +28,5 @@ vendor/bin/phpunit
 - [Reminders](docs/Reminders.md)
 - [RoRo](docs/RoRo.md)
 - [Database views and functions](docs/Views.md)
+- [MySQL tests](docs/MySqlTests.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

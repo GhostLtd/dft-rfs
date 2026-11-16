@@ -1,9 +1,9 @@
 doctrine:
   dbal:
-    logging: false
-  orm:
-    entity_managers:
+    connections:
       default:
-        dql:
-          string_functions:
-            IF: DoctrineExtensions\Query\Sqlite\IfElse
+        logging: false
+        # As config/packages/doctrine.yaml, plus "sessions": the test env uses the native file session handler, so
+        # nothing registers PdoSessionHandler's table (created by a migration) with the schema tool, and
+        # doctrine:schema:validate in the MySQL test bootstrap would otherwise want to drop it.
+        schema_filter: '~^(?!messenger_messages|cache_items|lock_keys|sessions)~'

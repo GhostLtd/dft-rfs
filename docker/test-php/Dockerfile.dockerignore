@@ -1,0 +1,5 @@
+# Build context for docker/test-php/Dockerfile is the repo root, but it only needs these.
+*
+!composer.json
+!composer.lock
+!docker/test-php/

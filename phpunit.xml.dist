@@ -12,6 +12,11 @@
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
+      <exclude>tests/MySQL</exclude>
+    </testsuite>
+    <!-- Needs the disposable MySQL from compose.mysql-tests.yaml: run with bin/test-mysql (see docs/MySqlTests.md) -->
+    <testsuite name="mysql">
+      <directory>tests/MySQL</directory>
     </testsuite>
     <testsuite name="extended">
       <directory suffix="TestExtended.php">tests</directory>

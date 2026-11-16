@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Change**: Tests: a MySQL test suite (`bin/test-mysql`) runs the migrations, views and MySQL-only SQL on a disposable MySQL 8.0.18 configured like production, and the SQLite suite now enforces foreign keys (see [MySQL tests](MySqlTests.md))
 - **Feature**: `app:notifications:check-legacy-messages`: read-only pre-deploy check that no queued Notify message still names a survey as its origin, with best- and worst-case times by which they will have cleared (see [notifications deployment](features/2026-09-notifications-revamp.md#deployment))
 - **Feature**: CSRGT: email and SMS reminders for surveys still in progress after their survey period (SMS capped per financial year)
 - **Feature**: Short login link (`/c/<token>`, `((loginLink))` in Notify templates) that opens the login page with code 1 prefilled
@@ -11,7 +12,6 @@
 - **Fix**: A request that doesn't match a route no longer opens a database connection or starts the session, and during maintenance an unknown URL now shows the 404 page (see [ADR](ADRs/2026-10-12-404s-without-database.md))
 - **Change**: Tests: tests that call the real GOV.UK Notify API are in the `notify-api` group, excluded by default (`vendor/bin/phpunit --group notify-api` to run them)
 - **Change**: Tests: functional tests run in-process on BrowserKit; only `JavaScriptBehaviourTest` uses a real browser (see [ADR](ADRs/2026-10-08-browserkit-first-functional-tests.md))
-- **Change**: Tests: functional tests run in-process on BrowserKit; only `JavaScriptBehaviourTest` uses a real browser (see [ADR](ADRs/browserkit-first-functional-tests/index.md))
 
 ## 2026-10-14
 - **Feature**: Outward code checker

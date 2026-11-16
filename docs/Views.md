@@ -71,11 +71,11 @@ bin/console app:views:apply --only=view_x --no-deps   # apply view_x alone
 bin/console app:views:apply -v            # echo each statement as it runs
 ```
 
-The command is MySQL/MariaDB-specific and gracefully skips on other platforms (e.g. the SQLite test database), emitting a note and exiting 0. That's why the test bootstrap calls it unconditionally — it's a no-op for SQLite-backed tests and a real apply for MySQL-backed ones.
+The command is MySQL/MariaDB-specific and gracefully skips on other platforms (e.g. the SQLite test database), emitting a note and exiting 0. So the main (SQLite) test suite never creates the views: they're tested by the MySQL test suite instead.
 
 ## Deploy / test integration
 
-- **Tests:** `tests/bootstrap.php` runs `app:views:apply` after `d:s:c`, before `messenger:setup`. On SQLite-backed tests this is a no-op; on MySQL-backed tests it creates every view and function so integration tests can `SELECT FROM view_…`.
+- **Tests:** the [MySQL test suite](MySqlTests.md) (`bin/test-mysql`) builds a fresh MySQL 8.0.18 database the way production is built — `doctrine:migrations:migrate`, then `app:views:apply` — and `tests/MySQL/ViewsTest` checks that every view returns rows and that the columns they derive are right. A view that no longer builds after a schema change fails the run. Add qualifying data to `tests/DataFixtures/MySQL/ViewCoverageFixtures.php` for any new view.
 - **Deploys / prod / dev:** `app:views:apply` needs to run after `doctrine:migrations:migrate`, wherever that happens in the deploy runbook. It is not wired into `cloudbuild.yaml` because `cloudbuild.yaml` does not run migrations either (it deploys the app and the `post-install` hook only checks `d:m:status`). Whoever runs `d:m:migrate` must also run `app:views:apply` immediately after.
 
 ## The rule, restated

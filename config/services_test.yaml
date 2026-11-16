@@ -14,6 +14,10 @@ services:
     App\Tests\Support\DatabaseActivityRecorder:
         tags: ['doctrine.middleware']
 
+    # SQLite only enforces foreign keys when asked to (production's MySQL always does)
+    App\Tests\Support\SqliteForeignKeysMiddleware:
+        tags: ['doctrine.middleware']
+
     # Alias these services to make sure they are not removed when the container is
     # compiled, and so that they can be replaced with mocks via their alias name.
     app.test.message_bus:

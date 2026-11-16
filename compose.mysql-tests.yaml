@@ -1,0 +1,47 @@
+# Disposable stack for the MySQL test suite. Run it with bin/test-mysql, which gives each run its own
+# project name and image tag, and tears everything down afterwards. See docs/MySqlTests.md.
+services:
+  # Matches production (Cloud SQL, MySQL 8.0.18-google): see docs/MySqlTests.md for the comparison.
+  # The service name is also the hostname tests/Support/MySqlTestDatabaseGuard insists on.
+  rfs-test-mysql:
+    image: mysql:8.0.18
+    command:
+      - --log-bin-trust-function-creators=1
+      - --max-allowed-packet=32M
+      - --local-infile=1
+      - --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: rfstest-root
+      # No "_" or "%": both are wildcards in the database grant the image creates for the user
+      MYSQL_DATABASE: rfstest
+      MYSQL_USER: rfstest
+      MYSQL_PASSWORD: rfstest
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      # TCP and the test user: the image's initialisation runs a temporary server with networking off
+      test: ["CMD", "mysqladmin", "ping", "--host=127.0.0.1", "--user=rfstest", "--password=rfstest", "--silent"]
+      interval: 2s
+      timeout: 5s
+      retries: 90
+
+  tests:
+    build:
+      context: .
+      dockerfile: docker/test-php/Dockerfile
+    image: rfs-test-php:${RFS_TEST_RUN:?set by bin/test-mysql}
+    depends_on:
+      rfs-test-mysql:
+        condition: service_healthy
+    working_dir: /app
+    volumes:
+      - .:/app
+    tmpfs:
+      # Keeps the test cache/logs out of the host checkout (and away from SQLite runs there)
+      - /app/var:mode=1777
+    environment:
+      APP_ENV: test
+      DATABASE_URL: mysql://rfstest:rfstest@rfs-test-mysql:3306/rfstest?serverVersion=8.0.18
+      # The container runs as the host user (bin/test-mysql), who has no home directory in the image
+      HOME: /tmp
+      COMPOSER_HOME: /tmp/composer

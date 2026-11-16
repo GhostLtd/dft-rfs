@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Runs the MySQL test suite (phpunit --testsuite mysql) in a disposable Compose stack: MySQL 8.0.18
+# configured like production, plus a PHP 8.3 image. Extra arguments are passed to phpunit.
+#
+#   bin/test-mysql
+#   bin/test-mysql --filter ViewsTest
+#
+# Each run gets its own Compose project and image tag, so overlapping runs (e.g. from separate
+# worktrees) can't share a server or an image. JUnit output goes to build/test-results/mysql.xml.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+export RFS_TEST_RUN="$(date +%s)-$$-${RANDOM}"
+project="rfs-mysql-tests-${RFS_TEST_RUN}"
+compose=(docker compose --project-name "$project" --file compose.mysql-tests.yaml)
+
+cleanup() {
+    "${compose[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+    # Removes only this run's tag; the layers stay in the build cache
+    docker image rm "rfs-test-php:${RFS_TEST_RUN}" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+"${compose[@]}" build tests
+
+status=0
+"${compose[@]}" run --rm --user "$(id -u):$(id -g)" tests "$@" || status=$?
+exit "$status"
