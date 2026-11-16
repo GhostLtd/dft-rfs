@@ -2,7 +2,7 @@
 # HTTPS (staging forces SSL), and Puppeteer's Chrome drives it from the same container, since Chrome resolves
 # *.localhost to its own loopback. The app is built into the image rather than bind-mounted, so a developer's
 # .env.local and other local secrets can't reach it (see Dockerfile.dockerignore).
-FROM node:22.23.5-bookworm-slim AS node
+FROM node:26.13.1-bookworm-slim AS node
 
 FROM dunglas/frankenphp:1.13.4-php8.3-bookworm
 
