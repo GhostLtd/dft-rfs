@@ -1,0 +1,113 @@
+# bin/dast --smoke: proves the stack's integration from inside the ZAP container before any long scan. DNS and TLS to
+# both hosts, a form login as the domestic user, a deep page showing its seeded marker, which fields expand ${VARS},
+# and that a wrong marker fails as an assertion. Not a scan: no spider, no passive rules wait, no active scan.
+env:
+  contexts:
+    - name: domestic
+      urls:
+        - https://rfs-frontend.localhost/domestic-survey
+      includePaths:
+        - https://rfs-frontend\.localhost/(domestic-survey|survey-feedback)(/.*)?
+      excludePaths:
+        - .*/logout.*
+      authentication:
+        method: form
+        parameters:
+          loginPageUrl: https://rfs-frontend.localhost/login
+          loginRequestUrl: https://rfs-frontend.localhost/login
+          # ZAP names the CSRF token after the input's id (passcode_login_token), then replaces that parameter's value
+          # wherever it appears in the body; the real field (passcode_login[token]) shares the placeholder, so both
+          # get the fresh token, and Symfony ignores the extra parameter. Literal brackets: ZAP matches raw names.
+          loginRequestBody: passcode_login[passcode][0]={%username%}&passcode_login[passcode][1]={%password%}&passcode_login[token]=DastCsrfPlaceholder&passcode_login_token=DastCsrfPlaceholder
+        verification:
+          method: poll
+          pollUrl: https://rfs-frontend.localhost/domestic-survey
+          pollFrequency: 60
+          pollUnits: requests
+          loggedInRegex: \Qhref="/logout"\E
+          loggedOutRegex: (?im)^location:\s*/login
+      sessionManagement:
+        method: cookie
+      users:
+        - name: domestic
+          credentials:
+            username: ${DAST_DOMESTIC_USERNAME}
+            password: ${DAST_DOMESTIC_PASSWORD}
+    - name: admin
+      urls:
+        - https://rfs-admin.localhost/
+    # Everything on the frontend host, for the smoke run's traffic export (including the login requests)
+    - name: frontend-all
+      urls:
+        - https://rfs-frontend.localhost/
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  - type: requestor
+    name: smoke-unauthenticated
+    requests:
+      - url: https://rfs-frontend.localhost/login
+        responseCode: 200
+      - url: https://rfs-admin.localhost/
+        responseCode: 200
+    tests:
+      - name: admin-home-is-admin
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost/
+        responseBodyRegex: \QDomestic\E
+        onFail: error
+
+  - type: requestor
+    name: smoke-domestic-login
+    parameters:
+      user: domestic
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_PATH_DOMESTIC_STOPS}?dast-check-smoke=1
+        responseCode: 200
+    tests:
+      - name: stops-marker
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_DOMESTIC_STOPS}?dast-check-smoke=1
+        responseBodyRegex: Dastford
+        onFail: error
+      - name: wrong-marker-must-fail
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_DOMESTIC_STOPS}?dast-check-smoke=1
+        responseBodyRegex: NotTheSeededMarker
+        onFail: warn
+
+  - type: requestor
+    name: smoke-admin-survey
+    requests:
+      - url: https://rfs-admin.localhost${DAST_PATH_ADMIN_SURVEY}
+        responseCode: 200
+    tests:
+      - name: admin-survey-marker
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost${DAST_PATH_ADMIN_SURVEY}
+        responseBodyRegex: DA57 ZAP
+        onFail: error
+
+  - type: export
+    alwaysRun: true
+    parameters:
+      context: domestic
+      type: har
+      source: all
+      fileName: /zap/wrk/smoke/traffic.har
+
+  - type: export
+    alwaysRun: true
+    parameters:
+      context: frontend-all
+      type: har
+      source: all
+      fileName: /zap/wrk/smoke/traffic-frontend.har

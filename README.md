@@ -22,6 +22,7 @@ vendor/bin/phpunit
 - The tests run on SQLite. Code that depends on MySQL itself (the views, migrations, MySQL-only SQL) is tested by a separate
   suite on a disposable MySQL 8.0.18 matching production: `bin/test-mysql` (needs only Docker; see [MySQL tests](docs/MySqlTests.md)).
 - GitHub Actions runs both suites and static checks on every push, plus dependency audits and (on demand) screenshots (see [CI](docs/CI.md)).
+- A ZAP (DAST) scan runs against a disposable, seeded copy of the app: `bin/dast` (needs only Docker; see [DAST](docs/Dast.md)).
 
 ## Relation documents / config
 - [Change log](docs/ChangeLog.md)
@@ -31,4 +32,5 @@ vendor/bin/phpunit
 - [Database views and functions](docs/Views.md)
 - [MySQL tests](docs/MySqlTests.md)
 - [CI](docs/CI.md)
+- [DAST](docs/Dast.md)
 - [Symfony upgrade notes](UPGRADE-NOTES.md)

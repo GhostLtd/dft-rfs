@@ -1,0 +1,84 @@
+# Disposable stack for the DAST (ZAP) scan. Run it with bin/dast, which gives each run its own project name, image tag
+# and output directory, seeds the database, runs ZAP once per context and tears everything down. See docs/Dast.md.
+#
+# Every service is on the "dast" network only, which is internal: no routed egress, so neither ZAP nor the app can
+# reach Notify, GCP or the internet during a scan. (The Docker host can still reach the containers directly, and is
+# trusted.) Image builds aren't affected: they don't use this network.
+services:
+  # Same MySQL 8.0.18 as the MySQL test suite; empty and in memory
+  rfs-dast-mysql:
+    extends:
+      file: compose.mysql-tests.yaml
+      service: rfs-test-mysql
+    networks: [dast]
+
+  # The screenshot image (docker/screenshots/Dockerfile), unchanged, in its "serve" mode, with the DAST Caddyfile
+  # (adds the admin host, with IAP auth faked) mounted over the image's
+  app:
+    build:
+      context: .
+      dockerfile: docker/screenshots/Dockerfile
+    image: rfs-screenshots:${RFS_TEST_RUN:?set by bin/dast}
+    command: ["serve"]
+    depends_on:
+      rfs-dast-mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/rfs-ready"]
+      interval: 2s
+      timeout: 5s
+      retries: 150
+    sysctls:
+      # Lets the non-root web server listen on 443
+      net.ipv4.ip_unprivileged_port_start: 0
+    user: "${RFS_UID:?set by bin/dast}:${RFS_GID:?set by bin/dast}"
+    tmpfs:
+      - /app/var:mode=1777
+    volumes:
+      - ./docker/dast/Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      dast:
+        aliases:
+          - ${DAST_FRONTEND_HOSTNAME:-rfs-frontend.localhost}
+          - ${DAST_ADMIN_HOSTNAME:-rfs-admin.localhost}
+    # Every setting is explicit, as in compose.screenshots.yaml
+    environment:
+      APP_ENV: staging
+      APP_DEBUG: 0
+      APP_SECRET: dast-only
+      FRONTEND_HOSTNAME: ${DAST_FRONTEND_HOSTNAME:-rfs-frontend.localhost}
+      ADMIN_HOSTNAME: ${DAST_ADMIN_HOSTNAME:-rfs-admin.localhost}
+      DATABASE_URL: mysql://rfstest:rfstest@rfs-dast-mysql:3306/rfstest?serverVersion=8.0.18
+      # Never used: no message worker runs, and there's no route out anyway
+      ALPHAGOV_NOTIFY_API_KEY: api-key-override-me-locally
+      # Every release feature flag in App\Features, as for the screenshots
+      APP_FEATURES: ${DAST_FEATURES:-postcode-changeover,outward-code-check}
+      # The faked IAP user (docker/dast/Caddyfile), in a management domain so it gets the widest admin role
+      DAST_ADMIN_EMAIL: dast-admin@example.com
+      MANAGEMENT_DOMAINS: '["example.com"]'
+      HOME: /tmp
+      XDG_DATA_HOME: /tmp/caddy-data
+      XDG_CONFIG_HOME: /tmp/caddy-config
+
+  # ZAP, run by bin/dast once per context as a named container (no --rm: its home, and so zap.log, must outlive the
+  # process until bin/dast has copied it out). Its home is on the container's own layer, not a tmpfs, which Docker
+  # discards when the container stops.
+  zap:
+    # The pinned ZAP image plus the Authentication Statistics add-on; bump by hand (see docs/Dast.md)
+    build:
+      context: docker/dast
+      dockerfile: zap.Dockerfile
+    image: rfs-dast-zap:${RFS_TEST_RUN:?set by bin/dast}
+    depends_on:
+      app:
+        condition: service_healthy
+    user: "${RFS_UID:?set by bin/dast}:${RFS_GID:?set by bin/dast}"
+    environment:
+      HOME: /tmp
+    volumes:
+      - ${DAST_OUTPUT_DIR:?set by bin/dast}:/zap/wrk
+    networks: [dast]
+
+networks:
+  dast:
+    internal: true

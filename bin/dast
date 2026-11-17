@@ -1,0 +1,469 @@
+#!/usr/bin/env bash
+# Runs a ZAP (DAST) scan against a disposable, seeded copy of the app (compose.dast.yaml). See docs/Dast.md.
+#
+#   bin/dast                # passive: spider + passive rules, per context
+#   bin/dast --active       # also the active scan (attacks; only ever against this throwaway stack)
+#   bin/dast --smoke        # just the stack's integration checks (DNS, HTTPS, login, egress), then stop
+#
+# Environment: DAST_SPIDER_MINS (default 10), DAST_ACTIVE_MINS (30), DAST_CONTEXT_TIMEOUT_MINS (3 x their sum + 15),
+# DAST_SECTIONS (a subset of "public domestic international pre-enquiry admin", in that order).
+# Test hooks, for proving the guards fail (docs/Dast.md): DAST_WRONG_PASSWORD=<section> gives that section's user a
+# wrong password; DAST_CRIPPLE_SPIDER=<section> limits that section's spider to depth 1; DAST_ASCAN_LOGGED_OUT=<survey
+# section> runs its active scan without its user and ends the app's sessions as it starts (with --active);
+# DAST_STALL_SECTION=<section> replaces that section's ZAP with a process that ignores TERM.
+#
+# Output goes to var/dast/<YYYYMMDD-HHMMSS>-<pid>/. Exits non-zero if the scan itself failed or was hollow (see
+# docs/Dast.md), never just because ZAP found something.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+usage() {
+    sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+active=false
+smoke=false
+for arg in "$@"; do
+    case "$arg" in
+        --active) active=true ;;
+        --smoke) smoke=true ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown option: $arg" >&2; usage >&2; exit 2 ;;
+    esac
+done
+
+# Spider and active-scan limits per section, in minutes; the section deadline (hard, see run_zap) defaults to three
+# times their sum plus 15
+spider_mins="${DAST_SPIDER_MINS:-10}"
+active_mins="${DAST_ACTIVE_MINS:-30}"
+if $active; then scan_mins=$((spider_mins + active_mins)); else scan_mins=$spider_mins; fi
+deadline_mins="${DAST_CONTEXT_TIMEOUT_MINS:-$((3 * scan_mins + 15))}"
+
+# Minimum URLs each section's spider must find (automation.spider.urls.added), calibrated from good runs: roughly
+# half the observed counts. Observed 2026-11-17 (10-minute spiders; each finished in well under a minute): public 25,
+# domestic 59, international 56, pre-enquiry 21, admin 1096.
+declare -A spider_floor=(
+    [public]=12
+    [domestic]=30
+    [international]=28
+    [pre-enquiry]=10
+    [admin]=550
+)
+
+# The active scan's evidence that its own requests were logged in (survey sections; see docs/Dast.md), from the
+# Authentication Statistics add-on: at least ascan_floor of its responses logged in, and fewer than
+# ascan_loggedout_limit logged out. Login failures must stay under auth_failure_limit. Calibrated from good runs:
+# roughly half the observed logged-in counts; 0 logged out and 0 failures observed, so small allowances. Observed
+# 2026-11-17 (5-minute active scans, each done in under a minute): domestic 1820, international 1354, pre-enquiry 355.
+declare -A ascan_floor=(
+    [domestic]=900
+    [international]=670
+    [pre-enquiry]=175
+)
+declare -A ascan_loggedout_limit=(
+    [domestic]=25
+    [international]=25
+    [pre-enquiry]=25
+)
+auth_failure_limit=5
+
+# Must match App\Utility\Dev\DastSeeder::MARKERS (DastSeederTest::testMarkersMatchBinDast checks): the seeded text
+# the live checks look for, as literal regexes (plain letters, digits and spaces)
+declare -A marker=(
+    [domestic-stops]='Dastford'
+    [domestic-summary]='Zapton'
+    [international-trip]='Scanville'
+    [pre-enquiry]='Dast Seed Haulage Ltd'
+    [admin-survey]='DA57 ZAP'
+)
+
+# The sections, in order; DAST_SECTIONS (space-separated) runs a subset, e.g. while investigating one. Checked here,
+# before anything starts: an empty or unknown list must never turn into a run that scans nothing and passes.
+all_sections=(public domestic international pre-enquiry admin)
+read -r -a requested <<< "${DAST_SECTIONS-${all_sections[*]}}"
+if [ "${#requested[@]}" -eq 0 ]; then
+    echo "DAST_SECTIONS names no sections (choose from: ${all_sections[*]})" >&2
+    exit 2
+fi
+for section in "${requested[@]}"; do
+    if [[ " ${all_sections[*]} " != *" ${section} "* ]]; then
+        echo "Unknown section in DAST_SECTIONS: ${section} (choose from: ${all_sections[*]})" >&2
+        exit 2
+    fi
+done
+# Always in the fixed order (admin last), once each
+sections=()
+for section in "${all_sections[@]}"; do
+    if [[ " ${requested[*]} " == *" ${section} "* ]]; then
+        sections+=("$section")
+    fi
+done
+
+RFS_TEST_RUN="$(date +%s)-$$-${RANDOM}"
+RFS_UID="$(id -u)"
+RFS_GID="$(id -g)"
+DAST_OUTPUT_DIR="$PWD/var/dast/$(date +%Y%m%d-%H%M%S)-$$"
+export RFS_TEST_RUN RFS_UID RFS_GID DAST_OUTPUT_DIR
+
+project="rfs-dast-${RFS_TEST_RUN}"
+compose=(docker compose --project-name "$project" --file compose.dast.yaml)
+seed_file="$(mktemp)"
+child=""
+watcher=""
+
+mkdir -p "$DAST_OUTPUT_DIR"
+
+# bin/dast's own messages go to fd 3, the terminal's stderr as it was at start: a trap can fire while a redirected
+# command is running (e.g. a section's ZAP, into its zap-console.log), and cleanup's messages must still be seen
+exec 3>&2
+log() {
+    printf '[dast %s] %s\n' "$(date +%H:%M:%S)" "$*" >&3
+}
+log "Output: ${DAST_OUTPUT_DIR}"
+
+# Long commands run as a background child that this shell waits on: bash defers traps while a foreground command
+# runs, so INT/TERM would otherwise wait for a whole scan to finish.
+run_child() {
+    "$@" &
+    child=$!
+    local status=0
+    wait "$child" || status=$?
+    child=""
+    return "$status"
+}
+
+# The run's ZAP containers (any left behind by an interrupted section)
+# shellcheck disable=SC2329 # used by cleanup, from the EXIT trap
+zap_containers() {
+    docker ps -aq --filter "label=com.docker.compose.project=${project}" --filter "label=com.docker.compose.service=zap"
+}
+
+# Every section ends here, whatever happened: ZAP's own log out of the (stopped) container, then the container killed,
+# removed and checked gone, so a section can never still be scanning when the next one starts.
+end_section() {
+    local section=$1 name=$2
+    docker cp "${name}:/tmp/zap-home/zap.log" "$DAST_OUTPUT_DIR/$section/zap.log" > /dev/null 2>&1 \
+        || log "${section}: no zap.log to copy"
+    docker kill "$name" > /dev/null 2>&1 || true
+    docker rm -f "$name" > /dev/null 2>&1 || true
+    # Gone only if the query itself succeeded and found nothing: a failed query proves nothing
+    local remaining
+    if ! remaining="$(docker ps -aq --filter "name=^${name}\$")"; then
+        log "${section}: couldn't check that ZAP container ${name} is gone (docker ps failed)"
+        return 1
+    fi
+    if [ -n "$remaining" ]; then
+        log "${section}: ZAP container ${name} is still there"
+        return 1
+    fi
+}
+
+# Runs ZAP's Automation Framework on $DAST_OUTPUT_DIR/<section>/zap-plan.yaml in a fresh container (fresh statistics),
+# under a hard deadline. Returns ZAP's status (1 errors, 2 warnings), timeout's (124/137), or 1 if cleanup failed.
+# -silent: no call-home or update checks (there's no route out anyway).
+run_zap() {
+    local section=$1 deadline_mins=$2
+    local name="rfs-dast-${RFS_TEST_RUN}-zap-${section}"
+    local status=0
+    local command=(zap.sh -cmd -silent -dir /tmp/zap-home -autorun "/zap/wrk/${section}/zap-plan.yaml")
+    if [ "${DAST_STALL_SECTION:-}" = "$section" ]; then
+        # Test hook: a section that hangs and ignores TERM (it leaves a log, to prove the copy after a forced kill)
+        command=(sh -c 'mkdir -p /tmp/zap-home && echo "stalled on purpose" > /tmp/zap-home/zap.log && trap "" TERM && while :; do sleep 1; done')
+    fi
+    local console="$DAST_OUTPUT_DIR/$section/zap-console.log"
+    : > "$console"
+    # Progress: ZAP's job lines, as they happen (the full output stays in zap-console.log). Stopped after the section
+    # (and by tail's --pid if bin/dast itself exits first).
+    (
+        tail -n +1 -f --pid=$$ "$console" 2> /dev/null \
+            | grep --line-buffered -E '^Job [a-zA-Z-]+ (started|finished|test .* (passed|failed))' \
+            | sed -u "s/^/  ${section}: /" >&3
+    ) &
+    local progress=$!
+    run_child timeout --kill-after=30s "${deadline_mins}m" \
+        "${compose[@]}" run --no-TTY --no-deps --name "$name" "${zap_env[@]}" zap "${command[@]}" \
+        > "$console" 2>&1 || status=$?
+    # Give the last lines a moment to show, then stop the progress pipeline (the subshell's children, then it)
+    sleep 1
+    pkill -P "$progress" 2> /dev/null || true
+    kill "$progress" 2> /dev/null || true
+    case "$status" in
+        0) ;;
+        124|137) log "${section}: hit its ${deadline_mins}-minute deadline" ;;
+        *) log "${section}: ZAP exited ${status} (see ${section}/zap-console.log)" ;;
+    esac
+    if ! end_section "$section" "$name"; then
+        # The next section must never scan while this one's ZAP might still be attacking the shared app
+        log "${section}: can't confirm its ZAP container is gone, so stopping the run here"
+        exit 1
+    fi
+    return "$status"
+}
+
+# Renders docker/dast/plans/<template>.template.yaml into the section's output directory, replacing each __TOKEN__
+# given as TOKEN=value (sed-escaped here). Fails if any token is left.
+render_plan() {
+    local section=$1 template=$2
+    shift 2
+    local sed_args=() pair value
+    for pair in "$@"; do
+        value=${pair#*=}
+        value=${value//\\/\\\\}
+        value=${value//&/\\&}
+        value=${value//|/\\|}
+        sed_args+=(-e "s|__${pair%%=*}__|${value}|g")
+    done
+    mkdir -p "$DAST_OUTPUT_DIR/$section"
+    sed "${sed_args[@]}" "docker/dast/plans/${template}.template.yaml" > "$DAST_OUTPUT_DIR/$section/zap-plan.yaml"
+    if grep -nE '^[^#]*__[A-Z0-9_]+__' "$DAST_OUTPUT_DIR/$section/zap-plan.yaml" >&2; then
+        log "${section}: unrendered tokens in its plan"
+        return 1
+    fi
+}
+
+# ZAP's default spider depth, or 1 for the DAST_CRIPPLE_SPIDER test hook's section. (That doesn't cripple
+# pre-enquiry: all its pages are one link from the summary, and ZAP also seeds the spider from the start URL's parents.)
+spider_depth() {
+    if [ "${DAST_CRIPPLE_SPIDER:-}" = "$1" ]; then echo 1; else echo 5; fi
+}
+
+# The user a survey section's active scan runs as: the section's own, or none for the DAST_ASCAN_LOGGED_OUT test
+# hook's section (its live checks keep theirs)
+ascan_user() {
+    if [ "${DAST_ASCAN_LOGGED_OUT:-}" = "$1" ]; then echo "''"; else echo "$1"; fi
+}
+
+# shellcheck disable=SC2016 # the ${DAST_...} values are for ZAP to expand, not bash
+render_plans() {
+    local passive=true
+    if $active; then passive=false; fi
+    local common=("SPIDER_MINS=${spider_mins}" "ACTIVE_MINS=${active_mins}" "ACTIVE=${active}" "PASSIVE=${passive}")
+
+    render_plan public public "${common[@]}" "FLOOR=${spider_floor[public]}" "MAX_DEPTH=$(spider_depth public)"
+    render_plan domestic survey "${common[@]}" "FLOOR=${spider_floor[domestic]}" \
+        "ASCAN_FLOOR=${ascan_floor[domestic]}" "ASCAN_LOGGEDOUT_LIMIT=${ascan_loggedout_limit[domestic]}" \
+        "AUTH_FAILURE_LIMIT=${auth_failure_limit}" \
+        "MAX_DEPTH=$(spider_depth domestic)" "ASCAN_USER=$(ascan_user domestic)" \
+        SECTION=domestic AREA=domestic-survey SUMMARY=/domestic-survey USER=DOMESTIC \
+        'SENTINEL_1=${DAST_PATH_DOMESTIC_STOPS}' 'SENTINEL_2=${DAST_PATH_DOMESTIC_SUMMARY}' \
+        'CHECK_1=${DAST_CHECK_DOMESTIC_STOPS}' 'CHECK_2=${DAST_CHECK_DOMESTIC_SUMMARY}' \
+        "MARK_1=${marker[domestic-stops]}" "MARK_2=${marker[domestic-summary]}"
+    render_plan international survey "${common[@]}" "FLOOR=${spider_floor[international]}" \
+        "ASCAN_FLOOR=${ascan_floor[international]}" "ASCAN_LOGGEDOUT_LIMIT=${ascan_loggedout_limit[international]}" \
+        "AUTH_FAILURE_LIMIT=${auth_failure_limit}" \
+        "MAX_DEPTH=$(spider_depth international)" "ASCAN_USER=$(ascan_user international)" \
+        SECTION=international AREA=international-survey SUMMARY=/international-survey USER=INTERNATIONAL \
+        'SENTINEL_1=${DAST_PATH_INTERNATIONAL_TRIP}' 'SENTINEL_2=${DAST_PATH_INTERNATIONAL_TRIP}' \
+        'CHECK_1=${DAST_CHECK_INTERNATIONAL_TRIP}' 'CHECK_2=${DAST_CHECK_INTERNATIONAL_TRIP}' \
+        "MARK_1=${marker[international-trip]}" "MARK_2=${marker[international-trip]}"
+    render_plan pre-enquiry survey "${common[@]}" "FLOOR=${spider_floor[pre-enquiry]}" \
+        "ASCAN_FLOOR=${ascan_floor[pre-enquiry]}" "ASCAN_LOGGEDOUT_LIMIT=${ascan_loggedout_limit[pre-enquiry]}" \
+        "AUTH_FAILURE_LIMIT=${auth_failure_limit}" \
+        "MAX_DEPTH=$(spider_depth pre-enquiry)" "ASCAN_USER=$(ascan_user pre-enquiry)" \
+        SECTION=pre-enquiry AREA=pre-enquiry SUMMARY=/pre-enquiry USER=PRE_ENQUIRY \
+        'SENTINEL_1=${DAST_PATH_PRE_ENQUIRY_SENTINEL}' 'SENTINEL_2=${DAST_PATH_PRE_ENQUIRY_SENTINEL}' \
+        'CHECK_1=${DAST_CHECK_PRE_ENQUIRY}' 'CHECK_2=${DAST_CHECK_PRE_ENQUIRY}' \
+        "MARK_1=${marker[pre-enquiry]}" "MARK_2=${marker[pre-enquiry]}"
+    render_plan admin admin "${common[@]}" "FLOOR=${spider_floor[admin]}" "MAX_DEPTH=$(spider_depth admin)" \
+        "MARK_ADMIN=${marker[admin-survey]}"
+}
+
+# ZAP's own validation of every rendered plan (unknown keys, bad types), before any scan
+check_plans() {
+    local plans=() section
+    for section in "${sections[@]}"; do
+        plans+=("/zap/wrk/${section}/zap-plan.yaml")
+    done
+    # shellcheck disable=SC2016 # expanded by the container's bash
+    run_child timeout --kill-after=30s 10m \
+        "${compose[@]}" run --no-TTY --no-deps --rm "${zap_env[@]}" zap \
+        bash -c 'for plan in "$@"; do echo "== $plan"; zap.sh -cmd -silent -dir /tmp/zap-home -autocheck "$plan" || exit $?; done' \
+        check "${plans[@]}" > "$DAST_OUTPUT_DIR/autocheck.log" 2>&1
+}
+
+# shellcheck disable=SC2329 # used by cleanup, from the EXIT trap
+capture_app_logs() {
+    "${compose[@]}" logs --no-color app > "$DAST_OUTPUT_DIR/app-console.log" 2>&1 || true
+    local file
+    for file in frankenphp.log access-frontend.log access-admin.log; do
+        "${compose[@]}" cp "app:/tmp/${file}" "$DAST_OUTPUT_DIR/${file}" > /dev/null 2>&1 || true
+    done
+    # /app/var is a tmpfs, which docker cp can't read
+    mkdir -p "$DAST_OUTPUT_DIR/app-var-log"
+    "${compose[@]}" exec -T app tar -C /app/var/log -cf - . 2> /dev/null \
+        | tar -C "$DAST_OUTPUT_DIR/app-var-log" -xf - 2> /dev/null || true
+}
+
+# shellcheck disable=SC2329 # run by the EXIT trap
+cleanup() {
+    local status=$?
+    trap - EXIT INT TERM
+    if [ -n "$watcher" ]; then
+        kill "$watcher" 2> /dev/null || true
+    fi
+    if [ -n "$child" ]; then
+        kill "$child" 2> /dev/null || true
+        wait "$child" 2> /dev/null || true
+    fi
+    for container in $(zap_containers); do
+        docker cp "${container}:/tmp/zap-home/zap.log" "$DAST_OUTPUT_DIR/zap-interrupted-${container:0:12}.log" > /dev/null 2>&1 || true
+        docker rm -f "$container" > /dev/null 2>&1 || true
+    done
+    capture_app_logs
+    rm -f "$seed_file"
+    if ! "${compose[@]}" down --volumes --remove-orphans > "$DAST_OUTPUT_DIR/teardown.log" 2>&1; then
+        log "Teardown failed (see teardown.log)"
+        [ "$status" -ne 0 ] || status=1
+    fi
+    # Removes only this run's tags; the layers stay in the build cache
+    docker image rm "rfs-screenshots:${RFS_TEST_RUN}" "rfs-dast-zap:${RFS_TEST_RUN}" > /dev/null 2>&1 || true
+    if ! leftovers="$(docker ps -aq --filter "label=com.docker.compose.project=${project}")"; then
+        log "Couldn't check for containers left behind for ${project} (docker ps failed)"
+        [ "$status" -ne 0 ] || status=1
+    elif [ -n "$leftovers" ]; then
+        log "Containers left behind for ${project}: $(echo "$leftovers" | tr '\n' ' ')"
+        [ "$status" -ne 0 ] || status=1
+    fi
+    log "Output: ${DAST_OUTPUT_DIR} (exit ${status})"
+    exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+log "Building the images"
+run_child "${compose[@]}" build app zap
+
+log "Starting the stack"
+run_child "${compose[@]}" up --detach --wait app
+
+log "Seeding"
+run_child "${compose[@]}" exec -T app bin/console rfs:dev:dast-seed > "$seed_file"
+
+# KEY=value lines for ZAP's environment (credentials and paths; see App\Utility\Dev\DastSeeder)
+zap_env=()
+for key in DAST_DOMESTIC_USERNAME DAST_DOMESTIC_PASSWORD DAST_INTERNATIONAL_USERNAME DAST_INTERNATIONAL_PASSWORD \
+    DAST_PRE_ENQUIRY_USERNAME DAST_PRE_ENQUIRY_PASSWORD DAST_PATH_DOMESTIC_STOPS DAST_PATH_DOMESTIC_SUMMARY \
+    DAST_PATH_INTERNATIONAL_TRIP DAST_PATH_PRE_ENQUIRY_SENTINEL DAST_PATH_ADMIN_SURVEY DAST_CHECK_DOMESTIC_STOPS \
+    DAST_CHECK_DOMESTIC_SUMMARY DAST_CHECK_INTERNATIONAL_TRIP DAST_CHECK_PRE_ENQUIRY DAST_CHECK_ADMIN_SURVEY; do
+    line="$(grep -E "^${key}=." "$seed_file" || true)"
+    if [ -z "$line" ]; then
+        log "The seed command didn't print ${key}"
+        exit 1
+    fi
+    if [ -n "${DAST_WRONG_PASSWORD:-}" ] \
+        && [ "$key" = "DAST_$(echo "$DAST_WRONG_PASSWORD" | tr 'a-z-' 'A-Z_')_PASSWORD" ]; then
+        log "Test hook: a wrong password for ${DAST_WRONG_PASSWORD}"
+        line="${key}=00000000"
+    fi
+    zap_env+=(-e "$line")
+done
+log "Seeded"
+
+if $smoke; then
+    status=0
+    app_ip="$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$("${compose[@]}" ps -q app)")"
+    log "Smoke: name resolution from the ZAP container (app is ${app_ip})"
+    resolved="$(run_child "${compose[@]}" run --no-TTY --no-deps --rm zap getent hosts rfs-frontend.localhost rfs-admin.localhost || true)"
+    printf '%s\n' "$resolved" >&2
+    if [ "$(printf '%s\n' "$resolved" | grep -c "^${app_ip} ")" -ne 2 ]; then
+        log "Smoke FAILED: the DAST hostnames don't both resolve to the app from the ZAP container"
+        status=1
+    fi
+
+    # Every diagnostic below runs as a run_child under a hard deadline (and curl under --max-time): a stalled request
+    # must neither hang the smoke run nor hold off the INT/TERM traps
+    mkdir -p "$DAST_OUTPUT_DIR/smoke"
+    log "Smoke: no routed egress from either container"
+    for target in 1.1.1.1 www.gov.uk; do
+        if run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app \
+            timeout 5 bash -c "exec 3<>/dev/tcp/${target}/443" 2> /dev/null; then
+            log "Smoke FAILED: app reached ${target}"; status=1
+        fi
+        if run_child timeout --kill-after=5s 60s "${compose[@]}" run --no-TTY --no-deps --rm zap \
+            timeout 5 bash -c "exec 3<>/dev/tcp/${target}/443" 2> /dev/null; then
+            log "Smoke FAILED: ZAP reached ${target}"; status=1
+        fi
+    done
+    for container in $("${compose[@]}" ps -q); do
+        networks="$(docker inspect --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}' "$container")"
+        if [ "$networks" != "${project}_dast " ]; then
+            log "Smoke FAILED: container ${container:0:12} is on: ${networks}"; status=1
+        fi
+    done
+
+    log "Smoke: response times from the app (admin home, a 404)"
+    for url in https://rfs-admin.localhost/ https://rfs-frontend.localhost/no-such-page; do
+        run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app \
+            curl -sk --max-time 10 -o /dev/null -w "  %{http_code} %{time_total}s ${url}\n" "$url" >&3 \
+            || { log "Smoke FAILED: no response from ${url} in time"; status=1; }
+    done
+
+    log "Smoke: the login form's field names"
+    if run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app \
+        curl -sk --max-time 10 https://rfs-frontend.localhost/login > "$DAST_OUTPUT_DIR/smoke/login.html"; then
+        grep -o 'name="passcode_login[^"]*"' "$DAST_OUTPUT_DIR/smoke/login.html" >&3 || status=1
+    else
+        log "Smoke FAILED: no login page in time"; status=1
+    fi
+
+    log "Smoke: ZAP Automation Framework (DNS, TLS, form login, markers, variable expansion)"
+    cp docker/dast/plans/smoke.yaml "$DAST_OUTPUT_DIR/smoke/zap-plan.yaml"
+    smoke_status=0
+    run_zap smoke 10 || smoke_status=$?
+    console="$DAST_OUTPUT_DIR/smoke/zap-console.log"
+    sed -n '/^Automation plan/,$p' "$console" >&2
+    # The plan deliberately checks a wrong marker (as a warning) to prove a mismatch fails as an assertion. That
+    # warning, and only that, is expected.
+    warnings="$(sed -n '/^Automation plan warnings:/,/^[^\t]/p' "$console" | grep -P '^\t' || true)"
+    if [ "$smoke_status" -eq 2 ] && [ "$warnings" = $'\tJob requestor test type url has failed. Test Name: wrong-marker-must-fail.' ]; then
+        smoke_status=0
+    elif [ "$smoke_status" -eq 0 ]; then
+        log "Smoke FAILED: the wrong marker didn't fail"
+        smoke_status=1
+    fi
+    [ "$smoke_status" -eq 0 ] || status=$smoke_status
+    if [ "$status" -eq 0 ]; then log "Smoke passed"; else log "Smoke FAILED"; fi
+
+    exit "$status"
+fi
+
+render_plans
+log "Checking the plans"
+if ! check_plans; then
+    log "A plan failed ZAP's check (see autocheck.log)"
+    exit 1
+fi
+
+run_status=0
+summary=()
+for section in "${sections[@]}"; do
+    log "${section}: scanning (deadline ${deadline_mins} minutes)"
+    section_status=0
+    if [ "${DAST_ASCAN_LOGGED_OUT:-}" = "$section" ]; then
+        # Test hook (with --active): no user isn't enough on its own, because the recorded requests still carry the
+        # spider's session cookie. So also end every app session once the section's active scan has started.
+        (
+            until grep -q '^Job activeScan started' "$DAST_OUTPUT_DIR/$section/zap-console.log" 2> /dev/null; do
+                sleep 1
+            done
+            "${compose[@]}" exec -T rfs-dast-mysql mysql -urfstest -prfstest rfstest -e 'DELETE FROM sessions' \
+                > /dev/null 2>&1
+            log "Test hook: ended every app session (${section}'s active scan has started)"
+        ) &
+        watcher=$!
+    fi
+    run_zap "$section" "$deadline_mins" || section_status=$?
+    if [ -n "$watcher" ]; then
+        kill "$watcher" 2> /dev/null || true
+        watcher=""
+    fi
+    summary+=("${section}: $([ "$section_status" -eq 0 ] && echo passed || echo "FAILED (${section_status})")")
+    [ "$run_status" -ne 0 ] || run_status=$section_status
+done
+
+cat "$DAST_OUTPUT_DIR"/*/urls.txt > "$DAST_OUTPUT_DIR/urls.txt" 2> /dev/null || true
+for line in "${summary[@]}"; do
+    log "$line"
+done
+exit "$run_status"

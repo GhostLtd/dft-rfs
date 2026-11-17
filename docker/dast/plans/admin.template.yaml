@@ -1,0 +1,127 @@
+# ZAP Automation Framework plan for the admin site. No ZAP login: the DAST Caddyfile fakes the IAP user on every
+# request, so access is proved by the live checks (an admin-only page showing seeded data). A template: bin/dast
+# replaces the __TOKENS__ and keeps the rendered copy in the section's output directory. See docs/Dast.md.
+env:
+  contexts:
+    - name: admin
+      urls:
+        - https://rfs-admin.localhost/
+      includePaths:
+        - https://rfs-admin\.localhost/.*
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  - type: spider
+    name: spider
+    parameters:
+      context: admin
+      url: https://rfs-admin.localhost/
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      postForm: false
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+      - name: admin-survey-discovered
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost${DAST_PATH_ADMIN_SURVEY}
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  - type: requestor
+    name: check-after-spider
+    requests:
+      - url: https://rfs-admin.localhost${DAST_CHECK_ADMIN_SURVEY}?dast-check-spider=1
+        responseCode: 200
+    tests:
+      - name: admin-check-after-spider
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost${DAST_CHECK_ADMIN_SURVEY}?dast-check-spider=1
+        responseBodyRegex: __MARK_ADMIN__
+        onFail: error
+
+  # The active scan (bin/dast --active only). No login statistics here: Caddy fakes the login on every request, so
+  # ZAP has no logged-in state to count; the live check afterwards proves access.
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: admin
+      maxScanDurationInMins: __ACTIVE_MINS__
+      # The rule's id in an X-ZAP-Scan-ID header, so the access logs show which rule sent each request
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off: the DOM XSS rule drives a real browser that submits the pages' forms (with valid CSRF tokens), which
+        # deletes and changes the seeded surveys mid-scan. The app renders on the server with little JavaScript.
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+
+  - type: requestor
+    name: check-after-active
+    enabled: __ACTIVE__
+    requests:
+      - url: https://rfs-admin.localhost${DAST_CHECK_ADMIN_SURVEY}?dast-check-active=1
+        responseCode: 200
+    tests:
+      - name: admin-check-after-active
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost${DAST_CHECK_ADMIN_SURVEY}?dast-check-active=1
+        responseBodyRegex: __MARK_ADMIN__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/admin
+      reportFile: report
+      reportTitle: RFS DAST - admin
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/admin
+      reportFile: report
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: admin
+      type: url
+      source: all
+      fileName: /zap/wrk/admin/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: admin
+      type: har
+      source: all
+      fileName: /zap/wrk/admin/traffic.har

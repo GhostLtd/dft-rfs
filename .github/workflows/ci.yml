@@ -133,6 +133,7 @@ jobs:
         run: |
           bash -n bin/test-mysql
           bash -n bin/screenshots
+          bash -n bin/dast
           sh -n docker/test-php/entrypoint.sh
           bash -n docker/screenshots/entrypoint.sh
 

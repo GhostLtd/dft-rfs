@@ -1,0 +1,121 @@
+# ZAP Automation Framework plan for the frontend's public pages, not logged in (including RoRo's login pages). A
+# template: bin/dast replaces the __TOKENS__ and keeps the rendered copy in the section's output directory. See
+# docs/Dast.md.
+env:
+  contexts:
+    - name: public
+      urls:
+        - https://rfs-frontend.localhost/
+      includePaths:
+        - https://rfs-frontend\.localhost/.*
+      excludePaths:
+        - .*/logout.*
+        # The survey sections are scanned logged in, by their own plans
+        - https://rfs-frontend\.localhost/(domestic-survey|international-survey|pre-enquiry|survey-feedback)(/.*)?
+        # RoRo's logged-in pages (v1 doesn't scan them; see docs/Dast.md)
+        - https://rfs-frontend\.localhost/roro/(?!login|check-email|authenticate).*
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  # Pages nothing links to. Not the discovery sentinels (the footer's statement pages), which the spider must find.
+  - type: requestor
+    name: prime
+    requests:
+      - url: https://rfs-frontend.localhost/login
+        responseCode: 200
+      - url: https://rfs-frontend.localhost/roro/login
+        responseCode: 200
+      - url: https://rfs-frontend.localhost/sitemap.txt
+        responseCode: 200
+
+  - type: spider
+    name: spider
+    parameters:
+      context: public
+      url: https://rfs-frontend.localhost/
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      postForm: false
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+      - name: accessibility-statement-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost/accessibility-statement
+        onFail: error
+      - name: privacy-statement-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost/privacy-statement
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  # The active scan (bin/dast --active only). Not logged in, so no login statistics.
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: public
+      maxScanDurationInMins: __ACTIVE_MINS__
+      # The rule's id in an X-ZAP-Scan-ID header, so the access logs show which rule sent each request
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off: the DOM XSS rule drives a real browser that submits the pages' forms (with valid CSRF tokens), which
+        # deletes and changes the seeded surveys mid-scan. The app renders on the server with little JavaScript.
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/public
+      reportFile: report
+      reportTitle: RFS DAST - public
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/public
+      reportFile: report
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: public
+      type: url
+      source: all
+      fileName: /zap/wrk/public/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: public
+      type: har
+      source: all
+      fileName: /zap/wrk/public/traffic.har

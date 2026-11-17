@@ -1,0 +1,33 @@
+# The DAST stack's web server (compose.dast.yaml, bin/dast; see docs/Dast.md). Bind-mounted over the screenshot
+# image's Caddyfile, so the image itself stays the screenshot one.
+{
+	skip_install_trust
+	frankenphp
+}
+
+# FRONTEND_HOSTNAME and ADMIN_HOSTNAME are set in compose.dast.yaml. "tls internal": Caddy's local CA, whatever the
+# hostnames (it only picks that CA by itself for names like *.localhost).
+# Access logs (method, URI, status per request), copied out by bin/dast: the evidence of what a scan sent
+{$FRONTEND_HOSTNAME} {
+	tls internal
+	log {
+		output file /tmp/access-frontend.log
+		format json
+	}
+	root * /app/public
+	php_server
+}
+
+# Admin auth is faked here, and only here: outside App Engine, App\Security\GoogleIap\IapAuthenticator logs in whoever
+# TEST_GOOGLE_IAP_AUTH_USER names (the functional tests use the same mechanism)
+{$ADMIN_HOSTNAME} {
+	tls internal
+	log {
+		output file /tmp/access-admin.log
+		format json
+	}
+	root * /app/public
+	php_server {
+		env TEST_GOOGLE_IAP_AUTH_USER {$DAST_ADMIN_EMAIL}
+	}
+}
