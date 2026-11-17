@@ -1,0 +1,318 @@
+# ZAP Automation Framework plan for the RoRo section, logged in as the seeded RoRo user. RoRo logs in with single-use
+# links: the login script (docker/dast/scripts/roro-login.js) spends one from the seeded pool for every login. A
+# template: bin/dast replaces the __TOKENS__ (floors, durations, marker literals, literal true/false) and keeps the
+# rendered copy in the section's output directory. ${DAST_...} values come from the seed command, via ZAP's
+# environment, and are only used in URLs. See docs/Dast.md for what each check proves.
+env:
+  contexts:
+    - name: roro
+      urls:
+        - https://rfs-frontend.localhost/roro
+      includePaths:
+        - https://rfs-frontend\.localhost/roro(/.*)?
+      excludePaths:
+        - .*/logout.*
+        # The public RoRo pages, covered by the public section
+        - https://rfs-frontend\.localhost/roro/(login|check-email|authenticate)(\?.*)?
+      authentication:
+        method: script
+        parameters:
+          script: /zap/scripts/roro-login.js
+          scriptEngine: Graal.js
+          Login URL: https://rfs-frontend.localhost/roro/authenticate
+        verification:
+          method: poll
+          # An authenticated HTML page that isn't a discovery sentinel
+          pollUrl: https://rfs-frontend.localhost/roro/switch-operator
+          pollFrequency: 10
+          pollUnits: requests
+          # In every logged-in RoRo page (so the active scanner's own HTML responses count as logged in)
+          loggedInRegex: \Qhref="/roro/logout"\E
+          # Logged out, RoRo pages redirect to the login page
+          loggedOutRegex: (?im)^location:\s*/roro/login
+      # Cookies: the session, and the remember-me cookie RoRo always sets
+      sessionManagement:
+        method: cookie
+      users:
+        - name: roro
+          credentials: {}
+        # Only used by bin/dast's DAST_RORO_SECOND_LOGIN test hook: a fresh login, with its own link
+        - name: roro-second
+          credentials: {}
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  # Test hook (DAST_ASCAN_LOGGED_OUT=roro): strip the Cookie header from the active scanner's requests only, so its
+  # attack traffic is logged out while the checks keep their cookies. (Ending server sessions isn't enough here:
+  # the remember-me cookie logs straight back in.) The hook also runs the active scan without its user: a user's
+  # cookies are added after the replacer has run, so only the recorded requests' own Cookie headers can be stripped.
+  - type: replacer
+    name: strip-ascan-cookies
+    enabled: __STRIP_ASCAN_COOKIES__
+    rules:
+      - description: DAST test hook - active scanner requests without cookies
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: ''
+        # 2: the active scanner (ZAP's HttpSender.ACTIVE_SCANNER_INITIATOR)
+        initiators: [2]
+
+  # Discovery: the spider must find a minimum number of URLs, and the deep pages (the sentinels) itself: the other
+  # operator's dashboard (only linked from the switch page) and a survey's wizard pages. Nothing else requests them
+  # first (login lands on the first operator's dashboard; the poll is the switch page).
+  - type: spider
+    name: spider
+    parameters:
+      context: roro
+      user: roro
+      url: https://rfs-frontend.localhost/roro
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      # Never submit POST forms: that changes survey state at random (see docs/Dast.md)
+      postForm: false
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+      - name: harwich-dashboard-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_RORO_HARWICH_DASHBOARD}
+        onFail: error
+      - name: vehicle-counts-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_RORO_VEHICLE_COUNTS}
+        onFail: error
+      - name: data-entry-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_RORO_DATA_ENTRY}
+        onFail: error
+      - name: comments-discovered
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_RORO_COMMENTS}
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  # Live check: each seeded survey's comments page (a leaf), which shows only while the survey exists and is still
+  # editable, with its own comment
+  - type: requestor
+    name: check-after-spider
+    parameters:
+      user: roro
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-spider=1
+        responseCode: 200
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-check-spider=1
+        responseCode: 200
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CUXHAVEN}?dast-check-spider=1
+        responseCode: 200
+    tests:
+      - name: calais-after-spider
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-spider=1
+        responseBodyRegex: __MARK_CALAIS__
+        onFail: error
+      - name: dunkirk-after-spider
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-check-spider=1
+        responseBodyRegex: __MARK_DUNKIRK__
+        onFail: error
+      - name: cuxhaven-after-spider
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CUXHAVEN}?dast-check-spider=1
+        responseBodyRegex: __MARK_CUXHAVEN__
+        onFail: error
+
+  # Test hook (DAST_RORO_REAUTH): the same ZAP user loses its cookies (session and remember-me), so it's logged out
+  # as far as the app can tell. Its next request comes back redirected to the login page; ZAP must see that, confirm
+  # it with a poll, log in again with a new link and re-send. Only the last request is checked.
+  - type: script
+    name: add-forget-roro-login
+    enabled: __REAUTH__
+    parameters:
+      action: add
+      type: standalone
+      engine: Graal.js
+      name: forget-roro-login
+      source: /zap/scripts/roro-forget-login.js
+
+  - type: script
+    name: forget-roro-login
+    enabled: __REAUTH__
+    parameters:
+      action: run
+      type: standalone
+      name: forget-roro-login
+
+  - type: requestor
+    name: check-reauth
+    enabled: __REAUTH__
+    parameters:
+      user: roro
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=1
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=2
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=3
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=4
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=5
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=6
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=7
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=8
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=9
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=10
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth=11
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth-last=1
+    tests:
+      - name: calais-after-reauth
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-reauth-last=1
+        responseBodyRegex: __MARK_CALAIS__
+        onFail: error
+
+  # The active scan (bin/dast --active only)
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: roro
+      # The RoRo user (bin/dast's DAST_ASCAN_LOGGED_OUT test hook empties it: see the replacer job above)
+      user: __ASCAN_USER__
+      maxScanDurationInMins: __ACTIVE_MINS__
+      # The rule's id in an X-ZAP-Scan-ID header, so the access logs show which rule sent each request
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off: the DOM XSS rule drives a real browser that submits the pages' forms (see docs/Dast.md)
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+    tests:
+      - name: ascan-logged-in-floor
+        type: stats
+        statistic: stats.auth.ascan.state.loggedin
+        site: https://rfs-frontend.localhost
+        operator: '>='
+        value: __ASCAN_FLOOR__
+        onFail: error
+      - name: ascan-logged-out-limit
+        type: monitor
+        statistic: stats.auth.ascan.state.loggedout
+        site: https://rfs-frontend.localhost
+        threshold: __ASCAN_LOGGEDOUT_LIMIT__
+        onFail: error
+      - name: auth-failure-limit
+        type: monitor
+        statistic: stats.auth.failure
+        site: https://rfs-frontend.localhost
+        threshold: __AUTH_FAILURE_LIMIT__
+        onFail: error
+
+  - type: requestor
+    name: check-after-active
+    enabled: __ACTIVE__
+    parameters:
+      user: roro
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-active=1
+        responseCode: 200
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-check-active=1
+        responseCode: 200
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CUXHAVEN}?dast-check-active=1
+        responseCode: 200
+    tests:
+      - name: calais-after-active
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-active=1
+        responseBodyRegex: __MARK_CALAIS__
+        onFail: error
+      - name: dunkirk-after-active
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-check-active=1
+        responseBodyRegex: __MARK_DUNKIRK__
+        onFail: error
+      - name: cuxhaven-after-active
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CUXHAVEN}?dast-check-active=1
+        responseBodyRegex: __MARK_CUXHAVEN__
+        onFail: error
+
+  # Test hook (DAST_RORO_SECOND_LOGIN): a second ZAP user's first request needs a login of its own, so a second link.
+  # With two or more links its page must show the survey (an error otherwise): a second link works. With a pool of one
+  # the check is only informational, so running out (bin/dast's DAST-RORO-FATAL check) is the only failure.
+  - type: requestor
+    name: second-login
+    enabled: __SECOND_LOGIN__
+    parameters:
+      user: roro-second
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-second-login=1
+    tests:
+      - name: dunkirk-after-second-login
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_DUNKIRK}?dast-second-login=1
+        responseBodyRegex: __MARK_DUNKIRK__
+        onFail: __SECOND_LOGIN_ON_FAIL__
+
+  # Final, whatever happened above: drain the passive queue completely, then the reports and exports
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/roro
+      reportFile: report
+      reportTitle: RFS DAST - roro
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/roro
+      reportFile: report
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: roro
+      type: url
+      source: all
+      fileName: /zap/wrk/roro/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: roro
+      type: har
+      source: all
+      fileName: /zap/wrk/roro/traffic.har

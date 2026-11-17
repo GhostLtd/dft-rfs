@@ -77,6 +77,8 @@ services:
       HOME: /tmp
     volumes:
       - ${DAST_OUTPUT_DIR:?set by bin/dast}:/zap/wrk
+      # ZAP scripts the plans use (the RoRo login)
+      - ./docker/dast/scripts:/zap/scripts:ro
     networks: [dast]
 
 networks:

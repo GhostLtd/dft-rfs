@@ -25,17 +25,28 @@ use App\Entity\PreEnquiry\PreEnquiryResponse;
 use App\Entity\SurveyResponse;
 use App\Entity\SurveyStateInterface;
 use App\Entity\Vehicle;
+use App\DTO\RoRo\OperatorRoute;
+use App\Entity\RoRo\Operator;
+use App\Entity\RoRo\OperatorGroup;
+use App\Entity\RoRo\Survey as RoRoSurvey;
+use App\Entity\RoRoUser;
+use App\Entity\Route\Route;
+use App\Form\RoRo\IntroductionType;
 use App\Utility\PasscodeGenerator;
+use App\Utility\RoRo\SurveyCreationHelper;
+use App\Workflow\RoRo\RoRoState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\PreEnquiry\PreEnquiryState;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 /**
  * Seeds an empty database with one passcode user per survey type, each with a part-completed survey, for the DAST
  * stack (bin/dast, docs/Dast.md). The data follows tests/DataFixtures (see the plan for which fixtures), but with
- * fixed marker strings that the ZAP plans look for to prove a page rendered the seeded data.
+ * fixed marker strings that the ZAP plans look for to prove a page rendered the seeded data. Also a RoRo user (two
+ * operators in one operator group, an active in-progress survey per route) and a pool of single-use login links for it.
  */
 class DastSeeder
 {
@@ -44,6 +55,18 @@ class DastSeeder
         'domestic' => '90000001',
         'international' => '90000002',
         'pre-enquiry' => '90000003',
+        'roro' => 'dast-roro@example.com',
+    ];
+
+    // The default size of the RoRo login-link pool (bin/dast's DAST_RORO_LINK_POOL overrides it, within 1-100)
+    public const int RORO_LOGIN_LINKS = 20;
+    private const int RORO_LOGIN_LINK_LIFETIME = 604800;
+
+    // The RoRo operator group, and its operators (grouped by name prefix: OperatorSwitchHelper) with their routes
+    private const string RORO_GROUP = 'Dast Ferries';
+    private const array RORO_OPERATORS = [
+        'Dast Ferries Dover' => [9901, [['Dover', 'Calais', 'roro-calais'], ['Dover', 'Dunkirk', 'roro-dunkirk']]],
+        'Dast Ferries Harwich' => [9902, [['Harwich', 'Cuxhaven', 'roro-cuxhaven']]],
     ];
 
     // Plain letters, digits and spaces, so the ZAP plans can use them as literal regexes. Copied into bin/dast.
@@ -53,26 +76,38 @@ class DastSeeder
         'international-trip' => 'Scanville',
         'pre-enquiry' => 'Dast Seed Haulage Ltd',
         'admin-survey' => 'DA57 ZAP',
+        // Each RoRo survey's comments
+        'roro-calais' => 'Dast survey Calais',
+        'roro-dunkirk' => 'Dast survey Dunkirk',
+        'roro-cuxhaven' => 'Dast survey Cuxhaven',
     ];
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly PasscodeGenerator $passcodeGenerator,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LoginLinkHandlerInterface $roroLoginLinkHandler,
+        private readonly SurveyCreationHelper $roroSurveyCreationHelper,
     ) {}
 
     /**
      * @return array<string, string> KEY => value, in the order bin/dast documents
      */
-    public function seed(): array
+    public function seed(int $roroLinks = self::RORO_LOGIN_LINKS): array
     {
-        if ($this->entityManager->getRepository(PasscodeUser::class)->count([]) > 0) {
-            throw new \RuntimeException('The DAST seeder only runs against an empty database (passcode users exist)');
+        if ($roroLinks < 1 || $roroLinks > 100) {
+            throw new \InvalidArgumentException("The RoRo login-link pool must hold 1-100 links, not {$roroLinks}");
+        }
+        foreach ([PasscodeUser::class, RoRoUser::class] as $userClass) {
+            if ($this->entityManager->getRepository($userClass)->count([]) > 0) {
+                throw new \RuntimeException('The DAST seeder only runs against a database with no users');
+            }
         }
 
         [$domesticUser, $domesticSurvey] = $this->seedDomestic();
         [$internationalUser, $trip] = $this->seedInternational();
         $preEnquiryUser = $this->seedPreEnquiry();
+        [$roroUser, $harwich, $roroSurveys] = $this->seedRoRo();
 
         return [
             'DAST_DOMESTIC_USERNAME' => $domesticUser->getUsername(),
@@ -92,7 +127,88 @@ class DastSeeder
             'DAST_CHECK_INTERNATIONAL_TRIP' => $this->path('app_internationalsurvey_trip_edit_wizard', ['tripId' => $trip->getId(), 'state' => TripState::STATE_ORIGIN_AND_DESTINATION]),
             'DAST_CHECK_PRE_ENQUIRY' => $this->path('app_pre_enquiry_wizard', ['state' => PreEnquiryState::STATE_COMPANY_NAME]),
             'DAST_CHECK_ADMIN_SURVEY' => $this->path('admin_domestic_survey_reveal_passcode', ['surveyId' => $domesticSurvey->getId()]),
+            'DAST_RORO_LOGIN_LINKS' => implode(' ', self::issueRoRoLoginLinks($this->roroLoginLinkHandler, $roroUser, $roroLinks)),
+            'DAST_PATH_RORO_HARWICH_DASHBOARD' => $this->path('app_roro_dashboard', ['operatorId' => $harwich->getId()]),
+            'DAST_PATH_RORO_VEHICLE_COUNTS' => $this->roroEditPath($roroSurveys['roro-calais'], RoRoState::STATE_VEHICLE_COUNTS),
+            'DAST_PATH_RORO_DATA_ENTRY' => $this->roroEditPath($roroSurveys['roro-calais'], RoRoState::STATE_DATA_ENTRY),
+            'DAST_PATH_RORO_COMMENTS' => $this->roroEditPath($roroSurveys['roro-calais'], RoRoState::STATE_COMMENTS),
+            'DAST_CHECK_RORO_CALAIS' => $this->roroEditPath($roroSurveys['roro-calais'], RoRoState::STATE_COMMENTS),
+            'DAST_CHECK_RORO_DUNKIRK' => $this->roroEditPath($roroSurveys['roro-dunkirk'], RoRoState::STATE_COMMENTS),
+            'DAST_CHECK_RORO_CUXHAVEN' => $this->roroEditPath($roroSurveys['roro-cuxhaven'], RoRoState::STATE_COMMENTS),
         ];
+    }
+
+    /**
+     * Single-use login links for the RoRo user, as POST bodies for /roro/authenticate (expires=…&user=…&hash=…).
+     *
+     * The handler signs the user and expires = time() + lifetime, nothing random, so links made in the same second
+     * would be one token. Each link's lifetime is one second longer than the last: a clock tick between calls can
+     * only widen the gap between expiries, never cancel it.
+     *
+     * @return list<string>
+     */
+    public static function issueRoRoLoginLinks(LoginLinkHandlerInterface $handler, RoRoUser $user, int $count): array
+    {
+        $bodies = [];
+        for ($i = 0; $i < $count; $i++) {
+            $lifetime = self::RORO_LOGIN_LINK_LIFETIME - $count + 1 + $i;
+            $bodies[] = (string) parse_url($handler->createLoginLink($user, null, $lifetime)->getUrl(), PHP_URL_QUERY);
+        }
+        return $bodies;
+    }
+
+    /** @return array{RoRoUser, Operator, array<string, RoRoSurvey>} the user, the Harwich operator, surveys by marker key */
+    private function seedRoRo(): array
+    {
+        $this->entityManager->persist((new OperatorGroup())->setName(self::RORO_GROUP));
+
+        $operators = [];
+        foreach (self::RORO_OPERATORS as $name => [$code, $routes]) {
+            $operator = (new Operator())->setName($name)->setCode($code)->setIsActive(true);
+            foreach ($routes as [$ukPort, $foreignPort]) {
+                $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames($ukPort, $foreignPort)
+                    ?? throw new \RuntimeException("No {$ukPort}-{$foreignPort} route (the migrations seed it)");
+                $operator->addRoute($route);
+            }
+            $this->entityManager->persist($operator);
+            $operators[$name] = $operator;
+        }
+
+        $user = (new RoRoUser())
+            ->setUsername(self::USERNAMES['roro'])
+            ->setOperator($operators['Dast Ferries Dover']);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        // Last month's surveys, as the monthly cron would create them, then made active and in progress with data:
+        // a new survey shows none of the wizard pages beyond its introduction
+        $periodStart = new \DateTime('first day of last month midnight');
+        $surveys = [];
+        foreach (self::RORO_OPERATORS as $name => [, $routes]) {
+            foreach ($routes as [$ukPort, $foreignPort, $marker]) {
+                $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames($ukPort, $foreignPort);
+                $survey = $this->roroSurveyCreationHelper
+                    ->createSurvey($periodStart, new OperatorRoute($operators[$name]->getId(), $route->getId()))
+                    ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
+                    ->setIsActiveForPeriod(true)
+                    ->setDataEntryMethod(IntroductionType::DATA_ENTRY_MANUAL_CHOICE)
+                    ->setComments(self::MARKERS[$marker]);
+                $count = 0;
+                foreach (array_slice($survey->getVehicleCounts()->toArray(), 0, 3) as $vehicleCount) {
+                    $vehicleCount->setVehicleCount(10 * ++$count);
+                }
+                $this->entityManager->persist($survey);
+                $surveys[$marker] = $survey;
+            }
+        }
+        $this->entityManager->flush();
+
+        return [$user, $operators['Dast Ferries Harwich'], $surveys];
+    }
+
+    private function roroEditPath(RoRoSurvey $survey, string $state): string
+    {
+        return $this->path('app_roro_survey_edit', ['surveyId' => $survey->getId(), 'state' => $state]);
     }
 
     /** @return array{PasscodeUser, DomesticSurvey} */

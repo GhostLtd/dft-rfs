@@ -1,6 +1,7 @@
 # bin/dast --smoke: proves the stack's integration from inside the ZAP container before any long scan. DNS and TLS to
 # both hosts, a form login as the domestic user, a deep page showing its seeded marker, which fields expand ${VARS},
-# and that a wrong marker fails as an assertion. Not a scan: no spider, no passive rules wait, no active scan.
+# and that a wrong marker fails as an assertion; the RoRo login script, and a 1-minute RoRo spider and active scan to
+# prove the login indicator counts the active scanner's logged-in responses. Not a full scan.
 env:
   contexts:
     - name: domestic
@@ -36,6 +37,33 @@ env:
     - name: admin
       urls:
         - https://rfs-admin.localhost/
+    # RoRo: single-use login links, spent by the login script (docker/dast/scripts/roro-login.js)
+    - name: roro
+      urls:
+        - https://rfs-frontend.localhost/roro
+      includePaths:
+        - https://rfs-frontend\.localhost/roro(/.*)?
+      excludePaths:
+        - .*/logout.*
+        - https://rfs-frontend\.localhost/roro/(login|check-email|authenticate)(\?.*)?
+      authentication:
+        method: script
+        parameters:
+          script: /zap/scripts/roro-login.js
+          scriptEngine: Graal.js
+          Login URL: https://rfs-frontend.localhost/roro/authenticate
+        verification:
+          method: poll
+          pollUrl: https://rfs-frontend.localhost/roro/switch-operator
+          pollFrequency: 10
+          pollUnits: requests
+          loggedInRegex: \Qhref="/roro/logout"\E
+          loggedOutRegex: (?im)^location:\s*/roro/login
+      sessionManagement:
+        method: cookie
+      users:
+        - name: roro
+          credentials: {}
     # Everything on the frontend host, for the smoke run's traffic export (including the login requests)
     - name: frontend-all
       urls:
@@ -94,6 +122,62 @@ jobs:
         operator: or
         url: https://rfs-admin.localhost${DAST_PATH_ADMIN_SURVEY}
         responseBodyRegex: DA57 ZAP
+        onFail: error
+
+  - type: requestor
+    name: smoke-roro-login
+    parameters:
+      user: roro
+    requests:
+      - url: https://rfs-frontend.localhost${DAST_PATH_RORO_HARWICH_DASHBOARD}?dast-check-smoke=1
+        responseCode: 200
+      - url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-smoke=1
+        responseCode: 200
+    tests:
+      - name: roro-harwich-dashboard-logged-in
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_PATH_RORO_HARWICH_DASHBOARD}?dast-check-smoke=1
+        responseBodyRegex: \Qhref="/roro/logout"\E
+        onFail: error
+      - name: roro-calais-marker
+        type: url
+        operator: or
+        url: https://rfs-frontend.localhost${DAST_CHECK_RORO_CALAIS}?dast-check-smoke=1
+        responseBodyRegex: Dast survey Calais
+        onFail: error
+
+  # The login indicator must count the active scanner's own logged-in responses (not just redirects): a minute's
+  # spider and active scan of RoRo, which must see a positive ascan logged-in count
+  - type: spider
+    name: smoke-roro-spider
+    parameters:
+      context: roro
+      user: roro
+      url: https://rfs-frontend.localhost/roro
+      maxDuration: 1
+      postForm: false
+      logoutAvoidance: true
+
+  - type: activeScan
+    name: smoke-roro-active
+    parameters:
+      context: roro
+      user: roro
+      maxScanDurationInMins: 1
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+    tests:
+      - name: roro-ascan-logged-in-positive
+        type: stats
+        statistic: stats.auth.ascan.state.loggedin
+        site: https://rfs-frontend.localhost
+        operator: '>'
+        value: 0
         onFail: error
 
   - type: export

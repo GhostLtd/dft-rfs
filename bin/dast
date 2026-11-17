@@ -3,14 +3,15 @@
 #
 #   bin/dast                # passive: spider + passive rules, per context
 #   bin/dast --active       # also the active scan (attacks; only ever against this throwaway stack)
-#   bin/dast --smoke        # just the stack's integration checks (DNS, HTTPS, login, egress), then stop
+#   bin/dast --smoke        # the stack's integration checks (DNS, HTTPS, logins, egress), then stop
 #
 # Environment: DAST_SPIDER_MINS (default 10), DAST_ACTIVE_MINS (30), DAST_CONTEXT_TIMEOUT_MINS (3 x their sum + 15),
-# DAST_SECTIONS (a subset of "public domestic international pre-enquiry admin", in that order).
+# DAST_SECTIONS (a subset of "public domestic international pre-enquiry roro admin", in that order),
+# DAST_RORO_LINK_POOL (RoRo login links, 1-100, default 20).
 # Test hooks, for proving the guards fail (docs/Dast.md): DAST_WRONG_PASSWORD=<section> gives that section's user a
 # wrong password; DAST_CRIPPLE_SPIDER=<section> limits that section's spider to depth 1; DAST_ASCAN_LOGGED_OUT=<survey
-# section> runs its active scan without its user and ends the app's sessions as it starts (with --active);
-# DAST_STALL_SECTION=<section> replaces that section's ZAP with a process that ignores TERM.
+# section> runs its active scan logged out (with --active); DAST_STALL_SECTION=<section> replaces that section's ZAP
+# with a process that ignores TERM; DAST_RORO_SECOND_LOGIN=1 and DAST_RORO_REAUTH=1 make RoRo log in again.
 #
 # Output goes to var/dast/<YYYYMMDD-HHMMSS>-<pid>/. Exits non-zero if the scan itself failed or was hollow (see
 # docs/Dast.md), never just because ZAP found something.
@@ -18,7 +19,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 usage() {
-    sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 active=false
@@ -41,12 +42,13 @@ deadline_mins="${DAST_CONTEXT_TIMEOUT_MINS:-$((3 * scan_mins + 15))}"
 
 # Minimum URLs each section's spider must find (automation.spider.urls.added), calibrated from good runs: roughly
 # half the observed counts. Observed 2026-11-17 (10-minute spiders; each finished in well under a minute): public 25,
-# domestic 59, international 56, pre-enquiry 21, admin 1096.
+# domestic 59, international 56, pre-enquiry 21, admin 1096; roro 38.
 declare -A spider_floor=(
     [public]=12
     [domestic]=30
     [international]=28
     [pre-enquiry]=10
+    [roro]=19
     [admin]=550
 )
 
@@ -54,16 +56,19 @@ declare -A spider_floor=(
 # Authentication Statistics add-on: at least ascan_floor of its responses logged in, and fewer than
 # ascan_loggedout_limit logged out. Login failures must stay under auth_failure_limit. Calibrated from good runs:
 # roughly half the observed logged-in counts; 0 logged out and 0 failures observed, so small allowances. Observed
-# 2026-11-17 (5-minute active scans, each done in under a minute): domestic 1820, international 1354, pre-enquiry 355.
+# 2026-11-17 (5-minute active scans, each done in under a minute): domestic 1820, international 1354, pre-enquiry 355,
+# roro 1261.
 declare -A ascan_floor=(
     [domestic]=900
     [international]=670
     [pre-enquiry]=175
+    [roro]=630
 )
 declare -A ascan_loggedout_limit=(
     [domestic]=25
     [international]=25
     [pre-enquiry]=25
+    [roro]=25
 )
 auth_failure_limit=5
 
@@ -75,11 +80,21 @@ declare -A marker=(
     [international-trip]='Scanville'
     [pre-enquiry]='Dast Seed Haulage Ltd'
     [admin-survey]='DA57 ZAP'
+    [roro-calais]='Dast survey Calais'
+    [roro-dunkirk]='Dast survey Dunkirk'
+    [roro-cuxhaven]='Dast survey Cuxhaven'
 )
+
+# The RoRo login-link pool size: DAST_RORO_LINK_POOL (1-100, default 20; see docs/Dast.md)
+roro_link_pool="${DAST_RORO_LINK_POOL:-20}"
+if ! [[ "$roro_link_pool" =~ ^[0-9]+$ ]] || [ "$roro_link_pool" -lt 1 ] || [ "$roro_link_pool" -gt 100 ]; then
+    echo "DAST_RORO_LINK_POOL must be a whole number from 1 to 100, not: ${roro_link_pool}" >&2
+    exit 2
+fi
 
 # The sections, in order; DAST_SECTIONS (space-separated) runs a subset, e.g. while investigating one. Checked here,
 # before anything starts: an empty or unknown list must never turn into a run that scans nothing and passes.
-all_sections=(public domestic international pre-enquiry admin)
+all_sections=(public domestic international pre-enquiry roro admin)
 read -r -a requested <<< "${DAST_SECTIONS-${all_sections[*]}}"
 if [ "${#requested[@]}" -eq 0 ]; then
     echo "DAST_SECTIONS names no sections (choose from: ${all_sections[*]})" >&2
@@ -192,6 +207,11 @@ run_zap() {
         124|137) log "${section}: hit its ${deadline_mins}-minute deadline" ;;
         *) log "${section}: ZAP exited ${status} (see ${section}/zap-console.log)" ;;
     esac
+    # The RoRo login script can't fail a plan itself (ZAP only logs a failed login), so it prints this instead
+    if grep -q 'DAST-RORO-FATAL' "$console"; then
+        log "${section}: $(grep -m1 -o 'DAST-RORO-FATAL.*' "$console")"
+        [ "$status" -ne 0 ] || status=1
+    fi
     if ! end_section "$section" "$name"; then
         # The next section must never scan while this one's ZAP might still be attacking the shared app
         log "${section}: can't confirm its ZAP container is gone, so stopping the run here"
@@ -264,8 +284,24 @@ render_plans() {
         'SENTINEL_1=${DAST_PATH_PRE_ENQUIRY_SENTINEL}' 'SENTINEL_2=${DAST_PATH_PRE_ENQUIRY_SENTINEL}' \
         'CHECK_1=${DAST_CHECK_PRE_ENQUIRY}' 'CHECK_2=${DAST_CHECK_PRE_ENQUIRY}' \
         "MARK_1=${marker[pre-enquiry]}" "MARK_2=${marker[pre-enquiry]}"
+    render_plan roro roro "${common[@]}" "FLOOR=${spider_floor[roro]}" "MAX_DEPTH=$(spider_depth roro)" \
+        "ASCAN_FLOOR=${ascan_floor[roro]}" "ASCAN_LOGGEDOUT_LIMIT=${ascan_loggedout_limit[roro]}" \
+        "AUTH_FAILURE_LIMIT=${auth_failure_limit}" \
+        "MARK_CALAIS=${marker[roro-calais]}" "MARK_DUNKIRK=${marker[roro-dunkirk]}" \
+        "MARK_CUXHAVEN=${marker[roro-cuxhaven]}" \
+        "STRIP_ASCAN_COOKIES=$(hook_is DAST_ASCAN_LOGGED_OUT roro)" "ASCAN_USER=$(ascan_user roro)" \
+        "SECOND_LOGIN=$(flag_is DAST_RORO_SECOND_LOGIN)" "REAUTH=$(flag_is DAST_RORO_REAUTH)" \
+        "SECOND_LOGIN_ON_FAIL=$(if [ "$roro_link_pool" -ge 2 ]; then echo error; else echo info; fi)"
     render_plan admin admin "${common[@]}" "FLOOR=${spider_floor[admin]}" "MAX_DEPTH=$(spider_depth admin)" \
         "MARK_ADMIN=${marker[admin-survey]}"
+}
+
+# Literal true/false for a plan: whether the test hook in variable $1 names section $2, or is set to 1
+hook_is() {
+    if [ "${!1:-}" = "$2" ]; then echo true; else echo false; fi
+}
+flag_is() {
+    if [ "${!1:-}" = 1 ]; then echo true; else echo false; fi
 }
 
 # ZAP's own validation of every rendered plan (unknown keys, bad types), before any scan
@@ -338,14 +374,16 @@ log "Starting the stack"
 run_child "${compose[@]}" up --detach --wait app
 
 log "Seeding"
-run_child "${compose[@]}" exec -T app bin/console rfs:dev:dast-seed > "$seed_file"
+run_child "${compose[@]}" exec -T app bin/console rfs:dev:dast-seed --roro-links="$roro_link_pool" > "$seed_file"
 
 # KEY=value lines for ZAP's environment (credentials and paths; see App\Utility\Dev\DastSeeder)
 zap_env=()
 for key in DAST_DOMESTIC_USERNAME DAST_DOMESTIC_PASSWORD DAST_INTERNATIONAL_USERNAME DAST_INTERNATIONAL_PASSWORD \
     DAST_PRE_ENQUIRY_USERNAME DAST_PRE_ENQUIRY_PASSWORD DAST_PATH_DOMESTIC_STOPS DAST_PATH_DOMESTIC_SUMMARY \
     DAST_PATH_INTERNATIONAL_TRIP DAST_PATH_PRE_ENQUIRY_SENTINEL DAST_PATH_ADMIN_SURVEY DAST_CHECK_DOMESTIC_STOPS \
-    DAST_CHECK_DOMESTIC_SUMMARY DAST_CHECK_INTERNATIONAL_TRIP DAST_CHECK_PRE_ENQUIRY DAST_CHECK_ADMIN_SURVEY; do
+    DAST_CHECK_DOMESTIC_SUMMARY DAST_CHECK_INTERNATIONAL_TRIP DAST_CHECK_PRE_ENQUIRY DAST_CHECK_ADMIN_SURVEY \
+    DAST_RORO_LOGIN_LINKS DAST_PATH_RORO_HARWICH_DASHBOARD DAST_PATH_RORO_VEHICLE_COUNTS DAST_PATH_RORO_DATA_ENTRY \
+    DAST_PATH_RORO_COMMENTS DAST_CHECK_RORO_CALAIS DAST_CHECK_RORO_DUNKIRK DAST_CHECK_RORO_CUXHAVEN; do
     line="$(grep -E "^${key}=." "$seed_file" || true)"
     if [ -z "$line" ]; then
         log "The seed command didn't print ${key}"
@@ -355,6 +393,10 @@ for key in DAST_DOMESTIC_USERNAME DAST_DOMESTIC_PASSWORD DAST_INTERNATIONAL_USER
         && [ "$key" = "DAST_$(echo "$DAST_WRONG_PASSWORD" | tr 'a-z-' 'A-Z_')_PASSWORD" ]; then
         log "Test hook: a wrong password for ${DAST_WRONG_PASSWORD}"
         line="${key}=00000000"
+    fi
+    if [ "${DAST_WRONG_PASSWORD:-}" = roro ] && [ "$key" = DAST_RORO_LOGIN_LINKS ]; then
+        log "Test hook: every RoRo login link with a wrong hash"
+        line="$(printf '%s' "$line" | sed 's/hash=[^& ]*/hash=0/g')"
     fi
     zap_env+=(-e "$line")
 done
@@ -423,6 +465,22 @@ if $smoke; then
         smoke_status=1
     fi
     [ "$smoke_status" -eq 0 ] || status=$smoke_status
+
+    log "Smoke: RoRo login links ($(grep -c '^DAST-RORO: login link' "$console" || true) used by the smoke run)"
+    if grep -q 'DAST-RORO-FATAL' "$console"; then
+        log "Smoke FAILED: the RoRo login links ran out"; status=1
+    fi
+    # Single use: the first link, spent by ZAP's login above, must now be refused (back to the login page)
+    first_link="$(sed -n 's/^DAST_RORO_LOGIN_LINKS=//p' "$seed_file" | cut -d' ' -f1)"
+    replay="$(run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app \
+        curl -sk --max-time 10 -o /dev/null -w '%{http_code} %{redirect_url}' -d "$first_link" \
+        https://rfs-frontend.localhost/roro/authenticate || true)"
+    if [[ "$replay" =~ ^302\ .*/roro/login$ ]]; then
+        log "  a replayed link is refused (${replay% *}, to /roro/login)"
+    else
+        log "Smoke FAILED: a replayed RoRo login link wasn't refused (${replay})"; status=1
+    fi
+
     if [ "$status" -eq 0 ]; then log "Smoke passed"; else log "Smoke FAILED"; fi
 
     exit "$status"
@@ -440,7 +498,9 @@ summary=()
 for section in "${sections[@]}"; do
     log "${section}: scanning (deadline ${deadline_mins} minutes)"
     section_status=0
-    if [ "${DAST_ASCAN_LOGGED_OUT:-}" = "$section" ]; then
+    if [ "${DAST_ASCAN_LOGGED_OUT:-}" = "$section" ] && [ "$section" != roro ]; then
+        # (RoRo's version of this hook is a cookie-stripping rule in its plan: remember-me would log it straight
+        # back in after its sessions ended.)
         # Test hook (with --active): no user isn't enough on its own, because the recorded requests still carry the
         # spider's session cookie. So also end every app session once the section's active scan has started.
         (
