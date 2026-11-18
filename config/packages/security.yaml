@@ -47,6 +47,11 @@ security:
             lazy: true
             provider: passcode
             custom_authenticator: App\Security\PasscodeAuthenticator
+            # Attempts per username and IP (and five times that per IP), so that the second code can't be brute-forced
+            # for a known first code. Kept in the shared cache.rate_limiter pool (cache.yaml), as RoRo's limiter is.
+            login_throttling:
+                max_attempts: 5
+                interval: '1 minute'
             logout:
                 path: app_logout
                 target: app_login

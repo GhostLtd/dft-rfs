@@ -1,2 +1,6 @@
 Invalid CSRF token.: The session expired before you signed in. Try again.
 Invalid credentials.: Wrong username or password.
+# Login throttling (the main firewall's login_throttling). Symfony picks the key by the wait; {minutes} is the wait
+"Too many failed login attempts, please try again in %minutes% minute.": Too many failed attempts to sign in. Wait 1 minute and try again.
+"Too many failed login attempts, please try again in %minutes% minutes.": Too many failed attempts to sign in. Wait {minutes} minutes and try again.
+Too many failed login attempts, please try again later.: Too many failed attempts to sign in. Wait a few minutes and try again.

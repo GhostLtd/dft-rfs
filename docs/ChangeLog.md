@@ -3,6 +3,7 @@
 # Changelog
 
 ## Upcoming
+- **Fix**: Security: passcode login is throttled: after 5 attempts in a minute for one first code (from one IP), the login page asks the user to wait; each refusal is logged as a warning with the IP
 - **Fix**: Security: `/cron/*` routes no longer accept an `X-Cloudscheduler: true` header, which anyone could send (App Engine only strips `X-Appengine-*` headers), so only App Engine cron (`X-Appengine-Cron`) can trigger them. **Must be verified on the GCP dev or test environment before release**: the scheduled jobs still run (App Engine's Cron jobs page, or 200s for `/cron/` from `0.1.0.2`/`0.1.0.1` in the request log), an outside `curl` of `/cron/messenger/consume` with `-H 'X-Cloudscheduler: true'` or `-H 'X-Appengine-Cron: true'` gets a 404, and no Cloud Scheduler job targets `/cron/*`
 - **Change**: Tests: `bin/dast` runs a ZAP scan against a disposable, seeded stack (see [DAST](Dast.md))
 - **Change**: CI: GitHub Actions runs the test suites, static checks, dependency audits and (on demand) screenshots, and `bin/screenshots` takes screenshots in a disposable stack (see [CI](CI.md))

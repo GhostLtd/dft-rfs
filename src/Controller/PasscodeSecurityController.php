@@ -28,7 +28,7 @@ class PasscodeSecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
 
         if ($error) {
-            $form->get('passcode')->addError(new FormError($translator->trans($error->getMessageKey(), [], 'security')));
+            $form->get('passcode')->addError(new FormError($translator->trans($error->getMessageKey(), $error->getMessageData(), 'security')));
         }
 
         return $this->render('security/login.html.twig', [
