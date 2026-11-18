@@ -28,7 +28,10 @@ cron:
     type: attribute
     prefix: /cron
     name_prefix: 'cron_'
-    condition: "(request.headers.get('X-Appengine-Cron') === 'true') or (request.headers.get('X-Cloudscheduler') === 'true')"
+    # Only App Engine cron's header: App Engine strips X-Appengine-* headers from outside requests, so only its cron
+    # service can send it. (Not X-Cloudscheduler: App Engine doesn't strip it, so anyone could send it, and a test
+    # environment confirmed that.) The jobs are in config/gcloud-build/all/cron.yaml.
+    condition: "request.headers.get('X-Appengine-Cron') === 'true'"
 
 kernel:
     resource: ../../src/Kernel.php
