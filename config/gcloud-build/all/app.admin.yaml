@@ -15,6 +15,11 @@ build_env_variables:
 handlers:
   - url: /build
     static_dir: public/build
+    # App Engine serves these itself, so Nelmio's headers (nelmio_security.yaml) never reach them. The HSTS value matches
+    # nelmio_security.yaml's (tests/Config/AppEngineStaticHeadersTest checks)
+    http_headers:
+      Strict-Transport-Security: max-age=2592000; includeSubDomains
+      X-Content-Type-Options: nosniff
   - url: /.*
     script: auto
 
