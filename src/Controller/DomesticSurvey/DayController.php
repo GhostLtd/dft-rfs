@@ -61,7 +61,7 @@ class DayController extends AbstractController
         $clickedButton = $form->getClickedButton();
 
         if ($form->isSubmitted()) {
-            if ($clickedButton->getName() === 'cancel') {
+            if ($clickedButton?->getName() === 'cancel') {
                 return $this->redirectToRoute(IndexController::SUMMARY_ROUTE);
             }
             if ($form->isValid()) {

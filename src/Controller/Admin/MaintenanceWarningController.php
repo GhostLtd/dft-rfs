@@ -44,7 +44,7 @@ class MaintenanceWarningController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->getClickedButton()->getName() === 'cancel') {
+            if ($form->getClickedButton()?->getName() === 'cancel') {
                 return $this->redirectToRoute('admin_maintenance_warning_list');
             }
 
