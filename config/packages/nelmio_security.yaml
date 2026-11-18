@@ -7,6 +7,8 @@ nelmio_security:
     csp:
         hosts: [ ]
         content_types: [ ]
+        # Only Content-Security-Policy, not the obsolete X-Content-Security-Policy that old Firefox/IE read
+        compat_headers: false
         enforce:
             level1_fallback: false
             browser_adaptive:
