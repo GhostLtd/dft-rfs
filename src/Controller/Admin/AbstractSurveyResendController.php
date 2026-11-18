@@ -24,7 +24,7 @@ abstract class AbstractSurveyResendController extends AbstractController
         if ($request->getMethod() === Request::METHOD_POST) {
             $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $survey = $form->getData();
 
                 $this->entityManager->wrapInTransaction(function () use ($survey) {

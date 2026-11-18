@@ -28,7 +28,7 @@ class AddController extends AbstractController
                 return $this->redirectToRoute('admin_index');
             }
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 /** @var PreEnquiry $preEnquiry */
                 $preEnquiry = $form->getData();
 

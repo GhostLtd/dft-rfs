@@ -77,7 +77,7 @@ class TripController extends AbstractController
                 return $redirectResponse;
             };
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $this->entityManager->flush();
                 return $redirectResponse;
             }

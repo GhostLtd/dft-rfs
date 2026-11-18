@@ -141,7 +141,7 @@ class SurveyController extends AbstractController
                 return new RedirectResponse($redirectUrl);
             };
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $this->entityManager->flush();
                 return new RedirectResponse($redirectUrl);
             }

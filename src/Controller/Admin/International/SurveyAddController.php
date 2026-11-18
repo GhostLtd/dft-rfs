@@ -31,7 +31,7 @@ class SurveyAddController extends AbstractController
                 return $this->redirectToRoute('admin_index');
             }
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 /** @var Survey $survey */
                 $survey = $form->getData();
 

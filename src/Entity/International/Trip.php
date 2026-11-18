@@ -90,7 +90,7 @@ class Trip
 
     #[AppAssert\ValidValueUnit(groups: ["trip_distance", "admin_trip"])]
     #[ORM\Embedded(class: Distance::class)]
-    private ?Distance $roundTripDistance;
+    private ?Distance $roundTripDistance = null;
 
     #[ORM\Column(type: Types::JSON)]
     private ?array $countriesTransitted = [];
