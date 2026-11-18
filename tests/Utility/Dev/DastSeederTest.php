@@ -52,6 +52,8 @@ class DastSeederTest extends AbstractFunctionalTestCase
         'DAST_CHECK_RORO_CALAIS',
         'DAST_CHECK_RORO_DUNKIRK',
         'DAST_CHECK_RORO_CUXHAVEN',
+        'DAST_RORO_FORMS_LOGIN_LINKS',
+        'DAST_PATH_RORO_FORMS_DASHBOARD',
     ];
 
     private EntityManagerInterface $entityManager;
@@ -187,7 +189,10 @@ class DastSeederTest extends AbstractFunctionalTestCase
         $this->seeder->seed();
         $this->entityManager->clear();
 
-        $surveys = $this->entityManager->getRepository(RoRoSurvey::class)->findAll();
+        $surveys = array_values(array_filter(
+            $this->entityManager->getRepository(RoRoSurvey::class)->findAll(),
+            fn(RoRoSurvey $survey) => str_starts_with($survey->getOperator()->getName(), 'Dast Ferries'),
+        ));
         self::assertCount(3, $surveys);
 
         $comments = [];
@@ -220,6 +225,36 @@ class DastSeederTest extends AbstractFunctionalTestCase
 
         $this->postLoginLink($bodies[0]);
         self::assertStringEndsWith('/roro/login', $this->getCurrentUri(), 'A used link is refused');
+    }
+
+    public function testRoRoFormsUserHasItsOwnOperatorSurveysAndLinks(): void
+    {
+        $output = $this->seeder->seed();
+        $this->entityManager->clear();
+
+        $user = $this->entityManager->getRepository(RoRoUser::class)->findOneBy(['username' => DastSeeder::RORO_FORMS_USERNAME]);
+        self::assertInstanceOf(RoRoUser::class, $user);
+        $operator = $user->getOperator();
+        self::assertSame('Forms Ferries', $operator->getName());
+
+        // Outside the Dast Ferries group, so its form submissions can't touch the roro section's surveys
+        $dover = $this->entityManager->getRepository(Operator::class)->findOneBy(['name' => 'Dast Ferries Dover']);
+        $targets = static::getContainer()->get(OperatorSwitchHelper::class)->getOperatorSwitchTargets($dover);
+        self::assertNotContains($operator->getId(), array_map(fn(Operator $target) => $target->getId(), $targets));
+
+        $surveys = $this->entityManager->getRepository(RoRoSurvey::class)->findBy(['operator' => $operator]);
+        self::assertNotEmpty($surveys);
+        foreach ($surveys as $survey) {
+            self::assertSame(SurveyStateInterface::STATE_IN_PROGRESS, $survey->getState());
+            self::assertTrue($survey->getIsActiveForPeriod());
+        }
+
+        $bodies = explode(' ', $output['DAST_RORO_FORMS_LOGIN_LINKS']);
+        self::assertCount(DastSeeder::RORO_LOGIN_LINKS, array_unique($bodies));
+        self::assertSame([], array_intersect($bodies, explode(' ', $output['DAST_RORO_LOGIN_LINKS'])));
+        $this->postLoginLink($bodies[0]);
+        self::assertStringEndsWith('/roro/operator/' . $operator->getId(), $this->getCurrentUri());
+        self::assertSame('/roro/operator/' . $operator->getId(), $output['DAST_PATH_RORO_FORMS_DASHBOARD']);
     }
 
     public function testRoRoLoginLinksStayDistinctAcrossClockTicks(): void
@@ -288,11 +323,15 @@ class DastSeederTest extends AbstractFunctionalTestCase
         $this->entityManager->persist((new RoRoUser())->setUsername('someone@example.com')->setOperator($operator));
         $this->entityManager->flush();
 
+        // Not expectException: the counts below must run after the refusal. (And not self::fail() inside the try:
+        // PHPUnit's failure is itself a RuntimeException, so the catch would swallow it.)
+        $refusal = null;
         try {
             $this->seeder->seed();
-            self::fail('Refused');
-        } catch (\RuntimeException) {
+        } catch (\RuntimeException $exception) {
+            $refusal = $exception->getMessage();
         }
+        self::assertSame('The DAST seeder only runs against a database with no users', $refusal);
 
         $this->entityManager->clear();
         self::assertSame(0, $this->entityManager->getRepository(PasscodeUser::class)->count([]));

@@ -7,12 +7,13 @@
 #
 # Environment: DAST_SPIDER_MINS (default 10), DAST_ACTIVE_MINS (30), DAST_CONTEXT_TIMEOUT_MINS (3 x their sum + 15),
 # DAST_SECTIONS (a subset of "public domestic international pre-enquiry roro domestic-forms international-forms
-# pre-enquiry-forms admin", in that order),
+# pre-enquiry-forms roro-forms admin admin-forms", in that order),
 # DAST_RORO_LINK_POOL (RoRo login links, 1-100, default 20).
 # Test hooks, for proving the guards fail (docs/Dast.md): DAST_WRONG_PASSWORD=<section> gives that section's user a
-# wrong password; DAST_CRIPPLE_SPIDER=<section> limits that section's spider to depth 1; DAST_ASCAN_LOGGED_OUT=<survey
-# section> runs its active scan logged out (with --active: no user, and its requests' cookies stripped); DAST_STALL_SECTION=<section> replaces that section's ZAP
-# with a process that ignores TERM; DAST_RORO_SECOND_LOGIN=1 and DAST_RORO_REAUTH=1 make RoRo log in again.
+# wrong password; DAST_CRIPPLE_SPIDER=<section> limits that section's spider to depth 1; DAST_ASCAN_LOGGED_OUT=<section>
+# runs its active scan logged out (with --active; not public or the admin sections); DAST_STALL_SECTION=<section>
+# replaces that section's ZAP with a process that ignores TERM; DAST_RORO_SECOND_LOGIN=1 and DAST_RORO_REAUTH=1 make
+# RoRo log in again.
 #
 # Output goes to var/dast/<YYYYMMDD-HHMMSS>-<pid>/. Exits non-zero if the scan itself failed or was hollow (see
 # docs/Dast.md), never just because ZAP found something.
@@ -20,7 +21,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 usage() {
-    sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 active=false
@@ -44,7 +45,7 @@ deadline_mins="${DAST_CONTEXT_TIMEOUT_MINS:-$((3 * scan_mins + 15))}"
 # Minimum URLs each section's spider must find (automation.spider.urls.added), calibrated from good runs: roughly
 # half the observed counts. Observed 2026-11-17 (10-minute spiders; each finished in well under a minute): public 25,
 # domestic 59, international 56, pre-enquiry 21, admin 1096; roro 38; domestic-forms 90, international-forms 83,
-# pre-enquiry-forms 28.
+# pre-enquiry-forms 28; 2026-11-18: roro-forms 39, admin-forms 1741 and 1886.
 declare -A spider_floor=(
     [public]=12
     [domestic]=30
@@ -54,7 +55,9 @@ declare -A spider_floor=(
     [domestic-forms]=45
     [international-forms]=41
     [pre-enquiry-forms]=14
+    [roro-forms]=19
     [admin]=550
+    [admin-forms]=900
 )
 
 # The active scan's evidence that its own requests were logged in (survey sections; see docs/Dast.md), from the
@@ -63,7 +66,7 @@ declare -A spider_floor=(
 # roughly half the observed logged-in counts; 0 logged out and 0 failures observed, so small allowances. Observed
 # 2026-11-17 (5-minute active scans, each done in under a minute): domestic 1820, international 1354, pre-enquiry 355,
 # roro 1261; forms sections (10-minute active scans, which they used): domestic 23884, international 24568,
-# pre-enquiry 8142.
+# pre-enquiry 8142; 2026-11-18: roro-forms 22612.
 declare -A ascan_floor=(
     [domestic]=900
     [international]=670
@@ -72,6 +75,7 @@ declare -A ascan_floor=(
     [domestic-forms]=11000
     [international-forms]=12000
     [pre-enquiry-forms]=4000
+    [roro-forms]=11000
 )
 declare -A ascan_loggedout_limit=(
     [domestic]=25
@@ -81,12 +85,15 @@ declare -A ascan_loggedout_limit=(
 )
 auth_failure_limit=5
 
-# Minimum survey form submissions (non-login POSTs without X-ZAP-Scan-ID) per forms section, calibrated from good runs:
-# about half. Observed 2026-11-18: domestic-forms 31, international-forms 27, pre-enquiry-forms 7.
+# Minimum form submissions (non-login POSTs without X-ZAP-Scan-ID) per forms section, calibrated from good runs:
+# about half. Observed 2026-11-18: domestic-forms 31, international-forms 27, pre-enquiry-forms 7, roro-forms 10,
+# admin-forms 343 and 488.
 declare -A form_post_floor=(
     [domestic-forms]=15
     [international-forms]=13
     [pre-enquiry-forms]=3
+    [roro-forms]=5
+    [admin-forms]=170
 )
 
 # Must match App\Utility\Dev\DastSeeder::MARKERS (DastSeederTest::testMarkersMatchBinDast checks): the seeded text
@@ -111,7 +118,8 @@ fi
 
 # The sections, in order; DAST_SECTIONS (space-separated) runs a subset, e.g. while investigating one. Checked here,
 # before anything starts: an empty or unknown list must never turn into a run that scans nothing and passes.
-all_sections=(public domestic international pre-enquiry roro domestic-forms international-forms pre-enquiry-forms admin)
+all_sections=(public domestic international pre-enquiry roro domestic-forms international-forms pre-enquiry-forms roro-forms
+    admin admin-forms)
 read -r -a requested <<< "${DAST_SECTIONS-${all_sections[*]}}"
 if [ "${#requested[@]}" -eq 0 ]; then
     echo "DAST_SECTIONS names no sections (choose from: ${all_sections[*]})" >&2
@@ -123,7 +131,27 @@ for section in "${requested[@]}"; do
         exit 2
     fi
 done
-# Always in the fixed order (admin last), once each
+# The test hooks, checked too: a typo must stop the run, not quietly run without the hook. Each names exactly one
+# section (compared whole: a substring check would let "domestic international" through, matching neither section)
+for hook in DAST_WRONG_PASSWORD DAST_CRIPPLE_SPIDER DAST_ASCAN_LOGGED_OUT DAST_STALL_SECTION; do
+    [ -n "${!hook:-}" ] || continue
+    known=false
+    for section in "${all_sections[@]}"; do
+        if [ "${!hook}" = "$section" ]; then known=true; fi
+    done
+    if ! $known; then
+        echo "${hook} must name one section, not: ${!hook} (choose from: ${all_sections[*]})" >&2
+        exit 2
+    fi
+done
+for hook in DAST_RORO_SECOND_LOGIN DAST_RORO_REAUTH; do
+    if [ -n "${!hook:-}" ] && [ "${!hook}" != 1 ]; then
+        echo "${hook} must be 1 or unset, not: ${!hook}" >&2
+        exit 2
+    fi
+done
+# Always in the fixed order, once each: admin-forms last (it changes and deletes the seeded data that the other
+# sections' checks read)
 sections=()
 for section in "${all_sections[@]}"; do
     if [[ " ${requested[*]} " == *" ${section} "* ]]; then
@@ -324,8 +352,15 @@ render_plans() {
             "USER=${user}" "ASCAN_USER=$(ascan_user "$section")" \
             "STRIP_ASCAN_COOKIES=$(hook_is DAST_ASCAN_LOGGED_OUT "$section")"
     done
+    render_plan roro-forms roro-forms "${common[@]}" "FLOOR=${spider_floor[roro-forms]}" \
+        "MAX_DEPTH=$(spider_depth roro-forms)" "ASCAN_FLOOR=${ascan_floor[roro-forms]}" \
+        "AUTH_FAILURE_LIMIT=${auth_failure_limit}" "ASCAN_USER=$(ascan_user roro-forms)" \
+        "STRIP_ASCAN_COOKIES=$(hook_is DAST_ASCAN_LOGGED_OUT roro-forms)"
     render_plan admin admin "${common[@]}" "FLOOR=${spider_floor[admin]}" "MAX_DEPTH=$(spider_depth admin)" \
         "MARK_ADMIN=${marker[admin-survey]}"
+    # A link in the admin menu, which only a signed-in admin's pages have
+    render_plan admin-forms admin-forms "${common[@]}" "FLOOR=${spider_floor[admin-forms]}" \
+        "MAX_DEPTH=$(spider_depth admin-forms)" 'MARK_ADMIN_MENU=\Qhref="/csrgt/dvla-import"\E'
 }
 
 # Literal true/false for a plan: whether the test hook in variable $1 names section $2, or is set to 1
@@ -349,14 +384,19 @@ check_plans() {
         check "${plans[@]}" > "$DAST_OUTPUT_DIR/autocheck.log" 2>&1
 }
 
-# Lines in the app's frontend access log so far, and the form POSTs logged after a given line: not logins, not the
-# active scanner's (X-ZAP-Scan-ID)
+# Lines in the app's frontend access log so far, and the form POSTs logged after a given line: not logins (passcode,
+# or RoRo's login and login-link pages), not the active scanner's (X-ZAP-Scan-ID)
+# (admin-forms: the admin site's log, which has no logins)
+access_log() {
+    if [ "$1" = admin-forms ]; then echo /tmp/access-admin.log; else echo /tmp/access-frontend.log; fi
+}
 access_log_lines() {
-    "${compose[@]}" exec -T app sh -c 'wc -l < /tmp/access-frontend.log 2> /dev/null || echo 0'
+    "${compose[@]}" exec -T app sh -c "wc -l < $(access_log "$1") 2> /dev/null || echo 0"
 }
 form_posts_since() {
-    "${compose[@]}" exec -T app sh -c "tail -n +$(($1 + 1)) /tmp/access-frontend.log" \
-        | grep '"method":"POST"' | grep -v '"X-Zap-Scan-Id"' | grep -cv '"uri":"/login"' || true
+    "${compose[@]}" exec -T app sh -c "tail -n +$(($2 + 1)) $(access_log "$1")" \
+        | grep '"method":"POST"' | grep -v '"X-Zap-Scan-Id"' \
+        | grep -cvE '"uri":"/(login|roro/login|roro/authenticate)[?"]' || true
 }
 
 # shellcheck disable=SC2329 # used by cleanup, from the EXIT trap
@@ -431,7 +471,8 @@ for key in DAST_DOMESTIC_USERNAME DAST_DOMESTIC_PASSWORD DAST_INTERNATIONAL_USER
     DAST_RORO_LOGIN_LINKS DAST_PATH_RORO_HARWICH_DASHBOARD DAST_PATH_RORO_VEHICLE_COUNTS DAST_PATH_RORO_DATA_ENTRY \
     DAST_PATH_RORO_COMMENTS DAST_CHECK_RORO_CALAIS DAST_CHECK_RORO_DUNKIRK DAST_CHECK_RORO_CUXHAVEN \
     DAST_FORMS_DOMESTIC_USERNAME DAST_FORMS_DOMESTIC_PASSWORD DAST_FORMS_INTERNATIONAL_USERNAME \
-    DAST_FORMS_INTERNATIONAL_PASSWORD DAST_FORMS_PRE_ENQUIRY_USERNAME DAST_FORMS_PRE_ENQUIRY_PASSWORD; do
+    DAST_FORMS_INTERNATIONAL_PASSWORD DAST_FORMS_PRE_ENQUIRY_USERNAME DAST_FORMS_PRE_ENQUIRY_PASSWORD \
+    DAST_RORO_FORMS_LOGIN_LINKS DAST_PATH_RORO_FORMS_DASHBOARD; do
     line="$(grep -E "^${key}=." "$seed_file" || true)"
     if [ -z "$line" ]; then
         log "The seed command didn't print ${key}"
@@ -441,8 +482,9 @@ for key in DAST_DOMESTIC_USERNAME DAST_DOMESTIC_PASSWORD DAST_INTERNATIONAL_USER
         log "Test hook: a wrong password for ${DAST_WRONG_PASSWORD}"
         line="${key}=00000000"
     fi
-    if [ "${DAST_WRONG_PASSWORD:-}" = roro ] && [ "$key" = DAST_RORO_LOGIN_LINKS ]; then
-        log "Test hook: every RoRo login link with a wrong hash"
+    if { [ "${DAST_WRONG_PASSWORD:-}" = roro ] && [ "$key" = DAST_RORO_LOGIN_LINKS ]; } \
+        || { [ "${DAST_WRONG_PASSWORD:-}" = roro-forms ] && [ "$key" = DAST_RORO_FORMS_LOGIN_LINKS ]; }; then
+        log "Test hook: every ${DAST_WRONG_PASSWORD} login link with a wrong hash"
         line="$(printf '%s' "$line" | sed 's/hash=[^& ]*/hash=0/g')"
     fi
     zap_env+=(-e "$line")
@@ -458,6 +500,22 @@ if $smoke; then
     if [ "$(printf '%s\n' "$resolved" | grep -c "^${app_ip} ")" -ne 2 ]; then
         log "Smoke FAILED: the DAST hostnames don't both resolve to the app from the ZAP container"
         status=1
+    fi
+
+    # External names must not resolve either: some Docker versions forward DNS from internal networks, which would leak
+    # lookups (and is a step towards egress)
+    log "Smoke: no external name resolution from either container"
+    # Control: the app resolves the DAST names with the same command (so a missing getent can't pass as "doesn't
+    # resolve"; the ZAP container's control is the check above)
+    if ! run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app getent hosts rfs-admin.localhost > /dev/null 2>&1; then
+        log "Smoke FAILED: app can't resolve rfs-admin.localhost with getent (so the check below proves nothing)"; status=1
+    fi
+    if run_child timeout --kill-after=5s 30s "${compose[@]}" exec -T app getent hosts www.gov.uk > /dev/null 2>&1; then
+        log "Smoke FAILED: app resolved www.gov.uk"; status=1
+    fi
+    if run_child timeout --kill-after=5s 60s "${compose[@]}" run --no-TTY --no-deps --rm zap \
+        getent hosts www.gov.uk > /dev/null 2>&1; then
+        log "Smoke FAILED: ZAP resolved www.gov.uk"; status=1
     fi
 
     # Every diagnostic below runs as a run_child under a hard deadline (and curl under --max-time): a stalled request
@@ -534,6 +592,11 @@ if $smoke; then
 fi
 
 render_plans
+if [ -n "${DAST_CRIPPLE_SPIDER:-}" ]; then log "Test hook: ${DAST_CRIPPLE_SPIDER}'s spider limited to depth 1"; fi
+if [ -n "${DAST_ASCAN_LOGGED_OUT:-}" ]; then log "Test hook: ${DAST_ASCAN_LOGGED_OUT}'s active scan logged out"; fi
+if [ -n "${DAST_STALL_SECTION:-}" ]; then log "Test hook: ${DAST_STALL_SECTION}'s ZAP replaced by a process that hangs"; fi
+if [ "${DAST_RORO_SECOND_LOGIN:-}" = 1 ]; then log "Test hook: RoRo's last request as a second ZAP user (a second login)"; fi
+if [ "${DAST_RORO_REAUTH:-}" = 1 ]; then log "Test hook: RoRo's ZAP user forgets its login mid-section"; fi
 log "Checking the plans"
 if ! check_plans; then
     log "A plan failed ZAP's check (see autocheck.log)"
@@ -546,18 +609,18 @@ for section in "${sections[@]}"; do
     log "${section}: scanning (deadline ${deadline_mins} minutes)"
     section_status=0
     if [[ "$section" == *-forms ]]; then
-        posts_before="$(access_log_lines)"
+        posts_before="$(access_log_lines "$section")"
     fi
     run_zap "$section" "$deadline_mins" || section_status=$?
     if [[ "$section" == *-forms ]]; then
-        # A forms section's point is submitting the survey forms: it must show some, besides logins and the active
+        # A forms section's point is submitting the forms: it must show some, besides logins and the active
         # scanner's own requests (which carry X-ZAP-Scan-ID)
-        posts="$(form_posts_since "$posts_before")"
+        posts="$(form_posts_since "$section" "$posts_before")"
         if [ "$posts" -lt "${form_post_floor[$section]}" ]; then
-            log "${section}: only ${posts} survey form submissions (at least ${form_post_floor[$section]} expected)"
+            log "${section}: only ${posts} form submissions (at least ${form_post_floor[$section]} expected)"
             [ "$section_status" -ne 0 ] || section_status=1
         else
-            log "${section}: ${posts} survey form submissions"
+            log "${section}: ${posts} form submissions"
         fi
     fi
     summary+=("${section}: $([ "$section_status" -eq 0 ] && echo passed || echo "FAILED (${section_status})")")

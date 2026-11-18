@@ -1,0 +1,157 @@
+# ZAP Automation Framework plan for the admin-forms section: the admin site with its forms submitted, so the active
+# scan has form submissions (POSTs) to attack. It runs after every other section (bin/dast's order), on the same
+# seeded data: that data is expected to change or go, and nothing checks it afterwards. No ZAP login (the DAST
+# Caddyfile fakes the IAP user on every request); the admin-menu check proves access, and bin/dast's form-submission
+# floor proves forms were submitted. A template: bin/dast replaces the __TOKENS__. See docs/Dast.md.
+env:
+  contexts:
+    - name: admin-forms
+      urls:
+        - https://rfs-admin.localhost/
+      includePaths:
+        - https://rfs-admin\.localhost/.*
+      excludePaths:
+        - .*/logout.*
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
+  - type: spider
+    name: spider
+    parameters:
+      context: admin-forms
+      url: https://rfs-admin.localhost/
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      # The point of this section (the admin section never submits them), with ZAP's default values
+      postForm: true
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  # Access: the faked IAP login still works: an admin page shows the admin menu (only rendered for a signed-in admin).
+  # Not the seeded survey, which the form submissions may have changed or deleted. A leaf page, not the home: ZAP's URL
+  # test resolves a URL that is also a folder in its sites tree (as / always is) to the folder, not the fresh response.
+  - type: requestor
+    name: check-after-spider
+    requests:
+      - url: https://rfs-admin.localhost/user-id-lookup?dast-check-spider=1
+        responseCode: 200
+    tests:
+      - name: admin-access-after-spider
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost/user-id-lookup?dast-check-spider=1
+        responseBodyRegex: __MARK_ADMIN_MENU__
+        onFail: error
+
+  # The active scan (bin/dast --active only). No login statistics here: Caddy fakes the login on every request, so
+  # ZAP has no logged-in state to count; the live check afterwards proves access.
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: admin-forms
+      maxScanDurationInMins: __ACTIVE_MINS__
+      # The rule's id in an X-ZAP-Scan-ID header, so the access logs show which rule sent each request
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off: the DOM XSS rule drives a real browser that submits the pages' forms (with valid CSRF tokens), which
+        # deletes and changes the seeded surveys mid-scan. The app renders on the server with little JavaScript.
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+
+  - type: requestor
+    name: check-after-active
+    enabled: __ACTIVE__
+    requests:
+      - url: https://rfs-admin.localhost/user-id-lookup?dast-check-active=1
+        responseCode: 200
+    tests:
+      - name: admin-access-after-active
+        type: url
+        operator: or
+        url: https://rfs-admin.localhost/user-id-lookup?dast-check-active=1
+        responseBodyRegex: __MARK_ADMIN_MENU__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/admin-forms
+      reportFile: report
+      reportTitle: RFS DAST - admin-forms
+    confidences: [high, medium, low]
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/admin-forms
+      reportFile: report
+    confidences: [high, medium, low]
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: admin-forms
+      type: url
+      source: all
+      fileName: /zap/wrk/admin-forms/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: admin-forms
+      type: har
+      source: all
+      fileName: /zap/wrk/admin-forms/traffic.har

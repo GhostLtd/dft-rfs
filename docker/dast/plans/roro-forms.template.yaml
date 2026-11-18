@@ -1,0 +1,179 @@
+# ZAP Automation Framework plan for the roro-forms section: the RoRo pages as a sacrificial RoRo user (its own
+# operator, outside the Dast Ferries group) whose forms ARE submitted, so the active scan has form submissions (POSTs)
+# to attack. Its surveys are expected to change, so there are no live checks; the spider and active scanner's
+# logged-in floors, and bin/dast's form-submission floor, guard against a hollow scan. Logs in with its own pool of
+# single-use links (docker/dast/scripts/roro-login.js, "Links variable"). A template: bin/dast replaces the
+# __TOKENS__. See docs/Dast.md.
+env:
+  contexts:
+    - name: roro-forms
+      # Literal URLs only in the context: ZAP doesn't expand ${...} here (only in jobs' parameters)
+      urls:
+        - https://rfs-frontend.localhost/roro
+      includePaths:
+        - https://rfs-frontend\.localhost/roro(/.*)?
+      excludePaths:
+        - .*/logout.*
+        # The public RoRo pages, covered by the public section
+        - https://rfs-frontend\.localhost/roro/(login|check-email|authenticate)(\?.*)?
+      authentication:
+        method: script
+        parameters:
+          script: /zap/scripts/roro-login.js
+          scriptEngine: Graal.js
+          Login URL: https://rfs-frontend.localhost/roro/authenticate
+          Links variable: DAST_RORO_FORMS_LOGIN_LINKS
+        verification:
+          method: poll
+          # An authenticated page for any RoRo user (as in the roro section)
+          pollUrl: https://rfs-frontend.localhost/roro/switch-operator
+          pollFrequency: 10
+          pollUnits: requests
+          loggedInRegex: \Qhref="/roro/logout"\E
+          loggedOutRegex: (?im)^location:\s*/roro/login
+      sessionManagement:
+        method: cookie
+      users:
+        - name: roro-forms
+          credentials: {}
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
+  # Test hook (DAST_ASCAN_LOGGED_OUT=<this section>): strip the Cookie header from the active scanner's requests only,
+  # and (via __ASCAN_USER__) run the active scan without its user, whose cookies ZAP would add after the replacer. The
+  # attack traffic is then logged out, and the logged-in floor must fail.
+  - type: replacer
+    name: strip-ascan-cookies
+    enabled: __STRIP_ASCAN_COOKIES__
+    rules:
+      - description: DAST test hook - active scanner requests without cookies
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: ''
+        # 2: the active scanner (ZAP's HttpSender.ACTIVE_SCANNER_INITIATOR)
+        initiators: [2]
+
+  # The spider submits POST forms here (it doesn't in the roro section), with ZAP's default values
+  - type: spider
+    name: spider
+    parameters:
+      context: roro-forms
+      user: roro-forms
+      url: https://rfs-frontend.localhost${DAST_PATH_RORO_FORMS_DASHBOARD}
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      postForm: true
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: roro-forms
+      # The section's user (bin/dast's DAST_ASCAN_LOGGED_OUT test hook empties it)
+      user: __ASCAN_USER__
+      maxScanDurationInMins: __ACTIVE_MINS__
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off, as in the other sections (it drives a browser that submits forms; see docs/Dast.md)
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+    tests:
+      - name: ascan-logged-in-floor
+        type: stats
+        statistic: stats.auth.ascan.state.loggedin
+        site: https://rfs-frontend.localhost
+        operator: '>='
+        value: __ASCAN_FLOOR__
+        onFail: error
+      - name: auth-failure-limit
+        type: monitor
+        statistic: stats.auth.failure
+        site: https://rfs-frontend.localhost
+        threshold: __AUTH_FAILURE_LIMIT__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/roro-forms
+      reportFile: report
+      reportTitle: RFS DAST - roro-forms
+    confidences: [high, medium, low]
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/roro-forms
+      reportFile: report
+    confidences: [high, medium, low]
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: roro-forms
+      type: url
+      source: all
+      fileName: /zap/wrk/roro-forms/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: roro-forms
+      type: har
+      source: all
+      fileName: /zap/wrk/roro-forms/traffic.har

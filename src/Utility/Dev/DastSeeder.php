@@ -2,6 +2,7 @@
 
 namespace App\Utility\Dev;
 
+use App\DTO\RoRo\OperatorRoute;
 use App\Entity\AbstractGoodsDescription;
 use App\Entity\CargoType;
 use App\Entity\Domestic\Day;
@@ -22,22 +23,21 @@ use App\Entity\International\Vehicle as InternationalVehicle;
 use App\Entity\PasscodeUser;
 use App\Entity\PreEnquiry\PreEnquiry;
 use App\Entity\PreEnquiry\PreEnquiryResponse;
-use App\Entity\SurveyResponse;
-use App\Entity\SurveyStateInterface;
-use App\Entity\Vehicle;
-use App\DTO\RoRo\OperatorRoute;
 use App\Entity\RoRo\Operator;
 use App\Entity\RoRo\OperatorGroup;
 use App\Entity\RoRo\Survey as RoRoSurvey;
 use App\Entity\RoRoUser;
 use App\Entity\Route\Route;
+use App\Entity\SurveyResponse;
+use App\Entity\SurveyStateInterface;
+use App\Entity\Vehicle;
 use App\Form\RoRo\IntroductionType;
 use App\Utility\PasscodeGenerator;
 use App\Utility\RoRo\SurveyCreationHelper;
-use App\Workflow\RoRo\RoRoState;
 use App\Workflow\DomesticSurvey\DaySummaryState;
 use App\Workflow\InternationalSurvey\TripState;
 use App\Workflow\PreEnquiry\PreEnquiryState;
+use App\Workflow\RoRo\RoRoState;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
@@ -50,7 +50,7 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
  */
 class DastSeeder
 {
-    // 8 digits, as passcode login requires
+    // The passcode users' usernames are 8 digits, as passcode login requires; the RoRo user's is an email address
     public const array USERNAMES = [
         'domestic' => '90000001',
         'international' => '90000002',
@@ -64,6 +64,10 @@ class DastSeeder
         'international' => '90000012',
         'pre-enquiry' => '90000013',
     ];
+
+    // The roro-forms section's sacrificial RoRo user, of its own operator outside the Dast Ferries group
+    public const string RORO_FORMS_USERNAME = 'dast-roro-forms@example.com';
+    private const string RORO_FORMS_OPERATOR = 'Forms Ferries';
 
     // The default size of the RoRo login-link pool (bin/dast's DAST_RORO_LINK_POOL overrides it, within 1-100)
     public const int RORO_LOGIN_LINKS = 20;
@@ -120,6 +124,7 @@ class DastSeeder
         [$internationalFormsUser] = $this->seedInternational(self::FORMS_USERNAMES['international'], 'Formsville', 'FR01 FRM', 'dast-international-forms');
         $preEnquiryFormsUser = $this->seedPreEnquiry(self::FORMS_USERNAMES['pre-enquiry'], 'Dast Forms Haulage Ltd', 'dast-pre-enquiry-forms');
         [$roroUser, $harwich, $roroSurveys] = $this->seedRoRo();
+        [$roroFormsUser, $roroFormsOperator] = $this->seedRoRoForms();
 
         return [
             'DAST_DOMESTIC_USERNAME' => $domesticUser->getUsername(),
@@ -153,6 +158,8 @@ class DastSeeder
             'DAST_CHECK_RORO_CALAIS' => $this->roroEditPath($roroSurveys['roro-calais'], RoRoState::STATE_COMMENTS),
             'DAST_CHECK_RORO_DUNKIRK' => $this->roroEditPath($roroSurveys['roro-dunkirk'], RoRoState::STATE_COMMENTS),
             'DAST_CHECK_RORO_CUXHAVEN' => $this->roroEditPath($roroSurveys['roro-cuxhaven'], RoRoState::STATE_COMMENTS),
+            'DAST_RORO_FORMS_LOGIN_LINKS' => implode(' ', self::issueRoRoLoginLinks($this->roroLoginLinkHandler, $roroFormsUser, $roroLinks)),
+            'DAST_PATH_RORO_FORMS_DASHBOARD' => $this->path('app_roro_dashboard', ['operatorId' => $roroFormsOperator->getId()]),
         ];
     }
 
@@ -181,12 +188,14 @@ class DastSeeder
         $this->entityManager->persist((new OperatorGroup())->setName(self::RORO_GROUP));
 
         $operators = [];
+        $routesByMarker = [];
         foreach (self::RORO_OPERATORS as $name => [$code, $routes]) {
             $operator = (new Operator())->setName($name)->setCode($code)->setIsActive(true);
-            foreach ($routes as [$ukPort, $foreignPort]) {
+            foreach ($routes as [$ukPort, $foreignPort, $marker]) {
                 $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames($ukPort, $foreignPort)
                     ?? throw new \RuntimeException("No {$ukPort}-{$foreignPort} route (the migrations seed it)");
                 $operator->addRoute($route);
+                $routesByMarker[$marker] = $route;
             }
             $this->entityManager->persist($operator);
             $operators[$name] = $operator;
@@ -203,8 +212,8 @@ class DastSeeder
         $periodStart = new \DateTime('first day of last month midnight');
         $surveys = [];
         foreach (self::RORO_OPERATORS as $name => [, $routes]) {
-            foreach ($routes as [$ukPort, $foreignPort, $marker]) {
-                $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames($ukPort, $foreignPort);
+            foreach ($routes as [, , $marker]) {
+                $route = $routesByMarker[$marker];
                 $survey = $this->roroSurveyCreationHelper
                     ->createSurvey($periodStart, new OperatorRoute($operators[$name]->getId(), $route->getId()))
                     ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
@@ -222,6 +231,42 @@ class DastSeeder
         $this->entityManager->flush();
 
         return [$user, $operators['Dast Ferries Harwich'], $surveys];
+    }
+
+    /**
+     * The roro-forms section's sacrificial user: its forms are submitted (and attacked), so its surveys are expected to
+     * change. Its operator's name doesn't start "Dast Ferries", so it isn't in that group (OperatorSwitchHelper) and
+     * can't reach the roro section's surveys.
+     *
+     * @return array{RoRoUser, Operator}
+     */
+    private function seedRoRoForms(): array
+    {
+        $operator = (new Operator())->setName(self::RORO_FORMS_OPERATOR)->setCode(9904)->setIsActive(true);
+        $routes = [];
+        foreach ([['Dover', 'Calais'], ['Harwich', 'Cuxhaven']] as [$ukPort, $foreignPort]) {
+            $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames($ukPort, $foreignPort)
+                ?? throw new \RuntimeException("No {$ukPort}-{$foreignPort} route (the migrations seed it)");
+            $operator->addRoute($route);
+            $routes[] = $route;
+        }
+        $user = (new RoRoUser())->setUsername(self::RORO_FORMS_USERNAME)->setOperator($operator);
+        $this->entityManager->persist($operator);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        foreach ($routes as $route) {
+            $survey = $this->roroSurveyCreationHelper
+                ->createSurvey(new \DateTime('first day of last month midnight'), new OperatorRoute($operator->getId(), $route->getId()))
+                ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
+                ->setIsActiveForPeriod(true)
+                ->setDataEntryMethod(IntroductionType::DATA_ENTRY_MANUAL_CHOICE)
+                ->setComments('Dast forms survey');
+            $this->entityManager->persist($survey);
+        }
+        $this->entityManager->flush();
+
+        return [$user, $operator];
     }
 
     private function roroEditPath(RoRoSurvey $survey, string $state): string

@@ -3,7 +3,8 @@
 //
 // RoRo logs in with single-use links (POST expires, user and hash to /roro/authenticate). The DAST seed command
 // issues a pool of them, which bin/dast hands to ZAP as DAST_RORO_LOGIN_LINKS: space-separated POST bodies. Each call
-// spends the next one. Out of links, it prints DAST-RORO-FATAL (bin/dast fails the section on that line: ZAP itself
+// spends the next one. The optional "Links variable" parameter names another pool (the roro-forms section's user has
+// its own, DAST_RORO_FORMS_LOGIN_LINKS). Out of links, it prints DAST-RORO-FATAL (bin/dast fails the section on that line: ZAP itself
 // only logs a failed login) and returns no message.
 
 var HttpRequestHeader = Java.type("org.parosproxy.paros.network.HttpRequestHeader");
@@ -12,10 +13,13 @@ var URI = Java.type("org.apache.commons.httpclient.URI");
 var ScriptVars = Java.type("org.zaproxy.zap.extension.script.ScriptVars");
 var JavaSystem = Java.type("java.lang.System");
 
+// One counter per ZAP process, which bin/dast runs per section, so per pool. (ZAP's script variable keys must be
+// under 30 characters.)
 var USED = "dast.roro.links.used";
 
-function authenticate(helper, paramsValues, credentials) {
-	var pool = String(JavaSystem.getenv("DAST_RORO_LOGIN_LINKS") || "").trim();
+function authenticate(helper, paramsValues, _credentials) {
+	var variable = String(paramsValues.get("Links variable") || "").trim() || "DAST_RORO_LOGIN_LINKS";
+	var pool = String(JavaSystem.getenv(variable) || "").trim();
 	var links = pool === "" ? [] : pool.split(/\s+/);
 	var used = parseInt(ScriptVars.getGlobalVar(USED) || "0", 10);
 
@@ -42,7 +46,7 @@ function getRequiredParamsNames() {
 }
 
 function getOptionalParamsNames() {
-	return [];
+	return ["Links variable"];
 }
 
 function getCredentialsParamsNames() {
