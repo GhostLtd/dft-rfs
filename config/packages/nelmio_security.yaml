@@ -29,6 +29,10 @@ nelmio_security:
                 - 'self'
             base-uri:
                 - 'none'
+            # Not covered by default-src: forms may only submit to this site (Chrome also applies it to the redirects
+            # that follow a submission, so a form handler must not redirect off-site)
+            form-action:
+                - 'self'
             frame-ancestors:
                 - 'none'
             block-all-mixed-content: true # defaults to false, blocks HTTP content over HTTPS transport
