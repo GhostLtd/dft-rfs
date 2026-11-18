@@ -33,17 +33,21 @@ brute force); those need targeted or manual testing.
    | `international` | `/international-survey` | `90000002` (a vehicle with a trip and its actions) |
    | `pre-enquiry` | `/pre-enquiry` | `90000003` (a pre-enquiry with a response) |
    | `roro` | `/roro` (dashboards, operator switching, survey view and wizard) | `dast-roro@example.com` (operators `Dast Ferries Dover` and `Dast Ferries Harwich`; Calais, Dunkirk and Cuxhaven surveys, active and in progress) |
+   | `domestic-forms`, `international-forms`, `pre-enquiry-forms` | the survey pages again, with their forms submitted (see below) | sacrificial users `90000011`, `90000012`, `90000013` |
    | `admin` | the admin site | `dast-admin@example.com` (manager role), faked |
 
 4. Tears everything down, keeping the output.
 
 ## What isn't scanned
 
-- **The survey forms' POST handling.** The spider never submits POST forms: doing so changes survey state at random
-  (for example, answering that the vehicle was sold deletes the survey's days), so the scan would destroy its own
-  data. The forms are still checked as rendered (e.g. for CSRF tokens), and a few active rules send POST probes of
-  their own (PHP-CGI and similar remote-code-execution checks, with non-form bodies), but the active scan has no
-  captured form submissions to attack.
+- **RoRo's and admin's form submissions.** In the survey sections the spider never submits POST forms: doing so
+  changes survey state at random (for example, answering that the vehicle was sold deletes the survey's days), so the
+  scan would destroy the data its checks rely on. The `*-forms` sections cover the survey types' forms instead: the
+  same pages as a sacrificial user whose forms *are* submitted (with ZAP's default values) and then attacked. Their
+  data is expected to change, so they have no live checks. Instead: the spider and logged-in floors, and a minimum
+  number of survey form submissions (`form_post_floor` in `bin/dast`), counted in the access log as POSTs that are
+  neither logins nor the active scanner's own requests (those carry `X-ZAP-Scan-ID`). RoRo's and admin's
+  forms aren't submitted anywhere.
 - **DOM-based XSS** (active rule 40026) is switched off. It drives a real browser that submits the pages' forms, with
   valid CSRF tokens, which deleted and changed the seeded surveys mid-scan (found from the access logs). The app
   renders on the server with little JavaScript.
@@ -126,6 +130,19 @@ output is in the section's `zap-console.log`). Everything goes to `var/dast/<YYY
 | `app-console.log`, `frankenphp.log`, `app-var-log/` | the app's logs |
 | `teardown.log` | Compose's teardown |
 
+Known false positives (and alerts that are informational by design) are marked as false positives by an alert filter
+at the start of every plan, and left out of the reports: see the `known-false-positives` job in
+`docker/dast/plans/*.template.yaml` and `local/2026-11-17-dast-first-run-triage.md`.
+
+`bin/dast-diff` compares two runs' findings per section, listing alerts that are new or have gone (record ids in URLs
+are replaced with `{id}`, since every run seeds new ones):
+
+```bash
+bin/dast-diff                  # the two latest runs in var/dast/
+bin/dast-diff OLD_DIR NEW_DIR  # two given runs
+bin/dast-diff --counts ...     # also count changes (noisy: reports list a sample of each alert's instances)
+```
+
 The output contains this run's throwaway credentials: passcodes in the survey sections' login requests, and RoRo
 login links in `roro/traffic.har`, `roro/report.html` (passive alerts quote the login POST) and the smoke run's
 exports. They're accepted there: single-use or for throwaway users on a throwaway database, and `var/dast/` is
@@ -148,10 +165,10 @@ be forged anyway: they're worthless outside one.
 | `DAST_SPIDER_MINS` | 10 | each section's spider limit |
 | `DAST_ACTIVE_MINS` | 30 | each section's active scan limit (`--active`) |
 | `DAST_CONTEXT_TIMEOUT_MINS` | 3 × their sum + 15 | each section's hard deadline |
-| `DAST_SECTIONS` | all six | a subset, e.g. `DAST_SECTIONS=domestic` while investigating. Always run in the fixed order, once each; an empty list or an unknown name stops `bin/dast` before it starts anything (exit 2) |
+| `DAST_SECTIONS` | all nine | a subset, e.g. `DAST_SECTIONS=domestic` while investigating. Always run in the fixed order, once each; an empty list or an unknown name stops `bin/dast` before it starts anything (exit 2) |
 | `DAST_WRONG_PASSWORD=<section>` | | test hook: a wrong password for that section's user (its checks must fail) |
 | `DAST_CRIPPLE_SPIDER=<section>` | | test hook: that section's spider limited to depth 1. Shown to fail international's discovery checks; it can't cripple pre-enquiry (all its pages are one link from the summary), and domestic's sentinels are one link deep too |
-| `DAST_ASCAN_LOGGED_OUT=<survey section>` | | test hook, with `--active`: that section's active scan runs logged out, and its logged-in floor must fail. For domestic, international and pre-enquiry: without its user, and `bin/dast` ends every app session as it starts (without that, the recorded requests' session cookie keeps it logged in). For `roro`: the active scan runs without its user and a replacer rule strips the `Cookie` header from the active scanner's requests only (ending sessions isn't enough there: remember-me logs straight back in; and with its user, ZAP adds the user's cookies after the replacer) |
+| `DAST_ASCAN_LOGGED_OUT=<section>` | | test hook, with `--active`, for the survey, RoRo and forms sections: that section's active scan runs without its user, and a replacer rule strips the `Cookie` header from the active scanner's requests only, so the attack traffic is logged out while the live checks keep their cookies. Its logged-in floor must fail. (Both are needed: with its user, ZAP adds the user's cookies after the replacer; ending the app's sessions instead races with requests in flight, which write their sessions back) |
 | `DAST_STALL_SECTION=<section>` | | test hook: that section's ZAP replaced by a process that hangs and ignores TERM (its deadline must stop it) |
 | `DAST_RORO_LINK_POOL` | 20 | how many RoRo login links to issue (1-100) |
 | `DAST_RORO_SECOND_LOGIN=1` | | test hook: a final request as a second ZAP user, which needs a link of its own, and must show a survey (so a second link works). With `DAST_RORO_LINK_POOL=1` that check is only informational and running out must be the section's only failure |
@@ -169,6 +186,8 @@ be forged anyway: they're worthless outside one.
 
 ## Follow-ups
 
-- POST-form coverage: a sacrificial second user per survey type, crawled with form submission on after the safe pass.
+- Form submissions for RoRo and admin (the `*-forms` sections cover the survey types only).
 - A combined report across sections.
-- Access-control checks with a second user per type.
+
+Cross-user access isn't part of the scan: `tests/NewFunctional/AccessControl/CrossUserAccessTest.php` (in the normal
+test suite) sweeps every frontend route that takes a record id, using the DAST seed data.

@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# Compares two bin/dast runs' findings: which alerts are new, which have gone, and whose counts changed, per section.
+# See docs/Dast.md.
+#
+#   bin/dast-diff                      # the two latest runs in var/dast/
+#   bin/dast-diff OLD_DIR NEW_DIR      # two run directories
+#   bin/dast-diff --counts [...]       # also alerts whose instance counts changed
+#
+# Alerts are matched by risk, rule id and name; record ids in URLs (UUIDs) are replaced with {id}, since every run
+# seeds new ones. Counts are left out by default: ZAP's reports list a sample of each alert's instances, so they
+# drift between runs. Needs jq, or Docker to run it.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+counts=false
+if [ "${1:-}" = --counts ]; then
+    counts=true
+    shift
+fi
+
+if [ $# -eq 2 ]; then
+    old=$1 new=$2
+elif [ $# -eq 0 ]; then
+    mapfile -t runs < <(find var/dast -mindepth 1 -maxdepth 1 -type d -name '2*' | sort | tail -2)
+    if [ "${#runs[@]}" -lt 2 ]; then
+        echo "Need two runs in var/dast/ (or name them: bin/dast-diff OLD_DIR NEW_DIR)" >&2
+        exit 2
+    fi
+    old=${runs[0]} new=${runs[1]}
+else
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' >&2
+    exit 2
+fi
+
+for dir in "$old" "$new"; do
+    if [ ! -d "$dir" ]; then
+        echo "Not a directory: ${dir}" >&2
+        exit 2
+    fi
+    if ! compgen -G "${dir}/*/report.json" > /dev/null; then
+        echo "No section reports (*/report.json) in ${dir}" >&2
+        exit 2
+    fi
+done
+
+jq_cmd=(jq)
+if ! command -v jq > /dev/null; then
+    jq_cmd=(docker run --rm -i ghcr.io/jqlang/jq:1.7.1)
+fi
+
+# One line per alert in a report (fails on a file that isn't a ZAP JSON report): "<risk>\t<rule id> <name>\t<instances>\t<example URL with ids as {id}>"
+alerts() {
+    # The whole file must be exactly one ZAP JSON report: -n with inputs reads every document (an empty file, trailing
+    # data or a second document is an error, not "no alerts"); then an object with a site array, each site with an
+    # alerts array (which may be empty), each alert with a string pluginid, name and riskdesc
+    "${jq_cmd[@]}" -r -n '
+        [inputs]
+        | if length == 1 then .[0] else error("expected exactly one JSON document, found \(length)") end
+        | if type == "object" and (.site | type) == "array"
+              and all(.site[]; type == "object" and (.alerts | type) == "array"
+                  and all(.alerts[]; type == "object"
+                      and (.pluginid | type) == "string" and (.name | type) == "string"
+                      and (.riskdesc | type) == "string"))
+          then . else error("not a ZAP JSON report") end
+        | [.site[].alerts[]]
+        | map({key: "\(.riskdesc | split(" ")[0])\t\(.pluginid) \(.name)",
+               count: (.count | tonumber? // (.instances | length)),
+               url: ((.instances[0].uri // "") | gsub("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; "{id}"))})
+        | group_by(.key)
+        | map("\(.[0].key)\t\(map(.count) | add)\t\(.[0].url)")
+        | .[]' < "$1"
+}
+
+# Every report parsed up front, each with its exit status checked: a report that can't be read must stop the
+# comparison, not look like a section with no alerts
+work="$(mktemp -d)"
+trap 'rm -rf "$work"' EXIT
+mapfile -t sections < <(for report in "$new"/*/report.json "$old"/*/report.json; do
+    [ -f "$report" ] && basename "$(dirname "$report")"
+done | sort -u)
+for section in "${sections[@]}"; do
+    for side in old new; do
+        report="${!side}/$section/report.json"
+        [ -f "$report" ] || continue
+        if ! alerts "$report" > "$work/${side}-${section}.raw"; then
+            echo "Couldn't read ${report}" >&2
+            exit 1
+        fi
+    done
+done
+
+echo "Old: ${old}"
+echo "New: ${new}"
+for section in "${sections[@]}"; do
+    if [ ! -f "$work/old-${section}.raw" ] || [ ! -f "$work/new-${section}.raw" ]; then
+        echo
+        echo "== ${section}: only in $([ -f "$work/new-${section}.raw" ] && echo new || echo old) run"
+        continue
+    fi
+    awk -F'\t' '{print $1" | "$2"\t"$3}' "$work/old-${section}.raw" | sort > "$work/old-${section}"
+    awk -F'\t' '{print $1" | "$2"\t"$3"\t"$4}' "$work/new-${section}.raw" | sort > "$work/new-${section}"
+    diff_output="$(join -t $'\t' -a 1 -a 2 -e '-' -o 0,1.2,2.2,2.3 "$work/old-${section}" "$work/new-${section}" \
+        | awk -F'\t' -v counts="$counts" '
+            $2 == "-" { print "  NEW      " $1 " (" $3 ", e.g. " $4 ")"; next }
+            $3 == "-" { print "  GONE     " $1 " (was " $2 ")"; next }
+            counts == "true" && $2 != $3 { print "  CHANGED  " $1 " (" $2 " -> " $3 ")" }')"
+    echo
+    if [ -n "$diff_output" ]; then
+        echo "== ${section}"
+        echo "$diff_output"
+    else
+        echo "== ${section}: no change"
+    fi
+done

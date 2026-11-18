@@ -11,7 +11,10 @@
 {$FRONTEND_HOSTNAME} {
 	tls internal
 	log {
-		output file /tmp/access-frontend.log
+		output file /tmp/access-frontend.log {
+			# One file for the whole run: a rolled-over part wouldn't be copied out
+			roll_disabled
+		}
 		format json
 	}
 	root * /app/public
@@ -23,7 +26,10 @@
 {$ADMIN_HOSTNAME} {
 	tls internal
 	log {
-		output file /tmp/access-admin.log
+		output file /tmp/access-admin.log {
+			# One file for the whole run: a rolled-over part wouldn't be copied out
+			roll_disabled
+		}
 		format json
 	}
 	root * /app/public

@@ -58,6 +58,13 @@ class DastSeeder
         'roro' => 'dast-roro@example.com',
     ];
 
+    // The forms sections' sacrificial users (bin/dast's *-forms sections)
+    public const array FORMS_USERNAMES = [
+        'domestic' => '90000011',
+        'international' => '90000012',
+        'pre-enquiry' => '90000013',
+    ];
+
     // The default size of the RoRo login-link pool (bin/dast's DAST_RORO_LINK_POOL overrides it, within 1-100)
     public const int RORO_LOGIN_LINKS = 20;
     private const int RORO_LOGIN_LINK_LIFETIME = 604800;
@@ -107,6 +114,11 @@ class DastSeeder
         [$domesticUser, $domesticSurvey] = $this->seedDomestic();
         [$internationalUser, $trip] = $this->seedInternational();
         $preEnquiryUser = $this->seedPreEnquiry();
+        // The forms sections' sacrificial users: their forms are submitted (and attacked), so their data is expected to
+        // change; nothing checks it
+        [$domesticFormsUser] = $this->seedDomestic(self::FORMS_USERNAMES['domestic'], 'DA57 FRM');
+        [$internationalFormsUser] = $this->seedInternational(self::FORMS_USERNAMES['international'], 'Formsville', 'FR01 FRM', 'dast-international-forms');
+        $preEnquiryFormsUser = $this->seedPreEnquiry(self::FORMS_USERNAMES['pre-enquiry'], 'Dast Forms Haulage Ltd', 'dast-pre-enquiry-forms');
         [$roroUser, $harwich, $roroSurveys] = $this->seedRoRo();
 
         return [
@@ -116,6 +128,12 @@ class DastSeeder
             'DAST_INTERNATIONAL_PASSWORD' => $this->passcodeGenerator->getPasswordForUser($internationalUser),
             'DAST_PRE_ENQUIRY_USERNAME' => $preEnquiryUser->getUsername(),
             'DAST_PRE_ENQUIRY_PASSWORD' => $this->passcodeGenerator->getPasswordForUser($preEnquiryUser),
+            'DAST_FORMS_DOMESTIC_USERNAME' => $domesticFormsUser->getUsername(),
+            'DAST_FORMS_DOMESTIC_PASSWORD' => $this->passcodeGenerator->getPasswordForUser($domesticFormsUser),
+            'DAST_FORMS_INTERNATIONAL_USERNAME' => $internationalFormsUser->getUsername(),
+            'DAST_FORMS_INTERNATIONAL_PASSWORD' => $this->passcodeGenerator->getPasswordForUser($internationalFormsUser),
+            'DAST_FORMS_PRE_ENQUIRY_USERNAME' => $preEnquiryFormsUser->getUsername(),
+            'DAST_FORMS_PRE_ENQUIRY_PASSWORD' => $this->passcodeGenerator->getPasswordForUser($preEnquiryFormsUser),
             'DAST_PATH_DOMESTIC_STOPS' => $this->path('app_domesticsurvey_day_view', ['dayNumber' => 1]),
             'DAST_PATH_DOMESTIC_SUMMARY' => $this->path('app_domesticsurvey_day_view', ['dayNumber' => 2]),
             'DAST_PATH_INTERNATIONAL_TRIP' => $this->path('app_internationalsurvey_trip_view', ['id' => $trip->getId()]),
@@ -212,15 +230,15 @@ class DastSeeder
     }
 
     /** @return array{PasscodeUser, DomesticSurvey} */
-    private function seedDomestic(): array
+    private function seedDomestic(string $username = self::USERNAMES['domestic'], string $registrationMark = self::MARKERS['admin-survey']): array
     {
-        $user = (new PasscodeUser())->setUsername(self::USERNAMES['domestic']);
+        $user = (new PasscodeUser())->setUsername($username);
 
         $survey = (new DomesticSurvey())
             ->setSurveyPeriodStart(new \DateTime('2021-05-01'))
             ->setSurveyPeriodEnd(new \DateTime('2021-05-10'))
             ->setIsNorthernIreland(true)
-            ->setRegistrationMark(self::MARKERS['admin-survey'])
+            ->setRegistrationMark($registrationMark)
             ->setPasscodeUser($user)
             ->setInvitationAddress(new LongAddress())
             ->setState(SurveyStateInterface::STATE_IN_PROGRESS);
@@ -315,10 +333,47 @@ class DastSeeder
             ->setWasLimitedByWeight(false);
     }
 
-    /** @return array{PasscodeUser, Trip} */
-    private function seedInternational(): array
+    /**
+     * A second international user and a RoRo user outside the Dast Ferries group, each with data of their own, for
+     * the cross-user access tests (tests/NewFunctional/AccessControl): they must never reach seed()'s users' data.
+     * Call after seed().
+     *
+     * @return array{PasscodeUser, RoRoUser}
+     */
+    public function seedAccessControlUsers(): array
     {
-        $user = (new PasscodeUser())->setUsername(self::USERNAMES['international']);
+        [$internationalUser] = $this->seedInternational('90000004', 'Probeton', 'BB02 BBB', 'dast-international-other');
+
+        $operator = (new Operator())->setName('Outsider Ferries')->setCode(9903)->setIsActive(true);
+        $route = $this->entityManager->getRepository(Route::class)->getRouteByPortNames('Harwich', 'Cuxhaven')
+            ?? throw new \RuntimeException('No Harwich-Cuxhaven route (the migrations seed it)');
+        $operator->addRoute($route);
+        $roroUser = (new RoRoUser())->setUsername('dast-roro-outsider@example.com')->setOperator($operator);
+        $this->entityManager->persist($operator);
+        $this->entityManager->persist($roroUser);
+        $this->entityManager->flush();
+
+        $survey = $this->roroSurveyCreationHelper
+            ->createSurvey(new \DateTime('first day of last month midnight'), new OperatorRoute($operator->getId(), $route->getId()))
+            ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
+            ->setIsActiveForPeriod(true)
+            ->setDataEntryMethod(IntroductionType::DATA_ENTRY_MANUAL_CHOICE)
+            ->setComments('Outsider survey');
+        $this->entityManager->persist($survey);
+        $this->entityManager->flush();
+
+        return [$internationalUser, $roroUser];
+    }
+
+    /** @return array{PasscodeUser, Trip} */
+    private function seedInternational(
+        string $username = self::USERNAMES['international'],
+        string $place = self::MARKERS['international-trip'],
+        string $registrationMark = 'AA01 ABC',
+        string $reference = 'dast-international',
+    ): array
+    {
+        $user = (new PasscodeUser())->setUsername($username);
         $company = (new Company())->setBusinessName('Dast International Ltd');
 
         $survey = (new InternationalSurvey())
@@ -327,9 +382,9 @@ class DastSeeder
             ->setPasscodeUser($user)
             ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
             ->setCompany($company)
-            ->setInvitationEmails('dast-international@example.com')
+            ->setInvitationEmails("{$reference}@example.com")
             ->setInvitationAddress(new LongAddress())
-            ->setReferenceNumber('dast-international');
+            ->setReferenceNumber($reference);
 
         $response = (new InternationalSurveyResponse())
             ->setContactName('Dast Tester')
@@ -346,7 +401,7 @@ class DastSeeder
             ->setResponseStartDate(new \DateTime());
 
         $vehicle = (new InternationalVehicle())
-            ->setRegistrationMark('AA01 ABC')
+            ->setRegistrationMark($registrationMark)
             ->setAxleConfiguration(333)
             ->setTrailerConfiguration(300)
             ->setBodyType(Vehicle::BODY_TYPE_CURTAIN_SIDED)
@@ -373,8 +428,8 @@ class DastSeeder
             ->setOutboundWasEmpty(false)
             ->setOutboundWasLimitedBySpace(false)
             ->setOutboundWasLimitedByWeight(false)
-            ->setOrigin(self::MARKERS['international-trip'])
-            ->setDestination(self::MARKERS['international-trip']);
+            ->setOrigin($place)
+            ->setDestination($place);
         $vehicle->addTrip($trip);
 
         $loading = (new Action())
@@ -404,22 +459,22 @@ class DastSeeder
         return [$user, $trip];
     }
 
-    private function seedPreEnquiry(): PasscodeUser
+    private function seedPreEnquiry(string $username = self::USERNAMES['pre-enquiry'], string $companyName = self::MARKERS['pre-enquiry'], string $reference = 'dast-pre-enquiry'): PasscodeUser
     {
-        $user = (new PasscodeUser())->setUsername(self::USERNAMES['pre-enquiry']);
+        $user = (new PasscodeUser())->setUsername($username);
 
         $preEnquiry = (new PreEnquiry())
             ->setPasscodeUser($user)
             ->setState(SurveyStateInterface::STATE_IN_PROGRESS)
-            ->setReferenceNumber('dast-pre-enquiry')
+            ->setReferenceNumber($reference)
             ->setInvitationAddress($this->address('Dast Invited Ltd', 'DA10 1AB'))
-            ->setInvitationEmails('dast-pre-enquiry@example.com')
+            ->setInvitationEmails("{$reference}@example.com")
             ->setDispatchDate(new \DateTime('2021-06-01'))
             ->setCompanyName('Dast Invited Ltd');
 
         $response = (new PreEnquiryResponse())
             ->setIsCorrectCompanyName(false)
-            ->setCompanyName(self::MARKERS['pre-enquiry'])
+            ->setCompanyName($companyName)
             ->setPreEnquiry($preEnquiry)
             ->setAnnualHgvJourneyEstimate(51)
             ->setInternationalJourneyHgvCount(20)

@@ -134,6 +134,7 @@ jobs:
           bash -n bin/test-mysql
           bash -n bin/screenshots
           bash -n bin/dast
+          bash -n bin/dast-diff
           sh -n docker/test-php/entrypoint.sh
           bash -n docker/screenshots/entrypoint.sh
 

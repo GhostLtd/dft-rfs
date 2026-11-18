@@ -46,8 +46,48 @@ env:
     progressToStdout: true
 
 jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
   # Discovery: the spider must find a minimum number of URLs, and the section's deep pages (the sentinels) itself.
   # Nothing else has requested the sentinels yet (login polls the summary), so their presence proves discovery.
+  # Test hook (DAST_ASCAN_LOGGED_OUT=<this section>): strip the Cookie header from the active scanner's requests only,
+  # and (via __ASCAN_USER__) run the active scan without its user, whose cookies ZAP would add after the replacer. The
+  # attack traffic is then logged out, and the logged-in floor must fail.
+  - type: replacer
+    name: strip-ascan-cookies
+    enabled: __STRIP_ASCAN_COOKIES__
+    rules:
+      - description: DAST test hook - active scanner requests without cookies
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: ''
+        # 2: the active scanner (ZAP's HttpSender.ACTIVE_SCANNER_INITIATOR)
+        initiators: [2]
+
   - type: spider
     name: spider
     parameters:
@@ -185,6 +225,7 @@ jobs:
       reportDir: /zap/wrk/__SECTION__
       reportFile: report
       reportTitle: RFS DAST - __SECTION__
+    confidences: [high, medium, low]
 
   - type: report
     name: report-json
@@ -193,6 +234,7 @@ jobs:
       template: traditional-json
       reportDir: /zap/wrk/__SECTION__
       reportFile: report
+    confidences: [high, medium, low]
 
   - type: export
     name: export-urls

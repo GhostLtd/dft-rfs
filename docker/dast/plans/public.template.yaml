@@ -21,6 +21,31 @@ env:
     progressToStdout: true
 
 jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
   # Pages nothing links to. Not the discovery sentinels (the footer's statement pages), which the spider must find.
   - type: requestor
     name: prime
@@ -92,6 +117,7 @@ jobs:
       reportDir: /zap/wrk/public
       reportFile: report
       reportTitle: RFS DAST - public
+    confidences: [high, medium, low]
 
   - type: report
     name: report-json
@@ -100,6 +126,7 @@ jobs:
       template: traditional-json
       reportDir: /zap/wrk/public
       reportFile: report
+    confidences: [high, medium, low]
 
   - type: export
     name: export-urls

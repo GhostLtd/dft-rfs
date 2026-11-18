@@ -1,0 +1,176 @@
+# ZAP Automation Framework plan for a survey type's "forms" section (domestic-forms, international-forms,
+# pre-enquiry-forms): the same pages as the survey section, as a sacrificial user whose forms ARE submitted, so the
+# active scan has form submissions (POSTs) to attack. The user's survey data is expected to change or go, so there are
+# no live checks; the spider floor and the active scanner's logged-in floor still guard against a hollow scan. A
+# template: bin/dast replaces the __TOKENS__. See docs/Dast.md.
+env:
+  contexts:
+    - name: __SECTION__
+      urls:
+        - https://rfs-frontend.localhost__SUMMARY__
+      includePaths:
+        - https://rfs-frontend\.localhost/(__AREA__|survey-feedback)(/.*)?
+      excludePaths:
+        - .*/logout.*
+      authentication:
+        method: form
+        parameters:
+          loginPageUrl: https://rfs-frontend.localhost/login
+          loginRequestUrl: https://rfs-frontend.localhost/login
+          # See survey.template.yaml for the extra passcode_login_token parameter
+          loginRequestBody: passcode_login[passcode][0]={%username%}&passcode_login[passcode][1]={%password%}&passcode_login[token]=DastCsrfPlaceholder&passcode_login_token=DastCsrfPlaceholder
+        verification:
+          method: poll
+          pollUrl: https://rfs-frontend.localhost__SUMMARY__
+          pollFrequency: 60
+          pollUnits: requests
+          loggedInRegex: \Qhref="/logout"\E
+          loggedOutRegex: (?im)^location:\s*/login
+      sessionManagement:
+        method: cookie
+      users:
+        - name: __SECTION__
+          credentials:
+            username: ${DAST_FORMS___USER___USERNAME}
+            password: ${DAST_FORMS___USER___PASSWORD}
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+
+jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
+  # The spider submits POST forms here (it doesn't in the other sections), with ZAP's default values
+  # Test hook (DAST_ASCAN_LOGGED_OUT=<this section>): strip the Cookie header from the active scanner's requests only,
+  # and (via __ASCAN_USER__) run the active scan without its user, whose cookies ZAP would add after the replacer. The
+  # attack traffic is then logged out, and the logged-in floor must fail.
+  - type: replacer
+    name: strip-ascan-cookies
+    enabled: __STRIP_ASCAN_COOKIES__
+    rules:
+      - description: DAST test hook - active scanner requests without cookies
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: ''
+        # 2: the active scanner (ZAP's HttpSender.ACTIVE_SCANNER_INITIATOR)
+        initiators: [2]
+
+  - type: spider
+    name: spider
+    parameters:
+      context: __SECTION__
+      user: __SECTION__
+      url: https://rfs-frontend.localhost__SUMMARY__
+      maxDuration: __SPIDER_MINS__
+      maxDepth: __MAX_DEPTH__
+      processForm: true
+      postForm: true
+      logoutAvoidance: true
+    tests:
+      - name: spider-url-floor
+        type: stats
+        statistic: automation.spider.urls.added
+        operator: '>='
+        value: __FLOOR__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-spider
+
+  - type: activeScan
+    name: active-scan
+    enabled: __ACTIVE__
+    parameters:
+      context: __SECTION__
+      # The section's user (bin/dast's DAST_ASCAN_LOGGED_OUT test hook empties it)
+      user: __ASCAN_USER__
+      maxScanDurationInMins: __ACTIVE_MINS__
+      injectPluginIdInHeader: true
+    policyDefinition:
+      rules:
+        # Off, as in the other sections (it drives a browser that submits forms; see docs/Dast.md)
+        - id: 40026
+          name: Cross Site Scripting (DOM Based)
+          threshold: 'Off'
+    tests:
+      - name: ascan-logged-in-floor
+        type: stats
+        statistic: stats.auth.ascan.state.loggedin
+        site: https://rfs-frontend.localhost
+        operator: '>='
+        value: __ASCAN_FLOOR__
+        onFail: error
+      - name: auth-failure-limit
+        type: monitor
+        statistic: stats.auth.failure
+        site: https://rfs-frontend.localhost
+        threshold: __AUTH_FAILURE_LIMIT__
+        onFail: error
+
+  - type: passiveScan-wait
+    name: passive-wait-final
+    alwaysRun: true
+
+  - type: report
+    name: report-html
+    alwaysRun: true
+    parameters:
+      template: traditional-html-plus
+      reportDir: /zap/wrk/__SECTION__
+      reportFile: report
+      reportTitle: RFS DAST - __SECTION__
+    confidences: [high, medium, low]
+
+  - type: report
+    name: report-json
+    alwaysRun: true
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/__SECTION__
+      reportFile: report
+    confidences: [high, medium, low]
+
+  - type: export
+    name: export-urls
+    alwaysRun: true
+    parameters:
+      context: __SECTION__
+      type: url
+      source: all
+      fileName: /zap/wrk/__SECTION__/urls.txt
+
+  - type: export
+    name: export-har
+    alwaysRun: true
+    enabled: __PASSIVE__
+    parameters:
+      context: __SECTION__
+      type: har
+      source: all
+      fileName: /zap/wrk/__SECTION__/traffic.har

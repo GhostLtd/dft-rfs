@@ -46,6 +46,31 @@ env:
     progressToStdout: true
 
 jobs:
+  # Known false positives and by-design informational alerts (local/2026-11-17-dast-first-run-triage.md): marked as
+  # false positives, which the reports leave out
+  - type: alertFilter
+    name: known-false-positives
+    alertFilters:
+      # Private IP Disclosure: SVG path data in the built assets
+      - ruleId: 2
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Timestamp Disclosure: numbers in the minified built assets
+      - ruleId: 10096
+        newRisk: False Positive
+        url: .*/build/.*
+        urlRegex: true
+      # Big Redirect: Symfony's redirect responses have a body naming the target URL
+      - ruleId: 10044
+        newRisk: False Positive
+      # Informational by design: Modern Web Application, Session Management Response Identified, User Agent Fuzzer
+      - ruleId: 10109
+        newRisk: False Positive
+      - ruleId: 10112
+        newRisk: False Positive
+      - ruleId: 10104
+        newRisk: False Positive
   # Test hook (DAST_ASCAN_LOGGED_OUT=roro): strip the Cookie header from the active scanner's requests only, so its
   # attack traffic is logged out while the checks keep their cookies. (Ending server sessions isn't enough here:
   # the remember-me cookie logs straight back in.) The hook also runs the active scan without its user: a user's
@@ -289,6 +314,7 @@ jobs:
       reportDir: /zap/wrk/roro
       reportFile: report
       reportTitle: RFS DAST - roro
+    confidences: [high, medium, low]
 
   - type: report
     name: report-json
@@ -297,6 +323,7 @@ jobs:
       template: traditional-json
       reportDir: /zap/wrk/roro
       reportFile: report
+    confidences: [high, medium, low]
 
   - type: export
     name: export-urls
